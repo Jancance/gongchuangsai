@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-15",
+  "images": [
+    "CAN_task_active_feedback_snapshot1.png",
+    "CAN_task_active_feedback_snapshot2.png"
+  ],
+  "snapshots": [
+    {
+      "feedback_count": [
+        18,
+        18,
+        17,
+        17
+      ],
+      "g_safety_count": 910,
+      "g_can_task_count": 350,
+      "g_stack_a_words": 222
+    },
+    {
+      "feedback_count": [
+        39,
+        39,
+        39,
+        39
+      ],
+      "g_safety_count": 1566,
+      "g_can_task_count": 608,
+      "g_stack_a_words": 169
+    }
+  ],
+  "shared_visible": {
+    "g_vm_test_request": 1,
+    "g_can_feedback_enable": 1,
+    "g_rtos_fault": 0,
+    "g_safety_fault": 0,
+    "g_safety_ready": 1,
+    "g_can_guard_ready": 1,
+    "g_can_task_create": 1,
+    "g_can_test_result": 1,
+    "g_can_task_stack_words": 297,
+    "g_safety_stack_words": 230,
+    "g_heap_min_bytes": 11320,
+    "speed_valid_mask": 15,
+    "position_valid_mask": 15,
+    "feedback_error_count": 0
+  },
+  "user_physical_confirmation": {
+    "question": "保持CAN持续采集时，换另一张二维码后，屏幕是否正常更新为新任务码？",
+    "answer": "屏幕正常更新"
+  },
+  "accepted": [
+    "Post-separation static continuous CAN acquisition: all four counts grow, both feedback masks0F/error0 and healthy readiness/fault snapshots",
+    "User-reported QR replacement updates physical screen while continuous CAN acquisition is active",
+    "CAN remaining stack297 words(1188B), minimum heap11320B in observed workload; no worst-case timing/stack guarantee"
+  ],
+  "not_newly_measured": [
+    "Physical VM voltage",
+    "Continuous raw RPM/sign/position arrays or exact per-node age arrays",
+    "Real motor motion/pose",
+    "Physical missing-node response and runtime disconnect-to-stop timing"
+  ],
+  "main_sha256_readback": "6188bb42fd9240a540d8175f6f5264e0f5f4dc368ca1143247f47d5bfd35940f",
+  "next": "No code changes: prepare missing ID1 startup status-guard check with feedback disabled, VM request0 and physical VM0 before unplugging ID1 complete cable, then first-fault breakpoint and VM1 request. Expected status data fault20/cause2/badmask1, no RTOS fault, physical VM0 after cutoff. Not live unplugging under power or motion acceptance.",
+  "requirements": {
+    "R": [
+      "PWR-01",
+      "QR-01",
+      "DSP-01",
+      "DSP-02",
+      "RUN-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ],
+    "Q": "QR-04 and all official pending questions unchanged"
+  },
+  "firmware_modified_by_assistant": false,
+  "assistant_hardware_actions": false
+}

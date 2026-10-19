@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-17",
+  "scope": "Static automatic stop request timeout causes physical VM shutdown, then explicit reset",
+  "build": {
+    "warnings": 0,
+    "rw": 760,
+    "ro": 424,
+    "compiler": "ARMCC5.06 update7 build960",
+    "code": 22488,
+    "errors": 0,
+    "zi": 22848
+  },
+  "timeout": {
+    "block_reason": 120,
+    "hold_report": 1,
+    "fail_mask": 0,
+    "cut_vm": 1,
+    "allowed": 0,
+    "ack_mask": 0,
+    "report_count": 514,
+    "cause": 2,
+    "session": 1,
+    "state": 3,
+    "diag_latched": 48,
+    "hold_stop_service": 1
+  },
+  "physical_vm_after_timeout": {
+    "volts": 0,
+    "source": "User direct report after timeout screenshot; meter image not supplied"
+  },
+  "after_request_off": {
+    "diag_latched": 48,
+    "hold_stop_service": 0,
+    "vm_request": 0,
+    "cut_vm": 1,
+    "safety_fault": 0,
+    "feedback_enable": 0,
+    "block_reason": 125,
+    "platform_ready": 1,
+    "cause": 2,
+    "hold_report": 0,
+    "rtos_fault": 0,
+    "can_ready": 0,
+    "state": 3
+  },
+  "explicit_confirmation": {
+    "vm_request": 0,
+    "safety_fault": 0,
+    "cut_vm": 0,
+    "rtos_fault": 0,
+    "cause": 0,
+    "ack_request": 0,
+    "ack_result": 1,
+    "session": 1,
+    "state": 0,
+    "allowed": 0,
+    "diag_latched": 0,
+    "block_reason": 61
+  },
+  "limitations": [
+    "No exact500ms physical timing measurement",
+    "No motor motion or braking distance verification",
+    "CAN transaction failure cause1 physical fallback still untested",
+    "Diagnostic injection deliberately withholds stop service, not an actual cable failure",
+    "Formal motion permission remains fixed0"
+  ]
+}

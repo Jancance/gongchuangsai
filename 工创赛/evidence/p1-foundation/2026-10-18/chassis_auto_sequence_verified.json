@@ -1,0 +1,56 @@
+{
+  "verification_date": "2026-10-18",
+  "implementation_and_build_date": "2026-10-17",
+  "sequence": [
+    "prepare",
+    "forward10s",
+    "stop/new zero+gap",
+    "left10s",
+    "stop/new zero+gap",
+    "CCW10s",
+    "stop/new zero+gap",
+    "VM cut"
+  ],
+  "defaults": {
+    "request": 0,
+    "dry_run": 1
+  },
+  "validation": {
+    "actual_C_integration_checks": 103,
+    "Keil_build": {
+      "code": 30268,
+      "ro": 440,
+      "rw": 1004,
+      "zi": 23132,
+      "errors": 0,
+      "warnings": 0
+    },
+    "project_refs_exist": true,
+    "hardware_download_dry_run_or_live": "not performed by assistant"
+  },
+  "prior_doc_write": "not executed due approval-review usage limit; completed on continuation",
+  "next": "user downloads firmware and triggers default dry-run once; report result and measured VM",
+  "sha256": {
+    "USER/chassis_auto_test.c": "1d6910975d2aea25fb625ab1eb57eda4e9aff8d170db0f89f31dd58827a1f198",
+    "USER/chassis_auto_test.h": "4ea9f5c0b57f68568c23217450ec41b6005d953addc7e680f525c293110f7f8e",
+    "USER/main.c": "45c2bec99f7684b3091d2ec91d6d71e3481f4c42d2736acc39579d6422fcb076",
+    "SYSTEM/SAFETY/safety.c": "174b11239ba708946b284b9b22c12ced96a5d90103d27413bda9a28a9ce4a751",
+    "gongxun-f407.uvprojx": "f526ae68a5d797917c07360d13f923406bcf00ed8fa343833032863f80254601"
+  },
+  "axf_sha256": "e25925981421d557a54a370cabc7964700984ac7d0cbd0b947a6b32a8eb689df",
+  "requirements": {
+    "R_unchanged": [
+      "PWR-01",
+      "RUN-01"
+    ],
+    "E_reviewed": [
+      "LOC-03",
+      "MOT-01",
+      "MOT-02",
+      "MOT-03",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": "unchanged"
+  }
+}

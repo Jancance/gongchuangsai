@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-06",
+  "evidence_type": "user debug screenshots plus read-only source and fromelf review",
+  "screenshot_sources": [
+    "C:/Users/TENDER~1/AppData/Local/Temp/codex-clipboard-b891765f-bc78-4275-a4e4-3be079bc432a.png",
+    "C:/Users/TENDER~1/AppData/Local/Temp/codex-clipboard-cd16d431-1d80-4dfb-8063-ad805da3d232.png"
+  ],
+  "PC_in_both_screenshots": "0x08000384",
+  "current_instruction_context": "SetSysClock PLLRDY poll",
+  "R0_CR_sample_from_screenshot": "0x1037c83",
+  "CR_decoded": {
+    "HSEON": true,
+    "HSERDY": true,
+    "PLLON": true,
+    "PLLRDY": false
+  },
+  "watch_SystemCoreClock_before_runtime_initialization": "0xE00AE7FE",
+  "watch_SWS_mask": 0,
+  "axf_path": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\Objects\\gongxun-f407.axf",
+  "axf_sha256": "ff306e8e8a8085ac91c156a5c771144fc37485f2707bcc373fd0945a8d34799e",
+  "compiled_pll_literal_address": "0x080003c8",
+  "compiled_pll_literal": "0x07405408",
+  "main_entry": "0x080004f8",
+  "main_loop_address": "0x080004fc-0x080004fe",
+  "target_pll_readback": "pending",
+  "root_cause": "not yet determined",
+  "hardware_clock_gate_passed": false,
+  "source_files_modified": false,
+  "hardware_registers_written": false,
+  "next_readbacks": [
+    "0x40023800",
+    "0x40023804",
+    "0x40023808",
+    "0xE0042000"
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "source": "D:\\Codex\\工创赛\\evidence\\20261007-000604-409723.zip",
+  "sha256": "a0937fb0013c16b12b643fbb85154027fbc30e05e0fbb4b6786f8af013434938",
+  "matches_v11": {
+    "vision_app/code/project_detector.py": true,
+    "vision_app/code/config/material_color_thresholds.json": true
+  },
+  "run": {
+    "frames": 652,
+    "states": {
+      "SEARCHING": 124,
+      "FOLLOWING_PIXEL": 528
+    },
+    "transition_counts": {
+      "sample-01": 1,
+      "first-frame": 1,
+      "sample-02": 1,
+      "sample-03": 1,
+      "sample-04": 1,
+      "sample-05": 1,
+      "first-other-color-candidate": 9,
+      "first-blue-with-red": 9,
+      "first-blue-visible": 1,
+      "sample-06": 1,
+      "sample-07": 1,
+      "sample-08": 1,
+      "sample-09": 1,
+      "sample-10": 1,
+      "sample-11": 1,
+      "sample-12": 1,
+      "first-blue-loss": 2,
+      "first-blue-reappearance": 2,
+      "first-blue-id-change": 1
+    },
+    "saved_events": [
+      "first-blue-id-change",
+      "first-blue-loss",
+      "first-blue-reappearance",
+      "first-blue-visible",
+      "first-blue-with-red",
+      "first-frame",
+      "first-other-color-candidate",
+      "sample-01",
+      "sample-02",
+      "sample-03",
+      "sample-04",
+      "sample-05",
+      "sample-06",
+      "sample-07",
+      "sample-08",
+      "sample-09",
+      "sample-10",
+      "sample-11",
+      "sample-12"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "blue",
+    "longest_watched_loss_s": 0.10645708799984277,
+    "periodic_samples": {
+      "interval_s": 2.0,
+      "limit": 12,
+      "saved": 12
+    }
+  },
+  "observed_labels": {
+    "red": 9,
+    "blue": 522
+  },
+  "first_blue_frame": 129,
+  "initial_no_blue_duration_s": 8.609130061000087,
+  "blue_missing_episodes": [
+    {
+      "first_missing_frame": 1,
+      "return_frame": 129,
+      "duration_s": 8.609130061000087,
+      "before_first_acquisition": true
+    },
+    {
+      "first_missing_frame": 422,
+      "return_frame": 423,
+      "duration_s": 0.10645708799984277,
+      "before_first_acquisition": false
+    },
+    {
+      "first_missing_frame": 491,
+      "return_frame": 492,
+      "duration_s": 0.04065763500011599,
+      "before_first_acquisition": false
+    }
+  ],
+  "blue_id_changes": [
+    {
+      "frame": 423,
+      "previous_id": "T002",
+      "current_id": "T004",
+      "observed_center_displacement_px": 155.97435686676192
+    }
+  ],
+  "result_host_age_ms_p95_max": [
+    92.67750360005493,
+    143.5817000001407
+  ],
+  "manual_glare_samples": [
+    {
+      "image": "first-frame-raw.png",
+      "manually_selected_disk_px": [
+        643,
+        545,
+        80
+      ],
+      "clipped_fraction_V_ge_250": 0.3605062534256814,
+      "scope": "Manual development ROI, not a full-object or scene quality score."
+    },
+    {
+      "image": "first-blue-loss-raw.png",
+      "manually_selected_disk_px": [
+        638,
+        596,
+        80
+      ],
+      "clipped_fraction_V_ge_250": 0.34515920075738704,
+      "scope": "Manual development ROI, not a full-object or scene quality score."
+    }
+  ],
+  "scope": "Desk motion development evidence. Ordinary-motion feedback retained; strong glare, identity and grasp not accepted."
+}

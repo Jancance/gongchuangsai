@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-10",
+  "operation": "Compile-only private candidate, no link/download/hardware",
+  "compiler": "ARMCC5.06 update5 build528",
+  "results": [
+    {
+      "translation_unit": "can.c",
+      "returncode": 0,
+      "diagnostics": []
+    },
+    {
+      "translation_unit": "main.c",
+      "returncode": 0,
+      "diagnostics": []
+    }
+  ],
+  "guide_is_compiled_source": true,
+  "original_source_sha256_before": {
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\main.c": "0cb92ef3c142afcf1c34f2a58ea46996b23bb992e27853f6a56dfb651f263377",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\stm32f4xx_conf.h": "8dfc890bb86a6deb575a63faf80e0c6e2ce240725b1e1cd1bdcba0a26511685b",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\gongxun-f407.uvprojx": "0b49b6cea6a9bab5be945768a57f6b5587c0afaa5c62c4db053ce381c11b008f"
+  },
+  "original_source_sha256_after": {
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\main.c": "0cb92ef3c142afcf1c34f2a58ea46996b23bb992e27853f6a56dfb651f263377",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\stm32f4xx_conf.h": "8dfc890bb86a6deb575a63faf80e0c6e2ce240725b1e1cd1bdcba0a26511685b",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\gongxun-f407.uvprojx": "0b49b6cea6a9bab5be945768a57f6b5587c0afaa5c62c4db053ce381c11b008f"
+  },
+  "original_files_byte_identical": true,
+  "private_probe_path": "D:\\Codex\\工创赛\\tmp\\can1_loopback_compile_20261010",
+  "mode": "CAN_Mode_Silent_LoopBack",
+  "source_current_conf_can_include_present": false,
+  "timing": {
+    "pclk1_required_hz": 42000000,
+    "prescaler": 6,
+    "sjw_tq": 1,
+    "bs1_tq": 11,
+    "bs2_tq": 2,
+    "nominal_bitrate": 500000
+  },
+  "test_frame": {
+    "id_type": "extended29bit",
+    "ext_id": "0x12345",
+    "dlc": 8,
+    "payload_hex": "10 11 12 13 14 15 16 17"
+  },
+  "timeouts_ms": {
+    "transmit": 100,
+    "receive": 100
+  },
+  "gpio": {
+    "CAN1_RX": "PD0 AF9",
+    "CAN1_TX": "PD1 AF9",
+    "pull": "NOPULL"
+  },
+  "source_module_sha256": "0f96912c93482f97eafa84df571aa78ebf8a8cf438ff371b8b6c4f4ad497f500",
+  "hardware_loopback_acceptance": "PENDING_USER_BUILD_AND_RUN",
+  "private_probe_cleaned": true
+}

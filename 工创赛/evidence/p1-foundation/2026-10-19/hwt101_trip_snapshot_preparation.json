@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-19",
+  "prior_hardware_observation": {
+    "mode": 2,
+    "state": 9,
+    "result": 2,
+    "cause": 4,
+    "elapsed_ms": 71080,
+    "before_deg": 3.29589844,
+    "after_deg": 0,
+    "tx_bytes": 15,
+    "user_reports_no_movement": true
+  },
+  "cause4_semantics": "output threshold excursion, not independent evidence of physical movement",
+  "change": "latch cause4 kind, phase, timestamp, angular rate, wrapped angle delta, current and previous angle",
+  "thresholds_changed": false,
+  "timing_changed": false,
+  "request_value": 3,
+  "checks": 2196,
+  "new_snapshot_checks": 23,
+  "build": {
+    "code": 34388,
+    "ro": 452,
+    "rw": 1264,
+    "zi": 25288,
+    "errors": 0,
+    "warnings": 0
+  },
+  "hardware": "not flashed by assistant; new snapshot pending",
+  "requirements": [
+    "RUN-01",
+    "PWR-01",
+    "LOC-03",
+    "LOC-05",
+    "RUN-06",
+    "MOT-04"
+  ],
+  "sha256": {
+    "3.stm32f407工程/USER/hwt101.c": "c87cf9276bc0482bce3a5062bc7f33e540c9f190781a577013c47aebb30642db",
+    "3.stm32f407工程/USER/hwt101.h": "d76f13f72b31bc7ff5dc044cf9a08092c422d417492ffe8b90f2991fbaa35be1",
+    "3.stm32f407工程/Objects/gongxun-f407.axf": "56af792d28f9cbb6c218215d5333112f5c6345714d15d4db52852d09e1d146b6",
+    "工创赛/evidence/p1-foundation/2026-10-19/hwt101_trip_snapshot_private_checks.c": "345e02feffc90261fd110ae28038eee5df2469c0c1af5917da8b1f2d25b747bc"
+  }
+}

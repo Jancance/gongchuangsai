@@ -1,0 +1,282 @@
+Diagnostic folder: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070055-396814
+Watch color: green ; keep F mode; Q quits. No robot control.
+Camera: /dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0, 1280x960, MJPG, requested 30.0 FPS; reconnect every 1.0s
+Undistortion: OFF (raw image)
+Serial: /dev/ttyS7, 115200 baud; RX control: AA 01/02/03/04/05/14/15 BB; task: AA 06 <15 ASCII bytes> BB
+Controls: F = moving follow, A = turntable, M = stop-reference material, R = ring station, S = stacked ring, D = measurement, I = idle, Q or Esc = quit
+Turntable tracking: Hough until stable, then local radial tracking
+Camera connected: /dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0, 1280x960, 30.0 FPS
+Mode=FOLLOW FPS=0.0 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070055-396814/sample-01
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070055-396814/first-frame
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070055-396814/first-green-visible
+Mode=FOLLOW FPS=21.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.6 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070055-396814/sample-02
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070055-396814/sample-03
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070055-396814/sample-04
+Mode=FOLLOW FPS=21.8 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070055-396814/sample-05
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070055-396814/sample-06
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070055-396814/sample-07
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070055-396814/sample-08
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070055-396814/sample-09
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.7 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070055-396814/sample-10
+Mode=FOLLOW FPS=21.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=20.3 Units=px targets=1 Ready=False Serial=DISABLED
+[ WARN:0] global ./modules/videoio/src/cap_v4l.cpp (802) requestBuffers VIDEOIO(V4L2:/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): failed VIDIOC_REQBUFS: errno=19 (No such device)
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): 采集过程中摄像头读取失败; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=采集过程中摄像头读取失败 Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Mode changed: TURNTABLE
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=TURNTABLE Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=TURNTABLE Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=TURNTABLE Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=TURNTABLE Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=TURNTABLE Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=TURNTABLE Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=TURNTABLE Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera connected: /dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0, 1280x960, 30.0 FPS
+Mode=TURNTABLE FPS=  0.0 State=SEARCHING Detect=16.4ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 30.5 State=SEARCHING Detect=11.9ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 30.3 State=SEARCHING Detect=12.4ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.5 State=SEARCHING Detect=23.2ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.4 State=SEARCHING Detect=12.0ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 28.4 State=SEARCHING Detect=21.2ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.4 State=SEARCHING Detect=9.6ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.2 State=SEARCHING Detect=23.2ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.8 State=SEARCHING Detect=21.5ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.9 State=SEARCHING Detect=11.3ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.1 State=SEARCHING Detect=24.5ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 28.9 State=SEARCHING Detect=15.8ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 28.6 State=SEARCHING Detect=28.0ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；所有候选均被精修拒绝：可见外圆弧不足 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 28.5 State=SEARCHING Detect=21.3ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 28.7 Center=(422.5,555.7) Radius=289.7px Arc=100deg RMS=3.08px Confidence=0.613 Detect=35.9ms Track=reacquired Stable=False Detail=累计稳定帧 1/5 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.1 State=SEARCHING Detect=24.8ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.5 State=SEARCHING Detect=41.2ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；所有候选均被精修拒绝：可见外圆弧不足; 可见外圆弧不足; 可见外圆弧不足 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.8 State=SEARCHING Detect=19.5ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；所有候选均被精修拒绝：可见外圆弧不足 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.3 State=SEARCHING Detect=28.0ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；所有候选均被精修拒绝：可见外圆弧不足; 可见外圆弧不足 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 28.1 State=SEARCHING Detect=26.3ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；所有候选均被精修拒绝：圆弧拟合残差过大 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 27.9 Center=(645.8,321.0) Radius=252.3px Arc=95deg RMS=2.28px Confidence=0.673 Detect=29.7ms Track=hough Stable=False Detail=累计稳定帧 1/5 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 28.6 State=SEARCHING Detect=23.4ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.6 State=SEARCHING Detect=18.0ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.6 State=SEARCHING Detect=9.7ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.4 State=SEARCHING Detect=19.3ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.1 State=SEARCHING Detect=25.9ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.1 State=SEARCHING Detect=14.3ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 28.7 State=SEARCHING Detect=15.7ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 28.7 State=SEARCHING Detect=24.2ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 28.9 State=SEARCHING Detect=15.4ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.4 State=SEARCHING Detect=8.0ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.8 State=SEARCHING Detect=21.5ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Mode=TURNTABLE FPS= 29.9 State=SEARCHING Detect=19.8ms Track=searching Detail=三物料粗定位未通过：三物料粗定位已禁用；当前参数下没有Hough大圆候选 Serial=DISABLED_P2_INTEGRATION_PENDING Report=WAITING Pending=False TurntableSent=0 RingSent=0 MaterialSent=0 Task=-- TaskRx=0 TaskInvalid=0 Last=--
+Run saved: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070055-396814
+Evidence ZIP: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070055-396814.zip
+Diagnostic folder: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822
+Watch color: green ; keep F mode; Q quits. No robot control.
+Camera: /dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0, 1280x960, MJPG, requested 30.0 FPS; reconnect every 1.0s
+Undistortion: OFF (raw image)
+Serial: /dev/ttyS7, 115200 baud; RX control: AA 01/02/03/04/05/14/15 BB; task: AA 06 <15 ASCII bytes> BB
+Controls: F = moving follow, A = turntable, M = stop-reference material, R = ring station, S = stacked ring, D = measurement, I = idle, Q or Esc = quit
+Turntable tracking: Hough until stable, then local radial tracking
+Camera connected: /dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0, 1280x960, 30.0 FPS
+Mode=FOLLOW FPS=0.0 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822/sample-01
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822/first-frame
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822/first-green-visible
+Mode=FOLLOW FPS=21.3 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.7 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822/sample-02
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822/sample-03
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822/sample-04
+Mode=FOLLOW FPS=22.5 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.7 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822/sample-05
+Mode=FOLLOW FPS=23.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=23.1 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822/sample-06
+Mode=FOLLOW FPS=23.1 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822/first-green-id-change
+Mode=FOLLOW FPS=23.1 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822/sample-07
+Mode=FOLLOW FPS=23.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=23.1 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822/sample-08
+Mode=FOLLOW FPS=23.1 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822/sample-09
+Mode=FOLLOW FPS=23.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=23.0 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822/sample-10
+Mode=FOLLOW FPS=22.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.9 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822/sample-11
+Mode=FOLLOW FPS=23.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=23.0 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822/sample-12
+Mode=FOLLOW FPS=23.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=23.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=23.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=23.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=23.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=23.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.8 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=23.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=23.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=23.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=23.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.8 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.7 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.6 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.7 Units=px targets=1 Ready=False Serial=DISABLED
+Run saved: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822
+Evidence ZIP: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-070539-644822.zip
+Diagnostic folder: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897
+Watch color: green ; keep F mode; Q quits. No robot control.
+Camera: /dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0, 1280x960, MJPG, requested 30.0 FPS; reconnect every 1.0s
+Undistortion: OFF (raw image)
+Serial: /dev/ttyS7, 115200 baud; RX control: AA 01/02/03/04/05/14/15 BB; task: AA 06 <15 ASCII bytes> BB
+Controls: F = moving follow, A = turntable, M = stop-reference material, R = ring station, S = stacked ring, D = measurement, I = idle, Q or Esc = quit
+Turntable tracking: Hough until stable, then local radial tracking
+Camera connected: /dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0, 1280x960, 30.0 FPS
+Mode=FOLLOW FPS=0.0 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-01
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/first-frame
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/first-green-visible
+Mode=FOLLOW FPS=21.5 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-02
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/first-green-id-change
+Mode=FOLLOW FPS=22.3 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-03
+Mode=FOLLOW FPS=22.5 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.5 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-04
+Mode=FOLLOW FPS=22.5 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.4 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-05
+Mode=FOLLOW FPS=22.4 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.4 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-06
+Mode=FOLLOW FPS=22.5 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.5 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-07
+Mode=FOLLOW FPS=22.4 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-08
+Mode=FOLLOW FPS=21.6 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.0 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-09
+Mode=FOLLOW FPS=20.5 Units=px targets=1 Ready=False Serial=DISABLED
+[ WARN:0] global ./modules/videoio/src/cap_v4l.cpp (802) requestBuffers VIDEOIO(V4L2:/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): failed VIDIOC_REQBUFS: errno=19 (No such device)
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): 采集过程中摄像头读取失败; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=采集过程中摄像头读取失败 Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera connected: /dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0, 1280x960, 30.0 FPS
+Mode=FOLLOW FPS=0.0 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-10
+Mode=FOLLOW FPS=21.3 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.6 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-11
+Mode=FOLLOW FPS=21.6 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.7 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-12
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.8 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.3 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.4 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.5 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.5 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.4 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.8 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.8 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.8 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.8 Units=px targets=1 Ready=False Serial=DISABLED
+Run saved: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897
+Evidence ZIP: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897.zip

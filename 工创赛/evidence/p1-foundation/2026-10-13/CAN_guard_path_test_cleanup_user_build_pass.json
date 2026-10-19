@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-13",
+  "source": "User full Rebuild log and read-only main/safety checks",
+  "compiler": "ARMCC V5.06 update5 build528",
+  "compile_and_link_success": true,
+  "errors": 0,
+  "warnings": 0,
+  "build_seconds": 6,
+  "program_size": {"Code": 15212, "RO_data": 424, "RW_data": 396, "ZI_data": 22524},
+  "actual_main_SHA256": "1b2be0a99414b984d42ee7da729a73411cf417941fd58ca24d11669daa484db6",
+  "temporary_symbols_present": {"test_mode": false, "test_valid_mask": false, "test_ticks": false, "test_frozen_state": false, "test_index": false},
+  "normal_CanReport_calls": 1,
+  "preserved": ["original CanReport arguments", "App_CanPollRefresh", "APP/RX/KEY heartbeats", "VM request default0", "poll default1", "CAN guard before power decision"],
+  "nonfunctional_stale_test_comment_present": true,
+  "acceptance": "Temporary test executable code cleanup and formal build/link PASS",
+  "hardware_clean_normal_start": "PENDING",
+  "next": "Download clean firmware, run about2s, observe request0/poll1/rtos0/safety_fault0/platform_ready1/CAN_ready0 and measure VM0; then watchdog",
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_Q": "unchanged",
+  "actual_firmware_modified_by_assistant": false,
+  "hardware_commands_sent_by_assistant": false
+}

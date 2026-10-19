@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-19",
+  "authorization": "user requested change to motor turn test using wireless debug",
+  "config": {
+    "APP_HWT_STATIC_TEST": 0,
+    "APP_HWT_TURN_TEST": 1,
+    "formal_motion_allowed": 0
+  },
+  "start": "g_hwt_turn_request=1",
+  "cancel": [
+    "g_hwt_turn_request=2",
+    "PC13 while active"
+  ],
+  "default_vm": 0,
+  "start_segment": 2,
+  "wheel_rpm": 5,
+  "run_ms": 10000,
+  "checks": {
+    "wireless_turn": 39,
+    "hwt_turn_mode_transport": 2079,
+    "total": 2118
+  },
+  "build": {
+    "code": 35556,
+    "ro": 452,
+    "rw": 1332,
+    "zi": 25284,
+    "errors": 0,
+    "warnings": 0
+  },
+  "hardware": "not flashed/operated by assistant; motor/HWT dynamic trial pending",
+  "requirements": [
+    "RUN-01",
+    "PWR-01",
+    "FIELD-06",
+    "LOC-01",
+    "LOC-02",
+    "LOC-03",
+    "LOC-05",
+    "LOC-07",
+    "RUN-06",
+    "MOT-02",
+    "MOT-03",
+    "MOT-04"
+  ],
+  "sha256": {
+    "3.stm32f407工程/USER/app_config.h": "07c674371947ec6cb8edcb8b7c0f293bf99032bf2080c567531ea8cbb337bf3d",
+    "3.stm32f407工程/USER/main.c": "3c82287a597520758f1099411b193563b78847ccb06e215251d53797beba1539",
+    "3.stm32f407工程/USER/chassis_auto_test.c": "4a180ebf602b8be4353ebd9234ef88d99c28ab03bbffa117b8d6ad7f4481fd3a",
+    "3.stm32f407工程/USER/chassis_auto_test.h": "f49329f5f51c3814e97f0ffe8051f913df8031ec485781d8c55dc8522e102d28",
+    "3.stm32f407工程/USER/hwt101.c": "66602a0739f2c2888a3322e3895db9309072876ec13d24c772bd9b1ea77c2c7f",
+    "3.stm32f407工程/USER/hwt101.h": "9d6ce5031a34538cac3d444e463d99d442e9440ec64dcd202dcd2fb5973cd956",
+    "3.stm32f407工程/Objects/gongxun-f407.axf": "1bfb0f3303484bc045af9465a6d3369d6018022757b1b1ac7d70d1d5f71c0137",
+    "工创赛/evidence/p1-foundation/2026-10-19/hwt101_wireless_turn_private_checks.c": "5849878441ca43427480ab6d681e8a4d6a64e6a92749ca32e3095bdee6cc199d",
+    "工创赛/evidence/p1-foundation/2026-10-19/hwt101_turn_mode_transport_private_checks.c": "c488fd6e185af1511b924c0bc6e7a7498d23ac5898bd9cbe621c4d167fb72a26"
+  }
+}

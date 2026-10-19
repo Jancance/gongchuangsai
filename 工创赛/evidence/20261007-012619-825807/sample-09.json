@@ -1,0 +1,257 @@
+{
+  "event": "sample-09",
+  "previous": {
+    "state": "FOLLOWING_PIXEL",
+    "targets": [
+      {
+        "id": "T001",
+        "color": "black",
+        "center_px": [
+          621.8365072754577,
+          425.78645111624326
+        ],
+        "bbox_px": [
+          497,
+          262,
+          262,
+          321
+        ],
+        "area_px2": 66032.5,
+        "read_time": 6731.099450169,
+        "proposal_source": "combined_silhouette",
+        "radius_px": null,
+        "geometry_reference_changed": false,
+        "consecutive_observations": 327,
+        "visible_in_last_frame": true,
+        "identity_continuity_unverified": false,
+        "state": "OBSERVED",
+        "velocity_px_s": [
+          -0.27193656031372326,
+          -0.8339318635458266
+        ],
+        "predicted_px": [
+          621.8093136194263,
+          425.7030579298887
+        ],
+        "prediction_horizon_s": 0.1,
+        "identity_valid_for_prediction": true
+      }
+    ],
+    "unknown_candidates": 2,
+    "ready": false,
+    "motion_allowed": false,
+    "units": "pixels",
+    "note": "当前为原始像素诊断，速度未补偿相机自身运动，禁止用于抓取指令",
+    "timestamp_source": "host_read_completion",
+    "timestamp": 6731.099450169,
+    "retired_ids": [],
+    "detector_regions": [
+      {
+        "bbox_px": [
+          497,
+          262,
+          262,
+          321
+        ],
+        "area_px2": 66032.5,
+        "label": "black",
+        "reason": "DOMINANT_COLOR_EVIDENCE",
+        "proposal_source": "combined_silhouette",
+        "usable_fraction": 0.9779919653206727,
+        "color_fractions": {
+          "red": 0.0,
+          "yellow": 0.0,
+          "blue": 0.10253121397606793,
+          "green": 0.0,
+          "black": 0.728580474419964,
+          "lightblue": 0.003084866295400302
+        },
+        "dark_fraction": 0.728580474419964,
+        "silhouette_center_px": [
+          621.8365072754577,
+          425.78645111624326
+        ]
+      },
+      {
+        "bbox_px": [
+          0,
+          0,
+          288,
+          167
+        ],
+        "area_px2": 23433.0,
+        "label": "UNKNOWN",
+        "reason": "TOUCHES_BORDER",
+        "proposal_source": "combined_silhouette"
+      },
+      {
+        "bbox_px": [
+          181,
+          48,
+          59,
+          56
+        ],
+        "area_px2": 1164.0,
+        "label": "UNKNOWN",
+        "reason": "SHAPE_UNCERTAIN",
+        "proposal_source": "combined_silhouette"
+      }
+    ],
+    "circle_diagnostics": [],
+    "frame_index": 327,
+    "watch_color": "black",
+    "detector_call_ms": 43.27064799963409,
+    "result_host_age_ms": 70.50719099970593,
+    "recorded_monotonic": 6731.16995736,
+    "last_watched_ids_before_frame": [
+      "T001"
+    ],
+    "internal_tracks_not_actionable": [
+      {
+        "id": "T001",
+        "color": "black",
+        "center_px": [
+          621.8365072754577,
+          425.78645111624326
+        ],
+        "bbox_px": [
+          497,
+          262,
+          262,
+          321
+        ],
+        "area_px2": 66032.5,
+        "read_time": 6731.099450169,
+        "proposal_source": "combined_silhouette",
+        "radius_px": null,
+        "geometry_reference_changed": false,
+        "consecutive_observations": 327,
+        "visible_in_last_frame": true,
+        "identity_continuity_unverified": false,
+        "state": "OBSERVED"
+      }
+    ],
+    "diagnostic_io_ms": 0.21087100049044238
+  },
+  "current": {
+    "state": "FOLLOWING_PIXEL",
+    "targets": [
+      {
+        "id": "T001",
+        "color": "black",
+        "center_px": [
+          621.8148327874155,
+          425.9682735856686
+        ],
+        "bbox_px": [
+          496,
+          262,
+          263,
+          321
+        ],
+        "area_px2": 65944.0,
+        "read_time": 6731.164445244,
+        "proposal_source": "combined_silhouette",
+        "radius_px": null,
+        "geometry_reference_changed": false,
+        "consecutive_observations": 328,
+        "visible_in_last_frame": true,
+        "identity_continuity_unverified": false,
+        "state": "OBSERVED",
+        "velocity_px_s": [
+          -0.33347892963293874,
+          2.797480723378943
+        ],
+        "predicted_px": [
+          621.7814848944522,
+          426.2480216580065
+        ],
+        "prediction_horizon_s": 0.1,
+        "identity_valid_for_prediction": true
+      }
+    ],
+    "unknown_candidates": 1,
+    "ready": false,
+    "motion_allowed": false,
+    "units": "pixels",
+    "note": "当前为原始像素诊断，速度未补偿相机自身运动，禁止用于抓取指令",
+    "timestamp_source": "host_read_completion",
+    "timestamp": 6731.164445244,
+    "retired_ids": [],
+    "detector_regions": [
+      {
+        "bbox_px": [
+          496,
+          262,
+          263,
+          321
+        ],
+        "area_px2": 65944.0,
+        "label": "black",
+        "reason": "DOMINANT_COLOR_EVIDENCE",
+        "proposal_source": "combined_silhouette",
+        "usable_fraction": 0.9786459327100426,
+        "color_fractions": {
+          "red": 0.0,
+          "yellow": 0.0,
+          "blue": 0.10365724869616079,
+          "green": 0.0,
+          "black": 0.727241709857187,
+          "lightblue": 0.0037531072803782353
+        },
+        "dark_fraction": 0.727241709857187,
+        "silhouette_center_px": [
+          621.8148327874155,
+          425.9682735856686
+        ]
+      },
+      {
+        "bbox_px": [
+          0,
+          0,
+          275,
+          176
+        ],
+        "area_px2": 22186.0,
+        "label": "UNKNOWN",
+        "reason": "TOUCHES_BORDER",
+        "proposal_source": "combined_silhouette"
+      }
+    ],
+    "circle_diagnostics": [],
+    "frame_index": 328,
+    "watch_color": "black",
+    "detector_call_ms": 42.395079999550944,
+    "result_host_age_ms": 55.026951000400004,
+    "recorded_monotonic": 6731.219472195,
+    "last_watched_ids_before_frame": [
+      "T001"
+    ],
+    "internal_tracks_not_actionable": [
+      {
+        "id": "T001",
+        "color": "black",
+        "center_px": [
+          621.8148327874155,
+          425.9682735856686
+        ],
+        "bbox_px": [
+          496,
+          262,
+          263,
+          321
+        ],
+        "area_px2": 65944.0,
+        "read_time": 6731.164445244,
+        "proposal_source": "combined_silhouette",
+        "radius_px": null,
+        "geometry_reference_changed": false,
+        "consecutive_observations": 328,
+        "visible_in_last_frame": true,
+        "identity_continuity_unverified": false,
+        "state": "OBSERVED"
+      }
+    ]
+  },
+  "note": "Raw frames before drawing. Event is evidence, not a root-cause diagnosis."
+}

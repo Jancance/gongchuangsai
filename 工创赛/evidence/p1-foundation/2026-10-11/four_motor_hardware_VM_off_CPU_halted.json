@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-11",
+  "source": "User reports CPU halted, VM request1, measured VM0V, switch controls power; screenshot1889626c",
+  "screenshot": "four_motor_hardware_VM_off_CPU_halted.png",
+  "observed": {"VM_request": 1, "RTOS_fault": 0, "task_A_stack_words": 210, "CPU_halt_PC": "0x08001F92"},
+  "VM_user_measured_volts": 0,
+  "existing_switch_independent_VM_off_under_halt": "PASS",
+  "complete_emergency_stop_watchdog_fault_shutdown_pass": false,
+  "next": "Hold hardware off and revoke software request. Manually add Power_Disable to RTOS fault entry; validate with temporary assertion then remove injection.",
+  "requirements": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "firmware_or_PCB_modified_by_assistant": false
+}

@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-06",
+  "source": "user hardware debug screenshot",
+  "paused_context": "FreeRTOS Idle ready-list check in tasks.c",
+  "create_a": 1,
+  "create_b": 1,
+  "count_a": 41,
+  "count_b": 9,
+  "tick_snapshot": 4000,
+  "scheduler_returned": 0,
+  "fault": 0,
+  "matches_initial_100_500_tick_counter_model": true,
+  "observed_multiple_periods": true,
+  "second_increment_observation_pending": true,
+  "suggested_after_about_two_seconds": {
+    "count_a_approx": 61,
+    "count_b_approx": 13,
+    "tick_approx": 6000
+  },
+  "user_build": {
+    "errors": 0,
+    "warnings": 0,
+    "code": 5452,
+    "ro": 424,
+    "rw": 156,
+    "zi": 22292
+  },
+  "independent_wall_clock_accuracy_verified": false,
+  "full_RTOS_vehicle_acceptance": false,
+  "assistant_modified_firmware": false
+}

@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-10",
+  "operation": "Compile-only private candidate; no full link/download/hardware transaction",
+  "compiler": "ARMCC5.06 update5 build528",
+  "results": [
+    {
+      "translation_unit": "can.c",
+      "returncode": 0,
+      "diagnostics": []
+    },
+    {
+      "translation_unit": "main.c",
+      "returncode": 0,
+      "diagnostics": []
+    }
+  ],
+  "original_source_sha256_before": {
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\SYSTEM\\CAN\\can.c": "a65596c6c57682c31865c8b2acadbfe4aa46032288a9d56275dc38d013ea74fd",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\SYSTEM\\CAN\\can.h": "16283744e05deb33d97b2ab42c279f957aa6011d7760e07440eff77ac319dfac",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\main.c": "eee50c7e55e6ff11a64f8e5048bd9dffb04c99a5fd4547065796e330af7792ae",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\stm32f4xx_conf.h": "8bb6976af199b1ce05dc5e8d5bf5266115c0ad737d6d07d8063a297dccea79bf",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\gongxun-f407.uvprojx": "ec820432d5c4a645f953a325d3124d3302b4bf99f8148b936f975cc5be08d955"
+  },
+  "original_source_sha256_after": {
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\SYSTEM\\CAN\\can.c": "a65596c6c57682c31865c8b2acadbfe4aa46032288a9d56275dc38d013ea74fd",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\SYSTEM\\CAN\\can.h": "16283744e05deb33d97b2ab42c279f957aa6011d7760e07440eff77ac319dfac",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\main.c": "eee50c7e55e6ff11a64f8e5048bd9dffb04c99a5fd4547065796e330af7792ae",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\stm32f4xx_conf.h": "8bb6976af199b1ce05dc5e8d5bf5266115c0ad737d6d07d8063a297dccea79bf",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\gongxun-f407.uvprojx": "ec820432d5c4a645f953a325d3124d3302b4bf99f8148b936f975cc5be08d955"
+  },
+  "original_files_byte_identical": true,
+  "guide_is_compiled_source": true,
+  "mode": "CAN_Mode_Normal for requested version, existing silent loopback retained at startup",
+  "read_only_request": {
+    "node_id": 1,
+    "ext_id": "0x0100",
+    "dlc": 2,
+    "data_hex": "1F 6B"
+  },
+  "expected_reply": {
+    "ext_id": "0x0100",
+    "dlc": 6,
+    "data": "1F FW_H FW_L HW_H HW_L 6B"
+  },
+  "timeouts_ms": {
+    "transmit": 100,
+    "receive": 200
+  },
+  "power_on_by_read_function": false,
+  "automatic_command_at_startup": false,
+  "private_probe_path": "D:\\Codex\\工创赛\\tmp\\zdt_version_compile_20261010",
+  "actual_normal_mode_version_read": "PENDING_USER_BUILD_AND_HARDWARE",
+  "termination_policy": "User requests existing short-wire first read; termination/wiring checked on actual errors, not treated as mandatory extra-measurement precondition",
+  "private_probe_cleaned": true
+}

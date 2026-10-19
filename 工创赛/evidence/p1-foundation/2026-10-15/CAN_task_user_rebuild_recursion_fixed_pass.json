@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-15",
+  "user_build": {
+    "compiler": "ARMCC V5.06 update5 build528",
+    "code": 20080,
+    "ro_data": 424,
+    "rw_data": 624,
+    "zi_data": 22744,
+    "errors": 0,
+    "warnings": 0,
+    "seconds": 2,
+    "flash_evidence_provided": false
+  },
+  "current_source_sha256": "6188bb42fd9240a540d8175f6f5264e0f5f4dc368ca1143247f47d5bfd35940f",
+  "read_only_review": {
+    "recursion_fixed": true,
+    "wrapper_driver_call": "result = USART1_SendString(text);",
+    "original_driver_call_sites_in_main": 1,
+    "external_wrapper_call_sites": 5,
+    "can_loopback_only_in_can_task": true,
+    "CAN_task_delay_ms": 50,
+    "TaskA_delay_ms": 10,
+    "CAN_stack_words": 384,
+    "CAN_priority": 3,
+    "vm_default": 0,
+    "feedback_default": 0,
+    "WATCHDOG_DEBUG_FREEZE": 1,
+    "TaskA_no_CAN1_transactions": true,
+    "poll_and_feedback_refresh_and_safety_report_in_can_task": true
+  },
+  "accepted": "User full Rebuild and current source correction review; no new hardware runtime acceptance yet.",
+  "next": "Cancel old Power_Disable line33 breakpoint before initial boot, user downloads and runs ~2s with VM request0/feedback0, then Stop and capture CAN create/count/stack/test and platform faults/readiness/heap. CAN guard readiness0 with VM request0 is expected.",
+  "pending": [
+    "Download confirmation and independent task startup",
+    "Independent-task continuous acquisition and scanner/screen interaction",
+    "CAN task stack/heap under actual query load",
+    "Motion feedback freshness/failure-to-stop and actual vehicle motion"
+  ],
+  "requirements": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ]
+  },
+  "actual_source_modified_by_assistant": false,
+  "assistant_hardware_actions": false
+}

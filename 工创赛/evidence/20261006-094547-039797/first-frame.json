@@ -1,0 +1,76 @@
+{
+  "event": "first-frame",
+  "previous": null,
+  "current": {
+    "state": "STALE_RESULT",
+    "targets": [],
+    "unknown_candidates": 0,
+    "ready": false,
+    "motion_allowed": false,
+    "units": "pixels",
+    "timestamp_source": "host_read_completion",
+    "timestamp": 4483.07489529,
+    "retired_ids": [],
+    "detector_regions": [
+      {
+        "bbox_px": [
+          514,
+          146,
+          265,
+          359
+        ],
+        "area_px2": 74030.0,
+        "label": "lightblue",
+        "reason": "DOMINANT_COLOR_EVIDENCE",
+        "proposal_source": "combined_silhouette",
+        "usable_fraction": 0.9999858731122946,
+        "color_fractions": {
+          "red": 0.0,
+          "yellow": 0.0,
+          "blue": 0.26936117311332747,
+          "green": 0.0,
+          "black": 0.23621902636114486,
+          "lightblue": 0.5032209758991891
+        },
+        "dark_fraction": 0.23621902636114486,
+        "silhouette_center_px": [
+          641.7790873069475,
+          329.2054302309874
+        ]
+      },
+      {
+        "bbox_px": [
+          1207,
+          0,
+          73,
+          96
+        ],
+        "area_px2": 3202.5,
+        "label": "UNKNOWN",
+        "reason": "TOUCHES_BORDER",
+        "proposal_source": "combined_silhouette"
+      },
+      {
+        "bbox_px": [
+          0,
+          0,
+          44,
+          102
+        ],
+        "area_px2": 2299.5,
+        "label": "UNKNOWN",
+        "reason": "TOUCHES_BORDER",
+        "proposal_source": "combined_silhouette"
+      }
+    ],
+    "circle_diagnostics": [],
+    "frame_index": 1,
+    "watch_color": "lightblue",
+    "detector_call_ms": 158.93731500000285,
+    "result_host_age_ms": 171.65114499948686,
+    "recorded_monotonic": 4483.246546435,
+    "last_watched_ids_before_frame": null,
+    "internal_tracks_not_actionable": []
+  },
+  "note": "Raw frames before drawing. Event is evidence, not a root-cause diagnosis."
+}

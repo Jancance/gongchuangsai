@@ -1,0 +1,10 @@
+/var/log/smart-carrier/*.log {
+    daily
+    rotate 7
+    size 5M
+    compress
+    missingok
+    notifempty
+    copytruncate
+}
+

@@ -1,0 +1,160 @@
+{
+  "source": "D:\\Codex\\工创赛\\evidence\\20261006-092130-937051.zip",
+  "sha256": "e778e3c9f5ec3b7f440a7330b7925ac7d36a505a4a52fac226b26adf5ace40f7",
+  "run": {
+    "frames": 224,
+    "states": {
+      "STALE_RESULT": 1,
+      "FOLLOWING_PIXEL": 223
+    },
+    "transition_counts": {
+      "first-frame": 1,
+      "first-other-color-candidate": 223
+    },
+    "saved_events": [
+      "first-frame",
+      "first-other-color-candidate"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "lightblue",
+    "longest_watched_loss_s": 0.0
+  },
+  "observed_labels": {
+    "blue": 223
+  },
+  "development_top_roi_xywh": [
+    570,
+    290,
+    140,
+    140
+  ],
+  "top_hsv_percentiles": [
+    [
+      109.0,
+      135.0,
+      195.0
+    ],
+    [
+      110.0,
+      137.0,
+      200.0
+    ],
+    [
+      110.0,
+      140.0,
+      208.0
+    ],
+    [
+      110.0,
+      143.0,
+      216.0
+    ],
+    [
+      110.0,
+      145.0,
+      220.0
+    ]
+  ],
+  "candidate_blue_s_min": 150,
+  "candidate_lightblue_s_max": 149,
+  "saved_frame_replay": [
+    {
+      "file": "first-frame-raw.png",
+      "known_regions": [
+        {
+          "bbox_px": [
+            512,
+            145,
+            268,
+            359
+          ],
+          "area_px2": 74207.5,
+          "label": "lightblue",
+          "reason": "DOMINANT_COLOR_EVIDENCE",
+          "proposal_source": "combined_silhouette",
+          "usable_fraction": 1.0,
+          "color_fractions": {
+            "red": 0.0,
+            "yellow": 0.0,
+            "blue": 0.2931923890063425,
+            "green": 0.0,
+            "black": 0.23805496828752643,
+            "lightblue": 0.4786892177589852
+          },
+          "dark_fraction": 0.23805496828752643,
+          "silhouette_center_px": [
+            641.8136868465676,
+            329.3547103280216
+          ]
+        }
+      ]
+    },
+    {
+      "file": "first-other-color-candidate-before-raw.png",
+      "known_regions": [
+        {
+          "bbox_px": [
+            512,
+            145,
+            268,
+            359
+          ],
+          "area_px2": 74207.5,
+          "label": "lightblue",
+          "reason": "DOMINANT_COLOR_EVIDENCE",
+          "proposal_source": "combined_silhouette",
+          "usable_fraction": 1.0,
+          "color_fractions": {
+            "red": 0.0,
+            "yellow": 0.0,
+            "blue": 0.2931923890063425,
+            "green": 0.0,
+            "black": 0.23805496828752643,
+            "lightblue": 0.4786892177589852
+          },
+          "dark_fraction": 0.23805496828752643,
+          "silhouette_center_px": [
+            641.8136868465676,
+            329.3547103280216
+          ]
+        }
+      ]
+    },
+    {
+      "file": "first-other-color-candidate-raw.png",
+      "known_regions": [
+        {
+          "bbox_px": [
+            516,
+            146,
+            263,
+            358
+          ],
+          "area_px2": 74132.5,
+          "label": "lightblue",
+          "reason": "DOMINANT_COLOR_EVIDENCE",
+          "proposal_source": "combined_silhouette",
+          "usable_fraction": 1.0,
+          "color_fractions": {
+            "red": 0.0,
+            "yellow": 0.0,
+            "blue": 0.2976316420521067,
+            "green": 0.0,
+            "black": 0.2369627466745659,
+            "lightblue": 0.4745743585403354
+          },
+          "dark_fraction": 0.2369627466745659,
+          "silhouette_center_px": [
+            641.9002888971323,
+            329.31351521487426
+          ]
+        }
+      ]
+    }
+  ],
+  "scope": "Three development images from one static scene, not live 223-frame acceptance."
+}

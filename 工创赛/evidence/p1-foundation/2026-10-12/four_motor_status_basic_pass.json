@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-12",
+  "acceptance": "Four-node basic read-only CAN1 status transactions PASS",
+  "source": "User Keil Watch1 screenshots; existing ID1 evidence plus new ID2/3/4 screenshots",
+  "nodes": [
+    {"address": 1, "position": "左后", "image": "left_rear_ID1_status_read_pass.png", "ExtId": "0x100", "result": 1, "esr": 0, "flags": 3},
+    {"address": 2, "position": "右后", "image": "right_rear_ID2_status_read_pass.png", "ExtId": "0x200", "result": 1, "esr": 0, "flags": 3},
+    {"address": 3, "position": "左前", "image": "left_front_ID3_status_read_pass.png", "ExtId": "0x300", "result": 1, "esr": 0, "flags": 3},
+    {"address": 4, "position": "右前", "image": "right_front_ID4_status_read_pass.png", "ExtId": "0x400", "result": 1, "esr": 0, "flags": 3}
+  ],
+  "common_frame_fields": {"IDE": 4, "RTR": 0, "DLC": 3, "Data": [58, 3, 107], "FMI": 0},
+  "all_status_requests_consumed": true,
+  "task_A_min_stack_words_visible": 209,
+  "new_ID2_3_4_images_show_rtos_fault_or_vm_voltage": false,
+  "scope": "Per-node basic query snapshots only; not continuous collection, current freshness, physical chassis arrival, synchronized control or motion acceptance",
+  "next": "Stage1 fault supervision: critical task progress and VM fault latch, then CAN freshness/protection before watchdog",
+  "pending": ["user build and hardware acceptance of task supervisor", "continuous CAN service and freshness", "driver fault handling", "watchdog", "screen and QR interfaces", "formal READY/start/rearm", "motion and localization acceptance"],
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_Q": "unchanged",
+  "actual_firmware_modified_by_assistant": false,
+  "hardware_commands_sent_by_assistant": false
+}

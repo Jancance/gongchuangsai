@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-15",
+  "source": "User screenshot 4306f910-4ae3-4aa0-8589-bdf25b1a7531",
+  "observed": {
+    "g_vm_test_request": 0,
+    "g_rtos_fault": 0,
+    "g_safety_fault": 0,
+    "g_safety_ready": 1,
+    "g_can_guard_ready": 0,
+    "g_safety_count": 223,
+    "g_stack_a_words": 220,
+    "g_safety_stack_words": 232,
+    "g_heap_min_bytes": 11320,
+    "g_can_task_create": 1,
+    "g_can_task_count": 89,
+    "g_can_task_stack_words": 325,
+    "g_can_test_result": 1
+  },
+  "accepted": "New CAN task creation, loopback and initial execution visible in user runtime snapshot; platform healthy with VM request0. CAN guard_ready0 is expected here.",
+  "not_newly_measured": [
+    "physical VM voltage",
+    "active-query CAN stack usage",
+    "post-separation feedback count growth",
+    "scanner/screen interaction under active sampling"
+  ],
+  "source_readback_sha256": "6188bb42fd9240a540d8175f6f5264e0f5f4dc368ca1143247f47d5bfd35940f",
+  "source_unchanged_since_review": true,
+  "next": "Without rebuild, user requests VM1 then waits for both readiness1/fault0, enables feedback1, captures active sampling snapshot, resumes and scans another QR without pressing START, waits for screen update then captures again. Four feedback counts should increase, masks0F/error0 and healthy faults/readiness; record CAN stack/heap. Preserve first nonzero fault if breakpoint triggers.",
+  "requirements": {
+    "R": [
+      "PWR-01",
+      "QR-01",
+      "DSP-01",
+      "DSP-02",
+      "RUN-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ],
+    "Q": "QR-04 remains unresolved; no task semantics or official display dimensions changed"
+  },
+  "actual_firmware_modified_by_assistant": false,
+  "hardware_actions_by_assistant": false
+}

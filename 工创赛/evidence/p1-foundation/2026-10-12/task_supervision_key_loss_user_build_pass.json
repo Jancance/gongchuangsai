@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-12",
+  "source": "User full Rebuild log and read-only actual main.c check",
+  "compiler": "ARMCC V5.06 update5 build528",
+  "compile_and_link_success": true,
+  "errors": 0,
+  "warnings": 0,
+  "build_seconds": 3,
+  "program_size": {"Code": 14108, "RO_data": 424, "RW_data": 336, "ZI_data": 22408},
+  "test_injection_verified": {"global": "g_safety_test_hold_key", "default": 0, "location": "App_KeyTask while loop before Key_GetEvent and Safety_Report", "branch": "vTaskDelay(1ms) then continue", "normal_key_work_and_report_preserved": true},
+  "hardware_key_loss_VM_shutdown": "PENDING",
+  "fault_latch_after_key_restoration": "PENDING",
+  "temporary_injection_cleanup": "PENDING",
+  "next": "User downloads and confirms normal health, VM supplied in hardware software-allow position, then hold_key1/F5 about1s and measures fault/ready/rtos/VM",
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_Q": "unchanged",
+  "actual_firmware_modified_by_assistant": false,
+  "hardware_commands_sent_by_assistant": false
+}

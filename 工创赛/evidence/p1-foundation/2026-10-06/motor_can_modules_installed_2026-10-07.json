@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-07",
+  "source": "latest user statement: 电机端装好了",
+  "motor_endpoint_can_module_installation": "USER_CONFIRMED_INSTALLED",
+  "supersedes": "Previous user report of no installed motor-side CAN modules",
+  "physical_bus_communication": "NOT_YET_TESTED",
+  "pending_input": ["P_Serial", "CAN_Baud", "ID_Addr", "Checksum"],
+  "source_review": "User manufacturer X42S manual V1.0.5 pages18,42,43,67; version-read reference corrected from mistaken page50 after recheck",
+  "mcu_project_can_source_status": "CAN source/header/module not yet integrated",
+  "next_action": "Record current menu values for one motor; then manual CAN1 setup and read-only identity/status transaction",
+  "firmware_modified": false,
+  "can_or_motion_commands_sent": false,
+  "requirements_checked": ["LOC-03 (E)", "LOC-07 (E)", "RUN-06 (E)", "MOT-04 (E)", "PWR-01 (R)"]
+}

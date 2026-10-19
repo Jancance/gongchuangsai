@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-06",
+  "source": "user screenshot codex-clipboard-3184bb60-880a-4ed4-8c3a-2275110583b6.png",
+  "pc": "0x0800045C",
+  "location": "App_RtosStop diagnostic while loop at freertos_hooks.c line 14",
+  "force_assert": 1,
+  "rtos_fault": 3,
+  "assert_line": 33,
+  "source_line_verified": "USER/main.c:33 configASSERT(g_test_force_assert == 0U);",
+  "count_a": 29,
+  "count_b": 6,
+  "tick": 2800,
+  "scheduler_returned": 0,
+  "stack_min_free_words_each": 233,
+  "heap_free_bytes": 17592,
+  "heap_min_free_bytes": 17592,
+  "status": "PASS_ASSERT_TRIGGER_LINE_RECORD_AND_STOP_LOOP_ENTRY",
+  "cleanup_status": "PENDING_USER_REMOVAL_REBUILD_DOWNLOAD_NORMAL_RUN",
+  "limitations": ["Single image does not independently measure ongoing counter freeze or PRIMASK", "Does not verify hardware output disable or watchdog", "Malloc failure and stack overflow injection untested"],
+  "next_action": "User removes temporary flag and task assertion, keeps normal hooks/assertions, rebuilds and downloads then resets and runs",
+  "requirements_checked": ["LOC-03 (E)", "RUN-06 (E)"],
+  "firmware_modified_by_assistant": false
+}

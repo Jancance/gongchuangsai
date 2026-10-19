@@ -1,0 +1,26 @@
+%YAML:1.0
+---
+calibration_format_version: 1
+camera_name: realtek_rgb_camera
+image_width: 1280
+image_height: 720
+distortion_model: plumb_bob
+camera_matrix: !!opencv-matrix
+   rows: 3
+   cols: 3
+   dt: d
+   data: [ 4.5760504726979264e+02, 0., 6.9334201735202726e+02, 0.,
+       4.5834020203078569e+02, 3.5505869327010345e+02, 0., 0., 1. ]
+distortion_coefficients: !!opencv-matrix
+   rows: 1
+   cols: 5
+   dt: d
+   data: [ 6.1886868354739021e-02, -7.9470625658282210e-02,
+       1.5774052651726428e-03, -1.7837088495720893e-03,
+       2.1258576063388406e-02 ]
+new_camera_matrix: !!opencv-matrix
+   rows: 3
+   cols: 3
+   dt: d
+   data: [ 4.5951556396484375e+02, 0., 6.7661797312358976e+02, 0.,
+       4.6821032714843750e+02, 3.5752523452541209e+02, 0., 0., 1. ]

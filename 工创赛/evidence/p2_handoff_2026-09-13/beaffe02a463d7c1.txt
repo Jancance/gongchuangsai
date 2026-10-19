@@ -1,0 +1,153 @@
+orangepi@robot-opi5pro:~$ ^[[200~date
+bash: $'\E[200~date': \u672a\u627e\u5230\u547d\u4ee4
+orangepi@robot-opi5pro:~$ lsusb
+Bus 006 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 005 Device 004: ID 1bcf:2d4f Sunplus Innovation Technology Inc. DECXIN CAMERA
+Bus 005 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 004 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 003 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 001 Device 002: ID 1a40:0101 Terminus Technology Inc. Hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+orangepi@robot-opi5pro:~$ lsusb -t
+/:  Bus 06.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 5000M
+/:  Bus 05.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 480M
+    |__ Port 1: Dev 4, If 0, Class=Video, Driver=uvcvideo, 480M
+    |__ Port 1: Dev 4, If 1, Class=Video, Driver=uvcvideo, 480M
+/:  Bus 04.Port 1: Dev 1, Class=root_hub, Driver=ohci-platform/1p, 12M
+/:  Bus 03.Port 1: Dev 1, Class=root_hub, Driver=ohci-platform/1p, 12M
+/:  Bus 02.Port 1: Dev 1, Class=root_hub, Driver=ehci-platform/1p, 480M
+/:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=ehci-platform/1p, 480M
+    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/4p, 480M
+orangepi@robot-opi5pro:~$ v4l2-ctl --list-devices
+DECXIN CAMERA: DECXIN CAMERA (usb-xhci-hcd.10.auto-1):
+	/dev/video0
+	/dev/video1
+	/dev/media0
+
+orangepi@robot-opi5pro:~$ ls -l /dev/v4l/by-id/
+\u603b\u8ba1 0
+lrwxrwxrwx 1 root root 12  8\u6708 29 21:47 usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0 -> ../../video0
+lrwxrwxrwx 1 root root 12  8\u6708 29 21:47 usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index1 -> ../../video1
+orangepi@robot-opi5pro:~$ dmesg -T | tail -n 120
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] rtt_do_get_ioctl: failed to send getbuf proxd iovar (CMD ID : 1), status=-4
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] dhd_rtt_init : FTM is not supported
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] dhd_rtt_init EXIT, err = 0
+[\u516d 8\u6708 29 20:57:50 2026] ttyFIQ ttyFIQ0: tty_port_close_start: tty->count = 1 port count = 2
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] dhd_legacy_preinit_ioctls: Failed to get preserve log # !
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] dhd_legacy_preinit_ioctls: d3_hostwake_delay IOVAR not present, proceed
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] dhd_bus_check_srmemsize : srmem_size no need to change.
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] dhd_conf_set_country : set country CN, revision 38
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] dhd_conf_set_country : Country code: CN (CN/38)
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] [wlan0] wl_android_wifi_on : Success
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] CFG80211-ERROR) init_roam_cache : roamscan_mode iovar failed. -23
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] CFG80211-ERROR) wl_cfg80211_up : Failed to enable RCC.
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] [wlan0] dhd_open : Exit ret=0
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] [wlan0] dhd_pri_open : tx queue started
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] dhd_pri_open : mutex is released.
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] P2P interface registered
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] WLC_E_IF: NO_IF set, event Ignored
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] P2P interface started
+[\u516d 8\u6708 29 20:57:50 2026] [dhd] [wlan0] wl_run_escan : LEGACY_SCAN sync ID: 0, bssidx: 0
+[\u516d 8\u6708 29 20:57:50 2026] Bluetooth: HCI UART driver ver 2.3
+[\u516d 8\u6708 29 20:57:50 2026] Bluetooth: HCI UART protocol H4 registered
+[\u516d 8\u6708 29 20:57:50 2026] Bluetooth: HCI UART protocol BCSP registered
+[\u516d 8\u6708 29 20:57:50 2026] Bluetooth: HCI UART protocol ATH3K registered
+[\u516d 8\u6708 29 20:57:50 2026] Bluetooth: HCI UART protocol Intel registered
+[\u516d 8\u6708 29 20:57:50 2026] Bluetooth: HCI UART protocol AG6XX registered
+[\u516d 8\u6708 29 20:57:50 2026] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[\u516d 8\u6708 29 20:57:50 2026] Bluetooth: BNEP filters: protocol multicast
+[\u516d 8\u6708 29 20:57:50 2026] Bluetooth: BNEP socket layer initialized
+[\u516d 8\u6708 29 20:57:52 2026] Bluetooth: RFCOMM TTY layer initialized
+[\u516d 8\u6708 29 20:57:52 2026] Bluetooth: RFCOMM socket layer initialized
+[\u516d 8\u6708 29 20:57:52 2026] Bluetooth: RFCOMM ver 1.11
+[\u516d 8\u6708 29 20:57:52 2026] [dhd] do_iovar_aml_enable aml failed -23
+[\u516d 8\u6708 29 20:57:52 2026] [dhd] [wlan0] wl_conn_debug_info : Connecting with 9e:71:15:98:5d:03 ssid "wifi", len (4), channel=5g-149(chan_cnt=1), sec=wpa2/psk/mfpc/aes, rssi=-48
+[\u516d 8\u6708 29 20:57:52 2026] [dhd] [wlan0] wl_iw_event : Link UP with 9e:71:15:98:5d:03
+[\u516d 8\u6708 29 20:57:52 2026] [dhd] [wlan0] wl_ext_iapsta_link : [S] Link UP with 9e:71:15:98:5d:03
+[\u516d 8\u6708 29 20:57:52 2026] [dhd] [wlan0] wl_bss_connect_done : Report connect result - connection succeeded
+[\u516d 8\u6708 29 20:57:52 2026] [dhd] CFG80211-ERROR) wl_mkeep_alive_update : Get mkeep_alive failed (error=-2)
+[\u516d 8\u6708 29 20:57:53 2026] [dhd] [wlan0] wl_add_keyext : key index (0) for 9e:71:15:98:5d:03
+[\u516d 8\u6708 29 20:57:53 2026] IPv6: ADDRCONF(NETDEV_CHANGE): wlan0: link becomes ready
+[\u516d 8\u6708 29 20:57:53 2026] [dhd] [wlan0] wl_cfg80211_set_suspend_bcn_li_dtim : bcn_li_dtim:0 lpas:0 bcn_to_dly:0
+[\u516d 8\u6708 29 20:57:58 2026] [dhd] [wlan0] wl_run_escan : LEGACY_SCAN sync ID: 1, bssidx: 0
+[\u516d 8\u6708 29 20:58:00 2026] ttyFIQ ttyFIQ0: tty_port_close_start: tty->count = 1 port count = 2
+[\u516d 8\u6708 29 20:58:14 2026] vcc_3v3_sd_s0: disabling
+[\u516d 8\u6708 29 20:58:19 2026] usb 5-1: new high-speed USB device number 2 using xhci-hcd
+[\u516d 8\u6708 29 20:58:20 2026] usb 5-1: New USB device found, idVendor=1bcf, idProduct=2d4f, bcdDevice= 1.34
+[\u516d 8\u6708 29 20:58:20 2026] usb 5-1: New USB device strings: Mfr=1, Product=4, SerialNumber=3
+[\u516d 8\u6708 29 20:58:20 2026] usb 5-1: Product: DECXIN CAMERA
+[\u516d 8\u6708 29 20:58:20 2026] usb 5-1: Manufacturer: DECXIN
+[\u516d 8\u6708 29 20:58:20 2026] usb 5-1: SerialNumber: 01.00.00
+[\u516d 8\u6708 29 20:58:20 2026] uvcvideo: Found UVC 1.00 device DECXIN CAMERA (1bcf:2d4f)
+[\u516d 8\u6708 29 20:58:20 2026] input: DECXIN CAMERA: DECXIN CAMERA as /devices/platform/usbdrd3_0/fc000000.usb/xhci-hcd.10.auto/usb5/5-1/5-1:1.0/input/input5
+[\u516d 8\u6708 29 20:59:26 2026] usb 5-1: USB disconnect, device number 2
+[\u516d 8\u6708 29 21:13:41 2026] dwhdmi-rockchip fde80000.hdmi: i2c read err!
+[\u516d 8\u6708 29 21:13:41 2026] dwhdmi-rockchip fde80000.hdmi: i2c read err!
+[\u516d 8\u6708 29 21:13:41 2026] dwhdmi-rockchip fde80000.hdmi: i2c read err!
+[\u516d 8\u6708 29 21:13:41 2026] dwhdmi-rockchip fde80000.hdmi: i2c read time out!
+[\u516d 8\u6708 29 21:13:41 2026] Console: switching to colour frame buffer device 240x67
+[\u516d 8\u6708 29 21:13:41 2026] rockchip-drm display-subsystem: [drm] fb0: rockchipdrmfb frame buffer device
+[\u516d 8\u6708 29 21:13:41 2026] rockchip-vop2 fdd90000.vop: [drm:vop2_crtc_atomic_enable] Update mode to 1920x1080p60, type: 11(if:800, flag:0x0) for vp0 dclk: 148500000
+[\u516d 8\u6708 29 21:13:41 2026] rockchip-vop2 fdd90000.vop: [drm:vop2_crtc_atomic_enable] dclk_out0 div: 0 dclk_core0 div: 2
+[\u516d 8\u6708 29 21:13:41 2026] rockchip-hdptx-phy-hdmi fed60000.hdmiphy: hdptx_ropll_cmn_config bus_width:16a8c8 rate:1485000
+[\u516d 8\u6708 29 21:13:41 2026] rockchip-hdptx-phy-hdmi fed60000.hdmiphy: hdptx phy pll locked!
+[\u516d 8\u6708 29 21:13:41 2026] rockchip-vop2 fdd90000.vop: [drm:vop2_crtc_atomic_enable] set dclk_vop0 to 148500000, get 148500000
+[\u516d 8\u6708 29 21:13:41 2026] dwhdmi-rockchip fde80000.hdmi: final tmdsclk = 148500000
+[\u516d 8\u6708 29 21:13:41 2026] dwhdmi-rockchip fde80000.hdmi: don't use dsc mode
+[\u516d 8\u6708 29 21:13:41 2026] dwhdmi-rockchip fde80000.hdmi: dw hdmi qp use tmds mode
+[\u516d 8\u6708 29 21:13:41 2026] rockchip-hdptx-phy-hdmi fed60000.hdmiphy: bus_width:0x16a8c8,bit_rate:1485000
+[\u516d 8\u6708 29 21:13:41 2026] rockchip-hdptx-phy-hdmi fed60000.hdmiphy: hdptx phy lane locked!
+[\u516d 8\u6708 29 21:14:06 2026] usb 5-1: new full-speed USB device number 3 using xhci-hcd
+[\u516d 8\u6708 29 21:14:06 2026] usb 5-1: not running at top speed; connect to a high speed hub
+[\u516d 8\u6708 29 21:14:06 2026] usb 5-1: New USB device found, idVendor=046d, idProduct=c08b, bcdDevice=69.00
+[\u516d 8\u6708 29 21:14:06 2026] usb 5-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[\u516d 8\u6708 29 21:14:06 2026] usb 5-1: Product: G502 HERO Gaming Mouse
+[\u516d 8\u6708 29 21:14:06 2026] usb 5-1: Manufacturer: Logitech
+[\u516d 8\u6708 29 21:14:06 2026] usb 5-1: SerialNumber: 20A5349F3942
+[\u516d 8\u6708 29 21:14:06 2026] input: Logitech G502 HERO Gaming Mouse as /devices/platform/usbdrd3_0/fc000000.usb/xhci-hcd.10.auto/usb5/5-1/5-1:1.0/0003:046D:C08B.0001/input/input6
+[\u516d 8\u6708 29 21:14:06 2026] hid-generic 0003:046D:C08B.0001: input,hidraw0: USB HID v1.11 Mouse [Logitech G502 HERO Gaming Mouse] on usb-xhci-hcd.10.auto-1/input0
+[\u516d 8\u6708 29 21:14:06 2026] input: Logitech G502 HERO Gaming Mouse Keyboard as /devices/platform/usbdrd3_0/fc000000.usb/xhci-hcd.10.auto/usb5/5-1/5-1:1.1/0003:046D:C08B.0002/input/input7
+[\u516d 8\u6708 29 21:14:06 2026] input: Logitech G502 HERO Gaming Mouse Consumer Control as /devices/platform/usbdrd3_0/fc000000.usb/xhci-hcd.10.auto/usb5/5-1/5-1:1.1/0003:046D:C08B.0002/input/input8
+[\u516d 8\u6708 29 21:14:06 2026] input: Logitech G502 HERO Gaming Mouse System Control as /devices/platform/usbdrd3_0/fc000000.usb/xhci-hcd.10.auto/usb5/5-1/5-1:1.1/0003:046D:C08B.0002/input/input9
+[\u516d 8\u6708 29 21:14:06 2026] hid-generic 0003:046D:C08B.0002: input,hiddev96,hidraw1: USB HID v1.11 Keyboard [Logitech G502 HERO Gaming Mouse] on usb-xhci-hcd.10.auto-1/input1
+[\u516d 8\u6708 29 21:14:19 2026] usb 1-1.1: new full-speed USB device number 3 using ehci-platform
+[\u516d 8\u6708 29 21:14:19 2026] usb 1-1.1: New USB device found, idVendor=0c45, idProduct=fefe, bcdDevice= 1.38
+[\u516d 8\u6708 29 21:14:19 2026] usb 1-1.1: New USB device strings: Mfr=0, Product=2, SerialNumber=0
+[\u516d 8\u6708 29 21:14:19 2026] usb 1-1.1: Product: 2.4G Dongle
+[\u516d 8\u6708 29 21:14:19 2026] input: 2.4G Dongle as /devices/platform/fc800000.usb/usb1/1-1/1-1.1/1-1.1:1.0/0003:0C45:FEFE.0003/input/input12
+[\u516d 8\u6708 29 21:14:19 2026] hid-generic 0003:0C45:FEFE.0003: input,hidraw2: USB HID v1.00 Keyboard [2.4G Dongle] on usb-fc800000.usb-1.1/input0
+[\u516d 8\u6708 29 21:14:19 2026] input: 2.4G Dongle as /devices/platform/fc800000.usb/usb1/1-1/1-1.1/1-1.1:1.1/0003:0C45:FEFE.0004/input/input13
+[\u516d 8\u6708 29 21:14:19 2026] hid-generic 0003:0C45:FEFE.0004: input,hidraw3: USB HID v1.00 Mouse [2.4G Dongle] on usb-fc800000.usb-1.1/input1
+[\u516d 8\u6708 29 21:14:19 2026] input: 2.4G Dongle Consumer Control as /devices/platform/fc800000.usb/usb1/1-1/1-1.1/1-1.1:1.2/0003:0C45:FEFE.0005/input/input14
+[\u516d 8\u6708 29 21:14:19 2026] input: 2.4G Dongle System Control as /devices/platform/fc800000.usb/usb1/1-1/1-1.1/1-1.1:1.2/0003:0C45:FEFE.0005/input/input15
+[\u516d 8\u6708 29 21:14:19 2026] input: 2.4G Dongle Keyboard as /devices/platform/fc800000.usb/usb1/1-1/1-1.1/1-1.1:1.2/0003:0C45:FEFE.0005/input/input16
+[\u516d 8\u6708 29 21:14:19 2026] input: 2.4G Dongle System Multi Axis as /devices/platform/fc800000.usb/usb1/1-1/1-1.1/1-1.1:1.2/0003:0C45:FEFE.0005/input/input17
+[\u516d 8\u6708 29 21:14:19 2026] input: 2.4G Dongle as /devices/platform/fc800000.usb/usb1/1-1/1-1.1/1-1.1:1.2/0003:0C45:FEFE.0005/input/input18
+[\u516d 8\u6708 29 21:14:19 2026] hid-generic 0003:0C45:FEFE.0005: input,hiddev97,hidraw4: USB HID v1.00 Keyboard [2.4G Dongle] on usb-fc800000.usb-1.1/input2
+[\u516d 8\u6708 29 21:14:19 2026] hid-generic 0003:0C45:FEFE.0006: hiddev98,hidraw5: USB HID v1.00 Device [2.4G Dongle] on usb-fc800000.usb-1.1/input3
+[\u516d 8\u6708 29 21:14:19 2026] hid-generic 0003:0C45:FEFE.0007: hiddev99,hidraw6: USB HID v1.00 Device [2.4G Dongle] on usb-fc800000.usb-1.1/input4
+[\u516d 8\u6708 29 21:15:04 2026] usb 5-1: USB disconnect, device number 3
+[\u516d 8\u6708 29 21:31:16 2026] rockchip-vop2 fdd90000.vop: [drm:vop2_crtc_atomic_disable] Crtc atomic disable vp0
+[\u516d 8\u6708 29 21:31:23 2026] rockchip-vop2 fdd90000.vop: [drm:vop2_crtc_atomic_enable] Update mode to 1920x1080p60, type: 11(if:800, flag:0x0) for vp0 dclk: 148500000
+[\u516d 8\u6708 29 21:31:23 2026] rockchip-hdptx-phy-hdmi fed60000.hdmiphy: hdptx_ropll_cmn_config bus_width:16a8c8 rate:1485000
+[\u516d 8\u6708 29 21:31:23 2026] rockchip-hdptx-phy-hdmi fed60000.hdmiphy: hdptx phy pll locked!
+[\u516d 8\u6708 29 21:31:23 2026] rockchip-vop2 fdd90000.vop: [drm:vop2_crtc_atomic_enable] dclk_out0 div: 0 dclk_core0 div: 2
+[\u516d 8\u6708 29 21:31:23 2026] rockchip-vop2 fdd90000.vop: [drm:vop2_crtc_atomic_enable] set dclk_vop0 to 148500000, get 148500000
+[\u516d 8\u6708 29 21:31:23 2026] dwhdmi-rockchip fde80000.hdmi: final tmdsclk = 148500000
+[\u516d 8\u6708 29 21:31:23 2026] dwhdmi-rockchip fde80000.hdmi: don't use dsc mode
+[\u516d 8\u6708 29 21:31:23 2026] dwhdmi-rockchip fde80000.hdmi: dw hdmi qp use tmds mode
+[\u516d 8\u6708 29 21:31:23 2026] rockchip-hdptx-phy-hdmi fed60000.hdmiphy: bus_width:0x16a8c8,bit_rate:1485000
+[\u516d 8\u6708 29 21:31:23 2026] rockchip-hdptx-phy-hdmi fed60000.hdmiphy: hdptx phy lane locked!
+[\u516d 8\u6708 29 21:47:03 2026] [drm:vop2_plane_atomic_check] *ERROR* Esmart0-win0 is invisible(src: pos[0, 0] rect[64 x 64] dst: pos[1856, 0] rect[64 x 64]
+[\u516d 8\u6708 29 21:47:03 2026] rockchip-vop2 fdd90000.vop: [drm:vop2_crtc_atomic_disable] Crtc atomic disable vp0
+[\u516d 8\u6708 29 21:47:14 2026] usb 1-1.1: USB disconnect, device number 3
+[\u516d 8\u6708 29 21:47:49 2026] usb 5-1: new high-speed USB device number 4 using xhci-hcd
+[\u516d 8\u6708 29 21:47:49 2026] usb 5-1: New USB device found, idVendor=1bcf, idProduct=2d4f, bcdDevice= 1.34
+[\u516d 8\u6708 29 21:47:49 2026] usb 5-1: New USB device strings: Mfr=1, Product=4, SerialNumber=3
+[\u516d 8\u6708 29 21:47:49 2026] usb 5-1: Product: DECXIN CAMERA
+[\u516d 8\u6708 29 21:47:49 2026] usb 5-1: Manufacturer: DECXIN
+[\u516d 8\u6708 29 21:47:49 2026] usb 5-1: SerialNumber: 01.00.00
+[\u516d 8\u6708 29 21:47:49 2026] uvcvideo: Found UVC 1.00 device DECXIN CAMERA (1bcf:2d4f)
+[\u516d 8\u6708 29 21:47:49 2026] input: DECXIN CAMERA: DECXIN CAMERA as /devices/platform/usbdrd3_0/fc000000.usb/xhci-hcd.10.auto/usb5/5-1/5-1:1.0/input/input19
+orangepi@robot-opi5pro:~$ 

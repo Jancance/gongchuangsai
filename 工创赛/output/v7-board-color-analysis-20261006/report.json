@@ -1,0 +1,144 @@
+{
+  "source": "D:\\Codex\\工创赛\\evidence\\20261006-191939-893382.zip",
+  "sha256": "027d68331f95e12a29fcfe70ab060be42ba4dac4d1b2b9e076db6c3864abb5f1",
+  "crc_passed": true,
+  "current_v7_hash_matches": {
+    "project_detector.py": true,
+    "project_tracker.py": true
+  },
+  "run": {
+    "frames": 370,
+    "states": {
+      "STALE_RESULT": 1,
+      "FOLLOWING_PIXEL": 331,
+      "SEARCHING": 38
+    },
+    "transition_counts": {
+      "first-frame": 1,
+      "first-other-color-candidate": 279,
+      "first-lightblue-with-blue": 279,
+      "first-lightblue-visible": 1,
+      "first-lightblue-loss": 7,
+      "first-lightblue-reappearance": 6,
+      "first-lightblue-with-red": 2
+    },
+    "saved_events": [
+      "first-frame",
+      "first-lightblue-loss",
+      "first-lightblue-reappearance",
+      "first-lightblue-visible",
+      "first-lightblue-with-blue",
+      "first-lightblue-with-red",
+      "first-other-color-candidate"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "lightblue",
+    "longest_watched_loss_s": 0.2279284210003425
+  },
+  "observed_labels": {
+    "blue": 279,
+    "lightblue": 52,
+    "red": 2
+  },
+  "observed_ids": {
+    "blue:T001": 225,
+    "lightblue:T002": 52,
+    "blue:T003": 54,
+    "red:T004": 2
+  },
+  "result_host_age_ms_p95_max": [
+    119.5997859000272,
+    167.83647200009
+  ],
+  "manual_top_samples": [
+    {
+      "image": "first-lightblue-with-blue-raw.png",
+      "manually_selected_disk_px": [
+        700,
+        168,
+        75
+      ],
+      "HSV_p10_p50_p90": [
+        [
+          107.0,
+          154.0,
+          153.0
+        ],
+        [
+          107.0,
+          164.0,
+          165.0
+        ],
+        [
+          108.0,
+          177.0,
+          178.0
+        ]
+      ],
+      "fraction_S_below_150": 0.04137149334088977
+    },
+    {
+      "image": "first-lightblue-visible-raw.png",
+      "manually_selected_disk_px": [
+        705,
+        373,
+        75
+      ],
+      "HSV_p10_p50_p90": [
+        [
+          109.0,
+          139.0,
+          193.0
+        ],
+        [
+          110.0,
+          144.0,
+          205.0
+        ],
+        [
+          110.0,
+          149.0,
+          218.0
+        ]
+      ],
+      "fraction_S_below_150": 0.9090393879285916
+    },
+    {
+      "image": "first-lightblue-with-red-raw.png",
+      "manually_selected_disk_px": [
+        628,
+        177,
+        75
+      ],
+      "HSV_p10_p50_p90": [
+        [
+          107.0,
+          164.0,
+          149.0
+        ],
+        [
+          107.0,
+          172.0,
+          160.0
+        ],
+        [
+          108.0,
+          182.0,
+          173.0
+        ]
+      ],
+      "fraction_S_below_150": 0.0
+    }
+  ],
+  "scope": "Saved raw samples and logged outputs only, not full image replay or calibrated scene accuracy.",
+  "limitations": [
+    "Watched color is diagnostic intent, not a general ground-truth label.",
+    "Longest watched loss only measures completed loss/reappearance episodes; initial and final absence excluded.",
+    "Lighting cause cannot be separated from position/view change without paired capture.",
+    "Hand red false positive remains unresolved. Metric/action/field acceptance unavailable."
+  ]
+}

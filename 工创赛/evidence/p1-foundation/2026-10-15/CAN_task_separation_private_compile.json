@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-15",
+  "exit_code": 0,
+  "compiler_output": "",
+  "scope": "Compile only isolated transformed main; no link or flash; actual source unchanged",
+  "actual_source_sha256_before": "bd45a93014f80c9846cfcc66bf39be59809b5afbf4b63fb7c0c1dc35cb38ce75",
+  "actual_source_sha256_after": "bd45a93014f80c9846cfcc66bf39be59809b5afbf4b63fb7c0c1dc35cb38ce75",
+  "probe_path": "D:\\Codex\\工创赛\\tmp\\can_task_separation_probe_20261015",
+  "cleaned": true,
+  "structural_checks": [
+    "CAN initialization moved to CAN task",
+    "TaskA has no CAN1 transactions",
+    "single PollRefresh/FeedbackRefresh path",
+    "debug UART calls in main share short critical wrapper",
+    "CAN task delay50ms and TaskA delay10ms",
+    "CAN stack384 priority3; existing safety task priority4 unchanged"
+  ],
+  "cleanup": "Two whitelisted files removed nonrecursively after absolute path and reparse checks; empty private directory removed",
+  "actual_source_sha256_after_cleanup": "bd45a93014f80c9846cfcc66bf39be59809b5afbf4b63fb7c0c1dc35cb38ce75"
+}

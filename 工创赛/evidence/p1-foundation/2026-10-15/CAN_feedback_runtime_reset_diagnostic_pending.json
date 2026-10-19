@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-15",
+  "source": "user reports reset after setting VM request1 and running",
+  "actual_source_checks": {
+    "watchdog_debug_freeze": 1,
+    "feedback_default": 0,
+    "vm_default": 0,
+    "feedback_step_recursive": false,
+    "taskA_heartbeat_present": true,
+    "taskA_delay_ms": 10,
+    "supervisor_feeds_only_when_healthy": true,
+    "rtos_stop_disables_VM_then_loops": true
+  },
+  "diagnosis": "root cause unconfirmed; runtime safety/RTOS fault followed by watchdog timeout is one code-supported path, not the earlier pause-unfreeze configuration",
+  "next": "warm VM0 platform ready, halt, set breakpoint on Power_Disable closing brace after GPIO reset, set VM request1 and continue; capture faults/context at halt",
+  "breakpoint": {
+    "path": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\HARDWARE\\POWER\\power.c",
+    "line": 33,
+    "point": "return after GPIO_ResetBits, not before VM shutoff"
+  },
+  "watch": [
+    "g_vm_test_request",
+    "g_rtos_fault",
+    "g_rtos_assert_line",
+    "g_safety_fault",
+    "g_can_guard_cause",
+    "g_can_guard_bad_nodes",
+    "g_can_poll_result"
+  ],
+  "pending": "fault values and reset cause; no timeout or feed logic changed",
+  "actual_source_modified": false,
+  "requirements_checked": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ]
+  }
+}

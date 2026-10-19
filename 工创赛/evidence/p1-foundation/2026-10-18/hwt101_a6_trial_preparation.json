@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-18",
+  "authorization": "user explicitly chose to assume firmware compatible and try",
+  "compatibility": "assumed for trial, not verified",
+  "writes": [
+    "FF AA A6 01 00",
+    "FF AA A6 04 00"
+  ],
+  "persistent_configuration_writes": false,
+  "motor_vm": "forced0 static mode",
+  "duration_ms": {
+    "still": 1000,
+    "before": 60000,
+    "capture": 10000,
+    "settle": 1000,
+    "after": 60000,
+    "total_deadline": 140000
+  },
+  "checks": 2109,
+  "build": {
+    "code": 33896,
+    "ro": 448,
+    "rw": 1208,
+    "zi": 25272,
+    "errors": 0,
+    "warnings": 0
+  },
+  "hardware": "not flashed by assistant; actual acceptance and drift effect pending",
+  "sha256": {
+    "3.stm32f407工程/USER/hwt101.c": "1ed5694ccb92e28904f4a380fd782d94adf4fba0cd2246d530f2edffbf8b5dbb",
+    "3.stm32f407工程/USER/hwt101.h": "4264cedebb40ef4698334beea368dfda2f573ab6ebed0a738de2719f7e86920a",
+    "3.stm32f407工程/Objects/gongxun-f407.axf": "b822ee22291e8fb0dbd1bcad34176fd2314d7bfdf334c0e5974c2a9d4c210318",
+    "工创赛/evidence/p1-foundation/2026-10-18/hwt101_a6_trial_private_checks.c": "6fb6393a4f6bddd1521840bfd7c04bdcb3408ff9858dcfa184f5e7f60e042eb0"
+  }
+}

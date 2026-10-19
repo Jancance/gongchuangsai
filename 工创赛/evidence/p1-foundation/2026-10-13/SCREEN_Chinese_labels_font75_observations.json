@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-13",
+  "sources": [
+    "SCREEN_page1_Chinese_labels_font75_t2.png",
+    "SCREEN_page1_Chinese_labels_font75_t3.png"
+  ],
+  "page1": {
+    "controls": [
+      "t2",
+      "t3"
+    ],
+    "visible_first_label": "正确抓取数:",
+    "visible_second_label": "正确放置数:",
+    "numbers_visible": false,
+    "font_id": 1,
+    "font_height_pixels": 75,
+    "txt_maxl": 30,
+    "horizontal_alignment": "left",
+    "vertical_alignment": "center",
+    "vscope": "private",
+    "bco": 65535,
+    "pco": 0
+  },
+  "font_list": {
+    "0": "120, h120, GB2312",
+    "1": "75宋体, h75, GB2312"
+  },
+  "original_page0_font_id_before_edit": 2,
+  "current_page0_font_assignment_verified": false,
+  "acceptance": "Chinese result labels visible in editor; numerical width and original task-code font preservation not yet verified",
+  "next": "preview current short labels with two test digits 99, ensure all digits visible, restore original h112 task-code font resource if necessary and check page0, then HMI compile",
+  "test_digits": "editor layout probe only; not actual successful action counts",
+  "numerical_range_policy": "99 is a two-digit display probe, not a limit on real counts",
+  "current_font75_is_allowed_engineering_choice": true,
+  "mission_result_trigger": "only after actual completion, return to same drawn start area and stop",
+  "pending": [
+    "number fits",
+    "page0 valid fonts and complete raw code",
+    "HMI compile",
+    "result API and actual state trigger",
+    "physical typography"
+  ],
+  "requirements_checked": {
+    "R": [
+      "DSP-01",
+      "DSP-02",
+      "FIELD-02",
+      "RUN-01"
+    ],
+    "E": [
+      "DSP-03",
+      "RUN-06"
+    ],
+    "Q": [
+      "FIELD-05"
+    ]
+  },
+  "actual_hmi_or_firmware_modified_by_assistant": false
+}

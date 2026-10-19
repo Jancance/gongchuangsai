@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-06",
+  "voltages_V_reported_by_user": {
+    "VDD": 3.2,
+    "VDDA": 3.2,
+    "VCAP1": 1.26,
+    "VCAP2": 1.26
+  },
+  "static_voltage_assessment": "within expected ranges; ripple/startup not measured",
+  "PLL_reset_value": "0x24003010",
+  "named_parameter_field_mask": "0xf437fff",
+  "preserved_mask": "0xf0bc8000",
+  "previous_observed_HSI_PLLCFGR": "0x7005410",
+  "proposed_field_only_update": {
+    "HSI": "0x27005410",
+    "HSE": "0x27405408"
+  },
+  "next_test": "preserve PLLCFGR reserved fields using existing HSI configuration",
+  "golden_bit_patterns_verified": true,
+  "test_on_board_completed": false,
+  "root_cause_proven": false,
+  "assistant_changed_firmware": false,
+  "primary_reference": "ST RM0090 section 7.3.2 reserved fields must remain at reset values"
+}

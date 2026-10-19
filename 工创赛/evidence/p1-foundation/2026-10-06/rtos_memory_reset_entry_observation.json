@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-06",
+  "source": "user screenshot codex-clipboard-3b99f109-6a28-410c-a16a-7a6d644a8006.png",
+  "pc": "0x080002E8",
+  "location": "Reset_Handler before SystemInit and __main",
+  "stack_a_min_free_words": 233,
+  "stack_b_min_free_words": 233,
+  "stack_word_bytes": 4,
+  "heap_free_bytes": 17600,
+  "heap_min_free_bytes": 17600,
+  "create_a": 1,
+  "create_b": 1,
+  "count_a": 446,
+  "count_b": 90,
+  "tick": 44500,
+  "scheduler_returned": 0,
+  "rtos_fault": 0,
+  "status": "PENDING_FRESH_POST_RESET_RUNNING_SNAPSHOT",
+  "limitation": "RAM and Watch can retain pre-reset results before C runtime initialization; values do not certify this boot",
+  "next_action": "F5, run 10-20 seconds, Stop without Reset; inspect task/Idle PC and refreshed counters/margins",
+  "requirements_checked": ["LOC-03 (E)", "RUN-06 (E)"],
+  "firmware_modified_by_assistant": false
+}

@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-13",
+  "sources": ["IWDG_healthy_feed_first.png", "IWDG_healthy_feed_second.png", "user measurement: VM 0 V"],
+  "observations": {
+    "watchdog_init_result": [1, 1],
+    "watchdog_started": [1, 1],
+    "watchdog_feed_count": [228, 535],
+    "watchdog_test_stop_feed": [0, 0],
+    "reset_iwdg": [0, 0],
+    "reset_flags_hex": ["0x14000000", "0x14000000"],
+    "vm_test_request": [0, 0],
+    "rtos_fault": [0, 0],
+    "safety_fault": [0, 0],
+    "safety_ready": [1, 1],
+    "can_guard_ready": [0, 0],
+    "safety_count": [234, 541],
+    "app_stack_min_words": [210, 210],
+    "safety_stack_min_words": [232, 232],
+    "heap_min_bytes": [14064, 14064],
+    "physical_vm_volts": 0
+  },
+  "acceptance": "PASS: normal startup, observed healthy feed count growth, and user measured VM default off",
+  "limits": ["no precise elapsed duration inferred from screenshots", "not proof of debug halt freeze", "not proof of actual watchdog timeout reset", "not complete vehicle READY or safety acceptance"],
+  "next": "keep VM request and stop-feed test at 0; halt for about 8 seconds, then resume about 2 seconds and compare feed counter continuity",
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_questions": "unchanged"
+}

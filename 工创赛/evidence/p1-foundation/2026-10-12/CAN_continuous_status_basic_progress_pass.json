@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-12",
+  "source": "User two Keil Watch1 screenshots f3eeab74 and a5004035",
+  "images": ["CAN_continuous_status_snapshot_A.png", "CAN_continuous_status_snapshot_B.png"],
+  "node_order": ["左后ID1", "右后ID2", "左前ID3", "右前ID4"],
+  "snapshot_A": {"result_values_visible": [1, 1, 1, 1], "flags": [3, 3, 3, 3], "counts": [14, 14, 13, 13], "age_ticks": [101, 0, 303, 202], "valid_mask": 15, "protect_mask": 0, "last_transaction_esr": 0},
+  "snapshot_B": {"result_values_visible": [1, 1, 1, 1], "flags": [3, 3, 3, 3], "counts": [26, 25, 25, 25], "age_ticks": [0, 303, 202, 101], "valid_mask": 15, "protect_mask": 0, "last_transaction_esr": 0},
+  "result_array_parent_label_cropped": true,
+  "all_node_success_counts_increased": true,
+  "count_increments": [12, 11, 12, 12],
+  "acceptance": "Basic four-node cyclic status collection with progress across two observations and fresh-data mask PASS",
+  "new_fault_stack_heap_values_visible": false,
+  "independent_response_latency_or_long_term_reliability_measured": false,
+  "next": "Set poll_enable0 and run about1s to verify valid0/age invalid; supplement current fault and stack/heap values before CAN fault-latch integration",
+  "pending": ["disable capture invalidation", "current RTOS/supervisor fault and stack/heap snapshot under cyclic workload", "failed/stale data and protection integration with Safety", "watchdog"],
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_Q": "unchanged",
+  "actual_firmware_modified_by_assistant": false,
+  "hardware_commands_sent_by_assistant": false
+}

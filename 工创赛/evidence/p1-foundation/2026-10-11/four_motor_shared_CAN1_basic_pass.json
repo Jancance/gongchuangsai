@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-11",
+  "source": "Four user screenshots in response to instruction to connect all four wheel motors simultaneously on CAN1",
+  "reported_test_context": "Four wheel nodes connected to existing power-board CAN1 ports; other CAN1 nodes kept isolated per instruction",
+  "topology_independently_photographed": false,
+  "records": [
+    {"address": 1, "position": "left rear", "result": 1, "ESR": 0, "ExtId": "0x0100", "DLC": 6, "data": "1F00CA23146B", "screenshot": "shared_CAN1_ID1_pass.png"},
+    {"address": 2, "position": "right rear", "result": 1, "ESR": 0, "ExtId": "0x0200", "DLC": 6, "data": "1F00CA23146B", "screenshot": "shared_CAN1_ID2_pass.png"},
+    {"address": 3, "position": "front left", "result": 1, "ESR": 0, "ExtId": "0x0300", "DLC": 6, "data": "1F00CA23146B", "screenshot": "shared_CAN1_ID3_pass.png"},
+    {"address": 4, "position": "front right", "result": 1, "ESR": 0, "ExtId": "0x0400", "DLC": 6, "data": "1F00CA23146B", "screenshot": "shared_CAN1_ID4_pass.png"}
+  ],
+  "common_observed": {"IDE": 4, "RTR": 0, "FMI": 0, "VM_request": 1, "query_request_consumed": true, "RTOS_fault": 0, "task_A_stack_words": 210, "INRQ": 0, "INAK": 0, "PD0": 1},
+  "shared_bus_basic_read_test": "PASS_IN_REPORTED_SETUP",
+  "ESR_evidence_scope": "Snapshot after each query, not continuous transient-error proof",
+  "continuous_reliability_and_synchronized_motion_pass": false,
+  "reset_default_VM_off_verified_with_four_nodes": true,
+  "reset_default_evidence": "four_motor_reset_VM_default_off.json",
+  "next": "Verify existing hardware VM off switch while CPU halted and software still requesting1; hold off and revoke software request after measuring.",
+  "requirements": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "firmware_or_PCB_modified_by_assistant": false
+}

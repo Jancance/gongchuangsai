@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-12",
+  "source": "User screenshot codex-clipboard-d9c72e0c-f2a1-44df-bfc0-4926bf108970.png plus explicit VM=0V",
+  "evidence_image": "key_task_loss_fault4_VM0_observation.png",
+  "observed": {"g_vm_test_request": 1, "g_safety_test_hold_key": 1, "g_rtos_fault": 0, "g_safety_task_create": 1, "g_safety_fault": 4, "g_safety_ready": 0, "g_safety_count": 1120, "g_safety_stack_words": 233, "g_stack_a_words": 217, "g_heap_min_bytes": 14064},
+  "user_reported_VM_volts_after_trigger": 0,
+  "VM_supply_confirmed_before_trigger": true,
+  "confirmation_source": "User later explicitly confirmed VM had voltage after vm_request1, before hold_key1; exact voltage not reported",
+  "acceptance": "Key-task loss detection and fault-inhibited state PASS; physical VM0 observed",
+  "powered_to_off_transition_acceptance": "PASS after later user confirmation of pre-trigger supply",
+  "fault_latch_after_key_restoration": "PASS; see key_task_restore_fault_latch_VM0_pass.json",
+  "next": "User temporary injection cleanup and normal startup verification",
+  "temporary_injection_cleanup": "PENDING",
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_Q": "unchanged",
+  "actual_firmware_modified_by_assistant": false,
+  "hardware_commands_sent_by_assistant": false
+}

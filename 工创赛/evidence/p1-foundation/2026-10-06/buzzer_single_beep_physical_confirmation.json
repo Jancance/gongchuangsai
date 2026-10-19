@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-06",
+  "source": "user statement: 启动后响一次，然后保持静音，状态灯继续闪烁",
+  "pin": "PB0",
+  "driver_assumption": "active buzzer authorized by user; exact type/model not independently established",
+  "configuration_verified_read_only": {"count": 1, "on_ms": 200, "gap_ms": 200},
+  "source_placements_verified_read_only": {"init": "main before task creation", "start": "task A before loop", "update": "task A inside loop"},
+  "status": "PASS_USER_REPORTED_ONE_BEEP_THEN_SILENT_WITH_LED_CONTINUING",
+  "three_beep_status": "PENDING",
+  "zero_beep_status": "PENDING",
+  "next_action": "User changes only APP_INIT_BEEP_COUNT to 3U, rebuilds/downloads and resets/runs, reports three distinct beeps and final silence",
+  "limitations": ["Exact buzzer model unknown", "No independent acoustic duration measurement", "Does not certify entire robot READY or hardware safety"],
+  "requirements_checked": ["LOC-03 (E)", "RUN-06 (E)", "PWR-01 (R)"],
+  "firmware_modified_by_assistant": false
+}

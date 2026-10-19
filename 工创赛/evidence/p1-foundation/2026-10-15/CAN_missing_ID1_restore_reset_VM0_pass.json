@@ -1,0 +1,82 @@
+{
+  "date": "2026-10-15",
+  "context": "After user reconnect/reset recovery step following static missing-ID1 protection test",
+  "image": "CAN_missing_ID1_restore_reset_VM0_pass.png",
+  "observed": {
+    "g_safety_fault": 0,
+    "g_safety_ready": 1,
+    "g_can_guard_ready": 0,
+    "g_can_guard_cause": 0,
+    "g_can_guard_bad_nodes": 0,
+    "g_safety_count": 316,
+    "g_stack_a_words": 222,
+    "g_safety_stack_words": 232,
+    "g_heap_min_bytes": 11320,
+    "g_can_task_create": 1,
+    "g_can_task_count": 127,
+    "g_can_task_stack_words": 325,
+    "g_can_test_result": 1,
+    "g_can_feedback_enable": 0,
+    "feedback_count": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "speed_valid_mask": 0,
+    "position_valid_mask": 0,
+    "feedback_error_count": 0
+  },
+  "user_VM_volts": 0,
+  "not_visible": [
+    "g_vm_test_request",
+    "g_rtos_fault"
+  ],
+  "accepted": "Healthy platform and cleared CAN cause/node mask after recovery, with user-measured physical VM0; accepts observed reconnect/reset recovery without automatic VM output. Does not prove formal runtime re-enable state machine or motor movement.",
+  "current_user_request": "Tell which Watch1 entries can be removed; no source change or next hardware test requested in this message.",
+  "watch_cleanup": {
+    "remove_display_entries": [
+      "g_can_position_address",
+      "g_can_position_request",
+      "g_can_position_result",
+      "g_can_position_sign",
+      "g_can_position_raw",
+      "g_can_position_reply",
+      "g_can_task_create",
+      "g_can_test_result",
+      "g_safety_count",
+      "g_can_task_count"
+    ],
+    "retain_display_entries": [
+      "g_vm_test_request",
+      "g_rtos_fault",
+      "g_safety_fault",
+      "g_safety_ready",
+      "g_can_guard_ready",
+      "g_can_guard_cause",
+      "g_can_guard_bad_nodes",
+      "g_can_feedback_enable",
+      "g_can_feedback_count",
+      "g_can_feedback_speed_valid_mask",
+      "g_can_feedback_position_valid_mask",
+      "g_can_feedback_error_count",
+      "g_stack_a_words",
+      "g_safety_stack_words",
+      "g_can_task_stack_words",
+      "g_heap_min_bytes"
+    ],
+    "effect": "Remove Watch expressions only; never delete source variables or code. Feedback count array may be collapsed when not inspecting values."
+  },
+  "requirements": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ]
+  },
+  "actual_firmware_modified_by_assistant": false,
+  "assistant_hardware_actions": false
+}

@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-17",
+  "geometry": {
+    "layout": "X per user",
+    "wheel_diameter_mm": 77,
+    "track_width_mm": 210,
+    "wheelbase_mm": 210,
+    "spacing_precision": "approximate user report"
+  },
+  "coordinates": {
+    "vx": "forward mm/s",
+    "vy": "left mm/s",
+    "wz": "counterclockwise rad/s"
+  },
+  "wheel_order": [
+    "left_rear",
+    "right_rear",
+    "left_front",
+    "right_front"
+  ],
+  "mm_s_per_rpm": 4.031710572106901,
+  "module": "pure math; no actuation or existing main/CAN/Safety changes",
+  "validation": {
+    "ARMCC_module": "passed",
+    "actual_module_host_checks": 4451,
+    "Keil_references_exist": true,
+    "full_rebuild": "pending user",
+    "hardware": "not performed"
+  },
+  "sha256": {
+    "USER/chassis_kinematics.c": "0fe5b026d5aa29923166fb91ef1b3d844c43811b113997ecb0da5cd3be8baa97",
+    "USER/chassis_kinematics.h": "35be90d4a8f8545200d477faab4dfc3b5836262b30fab5aa99243b05111d98c0",
+    "gongxun-f407.uvprojx": "57879c0643c4540f0e60cbddc1289f91f47af165e0c11b270fd8ea5c96882ed4"
+  },
+  "requirements": {
+    "R_unchanged": [
+      "PWR-01",
+      "RUN-01"
+    ],
+    "E_reviewed": [
+      "LOC-03",
+      "MOT-01",
+      "MOT-02",
+      "MOT-03",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": "unchanged"
+  }
+}

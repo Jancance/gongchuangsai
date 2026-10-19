@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-06",
+  "scope": "isolated port.c compile using temporary configuration copies, not user project rebuild",
+  "compiler": "ARMCC V5.06 update5 build528",
+  "original_expansion": "(5U << (8U - 4))",
+  "patched_expansion": "(5 << (8 - 4))",
+  "cases": [
+    {
+      "case": "original",
+      "exit_code": 1,
+      "output": "\"D:\\\\\\320\\302\\275\\250\\316\\304\\274\\376\\274\\3204\\\\\\271\\244\\264\\264\\310\\374\\\\\\264\\372\\302\\353\\\\stm32\\\\3.stm32f407\\271\\244\\263\\314\\\\FreeRTOS\\\\portable\\\\RVDS\\\\ARM_CM4F\\\\port.c\", line 503: Error: A1586E: Bad operand types (UnDefOT, Constant) for operator (\n  503 0000007a  mov r0, #(5U << (8U - 4))\n1 Error, 0 Warnings",
+      "object_exists": false
+    },
+    {
+      "case": "patched",
+      "exit_code": 0,
+      "output": "",
+      "object_exists": true
+    }
+  ],
+  "user_firmware_modified": false,
+  "full_project_link_tested": false,
+  "runtime_tested": false
+}

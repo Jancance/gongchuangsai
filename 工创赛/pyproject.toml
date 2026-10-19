@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smart-carrier"
+version = "0.1.0"
+description = "Fail-safe Orange Pi 5 Pro vision and STM32 control scaffold for the intelligent transport contest"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.23,<3",
+  "opencv-python-headless>=4.6,<5; platform_system != 'Linux'",
+  "PyYAML>=6,<7",
+  "pyserial>=3.5,<4",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7,<9"]
+
+[project.scripts]
+robot-main = "smart_carrier.main:main"
+robot-health = "smart_carrier.health:main"
+robot-camera-audit = "smart_carrier.camera_audit:main"
+robot-p2-replay = "smart_carrier.replay:main"
+robot-p2-selftest = "smart_carrier.p2_selftest:main"
+robot-p1-preflight = "smart_carrier.p1_preflight:main"
+robot-vision-workbench = "smart_carrier.vision_workbench:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"

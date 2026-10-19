@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-09",
+  "source": "User reports VM has no voltage and asks to resolve VM power before CAN work; original 15 schematic images and current main.c reviewed",
+  "priority": "VM_STATIC_POWER_DIAGNOSIS_BEFORE_CAN",
+  "vm_voltage_user_report": "电源板上的VM没有电压",
+  "voltage_measurements": {
+    "protected_24v_at_q2_input": 22.34,
+    "vm_en_at_r13_input_or_power_board_h2_pin6": 0.016,
+    "vm_output": null,
+    "pe2_vm_io": null
+  },
+  "current_firmware_pe2_initialized_as_output": true,
+  "current_firmware_vm_enable_command_present": true,
+  "latest_source_status": "User corrected main.c: Power_Init now called at line154 after Key_Init and before tasks; user reports VM has voltage",
+  "latest_request1_measurement": {"pe2_vm_io_volts": 0.017, "vm_en_volts": 0.0, "vm_volts": 0.0, "switch": "Not pressed", "request1_and_f5": "USER_CONFIRMED"},
+  "latest_evidence": "evidence/p1-foundation/2026-10-09/vm_enable_after_init_fix.json",
+  "current_pc13_key_function": "Event counter only, no power-enable action",
+  "schematic_control_path": [
+    "STM32 PE2 = VM_IO",
+    "Main-board six-contact switch pole1: pin1 VM_IO, pin2 VM_EN, pin3 GND",
+    "Main-board H2 pin6 VM_EN -> power-board H2 pin6 VM_EN",
+    "Power-board R13 1k -> Q6 SS8050 -> R14 / Q2 gate",
+    "Power-board Q2 FQB47P06 switches protected 24V to VM"
+  ],
+  "switch_truth_table_from_schematic": {
+    "pin2_connected_to_pin1": "VM_EN follows PE2; high requests VM on, low requests VM off",
+    "pin2_connected_to_pin3": "VM_EN tied to GND; VM forced off",
+    "pressed_or_released_position_mapping": "NOT_YET_MEASURED; do not infer from the 急停 label"
+  },
+  "upstream_input_enable": "U15 VCC_EN is distinct from VM_EN and PE2 VM_IO",
+  "legacy_design_conflict": "Older power design describes an ACT_SAFE_EN hardware AND/NC emergency loop/watchdog candidate; that complete chain is not shown by the reviewed six-contact selector and Q6/Q2 circuit",
+  "new_voltage_source": "User reply 1是22.34V，2是0.016V to the protected24V/VM_EN measurement request",
+  "interpretation": "Protected supply reaches Q2 input and VM_EN is low; current program has no PE2 allow-request setup, so VM-off matches the observed control condition. Switch position and Q2/Q6 health are not yet verified.",
+  "vm_enable_user_confirmed_after_init_fix": true,
+  "software_vm_disable_validation": "PENDING",
+  "latest_physical_switch_shutdown": "USER_CONFIRMED 可以关闭，现在通过按键可以关闭",
+  "software_request0_shutdown_clarification": "Pending separate confirmation; do not equate a physical-button report to all shutdown paths",
+  "next_action": "Clarify separate request0 shutdown and motor-module termination setting; user can meanwhile add existing CAN standard library per manual prep guide without powering motors or sending frames",
+  "can_work_status": "Library registration preparation can proceed; actual bus transaction awaits electrical/termination gate",
+  "original_schematic_archive": "evidence/p1-schematics/original-user-images/source_manifest.json",
+  "review_document": "docs/P1_CAN_VM_SCHEMATIC_RECHECK_2026-10-09.md",
+  "manual_code_guide": "docs/P1_VM_POWER_MANUAL_GUIDE_2026-10-09.md",
+  "private_compile_probe": "evidence/p1-foundation/2026-10-09/vm_power_private_compile_probe.json",
+  "requirements_checked": {
+    "R": ["RUN-01", "PWR-01"],
+    "E": ["LOC-03", "RUN-06", "MOT-04", "PWR-02"],
+    "Q": "Official clarification unchanged; static voltages, switch truth table and safety behavior still unverified engineering items"
+  },
+  "firmware_modified": false,
+  "pcb_or_schematic_modified": false,
+  "can_or_motion_commands_sent_by_assistant": false
+}

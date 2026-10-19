@@ -1,0 +1,261 @@
+{
+  "source": "D:\\Codex\\工创赛\\evidence\\20261006-195642-102168.zip",
+  "source_sha256": "67cc18b6a3cc6ca0c833c9c4f7f7218ad196b1ecd9121478d1c7a26a683e1b89",
+  "module_hashes": {
+    "project_detector.py": "7b15c2a817348e976378d342355a5e5fdebe8ee6a9fad8e55f1e17ad6d28713c",
+    "project_follow.py": "ddb013e0e633e69cfd1e9d3613d5abc11ae02fdcc5e0f676c5f35943b8a3f344",
+    "project_tracker.py": "d189ecbf15324eb0ae7ef0eeeaed8318ca72325c3cb9a725112069834bbc346a",
+    "project_camera.py": "a9d234f1d676afd44cf118a0e60be7aaf636c687ae40e281aa0dd62cb4795df4",
+    "diagnostic_entry": "4ba5217569306d759f582f309655178d11faf9c474e39b0f5ed135368d2b1afc",
+    "diagnostic_base": "11dfbfb390d8a6cc9d8915d7a6e79be21b213e449f603be7cff6e9d955ef1bc6"
+  },
+  "candidate": "tabletop-color-probe-v9-equivalent-roi-performance-candidate",
+  "run": {
+    "frames": 350,
+    "states": {
+      "STALE_RESULT": 49,
+      "FOLLOWING_PIXEL": 295,
+      "SEARCHING": 6
+    },
+    "transition_counts": {
+      "sample-01": 1,
+      "first-frame": 1,
+      "first-other-color-candidate": 286,
+      "first-lightblue-with-blue": 286,
+      "first-lightblue-visible": 1,
+      "first-lightblue-loss": 33,
+      "first-lightblue-reappearance": 32,
+      "first-lightblue-id-change": 32,
+      "sample-02": 1,
+      "sample-03": 1,
+      "sample-04": 1,
+      "sample-05": 1,
+      "sample-06": 1,
+      "sample-07": 1,
+      "sample-08": 1,
+      "sample-09": 1,
+      "sample-10": 1,
+      "sample-11": 1,
+      "first-lightblue-with-red": 5,
+      "sample-12": 1
+    },
+    "saved_events": [
+      "first-frame",
+      "first-lightblue-id-change",
+      "first-lightblue-loss",
+      "first-lightblue-reappearance",
+      "first-lightblue-visible",
+      "first-lightblue-with-blue",
+      "first-lightblue-with-red",
+      "first-other-color-candidate",
+      "sample-01",
+      "sample-02",
+      "sample-03",
+      "sample-04",
+      "sample-05",
+      "sample-06",
+      "sample-07",
+      "sample-08",
+      "sample-09",
+      "sample-10",
+      "sample-11",
+      "sample-12"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "lightblue",
+    "longest_watched_loss_s": 1.172433976999855,
+    "periodic_samples": {
+      "interval_s": 2.0,
+      "limit": 12,
+      "saved": 12
+    }
+  },
+  "stale_results_with_both_blue_and_lightblue_already_detected": 49,
+  "age_ms_p50_p95_max": [
+    130.4579810002906,
+    158.3093082500909,
+    208.56109700071102
+  ],
+  "detector_ms_p50_p95_max": [
+    112.86242399955881,
+    131.91728469996633,
+    193.51919000018825
+  ],
+  "saved_image_equivalence": [
+    {
+      "file": "first-frame-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "first-lightblue-id-change-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "first-lightblue-id-change-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "first-lightblue-loss-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "first-lightblue-loss-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "first-lightblue-reappearance-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "first-lightblue-reappearance-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "first-lightblue-visible-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "first-lightblue-visible-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "first-lightblue-with-blue-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "first-lightblue-with-blue-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "first-lightblue-with-red-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "first-lightblue-with-red-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "first-other-color-candidate-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "first-other-color-candidate-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "longest-lightblue-loss-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "longest-lightblue-loss-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-01-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-02-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-02-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-03-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-03-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-04-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-04-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-05-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-05-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-06-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-06-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-07-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-07-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-08-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-08-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-09-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-09-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-10-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-10-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-11-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-11-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-12-before-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    },
+    {
+      "file": "sample-12-raw.png",
+      "exact_regions_and_diagnostics_match": true
+    }
+  ],
+  "pc_benchmark_ms_p50_p95": {
+    "v8": [
+      70.85940000251867,
+      81.83643000447772
+    ],
+    "v9": [
+      44.41024999687215,
+      52.413834998151266
+    ]
+  },
+  "scope": "Saved image equivalence and PC timing only. Board timing and occlusion remain unverified."
+}

@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-11",
+  "source": "User screenshot codex-clipboard-318d0767-995a-4c4c-a75e-ffb9727cf8cd.png",
+  "screenshot": "right_rear_ID2_version_result_pass.png",
+  "motor": {"position": "right rear", "address": 2, "FWType_user_confirmed": "FW_Emm"},
+  "observed": {"target_address": 2, "result": 1, "ESR": 0, "request": 0, "VM_request": 1, "loopback_result": 1, "RTOS_fault": 0, "INRQ": 0, "INAK": 0, "PD0": 1, "task_A_stack_words": 210, "PC": "0x08001FC2"},
+  "actual_main_source_patch_verified": {"address_global": true, "address_snapshot": true, "range1_to4": true, "call_uses_selected_address": true},
+  "normal_version_transaction": "PASS",
+  "raw_reply_screenshot": "right_rear_ID2_version_raw_reply.png",
+  "raw_reply": {"ExtId": "0x00000200", "IDE": "0x04", "RTR": "0x00", "DLC": 6, "Data_valid_hex": ["1F", "00", "CA", "23", "14", "6B"], "FMI": 0},
+  "expected_extended_ID": "0x0200",
+  "firmware_version_and_HW_raw": {"software_raw": "0x00CA", "software_decimal": 202, "software_version": "V2.0.2", "hardware_raw": "0x2314", "matches_left_rear_fields": true},
+  "real_user_build_log_received": false,
+  "next": "Power off before connecting left-front ID3 only; run motherboard, restore VM after startup, then select address3/request1 and inspect result/ESR/raw reply. ID4 remains pending.",
+  "requirements": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06"]},
+  "firmware_or_PCB_modified_by_assistant": false,
+  "complete_network_and_motion_pass": false
+}

@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-15",
+  "source": "User screenshot 8b62bea6-4aca-4a6d-9cf6-3aac81f4b173",
+  "observed": {
+    "g_vm_test_request": 1,
+    "g_rtos_fault": 0,
+    "g_safety_fault": 0,
+    "g_safety_ready": 1,
+    "g_can_guard_ready": 1,
+    "g_safety_count": 2862,
+    "g_stack_a_words": 169,
+    "g_safety_stack_words": 230,
+    "g_heap_min_bytes": 12968,
+    "g_can_poll_result": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "g_can_poll_count": [
+      131,
+      131,
+      130,
+      130
+    ],
+    "g_can_poll_esr": 0
+  },
+  "not_visible": [
+    "g_can_feedback_enable",
+    "physical VM voltage",
+    "elapsed test duration"
+  ],
+  "interpretation": "Status-only cadence comparison has a healthy snapshot after at least 130 successful queries per node. Supports investigating query spacing; does not establish 10ms as the unique root cause or prove long-term reliability. Continuous feedback not accepted.",
+  "next": "User manually changes TaskA final delay from 100ms to 50ms, keeps feedback_enable=0, rebuilds and observes status-only polling for 10 seconds with first-fault breakpoint. Do not enable continuous feedback while retaining 100ms: twelve sequential transaction delays alone exceed the 1s freshness limit. 50ms is an engineering test candidate, not manufacturer minimum or accepted motion cadence.",
+  "requirements": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ]
+  },
+  "firmware_modified_by_assistant": false
+}

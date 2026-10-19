@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-12",
+  "source": "User screenshot codex-clipboard-d28f0034-bca3-4927-a0e0-55e64b5a613e.png plus explicit VM voltage0",
+  "evidence_image": "task_supervision_cleanup_normal_start_pass.png",
+  "observed": {"g_vm_test_request": 0, "g_rtos_fault": 0, "g_safety_task_create": 1, "g_safety_fault": 0, "g_safety_ready": 1, "g_safety_count": 145, "g_stack_a_words": 208, "g_safety_stack_words": 233, "g_heap_min_bytes": 14072, "deleted_test_symbol": "cannot evaluate"},
+  "user_reported_VM_volts": 0,
+  "actual_main_read_verified_test_symbol_absent": true,
+  "acceptance": "Key-loss temporary injection cleanup, formal build and normal startup/request0 physical VM-off gate PASS",
+  "scope": "Basic task supervision with one controlled Key-loss shutdown/latch case; not full vehicle readiness or CAN fault handling",
+  "next": "User three-file changes for CAN normal-session reuse and four-node cyclic status capture; then freshness/protection integration with Safety before watchdog",
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_Q": "unchanged",
+  "actual_firmware_modified_by_assistant": false,
+  "hardware_commands_sent_by_assistant": false
+}

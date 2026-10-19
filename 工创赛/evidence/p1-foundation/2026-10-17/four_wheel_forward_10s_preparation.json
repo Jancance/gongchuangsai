@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-17",
+  "explicit_user_choice": "four wheels together, all1RPM,10seconds",
+  "known_direction": "ID1 direction0 forward; direction1 reverse per user",
+  "pending_direction": "ID2/3/4 direction0 body-forward mapping unverified",
+  "parameters": {
+    "addresses": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "direction": 0,
+    "speed_raw": 1,
+    "run_ms": 10000,
+    "cut_ms": 10500,
+    "prepare_limit_ms": 5000,
+    "default_dry_run": 1
+  },
+  "synchronization": "sequential CAN exchanges, no FF synchronization claim",
+  "validation": {
+    "ARMCC_main_Safety": "passed",
+    "actual_C_host_mock_checks": 109,
+    "full_rebuild": "pending user",
+    "four_wheel_hardware_test": "not performed"
+  },
+  "sha256": {
+    "3.stm32f407工程/USER/main.c": "51618f6fc17cac2e5d794a7cdadfb6947da7d1aa1cdd49f84bf70a0d8fa99e8c",
+    "3.stm32f407工程/SYSTEM/SAFETY/safety.c": "b78f653f2b5f76a0c5b5b2813ba4fd707d3837f478075147ae88187e598ac8e5",
+    "3.stm32f407工程/SYSTEM/SAFETY/safety.h": "1495fb7be61f579e3b6941e4d724eee842cf51f7b41933e047d746610e3d5f3a"
+  },
+  "requirements": {
+    "R_unchanged": [
+      "PWR-01",
+      "RUN-01"
+    ],
+    "E_reviewed": [
+      "LOC-03",
+      "MOT-02",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": "unchanged"
+  }
+}

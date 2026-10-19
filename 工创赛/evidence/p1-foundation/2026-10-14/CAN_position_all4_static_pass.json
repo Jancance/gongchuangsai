@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-14",
+  "sources": [
+    "CAN_position_ID2_raw.png",
+    "CAN_position_ID2_serial.png",
+    "CAN_position_ID3_raw.png",
+    "CAN_position_ID3_serial.png",
+    "CAN_position_ID4_raw.png",
+    "CAN_position_ID4_serial_all4.png"
+  ],
+  "acceptance": "PASS: all four static 36 position transactions/raw/serial agreement including previous ID1",
+  "results": [
+    {
+      "address": 1,
+      "sign": 0,
+      "raw": 1,
+      "source": "previous accepted raw frame"
+    },
+    {
+      "address": 2,
+      "sign": 0,
+      "raw": 1,
+      "extid": "0200",
+      "result": 1,
+      "safety_count": 586
+    },
+    {
+      "address": 3,
+      "sign": 0,
+      "raw": 3,
+      "extid": "0300",
+      "result": 1,
+      "safety_count": 720
+    },
+    {
+      "address": 4,
+      "sign": 0,
+      "raw": 3,
+      "extid": "0400",
+      "result": 1,
+      "safety_count": 865
+    }
+  ],
+  "common": {
+    "dlc": 7,
+    "ide": 4,
+    "rtr": 0,
+    "vm_request": 1,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "platform_ready": 1,
+    "can_guard_ready": 1,
+    "app_stack_words": 181,
+    "safety_stack_words": 230,
+    "heap_min_bytes": 12968
+  },
+  "new_numeric_vm_measurement": false,
+  "position_frames": "36 00 00 00 00 [01 or 03] 6B",
+  "limits": [
+    "static single reads only; no continuous or moving feedback acceptance"
+  ],
+  "next": "main-only continuous static feedback prototype, default disabled, 10ms loop, status/speed/position one request per iteration",
+  "requirements_checked": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ]
+  }
+}

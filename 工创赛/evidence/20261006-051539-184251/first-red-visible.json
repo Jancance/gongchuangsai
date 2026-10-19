@@ -1,0 +1,96 @@
+{
+  "event": "first-red-visible",
+  "previous": null,
+  "current": {
+    "state": "FOLLOWING_PIXEL",
+    "targets": [
+      {
+        "id": "T001",
+        "color": "red",
+        "center_px": [
+          621.5282535300191,
+          475.8915953707122
+        ],
+        "bbox_px": [
+          496,
+          321,
+          261,
+          305
+        ],
+        "area_px2": 62299.0,
+        "read_time": 1376.868036969,
+        "consecutive_observations": 1,
+        "visible_in_last_frame": true,
+        "identity_continuity_unverified": false,
+        "state": "CANDIDATE",
+        "velocity_px_s": null,
+        "predicted_px": null,
+        "prediction_horizon_s": 0.1,
+        "identity_valid_for_prediction": true
+      }
+    ],
+    "unknown_candidates": 0,
+    "ready": false,
+    "motion_allowed": false,
+    "units": "pixels",
+    "note": "当前为原始像素诊断，速度未补偿相机自身运动，禁止用于抓取指令",
+    "timestamp_source": "host_read_completion",
+    "timestamp": 1376.868036969,
+    "retired_ids": [],
+    "detector_regions": [
+      {
+        "bbox_px": [
+          496,
+          321,
+          261,
+          305
+        ],
+        "area_px2": 62299.0,
+        "label": "red",
+        "reason": "DOMINANT_COLOR_EVIDENCE",
+        "usable_fraction": 0.9803046129999663,
+        "color_fractions": {
+          "red": 0.6908997164217582,
+          "yellow": 0.0,
+          "blue": 0.0,
+          "green": 0.0,
+          "black": 0.2991148921543353,
+          "lightblue": 0.0
+        },
+        "dark_fraction": 0.2991148921543353,
+        "silhouette_center_px": [
+          621.5282535300191,
+          475.8915953707122
+        ]
+      }
+    ],
+    "frame_index": 1,
+    "detector_call_ms": 99.45404299992333,
+    "result_host_age_ms": 113.46372499997415,
+    "recorded_monotonic": 1376.981500694,
+    "last_red_ids_before_frame": null,
+    "internal_tracks_not_actionable": [
+      {
+        "id": "T001",
+        "color": "red",
+        "center_px": [
+          621.5282535300191,
+          475.8915953707122
+        ],
+        "bbox_px": [
+          496,
+          321,
+          261,
+          305
+        ],
+        "area_px2": 62299.0,
+        "read_time": 1376.868036969,
+        "consecutive_observations": 1,
+        "visible_in_last_frame": true,
+        "identity_continuity_unverified": false,
+        "state": "CANDIDATE"
+      }
+    ]
+  },
+  "note": "Raw frames before drawing. Event is evidence, not a root-cause diagnosis."
+}

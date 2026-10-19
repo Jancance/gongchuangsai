@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-17",
+  "disable_validation": {
+    "rebuild": {
+      "code": 22816,
+      "ro": 424,
+      "rw": 784,
+      "zi": 22872,
+      "errors": 0,
+      "warnings": 0
+    },
+    "four_motor_release": "passed per direct user report",
+    "four_raw_replies_and_status_readback": "not provided",
+    "poweroff": "user acknowledged prescribed shutdown steps"
+  },
+  "enable_change": "single request: fixed raw speed zero with acc0 then recheck conditions and enabled1; no automatic retry",
+  "main_sha256": "7ad8ac67b03a249776772d7b6a19b044b7838057b865d61b47a3afadb274fe6d",
+  "validation": {
+    "ARMCC_main_isolated": "passed",
+    "actual_helper_and_branch_host_mock_checks": 106,
+    "full_rebuild": "pending user",
+    "hardware_enable": "not performed"
+  },
+  "next": "Keil Rebuild, VM request0",
+  "requirements": {
+    "R_unchanged": [
+      "PWR-01",
+      "RUN-01"
+    ],
+    "E_reviewed": [
+      "LOC-03",
+      "MOT-02",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": "unchanged"
+  }
+}

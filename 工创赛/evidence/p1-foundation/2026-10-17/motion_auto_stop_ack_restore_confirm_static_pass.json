@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-17",
+  "scope": "Static automatic-stop receipt acknowledgements and confirmation reset",
+  "user_full_rebuild": {
+    "code": 22464,
+    "rw": 756,
+    "errors": 0,
+    "zi": 22852,
+    "ro": 424,
+    "warnings": 0
+  },
+  "triggered": {
+    "results": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "fault_latched": 48,
+    "cut_vm": 0,
+    "hold_report": 1,
+    "fail_mask": 0,
+    "report_count": 308,
+    "session": 1,
+    "state": 2,
+    "block_reason": 120,
+    "cause": 0,
+    "ack_mask": 15
+  },
+  "restored": {
+    "fresh_masks": [
+      15,
+      15
+    ],
+    "fault_latched": 48,
+    "block_reason": 72,
+    "safety_fault": 0,
+    "report_count": 359,
+    "session": 1,
+    "state": 2,
+    "platform_ready": 1,
+    "rtos_fault": 0,
+    "can_ready": 1
+  },
+  "confirmed": {
+    "fault_latched": 0,
+    "cut_vm": 0,
+    "block_reason": 61,
+    "allowed": 0,
+    "session": 1,
+    "vm_request": 0,
+    "state": 0,
+    "historical_ack_mask": 15,
+    "ack_result": 1
+  },
+  "vm_volts_user_report": 0,
+  "not_verified": [
+    "Physical stop from motion",
+    "Failure/timeout physical VM cutoff",
+    "Exact response timing",
+    "Formal motion permission"
+  ]
+}

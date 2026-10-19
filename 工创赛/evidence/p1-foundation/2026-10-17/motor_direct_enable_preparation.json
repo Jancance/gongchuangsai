@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-17",
+  "trigger": "disabled ID1 zero speed rejected with F6 E2 6B, old result8/final10",
+  "fix": "direct one-shot F3 enabled1, remove F6 precondition and obsolete zero result/reply globals",
+  "main_sha256": "f534596a5e3bfac697b8b8a11758aaeeae3535cba282503b6d329f8d1885cb6c",
+  "checks": {
+    "ARMCC_main_isolated": "passed",
+    "actual_branch_mock_assertions": 69,
+    "full_rebuild": "pending",
+    "hardware_retest": "pending"
+  },
+  "not_proven": "F3 enable does not by itself prove cleared historical target or no transient motion",
+  "requirements": {
+    "R_unchanged": [
+      "PWR-01",
+      "RUN-01"
+    ],
+    "E_reviewed": [
+      "LOC-03",
+      "MOT-02",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": "unchanged"
+  }
+}

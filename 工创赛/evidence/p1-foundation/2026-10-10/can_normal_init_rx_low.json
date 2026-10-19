@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-10",
+  "source": "User screenshot codex-clipboard-2b81184f-b420-43c4-b0b2-bb949d6cee88.png",
+  "observed": {
+    "g_vm_test_request": 1,
+    "g_can_test_result": 1,
+    "g_rtos_fault": 0,
+    "g_stack_a_words": 199,
+    "g_can_version_request": 0,
+    "g_can_version_result": 3,
+    "g_can_version_esr": 0,
+    "CAN1_MCR_INRQ": 0,
+    "CAN1_MSR_INAK": 1,
+    "GPIOD_IDR_PD0": 0,
+    "PC": "0x080021BE",
+    "stack": "PSP"
+  },
+  "source_check": "Current can.c has bounded 100ms initialization-exit wait; version transmit is after successful initialization.",
+  "interpretation": "Initialization still active at observation. Low RX sample warrants supply and receive-path checks; continuous low and exact cause not proven.",
+  "user_voltage_measurements": {"U1_VCC_volts": 5.02, "U1_RXD_volts": 0},
+  "external_bus_isolated_measurement": {"U1_RXD_volts": 5.02, "source": "User reply after external CAN1 isolation instruction", "usable_for_diagnosis": false, "reason": "User subsequently corrected wrong RXD measurement point; correct isolated measurement must be repeated."},
+  "left_rear_only_measurement": {"U1_RXD_volts": 5.0, "source": "User reply after left rear ID1-only connection instruction", "usable_for_diagnosis": false, "reason": "User subsequently corrected wrong RXD measurement point."},
+  "left_rear_retry": {
+    "source": "User screenshot codex-clipboard-4766e12e-f57d-4479-96af-928f082ce5e3.png and subsequent voltage report",
+    "result": 3,
+    "ESR": 0,
+    "INRQ": 0,
+    "INAK": 1,
+    "PD0_IDR": 0,
+    "U1_RXD_reported_volts": 5.0,
+    "voltage_and_register_sample_simultaneity": "NOT_CONFIRMED",
+    "reported_5V_usable_for_diagnosis": false
+  },
+  "user_measurement_correction": {
+    "source": "User correction and screenshot codex-clipboard-f8d99ad6-9f88-44c5-a572-476c401314d1.png",
+    "statement": "Previous RXD measurement point was wrong.",
+    "correct_RXD_after_VM_and_motor_start_volts": 0,
+    "correct_RXD_after_version_request_volts": 0,
+    "result": 3,
+    "ESR": 0,
+    "INRQ": 0,
+    "INAK": 1,
+    "PD0_IDR": 0
+  },
+  "corrected_point_external_bus_isolated": {
+    "U1_RXD_volts": 0.1,
+    "source": "User reply after repeating all-external-CAN1 isolation at corrected RXD point",
+    "interpretation": "Low RX persists under reported isolated motherboard condition; specific local cause not yet identified."
+  },
+  "supply_clarification_and_new_measurements": {
+    "previous_supply_user_statement": "Motherboard powered using 3V3",
+    "user_action": "Added 5V supply",
+    "RXD_volts": 5.0,
+    "TXD_volts": 3.27,
+    "CANH_volts": 2.21,
+    "CANL_volts": 2.21,
+    "interpretation": "After 5V supply addition, RX high and TX high/H-L zero differential are consistent with local idle state. Actual motor transaction not yet verified.",
+    "schematic_H2": {"pin3": "3V3", "pin11": "5V", "pin12": "GND"},
+    "previous_VCC_5V_report_measurement_condition": "Must distinguish from newly disclosed 3V3-only setup; not proof receiver supply was present throughout earlier failures."
+  },
+  "retry_after_5V_addition": {
+    "source": "User screenshot codex-clipboard-adde1a11-5b05-4a14-ab6b-240a843d5145.png",
+    "result": 3,
+    "ESR": 0,
+    "VM_request": 1,
+    "version_request": 0,
+    "INRQ": 0,
+    "INAK": 1,
+    "PD0_IDR": 0,
+    "PC": "0x08001FAE",
+    "interpretation": "Initialization has not exited in current observed state; previous idle voltages are not contemporaneous evidence."
+  },
+  "connected_failure_state_voltages": {
+    "source": "User measured VCC/RXD/H/L in instructed current stopped failure state",
+    "VCC_volts": 5.03,
+    "RXD_volts": 0,
+    "CANH_volts": 2.92,
+    "CANL_volts": 0.5,
+    "CANH_minus_CANL_volts": 2.42,
+    "interpretation": "Supply valid; bus differential is dominant-consistent and explains low RX. DC measurements do not independently prove waveform or driving source."
+  },
+  "motor_VM_off_test": {
+    "VM_volts": 0,
+    "U1_RXD_volts": 5,
+    "CAN_wiring_change_instructed": false,
+    "interpretation": "Motor VM removal releases low RX state; current dominant state is associated with the powered left-rear endpoint, exact cause not yet established."
+  },
+  "user_constraint": "Cannot measure motor-module chip pins; requested reviewing ZDT manual instead.",
+  "manual_recheck": {
+    "source": "ZDT_X42S第二代闭环步进电机用户手册V1.0.5_260527.pdf",
+    "complete_pages_visually_reviewed": [6,12,16,18,28],
+    "communication_mode": "CAN1_MAP",
+    "wiring": {"R/A/H": "CANH", "T/B/L": "CANL", "GND": "common GND"},
+    "reported_parameters_match": true,
+    "plugin_mounting_direction_verified": false,
+    "example_PB8_PB9": "Not a replacement for finished mainboard PD0/PD1"
+  },
+  "current_left_rear_resolution_2026_10_11": {
+    "user_correction": "P_Serial CAN1_MAP was not actually selected previously",
+    "after_selection": "Version result1, ESR0, INAK0, PD0 high; ID1 read transaction passed",
+    "evidence": "../2026-10-11/left_rear_CAN1_MAP_version_read_pass.json",
+    "raw_reply_and_other_nodes": "PENDING"
+  },
+  "next": "Left-rear raw version reply1F00CA23146B verified. Read FWType menu without changing it; do not repeat voltage/plugin/transaction checks for the passed node.",
+  "hardware_pass": false,
+  "firmware_modified_by_assistant": false,
+  "requirements": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]}
+}

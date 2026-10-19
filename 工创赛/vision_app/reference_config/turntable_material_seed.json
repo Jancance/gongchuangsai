@@ -1,0 +1,28 @@
+{
+  "format_version": 1,
+  "enabled": true,
+  "reference": {
+    "center_px": [640.0, 360.0],
+    "radius_px": 371.0
+  },
+  "detection": {
+    "roi_margin_px": 180.0,
+    "processing_scale": 0.5,
+    "minimum_end_radius_px": 18,
+    "maximum_end_radius_px": 70,
+    "hough_dp": 1.2,
+    "hough_edge_threshold": 100.0,
+    "hough_accumulator_threshold": 26.0,
+    "hough_minimum_distance_px": 20.0,
+    "maximum_candidates": 40,
+    "minimum_color_support_ratio": 0.18,
+    "endpoint_cluster_distance_px": 115.0,
+    "maximum_clusters": 8,
+    "minimum_material_spacing_px": 80.0,
+    "minimum_orbit_radius_px": 90.0,
+    "maximum_orbit_radius_px": 340.0,
+    "maximum_center_reference_distance_px": 260.0,
+    "outer_radial_search_half_width_px": 120.0,
+    "retry_interval_frames": 5
+  }
+}

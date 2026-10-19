@@ -1,0 +1,179 @@
+{
+  "source": "D:\\Codex\\工创赛\\evidence\\20261007-061820-099415.zip",
+  "sha256": "e35cf8d10cd319775a33b7b7a18bb08b8d97d7e4f27fc0f2197edea0472b9075",
+  "matches_v13": {
+    "vision_app/code/project_detector.py": true,
+    "vision_app/code/config/material_color_thresholds.json": true
+  },
+  "run": {
+    "frames": 723,
+    "states": {
+      "FOLLOWING_PIXEL": 723
+    },
+    "transition_counts": {
+      "sample-01": 1,
+      "first-frame": 1,
+      "first-other-color-candidate": 723,
+      "first-red-with-green": 723,
+      "first-red-visible": 1,
+      "sample-02": 1,
+      "sample-03": 1,
+      "sample-04": 1,
+      "sample-05": 1,
+      "sample-06": 1,
+      "sample-07": 1,
+      "sample-08": 1,
+      "sample-09": 1,
+      "sample-10": 1,
+      "sample-11": 1,
+      "first-red-loss": 15,
+      "first-red-reappearance": 15,
+      "first-red-id-change": 5,
+      "sample-12": 1
+    },
+    "saved_events": [
+      "first-frame",
+      "first-other-color-candidate",
+      "first-red-id-change",
+      "first-red-loss",
+      "first-red-reappearance",
+      "first-red-visible",
+      "first-red-with-green",
+      "sample-01",
+      "sample-02",
+      "sample-03",
+      "sample-04",
+      "sample-05",
+      "sample-06",
+      "sample-07",
+      "sample-08",
+      "sample-09",
+      "sample-10",
+      "sample-11",
+      "sample-12"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "red",
+    "longest_watched_loss_s": 1.761202787000002,
+    "periodic_samples": {
+      "interval_s": 2.0,
+      "limit": 12,
+      "saved": 12
+    }
+  },
+  "observed_labels": {
+    "red": 639,
+    "green": 723
+  },
+  "complete_pair_results": 639,
+  "green_only_results": 84,
+  "complete_pair_episodes": [
+    {
+      "first_frame": 1,
+      "last_frame": 436,
+      "duration_s": 20.76395161700009
+    },
+    {
+      "first_frame": 444,
+      "last_frame": 451,
+      "duration_s": 0.35293307999995704
+    },
+    {
+      "first_frame": 455,
+      "last_frame": 455,
+      "duration_s": 0.0
+    },
+    {
+      "first_frame": 462,
+      "last_frame": 462,
+      "duration_s": 0.0
+    },
+    {
+      "first_frame": 498,
+      "last_frame": 500,
+      "duration_s": 0.1290413599999738
+    },
+    {
+      "first_frame": 502,
+      "last_frame": 508,
+      "duration_s": 0.32341713799996796
+    },
+    {
+      "first_frame": 512,
+      "last_frame": 514,
+      "duration_s": 0.10226325300004646
+    },
+    {
+      "first_frame": 517,
+      "last_frame": 517,
+      "duration_s": 0.0
+    },
+    {
+      "first_frame": 530,
+      "last_frame": 533,
+      "duration_s": 0.15508039500002724
+    },
+    {
+      "first_frame": 535,
+      "last_frame": 576,
+      "duration_s": 2.060549902000048
+    },
+    {
+      "first_frame": 578,
+      "last_frame": 581,
+      "duration_s": 0.15987182499998198
+    },
+    {
+      "first_frame": 584,
+      "last_frame": 584,
+      "duration_s": 0.0
+    },
+    {
+      "first_frame": 586,
+      "last_frame": 590,
+      "duration_s": 0.2325243440000122
+    },
+    {
+      "first_frame": 598,
+      "last_frame": 598,
+      "duration_s": 0.0
+    },
+    {
+      "first_frame": 600,
+      "last_frame": 601,
+      "duration_s": 0.03738266100003784
+    },
+    {
+      "first_frame": 604,
+      "last_frame": 723,
+      "duration_s": 6.036983115999988
+    }
+  ],
+  "last_positions": [
+    {
+      "color": "green",
+      "id": "T002",
+      "center_px": [
+        391.47385910042914,
+        486.0446779934819
+      ]
+    },
+    {
+      "color": "red",
+      "id": "T007",
+      "center_px": [
+        762.0141401491143,
+        474.9716000641461
+      ]
+    }
+  ],
+  "result_host_age_ms_p95_max": [
+    80.29063180005096,
+    132.92863600008786
+  ],
+  "scope": "Current separated red/green recognition and complete-pair spans. Handling losses are not automatically labelled static or motion; no whole-run zero-loss/identity/grasp acceptance."
+}

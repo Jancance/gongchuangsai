@@ -1,0 +1,101 @@
+{
+  "source": "D:\\Codex\\工创赛\\evidence\\20261006-233915-492000.zip",
+  "sha256": "bf7cee3f0cd06936ab1b5bcbf60f3524cf5fac7840f62c05d148eda7fc6c238e",
+  "run": {
+    "frames": 763,
+    "states": {
+      "STALE_RESULT": 1,
+      "FOLLOWING_PIXEL": 762
+    },
+    "transition_counts": {
+      "sample-01": 1,
+      "first-frame": 1,
+      "first-other-color-candidate": 762,
+      "first-lightblue-with-blue": 762,
+      "first-lightblue-visible": 1,
+      "sample-02": 1,
+      "sample-03": 1,
+      "sample-04": 1,
+      "sample-05": 1,
+      "first-lightblue-with-red": 9,
+      "sample-06": 1,
+      "sample-07": 1,
+      "sample-08": 1,
+      "sample-09": 1,
+      "sample-10": 1,
+      "first-lightblue-loss": 9,
+      "sample-11": 1,
+      "first-lightblue-reappearance": 9,
+      "first-lightblue-id-change": 3,
+      "sample-12": 1
+    },
+    "saved_events": [
+      "first-frame",
+      "first-lightblue-id-change",
+      "first-lightblue-loss",
+      "first-lightblue-reappearance",
+      "first-lightblue-visible",
+      "first-lightblue-with-blue",
+      "first-lightblue-with-red",
+      "first-other-color-candidate",
+      "sample-01",
+      "sample-02",
+      "sample-03",
+      "sample-04",
+      "sample-05",
+      "sample-06",
+      "sample-07",
+      "sample-08",
+      "sample-09",
+      "sample-10",
+      "sample-11",
+      "sample-12"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "lightblue",
+    "longest_watched_loss_s": 3.5672248730000433,
+    "periodic_samples": {
+      "interval_s": 2.0,
+      "limit": 12,
+      "saved": 12
+    }
+  },
+  "matches": {
+    "vision_app/code/project_detector.py": true,
+    "vision_app/code/config/material_color_thresholds.json": true
+  },
+  "checks": {
+    "v11_package_matches": true,
+    "blue_present_in_every_result_after_startup": true,
+    "blue_has_one_id": true,
+    "all_results_after_startup_fresh": true,
+    "all_action_gates_off": true
+  },
+  "observed_labels": {
+    "lightblue": 592,
+    "blue": 762,
+    "red": 9
+  },
+  "blue_ids": [
+    "T002"
+  ],
+  "initial_result_state": "STALE_RESULT",
+  "blue_results_after_startup": 762,
+  "duration_s": 49.950203577000025,
+  "result_host_age_ms_p50_p95_max": [
+    76.06531499999392,
+    96.96618529995361,
+    168.23292500004072
+  ],
+  "post_startup_result_host_age_ms_max": 116.1737589999916,
+  "detector_ms_p50_p95_max": [
+    58.75348199998598,
+    69.04774430003044,
+    143.81640100003779
+  ],
+  "scope": "Independent fixed blue remains observed during pale edge test. Not acceptance of all pale losses, blue motion or real grasp."
+}

@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-13",
+  "datasheet": {"url": "https://www.st.com/resource/en/datasheet/stm32f407vg.pdf", "title": "STM32F405xx STM32F407xx DS8626", "revision": "12, March2026", "page": 105, "table": 35, "LSI_frequency_kHz": [17, 32, 47], "conditions": "VDD3V, TA-40..105C unless otherwise specified; frequency evaluated by characterization", "retrieval": "official web PDF parsed Table35; screenshot requested but wrapper returned reference text"},
+  "reference_manual": {"url": "https://www.st.com/resource/en/reference_manual/DM00031020.pdf", "name": "RM0090", "sections": ["21 independent watchdog", "debug independent watchdog stop bit"], "retrieval": "official search excerpts available; attempted full opens returned internal errors"},
+  "actual_ST_SPL_version": "V1.3.0",
+  "local_driver_interfaces_verified": ["IWDG_WriteAccessCmd/SetPrescaler/SetReload/Enable/ReloadCounter/GetFlagStatus", "DBGMCU_APB1PeriphConfig(DBGMCU_IWDG_STOP,...)", "RCC_LSICmd/LSIRDY/IWDGRST/ClearFlag"],
+  "source_driver_files_exist_in_user_project": true,
+  "source_driver_files_already_in_Keil": false,
+  "candidate_timeout_calculation": "64*(999+1)/fLSI; nominal2s, calculated1.36..3.76s for table frequency range, not measured board timing",
+  "candidate_debug_freeze": 1,
+  "feed_policy": "Only Safety_Update after current task/CAN checks and output decision, safety_ready1 and rtos_fault0; bounded CAN boot wait is an allowed transient",
+  "hardware_IWDG_acceptance": "PENDING"
+}

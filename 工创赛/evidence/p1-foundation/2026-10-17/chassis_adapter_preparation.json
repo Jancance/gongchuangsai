@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-17",
+  "implemented": [
+    "pure Emm integer-RPM command encoder",
+    "shared verified0/1/0/1 direction map",
+    "pure signed feedback conversion requiring mask0F",
+    "3 pure basic command patterns"
+  ],
+  "not_implemented": [
+    "three-segment timed actuator state machine",
+    "new runtime feedback freshness/stop policy",
+    "wireless control"
+  ],
+  "validation": {
+    "math_regression": 4451,
+    "adapter_checks": 228,
+    "ARMCC_main_module": "passed",
+    "actual_Keil_build": {
+      "exit": 0,
+      "code": 26016,
+      "ro": 440,
+      "rw": 904,
+      "zi": 22992,
+      "errors": 0,
+      "warnings": 0
+    },
+    "hardware_download": "not performed"
+  },
+  "next": "finite three-step executor with feedback and independent deadlines; keep VM off",
+  "sha256": {
+    "USER/main.c": "0f8b973b658d35d20ba37208416967526508cccf6557f1e93813976235edd6f0",
+    "USER/chassis_kinematics.c": "cec2691ce87d928ef4c3b284858a6d68a5465604aa691bbc4ce4815eb780b380",
+    "USER/chassis_kinematics.h": "3c4c02ebcfc235171541f0f76a8902f5eeae4c95cab164b08dd160e2e3a222ae"
+  },
+  "requirements": {
+    "R_unchanged": [
+      "PWR-01",
+      "RUN-01"
+    ],
+    "E_reviewed": [
+      "LOC-03",
+      "MOT-01",
+      "MOT-02",
+      "MOT-03",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": "unchanged"
+  }
+}

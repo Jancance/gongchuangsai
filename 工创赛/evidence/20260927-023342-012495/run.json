@@ -1,0 +1,49 @@
+{
+  "session_id": "b70c85813aea470588e713baeab6d16e",
+  "probe": "tabletop-color-probe-v1-candidate",
+  "processed_frames": 879,
+  "stale_rejections": 0,
+  "error": null,
+  "forced_shutdown": false,
+  "capture_events": [
+    {
+      "event": "ready",
+      "controls": "gain: 30\nwhite_balance_temperature_auto: 0\nwhite_balance_temperature: 4600\nexposure_auto: 1 (Manual Mode)\nexposure_absolute: 50\n",
+      "requested_buffers": 4,
+      "v4l2_mode_readback": "Format Video Capture:\n\tWidth/Height      : 1280/960\n\tPixel Format      : 'MJPG' (Motion-JPEG)\n\tField             : None\n\tBytes per Line    : 0\n\tSize Image        : 2457600\n\tColorspace        : sRGB\n\tTransfer Function : Rec. 709\n\tYCbCr/HSV Encoding: ITU-R 601\n\tQuantization      : Default (maps to Full Range)\n\tFlags             : \nStreaming Parameters Video Capture:\n\tCapabilities     : timeperframe\n\tFrames per second: 30.000 (30/1)\n\tRead buffers     : 0\n",
+      "opencv_mode_readback": {
+        "width": 1280.0,
+        "height": 960.0,
+        "fps": 30.0,
+        "fourcc": "MJPG",
+        "buffers": 4.0
+      },
+      "buffersize_set_returned_true": true,
+      "buffersize_note": "Return value is not proof of zero driver backlog."
+    },
+    {
+      "event": "capture_timing",
+      "host_reads_including_shutdown": 1413,
+      "read_call_ms": {
+        "min": 10.361,
+        "p50": 32.777,
+        "p95": 43.784,
+        "max": 50.561
+      },
+      "publish_lock_and_copy_ms": {
+        "min": 0.489,
+        "p50": 0.631,
+        "p95": 1.094,
+        "max": 4.079
+      },
+      "read_completion_interval_ms": {
+        "min": 11.213,
+        "p50": 33.501,
+        "p95": 44.46,
+        "max": 51.179
+      },
+      "note": "Includes any last capture during shutdown; read includes waiting and decoding."
+    }
+  ],
+  "scope": "Tabletop identity demo, one item per color. No motion state or metric pose. Reappearance creates a new ID."
+}

@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-17",
+  "observed_build": {
+    "code": 26014,
+    "ro": 430,
+    "rw": 904,
+    "zi": 22992,
+    "errors": 0,
+    "warnings": 0,
+    "new_module_compiled": false
+  },
+  "evidence": "build_log/lnp/map contain no chassis_kinematics; project USER group lacked new file entries; source files exist",
+  "fix": "reinsert only c/h USER entries in current uvprojx, preserve other project bytes",
+  "validation": "XML parsed, both references exist",
+  "project_sha256": "6e111df57cca88ff0db14ff54071f54127572d049337d9dfddcbcd843e030ebc",
+  "next": "reload project from disk without saving stale file list, then Rebuild and check compilation line"
+}

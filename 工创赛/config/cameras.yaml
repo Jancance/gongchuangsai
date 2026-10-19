@@ -1,0 +1,41 @@
+schema_version: 1
+cameras:
+  main:
+    role: material-ring-stacking-placement
+    device_by_id: /dev/v4l/by-id/REPLACE_WITH_MAIN_CAMERA
+    required_bus: usb2
+    width: 1280
+    height: 960
+    fps: 30
+    fourcc: MJPG
+    calibration_id: main-unconfigured
+    max_frame_age_ms: 150
+    exposure_mode: manual
+    seller_claims_only:
+      global_shutter: true
+      field_of_view_deg: 77
+      distortion_free: true
+      field_of_view_axis: unconfirmed
+      residual_distortion: unverified
+      source: user_supplied_product_title_and_variant
+      product_url: "https://e.tb.cn/h.8vlPu2ObNUtGu1F?tk=ORErTmC1QWh"
+      maximum_mjpg_fps: 120
+    verified: false
+  front:
+    role: lane-obstacle
+    device_by_id: /dev/v4l/by-id/REPLACE_WITH_FRONT_CAMERA
+    required_bus: usb2
+    width: 1280
+    height: 720
+    fps: 30
+    fourcc: MJPG
+    calibration_id: front-unconfigured
+    max_frame_age_ms: 150
+    exposure_mode: manual
+    verified: false
+scanner:
+  role: task-code-primary
+  transport: REPLACE_WITH_USB_CDC_OR_TTY
+  keyboard_wedge_forbidden: true
+  illumination_must_be_switchable: true
+  verified: false

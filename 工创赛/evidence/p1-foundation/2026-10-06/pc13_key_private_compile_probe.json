@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-06",
+  "scope": "private compile-only of PC13 key module and task plus removing temporary RX pattern check",
+  "results": [
+    {
+      "module": "Key",
+      "returncode": 0,
+      "diagnostics": []
+    },
+    {
+      "module": "main",
+      "returncode": 0,
+      "diagnostics": []
+    }
+  ],
+  "user_sources_unchanged": true,
+  "linked": false,
+  "runtime_verified": false,
+  "candidate": {
+    "sample_ms": 1,
+    "debounce_ms": 20,
+    "stack_words": 256,
+    "priority": 2
+  },
+  "expected_behavior": "release before press, one event per stable press, no repeat while held",
+  "requirements_checked": [
+    "LOC-03 (E)",
+    "RUN-06 (E)",
+    "RUN-01 (R)",
+    "PWR-01 (R)"
+  ]
+}

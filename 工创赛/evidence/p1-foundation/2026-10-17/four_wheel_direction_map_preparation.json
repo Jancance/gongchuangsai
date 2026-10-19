@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-17",
+  "observed_watch": {
+    "dry_run": 0,
+    "request": 0,
+    "result": 1,
+    "state": 4,
+    "cut_vm": 1,
+    "cause": 0,
+    "start_mask": 15,
+    "stop_mask": 15
+  },
+  "user_observation": "motor2 and4 reversed",
+  "corrected_forward_direction_by_address": [
+    0,
+    1,
+    0,
+    1
+  ],
+  "positions": [
+    "left_rear",
+    "right_rear",
+    "left_front",
+    "right_front"
+  ],
+  "validation": {
+    "ARMCC_main": "passed",
+    "actual_C_host_checks": 109,
+    "full_rebuild": "pending",
+    "corrected_hardware_retest": "pending",
+    "voltmeter_for_current_run": "not provided"
+  },
+  "main_sha256": "d865f108da2334b88e17f6300f5cdbfb1044ec84498d9808306e7f17cc5cf878",
+  "next": "rebuild and retest direction map; then chassis geometry, logical signed wheel speed/feedback, kinematics/limits and fault handling, HWT and XY",
+  "requirements": {
+    "R_unchanged": [
+      "PWR-01",
+      "RUN-01"
+    ],
+    "E_reviewed": [
+      "LOC-03",
+      "MOT-01",
+      "MOT-02",
+      "MOT-03",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": "unchanged"
+  }
+}

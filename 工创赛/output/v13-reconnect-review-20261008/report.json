@@ -1,0 +1,241 @@
+{
+  "source": "D:\\Codex\\工创赛\\evidence\\20261007-071416-797897.zip",
+  "sha256": "4256b95c5d125ba894ac2437b990e223f4a8d3d6751176631b5e2c0c919ee6df",
+  "matches_v13": {
+    "vision_app/code/project_detector.py": true,
+    "vision_app/code/config/material_color_thresholds.json": true
+  },
+  "module_matches_previous_v13": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true,
+    "diagnostic_entry": true,
+    "diagnostic_base": true
+  },
+  "run": {
+    "frames": 1542,
+    "states": {
+      "FOLLOWING_PIXEL": 1542
+    },
+    "transition_counts": {
+      "sample-01": 1,
+      "first-frame": 1,
+      "first-green-visible": 1,
+      "sample-02": 1,
+      "first-green-id-change": 2,
+      "sample-03": 1,
+      "sample-04": 1,
+      "sample-05": 1,
+      "sample-06": 1,
+      "sample-07": 1,
+      "sample-08": 1,
+      "sample-09": 1,
+      "sample-10": 1,
+      "sample-11": 1,
+      "sample-12": 1
+    },
+    "saved_events": [
+      "first-frame",
+      "first-green-id-change",
+      "first-green-visible",
+      "sample-01",
+      "sample-02",
+      "sample-03",
+      "sample-04",
+      "sample-05",
+      "sample-06",
+      "sample-07",
+      "sample-08",
+      "sample-09",
+      "sample-10",
+      "sample-11",
+      "sample-12"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "green",
+    "longest_watched_loss_s": 0.0,
+    "periodic_samples": {
+      "interval_s": 2.0,
+      "limit": 12,
+      "saved": 12
+    }
+  },
+  "result_count": 1542,
+  "duration_s": 91.355922491,
+  "states": {
+    "FOLLOWING_PIXEL": 1542
+  },
+  "target_combinations": [
+    {
+      "labels": [
+        "green"
+      ],
+      "count": 1542
+    }
+  ],
+  "ids": {
+    "T001": 79,
+    "T002": 286,
+    "T003": 1177
+  },
+  "host_age_ms_p50_p95_max": [
+    57.85158649996447,
+    73.90951610027514,
+    108.27425100023902
+  ],
+  "detector_call_ms_p50_p95_max": [
+    37.93311649997122,
+    40.73323159993833,
+    99.11752300013177
+  ],
+  "gaps_over_half_second": [
+    {
+      "previous_frame": 365,
+      "next_frame": 366,
+      "observation_gap_s": 21.276240659999985,
+      "previous_ids": [
+        "T002"
+      ],
+      "next_ids": [
+        "T003"
+      ],
+      "next_targets": [
+        {
+          "id": "T003",
+          "color": "green",
+          "center_px": [
+            603.9964376189538,
+            451.86505742600247
+          ],
+          "bbox_px": [
+            468,
+            283,
+            276,
+            317
+          ],
+          "area_px2": 63487.5,
+          "read_time": 3938.708661017,
+          "proposal_source": "combined_silhouette",
+          "radius_px": null,
+          "geometry_reference_changed": false,
+          "consecutive_observations": 1,
+          "visible_in_last_frame": true,
+          "identity_continuity_unverified": false,
+          "state": "CANDIDATE",
+          "velocity_px_s": null,
+          "predicted_px": null,
+          "prediction_horizon_s": 0.1,
+          "identity_valid_for_prediction": true
+        }
+      ]
+    }
+  ],
+  "id_transitions": [
+    {
+      "previous_frame": 79,
+      "next_frame": 80,
+      "observation_gap_s": 0.06263644599994223,
+      "previous_ids": [
+        "T001"
+      ],
+      "next_ids": [
+        "T002"
+      ],
+      "next_targets": [
+        {
+          "id": "T002",
+          "color": "green",
+          "center_px": [
+            607.187661067032,
+            464.2723745721326
+          ],
+          "bbox_px": [
+            474,
+            328,
+            271,
+            276
+          ],
+          "area_px2": 59111.0,
+          "read_time": 3904.362812203,
+          "proposal_source": "combined_silhouette",
+          "radius_px": null,
+          "geometry_reference_changed": false,
+          "consecutive_observations": 1,
+          "visible_in_last_frame": true,
+          "identity_continuity_unverified": false,
+          "state": "CANDIDATE",
+          "velocity_px_s": null,
+          "predicted_px": null,
+          "prediction_horizon_s": 0.1,
+          "identity_valid_for_prediction": true
+        }
+      ]
+    },
+    {
+      "previous_frame": 365,
+      "next_frame": 366,
+      "observation_gap_s": 21.276240659999985,
+      "previous_ids": [
+        "T002"
+      ],
+      "next_ids": [
+        "T003"
+      ],
+      "next_targets": [
+        {
+          "id": "T003",
+          "color": "green",
+          "center_px": [
+            603.9964376189538,
+            451.86505742600247
+          ],
+          "bbox_px": [
+            468,
+            283,
+            276,
+            317
+          ],
+          "area_px2": 63487.5,
+          "read_time": 3938.708661017,
+          "proposal_source": "combined_silhouette",
+          "radius_px": null,
+          "geometry_reference_changed": false,
+          "consecutive_observations": 1,
+          "visible_in_last_frame": true,
+          "identity_continuity_unverified": false,
+          "state": "CANDIDATE",
+          "velocity_px_s": null,
+          "predicted_px": null,
+          "prediction_horizon_s": 0.1,
+          "identity_valid_for_prediction": true
+        }
+      ]
+    }
+  ],
+  "last_segment_duration_s": 53.41498646399987,
+  "console_log_present": true,
+  "scope": "Ground A4 white-paper background. Green output recovery supported by user, screenshot and restarted candidate after a gap. Waiting states absent from observations; gap is not replug-to-recovery time. Earlier ID transition cause and same-run waiting/mode/USB events require missing console log. No actuator or metric calibration acceptance.",
+  "console_review": {
+    "source": "D:\\Codex\\工创赛\\evidence\\camera-reconnect-console-20261007.log",
+    "sha256": "64acb7d5447bedd159eac38464050b49154d07bcdf8ac101ca26e33df7d83181",
+    "run_id": "20261007-071416-797897",
+    "first_source_line": 166,
+    "last_source_line": 282,
+    "connected_count": 2,
+    "unavailable_count": 10,
+    "waiting_count": 10,
+    "mode_change_lines": [],
+    "mode_stays_follow_in_logged_status": true,
+    "v4l2_no_device_warning_lines": [
+      "[ WARN:0] global ./modules/videoio/src/cap_v4l.cpp (802) requestBuffers VIDEOIO(V4L2:/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): failed VIDIOC_REQBUFS: errno=19 (No such device)"
+    ],
+    "recovered_follow_status": "Mode=FOLLOW FPS=0.0 Units=px targets=1 Ready=False Serial=DISABLED",
+    "time_limit": "Console has no line timestamps or physical replug marker; exact recovery latency remains unmeasured.",
+    "early_id_reset_limit": "No mode-change or camera event explains T001 to T002 before disconnect. Repeated F can reset same mode without printing Mode changed; cause not proven."
+  }
+}

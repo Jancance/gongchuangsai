@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-06",
+  "user_reported_resolution": "wrong crystal selected; replaced with intended crystal",
+  "old_and_new_part_numbers": "not supplied",
+  "PC": "0x08000518",
+  "RCC_CR": "0x3037c83",
+  "RCC_PLLCFGR": "0x27405408",
+  "RCC_CFGR": "0x940a",
+  "SystemCoreClock": 168000000,
+  "decoded": {
+    "HSERDY": true,
+    "PLLRDY": true,
+    "source": "HSE",
+    "M": 8,
+    "N": 336,
+    "P": 2,
+    "Q": 7,
+    "SWS": 2,
+    "reserved_bit29": true
+  },
+  "startup_check_result": "passed for observed hardware debug startup",
+  "independent_frequency_and_repeated_boots": "not measured",
+  "reserved_field_fix_retained": true,
+  "FreeRTOS_integrated": false,
+  "next_gate": "user prepares official V11.3.1 kernel with RVDS/ARM_CM4F for ARMCC5",
+  "saved_screenshots": [
+    {
+      "name": "hse_fixed_main.png",
+      "sha256": "64dad84fcfab1784ddbd7407ff1a48eb8e762eb9d2317e883edf0831bc5df7b2"
+    },
+    {
+      "name": "hse_fixed_watch.png",
+      "sha256": "64ce9e777571c507b530a994b1c90907725b79613e835a47a57404674a36913d"
+    }
+  ],
+  "assistant_modified_firmware": false
+}

@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-01",
+  "kind": "scratch algebra check; not firmware or vehicle acceptance",
+  "random_seed": 20261001,
+  "samples": 1000,
+  "synthetic_k_mm": 200.0,
+  "max_coordinate_roundtrip_error_mm_s": 1.1368683772161603e-13,
+  "max_wheel_roundtrip_error": 1.1368683772161603e-13,
+  "source_matrix_rank": 2,
+  "candidate_matrix_rank": 3,
+  "yaw_zero_source_right_command_worldX": 1,
+  "yaw_zero_source_declared_right_expected_worldX": -1,
+  "checks": [
+    "coordinate roundtrip",
+    "candidate kinematics roundtrip",
+    "uniform wheel speed saturation",
+    "source rank deficiency"
+  ],
+  "not_checked": [
+    "jerk braking and trajectory follower",
+    "FreeRTOS timing",
+    "motor protocol or direction",
+    "real wheel geometry",
+    "real localization",
+    "video physical speed or settling"
+  ],
+  "result": "PASS for listed algebra checks only"
+}

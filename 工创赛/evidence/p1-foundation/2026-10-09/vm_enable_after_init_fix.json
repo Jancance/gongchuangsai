@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-09",
+  "user_confirmation": "ok，vm有电压了",
+  "latest_user_off_confirmation": "可以关闭，现在通过按键可以关闭",
+  "physical_switch_can_disable_vm_user_confirmed": true,
+  "software_request_off_clarification_pending": true,
+  "off_confirmation_scope": "User explicitly reports physical-button shutdown. Separate request0/F5 shutdown is being clarified; no new voltage was supplied.",
+  "acceptance_scope": "VM_ON_USER_CONFIRMED_AFTER_POWER_INIT_FIX",
+  "exact_vm_on_voltage": null,
+  "exact_pe2_vm_io_voltage": null,
+  "exact_vm_en_voltage": null,
+  "current_source_inspection": {
+    "main_c_sha256": "0CB92EF3C142AFCF1C34F2A58EA46996B23BB992E27853F6A56DFB651F263377",
+    "key_init_line": 152,
+    "power_init_line": 154,
+    "power_init_called_before_task_creation": true,
+    "modified_by": "USER"
+  },
+  "software_request_off_verified": false,
+  "physical_emergency_switch_off_verified": false,
+  "reset_default_off_verified": false,
+  "loaded_motor_power_verified": false,
+  "can_communication_verified": false,
+  "next_action": "Clarify whether request0/F5 also independently closes VM and check motor-side termination settings. Independently prepare standard CAN library registration, with VM kept off and no actual CAN frames.",
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"], "Q": "Official clarification unchanged; shutdown and switch behavior remain engineering validation items"},
+  "firmware_modified_by_assistant": false,
+  "pcb_or_schematic_modified": false,
+  "commands_sent_by_assistant_to_hardware": false
+}

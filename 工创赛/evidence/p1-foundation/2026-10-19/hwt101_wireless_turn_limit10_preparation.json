@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-19",
+  "authorization": "user requested higher speed protection threshold",
+  "scope": "APP_HWT_TURN_TEST only",
+  "target_rpm": 5,
+  "old_limit_rpm": 7,
+  "new_limit_rpm": 10,
+  "run_ms": 10000,
+  "direction_check_unchanged": true,
+  "other_protections_unchanged": true,
+  "prior_user_driver_rpm": [
+    -5,
+    -8,
+    0,
+    1
+  ],
+  "prior_user_auto_cause": 8,
+  "checks": 44,
+  "build": {
+    "code": 35556,
+    "ro": 452,
+    "rw": 1332,
+    "zi": 25284,
+    "errors": 0,
+    "warnings": 0
+  },
+  "hardware": "not flashed by assistant; new threshold hardware trial pending",
+  "requirements": [
+    "RUN-01",
+    "PWR-01",
+    "LOC-03",
+    "LOC-05",
+    "RUN-06",
+    "MOT-02",
+    "MOT-04"
+  ],
+  "sha256": {
+    "3.stm32f407工程/USER/chassis_auto_test.h": "634a28eb9614d2ce07f08a8e291b53a35c36eab36462e7e24cdc9ef140fe259f",
+    "3.stm32f407工程/Objects/gongxun-f407.axf": "437d9dea10a981708ca8263f4132a8f390ea1190d2f3e949f68a9e7e84548c59",
+    "工创赛/evidence/p1-foundation/2026-10-19/hwt101_wireless_turn_limit10_private_checks.c": "b145465ee6e85cf601ceb21026e1ef896f03cbc7d70187b19f46b9eb27d668e0"
+  }
+}

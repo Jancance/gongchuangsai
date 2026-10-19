@@ -1,0 +1,216 @@
+{
+  "source": "D:\\Codex\\工创赛\\evidence\\20261007-062946-846384.zip",
+  "sha256": "7c94932cf58a41a0bab5905f8aad7790b65533a4d6fcb8f69cbd44ffd5b2c049",
+  "matches_v13": {
+    "vision_app/code/project_detector.py": true,
+    "vision_app/code/config/material_color_thresholds.json": true
+  },
+  "run": {
+    "frames": 475,
+    "states": {
+      "FOLLOWING_PIXEL": 474,
+      "SEARCHING": 1
+    },
+    "transition_counts": {
+      "sample-01": 1,
+      "first-frame": 1,
+      "first-other-color-candidate": 458,
+      "first-lightblue-with-blue": 458,
+      "first-lightblue-visible": 1,
+      "sample-02": 1,
+      "sample-03": 1,
+      "sample-04": 1,
+      "sample-05": 1,
+      "sample-06": 1,
+      "sample-07": 1,
+      "sample-08": 1,
+      "sample-09": 1,
+      "sample-10": 1,
+      "first-lightblue-with-red": 16,
+      "first-lightblue-loss": 1,
+      "first-lightblue-reappearance": 1,
+      "sample-11": 1,
+      "sample-12": 1
+    },
+    "saved_events": [
+      "first-frame",
+      "first-lightblue-loss",
+      "first-lightblue-reappearance",
+      "first-lightblue-visible",
+      "first-lightblue-with-blue",
+      "first-lightblue-with-red",
+      "first-other-color-candidate",
+      "sample-01",
+      "sample-02",
+      "sample-03",
+      "sample-04",
+      "sample-05",
+      "sample-06",
+      "sample-07",
+      "sample-08",
+      "sample-09",
+      "sample-10",
+      "sample-11",
+      "sample-12"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "lightblue",
+    "longest_watched_loss_s": 0.09668622199978927,
+    "periodic_samples": {
+      "interval_s": 2.0,
+      "limit": 12,
+      "saved": 12
+    }
+  },
+  "observed_labels": {
+    "lightblue": 474,
+    "blue": 458,
+    "red": 16
+  },
+  "target_combinations": [
+    {
+      "colours": [
+        "blue",
+        "lightblue"
+      ],
+      "count": 442
+    },
+    {
+      "colours": [
+        "lightblue"
+      ],
+      "count": 16
+    },
+    {
+      "colours": [
+        "blue",
+        "lightblue",
+        "red"
+      ],
+      "count": 16
+    },
+    {
+      "colours": [],
+      "count": 1
+    }
+  ],
+  "complete_pair_episodes": [
+    {
+      "first_frame": 1,
+      "last_frame": 268,
+      "duration_s": 17.39053327900001
+    },
+    {
+      "first_frame": 270,
+      "last_frame": 274,
+      "duration_s": 0.3418826199999785
+    },
+    {
+      "first_frame": 282,
+      "last_frame": 282,
+      "duration_s": 0.0
+    },
+    {
+      "first_frame": 287,
+      "last_frame": 287,
+      "duration_s": 0.0
+    },
+    {
+      "first_frame": 290,
+      "last_frame": 290,
+      "duration_s": 0.0
+    },
+    {
+      "first_frame": 296,
+      "last_frame": 297,
+      "duration_s": 0.06676287499999489
+    },
+    {
+      "first_frame": 300,
+      "last_frame": 300,
+      "duration_s": 0.0
+    },
+    {
+      "first_frame": 302,
+      "last_frame": 302,
+      "duration_s": 0.0
+    },
+    {
+      "first_frame": 304,
+      "last_frame": 304,
+      "duration_s": 0.0
+    },
+    {
+      "first_frame": 306,
+      "last_frame": 308,
+      "duration_s": 0.10709388699979172
+    },
+    {
+      "first_frame": 310,
+      "last_frame": 330,
+      "duration_s": 1.1652115930000946
+    },
+    {
+      "first_frame": 332,
+      "last_frame": 339,
+      "duration_s": 0.4295048639999095
+    },
+    {
+      "first_frame": 342,
+      "last_frame": 344,
+      "duration_s": 0.13539734500000122
+    },
+    {
+      "first_frame": 346,
+      "last_frame": 347,
+      "duration_s": 0.06320285000015247
+    },
+    {
+      "first_frame": 349,
+      "last_frame": 350,
+      "duration_s": 0.06364500900008352
+    },
+    {
+      "first_frame": 352,
+      "last_frame": 352,
+      "duration_s": 0.0
+    },
+    {
+      "first_frame": 354,
+      "last_frame": 356,
+      "duration_s": 0.10021678999987671
+    },
+    {
+      "first_frame": 358,
+      "last_frame": 475,
+      "duration_s": 6.34560441199983
+    }
+  ],
+  "last_positions": [
+    {
+      "color": "blue",
+      "id": "T003",
+      "center_px": [
+        404.34089145364476,
+        420.8103526409659
+      ]
+    },
+    {
+      "color": "lightblue",
+      "id": "T001",
+      "center_px": [
+        792.3247781106902,
+        440.72625643055005
+      ]
+    }
+  ],
+  "result_host_age_ms_p95_max": [
+    95.71274260010796,
+    135.87071200004175
+  ],
+  "scope": "Current separated blue/pale recognition. Third red hand targets and handling/identity/glare remain unresolved; not whole-run pair acceptance."
+}

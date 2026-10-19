@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-14",
+  "source": "user response to reset-held-button, scan, release/repress test",
+  "image": "START_reset_held_release_repress_VM0.png",
+  "serial_lines": [
+    "F407 FreeRTOS READY",
+    "F407 FreeRTOS READY",
+    "SCAN:421+213+124+231",
+    "START:421+213+124+231"
+  ],
+  "start_lines": 1,
+  "received_bytes": 87,
+  "physical_vm_volts": 0,
+  "acceptance": "reset/release/repress workflow accepted per user test feedback; new START matches scanned code",
+  "limits": [
+    "static screenshot does not separately capture intermediate held-key interval",
+    "two READY lines are compatible with instructed reset; not evidence of spontaneous reset loop"
+  ],
+  "next": "read-only motor speed feedback",
+  "requirements": [
+    "RUN-01 R",
+    "RUN-06 E",
+    "LOC-03 E",
+    "MOT-04 E",
+    "QR-04 Q"
+  ]
+}

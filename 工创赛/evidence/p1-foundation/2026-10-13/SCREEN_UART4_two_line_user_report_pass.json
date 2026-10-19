@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-13",
+  "source": "user explicit physical screen report, actual source and Keil read-only verification",
+  "screen_model": "TJC4832T135_011C_A01",
+  "first_line": "156+123+",
+  "second_line": "516+231",
+  "complete_raw_code": "156+123+516+231",
+  "acceptance": "PASS: UART4 screen visibly displays complete two-line raw task code per user report",
+  "actual_source_integration_checked": true,
+  "keil_source_and_include_checked": true,
+  "source_hashes": {
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\HARDWARE\\SCREEN\\screen.h": "573B8C12044D50257D18124F320285A39550E2E0057DCD85B5829CD4CBD977B2",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\HARDWARE\\SCREEN\\screen.c": "2E375764218EFB843855F1D6C7A7C18A15AC7339AEFD18676D6135EE67D43195",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\main.c": "10E2C462E11322A4C022C122D118F4131B6EADFD7BBC03E1D47BE2F047B33065"
+  },
+  "new_screen_photo_provided": false,
+  "new_full_user_build_log_provided": false,
+  "new_vm_or_fault_values_reported": false,
+  "original_hmi": {
+    "path": "D:\\新建文件夹4\\工创赛\\代码\\串口屏\\工创赛.HMI",
+    "bytes": 7491691,
+    "opened_in_editor": "USART HMI",
+    "read_attempt": "blocked by process-exclusive file lock",
+    "contents_parsed": false,
+    "modified": false
+  },
+  "fonts": [
+    "96宋体.zi",
+    "112宋体.zi",
+    "128宋体.zi"
+  ],
+  "next": "read page0 layout and t0 properties from user editor screenshot, then add status/fault display on a preserved working copy",
+  "pending": [
+    "actual page layout/font IDs",
+    "status and fault display",
+    "font physical height and visibility",
+    "real grab/place counts",
+    "scanner integration",
+    "formal READY"
+  ],
+  "requirements_checked": {
+    "R": [
+      "DSP-01",
+      "DSP-02",
+      "QR-01"
+    ],
+    "E": [
+      "DSP-03",
+      "LOC-03",
+      "RUN-06"
+    ],
+    "Q": [
+      "QR-04"
+    ]
+  }
+}

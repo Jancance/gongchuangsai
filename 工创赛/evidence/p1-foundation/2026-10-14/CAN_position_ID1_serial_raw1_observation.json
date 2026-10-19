@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-14",
+  "source_image": "CAN_position_ID1_serial_raw1_speed_watch.png",
+  "serial": "POS:A1 R1 SIGN0 RAW1",
+  "serial_received_bytes": 43,
+  "address": 1,
+  "result": 1,
+  "sign": 0,
+  "raw": 1,
+  "observed_watch": {
+    "expanded_reply": "g_can_speed_reply",
+    "speed_reply_dlc": 0,
+    "position_address": 1,
+    "position_request": 0,
+    "vm_request": 1,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "platform_ready": 1,
+    "can_guard_ready": 1,
+    "watchdog_feed_count": 446,
+    "safety_count": 452,
+    "app_stack_words": 181,
+    "safety_stack_words": 230,
+    "heap_min_bytes": 12968
+  },
+  "acceptance": "ID1 position query and parsed serial result observed successful; raw position frame pending",
+  "position_reply_expanded": false,
+  "new_physical_vm_measurement_reported": false,
+  "next": "same run expand g_can_position_reply and Data; expected ExtID0100/DLC7/36 00 00 00 00 01 6B for printed raw1",
+  "limits": [
+    "speed reply zeros do not describe the position transaction",
+    "expected bytes are derived from serial value, not observed raw frame"
+  ],
+  "requirements_checked": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ]
+  }
+}

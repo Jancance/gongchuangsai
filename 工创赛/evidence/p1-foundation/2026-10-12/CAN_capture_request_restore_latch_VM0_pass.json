@@ -1,0 +1,19 @@
+{
+  "user_feedback_date": "2026-10-12",
+  "record_updated_client_date": "2026-10-13",
+  "source": "User screenshot 5e8841d5 and explicit VM0; prior cause1 trip followed restored capture request",
+  "evidence_image": "CAN_capture_request_restore_latch_VM0_pass.png",
+  "observed": {"g_safety_task_create": 1, "g_safety_fault": 32, "g_safety_ready": 0, "g_safety_count": 1830, "g_safety_stack_words": 230, "g_heap_min_bytes": 14064, "g_can_poll_enable": 1, "g_can_poll_valid_mask": 0, "g_can_poll_protect_mask": 0, "g_can_poll_esr": 0, "g_can_guard_ready": 0, "g_can_guard_bad_nodes": 15, "g_can_guard_cause": 1},
+  "previous_trip_safety_count": 1499,
+  "supervisor_progress_observed": true,
+  "VM_volts": 0,
+  "current_VM_request_and_RTOS_fault_not_visible_in_image": true,
+  "acceptance": "Restored necessary-capture request leaves cause1/fault0x20 latched and physical VM off PASS",
+  "scope": "Capture request restored; physical acquisition remains inhibited by the latched safety fault. This is not driver data recovery or all CAN failure paths acceptance.",
+  "next": "User temporary main.c test-mode changes for stale published sampling timestamps and simulated node1 protection; rebuild then separate tests and cleanup",
+  "pending": ["stale timestamp cause2 shutdown/latch", "simulated protection cause3 shutdown/latch", "temporary test cleanup", "watchdog"],
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_Q": "unchanged",
+  "actual_firmware_modified_by_assistant": false,
+  "hardware_commands_sent_by_assistant": false
+}

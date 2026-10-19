@@ -1,0 +1,26 @@
+schema_version: 1
+front_camera:
+  calibration_id: front-unconfigured
+  # Replace after calibration. Maps image [u,v,1] to ground [x_mm,y_mm,w].
+  homography_image_to_ground:
+    - [1.0, 0.0, 0.0]
+    - [0.0, 1.0, 0.0]
+    - [0.0, 0.0, 1.0]
+  roi_fraction: [0.0, 0.30, 1.0, 1.0]
+  dark_l_max: 65
+  min_ground_l_median: 70
+  max_dark_fraction: 0.35
+  min_component_area_px: 120
+  max_component_area_fraction: 0.20
+  morphology_kernel_px: 5
+  obstacle_radius_mm: 25.0
+  min_confidence: 0.65
+  stable_frames: 3
+  stability_tolerance_mm: 60.0
+color_hsv:
+  red: [[0, 80, 45], [10, 255, 255]]
+  yellow: [[18, 70, 50], [38, 255, 255]]
+  blue: [[90, 60, 40], [135, 255, 255]]
+  green: [[38, 45, 35], [90, 255, 255]]
+  black: [[0, 0, 0], [179, 255, 55]]
+  cyan: [[78, 40, 45], [100, 255, 255]]

@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-19",
+  "authorization": "user confirmed no movement and requested continuing MCU handling",
+  "hardware_observation": {
+    "mode": 2,
+    "state": 9,
+    "cause": 4,
+    "trip_kind": 2,
+    "trip_wz_dps": 0,
+    "trip_prev_deg": 136.203003,
+    "trip_yaw_deg": 0,
+    "trip_delta_deg": -136.203003,
+    "elapsed_ms": 71130,
+    "before_deg": 3.36181641,
+    "after_sampling_started": false
+  },
+  "exception": {
+    "address": "0x48",
+    "state": 4,
+    "maximum_events": 1,
+    "new_yaw_sample": true,
+    "yaw_raw": 0,
+    "maximum_abs_wz_dps": 0.5,
+    "minimum_abs_jump_deg_exclusive": 2
+  },
+  "capture_timer_reset": false,
+  "post_drift_ignored": false,
+  "new_sensor_commands": false,
+  "request_value": 3,
+  "checks": 2226,
+  "new_rezero_checks": 29,
+  "build": {
+    "code": 34580,
+    "ro": 452,
+    "rw": 1280,
+    "zi": 25288,
+    "errors": 0,
+    "warnings": 0
+  },
+  "hardware": "not flashed by assistant; complete flow and drift effect pending",
+  "requirements": [
+    "RUN-01",
+    "PWR-01",
+    "LOC-03",
+    "LOC-05",
+    "RUN-06",
+    "MOT-04"
+  ],
+  "sha256": {
+    "3.stm32f407工程/USER/hwt101.c": "017454b4990f6c338eb642004fa7f432bf48bf7379de175ced9fc8c744190c64",
+    "3.stm32f407工程/USER/hwt101.h": "5cfcfeed5c0d2ff762afc40b18d8e586d63369dd9e4811d82bcebfdbfb432cc8",
+    "3.stm32f407工程/Objects/gongxun-f407.axf": "5eed48038b5e3b809165dc2647193e27b4376ef53aab7d3a17c447b875362c1d",
+    "工创赛/evidence/p1-foundation/2026-10-19/hwt101_workmode48_rezero_private_checks.c": "0ab2669e4a19f4fc6664416b72717554fbf0678a66bd8b83ef21f0a301ca76c2"
+  }
+}

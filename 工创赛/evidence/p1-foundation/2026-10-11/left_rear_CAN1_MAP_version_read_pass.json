@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-11",
+  "source": "User confirms previous P_Serial selection omitted; screenshot after selecting CAN1_MAP",
+  "screenshot": "left_rear_CAN1_MAP_version_read_pass.png",
+  "motor": {"position": "left rear", "address": 1, "board_marking": "X42S_V2.0", "module_marking": "ZDT_CAN_V1.2"},
+  "observed": {"version_result": 1, "ESR": 0, "version_request": 0, "VM_request": 1, "loopback_result": 1, "RTOS_fault": 0, "INRQ": 0, "INAK": 0, "PD0": 1, "task_A_stack_words": 210, "PC": "0x080021C0"},
+  "source_result1_conditions_verified": ["Normal initialization succeeds", "Transmit succeeds", "Extended data frame ID matches address shifted8", "DLC6", "Data0 0x1F", "Data5 0x6B"],
+  "single_motor_read_transaction": "PASS",
+  "raw_reply_screenshot": "left_rear_CAN_version_raw_reply.png",
+  "raw_reply": {"ExtId": "0x00000100", "IDE": "0x04", "RTR": "0x00", "DLC": 6, "Data_valid_hex": ["1F", "00", "CA", "23", "14", "6B"], "FMI": 0},
+  "decoded_software_version": {"raw_uint16": "0x00CA", "decimal": 202, "version": "V2.0.2", "basis": "Manufacturer page67 FW_Ver example200 meansV2.0.0"},
+  "hardware_version_raw": "0x2314",
+  "hardware_field_decode_limit": "Series nibble2 is not covered by this manual's0/1 description; type/version prose is ambiguous. Retain raw and known photo marking rather than guessing firmware family.",
+  "firmware_X_or_Emm": "FW_Emm",
+  "firmware_type_source": "User directly confirms left-rear FWType menu value",
+  "historical_mode_report_correction": "Previous CAN1_MAP transcription did not mean left rear was actually configured; user correction takes precedence.",
+  "other_three_motor_actual_mode_and_transactions": "PENDING",
+  "four_motor_network_and_motion_pass": false,
+  "next": "Verify other three actual CAN1_MAP selections with preserved rear-right2/front-left3/front-right4 addresses; then perform their read transactions and confirm individual FWType.",
+  "requirements": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06"]},
+  "firmware_or_PCB_modified_by_assistant": false
+}

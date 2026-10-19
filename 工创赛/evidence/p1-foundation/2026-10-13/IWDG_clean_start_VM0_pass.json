@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-13",
+  "source_image": "IWDG_clean_start_VM0.png",
+  "user_physical_vm_volts": 0,
+  "observations": {
+    "watchdog_init_result": 1,
+    "watchdog_started": 1,
+    "watchdog_feed_count": 246,
+    "reset_iwdg": 0,
+    "reset_flags_hex": "0x14000000",
+    "vm_test_request": 0,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "safety_ready": 1,
+    "can_guard_ready": 0,
+    "safety_count": 252,
+    "app_stack_min_words": 217,
+    "safety_stack_min_words": 232,
+    "heap_min_bytes": 14072,
+    "temporary_test_watch_row_absent": true
+  },
+  "actual_source_read_only_checks": {"debug_freeze": 1, "temporary_stop_feed_symbol_present": false},
+  "acceptance": "PASS: cleaned watchdog program startup and default VM off; runtime feed counter positive",
+  "limits": ["single runtime snapshot does not independently measure feed rate or duration", "no final non-freezing or standalone runtime acceptance in this observation"],
+  "next": "user changes WATCHDOG_DEBUG_FREEZE to 0U and Rebuilds for remaining configuration verification",
+  "pending": ["non-freezing configuration build and runtime", "standalone runtime observation", "complete vehicle safety"],
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_questions": "unchanged"
+}

@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-11",
+  "source": "User reports software request0 revocation success, then fault3 and VM0V during assertion test; screenshot6366d7d6",
+  "screenshot": "rtos_assert_VM_off_pass.png",
+  "before_injection_user_report": {"software_request0_revocation_succeeded": true, "hardware_allow_position_did_not_enable_VM_with_request0": true},
+  "assertion_phase": {"RTOS_fault": 3, "VM_request": 1, "test_force_assert": 1, "VM_user_measured_volts": 0, "stop_location": "App_RtosStop diagnostic loop after Power_Disable"},
+  "actual_hook_source_verified": {"includes_power_h": true, "Power_Disable_after_disable_irq": true},
+  "temporary_main_source_locations": {"variable_line": 44, "injection_if_start": 69, "injection_if_end": 72, "permanent_scheduler_failure_assert_to_retain": 219},
+  "assertion_entry_VM_off_test": "PASS",
+  "temporary_injection_cleanup": "USER_SOURCE_REMOVAL_AND_NORMAL_EXECUTION_CONFIRMED",
+  "cleanup_evidence": "rtos_assert_injection_cleanup_normal.json",
+  "complete_fault_watchdog_ISR_memory_damage_safety_pass": false,
+  "next": "Proceed to manual3A readonly motor status extension and ID1 response validation; no repeat fault injection.",
+  "requirements": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "firmware_or_PCB_modified_by_assistant": false
+}

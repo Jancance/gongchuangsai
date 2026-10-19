@@ -1,0 +1,151 @@
+{
+  "source": "D:\\Codex\\工创赛\\evidence\\20261008-130216-931830.zip",
+  "sha256": "a3d061a73f7f8b883b42fd1741a271ea8273925fcba94e10469168795fd7af89",
+  "matches_v13": {
+    "vision_app/code/project_detector.py": true,
+    "vision_app/code/config/material_color_thresholds.json": true
+  },
+  "all_module_hashes_match_reconnect_run": true,
+  "run": {
+    "frames": 5210,
+    "states": {
+      "FOLLOWING_PIXEL": 5210
+    },
+    "transition_counts": {
+      "sample-01": 1,
+      "first-frame": 1,
+      "first-green-visible": 1,
+      "sample-02": 1,
+      "sample-03": 1,
+      "sample-04": 1,
+      "sample-05": 1,
+      "sample-06": 1,
+      "sample-07": 1,
+      "sample-08": 1
+    },
+    "saved_events": [
+      "first-frame",
+      "first-green-visible",
+      "sample-01",
+      "sample-02",
+      "sample-03",
+      "sample-04",
+      "sample-05",
+      "sample-06",
+      "sample-07",
+      "sample-08"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "green",
+    "longest_watched_loss_s": 0.0,
+    "periodic_samples": {
+      "interval_s": 30.0,
+      "limit": 12,
+      "saved": 8
+    }
+  },
+  "result_count": 5210,
+  "duration_s": 239.18922957799998,
+  "full_five_minute_observation_span": false,
+  "states": {
+    "FOLLOWING_PIXEL": 5210
+  },
+  "target_combinations": [
+    {
+      "labels": [
+        "green"
+      ],
+      "count": 5210
+    }
+  ],
+  "ids": {
+    "T001": 5210
+  },
+  "id_transitions": [],
+  "host_age_ms_p50_p95_max": [
+    58.2751649999409,
+    74.35062570004334,
+    103.07975900002475
+  ],
+  "detector_call_ms_p50_p95_max": [
+    38.53870950001692,
+    40.282554199967535,
+    89.63213800006997
+  ],
+  "largest_observation_gaps": [
+    {
+      "previous_frame": 1,
+      "next_frame": 2,
+      "duration_s": 0.11501949199998762
+    },
+    {
+      "previous_frame": 4425,
+      "next_frame": 4426,
+      "duration_s": 0.08155190799993761
+    },
+    {
+      "previous_frame": 3240,
+      "next_frame": 3241,
+      "duration_s": 0.08065915400004542
+    },
+    {
+      "previous_frame": 2321,
+      "next_frame": 2322,
+      "duration_s": 0.08048950399995647
+    },
+    {
+      "previous_frame": 472,
+      "next_frame": 473,
+      "duration_s": 0.08043186999998397
+    },
+    {
+      "previous_frame": 4929,
+      "next_frame": 4930,
+      "duration_s": 0.07999296299999514
+    },
+    {
+      "previous_frame": 3680,
+      "next_frame": 3681,
+      "duration_s": 0.07997461299999031
+    },
+    {
+      "previous_frame": 4752,
+      "next_frame": 4753,
+      "duration_s": 0.07988533899992944
+    },
+    {
+      "previous_frame": 3620,
+      "next_frame": 3621,
+      "duration_s": 0.07957444700002725
+    },
+    {
+      "previous_frame": 3366,
+      "next_frame": 3367,
+      "duration_s": 0.07948928000007527
+    }
+  ],
+  "console_log_present": true,
+  "scope": "Observed 239-second ground A4 white-paper stability only, not a five-minute completion. No long gap in detection rows; V4L/JPEG/connection events need separate console. Static successful detections do not prove unique sensor frames or exposure latency. Actions disabled.",
+  "console_review": {
+    "source": "D:\\Codex\\工创赛\\evidence\\follow-stability-console-20261008.log",
+    "sha256": "7f1e72d1fcfbc112d92d1600d7dcced2e58d0040d91c3071b4b32361eff797f0",
+    "first_source_line": 27,
+    "last_source_line": 281,
+    "connected_count": 1,
+    "unavailable_count": 0,
+    "waiting_count": 0,
+    "modes": [
+      "FOLLOW"
+    ],
+    "mode_change_lines": [],
+    "warning_lines": [],
+    "logged_target_counts": [
+      "1"
+    ],
+    "limit": "No warning/event found in selected console segment; no sensor timestamp, unique frame or full 300-second claim."
+  }
+}

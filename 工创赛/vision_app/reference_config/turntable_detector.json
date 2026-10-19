@@ -1,0 +1,30 @@
+{
+  "format_version": 1,
+  "coarse_search": {
+    "image_scale": 0.29000000000000004,
+    "minimum_radius_px": 241.0,
+    "maximum_radius_px": 362.0,
+    "hough_dp": 1.2,
+    "minimum_center_distance_px": 160.0,
+    "canny_threshold": 24.0,
+    "accumulator_threshold": 26.0,
+    "maximum_candidates": 5
+  },
+  "refinement": {
+    "radial_search_half_width_px": 53.0,
+    "angular_step_deg": 2.0,
+    "minimum_visible_arc_deg": 90.0,
+    "maximum_fit_rms_px": 6.6000000000000005,
+    "minimum_edge_strength": 2.0,
+    "saturated_pixel_threshold": 90,
+    "local_recheck_confidence_below": 0.72,
+    "local_recheck_rms_above_px": 1.6,
+    "local_recheck_interval_frames": 5,
+    "reacquisition_jump_px": 30.0
+  },
+  "stability": {
+    "window_frames": 5,
+    "maximum_center_jitter_px": 10.0,
+    "maximum_radius_jitter_px": 5.0
+  }
+}

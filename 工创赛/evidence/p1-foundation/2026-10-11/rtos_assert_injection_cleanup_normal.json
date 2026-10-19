@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-11",
+  "source": "User screenshot88a33d7a and current source inspection",
+  "screenshot": "rtos_assert_injection_cleanup_normal.png",
+  "observed": {"RTOS_fault": 0, "VM_request": 0, "loopback_result": 1, "task_A_stack_words": 210, "old_force_assert_watch": "cannot evaluate"},
+  "source_verified": {"temporary_variable_removed": true, "temporary_injection_removed": true, "permanent_scheduler_failure_assert_retained": true, "hook_power_include_and_disable_retained": true},
+  "cleanup_and_normal_execution": "PASS",
+  "new_actual_build_log_received": false,
+  "next": "Manual3A status read extension and ID1 readonly hardware check per guide",
+  "requirements": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "firmware_or_PCB_modified_by_assistant": false
+}

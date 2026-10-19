@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-12",
+  "compiler": "ARMCC5.06 update5 build528",
+  "units": [
+    {
+      "unit": "safety.c",
+      "return_code": 0,
+      "diagnostics": []
+    },
+    {
+      "unit": "main.c",
+      "return_code": 0,
+      "diagnostics": []
+    }
+  ],
+  "actual_sources": [
+    {
+      "path": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\SYSTEM\\SAFETY\\safety.c",
+      "before_SHA256": "8342c9c533815a4f2f259ba14c4a7fb304691106d28a089b0574e727ef088d06",
+      "after_SHA256": "8342c9c533815a4f2f259ba14c4a7fb304691106d28a089b0574e727ef088d06",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\SYSTEM\\SAFETY\\safety.h",
+      "before_SHA256": "372c8d67b1c8eaa9d0786b1774eb10ebc66b916fbe49248c0c2bc38a38a65d6c",
+      "after_SHA256": "372c8d67b1c8eaa9d0786b1774eb10ebc66b916fbe49248c0c2bc38a38a65d6c",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\main.c",
+      "before_SHA256": "f1ec0bfb15b45d6110dad95959111fa79fa8cfac7c0ed2ea7c79b746fab2c43a",
+      "after_SHA256": "f1ec0bfb15b45d6110dad95959111fa79fa8cfac7c0ed2ea7c79b746fab2c43a",
+      "unchanged": true
+    }
+  ],
+  "scratch_dir": "D:\\Codex\\工创赛\\tmp\\can_fault_guard_probe_iunejq5h",
+  "private_probe_cleaned": true,
+  "linked_or_flashed": false,
+  "user_build": "PENDING",
+  "hardware_CAN_fault_guard": "PENDING",
+  "candidate_parameters_ms": {
+    "CAN_startup_grace": 3000,
+    "CAN_freshness": 1000
+  },
+  "fault_masks": {
+    "CAN_data": "0x20",
+    "CAN_protection": "0x40"
+  },
+  "capture_default_enable": 1,
+  "shared_CAN_snapshot_fields_volatile": true
+}

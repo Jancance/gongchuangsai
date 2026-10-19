@@ -1,0 +1,89 @@
+{
+  "source": "D:\\Codex\\工创赛\\evidence\\20261007-002007-035470.zip",
+  "sha256": "d616311ab1bb8d3a3e47aab5b04e1aacc7bfdd1470a4a6a00a119ce52230c268",
+  "run": {
+    "frames": 605,
+    "states": {
+      "FOLLOWING_PIXEL": 605
+    },
+    "transition_counts": {
+      "sample-01": 1,
+      "first-frame": 1,
+      "first-green-visible": 1,
+      "sample-02": 1,
+      "sample-03": 1,
+      "sample-04": 1,
+      "sample-05": 1,
+      "sample-06": 1,
+      "sample-07": 1,
+      "first-other-color-candidate": 1,
+      "first-green-with-red": 1,
+      "sample-08": 1,
+      "sample-09": 1,
+      "sample-10": 1,
+      "sample-11": 1,
+      "sample-12": 1
+    },
+    "saved_events": [
+      "first-frame",
+      "first-green-visible",
+      "first-green-with-red",
+      "first-other-color-candidate",
+      "sample-01",
+      "sample-02",
+      "sample-03",
+      "sample-04",
+      "sample-05",
+      "sample-06",
+      "sample-07",
+      "sample-08",
+      "sample-09",
+      "sample-10",
+      "sample-11",
+      "sample-12"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "green",
+    "longest_watched_loss_s": 0.0,
+    "periodic_samples": {
+      "interval_s": 2.0,
+      "limit": 12,
+      "saved": 12
+    }
+  },
+  "matches": {
+    "vision_app/code/project_detector.py": true,
+    "vision_app/code/config/material_color_thresholds.json": true
+  },
+  "checks": {
+    "v11_matches": true,
+    "one_green_every_result": true,
+    "one_green_id": true,
+    "all_results_fresh": true,
+    "all_action_gates_off": true
+  },
+  "observed_labels": {
+    "green": 605,
+    "red": 1
+  },
+  "green_ids": [
+    "T001"
+  ],
+  "duration_s": 34.00170162999984,
+  "result_host_age_ms_p50_p95_max": [
+    67.86853199992038,
+    87.51393699985782,
+    117.91127800006507
+  ],
+  "detector_ms_p50_p95_max": [
+    46.54630499999257,
+    57.574153800123895,
+    104.40354600041246
+  ],
+  "remaining_negative": "One additional red hand candidate; not a zero-false-positive claim.",
+  "scope": "Current tabletop green movement/lighting only. Not all glare/edge/multi-instance or physical identity/grasp acceptance."
+}

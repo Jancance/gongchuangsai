@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-14",
+  "sources": [
+    "CAN_speed_ID2_raw.png",
+    "CAN_speed_ID2_serial.png",
+    "CAN_speed_ID3_raw.png",
+    "CAN_speed_ID3_serial.png",
+    "CAN_speed_ID4_raw.png",
+    "CAN_speed_ID4_serial_all4.png"
+  ],
+  "acceptance": "PASS: ID2/3/4 static 35 transactions and decoding; all four IDs now passed including prior ID1",
+  "nodes": [
+    {
+      "address": 2,
+      "extid": "0200",
+      "rpm": 0,
+      "result": 1,
+      "watchdog_count": 1856,
+      "safety_count": 1862
+    },
+    {
+      "address": 3,
+      "extid": "0300",
+      "rpm": 0,
+      "result": 1,
+      "watchdog_count": 2041,
+      "safety_count": 2047
+    },
+    {
+      "address": 4,
+      "extid": "0400",
+      "rpm": 0,
+      "result": 1,
+      "watchdog_count": 2218,
+      "safety_count": 2224
+    }
+  ],
+  "common": {
+    "ide": 4,
+    "rtr": 0,
+    "dlc": 5,
+    "data": [
+      "35",
+      "00",
+      "00",
+      "00",
+      "6B"
+    ],
+    "vm_request": 1,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "platform_ready": 1,
+    "can_guard_ready": 1,
+    "app_stack_words": 187,
+    "safety_stack_words": 230,
+    "heap_min_bytes": 12960,
+    "reset_iwdg": 0
+  },
+  "new_numeric_vm_measurement": false,
+  "limits": [
+    "static zero feedback only; nonzero accuracy/direction unverified",
+    "no new physical VM measurement inferred"
+  ],
+  "next": "36 real-time position raw/sign reader manual build",
+  "requirements": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ]
+  }
+}

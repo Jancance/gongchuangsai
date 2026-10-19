@@ -1,0 +1,58 @@
+{
+  "source": "evidence\\20261006-083236-468596.zip",
+  "sha256": "a1ad04556b42e0e5ff6205ae4e8bc7556e14ca7eff388b46624d3da7a18267b1",
+  "run": {
+    "frames": 456,
+    "states": {
+      "STALE_RESULT": 1,
+      "FOLLOWING_PIXEL": 443,
+      "SEARCHING": 12
+    },
+    "transition_counts": {
+      "first-red-visible": 1,
+      "first-red-loss": 6,
+      "first-red-reappearance": 6
+    },
+    "saved_events": [
+      "first-red-loss",
+      "first-red-reappearance",
+      "first-red-visible"
+    ],
+    "longest_red_loss_s": 0.37381680500000414,
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer."
+  },
+  "module_hashes": {
+    "project_detector.py": "e2347aa6055bba9e1e32d37b851e1e6d02d58be3a06ee3763157945ea90b881a",
+    "project_follow.py": "ddb013e0e633e69cfd1e9d3613d5abc11ae02fdcc5e0f676c5f35943b8a3f344",
+    "project_tracker.py": "818a825ea8f7c18b25c8405f5dbbe03ee0745758b03ed02825f251a29d605259",
+    "project_camera.py": "a9d234f1d676afd44cf118a0e60be7aaf636c687ae40e281aa0dd62cb4795df4",
+    "diagnostic_entry": "11dfbfb390d8a6cc9d8915d7a6e79be21b213e449f603be7cff6e9d955ef1bc6"
+  },
+  "visible_ids": {
+    "T001": 443
+  },
+  "states": {
+    "STALE_RESULT": 1,
+    "FOLLOWING_PIXEL": 443,
+    "SEARCHING": 12
+  },
+  "observed_identity_unverified_frames": 158,
+  "unsafe_results": 0,
+  "scope": "User accepted desktop red working version. Not zero-loss or physical identity/grasp acceptance.",
+  "result_host_age_ms": {
+    "p95": 118.0502060000066,
+    "max": 183.99940700000172
+  },
+  "detector_call_ms": {
+    "p95": 84.52919700000905,
+    "max": 169.96754699999883
+  },
+  "diagnostic_io_ms": {
+    "p95": 0.25345400000276186,
+    "max": 7.2235939999956145
+  }
+}

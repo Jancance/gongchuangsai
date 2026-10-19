@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-18",
+  "observed": {
+    "tx_bytes": 5,
+    "version_result": 3,
+    "raw": 0,
+    "reply": "all zero",
+    "attitude_valid_mask": 3
+  },
+  "change": "TXE interrupt continuous five-byte request; independent RX/TX IRQ service",
+  "root_cause": "not proven; task-driven byte gaps removed as variable",
+  "checks": 2072,
+  "build": {
+    "code": 32388,
+    "ro": 448,
+    "rw": 1112,
+    "zi": 25272,
+    "errors": 0,
+    "warnings": 0
+  },
+  "checked_R": [
+    "RUN-01",
+    "PWR-01"
+  ],
+  "checked_E": [
+    "LOC-03",
+    "LOC-05",
+    "RUN-06"
+  ],
+  "Q": "unchanged",
+  "hardware_retest": "pending; no flashing by assistant",
+  "sha256": {
+    "3.stm32f407工程/USER/hwt101.c": "1e2dcb7808469f0a1d69c0d6d405b6b2d20ee47349a9965fc9acc086ecf367f9",
+    "3.stm32f407工程/Objects/gongxun-f407.axf": "310d80ac4a149536fbd5167a8f8a4343351e19ae191501e25ae558f858f9965e",
+    "工创赛/evidence/p1-foundation/2026-10-18/hwt101_contiguous_tx_private_checks.c": "71f467453f9c119cabc32fe4f07c8ed2045fb119277b756764c4117c8d49fab0"
+  }
+}

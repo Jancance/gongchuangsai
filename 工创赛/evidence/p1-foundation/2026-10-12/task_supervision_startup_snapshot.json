@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-12",
+  "source": "User Keil screenshot codex-clipboard-1f7094c7-d3d4-4875-a5ac-ee779b8c4b09.png",
+  "evidence_image": "task_supervision_startup_snapshot.png",
+  "observed": {
+    "g_vm_test_request": 0,
+    "g_rtos_fault": 0,
+    "g_stack_a_words": 208,
+    "g_safety_task_create": 1,
+    "g_safety_fault": 0,
+    "g_safety_ready": 1,
+    "g_safety_count": 294,
+    "g_safety_stack_words": 233,
+    "g_heap_min_bytes": 14072
+  },
+  "actual_source_read_verified": ["safety.c/h exist", "Safety_Init after Power_Init before task creation", "APP/RX/KEY reports connected", "normal Power_Enable removed from main", "supervisor calls Safety_Update every configured 20ms", "safety.c in Keil project", "SYSTEM/SAFETY include path configured"],
+  "acceptance": "Task supervisor creation and healthy startup software snapshot PASS",
+  "physical_VM_voltage": "NOT_REPORTED",
+  "count_progress_over_two_observations": "PENDING",
+  "actual_full_Rebuild_errors_and_warnings": "NOT_REPORTED",
+  "pending": ["supervisor count increases after resuming", "VM remains physically off with request0 after new output ownership", "task loss VM shutdown and latched fault", "CAN continuous freshness/protection", "watchdog"],
+  "local_ready_is_not_vehicle_READY": true,
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_Q": "unchanged",
+  "actual_firmware_modified_by_assistant": false,
+  "hardware_commands_sent_by_assistant": false
+}

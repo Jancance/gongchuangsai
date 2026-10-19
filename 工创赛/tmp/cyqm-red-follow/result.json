@@ -1,0 +1,63 @@
+{
+  "state": "FOLLOWING_PIXEL",
+  "targets": [
+    {
+      "id": "T001",
+      "color": "red",
+      "center_px": [
+        664.3704066873587,
+        437.4657216242787
+      ],
+      "bbox_px": [
+        536,
+        274,
+        260,
+        320
+      ],
+      "area_px2": 64759.0,
+      "read_time": 103709.468,
+      "consecutive_observations": 1,
+      "visible_in_last_frame": true,
+      "identity_continuity_unverified": false,
+      "state": "CANDIDATE",
+      "velocity_px_s": null,
+      "predicted_px": null,
+      "prediction_horizon_s": 0.1
+    }
+  ],
+  "unknown_candidates": 0,
+  "ready": false,
+  "motion_allowed": false,
+  "units": "pixels",
+  "note": "当前为原始像素诊断，速度未补偿相机自身运动，禁止用于抓取指令",
+  "timestamp_source": "host_read_completion",
+  "timestamp": 103709.468,
+  "retired_ids": [],
+  "detector_regions": [
+    {
+      "bbox_px": [
+        536,
+        274,
+        260,
+        320
+      ],
+      "area_px2": 64759.0,
+      "label": "red",
+      "reason": "DOMINANT_COLOR_EVIDENCE",
+      "usable_fraction": 0.9746679624230644,
+      "color_fractions": {
+        "red": 0.6900591597979261,
+        "yellow": 0.0,
+        "blue": 0.0,
+        "green": 0.0,
+        "black": 0.30312749268811484,
+        "lightblue": 0.0
+      },
+      "dark_fraction": 0.30312749268811484,
+      "silhouette_center_px": [
+        664.3704066873587,
+        437.4657216242787
+      ]
+    }
+  ]
+}

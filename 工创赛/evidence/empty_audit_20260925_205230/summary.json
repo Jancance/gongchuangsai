@@ -1,0 +1,24 @@
+{
+  "version": "tabletop-color-probe-v0",
+  "expected_counts": {},
+  "requested_seconds": 10.0,
+  "elapsed_seconds": 10.023,
+  "processed_frames": 208,
+  "matching_frames": 208,
+  "mismatch_frames": 0,
+  "matching_fraction": 1.0,
+  "frames_with_unknown": 208,
+  "max_unknown_count": 4,
+  "observed_patterns": {
+    "{}": 208
+  },
+  "application_processing_fps": 20.75,
+  "max_read_completion_gap_ms": 60.05,
+  "p95_analysis_ms": 39.34,
+  "completed": true,
+  "error": null,
+  "scope": "STATIC DEVELOPMENT OBSERVATION ONLY. UNKNOWN not counted as a known object. No hardware acceptance.",
+  "caveat": "Application read completion timing; no sensor timestamps, frame uniqueness, latency or track IDs.",
+  "controls_readback": "gain: 30\nwhite_balance_temperature_auto: 0\nwhite_balance_temperature: 4600\nexposure_auto: 1 (Manual Mode)\nexposure_absolute: 50\n",
+  "probe_sha256": "5d99ec76bfe9d45f79958dfb5fb587e7bfe989859b1232b33723c25983978f19"
+}

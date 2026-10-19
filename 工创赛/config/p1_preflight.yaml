@@ -1,0 +1,93 @@
+schema_version: 1
+gate_id: P1-0
+# Keep BLOCKED until every P1-0 item has evidence, then change to READY_FOR_REVIEW.
+status: BLOCKED
+checked_rule_ids:
+  - RUN-01
+  - RUN-04
+  - RUN-05
+  - RUN-06
+  - PWR-01
+  - PWR-02
+  - MECH-01
+  - MECH-04
+  - MECH-05
+  - OBS-06
+  - LOC-01
+  - LOC-02
+  - LOC-03
+  - LOC-04
+  - LOC-05
+  - LOC-06
+  - LOC-07
+
+mcu:
+  part: STM32F407VET6
+  package: LQFP100
+  datasheet: DS8626
+  datasheet_revision: "12"
+  datasheet_url: https://www.st.com/resource/en/datasheet/stm32f407ve.pdf
+  physical_pin_reviewed: false
+  alternate_function_reviewed: false
+
+artifacts:
+  cubemx_ioc: REPLACE_WITH_PATH
+  schematic_pdf: REPLACE_WITH_PATH
+  pin_mux_report: REPLACE_WITH_PATH
+  power_budget: REPLACE_WITH_PATH
+  reset_state_review: REPLACE_WITH_PATH
+
+motor_bus:
+  exact_models: []
+  manual_paths: []
+  protocol_mode: UNKNOWN
+  bitrate: UNKNOWN
+  node_ids: []
+  electrical_levels_verified: false
+  can1_transceiver_part: UNKNOWN
+  can1_transceiver_3v3_compatible: false
+  can1_termination_reviewed: false
+  can2_transceiver_part: UNKNOWN
+  can2_transceiver_3v3_compatible: false
+  can2_termination_reviewed: false
+
+serial_interfaces:
+  orange_pi_usart6:
+    electrical_standard: 3V3_TTL
+    verified: true
+  hwt101_usart2:
+    electrical_standard: UNKNOWN
+    verified: false
+  maixcam2_usart3:
+    electrical_standard: UNKNOWN
+    verified: false
+  display_uart4:
+    electrical_standard: UNKNOWN
+    verified: false
+
+safety:
+  actuators_physically_disconnected: true
+  hardware_estop_cuts_actuator_enable: false
+  global_enable_safe_during_reset: false
+  servo_power_safe_during_reset: false
+  boot0_and_nrst_reviewed: false
+  watchdog_and_brownout_plan_reviewed: false
+
+mechanical_inputs:
+  axis35_origin:
+    pin: PE8
+    normally_closed: true
+    electrical_interface_verified: false
+  axis28_origin:
+    pin: PE10
+    normally_closed: true
+    electrical_interface_verified: false
+  dm4310_origin:
+    pin: PD3
+    fitted: false
+    status: DNP_PENDING_ABSOLUTE_ANGLE_GATE
+
+tof:
+  fitted: false
+  runtime_status: NOT_PRESENT
+  interfaces_dnp: true

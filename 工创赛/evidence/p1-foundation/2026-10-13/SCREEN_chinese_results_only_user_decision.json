@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-13",
+  "source": "user explicit correction: Chinese result counts only",
+  "supersedes": "assistant proposed diagnostic page and extra raw code on final result page",
+  "classification": "E: user interface and display timing decision",
+  "page0": "preserve original complete task code display",
+  "page1": {
+    "first_control": "t2",
+    "first_line": "成功抓取次数：xx",
+    "second_control": "t3",
+    "second_line": "成功放置次数：xx",
+    "extra_diagnostic_fields": false,
+    "extra_task_code_fields": false,
+    "values": "xx replaced with actual confirmed successful counts after mission completion/return/stop"
+  },
+  "display_trigger": [
+    "current round tasks completed",
+    "returned to same drawn start area",
+    "stopped"
+  ],
+  "proposed_ui": {
+    "font_height_pixels": 32,
+    "font_encoding": "GB2312",
+    "font_id": "actual new font ID",
+    "txt_maxl": 32,
+    "preview_values": "literal xx placeholders, not real counts"
+  },
+  "implementation_status": "manual HMI settings prepared; no new UI/firmware acceptance",
+  "existing_supervision_and_iwdg": "preserved",
+  "pending": [
+    "Chinese font glyphs and preview",
+    "HMI compile",
+    "physical result display",
+    "result API integration",
+    "actual correct action events",
+    "confirmed return and stop trigger"
+  ],
+  "requirements_checked": {
+    "R": [
+      "DSP-01",
+      "DSP-02",
+      "FIELD-02",
+      "RUN-01"
+    ],
+    "E": [
+      "DSP-03",
+      "RUN-06"
+    ],
+    "Q": [
+      "QR-04",
+      "FIELD-05"
+    ]
+  },
+  "actual_hmi_or_firmware_modified_by_assistant": false
+}

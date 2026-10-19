@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-06",
+  "source": "user screenshot codex-clipboard-ea2803d4-ebf1-4b7c-8294-2b21c978eb77.png",
+  "pc": "0x080002E8",
+  "location": "Reset_Handler before SystemInit and __main",
+  "temporary_flag_and_task_assert_removed_from_source": true,
+  "normal_asserts_and_fault_hooks_retained": true,
+  "watch_temporary_flag": "cannot evaluate",
+  "build_output": {"errors": 0, "warnings": 0, "code": 5600, "ro_data": 424, "rw_data": 172, "zi_data": 22292},
+  "status": "PASS_SOURCE_CLEANUP_BUILD_PENDING_POST_RESET_RUNNING_SNAPSHOT",
+  "limitation": "Watch RAM values at reset entry may belong to previous execution",
+  "next_action": "Remove stale flag Watch row, F5 for about 5 seconds, Stop without Reset; confirm Idle/task PC and refreshed counters with fault/line zero",
+  "requirements_checked": ["LOC-03 (E)", "RUN-06 (E)"],
+  "firmware_modified_by_assistant": false
+}

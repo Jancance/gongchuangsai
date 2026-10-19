@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-17",
+  "source": "User directly reported all four driver menu S_Vel_IS values are Disable; no menu photos supplied",
+  "firmware": "FW_Emm per handoff",
+  "nodes": [
+    {
+      "S_Vel_IS": "Disable",
+      "address": 1,
+      "wheel": "left_rear"
+    },
+    {
+      "S_Vel_IS": "Disable",
+      "address": 2,
+      "wheel": "right_rear"
+    },
+    {
+      "S_Vel_IS": "Disable",
+      "address": 3,
+      "wheel": "left_front"
+    },
+    {
+      "S_Vel_IS": "Disable",
+      "address": 4,
+      "wheel": "right_front"
+    }
+  ],
+  "meaning": "Input divide-by10 disabled; speed_raw1 corresponds to1RPM per vendor manual",
+  "configuration_changed": false,
+  "command_sent_by_assistant": false,
+  "limits_note": "This resolves reported scaling configuration only; nonzero accuracy, wheel direction, chassis safe limits and physical enable behavior remain unverified",
+  "reference": "Local ZDT_X42S V1.0.5 manual pages19/81"
+}

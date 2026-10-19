@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-15",
+  "test_context": "User follows prepared static test with ID1 absent before VM request; feedback disabled. Not a motion or live unplug test.",
+  "image": "CAN_missing_ID1_fault20_VM0_pass.png",
+  "observed": {
+    "breakpoint": "Power_Disable closing brace line33 after GPIO_ResetBits",
+    "g_safety_fault": 32,
+    "g_safety_ready": 0,
+    "g_can_guard_ready": 0,
+    "g_can_guard_cause": 2,
+    "g_can_guard_bad_nodes": 1,
+    "g_safety_count": 373,
+    "g_can_task_create": 1,
+    "g_can_task_count": 116,
+    "g_can_task_stack_words": 297,
+    "g_can_test_result": 1,
+    "g_can_feedback_enable": 0,
+    "g_can_feedback_count": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "speed_valid_mask": 0,
+    "position_valid_mask": 0,
+    "feedback_error_count": 0,
+    "g_stack_a_words": 222,
+    "g_safety_stack_words": 230,
+    "g_heap_min_bytes": 11320
+  },
+  "user_measurement": {
+    "VM_volts": 0,
+    "report": "vm为0"
+  },
+  "not_visible": [
+    "g_rtos_fault",
+    "g_vm_test_request",
+    "expanded g_can_poll_result"
+  ],
+  "accepted": "Static missing-ID1 CAN data guard records cause2/mask1, both readiness flags drop, execution reaches VM-off breakpoint and user confirms physical VM0.",
+  "pending": [
+    "Reconnect ID1 while halted and VM0, remove old breakpoint, reset and verify default VM request0/physical VM0 and normal platform startup",
+    "Live feedback loss response, motion stopping timing and formal re-enable state machine remain unverified"
+  ],
+  "requirements": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ],
+    "Q": "No pending official question resolved"
+  },
+  "assistant_modified_actual_firmware": false,
+  "assistant_hardware_actions": false
+}

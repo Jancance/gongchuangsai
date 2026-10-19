@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-09",
+  "user_report": {
+    "switch_mechanical_state": "Not pressed",
+    "pe2_vm_io_volts": 0.017,
+    "vm_en_volts": 0.0,
+    "vm_volts": 0.0,
+    "g_vm_test_request": 1,
+    "f5_run_before_measurement": "USER_CONFIRMED"
+  },
+  "screenshot": {
+    "path": "evidence/p1-foundation/2026-10-09/vm_request1_missing_power_init.png",
+    "sha256": "889BC2D55E3AF759E8AC0E9806ADF0228E58797CB06AE9125E2ADD5A660603AB",
+    "visible_watch": {
+      "g_vm_test_request": 1,
+      "g_rtos_fault": 0,
+      "g_rx_task_create": 1,
+      "g_key_task_create": 1,
+      "g_rx_stack_words": 217,
+      "g_key_stack_words": 233,
+      "g_heap_free_bytes": 15192,
+      "g_heap_min_bytes": 15192
+    },
+    "pc": "0x08001816 in FreeRTOS idle task; Thread/PSP, not a fault-loop diagnosis"
+  },
+  "current_source_inspection": {
+    "main_c_sha256": "969DC957D8AA348801E998407744A3C38C627DBB9A3A7E3B74B2D5F7EA216025",
+    "power_header_included": true,
+    "power_c_added_to_uvprojx": true,
+    "power_include_path_added": true,
+    "power_init_function_defined": true,
+    "power_init_called_in_main": false,
+    "task_a_power_enable_disable_branch_present": true,
+    "key_init_line": 152,
+    "next_xTaskCreate_line": 155
+  },
+  "finding": "Power_Init exists but is not called; the intended PE2 output configuration is never performed. Power_Enable sets the output latch, which is insufficient while the pad is not configured as output.",
+  "next_action": "User adds Power_Init immediately after Key_Init in main, before task creation, then rebuilds/downloads and repeats request1/F5 with motor VM loads disconnected; measures PE2/VM_EN/VM and then request0/F5",
+  "hardware_switch_or_q2_failure_confirmed": false,
+  "physical_vm_enable_acceptance": "PENDING_AFTER_FIX",
+  "firmware_modified_by_assistant": false,
+  "pcb_or_schematic_modified": false,
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"], "Q": "Official clarification unchanged"}
+}

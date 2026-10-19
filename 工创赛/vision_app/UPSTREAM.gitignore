@@ -1,0 +1,12 @@
+# 默认忽略项目根目录下的所有内容，保留 code 源码目录和项目说明。
+/*
+!/.gitignore
+!/README.md
+!/code/
+
+# code 内部的 Python 缓存和常见运行期临时文件不提交。
+__pycache__/
+*.py[cod]
+*.log
+.pytest_cache/
+.mypy_cache/

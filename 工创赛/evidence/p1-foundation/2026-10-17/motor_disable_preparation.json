@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-17",
+  "change": "one-shot fixed disable only in CAN task",
+  "main_sha256": "bb4aa88e07be0fdebf87b846c17ba5e428bc686542f94c466fb60b8491d72578",
+  "validation": {
+    "armcc_main_isolated_compile": "passed",
+    "host_actual_branch_mock_CAN_checks": 48,
+    "full_project_rebuild": "pending user",
+    "download_and_hardware": "not performed"
+  },
+  "manual_pages": [
+    50,
+    73,
+    74
+  ],
+  "next": "Keil Rebuild, VM request stays 0; then ID1 F3 acknowledgement and 3A Ens_TF verification",
+  "requirements": {
+    "R_unchanged": [
+      "PWR-01",
+      "RUN-01"
+    ],
+    "E_reviewed": [
+      "LOC-03",
+      "MOT-02",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": "unchanged"
+  }
+}

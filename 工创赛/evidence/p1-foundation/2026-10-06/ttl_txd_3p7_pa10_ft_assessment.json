@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-06",
+  "source": "user remeasurement: module TXD-to-GND 3.7V, module VCC-to-GND 3.7V",
+  "txd_idle_v": 3.7,
+  "module_vcc_v": 3.7,
+  "prior_user_mcu_vdd_v": 3.2,
+  "prior_vdd_note": "Earlier user reading, not independently remeasured this turn; keep original normal board power",
+  "official_source": "https://www.st.com/resource/en/datasheet/stm32f407vg.pdf",
+  "source_version": "DS8626 Rev12, 18-Mar-2026",
+  "pin_table": "Table8 p57 PA10 FT USART1_RX",
+  "operating_condition_table": "Table14 p82: FT VIN up to 5.5V for 2V <= VDD <= 3.6V",
+  "required_condition": "Internal pull-up/down disabled for VIN > VDD+0.3; digital USART mode, normal MCU power",
+  "required_manual_code_change": "GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;",
+  "connection_status": "CONDITIONALLY_COMPATIBLE_FOR_PA10_RX_AFTER_CONFIG_FIX",
+  "module_vcc_to_mcu": "NOT_CONNECTED",
+  "physical_rx_status": "PENDING_USER_ABC_TEST",
+  "limitations": ["Not a statement about every GPIO", "No independent waveform/overshoot measurement", "Does not certify hardware safety or powered-off input tolerance"],
+  "requirements_checked": ["LOC-03 (E)", "RUN-06 (E)", "PWR-01 (R)"],
+  "firmware_modified_by_assistant": false
+}

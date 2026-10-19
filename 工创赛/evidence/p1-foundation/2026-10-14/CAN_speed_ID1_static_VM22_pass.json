@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-14",
+  "sources": [
+    "CAN_speed_ID1_raw_healthy_VM22.png",
+    "CAN_speed_ID1_serial_RPM0.png",
+    "user VM22V report",
+    "actual watchdog.c macro1 read-only check"
+  ],
+  "address": 1,
+  "wheel": "left rear",
+  "serial": "SPEED:A1 R1 RPM0",
+  "result": 1,
+  "rpm": 0,
+  "raw": {
+    "ext_id": "0x00000100",
+    "ide": "0x04",
+    "rtr": 0,
+    "dlc": 5,
+    "data": [
+      "35",
+      "00",
+      "00",
+      "00",
+      "6B"
+    ]
+  },
+  "health": {
+    "vm_request": 1,
+    "physical_vm_volts": 22,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "platform_ready": 1,
+    "can_guard_ready": 1,
+    "reset_iwdg": 0,
+    "reset_flags": "0x14000000",
+    "watchdog_feed_count": 1634,
+    "safety_count": 1640,
+    "app_min_stack_words": 187,
+    "safety_min_stack_words": 230,
+    "heap_min_bytes": 12960
+  },
+  "actual_debug_freeze": 1,
+  "acceptance": "PASS: ID1 static Emm speed query/reply/decode and healthy powered baseline",
+  "limits": [
+    "static zero speed does not validate nonzero accuracy, wheel direction or physical velocity",
+    "unused StdId ignored for extended-ID reply",
+    "new macro1 full build log not supplied; runtime/source observed"
+  ],
+  "next": "read IDs2,3,4 once each, preserve raw IDs and serial results",
+  "requirements_checked": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-13",
+  "source_image": "IWDG_standalone_serial_single_READY_VM0.png",
+  "test_context": "user response to exit-debugger, reset-once, observe-30-seconds instructions",
+  "user_reports": {"led_continuous_blink": true, "startup_beep_repeats": false, "physical_vm_volts": 0},
+  "serial_snapshot": {"port": "COM4 USB-SERIAL", "baud": 115200, "data_bits": 8, "stop_bits": 1, "parity": "none", "visible_startup_line": "F407 FreeRTOS READY", "visible_startup_line_count": 1, "received_byte_counter": 21},
+  "configuration": {"debug_freeze": 0, "temporary_stop_feed_test_removed": true},
+  "acceptance": "PASS: basic standalone normal-operation observation with a single startup indication and VM off",
+  "limits": ["30-second observation was instructed; elapsed duration not independently timed from static screenshot", "not complete vehicle READY or long-duration/all-fault acceptance"],
+  "watchdog_basic_gates": "build, healthy feeding, debug-freeze workflow, actual stop-feed reset/VM-off, test cleanup/startup, non-freezing halt reset and standalone observation now closed for current platform",
+  "next": "UART4 screen precheck and manual migration of existing F103 functionality",
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_questions": "unchanged"
+}

@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-10",
+  "user_chip_model": "Sit65hvd230",
+  "normalized_chip_model": "SIT65HVD230",
+  "manufacturer": "SIT / 芯力特",
+  "identification_basis": "User read the chip model; photo independently shows a small transceiver module but the marking is too blurred for an independent exact-model or resistor-value reading",
+  "photo": "evidence/p1-foundation/2026-10-10/motor_can_module_sit65hvd230_user_photo.jpg",
+  "photo_sha256": "D8B80FE1BB24DD5C531AC0C76FFC8ECC1F3DD365FD2EC57E40575BAD6911D0F4",
+  "primary_sources": {
+    "product_page": "https://en.sitcores.com/show-38-154-1.html",
+    "datasheet": "https://en.sitcores.com/uploadfile/2023/1012/20231012041534872.pdf",
+    "datasheet_document_version": "REC V1.9 2020.02; website download title says Industrial-SIT65HVD230-V1.0-en, actual PDF version retained",
+    "application_note": "https://en.sitcores.com/uploadfile/2025/0901/20250901023126482.pdf",
+    "application_note_version": "REC V1.0 2025.5"
+  },
+  "verified_chip_specs": {
+    "function": "CAN physical-layer transceiver, ISO11898-2",
+    "recommended_vcc_volts": "3.0 to3.6, nominal3.3",
+    "maximum_signaling_rate_bits_per_second": 1000000,
+    "pins_for_reference_only": {"CANL": 6, "CANH": 7, "VCC": 3, "GND": 2, "RS": 8},
+    "rs_function": "High-speed with pull-down, slope-control with external pull-down resistor, standby with high level",
+    "datasheet_differential_input_resistance_kohms": "40 to100; not a built-in120-ohm bus termination"
+  },
+  "readable_resistor_markings_in_user_photo": false,
+  "module_120ohm_termination_confirmed": false,
+  "isolated_node_resistance_user_report_ohms": 64500,
+  "isolated_measurement_interpretation": "User reported64.5kΩ after isolating the node; no effective fixed120-ohm termination is evident under that measurement condition, not an assertion that a powered selectable termination can never exist",
+  "master_transceiver": "TJA1050 at5V remains unchanged; motor-module SIT65HVD230 does not replace the master schematic",
+  "firmware_family_x_or_emm_confirmed": false,
+  "latest_user_steering": "看张大头步进电机的手册啊，不需要这么麻烦吧",
+  "next_action": "Use vendor manual to make a bounded read-only version request to left rear ID1 over existing short wiring; no extra resistor measurement/modification mandated before this first read. If real bus errors occur, diagnose termination/wiring from status.",
+  "reason_for_new_measurement": "Previous119.6-ohm motor-end measurement retained the connection to master R7; isolated motor-end measurement identifies the node's own effective termination without the master resistor",
+  "interpretation_scope": "Around120 ohms is consistent with a local termination; high resistance or OL generally lacks that effective fixed120-ohm path, but exact reading will be assessed rather than guessing from blurry marks",
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"], "Q": "Official clarification unchanged; electrical/firmware pending items are engineering verification"},
+  "firmware_or_pcb_modified": false,
+  "can_or_motion_commands_sent_by_assistant": false
+}

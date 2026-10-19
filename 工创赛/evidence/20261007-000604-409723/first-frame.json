@@ -1,0 +1,51 @@
+{
+  "event": "first-frame",
+  "previous": null,
+  "current": {
+    "state": "SEARCHING",
+    "targets": [],
+    "unknown_candidates": 2,
+    "ready": false,
+    "motion_allowed": false,
+    "units": "pixels",
+    "note": "当前为原始像素诊断，速度未补偿相机自身运动，禁止用于抓取指令",
+    "timestamp_source": "host_read_completion",
+    "timestamp": 1899.550306315,
+    "retired_ids": [],
+    "detector_regions": [
+      {
+        "bbox_px": [
+          522,
+          353,
+          262,
+          295
+        ],
+        "area_px2": 49505.5,
+        "label": "UNKNOWN",
+        "reason": "SHAPE_UNCERTAIN",
+        "proposal_source": "combined_silhouette"
+      },
+      {
+        "bbox_px": [
+          0,
+          0,
+          85,
+          169
+        ],
+        "area_px2": 6953.0,
+        "label": "UNKNOWN",
+        "reason": "TOUCHES_BORDER",
+        "proposal_source": "combined_silhouette"
+      }
+    ],
+    "circle_diagnostics": [],
+    "frame_index": 1,
+    "watch_color": "blue",
+    "detector_call_ms": 118.89645700011897,
+    "result_host_age_ms": 143.5817000001407,
+    "recorded_monotonic": 1899.693888015,
+    "last_watched_ids_before_frame": null,
+    "internal_tracks_not_actionable": []
+  },
+  "note": "Raw frames before drawing. Event is evidence, not a root-cause diagnosis."
+}

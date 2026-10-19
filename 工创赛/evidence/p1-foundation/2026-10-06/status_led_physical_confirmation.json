@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-06",
+  "source": "user statement: 状态灯是亮0.5秒、灭0.5秒",
+  "pin": "PE7",
+  "reported_on_seconds": 0.5,
+  "reported_off_seconds": 0.5,
+  "main_calls_verified_read_only": ["LED_Init", "LED_Turn"],
+  "include_path_verified_read_only": ".\\HARDWARE\\LED",
+  "status": "PASS_USER_REPORTED_PHYSICAL_STATUS_LED_BLINK",
+  "limitation": "User observation; no independent oscilloscope timing accuracy measurement supplied",
+  "next_action": "Confirm PB0 buzzer active/passive type or model before manual configurable startup indication driver",
+  "requirements_checked": ["LOC-03 (E)", "RUN-06 (E)", "PWR-01 (R)"],
+  "firmware_modified_by_assistant": false
+}

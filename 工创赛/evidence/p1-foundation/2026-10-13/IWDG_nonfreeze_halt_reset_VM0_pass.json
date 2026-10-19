@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-13",
+  "source_image": "IWDG_nonfreeze_halt_reset_VM0.png",
+  "user_reports": ["after F5 about 5 seconds, Stop followed by automatic program restart while waiting", "physical VM 0 V"],
+  "actual_configuration_from_preceding_build": {"debug_freeze": 0, "temporary_stop_feed_symbol_present": false},
+  "observations_after": {
+    "watchdog_init_result": 1,
+    "watchdog_started": 1,
+    "watchdog_feed_count": 507,
+    "reset_iwdg": 1,
+    "reset_flags_hex": "0x24000000",
+    "vm_test_request": 0,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "safety_ready": 1,
+    "can_guard_ready": 0,
+    "safety_count": 513,
+    "app_stack_min_words": 208,
+    "safety_stack_min_words": 232,
+    "heap_min_bytes": 14072,
+    "physical_vm_volts": 0
+  },
+  "acceptance": "PASS: non-freezing debug halt watchdog reset and restarted VM default off",
+  "limits": ["exact timeout duration not measured", "debugger automatically resumed reset program in this observed session; not assumed universal", "standalone runtime and full vehicle safety not yet accepted"],
+  "next": "exit debugger, reset once with serial capture open, observe 30 seconds of uninterrupted startup/LED operation and physical VM 0",
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_questions": "unchanged"
+}

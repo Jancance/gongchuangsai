@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-18",
+  "phase": "read actual version before calibration",
+  "serial": "USART2 PD5 TX + PD6 RX 115200 8N1",
+  "command": [
+    255,
+    170,
+    39,
+    46,
+    0
+  ],
+  "automatic_writes": "none",
+  "calibration": "pending actual firmware version and static confirmation",
+  "static_vm_off": true,
+  "checks": 2062,
+  "build": {
+    "code": 32220,
+    "ro": 448,
+    "rw": 1108,
+    "zi": 25276,
+    "errors": 0,
+    "warnings": 0
+  },
+  "hardware": "not flashed/sent by assistant; actual version pending",
+  "sha256": {
+    "3.stm32f407工程/USER/hwt101.c": "8312ffe82d0dcff2b22cd1981f0d5a5e9bec0f369491d55efc874798155db521",
+    "3.stm32f407工程/USER/hwt101.h": "5f33ec1dbfc071ed5b32075b0f82f0259a3dc058106d0e956824c79bdec2817a",
+    "3.stm32f407工程/USER/hwt101_parser.c": "e9e3fe5161a2d6517047a74c74d15d153082ebb29a5b051275bc40987c8155e5",
+    "3.stm32f407工程/USER/hwt101_parser.h": "3d59da04a96371693dfa77882e5408619373c86c6b731673157c8b43fb9ba65f",
+    "3.stm32f407工程/Objects/gongxun-f407.axf": "88feb750ebdbb402ad3113e6d5522c29efe74948ce572f8915094528f67e0e93",
+    "工创赛/evidence/p1-foundation/2026-10-18/hwt101_version_private_checks.c": "5bd515e169c851191f04d69ddb32257aebfdc0da077ceb97b11f7f1459f685c7"
+  }
+}

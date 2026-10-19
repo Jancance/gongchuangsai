@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-14",
+  "source_image": "START_early_key_no_latent_start_VM0.png",
+  "user_reports": "no problem; VM 0 V",
+  "serial": {
+    "port": "COM11 USB-SERIAL",
+    "baud": 115200,
+    "data_bits": 8,
+    "stop_bits": 1,
+    "parity": "none",
+    "lines": [
+      "F407 FreeRTOS READY",
+      "SCAN:532+123+325+132"
+    ],
+    "received_bytes": 43,
+    "start_line_visible": false
+  },
+  "physical_vm_volts": 0,
+  "acceptance": "PASS: early key press without scanned code does not create a latent automatic start when a code arrives, per test-context user report and serial snapshot",
+  "not_shown": [
+    "g_start_deny_count",
+    "g_start_request",
+    "fault counters"
+  ],
+  "next": "same run, release PC13 for at least 100ms and press once; expect one START:532+123+325+132 and VM0",
+  "pending": [
+    "valid code/key acceptance",
+    "code lock after replacement scan",
+    "held key and reset behavior",
+    "complete READY and motion control"
+  ],
+  "requirements_checked": {
+    "R": [
+      "QR-01",
+      "RUN-01",
+      "FIELD-02"
+    ],
+    "E": [
+      "QR-03",
+      "RUN-06"
+    ],
+    "Q": [
+      "QR-04"
+    ]
+  }
+}

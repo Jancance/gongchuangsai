@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-07",
+  "source": "user statement: 我现在使用的是带自锁的开关要怎么操作",
+  "actual_input_device": "self-latching switch",
+  "prior_instruction_assumption": "momentary normally open button",
+  "source_logic_verified_read_only": "stable release before accepting one stable low event; hold does not repeat",
+  "code_change_required_for_current_test": false,
+  "operation_mapping": {"connected_PC13_GND": "latched pressed", "disconnected_PC13_GND": "released"},
+  "next_action": "Latched ON reset/run gives count0; resume then unlatch OFF at least 0.1s then latch ON/hold gives count1",
+  "boundary_test_status": "PENDING_PHYSICAL_RESULT",
+  "limitations": ["OFF is not a implemented stop command", "No hardware E-stop functionality implied", "Actual contact state must match PC13-GND wiring"],
+  "requirements_checked": ["RUN-01 (R)", "PWR-01 (R)", "LOC-03 (E)", "RUN-06 (E)"],
+  "firmware_modified_by_assistant": false
+}

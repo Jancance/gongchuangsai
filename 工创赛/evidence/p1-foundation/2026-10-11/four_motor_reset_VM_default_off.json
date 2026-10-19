@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-11",
+  "source": "User reports VM0V after motherboard reset and supplies screenshot62d1edbe-ac4d-4090-bdf6-3e1950685a15",
+  "screenshot": "four_motor_reset_VM_default_off.png",
+  "reported_context": "All four wheel motors remain connected after shared CAN1 test",
+  "observed": {"VM_request": 0, "version_request": 0, "version_result": 0, "reply_fields_cleared": true, "target_address_default": 1, "loopback_result": 1, "RTOS_fault": 0, "task_A_stack_words": 210},
+  "VM_user_measured_volts": 0,
+  "normal_reset_default_VM_off": "PASS",
+  "hardware_switch_during_CPU_halt": "USER_REQUEST1_VM0_STATIC_PASS",
+  "hardware_switch_evidence": "four_motor_hardware_VM_off_CPU_halted.json",
+  "complete_emergency_stop_watchdog_fault_shutdown_pass": false,
+  "next": "Hold hardware off/revoke request, then manually add software fault VM-off and test assertion before injection cleanup.",
+  "requirements": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "firmware_or_PCB_modified_by_assistant": false
+}

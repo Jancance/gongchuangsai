@@ -1,0 +1,52 @@
+schema_version: 1
+platform:
+  board: orange-pi-5-pro
+  soc: rk3588s
+  memory_gib: 8
+  expected_architecture: aarch64
+  expected_os: Orange Pi 1.0.6 Ubuntu 22.04 Jammy Desktop XFCE
+  expected_kernel_family: "5.10.160-rockchip-rk3588"
+power:
+  bench_supply: fixed-5v-5a-no-pd
+  final_supply: single-onboard-battery-with-regulated-5v-rail
+  max_temperature_c: 75.0
+uart:
+  overlay: uart6-m1
+  header_rx_pin: 18
+  header_tx_pin: 16
+  logic_voltage: 3.3
+  device: /dev/ttyS6
+  planned_primary_transport: usb-ch340
+  planned_primary_device_by_id: REPLACE_WITH_CH340_BY_ID
+  backup_transport: direct-uart6-3v3
+  backup_device: /dev/ttyS6
+  ttl_level_verified: false
+  baud: 115200
+  heartbeat_slowdown_ms: 200
+  heartbeat_stop_ms: 500
+robot:
+  chassis_width_mm: 240.0
+  chassis_length_mm: 240.0
+  lane_width_mm: 400.0
+  boundary_margin_mm: 20.0
+  obstacle_nominal_radius_mm: 25.0
+  obstacle_nominal_height_mm: 100.0
+tof:
+  count: 0
+  reserved_count: 3
+  owner: stm32
+  status: NOT_PRESENT
+  enabled: false
+  slow_distance_mm: 350
+  stop_distance_mm: 180
+watchdog:
+  enabled: false
+  device: /dev/watchdog
+  timeout_seconds: 10
+deployment_evidence:
+  emmc_root_verified: true
+  opencv_version: "4.5.4"
+  opencl_available: true
+  uart6_loopback: pass
+  cameras_verified: false
+  scanner_verified: false

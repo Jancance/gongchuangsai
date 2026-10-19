@@ -1,0 +1,77 @@
+{
+  "version": "tabletop-color-probe-v1-candidate",
+  "diagnostic_version": "host-freshness-v3-stall-injection",
+  "simulated_stall_after_seconds": 3.0,
+  "expected_fault_observed": true,
+  "no_fresh_frame_detected": true,
+  "fault_detection_after_injection_ms": 500.23,
+  "requested_buffers": 4,
+  "requested_seconds": 10.0,
+  "elapsed_seconds": 3.509,
+  "max_host_age_ms": 150,
+  "stall_ms": 500,
+  "host_read_frames": 92,
+  "processed_frames": 41,
+  "host_read_fps": 26.22,
+  "processing_fps": 11.69,
+  "intentionally_skipped_before_processing": 51,
+  "unconsumed_at_end": 0,
+  "stale_input_frames": 0,
+  "stale_result_frames": 1,
+  "p95_input_host_age_ms": 35.62,
+  "max_input_host_age_ms": 39.08,
+  "p95_analysis_ms": 75.15,
+  "p95_result_host_age_ms": 108.74,
+  "max_result_host_age_ms": 160.84,
+  "completed": false,
+  "error": "NoFreshFrameError: No new host-read frame within stall limit",
+  "capture_forced_shutdown": false,
+  "capture_events": [
+    {
+      "event": "ready",
+      "controls": "gain: 30\nwhite_balance_temperature_auto: 0\nwhite_balance_temperature: 4600\nexposure_auto: 1 (Manual Mode)\nexposure_absolute: 50\n",
+      "requested_buffers": 4,
+      "v4l2_mode_readback": "Format Video Capture:\n\tWidth/Height      : 1280/960\n\tPixel Format      : 'MJPG' (Motion-JPEG)\n\tField             : None\n\tBytes per Line    : 0\n\tSize Image        : 2457600\n\tColorspace        : sRGB\n\tTransfer Function : Rec. 709\n\tYCbCr/HSV Encoding: ITU-R 601\n\tQuantization      : Default (maps to Full Range)\n\tFlags             : \nStreaming Parameters Video Capture:\n\tCapabilities     : timeperframe\n\tFrames per second: 30.000 (30/1)\n\tRead buffers     : 0\n",
+      "opencv_mode_readback": {
+        "width": 1280.0,
+        "height": 960.0,
+        "fps": 30.0,
+        "fourcc": "MJPG",
+        "buffers": 4.0
+      },
+      "buffersize_set_returned_true": true,
+      "buffersize_note": "Return value is not proof of zero driver backlog."
+    },
+    {
+      "event": "simulated_capture_stall",
+      "monotonic_time": 506.539110987,
+      "published_before_pause": 92
+    },
+    {
+      "event": "capture_timing",
+      "host_reads_including_shutdown": 92,
+      "read_call_ms": {
+        "min": 9.982,
+        "p50": 30.843,
+        "p95": 45.119,
+        "max": 48.432
+      },
+      "publish_lock_and_copy_ms": {
+        "min": 1.114,
+        "p50": 1.365,
+        "p95": 2.14,
+        "max": 4.49
+      },
+      "read_completion_interval_ms": {
+        "min": 11.341,
+        "p50": 32.348,
+        "p95": 46.51,
+        "max": 49.984
+      },
+      "note": "Includes any last capture during shutdown; read includes waiting and decoding."
+    }
+  ],
+  "probe_sha256": "73d826baf5698d75db5cf380c95c30f645adf93dd2f4ecd11efc7fbb80a4856d",
+  "diagnostic_sha256": "ac3f9abb8ec62a2427110423ea94d6fda2f453074833b232e4481e5f837b01da",
+  "caveat": "HOST READ COMPLETION AGE ONLY. Cannot prove exposure age, camera/USB buffering, sensor unique frames or frame loss. Skips are application overwrite, not sensor drops. No robot actions."
+}

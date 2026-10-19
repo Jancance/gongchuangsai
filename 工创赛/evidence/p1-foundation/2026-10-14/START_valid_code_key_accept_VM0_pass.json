@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-14",
+  "source_image": "START_valid_code_key_accept_VM0.png",
+  "user_reports": [
+    "PC13 is currently a momentary self-returning button, not latching",
+    "VM remains 0 V; normal"
+  ],
+  "serial": {
+    "port": "COM11 USB-SERIAL",
+    "baud": 115200,
+    "data_bits": 8,
+    "stop_bits": 1,
+    "parity": "none",
+    "lines": [
+      "F407 FreeRTOS READY",
+      "SCAN:532+123+325+132",
+      "START:532+123+325+132"
+    ],
+    "start_line_count": 1,
+    "received_bytes": 66
+  },
+  "physical_vm_volts": 0,
+  "acceptance": "PASS: valid scanned code plus PC13 press produces one matching START request per serial and user measurement",
+  "button_hardware_type": "momentary self-returning, user confirmed 2026-10-14",
+  "firmware_change_needed_for_button_type": false,
+  "next": "same run, scan another different QR with successful scanner feedback; screen retains bound code and no second START, VM0",
+  "not_independently_observed": [
+    "request flag and accept counter in Watch",
+    "frozen task code after replacement scan",
+    "all motor readiness or physical motion"
+  ],
+  "requirements_checked": {
+    "R": [
+      "QR-01",
+      "RUN-01",
+      "FIELD-02"
+    ],
+    "E": [
+      "QR-03",
+      "RUN-06"
+    ],
+    "Q": [
+      "QR-04"
+    ]
+  }
+}

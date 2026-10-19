@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-17",
+  "source_change": "direction argument0 to1 only, plus matching comment",
+  "previous_user_observation": {
+    "wheel1": "forward about10s then stop and VM cut",
+    "wheel2_3_4": "no active rotation",
+    "direction0": "user-defined forward for installed ID1"
+  },
+  "parameters": {
+    "address": 1,
+    "direction": 1,
+    "speed_raw": 1,
+    "run_ms": 10000,
+    "cut_ms": 10500,
+    "default_dry_run": 1
+  },
+  "validation": {
+    "inverse_diff_and_encoding": "passed",
+    "isolated_ARMCC_main": "passed",
+    "full_rebuild": "pending",
+    "hardware_reverse": "not performed"
+  },
+  "main_sha256": "1a53ec9efbd74dbd6866353fc6566f2731f67c7e5c9c8854acd617acc4997b97",
+  "requirements": {
+    "R_unchanged": [
+      "PWR-01",
+      "RUN-01"
+    ],
+    "E_reviewed": [
+      "LOC-03",
+      "MOT-02",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": "unchanged"
+  }
+}

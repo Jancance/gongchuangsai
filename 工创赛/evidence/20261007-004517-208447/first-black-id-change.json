@@ -1,0 +1,155 @@
+{
+  "event": "first-black-id-change",
+  "previous": {
+    "state": "SEARCHING",
+    "targets": [],
+    "unknown_candidates": 1,
+    "ready": false,
+    "motion_allowed": false,
+    "units": "pixels",
+    "note": "当前为原始像素诊断，速度未补偿相机自身运动，禁止用于抓取指令",
+    "timestamp_source": "host_read_completion",
+    "timestamp": 4262.780947982,
+    "retired_ids": [],
+    "detector_regions": [
+      {
+        "bbox_px": [
+          0,
+          0,
+          954,
+          723
+        ],
+        "area_px2": 324724.5,
+        "label": "UNKNOWN",
+        "reason": "TOUCHES_BORDER",
+        "proposal_source": "combined_silhouette"
+      }
+    ],
+    "circle_diagnostics": [],
+    "frame_index": 197,
+    "watch_color": "black",
+    "detector_call_ms": 41.75632999977097,
+    "result_host_age_ms": 49.97798200020043,
+    "recorded_monotonic": 4262.830925964,
+    "last_watched_ids_before_frame": [
+      "T001"
+    ],
+    "internal_tracks_not_actionable": [],
+    "diagnostic_io_ms": 0.1353309999103658
+  },
+  "current": {
+    "state": "FOLLOWING_PIXEL",
+    "targets": [
+      {
+        "id": "T002",
+        "color": "black",
+        "center_px": [
+          815.3069058835321,
+          476.1398120438914
+        ],
+        "bbox_px": [
+          665,
+          318,
+          289,
+          307
+        ],
+        "area_px2": 69839.0,
+        "read_time": 4262.81249382,
+        "proposal_source": "combined_silhouette",
+        "radius_px": null,
+        "geometry_reference_changed": false,
+        "consecutive_observations": 1,
+        "visible_in_last_frame": true,
+        "identity_continuity_unverified": false,
+        "state": "CANDIDATE",
+        "velocity_px_s": null,
+        "predicted_px": null,
+        "prediction_horizon_s": 0.1,
+        "identity_valid_for_prediction": true
+      }
+    ],
+    "unknown_candidates": 1,
+    "ready": false,
+    "motion_allowed": false,
+    "units": "pixels",
+    "note": "当前为原始像素诊断，速度未补偿相机自身运动，禁止用于抓取指令",
+    "timestamp_source": "host_read_completion",
+    "timestamp": 4262.81249382,
+    "retired_ids": [],
+    "detector_regions": [
+      {
+        "bbox_px": [
+          0,
+          0,
+          647,
+          712
+        ],
+        "area_px2": 238466.5,
+        "label": "UNKNOWN",
+        "reason": "TOUCHES_BORDER",
+        "proposal_source": "combined_silhouette"
+      },
+      {
+        "bbox_px": [
+          665,
+          318,
+          289,
+          307
+        ],
+        "area_px2": 69839.0,
+        "label": "black",
+        "reason": "DOMINANT_COLOR_EVIDENCE",
+        "proposal_source": "combined_silhouette",
+        "usable_fraction": 1.0,
+        "color_fractions": {
+          "red": 0.0,
+          "yellow": 0.0,
+          "blue": 0.025622957210111246,
+          "green": 0.0,
+          "black": 0.9631773066658671,
+          "lightblue": 0.00019490839305526402
+        },
+        "dark_fraction": 0.9631773066658671,
+        "silhouette_center_px": [
+          815.3069058835321,
+          476.1398120438914
+        ]
+      }
+    ],
+    "circle_diagnostics": [],
+    "frame_index": 198,
+    "watch_color": "black",
+    "detector_call_ms": 45.49543400025868,
+    "result_host_age_ms": 70.85658500000136,
+    "recorded_monotonic": 4262.883350405,
+    "last_watched_ids_before_frame": [
+      "T001"
+    ],
+    "internal_tracks_not_actionable": [
+      {
+        "id": "T002",
+        "color": "black",
+        "center_px": [
+          815.3069058835321,
+          476.1398120438914
+        ],
+        "bbox_px": [
+          665,
+          318,
+          289,
+          307
+        ],
+        "area_px2": 69839.0,
+        "read_time": 4262.81249382,
+        "proposal_source": "combined_silhouette",
+        "radius_px": null,
+        "geometry_reference_changed": false,
+        "consecutive_observations": 1,
+        "visible_in_last_frame": true,
+        "identity_continuity_unverified": false,
+        "state": "CANDIDATE"
+      }
+    ]
+  },
+  "note": "Raw frames before drawing. Event is evidence, not a root-cause diagnosis."
+}

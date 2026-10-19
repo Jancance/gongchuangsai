@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-14",
+  "source": "user complete Keil Rebuild log and actual main read-only check",
+  "compiler": "ARMCC V5.06 update 5 build 528",
+  "errors": 0,
+  "warnings": 0,
+  "build_seconds": 2,
+  "program_size_bytes": {
+    "code": 18232,
+    "ro_data": 424,
+    "rw_data": 512,
+    "zi_data": 22576
+  },
+  "acceptance": "PASS: current scanner/screen/start-request firmware full build and link",
+  "actual_start_gate_integration_checked": true,
+  "download_or_runtime_evidence_in_this_log": false,
+  "next": "after fresh reset, press PC13 without scanning, then scan and confirm no automatic START",
+  "pending": [
+    "early key rejection without latent start",
+    "valid scan then key acceptance",
+    "bound code freeze",
+    "held-key/reset behavior",
+    "full formal READY/motion control"
+  ],
+  "requirements_checked": {
+    "R": [
+      "QR-01",
+      "RUN-01",
+      "FIELD-02"
+    ],
+    "E": [
+      "QR-03",
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ],
+    "Q": [
+      "QR-04"
+    ]
+  }
+}

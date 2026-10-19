@@ -1,0 +1,426 @@
+{
+  "event": "first-lightblue-loss",
+  "previous": {
+    "state": "FOLLOWING_PIXEL",
+    "targets": [
+      {
+        "id": "T002",
+        "color": "lightblue",
+        "center_px": [
+          704.0,
+          376.0
+        ],
+        "bbox_px": [
+          596,
+          268,
+          217,
+          217
+        ],
+        "area_px2": 36372.60472942369,
+        "read_time": 2965.661034193,
+        "proposal_source": "chromatic_circle",
+        "radius_px": 107.5999984741211,
+        "geometry_reference_changed": false,
+        "consecutive_observations": 11,
+        "visible_in_last_frame": true,
+        "identity_continuity_unverified": false,
+        "state": "OBSERVED",
+        "velocity_px_s": [
+          -20.86664062166372,
+          0.0
+        ],
+        "predicted_px": [
+          701.9133359378336,
+          376.0
+        ],
+        "prediction_horizon_s": 0.1,
+        "identity_valid_for_prediction": true
+      }
+    ],
+    "unknown_candidates": 3,
+    "ready": false,
+    "motion_allowed": false,
+    "units": "pixels",
+    "note": "当前为原始像素诊断，速度未补偿相机自身运动，禁止用于抓取指令",
+    "timestamp_source": "host_read_completion",
+    "timestamp": 2965.661034193,
+    "retired_ids": [],
+    "detector_regions": [
+      {
+        "bbox_px": [
+          561,
+          178,
+          267,
+          350
+        ],
+        "area_px2": 72150.0,
+        "label": "UNKNOWN",
+        "reason": "AMBIGUOUS_COLOR",
+        "proposal_source": "combined_silhouette",
+        "usable_fraction": 0.9999274584336825,
+        "color_fractions": {
+          "red": 0.0,
+          "yellow": 0.0,
+          "blue": 0.3498208093324241,
+          "green": 0.0,
+          "black": 0.2472541025231787,
+          "lightblue": 0.4188563717879891
+        },
+        "dark_fraction": 0.2472541025231787,
+        "silhouette_center_px": [
+          697.4691499191499,
+          357.12493878493876
+        ]
+      },
+      {
+        "bbox_px": [
+          1168,
+          0,
+          112,
+          232
+        ],
+        "area_px2": 11400.5,
+        "label": "UNKNOWN",
+        "reason": "TOUCHES_BORDER",
+        "proposal_source": "combined_silhouette"
+      },
+      {
+        "bbox_px": [
+          0,
+          0,
+          50,
+          104
+        ],
+        "area_px2": 2602.0,
+        "label": "UNKNOWN",
+        "reason": "TOUCHES_BORDER",
+        "proposal_source": "combined_silhouette"
+      },
+      {
+        "bbox_px": [
+          596,
+          268,
+          217,
+          217
+        ],
+        "area_px2": 36372.60472942369,
+        "label": "lightblue",
+        "reason": "CURRENT_COLOR_ARC_SUPPORT",
+        "proposal_source": "chromatic_circle",
+        "silhouette_center_px": [
+          704.0,
+          376.0
+        ],
+        "center_reference": "current_color_circle_not_calibrated_grasp_point",
+        "arc_fraction": 0.8472222222222222,
+        "usable_fraction": 1.0,
+        "color_fractions": {
+          "red": 0.0,
+          "yellow": 0.0,
+          "blue": 0.18539631821647726,
+          "green": 0.0,
+          "black": 0.0,
+          "lightblue": 0.8146036817835227
+        },
+        "radius_px": 107.5999984741211,
+        "circle_proposal": "hough",
+        "parent_fraction": 1.0
+      }
+    ],
+    "circle_diagnostics": [
+      {
+        "color": "lightblue",
+        "center_px": [
+          706.0,
+          376.0
+        ],
+        "radius_px": 107.0,
+        "circle_proposal": "revalidated_previous_circle",
+        "reason": "CURRENT_FRAME_VALIDATED",
+        "arc_fraction": 0.8194444444444444
+      },
+      {
+        "color": "lightblue",
+        "center_px": [
+          704.0,
+          376.0
+        ],
+        "radius_px": 107.5999984741211,
+        "circle_proposal": "hough",
+        "reason": "CURRENT_FRAME_VALIDATED",
+        "arc_fraction": 0.8472222222222222
+      },
+      {
+        "color": "lightblue",
+        "center_px": [
+          700.0,
+          404.0
+        ],
+        "radius_px": 122.4000015258789,
+        "circle_proposal": "hough",
+        "reason": "INSUFFICIENT_ARC",
+        "arc_fraction": 0.625
+      },
+      {
+        "color": "lightblue",
+        "center_px": [
+          676.0,
+          408.0
+        ],
+        "radius_px": 111.4000015258789,
+        "circle_proposal": "hough",
+        "reason": "INSUFFICIENT_ARC",
+        "arc_fraction": 0.5972222222222222
+      },
+      {
+        "color": "lightblue",
+        "center_px": [
+          728.0,
+          392.0
+        ],
+        "radius_px": 80.4000015258789,
+        "circle_proposal": "hough",
+        "reason": "INSUFFICIENT_ARC",
+        "arc_fraction": 0.6527777777777778
+      },
+      {
+        "color": "lightblue",
+        "center_px": [
+          720.0,
+          412.0
+        ],
+        "radius_px": 69.19999694824219,
+        "circle_proposal": "hough",
+        "reason": "INSUFFICIENT_ARC",
+        "arc_fraction": 0.625
+      }
+    ],
+    "frame_index": 253,
+    "watch_color": "lightblue",
+    "detector_call_ms": 96.72874999978376,
+    "result_host_age_ms": 121.66728900001544,
+    "recorded_monotonic": 2965.782701482,
+    "last_watched_ids_before_frame": [
+      "T002"
+    ],
+    "internal_tracks_not_actionable": [
+      {
+        "id": "T002",
+        "color": "lightblue",
+        "center_px": [
+          704.0,
+          376.0
+        ],
+        "bbox_px": [
+          596,
+          268,
+          217,
+          217
+        ],
+        "area_px2": 36372.60472942369,
+        "read_time": 2965.661034193,
+        "proposal_source": "chromatic_circle",
+        "radius_px": 107.5999984741211,
+        "geometry_reference_changed": false,
+        "consecutive_observations": 11,
+        "visible_in_last_frame": true,
+        "identity_continuity_unverified": false,
+        "state": "OBSERVED"
+      }
+    ],
+    "diagnostic_io_ms": 0.2776619999167451
+  },
+  "current": {
+    "state": "SEARCHING",
+    "targets": [],
+    "unknown_candidates": 3,
+    "ready": false,
+    "motion_allowed": false,
+    "units": "pixels",
+    "note": "当前为原始像素诊断，速度未补偿相机自身运动，禁止用于抓取指令",
+    "timestamp_source": "host_read_completion",
+    "timestamp": 2965.773150143,
+    "retired_ids": [],
+    "detector_regions": [
+      {
+        "bbox_px": [
+          560,
+          178,
+          267,
+          351
+        ],
+        "area_px2": 72231.0,
+        "label": "UNKNOWN",
+        "reason": "AMBIGUOUS_COLOR",
+        "proposal_source": "combined_silhouette",
+        "usable_fraction": 0.9998840596513094,
+        "color_fractions": {
+          "red": 0.0,
+          "yellow": 0.0,
+          "blue": 0.36466018291710756,
+          "green": 0.0,
+          "black": 0.24774977171597118,
+          "lightblue": 0.4039685185453597
+        },
+        "dark_fraction": 0.24774977171597118,
+        "silhouette_center_px": [
+          697.4149464911188,
+          357.16211414305025
+        ]
+      },
+      {
+        "bbox_px": [
+          1157,
+          0,
+          123,
+          248
+        ],
+        "area_px2": 12772.5,
+        "label": "UNKNOWN",
+        "reason": "TOUCHES_BORDER",
+        "proposal_source": "combined_silhouette"
+      },
+      {
+        "bbox_px": [
+          0,
+          0,
+          49,
+          105
+        ],
+        "area_px2": 2639.0,
+        "label": "UNKNOWN",
+        "reason": "TOUCHES_BORDER",
+        "proposal_source": "combined_silhouette"
+      }
+    ],
+    "circle_diagnostics": [
+      {
+        "color": "lightblue",
+        "center_px": [
+          704.0,
+          376.0
+        ],
+        "radius_px": 107.5999984741211,
+        "circle_proposal": "revalidated_previous_circle",
+        "reason": "CURRENT_FRAME_VALIDATED",
+        "arc_fraction": 0.75
+      },
+      {
+        "color": "lightblue",
+        "center_px": [
+          705.0,
+          373.0
+        ],
+        "radius_px": 109.80000305175781,
+        "circle_proposal": "hough",
+        "reason": "INSUFFICIENT_ARC",
+        "arc_fraction": 0.7361111111111112
+      },
+      {
+        "color": "lightblue",
+        "center_px": [
+          693.0,
+          395.0
+        ],
+        "radius_px": 128.8000030517578,
+        "circle_proposal": "hough",
+        "reason": "INSUFFICIENT_ARC",
+        "arc_fraction": 0.4861111111111111
+      },
+      {
+        "color": "lightblue",
+        "center_px": [
+          695.0,
+          417.0
+        ],
+        "radius_px": 113.19999694824219,
+        "circle_proposal": "hough",
+        "reason": "INSUFFICIENT_ARC",
+        "arc_fraction": 0.625
+      },
+      {
+        "color": "lightblue",
+        "center_px": [
+          717.0,
+          419.0
+        ],
+        "radius_px": 100.0,
+        "circle_proposal": "hough",
+        "reason": "INSUFFICIENT_ARC",
+        "arc_fraction": 0.6388888888888888
+      },
+      {
+        "color": "lightblue",
+        "center_px": [
+          721.0,
+          393.0
+        ],
+        "radius_px": 84.5999984741211,
+        "circle_proposal": "hough",
+        "reason": "INSUFFICIENT_ARC",
+        "arc_fraction": 0.7083333333333334
+      },
+      {
+        "color": "lightblue",
+        "center_px": [
+          703.0,
+          443.0
+        ],
+        "radius_px": 87.0,
+        "circle_proposal": "hough",
+        "reason": "INSUFFICIENT_ARC",
+        "arc_fraction": 0.375
+      },
+      {
+        "color": "lightblue",
+        "center_px": [
+          667.0,
+          389.0
+        ],
+        "radius_px": 80.0,
+        "circle_proposal": "hough",
+        "reason": "CURRENT_FRAME_VALIDATED",
+        "arc_fraction": 0.7638888888888888
+      },
+      {
+        "color": "lightblue",
+        "reason": "MULTIPLE_SUPPORTED_CIRCLES",
+        "count": 2
+      }
+    ],
+    "frame_index": 254,
+    "watch_color": "lightblue",
+    "detector_call_ms": 100.02890300029321,
+    "result_host_age_ms": 116.78545400036455,
+    "recorded_monotonic": 2965.889935597,
+    "last_watched_ids_before_frame": [
+      "T002"
+    ],
+    "internal_tracks_not_actionable": [
+      {
+        "id": "T002",
+        "color": "lightblue",
+        "center_px": [
+          704.0,
+          376.0
+        ],
+        "bbox_px": [
+          596,
+          268,
+          217,
+          217
+        ],
+        "area_px2": 36372.60472942369,
+        "read_time": 2965.661034193,
+        "proposal_source": "chromatic_circle",
+        "radius_px": 107.5999984741211,
+        "geometry_reference_changed": false,
+        "consecutive_observations": 11,
+        "visible_in_last_frame": false,
+        "identity_continuity_unverified": false,
+        "state": "OBSERVED"
+      }
+    ]
+  },
+  "note": "Raw frames before drawing. Event is evidence, not a root-cause diagnosis."
+}

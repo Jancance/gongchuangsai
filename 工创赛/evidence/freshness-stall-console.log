@@ -1,0 +1,19 @@
+Starting capture and warm-up; keep camera and objects still.
+Recording latest-frame diagnostic for 10.0 seconds.
+completed: False
+expected_fault_observed: True
+fault_detection_after_injection_ms: 500.23
+requested_buffers: 4
+host_read_frames: 92
+processed_frames: 41
+host_read_fps: 26.22
+processing_fps: 11.69
+intentionally_skipped_before_processing: 51
+stale_input_frames: 0
+stale_result_frames: 1
+p95_input_host_age_ms: 35.62
+p95_result_host_age_ms: 108.74
+max_result_host_age_ms: 160.84
+capture_forced_shutdown: False
+Saved: /home/orangepi/v0-main/freshness-audits/20260926-150015-446968
+NoFreshFrameError: No new host-read frame within stall limit

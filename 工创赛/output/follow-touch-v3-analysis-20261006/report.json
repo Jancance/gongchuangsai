@@ -1,0 +1,904 @@
+{
+  "candidate_version": "tabletop-color-probe-v3-circle-touch-candidate",
+  "runs": [
+    {
+      "source": "D:\\Codex\\工创赛\\evidence\\20261006-051539-184251.zip",
+      "sha256": "3df47d20698cd1073250be4cd7468d9a3fecc1d9c9acd63cb1f4ee60bb21458d",
+      "run": {
+        "frames": 430,
+        "states": {
+          "FOLLOWING_PIXEL": 327,
+          "SEARCHING": 103
+        },
+        "transition_counts": {
+          "first-red-visible": 1,
+          "first-red-loss": 3,
+          "first-red-reappearance": 3,
+          "first-red-id-change": 3
+        },
+        "saved_events": [
+          "first-red-id-change",
+          "first-red-loss",
+          "first-red-reappearance",
+          "first-red-visible"
+        ],
+        "exit_code": 0,
+        "error": null,
+        "serial": "DISABLED",
+        "motion_allowed": false,
+        "scope": "Desktop pixel evidence; synchronous image saving adds diagnostic overhead."
+      },
+      "timing": {
+        "detector_call_ms": {
+          "p95": 77.35899799990875,
+          "max": 99.45404299992333
+        },
+        "result_host_age_ms": {
+          "p95": 111.49104600008286,
+          "max": 123.67772000015975
+        },
+        "diagnostic_io_ms": {
+          "p95": 0.1510810000127094,
+          "max": 410.20203600010063
+        }
+      },
+      "states": {
+        "FOLLOWING_PIXEL": 327,
+        "SEARCHING": 103
+      },
+      "proposal_sources": {
+        "ABSENT": 572
+      },
+      "event_frame_replay": [
+        {
+          "file": "first-red-id-change-before-raw.png",
+          "v2_known": [
+            {
+              "bbox_px": [
+                558,
+                409,
+                253,
+                226
+              ],
+              "area_px2": 41770.0,
+              "label": "red",
+              "reason": "ISOLATED_CHROMATIC_COMPONENT",
+              "proposal_source": "chromatic_component",
+              "center_reference": "chromatic_region_not_calibrated_grasp_point",
+              "circularity": 0.6992873750270563,
+              "solidity": 0.9732853331469249,
+              "usable_fraction": 0.9099445264390045,
+              "color_fractions": {
+                "red": 0.9151542269079113,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.01806538214155877,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.01806538214155877,
+              "silhouette_center_px": [
+                685.692319048759,
+                523.2000478812545
+              ]
+            }
+          ],
+          "v3_known": [
+            {
+              "bbox_px": [
+                558,
+                409,
+                253,
+                226
+              ],
+              "area_px2": 41770.0,
+              "label": "red",
+              "reason": "ISOLATED_CHROMATIC_COMPONENT",
+              "proposal_source": "chromatic_component",
+              "center_reference": "chromatic_region_not_calibrated_grasp_point",
+              "circularity": 0.6992873750270563,
+              "solidity": 0.9732853331469249,
+              "usable_fraction": 0.9099445264390045,
+              "color_fractions": {
+                "red": 0.9151542269079113,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.01806538214155877,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.01806538214155877,
+              "silhouette_center_px": [
+                685.692319048759,
+                523.2000478812545
+              ]
+            }
+          ],
+          "hint_scope": "Offline development search using first-visible bbox; live age limited to 500ms by MaterialFollower."
+        },
+        {
+          "file": "first-red-id-change-raw.png",
+          "v2_known": [
+            {
+              "bbox_px": [
+                553,
+                335,
+                260,
+                299
+              ],
+              "area_px2": 54821.0,
+              "label": "red",
+              "reason": "DOMINANT_COLOR_EVIDENCE",
+              "proposal_source": "combined_silhouette",
+              "usable_fraction": 0.9920788177339901,
+              "color_fractions": {
+                "red": 0.6539286565504091,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.35588305394454595,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.35588305394454595,
+              "silhouette_center_px": [
+                683.5181286976401,
+                477.9907000358743
+              ]
+            }
+          ],
+          "v3_known": [
+            {
+              "bbox_px": [
+                553,
+                335,
+                260,
+                299
+              ],
+              "area_px2": 54821.0,
+              "label": "red",
+              "reason": "DOMINANT_COLOR_EVIDENCE",
+              "proposal_source": "combined_silhouette",
+              "usable_fraction": 0.9920788177339901,
+              "color_fractions": {
+                "red": 0.6539286565504091,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.35588305394454595,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.35588305394454595,
+              "silhouette_center_px": [
+                683.5181286976401,
+                477.9907000358743
+              ]
+            }
+          ],
+          "hint_scope": "Offline development search using first-visible bbox; live age limited to 500ms by MaterialFollower."
+        },
+        {
+          "file": "first-red-loss-before-raw.png",
+          "v2_known": [
+            {
+              "bbox_px": [
+                500,
+                324,
+                261,
+                304
+              ],
+              "area_px2": 61936.5,
+              "label": "red",
+              "reason": "DOMINANT_COLOR_EVIDENCE",
+              "proposal_source": "combined_silhouette",
+              "usable_fraction": 0.9743759215008388,
+              "color_fractions": {
+                "red": 0.6892425428298112,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.3025654404730846,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.3025654404730846,
+              "silhouette_center_px": [
+                625.3154844074173,
+                479.12584394231726
+              ]
+            }
+          ],
+          "v3_known": [
+            {
+              "bbox_px": [
+                500,
+                324,
+                261,
+                304
+              ],
+              "area_px2": 61936.5,
+              "label": "red",
+              "reason": "DOMINANT_COLOR_EVIDENCE",
+              "proposal_source": "combined_silhouette",
+              "usable_fraction": 0.9743759215008388,
+              "color_fractions": {
+                "red": 0.6892425428298112,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.3025654404730846,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.3025654404730846,
+              "silhouette_center_px": [
+                625.3154844074173,
+                479.12584394231726
+              ]
+            }
+          ],
+          "hint_scope": "Offline development search using first-visible bbox; live age limited to 500ms by MaterialFollower."
+        },
+        {
+          "file": "first-red-loss-raw.png",
+          "v2_known": [
+            {
+              "bbox_px": [
+                501,
+                400,
+                259,
+                228
+              ],
+              "area_px2": 44971.0,
+              "label": "red",
+              "reason": "ISOLATED_CHROMATIC_COMPONENT",
+              "proposal_source": "chromatic_component",
+              "center_reference": "chromatic_region_not_calibrated_grasp_point",
+              "circularity": 0.683102729264891,
+              "solidity": 0.9557317125005313,
+              "usable_fraction": 0.9646590695046148,
+              "color_fractions": {
+                "red": 0.940714163676747,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.03482951355837056,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.03482951355837056,
+              "silhouette_center_px": [
+                627.9107980698673,
+                513.8711984760549
+              ]
+            }
+          ],
+          "v3_known": [
+            {
+              "bbox_px": [
+                501,
+                400,
+                259,
+                228
+              ],
+              "area_px2": 44971.0,
+              "label": "red",
+              "reason": "ISOLATED_CHROMATIC_COMPONENT",
+              "proposal_source": "chromatic_component",
+              "center_reference": "chromatic_region_not_calibrated_grasp_point",
+              "circularity": 0.683102729264891,
+              "solidity": 0.9557317125005313,
+              "usable_fraction": 0.9646590695046148,
+              "color_fractions": {
+                "red": 0.940714163676747,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.03482951355837056,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.03482951355837056,
+              "silhouette_center_px": [
+                627.9107980698673,
+                513.8711984760549
+              ]
+            }
+          ],
+          "hint_scope": "Offline development search using first-visible bbox; live age limited to 500ms by MaterialFollower."
+        },
+        {
+          "file": "first-red-reappearance-before-raw.png",
+          "v2_known": [
+            {
+              "bbox_px": [
+                558,
+                409,
+                253,
+                226
+              ],
+              "area_px2": 41770.0,
+              "label": "red",
+              "reason": "ISOLATED_CHROMATIC_COMPONENT",
+              "proposal_source": "chromatic_component",
+              "center_reference": "chromatic_region_not_calibrated_grasp_point",
+              "circularity": 0.6992873750270563,
+              "solidity": 0.9732853331469249,
+              "usable_fraction": 0.9099445264390045,
+              "color_fractions": {
+                "red": 0.9151542269079113,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.01806538214155877,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.01806538214155877,
+              "silhouette_center_px": [
+                685.692319048759,
+                523.2000478812545
+              ]
+            }
+          ],
+          "v3_known": [
+            {
+              "bbox_px": [
+                558,
+                409,
+                253,
+                226
+              ],
+              "area_px2": 41770.0,
+              "label": "red",
+              "reason": "ISOLATED_CHROMATIC_COMPONENT",
+              "proposal_source": "chromatic_component",
+              "center_reference": "chromatic_region_not_calibrated_grasp_point",
+              "circularity": 0.6992873750270563,
+              "solidity": 0.9732853331469249,
+              "usable_fraction": 0.9099445264390045,
+              "color_fractions": {
+                "red": 0.9151542269079113,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.01806538214155877,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.01806538214155877,
+              "silhouette_center_px": [
+                685.692319048759,
+                523.2000478812545
+              ]
+            }
+          ],
+          "hint_scope": "Offline development search using first-visible bbox; live age limited to 500ms by MaterialFollower."
+        },
+        {
+          "file": "first-red-reappearance-raw.png",
+          "v2_known": [
+            {
+              "bbox_px": [
+                553,
+                335,
+                260,
+                299
+              ],
+              "area_px2": 54821.0,
+              "label": "red",
+              "reason": "DOMINANT_COLOR_EVIDENCE",
+              "proposal_source": "combined_silhouette",
+              "usable_fraction": 0.9920788177339901,
+              "color_fractions": {
+                "red": 0.6539286565504091,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.35588305394454595,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.35588305394454595,
+              "silhouette_center_px": [
+                683.5181286976401,
+                477.9907000358743
+              ]
+            }
+          ],
+          "v3_known": [
+            {
+              "bbox_px": [
+                553,
+                335,
+                260,
+                299
+              ],
+              "area_px2": 54821.0,
+              "label": "red",
+              "reason": "DOMINANT_COLOR_EVIDENCE",
+              "proposal_source": "combined_silhouette",
+              "usable_fraction": 0.9920788177339901,
+              "color_fractions": {
+                "red": 0.6539286565504091,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.35588305394454595,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.35588305394454595,
+              "silhouette_center_px": [
+                683.5181286976401,
+                477.9907000358743
+              ]
+            }
+          ],
+          "hint_scope": "Offline development search using first-visible bbox; live age limited to 500ms by MaterialFollower."
+        },
+        {
+          "file": "first-red-visible-raw.png",
+          "v2_known": [
+            {
+              "bbox_px": [
+                496,
+                321,
+                261,
+                305
+              ],
+              "area_px2": 62299.0,
+              "label": "red",
+              "reason": "DOMINANT_COLOR_EVIDENCE",
+              "proposal_source": "combined_silhouette",
+              "usable_fraction": 0.9803046129999663,
+              "color_fractions": {
+                "red": 0.6908997164217582,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.2991148921543353,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.2991148921543353,
+              "silhouette_center_px": [
+                621.5282535300191,
+                475.8915953707122
+              ]
+            }
+          ],
+          "v3_known": [
+            {
+              "bbox_px": [
+                496,
+                321,
+                261,
+                305
+              ],
+              "area_px2": 62299.0,
+              "label": "red",
+              "reason": "DOMINANT_COLOR_EVIDENCE",
+              "proposal_source": "combined_silhouette",
+              "usable_fraction": 0.9803046129999663,
+              "color_fractions": {
+                "red": 0.6908997164217582,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.2991148921543353,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.2991148921543353,
+              "silhouette_center_px": [
+                621.5282535300191,
+                475.8915953707122
+              ]
+            }
+          ],
+          "hint_scope": "Offline development search using first-visible bbox; live age limited to 500ms by MaterialFollower."
+        }
+      ]
+    },
+    {
+      "source": "D:\\Codex\\工创赛\\evidence\\20261006-053817-238086.zip",
+      "sha256": "bc16a9a6a4013a2dc72b319eb97d8647588f889eba2710e26653bbedf548dc70",
+      "run": {
+        "frames": 641,
+        "states": {
+          "FOLLOWING_PIXEL": 515,
+          "SEARCHING": 126
+        },
+        "transition_counts": {
+          "first-red-visible": 1,
+          "first-red-loss": 7,
+          "first-red-reappearance": 7,
+          "first-red-id-change": 5
+        },
+        "saved_events": [
+          "first-red-id-change",
+          "first-red-loss",
+          "first-red-reappearance",
+          "first-red-visible"
+        ],
+        "exit_code": 0,
+        "error": null,
+        "serial": "DISABLED",
+        "motion_allowed": false,
+        "scope": "Desktop pixel evidence; synchronous image saving adds diagnostic overhead."
+      },
+      "timing": {
+        "detector_call_ms": {
+          "p95": 86.69779000001654,
+          "max": 129.38344500025778
+        },
+        "result_host_age_ms": {
+          "p95": 115.66860799985079,
+          "max": 141.08814500013978
+        },
+        "diagnostic_io_ms": {
+          "p95": 0.16916399999900023,
+          "max": 414.62919100013096
+        }
+      },
+      "states": {
+        "FOLLOWING_PIXEL": 515,
+        "SEARCHING": 126
+      },
+      "proposal_sources": {
+        "combined_silhouette": 924,
+        "chromatic_component": 34
+      },
+      "event_frame_replay": [
+        {
+          "file": "first-red-id-change-before-raw.png",
+          "v2_known": [],
+          "v3_known": [
+            {
+              "bbox_px": [
+                587,
+                378,
+                241,
+                241
+              ],
+              "area_px2": 45238.93421169302,
+              "label": "red",
+              "reason": "CURRENT_COLOR_ARC_SUPPORT",
+              "proposal_source": "chromatic_circle",
+              "silhouette_center_px": [
+                707.0,
+                498.0
+              ],
+              "center_reference": "current_color_circle_not_calibrated_grasp_point",
+              "arc_fraction": 0.9305555555555556,
+              "usable_fraction": 0.9156767169668136,
+              "color_fractions": {
+                "red": 0.8944281524926686,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.07554507203876068,
+                "lightblue": 0.0
+              },
+              "radius_px": 120.0
+            }
+          ],
+          "hint_scope": "Offline development search using first-visible bbox; live age limited to 500ms by MaterialFollower."
+        },
+        {
+          "file": "first-red-id-change-raw.png",
+          "v2_known": [
+            {
+              "bbox_px": [
+                587,
+                392,
+                259,
+                230
+              ],
+              "area_px2": 44255.5,
+              "label": "red",
+              "reason": "ISOLATED_CHROMATIC_COMPONENT",
+              "proposal_source": "chromatic_component",
+              "center_reference": "chromatic_region_not_calibrated_grasp_point",
+              "circularity": 0.7923198301147542,
+              "solidity": 0.9727338667135572,
+              "usable_fraction": 0.9262755406858645,
+              "color_fractions": {
+                "red": 0.9495356037151703,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.04097007223942208,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.04097007223942208,
+              "silhouette_center_px": [
+                720.3780961311776,
+                508.50045380423524
+              ]
+            }
+          ],
+          "v3_known": [
+            {
+              "bbox_px": [
+                587,
+                392,
+                259,
+                230
+              ],
+              "area_px2": 44255.5,
+              "label": "red",
+              "reason": "ISOLATED_CHROMATIC_COMPONENT",
+              "proposal_source": "chromatic_component",
+              "center_reference": "chromatic_region_not_calibrated_grasp_point",
+              "circularity": 0.7923198301147542,
+              "solidity": 0.9727338667135572,
+              "usable_fraction": 0.9262755406858645,
+              "color_fractions": {
+                "red": 0.9495356037151703,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.04097007223942208,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.04097007223942208,
+              "silhouette_center_px": [
+                720.3780961311776,
+                508.50045380423524
+              ]
+            }
+          ],
+          "hint_scope": "Offline development search using first-visible bbox; live age limited to 500ms by MaterialFollower."
+        },
+        {
+          "file": "first-red-loss-before-raw.png",
+          "v2_known": [
+            {
+              "bbox_px": [
+                600,
+                324,
+                265,
+                303
+              ],
+              "area_px2": 63252.5,
+              "label": "red",
+              "reason": "DOMINANT_COLOR_EVIDENCE",
+              "proposal_source": "combined_silhouette",
+              "usable_fraction": 0.9514266755142667,
+              "color_fractions": {
+                "red": 0.6787906263077138,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.32588227088854793,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.32588227088854793,
+              "silhouette_center_px": [
+                738.3191309961397,
+                479.2083580359142
+              ]
+            }
+          ],
+          "v3_known": [
+            {
+              "bbox_px": [
+                600,
+                324,
+                265,
+                303
+              ],
+              "area_px2": 63252.5,
+              "label": "red",
+              "reason": "DOMINANT_COLOR_EVIDENCE",
+              "proposal_source": "combined_silhouette",
+              "usable_fraction": 0.9514266755142667,
+              "color_fractions": {
+                "red": 0.6787906263077138,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.32588227088854793,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.32588227088854793,
+              "silhouette_center_px": [
+                738.3191309961397,
+                479.2083580359142
+              ]
+            }
+          ],
+          "hint_scope": "Offline development search using first-visible bbox; live age limited to 500ms by MaterialFollower."
+        },
+        {
+          "file": "first-red-loss-raw.png",
+          "v2_known": [],
+          "v3_known": [
+            {
+              "bbox_px": [
+                639,
+                398,
+                233,
+                233
+              ],
+              "area_px2": 41982.23249497459,
+              "label": "red",
+              "reason": "CURRENT_COLOR_ARC_SUPPORT",
+              "proposal_source": "chromatic_circle",
+              "silhouette_center_px": [
+                755.0,
+                514.0
+              ],
+              "center_reference": "current_color_circle_not_calibrated_grasp_point",
+              "arc_fraction": 0.8194444444444444,
+              "usable_fraction": 0.9129764265256665,
+              "color_fractions": {
+                "red": 0.9420159955874241,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.0,
+                "lightblue": 0.0
+              },
+              "radius_px": 115.5999984741211
+            }
+          ],
+          "hint_scope": "Offline development search using first-visible bbox; live age limited to 500ms by MaterialFollower."
+        },
+        {
+          "file": "first-red-reappearance-before-raw.png",
+          "v2_known": [],
+          "v3_known": [
+            {
+              "bbox_px": [
+                587,
+                378,
+                241,
+                241
+              ],
+              "area_px2": 45238.93421169302,
+              "label": "red",
+              "reason": "CURRENT_COLOR_ARC_SUPPORT",
+              "proposal_source": "chromatic_circle",
+              "silhouette_center_px": [
+                707.0,
+                498.0
+              ],
+              "center_reference": "current_color_circle_not_calibrated_grasp_point",
+              "arc_fraction": 0.9305555555555556,
+              "usable_fraction": 0.9156767169668136,
+              "color_fractions": {
+                "red": 0.8944281524926686,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.07554507203876068,
+                "lightblue": 0.0
+              },
+              "radius_px": 120.0
+            }
+          ],
+          "hint_scope": "Offline development search using first-visible bbox; live age limited to 500ms by MaterialFollower."
+        },
+        {
+          "file": "first-red-reappearance-raw.png",
+          "v2_known": [
+            {
+              "bbox_px": [
+                587,
+                392,
+                259,
+                230
+              ],
+              "area_px2": 44255.5,
+              "label": "red",
+              "reason": "ISOLATED_CHROMATIC_COMPONENT",
+              "proposal_source": "chromatic_component",
+              "center_reference": "chromatic_region_not_calibrated_grasp_point",
+              "circularity": 0.7923198301147542,
+              "solidity": 0.9727338667135572,
+              "usable_fraction": 0.9262755406858645,
+              "color_fractions": {
+                "red": 0.9495356037151703,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.04097007223942208,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.04097007223942208,
+              "silhouette_center_px": [
+                720.3780961311776,
+                508.50045380423524
+              ]
+            }
+          ],
+          "v3_known": [
+            {
+              "bbox_px": [
+                587,
+                392,
+                259,
+                230
+              ],
+              "area_px2": 44255.5,
+              "label": "red",
+              "reason": "ISOLATED_CHROMATIC_COMPONENT",
+              "proposal_source": "chromatic_component",
+              "center_reference": "chromatic_region_not_calibrated_grasp_point",
+              "circularity": 0.7923198301147542,
+              "solidity": 0.9727338667135572,
+              "usable_fraction": 0.9262755406858645,
+              "color_fractions": {
+                "red": 0.9495356037151703,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.04097007223942208,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.04097007223942208,
+              "silhouette_center_px": [
+                720.3780961311776,
+                508.50045380423524
+              ]
+            }
+          ],
+          "hint_scope": "Offline development search using first-visible bbox; live age limited to 500ms by MaterialFollower."
+        },
+        {
+          "file": "first-red-visible-raw.png",
+          "v2_known": [
+            {
+              "bbox_px": [
+                601,
+                324,
+                263,
+                303
+              ],
+              "area_px2": 63144.5,
+              "label": "red",
+              "reason": "DOMINANT_COLOR_EVIDENCE",
+              "proposal_source": "combined_silhouette",
+              "usable_fraction": 0.9518618833186554,
+              "color_fractions": {
+                "red": 0.6805041547377977,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.3252915299210949,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.3252915299210949,
+              "silhouette_center_px": [
+                737.8334851016319,
+                479.14991012677274
+              ]
+            }
+          ],
+          "v3_known": [
+            {
+              "bbox_px": [
+                601,
+                324,
+                263,
+                303
+              ],
+              "area_px2": 63144.5,
+              "label": "red",
+              "reason": "DOMINANT_COLOR_EVIDENCE",
+              "proposal_source": "combined_silhouette",
+              "usable_fraction": 0.9518618833186554,
+              "color_fractions": {
+                "red": 0.6805041547377977,
+                "yellow": 0.0,
+                "blue": 0.0,
+                "green": 0.0,
+                "black": 0.3252915299210949,
+                "lightblue": 0.0
+              },
+              "dark_fraction": 0.3252915299210949,
+              "silhouette_center_px": [
+                737.8334851016319,
+                479.14991012677274
+              ]
+            }
+          ],
+          "hint_scope": "Offline development search using first-visible bbox; live age limited to 500ms by MaterialFollower."
+        }
+      ]
+    }
+  ],
+  "scope": "Event-frame development replay, not continuous replay, board runtime or grasp acceptance."
+}

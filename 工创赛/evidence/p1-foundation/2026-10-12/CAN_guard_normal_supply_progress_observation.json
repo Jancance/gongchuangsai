@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-12",
+  "source": "User completed guide step5, confirmed actual VM supplied, and sent two screenshots d204c050/95408725",
+  "images": ["CAN_guard_normal_supply_snapshot_A.png", "CAN_guard_normal_supply_snapshot_B.png"],
+  "common": {"g_vm_test_request": 1, "g_rtos_fault": 0, "g_safety_task_create": 1, "g_safety_fault": 0, "g_safety_ready": 1, "g_can_poll_enable": 1, "result": [1, 1, 1, 1], "flags": [3, 3, 3, 3], "valid_mask": 15, "protect_mask": 0, "last_transaction_esr": 0, "g_stack_a_words": 201, "g_safety_stack_words": 230, "g_heap_min_bytes": 14064},
+  "snapshot_A": {"g_safety_count": 1078, "CAN_counts": [35, 36, 35, 35], "age_ticks": [101, 0, 303, 202]},
+  "snapshot_B": {"g_safety_count": 1283, "CAN_counts": [45, 46, 46, 45], "age_ticks": [202, 101, 0, 303]},
+  "VM_has_voltage_user_confirmed": true,
+  "exact_VM_voltage": "NOT_REPORTED",
+  "new_guard_ready_bad_nodes_cause_visible": false,
+  "actual_source_verified": ["CAN guard helpers/init/header present", "CAN guard called before safety ready and Power decision", "CAN snapshot report connected after refresh", "poll default enable1", "volatile shared snapshot and short critical sections"],
+  "user_full_Rebuild_errors_warnings": "NOT_REPORTED",
+  "acceptance": "Post-integration normal supplied four-node capture progress and fault/memory snapshot PASS; new guard diagnostic values not yet shown",
+  "next": "Add guard ready/bad_nodes/cause Watch rows, verify normal1/0/0, then disable required capture with vm_request1 and hardware allow retained; measure fault0x20/VM0",
+  "pending": ["CAN guard diagnostic normal values", "necessary capture loss VM shutdown/latch", "stale time and protection path tests", "watchdog"],
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_Q": "unchanged",
+  "actual_firmware_modified_by_assistant": false,
+  "hardware_commands_sent_by_assistant": false
+}

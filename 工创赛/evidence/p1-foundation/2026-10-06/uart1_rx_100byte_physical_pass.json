@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-06",
+  "source": "user screenshot codex-clipboard-1526dc88-1cb1-47c4-8a1d-4710487fbe19.png",
+  "terminal": "XCOM COM4 115200 8N1 text, S100 R21",
+  "payload": "0123456789 repeated 10 times",
+  "pc": "0x080016D2",
+  "cpu_context": "Idle, Thread, PSP",
+  "rx_count": 100,
+  "rx_last": "0x39",
+  "test_sequence_mismatches": 0,
+  "rx_error_events": 0,
+  "rtos_fault": 0,
+  "rx_task_create": 1,
+  "status": "PASS_ONE_100_BYTE_BURST_WITH_DEDICATED_BLOCKING_RX_TASK",
+  "rx_task_memory_margin_status": "PENDING_WATCH_VALUES",
+  "next_action": "Add g_rx_stack_words, g_heap_free_bytes, g_heap_min_bytes to current paused Watch",
+  "limitations": ["Not sustained full-rate acceptance", "Not full error/protocol coverage", "New task memory and hardware safety remain unverified"],
+  "requirements_checked": ["LOC-03 (E)", "RUN-06 (E)", "PWR-01 (R)"],
+  "firmware_modified_by_assistant": false
+}

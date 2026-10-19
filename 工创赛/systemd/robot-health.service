@@ -1,0 +1,23 @@
+[Unit]
+Description=Smart Carrier hardware health monitor
+After=local-fs.target
+
+[Service]
+Type=simple
+User=robot
+Group=robot
+SupplementaryGroups=dialout video
+WorkingDirectory=/opt/smart-carrier
+ExecStart=/opt/smart-carrier/.venv/bin/robot-health --config /opt/smart-carrier/config --watch 1 --output /run/smart-carrier/health.json
+Restart=always
+RestartSec=1
+RuntimeDirectory=smart-carrier
+RuntimeDirectoryMode=0755
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/run/smart-carrier /var/log/smart-carrier
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-11",
+  "source": "User screenshot codex-clipboard-4c216f7e-8d7c-451b-898c-ee86bc1ddaa5.png",
+  "screenshot": "front_right_ID4_version_read_pass.png",
+  "motor": {"position": "front right", "address": 4, "FWType_user_confirmed": "FW_Emm"},
+  "observed": {"result": 1, "ESR": 0, "request": 0, "VM_request": 1, "loopback_result": 1, "RTOS_fault": 0, "INRQ": 0, "INAK": 0, "PD0": 1, "task_A_stack_words": 210},
+  "selected_address_visible": false,
+  "address_basis": "Extended reply0400 and current read function ID-matching condition",
+  "raw_reply": {"ExtId": "0x00000400", "IDE": "0x04", "RTR": "0x00", "DLC": 6, "Data_valid_hex": ["1F", "00", "CA", "23", "14", "6B"], "FMI": 0},
+  "normal_version_transaction": "PASS",
+  "firmware_version_and_HW_raw": {"software_raw": "0x00CA", "software_decimal": 202, "software_version": "V2.0.2", "hardware_raw": "0x2314", "matches_other_three_fields": true},
+  "next": "With all power off reconnect all four wheel nodes on CAN1, keeping other nodes isolated; run motherboard/VM then query1_to4 and record result/ESR/ExtId for shared-bus basic verification.",
+  "requirements": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "firmware_or_PCB_modified_by_assistant": false,
+  "complete_shared_network_and_motion_pass": false
+}

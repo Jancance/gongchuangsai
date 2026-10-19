@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-13",
+  "source_image": "IWDG_timeout_reset_VM0.png",
+  "paired_baseline": "IWDG_before_stop_feed_VM22_pass.json",
+  "user_physical_vm_volts_before": 22,
+  "user_physical_vm_volts_after": 0,
+  "observations_after": {
+    "watchdog_init_result": 1,
+    "watchdog_started": 1,
+    "watchdog_feed_count": 719,
+    "watchdog_test_stop_feed": 0,
+    "reset_iwdg": 1,
+    "reset_flags_hex": "0x24000000",
+    "vm_test_request": 0,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "safety_ready": 1,
+    "can_guard_ready": 0,
+    "safety_count": 725,
+    "app_stack_min_words": 210,
+    "safety_stack_min_words": 232,
+    "heap_min_bytes": 14064
+  },
+  "acceptance": "PASS: watchdog stop-feed timeout reset recorded, startup variables reset, and physical VM defaults off after previously powered 22 V baseline",
+  "limits": ["no precise timeout duration measured", "conditional stop-feed test does not cover every real hang or clock failure", "not full vehicle safety or final non-freezing configuration acceptance"],
+  "next": "user removes temporary extern, variable, and stop-feed branch from watchdog.h/c; Rebuild and verify clean startup",
+  "pending": ["temporary test cleanup build and runtime", "final non-freezing configuration verification"],
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_questions": "unchanged"
+}

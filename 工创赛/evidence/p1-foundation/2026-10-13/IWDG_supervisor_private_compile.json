@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-13",
+  "compiler": "ARMCC5.06 update5 build528",
+  "units": [
+    {
+      "unit": "watchdog.c",
+      "return_code": 0,
+      "diagnostics": []
+    },
+    {
+      "unit": "main.c",
+      "return_code": 0,
+      "diagnostics": []
+    },
+    {
+      "unit": "safety.c",
+      "return_code": 0,
+      "diagnostics": []
+    },
+    {
+      "unit": "stm32f4xx_iwdg.c",
+      "return_code": 0,
+      "diagnostics": []
+    },
+    {
+      "unit": "stm32f4xx_dbgmcu.c",
+      "return_code": 0,
+      "diagnostics": []
+    }
+  ],
+  "actual_sources": [
+    {
+      "path": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\main.c",
+      "before_SHA256": "1b2be0a99414b984d42ee7da729a73411cf417941fd58ca24d11669daa484db6",
+      "after_SHA256": "1b2be0a99414b984d42ee7da729a73411cf417941fd58ca24d11669daa484db6",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\SYSTEM\\SAFETY\\safety.c",
+      "before_SHA256": "089d0fca48a3b382f1c852d983ebf355d43e32cda889a0ebbbd240bf00fba447",
+      "after_SHA256": "089d0fca48a3b382f1c852d983ebf355d43e32cda889a0ebbbd240bf00fba447",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\StdPeriph_Driver\\src\\stm32f4xx_iwdg.c",
+      "before_SHA256": "1c7d8a63ce63290efcaa2d72972a08886cc5373947ff6120741062ee05590ba4",
+      "after_SHA256": "1c7d8a63ce63290efcaa2d72972a08886cc5373947ff6120741062ee05590ba4",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\StdPeriph_Driver\\src\\stm32f4xx_dbgmcu.c",
+      "before_SHA256": "26e7d3b66f590b937fc6f50ec8997bfb52efe900da5cdd6a7d93c8abc438cd81",
+      "after_SHA256": "26e7d3b66f590b937fc6f50ec8997bfb52efe900da5cdd6a7d93c8abc438cd81",
+      "unchanged": true
+    }
+  ],
+  "scratch_dir": "D:\\Codex\\工创赛\\tmp\\iwdg_supervisor_probe_bl3f6k2j",
+  "private_probe_cleaned": true,
+  "linked_or_flashed": false,
+  "user_full_build": "PENDING",
+  "hardware_IWDG_acceptance": "PENDING",
+  "candidate_config": {
+    "prescaler": 64,
+    "reload": 999,
+    "debug_freeze": 1,
+    "nominal_LSI_Hz": 32000,
+    "nominal_timeout_s": 2,
+    "timeout_s_calculated_for_DS_range": [
+      1.3617021276595744,
+      3.764705882352941
+    ]
+  },
+  "feed_owner": "Safety_Update healthy branch only",
+  "temporary_test_stop_feed_default": 0
+}

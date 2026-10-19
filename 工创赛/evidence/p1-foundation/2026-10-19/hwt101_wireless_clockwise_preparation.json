@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-19",
+  "current_direction": "clockwise",
+  "request": "g_hwt_turn_request=1",
+  "target_rpm": 5,
+  "speed_limit_rpm": 10,
+  "run_ms": 10000,
+  "default_vm_request": 0,
+  "checks": 44,
+  "build": {
+    "code": 35604,
+    "ro": 452,
+    "rw": 1332,
+    "zi": 25284,
+    "errors": 0,
+    "warnings": 0
+  },
+  "prior_ccw_user_pass": {
+    "key_state": 4,
+    "auto_result": 1,
+    "auto_cause": 0,
+    "vm_request": 0,
+    "yaw_delta_deg": 56.920166,
+    "user_confirms_direction": "counterclockwise",
+    "user_confirms_stop_after_10s": true,
+    "post_stop_one_minute": "user reports yaw unchanged"
+  },
+  "hardware": "clockwise not flashed or operated by assistant; awaiting user trial",
+  "requirements": [
+    "RUN-01",
+    "PWR-01",
+    "LOC-03",
+    "LOC-05",
+    "LOC-07",
+    "RUN-06",
+    "MOT-02",
+    "MOT-04"
+  ],
+  "sha256": {
+    "3.stm32f407工程/USER/app_config.h": "16c608c0be9d9f4e90119449f678a6b61abd801fb10a95b80da0c66f1a7ec6d2",
+    "3.stm32f407工程/USER/chassis_auto_test.c": "a20e2ecb5490b3720e4c40438cf0cc51a7356eee390c2b1aa6bd9dc7b65501f3",
+    "3.stm32f407工程/USER/chassis_auto_test.h": "6f06e33b0266d83c25f46ac1b471180c67931ee06873c770c4d1d9763b98056c",
+    "3.stm32f407工程/Objects/gongxun-f407.axf": "51d422e3e6be0a2e9036e6a4681dc6b1167ecf5b69583340c69c526b29f056ed",
+    "工创赛/evidence/p1-foundation/2026-10-19/gongxun-f407-ccw-user-pass.axf": "3b155b5a582420978984eda5bd6e9f5745f575a9691800343d895bb67a88bef9",
+    "工创赛/evidence/p1-foundation/2026-10-19/hwt101_wireless_clockwise_private_checks.c": "0a14380230b3992d664ce49e8c71a82dc0bd31c367245814c3a0bb7e2ca1d549"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "recorded_date": "2026-10-15",
+  "source": "user complete Keil Rebuild and Flash Load log",
+  "log_calendar_date_explicit": false,
+  "compiler": "ARMCC V5.06 update 5 build 528",
+  "errors": 0,
+  "warnings": 0,
+  "build_seconds": 2,
+  "program_size_bytes": {
+    "code": 19932,
+    "ro_data": 424,
+    "rw_data": 612,
+    "zi_data": 22740
+  },
+  "flash": {
+    "erase": "done",
+    "programming": "done",
+    "verify": "OK",
+    "application": "running",
+    "reported_clock_time": "19:58:42"
+  },
+  "actual_main_read_only_checks": [
+    "feedback default0",
+    "Step/Refresh calls present",
+    "TaskA delay10ms",
+    "freshness1000ms"
+  ],
+  "acceptance": "PASS: continuous-feedback firmware full build/link and reported download verification",
+  "runtime_feedback_acceptance": false,
+  "next": "VM/status healthy then feedback_enable1; compare four counts and masks after 3 seconds and 2 additional seconds",
+  "requirements_checked": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ]
+  }
+}

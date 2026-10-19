@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-06",
+  "scope": "private compile-only of native blocking UART RX task candidate",
+  "compiler": "installed ARMCC5",
+  "results": [
+    {
+      "module": "usart",
+      "returncode": 0,
+      "diagnostics": []
+    },
+    {
+      "module": "main",
+      "returncode": 0,
+      "diagnostics": []
+    }
+  ],
+  "user_sources_unchanged": true,
+  "linked": false,
+  "runtime_verified": false,
+  "next_test": "100 ASCII digits, exact count/last/pattern, no RX errors, new task stack/heap margins",
+  "requirements_checked": [
+    "LOC-03 (E)",
+    "RUN-06 (E)",
+    "PWR-01 (R)"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-19",
+  "request_value": 3,
+  "mode_display": 2,
+  "commands": [
+    "FF AA 48 01 00",
+    "FF AA 48 00 00"
+  ],
+  "capture_ms": 20000,
+  "baseline_ms": 60000,
+  "post_ms": 60000,
+  "overall_deadline_ms": 150000,
+  "default_request": 0,
+  "a7_writes": false,
+  "key_save_commands": false,
+  "checks": 2172,
+  "new_workmode48_checks": 29,
+  "build": {
+    "code": 34208,
+    "ro": 452,
+    "rw": 1236,
+    "zi": 25284,
+    "errors": 0,
+    "warnings": 0
+  },
+  "hardware": "not flashed by assistant; actual effect pending",
+  "source": "https://wit-motion.yuque.com/wumwnr/docs/hqz83q",
+  "document_conflict": "WORKMODE table labels 01 peak-to-peak, FAQ labels same bytes auto bias; explicit user-selected FAQ trial, not confirmed algorithm",
+  "requirements": [
+    "RUN-01",
+    "PWR-01",
+    "LOC-03",
+    "LOC-05",
+    "RUN-06",
+    "MOT-04"
+  ],
+  "sha256": {
+    "3.stm32f407工程/USER/hwt101.c": "37d56b0470cf2be16f939993613d922da58fee0f219d9d21b5f3e4ed1703ee04",
+    "3.stm32f407工程/USER/hwt101.h": "d946c610c908d27555d90faaa08fc5dc83dcd00356f8cd88915db8e32c203f3b",
+    "3.stm32f407工程/Objects/gongxun-f407.axf": "27d90c13b833566759249a90c759bec4ed6d5a6aa2c1c4d3d5ecd6f69e31527c",
+    "工创赛/evidence/p1-foundation/2026-10-19/hwt101_workmode48_private_checks.c": "8475aa822e50e3a5718fbba75315bf02c9dd5cd550fb2b8cc89d0fe457e58a43"
+  }
+}

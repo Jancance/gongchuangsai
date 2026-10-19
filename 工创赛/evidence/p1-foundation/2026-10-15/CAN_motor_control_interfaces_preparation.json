@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-15",
+  "user_assembly_report": "已完整装好，可以载物测试",
+  "interpretation": "User confirms complete arm/gripper/tray assembly and ability to test with payload; accepts assembly availability for planning, not proof of actual motion, payload weight, wheel geometry, safe limits or full course performance.",
+  "current_scope": "Prepare CAN enable/stop/Emm raw-speed interfaces with current main unchanged; user manual build first, movement gate remains separate.",
+  "source_manual": "evidence/p1-0/motor-manuals/ZDT_X42S第二代闭环步进电机用户手册V1.0.5_260527.pdf",
+  "reviewed_pages": [
+    42,
+    43,
+    50,
+    53,
+    60,
+    81
+  ],
+  "protocol_notes": [
+    "Single extended frame ExtID=address<<8, payload excludes address",
+    "F3 AB enabled 00 6B, FE 98 00 6B, F6 direction speedHi speedLo acceleration 00 6B",
+    "02 acknowledges valid command, not execution completion; other ACKs preserved and return8",
+    "Emm speed raw input affected by configurable divide-by-ten setting; current per-motor setting unverified; no configuration change sent",
+    "Existing CAN initialization, no-auto-retransmission setting, timeouts and read APIs preserved"
+  ],
+  "verification": "CAN_motor_control_interfaces_private_checks.json",
+  "requirements": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-01",
+      "MOT-02",
+      "MOT-03",
+      "MOT-04"
+    ]
+  },
+  "official_Q_unchanged": true,
+  "real_firmware_modified": false,
+  "real_CAN_sent": false
+}

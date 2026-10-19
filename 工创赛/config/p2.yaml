@@ -1,0 +1,27 @@
+schema_version: 1
+mode: p2-vision
+timing:
+  recovery_decision_deadline_ms: 3000
+  maximum_retries: 2
+  p1_heartbeat_stop_ms: 500
+  maximum_observation_age_ms: 200
+quality_gate:
+  minimum_sharpness: 35.0
+  maximum_clipped_ratio: 0.25
+tracking:
+  stationary_speed_px_s: 8.0
+  moving_speed_px_s: 20.0
+  stable_frames: 3
+navigation:
+  lane_width_mm: 400.0
+  conservative_robot_width_mm: 260.0
+  boundary_margin_mm: 20.0
+  home_zone_policy: all_corners_inside
+  home_zone_policy_basis: engineering_conservative_pending_FIELD-05
+obstacle:
+  nominal_diameter_mm: 50.0
+  nominal_height_mm: 100.0
+  count_and_spacing: pending_OBS-03
+evidence:
+  tray_load_requires: [p1_done, current_visual, tray_sensor]
+  placement_requires: [p1_done, current_visual, centered, stable]

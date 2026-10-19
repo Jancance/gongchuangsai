@@ -1,0 +1,62 @@
+{
+  "source": "evidence\\20261006-091047-121270.zip",
+  "sha256": "d24752cb3095cb5e498a6b1455d2ab93dd5e2e423b54ccdfe65ac938e6fd9063",
+  "run": {
+    "frames": 377,
+    "states": {
+      "STALE_RESULT": 1,
+      "FOLLOWING_PIXEL": 362,
+      "SEARCHING": 14
+    },
+    "transition_counts": {
+      "first-frame": 1,
+      "first-blue-visible": 1,
+      "first-blue-loss": 12,
+      "first-blue-reappearance": 12,
+      "first-other-color-candidate": 2
+    },
+    "saved_events": [
+      "first-blue-loss",
+      "first-blue-reappearance",
+      "first-blue-visible",
+      "first-frame",
+      "first-other-color-candidate"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "blue",
+    "longest_watched_loss_s": 0.2037326499998926
+  },
+  "module_hashes": {
+    "project_detector.py": "f6bf4d2027f2ad66bbbf5252453bf22551b3a0a1e081543f16a0f443f6df1964",
+    "project_follow.py": "ddb013e0e633e69cfd1e9d3613d5abc11ae02fdcc5e0f676c5f35943b8a3f344",
+    "project_tracker.py": "818a825ea8f7c18b25c8405f5dbbe03ee0745758b03ed02825f251a29d605259",
+    "project_camera.py": "a9d234f1d676afd44cf118a0e60be7aaf636c687ae40e281aa0dd62cb4795df4",
+    "diagnostic_entry": "ef52a068c68b7054df1cd82cfeb4d56de8c72473a72d69d2ffdd4808cd9f752e",
+    "diagnostic_base": "11dfbfb390d8a6cc9d8915d7a6e79be21b213e449f603be7cff6e9d955ef1bc6"
+  },
+  "watched_ids": {
+    "T001": 362
+  },
+  "observed_labels": {
+    "blue": 362,
+    "red": 2
+  },
+  "unsafe_results": 0,
+  "scope": "Current desktop blue working version; short losses and hand false positives remain.",
+  "result_host_age_ms": {
+    "p95": 122.3371800001587,
+    "max": 157.68627799980095
+  },
+  "detector_call_ms": {
+    "p95": 90.77034999972966,
+    "max": 143.1799039996804
+  },
+  "diagnostic_io_ms": {
+    "p95": 0.2992449999510427,
+    "max": 6.992003999584995
+  }
+}

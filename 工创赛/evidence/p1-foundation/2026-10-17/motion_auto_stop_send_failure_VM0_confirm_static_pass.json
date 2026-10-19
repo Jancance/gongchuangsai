@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-17",
+  "scope": "One-shot software stop-send-failure injection, physical VM shutdown and explicit reset",
+  "rebuild": {
+    "code": 22568,
+    "rw": 768,
+    "zi": 22848,
+    "compiler": "ARMCC5.06 update7 build960",
+    "warnings": 0,
+    "ro": 424,
+    "errors": 0
+  },
+  "injected": {
+    "fail_once": 0,
+    "position_fresh_mask": 15,
+    "ack_mask": 0,
+    "results": [
+      4,
+      0,
+      0,
+      0
+    ],
+    "cause": 1,
+    "speed_fresh_mask": 11,
+    "fail_count": 1,
+    "cut_vm": 1,
+    "diag_latched": 16,
+    "session": 1,
+    "block_reason": 88,
+    "state": 3,
+    "fail_mask": 1
+  },
+  "physical_vm_volts_user_report": 0,
+  "after_request_off": {
+    "fail_once": 0,
+    "hold_report": 0,
+    "hold_service": 0,
+    "diag_latched": 16,
+    "cause": 1,
+    "block_reason": 125,
+    "cut_vm": 1,
+    "safety_fault": 0,
+    "rtos_fault": 0,
+    "can_ready": 0,
+    "state": 3,
+    "platform_ready": 1,
+    "vm_request": 0
+  },
+  "confirmation": {
+    "allowed": 0,
+    "ack_request": 0,
+    "historical_results": [
+      4,
+      0,
+      0,
+      0
+    ],
+    "state": 0,
+    "cut_vm": 0,
+    "diag_latched": 0,
+    "historical_fail_mask": 1,
+    "historical_session": 1,
+    "ack_result": 1,
+    "cause": 0,
+    "block_reason": 61
+  },
+  "counter_note": "User confirmed manually changing fail_stop_count from1 to0 during cleanup; not a firmware reset or unexplained counter loss",
+  "limitations": [
+    "Injection skips actual CAN frame, so no physical bus failure established",
+    "No actual motion/braking or exact response timing measured",
+    "No newly reported voltage after explicit acknowledgement",
+    "Formal motion permission remains fixed0"
+  ],
+  "next": "Read-only confirmation of four motor speed input scaling settings before planning enable or nonzero speed tests"
+}

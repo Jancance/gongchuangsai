@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-06",
+  "source": "user screenshot codex-clipboard-e2001013-39b4-4fda-9977-5771d2b02adc.png",
+  "pc": "0x080016D2",
+  "cpu_context": "Idle, Thread, PSP",
+  "rx_task_min_free_stack_words": 217,
+  "stack_word_bytes": 4,
+  "rx_task_min_free_stack_bytes": 868,
+  "heap_current_free_bytes": 16328,
+  "heap_min_free_bytes": 16328,
+  "test_count": 100,
+  "last_byte": "0x39",
+  "mismatches": 0,
+  "rx_error_events": 0,
+  "rtos_fault": 0,
+  "rx_task_create": 1,
+  "status": "PASS_CURRENT_RX_TASK_BURST_AND_MEMORY_MARGIN_GATE",
+  "retained_candidate_config": {"rx_stack_words": 256, "heap_bytes": 20480},
+  "next_action": "User removes temporary digit comparison/counter and rebuilds; prepare PC13 input after button connection clarification",
+  "limitations": ["Not sustained full-rate acceptance", "Not worst-case future application/ISR stack or hardware safety acceptance"],
+  "requirements_checked": ["LOC-03 (E)", "RUN-06 (E)", "RUN-01 (R)", "PWR-01 (R)"],
+  "firmware_modified_by_assistant": false
+}

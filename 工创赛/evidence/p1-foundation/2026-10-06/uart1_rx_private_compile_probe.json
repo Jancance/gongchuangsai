@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-06",
+  "scope": "private compile-only of proposed UART1 RX queue modifications",
+  "compiler": "ARMCC 5.06 installed",
+  "results": [
+    {
+      "module": "usart",
+      "returncode": 0,
+      "diagnostics": []
+    },
+    {
+      "module": "main",
+      "returncode": 0,
+      "diagnostics": []
+    }
+  ],
+  "user_sources_unchanged": true,
+  "runtime_verified": false,
+  "limitations": "Not linked, downloaded or tested on hardware; TXD logic level pending",
+  "requirements_checked": [
+    "LOC-03 (E)",
+    "RUN-06 (E)",
+    "PWR-01 (R)"
+  ]
+}

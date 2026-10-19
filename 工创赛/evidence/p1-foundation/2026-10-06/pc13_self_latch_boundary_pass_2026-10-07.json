@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-07",
+  "source": "user statement 没有问题 and screenshot codex-clipboard-7106da68-9100-4fed-ac08-f8fa995b80b8.png",
+  "input_device": "PC13 self-latching switch",
+  "test_sequence": "latched connected during reset/run count0, resume then disconnect 0.1s and reconnect/hold count1",
+  "initial_zero_evidence": "user confirmation of instructed sequence, no separate zero screenshot",
+  "final_one_evidence": "screenshot",
+  "start_key_count": 1,
+  "key_task_create": 1,
+  "rtos_fault": 0,
+  "key_min_free_stack_words": 233,
+  "rx_min_free_stack_words": 217,
+  "heap_free_bytes": 15200,
+  "heap_min_free_bytes": 15200,
+  "pc": "0x080017E4",
+  "cpu_context": "Idle Thread PSP",
+  "status": "PASS_USER_CONFIRMED_SELF_LATCH_STARTUP_RELEASE_REARM_BOUNDARY",
+  "next_action": "Confirm PA1 selector connection and whether two positions mean drawn start1/2 or route variants",
+  "limitations": ["Not independent GPIO waveform/debounce timing measurement", "Not full vehicle one-key start or safety acceptance"],
+  "requirements_checked": ["RUN-01 (R)", "FIELD-02 (R)", "PWR-01 (R)", "FIELD-03 (E)", "LOC-03 (E)", "RUN-06 (E)"],
+  "firmware_modified_by_assistant": false
+}

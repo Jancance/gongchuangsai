@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-14",
+  "source": "user reports scanner code in use and multiple changed QR codes update screen",
+  "acceptance": "PASS: actual scanner to UART5 to page0 and repeated different-code updates per user report",
+  "actual_source_integration_checked": true,
+  "new_build_log_or_photo_provided": false,
+  "new_vm_fault_measurements_reported": false,
+  "pending": [
+    "malformed/partial/overlong frames",
+    "loss and recovery",
+    "business object and full legality",
+    "formal READY and motion start"
+  ],
+  "next": "PC13 task-code confirmation and current-platform start-request gate",
+  "requirements_checked": [
+    "QR-01 R",
+    "QR-03 E",
+    "QR-04 Q",
+    "RUN-01 R",
+    "RUN-06 E"
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-13",
+  "sources": [
+    "user explicit post-contest return-to-start statistics display instruction",
+    "SCREEN_HMI_page0_t0_properties.png",
+    "SCREEN_HMI_page0_t1_properties.png"
+  ],
+  "user_display_timing": {
+    "classification": "E: user engineering decision",
+    "internal_correct_action_counting": "accumulate from verified successful grab/place events",
+    "display_trigger": [
+      "current round task complete",
+      "returned to same drawn start area",
+      "stopped"
+    ],
+    "during_round": "keep complete raw task code",
+    "after_return": "automatically display and retain complete raw code and final correct grab/place counts",
+    "implemented": false
+  },
+  "screenshot_properties": {
+    "page": "page0",
+    "controls": [
+      "t0",
+      "t1"
+    ],
+    "font_id": 2,
+    "font_resource": "112宋体",
+    "vscope": "private",
+    "background_color": 65535,
+    "text_color": 0,
+    "horizontal_alignment": "center",
+    "vertical_alignment": "center",
+    "font_ids": {
+      "0": "96宋体",
+      "1": "128宋体",
+      "2": "112宋体"
+    },
+    "font_encoding": "gb2312",
+    "actual_control_coordinates_shown": false,
+    "physical_glyph_height_measured": false
+  },
+  "original_hmi": "D:\\新建文件夹4\\工创赛\\代码\\串口屏\\工创赛.HMI",
+  "original_hmi_modified_by_assistant": false,
+  "proposed_working_copy": "D:\\Codex\\工创赛\\screen_work\\工创赛_F407.HMI",
+  "next": "user Save As to working copy, preserve page0/fonts, add empty page1 diagnostic page and show editor screenshot",
+  "pending": [
+    "working copy and page1",
+    "diagnostic controls and firmware",
+    "font physical height",
+    "verified action counts and return-state result display",
+    "scanner",
+    "formal READY"
+  ],
+  "requirements_checked": {
+    "R": [
+      "DSP-01",
+      "DSP-02",
+      "QR-01",
+      "FIELD-02",
+      "RUN-01"
+    ],
+    "E": [
+      "DSP-03",
+      "FIELD-04",
+      "LOC-03",
+      "RUN-06"
+    ],
+    "Q": [
+      "QR-04",
+      "FIELD-05"
+    ]
+  },
+  "no_new_firmware_or_hmi_edits": true
+}

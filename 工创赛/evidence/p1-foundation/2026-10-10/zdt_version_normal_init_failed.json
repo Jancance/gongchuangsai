@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-10",
+  "evidence_level": "USER_DEBUG_SCREENSHOTS_AND_CURRENT_SOURCE_READ_ONLY_CHECK",
+  "screenshots": [
+    {"path":"evidence/p1-foundation/2026-10-10/zdt_version_init_failed_first.png","sha256":"C4CF68979C48FDAB31364E1825427BBC205FFAEF92365A3321D997AE3D3B44C2"},
+    {"path":"evidence/p1-foundation/2026-10-10/zdt_version_init_failed_expanded.png","sha256":"3E4C35C2C21707B29A9A9E2576A9F23EAEC469678C87F7107401A5E1335795BC"}
+  ],
+  "watch": {"g_can_version_result":3,"g_can_version_request":0,"g_can_version_esr":0,"g_vm_test_request":1,"g_can_test_result":1,"g_rtos_fault":0,"g_stack_a_words":199,"g_heap_free_bytes":15200,"g_heap_min_bytes":15200},
+  "task_a_stack_free_bytes":796,
+  "pc":"0x08002186 in FreeRTOS idle; Thread/PSP",
+  "raw_reply_struct_address":"0x20000110 is the global struct RAM address, not a returned firmware version",
+  "current_can_source_sha256":"7CD4C68F3771CA537551459FE2D52A52BA2A34EB40A3222C9C23A3E58EBE4183",
+  "source_review": "Mode parameter is used correctly; startup loopback calls Silent_LoopBack, version function calls Normal. Result3 is returned when CAN_Init fails, before CAN_Transmit.",
+  "library_init_failure_branches": ["INAK did not set when entering initialization", "INAK did not clear when leaving initialization"],
+  "version_request_transmitted":false,
+  "motor_reply_received":false,
+  "next_action":"No source edit or rebuild: read CAN1 MCR.INRQ, MSR.INAK and PD0 pad input in Watch after the failed read to distinguish init stage and RX level",
+  "watch_expressions": {
+    "CAN1_INRQ":"(*(unsigned int *)0x40006400) & 1",
+    "CAN1_INAK":"(*(unsigned int *)0x40006404) & 1",
+    "PD0_RX_LEVEL":"(*(unsigned int *)0x40020C10) & 1"
+  },
+  "register_observations":{"INRQ":0,"INAK":0,"PD0_RX_LEVEL":1},
+  "register_screenshot":"evidence/p1-foundation/2026-10-10/can_normal_init_late_exit_registers.png",
+  "register_screenshot_sha256":"2E96D55BB07ABDED7A0520FBF56F567B5275A28ADAA5CCE44ABEC3F3B5F279BD",
+  "register_timing_scope":"Read after CAN_Init had returned failure, not values captured inside the failed wait",
+  "late_exit_interpretation":"CAN is no longer acknowledging initialization at observation and PD0 is high; delayed normal-mode synchronization is plausible, but the initial transient cause is not uniquely established",
+  "next_code_action":"Manual minimum wrapper patch: preserve enter-init failure, wait up to100ms using native tick/delay for late INAK clear after requested exit, then continue filter configuration; actual version retry still required",
+  "rx_stuck_low_confirmed":false,
+  "termination_or_chip_failure_confirmed":false,
+  "requirements_checked":{"R":["PWR-01"],"E":["LOC-03","RUN-06","MOT-04"],"Q":"Official clarification unchanged"},
+  "firmware_or_pcb_modified_by_assistant":false
+}

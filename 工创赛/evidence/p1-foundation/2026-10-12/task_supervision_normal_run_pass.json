@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-12",
+  "source": "User screenshot codex-clipboard-7d651aa1-2435-4e7d-a8ab-27437e1a7367.png and explicit VM=0V measurement",
+  "evidence_image": "task_supervision_normal_run_pass.png",
+  "previous_count": 294,
+  "current_count": 544,
+  "count_increased": true,
+  "observed": {"g_vm_test_request": 0, "g_rtos_fault": 0, "g_safety_task_create": 1, "g_safety_fault": 0, "g_safety_ready": 1, "g_safety_stack_words": 233, "g_stack_a_words": 208, "g_heap_min_bytes": 14072},
+  "user_reported_VM_volts": 0,
+  "elapsed_time_independently_measured": false,
+  "acceptance": "Task supervision normal run, observed count progress and request0 physical VM off PASS",
+  "not_vehicle_READY_or_motion_acceptance": true,
+  "next": "User temporary Key-task loss injection build, then physical shutdown/latch validation and cleanup",
+  "pending": ["task loss VM shutdown", "fault remains latched after task restoration", "temporary injection cleanup", "CAN continuous freshness/protection", "watchdog"],
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_Q": "unchanged",
+  "actual_firmware_modified_by_assistant": false,
+  "hardware_commands_sent_by_assistant": false
+}

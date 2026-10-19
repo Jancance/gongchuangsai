@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-06",
+  "board_type_confirmed_by_user": "custom main PCB",
+  "screenshot": "C:/Users/TENDER~1/AppData/Local/Temp/codex-clipboard-90a79768-2018-40f7-adc5-da65a35dce21.png",
+  "registers": {
+    "RCC_CR": "0x1037c83",
+    "RCC_PLLCFGR": "0x7405408",
+    "RCC_CFGR": "0x9400",
+    "DBGMCU_IDCODE": "0x10076413"
+  },
+  "decoded": {
+    "M": 8,
+    "N": 336,
+    "P": 2,
+    "Q": 7,
+    "PLL_source": "HSE",
+    "HSERDY": true,
+    "PLLON": true,
+    "PLLRDY": false,
+    "SWS": 0,
+    "DEV_ID": "0x413",
+    "REV_ID": "0x1007"
+  },
+  "observation": "PLL enabled but not ready; parameters written correctly",
+  "next_test": {
+    "kind": "temporary PLL HSI-input comparison; not full HSI fallback",
+    "HSI_Hz": 16000000,
+    "M": 16,
+    "N": 336,
+    "P": 2,
+    "Q": 7,
+    "expected_PLLCFGR": "0x07005410",
+    "expected_SYSCLK_Hz": 168000000,
+    "source_modified_by_assistant": false,
+    "test_performed": false,
+    "HSE_wait_retained": true
+  },
+  "clock_gate_passed": false
+}

@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-15",
+  "source": "User Watch screenshot fc8d1091-938a-4cf1-9b2b-235d0c64dfc9",
+  "image": "CAN_feedback_first_fault20_ID1_timeout.png",
+  "observed": {
+    "g_vm_test_request": 1,
+    "g_rtos_fault": 0,
+    "g_rtos_assert_line": 0,
+    "g_safety_fault": 32,
+    "g_safety_ready": 0,
+    "g_can_guard_ready": 0,
+    "g_can_guard_cause": 2,
+    "g_can_guard_bad_nodes": 1,
+    "g_can_poll_result": [
+      5,
+      1,
+      1,
+      1
+    ],
+    "g_safety_count": 522,
+    "g_stack_a_words": 169,
+    "g_safety_stack_words": 230,
+    "g_heap_min_bytes": 12968
+  },
+  "interpretation": "Current source maps result 5 to no matching reply before receive timeout; node mask 1 identifies address 1. CAN data fault disables VM and stops normal watchdog feeding. This snapshot does not itself capture the later reset or establish the underlying cause of the missing reply.",
+  "pending": [
+    "Keep halted at first fault; read feedback enable, poll enable, expanded four poll counts and poll ESR",
+    "Determine never-successful versus intermittent node 1 reply loss",
+    "Continuous feedback and physical runtime acceptance remain pending"
+  ],
+  "requirements": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ],
+    "Q": "No official pending question resolved"
+  },
+  "actual_firmware_modified": false,
+  "hardware_actions_by_assistant": false
+}

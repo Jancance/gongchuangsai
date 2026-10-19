@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-14",
+  "source": "user complete Keil Rebuild log and actual ReadSpeed/main branch read-only verification",
+  "compiler": "ARMCC V5.06 update 5 build 528",
+  "errors": 0,
+  "warnings": 0,
+  "build_seconds": 2,
+  "program_size_bytes": {
+    "code": 18900,
+    "ro_data": 424,
+    "rw_data": 532,
+    "zi_data": 22596
+  },
+  "acceptance": "PASS: speed-read firmware full build and link",
+  "actual_source_integration_checked": true,
+  "flash_or_runtime_evidence_in_log": false,
+  "next": "download, establish VM power and existing four-node status health, request ID1 read-only speed and inspect log/raw frame",
+  "pending": [
+    "ID1 speed reply",
+    "IDs2/3/4",
+    "position feedback",
+    "continuous feedback and control"
+  ],
+  "requirements_checked": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ]
+  }
+}

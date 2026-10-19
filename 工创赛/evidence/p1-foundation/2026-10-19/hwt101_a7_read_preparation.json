@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-19",
+  "request": "FF AA 27 A7 00",
+  "default_a7_request": 0,
+  "a7_configuration_writes": false,
+  "checks": 2142,
+  "build": {
+    "code": 34092,
+    "ro": 452,
+    "rw": 1228,
+    "zi": 25284,
+    "errors": 0,
+    "warnings": 0
+  },
+  "hardware": "not flashed by assistant; A7 readback pending",
+  "prior_user_a6_result": {
+    "before_deg": 3.09265137,
+    "after_deg": 3.29589844,
+    "state": 8,
+    "result": 1,
+    "cause": 0,
+    "tx_bytes": 15
+  },
+  "requirements": [
+    "RUN-01",
+    "PWR-01",
+    "LOC-03",
+    "LOC-05",
+    "RUN-06",
+    "MOT-04"
+  ],
+  "sha256": {
+    "3.stm32f407工程/USER/hwt101.c": "6612905bf997891462eaebbc64fc37c38f2ec3e460b3c7f6b62f14024ee7a533",
+    "3.stm32f407工程/USER/hwt101.h": "12212e22fca4a89f06370b4707dad26de48f74469521c58a0b2c7bce761441a4",
+    "3.stm32f407工程/Objects/gongxun-f407.axf": "7685b2fb5ade1501612157bab5bc90241bd769b6e0897c91b399d3a998f96784",
+    "工创赛/evidence/p1-foundation/2026-10-19/hwt101_a7_read_private_checks.c": "92361dbe589f4c3cc32c357f344ea15f52859298998293bf392a520b0a0d2367"
+  }
+}

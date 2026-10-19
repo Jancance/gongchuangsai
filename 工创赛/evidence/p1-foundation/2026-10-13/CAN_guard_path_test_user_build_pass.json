@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-13",
+  "source": "User full Rebuild log and read-only actual main.c verification",
+  "compiler": "ARMCC V5.06 update5 build528",
+  "compile_and_link_success": true,
+  "errors": 0,
+  "warnings": 0,
+  "build_seconds": 2,
+  "program_size": {"Code": 15336, "RO_data": 424, "RW_data": 408, "ZI_data": 22544},
+  "actual_source_verified": ["four temporary test globals", "taskA test_index local", "mode1 saves valid/ticks once and republishes", "mode2 adds node1 protection mask", "mode0 retains original publication", "normal polling/freshness/APP heartbeat retained"],
+  "acceptance": "Formal build of current CAN guard and temporary path tests PASS",
+  "temporary_test_cleanup": "PENDING",
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_Q": "unchanged",
+  "actual_firmware_modified_by_assistant": false,
+  "hardware_commands_sent_by_assistant": false
+}

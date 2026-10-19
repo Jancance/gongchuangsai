@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-17",
+  "category": "engineering_progress_not_complete_motion_safety",
+  "firmware": "C:/Users/lenovo/Desktop/工创赛/3.stm32f407工程",
+  "user_rebuild": {
+    "errors": 0,
+    "scope": "User-provided full Rebuild before motion diagnostic changes",
+    "ro": 424,
+    "warnings": 0,
+    "compiler": "ARMCC 5.06 update 7 build 960",
+    "zi": 22784,
+    "rw": 656,
+    "code": 20628
+  },
+  "accepted": [
+    "Four addresses 1-4: static stop response FE 02 6B, result 1, matching extended IDs and DLC3",
+    "Four addresses 1-4: static zero-speed response F6 02 6B, result 1; subsequent speed read result 1, RPM0",
+    "End-of-zero-test screenshot: VM request1, RTOS/Safety fault0, platform/CAN ready1",
+    "User reported physical VM0V after closing request",
+    "VM-off test flow: stop and zero requests consumed, result9; zero reply fully shown cleared; stop reply DLC not expanded in final screenshot"
+  ],
+  "new_change": {
+    "downloaded": false,
+    "firmware_linked": false,
+    "files": [
+      "SYSTEM/SAFETY/safety.c",
+      "SYSTEM/SAFETY/safety.h"
+    ],
+    "checks": [
+      "Unrelated source verified unchanged by inverse edit",
+      "Original CP936 encoding preserved",
+      "Isolated ARMCC safety.c and main.c compile succeeded without diagnostic output"
+    ],
+    "description": "Default-denied motion permission diagnostics only; policy-pending bit always set; no CAN commands or change to VM/feed/fault behavior",
+    "hardware_tested": false
+  },
+  "next": "User full Rebuild of motion diagnostics, then VM0 startup observation of allowed0 and reason0x0D after platform healthy",
+  "open": [
+    "Active motion permission and recovery state machine",
+    "Velocity feedback freshness and failure-to-stop timing",
+    "Motion limits, speed scaling, enable verification",
+    "Physical stop under motion, HWT heading and real-time XY"
+  ],
+  "requirement_ids": [
+    "RUN-01 (R)",
+    "PWR-01 (R)",
+    "LOC-03 (E)",
+    "RUN-06 (E)",
+    "MOT-02 (E)",
+    "MOT-04 (E)"
+  ],
+  "evidence": "User-provided build logs and Watch images in this chat; physical VM voltage is user report, not instrument capture"
+}

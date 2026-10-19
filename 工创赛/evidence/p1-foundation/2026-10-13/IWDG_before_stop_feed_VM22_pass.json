@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-13",
+  "source_image": "IWDG_before_stop_feed_VM22.png",
+  "user_physical_vm_volts": 22,
+  "observations": {
+    "watchdog_init_result": 1,
+    "watchdog_started": 1,
+    "watchdog_feed_count": 1467,
+    "watchdog_test_stop_feed": 0,
+    "reset_iwdg": 0,
+    "reset_flags_hex": "0x14000000",
+    "vm_test_request": 1,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "safety_ready": 1,
+    "can_guard_ready": 1,
+    "safety_count": 1473,
+    "app_stack_min_words": 201,
+    "safety_stack_min_words": 230,
+    "heap_min_bytes": 14064
+  },
+  "acceptance": "PASS: healthy powered baseline before watchdog stop-feed test",
+  "next": "keep hardware permission and VM request 1; set stop-feed test 1, run continuously about 8 seconds, then inspect reset cause, startup defaults and physical VM",
+  "not_yet_verified": ["actual watchdog timeout reset", "VM default off after watchdog reset", "test variable cleanup", "final non-freezing configuration"],
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_questions": "unchanged"
+}

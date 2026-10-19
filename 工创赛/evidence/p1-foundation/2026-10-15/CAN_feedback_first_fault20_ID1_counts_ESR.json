@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-15",
+  "source": "User screenshot dbdf9889-489c-4e0a-b04e-0908e8e41e61",
+  "observed": {
+    "g_can_feedback_enable": 0,
+    "g_can_poll_enable": 1,
+    "g_can_poll_count": [
+      1,
+      1,
+      2,
+      2
+    ],
+    "g_can_poll_esr": 0,
+    "g_can_poll_result": [
+      5,
+      1,
+      1,
+      1
+    ],
+    "g_safety_fault": 32,
+    "g_can_guard_cause": 2,
+    "g_can_guard_bad_nodes": 1,
+    "g_rtos_fault": 0
+  },
+  "conclusion": "Address 1 has at least one successful status reply in this polling session, then a failed query. Continuous speed/position feedback is disabled. ESR snapshot is zero; this does not rule out all physical or reply-processing faults. Underlying timeout cause remains unconfirmed.",
+  "next_controlled_test": "User manually changes only App_TestTaskA final delay from 10 to 100 ms, feedback remains 0; rebuild/flash and preserve first-fault breakpoint. Observe 10 seconds and poll results/counts/ESR/fault. Temporary diagnostic cadence only, not accepted continuous feedback timing.",
+  "requirements": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ]
+  },
+  "actual_firmware_modified_by_assistant": false
+}

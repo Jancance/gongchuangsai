@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-06",
+  "evidence": "user HSE restore screenshots and attached source text",
+  "screenshot_sources": [
+    "C:/Users/TENDER~1/AppData/Local/Temp/codex-clipboard-8aceb335-b984-4b01-bc11-f5fe93aa1d62.png",
+    "C:/Users/TENDER~1/AppData/Local/Temp/codex-clipboard-399c4cc3-04b6-4d4f-b43b-b51f28b7f84c.png",
+    "C:/Users/TENDER~1/AppData/Local/Temp/codex-clipboard-e2999128-944a-404a-9a34-a86b7d57b58f.png"
+  ],
+  "PC": "0x08000398",
+  "registers": {
+    "RCC_CR": "0x1037c83",
+    "RCC_PLLCFGR": "0x27405408",
+    "RCC_CFGR": "0x9400"
+  },
+  "decoded": {
+    "M": 8,
+    "N": 336,
+    "P": 2,
+    "Q": 7,
+    "source": "HSE",
+    "reserved_bit29": true,
+    "HSERDY": true,
+    "PLLON": true,
+    "PLLRDY": false,
+    "SWS": 0
+  },
+  "HSI_comparison_with_reserved_fix": "previously passed",
+  "DC_voltages_reported_V": {
+    "VDD": 3.2,
+    "VDDA": 3.2,
+    "VCAP1": 1.26,
+    "VCAP2": 1.26
+  },
+  "actual_crystal_frequency": "not measured; label/model requested",
+  "cold_solder_confirmed": false,
+  "next_gate": "identify crystal and available frequency measurement tools",
+  "attachment_sha256": "5efe5c088ee24c2ebfa762774c36a272cb8feffe19126176fbcd36ffd6df0d73",
+  "assistant_modified_firmware": false
+}

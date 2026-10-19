@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-17",
+  "fixed_parameters": {
+    "address": 1,
+    "direction": 0,
+    "speed_raw": 1,
+    "rpm_assumption": "1RPM per user-reported S_Vel_IS Disable",
+    "run_ms": 1000,
+    "cut_ms": 1500,
+    "default_dry_run": 1
+  },
+  "hashes": {
+    "3.stm32f407工程/USER/main.c": "d281578e16cb680c1eed68f2431737b0b1c4bcbaa022a53f50be8a58b1f70622",
+    "3.stm32f407工程/SYSTEM/SAFETY/safety.c": "5cd9e3cee0254279d3c04340793fc21216392398d220e747631219436ff229a3",
+    "3.stm32f407工程/SYSTEM/SAFETY/safety.h": "ce2df7881923025849cd821715de87614187037c7fd71b3ca44fbf2f774051fb"
+  },
+  "validation": {
+    "isolated_ARMCC_main_and_Safety": "passed",
+    "actual_C_host_mock_checks": 80,
+    "full_rebuild": "pending user",
+    "hardware_cut_dry_run": "not performed",
+    "actual_rotation": "not performed"
+  },
+  "previous_enable_validation": {
+    "build_code": 23096,
+    "errors": 0,
+    "warnings": 0,
+    "four_motor_disable_then_enable": "passed per direct user report"
+  },
+  "next": "complete Rebuild with VM off; dry-run hardware cutoff before actual rotation",
+  "requirements": {
+    "R_unchanged": [
+      "PWR-01",
+      "RUN-01"
+    ],
+    "E_reviewed": [
+      "LOC-03",
+      "MOT-02",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": "unchanged"
+  }
+}

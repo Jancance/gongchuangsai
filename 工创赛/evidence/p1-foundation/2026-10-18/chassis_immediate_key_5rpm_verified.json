@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-18",
+  "target_rpm": 5,
+  "speed_feedback_trip_above_rpm": 7,
+  "manual_countdown_ms": 0,
+  "key_debounce_ms": 20,
+  "boot_held_key_accepted": true,
+  "build": {
+    "code": 30792,
+    "ro": 440,
+    "rw": 1012,
+    "zi": 23132,
+    "errors": 0,
+    "warnings": 0
+  },
+  "checks": 140,
+  "original_scanner_mode_compile": "main.c and key.c passed",
+  "hardware": "5RPM immediate PC13 mode not flashed or tested by assistant; live pending",
+  "checked_R": [
+    "RUN-01",
+    "PWR-01"
+  ],
+  "checked_E": [
+    "RUN-06",
+    "MOT-04"
+  ],
+  "Q": "unchanged; pending",
+  "sha256": {
+    "3.stm32f407工程/USER/main.c": "3e6fd0596c89af9d8627848d1d58dfd9b845ad37a225c2eb67b4cabfc1585fb6",
+    "3.stm32f407工程/USER/app_config.h": "cefb6bfb90a3747e89c8917f641bfb2c1ce7b838a646262a5f476c3a8639e3cf",
+    "3.stm32f407工程/HARDWARE/KEY/key.c": "dd5adcb615307bc7bf7dce96e3dc1bb35ff2337098992724c2c4e7a4518880a8",
+    "3.stm32f407工程/USER/chassis_auto_test.c": "02216fd027a8f1e31d1514bc4f7e258cab765a101b9b8b9a5e1d8d9bafde0ba5",
+    "3.stm32f407工程/USER/chassis_auto_test.h": "ed4f6dd58d8e5ba0ae214a2b8c6fb7af1d799b8435909ea97e0b1ce2cb154c77",
+    "3.stm32f407工程/Objects/gongxun-f407.axf": "00b188725a42c779c612a1095fe7e9b9a6e4730ae40b8f8ee8cb3c6d6050f150",
+    "工创赛/evidence/p1-foundation/2026-10-18/chassis_immediate_key_private_checks.c": "435caac2beb6346ec4fc039c3a7a74746bb0619675cae6470e5659eab72b103c"
+  }
+}

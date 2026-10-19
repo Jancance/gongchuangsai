@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-12",
+  "source": "User Keil Watch1 screenshot codex-clipboard-17533e6b-537e-4bcd-8722-93f2199fb6a0.png",
+  "evidence_image": "left_rear_ID1_status_read_pass.png",
+  "node": {"address": 1, "position": "左后"},
+  "g_vm_test_request": 1,
+  "g_rtos_fault": 0,
+  "g_stack_a_words": 209,
+  "g_can_status_request": 0,
+  "g_can_status_result": 1,
+  "g_can_status_esr": 0,
+  "g_can_status_flags": 3,
+  "reply": {"ExtId": "0x100", "IDE": "0x04", "RTR": 0, "DLC": 3, "Data": [58, 3, 107], "FMI": 0},
+  "interpretation": "本次快照使能位与驱动目标到位位置位，堵转/堵转保护位未置位；不等于底盘位姿到达或运动验收。",
+  "acceptance": "ID1 basic read-only status transaction PASS",
+  "pending": ["ID2/3/4 status transactions", "continuous collection and freshness", "fault supervision", "watchdog", "complete safety and motion acceptance"],
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_Q": "unchanged",
+  "actual_firmware_modified_by_assistant": false,
+  "hardware_commands_sent_by_assistant": false
+}

@@ -1,0 +1,57 @@
+{
+  "version": "tabletop-color-probe-v0",
+  "regions": [
+    {
+      "bbox_px": [
+        290,
+        383,
+        322,
+        264
+      ],
+      "area_px2": 66207.0,
+      "label": "blue",
+      "reason": "DOMINANT_COLOR_EVIDENCE",
+      "usable_fraction": 1.0,
+      "color_fractions": {
+        "red": 0.0,
+        "yellow": 0.0,
+        "green": 0.0,
+        "blue": 0.8812088190572732,
+        "lightblue": 0.0
+      },
+      "dark_fraction": 0.0003326153066396351,
+      "silhouette_center_px": [
+        453.45770588205676,
+        519.2058040187089
+      ]
+    },
+    {
+      "bbox_px": [
+        670,
+        391,
+        290,
+        264
+      ],
+      "area_px2": 59859.5,
+      "label": "black",
+      "reason": "DARK_WITH_LITTLE_CHROMATIC_EVIDENCE",
+      "usable_fraction": 1.0,
+      "color_fractions": {
+        "red": 0.0,
+        "yellow": 0.0,
+        "green": 0.0,
+        "blue": 0.003598764131732322,
+        "lightblue": 0.0
+      },
+      "dark_fraction": 0.9899234604311495,
+      "silhouette_center_px": [
+        812.9596583109893,
+        527.4621683553431
+      ]
+    }
+  ],
+  "scope": "OFFLINE DEVELOPMENT ONLY; no metric coordinates or grasp target",
+  "source_sha256": "42d0a090b44d7734e18d98eab1c928f9266499fce4069324bdd4cd77024d2259",
+  "probe_sha256": "5d99ec76bfe9d45f79958dfb5fb587e7bfe989859b1232b33723c25983978f19",
+  "evaluation": "New real pair; existing v0 rules unchanged before evaluation"
+}

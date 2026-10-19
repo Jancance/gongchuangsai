@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-15",
+  "source": "User screenshot cb1e8764-efb1-44e3-9491-93a2cbfc7032",
+  "observed": {
+    "g_vm_test_request": 1,
+    "g_rtos_fault": 0,
+    "g_safety_fault": 0,
+    "g_safety_ready": 1,
+    "g_can_guard_ready": 1,
+    "g_can_feedback_enable": 0,
+    "g_safety_count": 2910,
+    "g_stack_a_words": 169,
+    "g_safety_stack_words": 230,
+    "g_heap_min_bytes": 12968,
+    "g_can_poll_result": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "g_can_poll_count": [
+      267,
+      267,
+      267,
+      267
+    ],
+    "g_can_poll_esr": 0
+  },
+  "source_readback": "USER/main.c App_TestTaskA final delay is 50ms; existing feedback Step/Refresh retained. Read only.",
+  "limits": [
+    "Screenshot displays Power_Disable return address; no nonzero fault shown, so breakpoint display alone is not a new fault. Physical VM voltage and halt reason not newly measured.",
+    "Healthy status-only snapshot does not prove continuous speed/position feedback or long-term reliability.",
+    "Underlying 10ms failure cause remains unconfirmed."
+  ],
+  "next": "Keep 50ms and enable existing continuous feedback in Watch without rebuild. Observe at 3 seconds and another 2 seconds; four feedback counts must grow, all three masks 0x0F, results all 1, error count 0, healthy faults/readiness. If breakpoint hits with nonzero fault, preserve first fault and stop.",
+  "requirements": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ]
+  },
+  "actual_firmware_modified_by_assistant": false
+}

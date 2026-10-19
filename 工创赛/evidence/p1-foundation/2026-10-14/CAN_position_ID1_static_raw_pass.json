@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-14",
+  "source_image": "CAN_position_ID1_raw_SIGN0_RAW1.png",
+  "paired_serial_evidence": "CAN_position_ID1_serial_raw1_observation.json",
+  "address": 1,
+  "result": 1,
+  "sign": 0,
+  "raw": 1,
+  "frame": {
+    "extid": "0x0100",
+    "ide": 4,
+    "rtr": 0,
+    "dlc": 7,
+    "data": [
+      "36",
+      "00",
+      "00",
+      "00",
+      "00",
+      "01",
+      "6B"
+    ]
+  },
+  "acceptance": "PASS: ID1 static position transaction/raw frame/decoded serial agreement",
+  "vm_request": 1,
+  "rtos_fault": 0,
+  "safety_fault": 0,
+  "platform_ready": 1,
+  "can_guard_ready": 1,
+  "app_stack_words": 181,
+  "safety_stack_words": 230,
+  "heap_min_bytes": 12968,
+  "new_physical_vm_measurement": false,
+  "next": "Watch cleanup and static position queries for IDs2/3/4",
+  "watch_remove": [
+    "g_reset_iwdg",
+    "g_reset_flags",
+    "g_can_speed_address",
+    "g_can_speed_request",
+    "g_can_speed_reply"
+  ],
+  "watch_optional_remove": [
+    "g_watchdog_init_result",
+    "g_watchdog_started",
+    "g_watchdog_feed_count"
+  ],
+  "watch_remove_scope": "expressions only; source variables/functions retained",
+  "pending": [
+    "remaining position nodes",
+    "static repeated position consistency",
+    "continuous/moving feedback"
+  ],
+  "requirements_checked": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ]
+  }
+}

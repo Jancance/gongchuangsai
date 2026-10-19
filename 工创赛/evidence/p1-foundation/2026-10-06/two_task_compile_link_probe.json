@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-06",
+  "scope": "temporary main compile and link with existing user kernel objects; not hardware execution",
+  "compiler_case": {
+    "exit_code": 0,
+    "output": "none; compilation passed in preceding call"
+  },
+  "linker_case": {
+    "exit_code": 0,
+    "output": "Program Size: Code=5408 RO-data=424 RW-data=156 ZI-data=22292"
+  },
+  "source_main_unchanged": true,
+  "source_main_sha256": "df847b0ed8fe5d9e8b6e5a49ab4e86407e4f1473728771ee7b0d81ff66a85087",
+  "source_snippet_sha256": "b8e8a29702e4950b3ab3ebbf98fdd457649719479c8cdaab2ece25d8f4e0db26",
+  "kernel_version": "V11.3.1",
+  "config_heap_bytes": 20480,
+  "planned_task_stack_words_each": 256,
+  "planned_delays_ms": [
+    100,
+    500
+  ],
+  "expected_tick_reload": 167999,
+  "runtime_scheduling_verified": false
+}

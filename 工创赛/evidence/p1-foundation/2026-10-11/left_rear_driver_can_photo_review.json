@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-11",
+  "board_marking": "X42S_V2.0",
+  "plugin_marking": "ZHANGDATOU ZDT_CAN_V1.2",
+  "firmware_X_or_Emm": "NOT_CONFIRMED",
+  "photos": ["left_rear_can_module_installed.jpg", "left_rear_driver_module_removed.jpg", "left_rear_motor_connector_wire_colors.jpg"],
+  "motor_end_wire_colors": {"V+": "red", "Gnd": "gray", "Com": "purple", "En": "brown", "Stp": "orange", "Dir": "yellow", "R/A/H": "green", "T/B/L": "blue"},
+  "expected_power_board_four_wheel_port": {"8": "VM / red V+", "7": "GND / gray Gnd", "2": "CAN_H / green R/A/H", "1": "CAN_L / blue T/B/L"},
+  "power_board_end_visible": false,
+  "power_board_PCB_screenshot": "power_board_motor_port_pcb_user_confirmation.png",
+  "PCB_port_mapping_matches_schematic": true,
+  "actual_harness_user_confirmation": "User states the connection is correct; accepted as user-reported wiring verification, not a photographed continuity test.",
+  "all_plugin_contacts_verified": false,
+  "new_user_setup_clarification": "User states the CAN plugin was simply inserted and no further operation was performed; actual post-installation port selection/confirmation must be checked while preserving historical CAN1_MAP report.",
+  "latest_resolution": "User confirms CAN1_MAP had not actually been selected; selecting it led to ID1 normal CAN version result1/ESR0. Plugin substitution not needed for current passed transaction.",
+  "next": "Raw left-rear version reply verified as1F00CA23146B; read driver FWType menu without changing it. Other three actual modes/transactions still pending.",
+  "requirements": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06"]},
+  "firmware_or_PCB_modified": false,
+  "hardware_transaction_passed": "LEFT_REAR_ID1_VERSION_READ_ONLY"
+}

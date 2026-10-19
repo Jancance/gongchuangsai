@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-11",
+  "source": "User screenshot codex-clipboard-1c0ef891-6718-4577-826b-26a673851d04.png",
+  "screenshot": "front_left_ID3_version_read_pass.png",
+  "motor": {"position": "front left", "address": 3, "FWType_user_confirmed": "FW_Emm"},
+  "observed": {"target_address": 3, "result": 1, "ESR": 0, "request": 0, "VM_request": 1, "loopback_result": 1, "RTOS_fault": 0, "INRQ": 0, "INAK": 0, "PD0": 1, "task_A_stack_words": 210},
+  "raw_reply": {"ExtId": "0x00000300", "IDE": "0x04", "RTR": "0x00", "DLC": 6, "Data_valid_hex": ["1F", "00", "CA", "23", "14", "6B"], "FMI": 0},
+  "normal_version_transaction": "PASS",
+  "firmware_version_and_HW_raw": {"software_raw": "0x00CA", "software_decimal": 202, "software_version": "V2.0.2", "hardware_raw": "0x2314", "matches_ID1_ID2_fields": true},
+  "next": "Power off before right-front ID4 single-node connection; run motherboard, restore VM after startup, select address4/request1 and inspect result/ESR/raw reply.",
+  "requirements": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06"]},
+  "firmware_or_PCB_modified_by_assistant": false,
+  "complete_network_and_motion_pass": false
+}

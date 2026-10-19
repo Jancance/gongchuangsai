@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-17",
+  "scope": "Static automatic stop software preparation; motion permission remains 0",
+  "changed_files": [
+    "SYSTEM/SAFETY/safety.c",
+    "SYSTEM/SAFETY/safety.h",
+    "USER/main.c"
+  ],
+  "trigger": "Existing feedback diagnostic latch while VM requested",
+  "behavior": [
+    "One stop session per latch, addresses1-4 serially served by existing CAN task",
+    "Result1 means02 receipt only; state2 means all four receipt acknowledgements",
+    "Non1 result/candidate500ms deadline/original platform fault requests VM cut",
+    "Safety output decision denies VM when cut flag set; original watchdog feed condition unchanged",
+    "Session token rejects stale reports; late replies after cut/cancel cannot restore completion",
+    "VM0 plus explicit diagnostic acknowledgement resets stop control; no automatic reset on restored feedback"
+  ],
+  "states": {
+    "pending": 1,
+    "idle": 0,
+    "vm_cut": 3,
+    "cancelled": 4,
+    "four_receipt_acks": 2
+  },
+  "checks": {
+    "armcc": "safety.c and main.c isolated compilation passed",
+    "covered": [
+      "all four successes",
+      "invalid/null take",
+      "single inflight",
+      "wrong address/session",
+      "failed response",
+      "no retry while latched",
+      "VM cut latch and explicit reset",
+      "499/500ms boundary",
+      "late response",
+      "32bit tick wrap",
+      "request cancellation",
+      "prior session report",
+      "original platform fault",
+      "diagnostic latch/recovery/ack refusal/ack acceptance"
+    ],
+    "host": "Actual C stop/latch functions extracted, compiled and executed with existing MATLAB LCC64",
+    "assertions": 63
+  },
+  "source_sha256": {
+    "SYSTEM/SAFETY/safety.h": "BCAEE28D38D9A993D390CE45AA4032429A4B507C358146C84BB671CCB65C48DE",
+    "USER/main.c": "90BD7A3EC2EF5A0ED2097F6505157CBF96DA8084DD4A6509E290AE5298286119",
+    "SYSTEM/SAFETY/safety.c": "5B2C23E297A6AC4698E63897A6CB11F6ECA37C62A4354E0292B7D0545D4F50F5"
+  },
+  "limitations": [
+    "No full firmware link/download performed for this version",
+    "No physical CAN/power/stop test",
+    "500ms is static candidate measured from request publication; not braking latency guarantee",
+    "Physical VM cutoff occurs through Safety scheduling and hardware; not established by host assertions",
+    "Formal motion permission, enable, speed limits and real motion remain unimplemented"
+  ]
+}

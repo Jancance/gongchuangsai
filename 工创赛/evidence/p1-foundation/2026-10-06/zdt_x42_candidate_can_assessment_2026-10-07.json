@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-07",
+  "user_inputs": {"wheels": "mecanum", "motor_vendor": "张大头", "desired_bus": "CAN", "tentative_model": "X42-V2.0", "described_variant": "光耦+TTL", "PA1": "wired but software selection skipped by user"},
+  "actual_board_identity": "PENDING_PHOTO_OR_EXACT_LABEL",
+  "can_motor_side_physical_interface": "UNVERIFIED",
+  "sources": [{"type": "user-supplied manufacturer PDF", "path": "D:/Codex/工创赛/evidence/p1-0/motor-manuals/ZDT_X42S第二代闭环步进电机用户手册V1.0.5_260527.pdf", "relevant_pages_read": [6,12,28], "existing_renderings_viewed": [12,28], "scope": "X42S family, not automatically same as user's tentative X42 V2"}, {"type": "manufacturer author original manual", "url": "https://blog.csdn.net/zhangdatou666/article/details/135709033", "title": "ZDT_X系列_V2步进闭环驱动说明书Rev1.0", "scope": "family software CAN1_MAP/menu and general CAN support, not proof of user's fitted transceiver"}],
+  "conclusions": ["Optocoupler describes pulse input isolation, not CAN physical interface", "CAN requires compatible physical hardware on both MCU and motor endpoints", "Shared terminal label/software CAN_MAP is not enough to establish fitted motor CAN transceiver", "Do not mix X42/X42S or X/Emm movement formats without real firmware identification"],
+  "next_action": "Obtain clear image of one 42 driver back and communication interface/subboard, then prepare non-motion identity/status read",
+  "rule_boundary": "PA1 software skipped; drawn start_id and realtime XY remain separate from opening radar obstacle map",
+  "firmware_modified": false,
+  "motor_commands_sent": false,
+  "requirements_checked": ["FIELD-02 (R)", "FIELD-03 (E)", "LOC-01..07 (E)", "RUN-01 (R)", "RUN-06 (E)", "MOT-01..04 (E)"]
+}

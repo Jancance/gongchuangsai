@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-13",
+  "source": "User screenshot23e8764d and explicit VM0 after CAN path-test cleanup",
+  "evidence_image": "CAN_guard_clean_normal_start_VM0_pass.png",
+  "observed": {"g_vm_test_request": 0, "g_rtos_fault": 0, "g_safety_fault": 0, "g_safety_ready": 1, "g_can_poll_enable": 1, "g_can_guard_ready": 0, "g_can_guard_bad_nodes": 0, "g_can_guard_cause": 0, "g_safety_count": 266, "g_stack_a_words": 208, "g_safety_stack_words": 232, "g_heap_min_bytes": 14064},
+  "VM_volts": 0,
+  "acceptance": "CAN temporary test cleanup and normal startup/default VM off PASS",
+  "CAN_ready0_expected_with_VM_request0": true,
+  "next": "User manual IWDG module and supervision healthy feed integration, then hardware watchdog and debug/reset tests",
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_Q": "unchanged",
+  "actual_firmware_modified_by_assistant": false,
+  "hardware_commands_sent_by_assistant": false
+}

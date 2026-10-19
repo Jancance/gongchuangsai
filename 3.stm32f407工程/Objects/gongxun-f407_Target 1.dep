@@ -1,0 +1,659 @@
+Dependencies for Project 'gongxun-f407', Target 'Target 1': (DO NOT MODIFY !)
+CompilerVersion: 5060960::V5.06 update 7 (build 960)::.\arm5_compiler
+F (.\USER\main.c)(0x6AD616C8)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\FreeRTOS\include\FreeRTOS.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+I (.\USER\FreeRTOSConfig.h)(0x6AC4506A)
+I (.\USER\freertos_hooks.h)(0x6AC44260)
+I (.\FreeRTOS\include\projdefs.h)(0x6A888C98)
+I (.\FreeRTOS\include\portable.h)(0x6A888C98)
+I (.\FreeRTOS\include\deprecated_definitions.h)(0x6A888C98)
+I (.\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x6A888C98)
+I (.\FreeRTOS\include\mpu_wrappers.h)(0x6A888C98)
+I (.\FreeRTOS\include\task.h)(0x6A888C98)
+I (.\FreeRTOS\include\list.h)(0x6A888C98)
+I (.\HARDWARE\LED\led.h)(0x6AC4CFB0)
+I (.\HARDWARE\BUZZER\Buzzer.h)(0x6AC4D7FE)
+I (USER\app_config.h)(0x6AD61FBE)
+I (.\SYSTEM\USART\usart.h)(0x6AC4EDCE)
+I (.\HARDWARE\KEY\Key.h)(0x6AC51848)
+I (.\HARDWARE\POWER\power.h)(0x6AC8F602)
+I (.\SYSTEM\CAN\can.h)(0x6AD179CE)
+I (USER\chassis_kinematics.h)(0x6AD38675)
+I (USER\chassis_auto_test.h)(0x6AD61FBE)
+I (USER\hwt101.h)(0x6AD615E7)
+I (.\SYSTEM\SAFETY\safety.h)(0x6AD37D8B)
+I (.\SYSTEM\WATCHDOG\watchdog.h)(0x6ACE0122)
+I (.\HARDWARE\SCREEN\screen.h)(0x6ACF4680)
+I (.\HARDWARE\SAOMA\saoma.h)(0x6ACF455C)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdio.h)(0x67B896FE)
+F (.\USER\FreeRTOSConfig.h)(0x6AC4506A)()
+F (.\USER\freertos_hooks.c)(0x6ACB8822)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\freertos_hooks.o --omf_browse .\objects\freertos_hooks.crf --depend .\objects\freertos_hooks.d)
+I (.\FreeRTOS\include\FreeRTOS.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\USER\FreeRTOSConfig.h)(0x6AC4506A)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\USER\freertos_hooks.h)(0x6AC44260)
+I (.\FreeRTOS\include\projdefs.h)(0x6A888C98)
+I (.\FreeRTOS\include\portable.h)(0x6A888C98)
+I (.\FreeRTOS\include\deprecated_definitions.h)(0x6A888C98)
+I (.\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x6A888C98)
+I (.\FreeRTOS\include\mpu_wrappers.h)(0x6A888C98)
+I (.\FreeRTOS\include\task.h)(0x6A888C98)
+I (.\FreeRTOS\include\list.h)(0x6A888C98)
+I (.\HARDWARE\POWER\power.h)(0x6AC8F602)
+F (.\USER\freertos_hooks.h)(0x6AC44260)()
+F (.\USER\chassis_kinematics.c)(0x6AD38675)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\chassis_kinematics.o --omf_browse .\objects\chassis_kinematics.crf --depend .\objects\chassis_kinematics.d)
+I (USER\chassis_kinematics.h)(0x6AD38675)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (D:\Keil_v5\ARM\arm5_compiler\include\float.h)(0x67B896EA)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+F (.\USER\chassis_kinematics.h)(0x6AD38675)()
+F (.\USER\chassis_auto_test.c)(0x6AD61F91)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\chassis_auto_test.o --omf_browse .\objects\chassis_auto_test.crf --depend .\objects\chassis_auto_test.d)
+I (USER\chassis_auto_test.h)(0x6AD61FBE)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (USER\app_config.h)(0x6AD61FBE)
+I (USER\chassis_kinematics.h)(0x6AD38675)
+I (.\SYSTEM\CAN\can.h)(0x6AD179CE)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\SYSTEM\SAFETY\safety.h)(0x6AD37D8B)
+I (.\FreeRTOS\include\FreeRTOS.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+I (.\USER\FreeRTOSConfig.h)(0x6AC4506A)
+I (.\USER\freertos_hooks.h)(0x6AC44260)
+I (.\FreeRTOS\include\projdefs.h)(0x6A888C98)
+I (.\FreeRTOS\include\portable.h)(0x6A888C98)
+I (.\FreeRTOS\include\deprecated_definitions.h)(0x6A888C98)
+I (.\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x6A888C98)
+I (.\FreeRTOS\include\mpu_wrappers.h)(0x6A888C98)
+I (.\FreeRTOS\include\task.h)(0x6A888C98)
+I (.\FreeRTOS\include\list.h)(0x6A888C98)
+F (.\USER\chassis_auto_test.h)(0x6AD61FBE)()
+F (.\USER\hwt101.c)(0x6AD615E7)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\hwt101.o --omf_browse .\objects\hwt101.crf --depend .\objects\hwt101.d)
+I (USER\hwt101.h)(0x6AD615E7)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (USER\hwt101_parser.h)(0x6AD4D5D0)
+I (USER\app_config.h)(0x6AD61FBE)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\FreeRTOS\include\FreeRTOS.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+I (.\USER\FreeRTOSConfig.h)(0x6AC4506A)
+I (.\USER\freertos_hooks.h)(0x6AC44260)
+I (.\FreeRTOS\include\projdefs.h)(0x6A888C98)
+I (.\FreeRTOS\include\portable.h)(0x6A888C98)
+I (.\FreeRTOS\include\deprecated_definitions.h)(0x6A888C98)
+I (.\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x6A888C98)
+I (.\FreeRTOS\include\mpu_wrappers.h)(0x6A888C98)
+I (.\FreeRTOS\include\task.h)(0x6A888C98)
+I (.\FreeRTOS\include\list.h)(0x6A888C98)
+F (.\USER\hwt101.h)(0x6AD615E7)()
+F (.\USER\hwt101_parser.c)(0x6AD4D5D0)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\hwt101_parser.o --omf_browse .\objects\hwt101_parser.crf --depend .\objects\hwt101_parser.d)
+I (USER\hwt101_parser.h)(0x6AD4D5D0)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (D:\Keil_v5\ARM\arm5_compiler\include\string.h)(0x67B896FE)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+F (.\USER\hwt101_parser.h)(0x6AD4D5D0)()
+F (.\HARDWARE\LED\led.c)(0x6AC4D06A)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\led.o --omf_browse .\objects\led.crf --depend .\objects\led.d)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (HARDWARE\LED\led.h)(0x6AC4CFB0)
+F (.\HARDWARE\BUZZER\buzzer.c)(0x6AC4D808)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\buzzer.o --omf_browse .\objects\buzzer.crf --depend .\objects\buzzer.d)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\FreeRTOS\include\FreeRTOS.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+I (.\USER\FreeRTOSConfig.h)(0x6AC4506A)
+I (.\USER\freertos_hooks.h)(0x6AC44260)
+I (.\FreeRTOS\include\projdefs.h)(0x6A888C98)
+I (.\FreeRTOS\include\portable.h)(0x6A888C98)
+I (.\FreeRTOS\include\deprecated_definitions.h)(0x6A888C98)
+I (.\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x6A888C98)
+I (.\FreeRTOS\include\mpu_wrappers.h)(0x6A888C98)
+I (.\FreeRTOS\include\task.h)(0x6A888C98)
+I (.\FreeRTOS\include\list.h)(0x6A888C98)
+I (.\USER\app_config.h)(0x6AD61FBE)
+I (HARDWARE\BUZZER\Buzzer.h)(0x6AC4D7FE)
+F (.\HARDWARE\KEY\key.c)(0x6AD4C869)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\key.o --omf_browse .\objects\key.crf --depend .\objects\key.d)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\FreeRTOS\include\FreeRTOS.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+I (.\USER\FreeRTOSConfig.h)(0x6AC4506A)
+I (.\USER\freertos_hooks.h)(0x6AC44260)
+I (.\FreeRTOS\include\projdefs.h)(0x6A888C98)
+I (.\FreeRTOS\include\portable.h)(0x6A888C98)
+I (.\FreeRTOS\include\deprecated_definitions.h)(0x6A888C98)
+I (.\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x6A888C98)
+I (.\FreeRTOS\include\mpu_wrappers.h)(0x6A888C98)
+I (.\FreeRTOS\include\task.h)(0x6A888C98)
+I (.\FreeRTOS\include\list.h)(0x6A888C98)
+I (.\USER\app_config.h)(0x6AD61FBE)
+I (HARDWARE\KEY\Key.h)(0x6AC51848)
+F (.\HARDWARE\POWER\power.c)(0x6AC8F604)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\power.o --omf_browse .\objects\power.crf --depend .\objects\power.d)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (HARDWARE\POWER\power.h)(0x6AC8F602)
+F (.\HARDWARE\SCREEN\screen.c)(0x6ACE2B8E)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\screen.o --omf_browse .\objects\screen.crf --depend .\objects\screen.d)
+I (HARDWARE\SCREEN\screen.h)(0x6ACF4680)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\FreeRTOS\include\FreeRTOS.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+I (.\USER\FreeRTOSConfig.h)(0x6AC4506A)
+I (.\USER\freertos_hooks.h)(0x6AC44260)
+I (.\FreeRTOS\include\projdefs.h)(0x6A888C98)
+I (.\FreeRTOS\include\portable.h)(0x6A888C98)
+I (.\FreeRTOS\include\deprecated_definitions.h)(0x6A888C98)
+I (.\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x6A888C98)
+I (.\FreeRTOS\include\mpu_wrappers.h)(0x6A888C98)
+I (.\FreeRTOS\include\task.h)(0x6A888C98)
+I (.\FreeRTOS\include\list.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdio.h)(0x67B896FE)
+F (.\HARDWARE\SAOMA\saoma.c)(0x6ACF455C)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\saoma.o --omf_browse .\objects\saoma.crf --depend .\objects\saoma.d)
+I (HARDWARE\SAOMA\saoma.h)(0x6ACF455C)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\FreeRTOS\include\FreeRTOS.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+I (.\USER\FreeRTOSConfig.h)(0x6AC4506A)
+I (.\USER\freertos_hooks.h)(0x6AC44260)
+I (.\FreeRTOS\include\projdefs.h)(0x6A888C98)
+I (.\FreeRTOS\include\portable.h)(0x6A888C98)
+I (.\FreeRTOS\include\deprecated_definitions.h)(0x6A888C98)
+I (.\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x6A888C98)
+I (.\FreeRTOS\include\mpu_wrappers.h)(0x6A888C98)
+I (.\FreeRTOS\include\task.h)(0x6A888C98)
+I (.\FreeRTOS\include\list.h)(0x6A888C98)
+I (.\FreeRTOS\include\queue.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\string.h)(0x67B896FE)
+F (.\SYSTEM\USART\usart.c)(0x6AC4EDDA)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\usart.o --omf_browse .\objects\usart.crf --depend .\objects\usart.d)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (SYSTEM\USART\usart.h)(0x6AC4EDCE)
+I (.\FreeRTOS\include\FreeRTOS.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+I (.\USER\FreeRTOSConfig.h)(0x6AC4506A)
+I (.\USER\freertos_hooks.h)(0x6AC44260)
+I (.\FreeRTOS\include\projdefs.h)(0x6A888C98)
+I (.\FreeRTOS\include\portable.h)(0x6A888C98)
+I (.\FreeRTOS\include\deprecated_definitions.h)(0x6A888C98)
+I (.\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x6A888C98)
+I (.\FreeRTOS\include\mpu_wrappers.h)(0x6A888C98)
+I (.\FreeRTOS\include\queue.h)(0x6A888C98)
+I (.\FreeRTOS\include\task.h)(0x6A888C98)
+I (.\FreeRTOS\include\list.h)(0x6A888C98)
+F (.\SYSTEM\CAN\can.c)(0x6AD17B03)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\can.o --omf_browse .\objects\can.crf --depend .\objects\can.d)
+I (SYSTEM\CAN\can.h)(0x6AD179CE)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\FreeRTOS\include\FreeRTOS.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+I (.\USER\FreeRTOSConfig.h)(0x6AC4506A)
+I (.\USER\freertos_hooks.h)(0x6AC44260)
+I (.\FreeRTOS\include\projdefs.h)(0x6A888C98)
+I (.\FreeRTOS\include\portable.h)(0x6A888C98)
+I (.\FreeRTOS\include\deprecated_definitions.h)(0x6A888C98)
+I (.\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x6A888C98)
+I (.\FreeRTOS\include\mpu_wrappers.h)(0x6A888C98)
+I (.\FreeRTOS\include\task.h)(0x6A888C98)
+I (.\FreeRTOS\include\list.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\string.h)(0x67B896FE)
+F (.\SYSTEM\SAFETY\safety.c)(0x6AD38878)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\safety.o --omf_browse .\objects\safety.crf --depend .\objects\safety.d)
+I (SYSTEM\SAFETY\safety.h)(0x6AD37D8B)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\FreeRTOS\include\FreeRTOS.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+I (.\USER\FreeRTOSConfig.h)(0x6AC4506A)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\USER\freertos_hooks.h)(0x6AC44260)
+I (.\FreeRTOS\include\projdefs.h)(0x6A888C98)
+I (.\FreeRTOS\include\portable.h)(0x6A888C98)
+I (.\FreeRTOS\include\deprecated_definitions.h)(0x6A888C98)
+I (.\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x6A888C98)
+I (.\FreeRTOS\include\mpu_wrappers.h)(0x6A888C98)
+I (.\USER\chassis_auto_test.h)(0x6AD61FBE)
+I (.\USER\app_config.h)(0x6AD61FBE)
+I (.\FreeRTOS\include\task.h)(0x6A888C98)
+I (.\FreeRTOS\include\list.h)(0x6A888C98)
+I (.\HARDWARE\POWER\power.h)(0x6AC8F602)
+I (.\SYSTEM\WATCHDOG\watchdog.h)(0x6ACE0122)
+F (.\SYSTEM\WATCHDOG\watchdog.c)(0x6ACF5862)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\watchdog.o --omf_browse .\objects\watchdog.crf --depend .\objects\watchdog.d)
+I (SYSTEM\WATCHDOG\watchdog.h)(0x6ACE0122)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_iwdg.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_dbgmcu.h)(0x52B3ACE6)
+F (.\StdPeriph_Driver\src\stm32f4xx_gpio.c)(0x52B3ACE6)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\stm32f4xx_gpio.o --omf_browse .\objects\stm32f4xx_gpio.crf --depend .\objects\stm32f4xx_gpio.d)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+F (.\StdPeriph_Driver\src\stm32f4xx_rcc.c)(0x52B3ACE6)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\stm32f4xx_rcc.o --omf_browse .\objects\stm32f4xx_rcc.crf --depend .\objects\stm32f4xx_rcc.d)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+F (.\StdPeriph_Driver\src\misc.c)(0x52B3ACE6)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\misc.o --omf_browse .\objects\misc.crf --depend .\objects\misc.d)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+F (.\StdPeriph_Driver\src\stm32f4xx_usart.c)(0x52B3ACE6)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\stm32f4xx_usart.o --omf_browse .\objects\stm32f4xx_usart.crf --depend .\objects\stm32f4xx_usart.d)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+F (.\StdPeriph_Driver\src\stm32f4xx_can.c)(0x52B3ACE6)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\stm32f4xx_can.o --omf_browse .\objects\stm32f4xx_can.crf --depend .\objects\stm32f4xx_can.d)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+F (.\StdPeriph_Driver\src\stm32f4xx_iwdg.c)(0x52B3ACE6)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\stm32f4xx_iwdg.o --omf_browse .\objects\stm32f4xx_iwdg.crf --depend .\objects\stm32f4xx_iwdg.d)
+I (.\StdPeriph_Driver\inc\stm32f4xx_iwdg.h)(0x52B3ACE6)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+F (.\StdPeriph_Driver\src\stm32f4xx_dbgmcu.c)(0x52B3ACE6)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\stm32f4xx_dbgmcu.o --omf_browse .\objects\stm32f4xx_dbgmcu.crf --depend .\objects\stm32f4xx_dbgmcu.d)
+I (.\StdPeriph_Driver\inc\stm32f4xx_dbgmcu.h)(0x52B3ACE6)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+F (.\CORE\system_stm32f4xx.c)(0x6AC417C4)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\system_stm32f4xx.o --omf_browse .\objects\system_stm32f4xx.crf --depend .\objects\system_stm32f4xx.d)
+I (CORE\stm32f4xx.h)(0x529EBB22)
+I (CORE\core_cm4.h)(0x5A0D5BFA)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (CORE\cmsis_version.h)(0x5A0D5BFA)
+I (CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+F (.\CORE\startup_stm32f40_41xxx.s)(0x529EBB22)(--cpu Cortex-M4.fp.sp -g --apcs=interwork -ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include--pd "__UVISION_VERSION SETA 538" --pd "STM32F40_41xxx SETA 1"--list .\listings\startup_stm32f40_41xxx.lst --xref -o .\objects\startup_stm32f40_41xxx.o --depend .\objects\startup_stm32f40_41xxx.d)
+F (.\FreeRTOS\tasks.c)(0x6AD0C31A)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\tasks.o --omf_browse .\objects\tasks.crf --depend .\objects\tasks.d)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdlib.h)(0x67B896FE)
+I (D:\Keil_v5\ARM\arm5_compiler\include\string.h)(0x67B896FE)
+I (.\FreeRTOS\include\FreeRTOS.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\USER\FreeRTOSConfig.h)(0x6AC4506A)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\USER\freertos_hooks.h)(0x6AC44260)
+I (.\FreeRTOS\include\projdefs.h)(0x6A888C98)
+I (.\FreeRTOS\include\portable.h)(0x6A888C98)
+I (.\FreeRTOS\include\deprecated_definitions.h)(0x6A888C98)
+I (.\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x6A888C98)
+I (.\FreeRTOS\include\mpu_wrappers.h)(0x6A888C98)
+I (.\FreeRTOS\include\task.h)(0x6A888C98)
+I (.\FreeRTOS\include\list.h)(0x6A888C98)
+I (.\FreeRTOS\include\timers.h)(0x6A888C98)
+I (.\FreeRTOS\include\stack_macros.h)(0x6A888C98)
+F (.\FreeRTOS\list.c)(0x6A888C98)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\list.o --omf_browse .\objects\list.crf --depend .\objects\list.d)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdlib.h)(0x67B896FE)
+I (.\FreeRTOS\include\FreeRTOS.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\USER\FreeRTOSConfig.h)(0x6AC4506A)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\USER\freertos_hooks.h)(0x6AC44260)
+I (.\FreeRTOS\include\projdefs.h)(0x6A888C98)
+I (.\FreeRTOS\include\portable.h)(0x6A888C98)
+I (.\FreeRTOS\include\deprecated_definitions.h)(0x6A888C98)
+I (.\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x6A888C98)
+I (.\FreeRTOS\include\mpu_wrappers.h)(0x6A888C98)
+I (.\FreeRTOS\include\list.h)(0x6A888C98)
+F (.\FreeRTOS\queue.c)(0x6A888C98)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\queue.o --omf_browse .\objects\queue.crf --depend .\objects\queue.d)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdlib.h)(0x67B896FE)
+I (D:\Keil_v5\ARM\arm5_compiler\include\string.h)(0x67B896FE)
+I (.\FreeRTOS\include\FreeRTOS.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\USER\FreeRTOSConfig.h)(0x6AC4506A)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\USER\freertos_hooks.h)(0x6AC44260)
+I (.\FreeRTOS\include\projdefs.h)(0x6A888C98)
+I (.\FreeRTOS\include\portable.h)(0x6A888C98)
+I (.\FreeRTOS\include\deprecated_definitions.h)(0x6A888C98)
+I (.\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x6A888C98)
+I (.\FreeRTOS\include\mpu_wrappers.h)(0x6A888C98)
+I (.\FreeRTOS\include\task.h)(0x6A888C98)
+I (.\FreeRTOS\include\list.h)(0x6A888C98)
+I (.\FreeRTOS\include\queue.h)(0x6A888C98)
+F (.\FreeRTOS\portable\RVDS\ARM_CM4F\port.c)(0x6A888C98)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\port.o --omf_browse .\objects\port.crf --depend .\objects\port.d)
+I (.\FreeRTOS\include\FreeRTOS.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\USER\FreeRTOSConfig.h)(0x6AC4506A)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\USER\freertos_hooks.h)(0x6AC44260)
+I (.\FreeRTOS\include\projdefs.h)(0x6A888C98)
+I (.\FreeRTOS\include\portable.h)(0x6A888C98)
+I (.\FreeRTOS\include\deprecated_definitions.h)(0x6A888C98)
+I (.\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x6A888C98)
+I (.\FreeRTOS\include\mpu_wrappers.h)(0x6A888C98)
+I (.\FreeRTOS\include\task.h)(0x6A888C98)
+I (.\FreeRTOS\include\list.h)(0x6A888C98)
+F (.\FreeRTOS\portable\MemMang\heap_4.c)(0x6A888C98)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I .\CORE -I .\USER -I .\StdPeriph_Driver\inc -I .\FreeRTOS\include -I .\FreeRTOS\portable\RVDS\ARM_CM4F -I .\HARDWARE\LED -I .\HARDWARE\BUZZER -I .\SYSTEM\USART -I .\HARDWARE\KEY -I .\HARDWARE\POWER -I .\SYSTEM\CAN -I .\SYSTEM\SAFETY -I .\SYSTEM\WATCHDOG -I .\HARDWARE\SCREEN -I .\HARDWARE\SAOMA-ID:\keil\Arm\Packs\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="538" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE="8000000"-o .\objects\heap_4.o --omf_browse .\objects\heap_4.crf --depend .\objects\heap_4.d)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdlib.h)(0x67B896FE)
+I (D:\Keil_v5\ARM\arm5_compiler\include\string.h)(0x67B896FE)
+I (.\FreeRTOS\include\FreeRTOS.h)(0x6A888C98)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stddef.h)(0x67B896FC)
+I (D:\Keil_v5\ARM\arm5_compiler\include\stdint.h)(0x67B896FC)
+I (.\USER\FreeRTOSConfig.h)(0x6AC4506A)
+I (.\CORE\stm32f4xx.h)(0x529EBB22)
+I (.\CORE\core_cm4.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_version.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_compiler.h)(0x5A0D5BFA)
+I (.\CORE\cmsis_armcc.h)(0x5A0D5BFA)
+I (.\CORE\mpu_armv7.h)(0x5A0D5BFA)
+I (.\CORE\system_stm32f4xx.h)(0x529EBB22)
+I (.\USER\stm32f4xx_conf.h)(0x6ACA07AA)
+I (.\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\misc.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x52B3ACE6)
+I (.\StdPeriph_Driver\inc\stm32f4xx_can.h)(0x52B3ACE6)
+I (.\USER\freertos_hooks.h)(0x6AC44260)
+I (.\FreeRTOS\include\projdefs.h)(0x6A888C98)
+I (.\FreeRTOS\include\portable.h)(0x6A888C98)
+I (.\FreeRTOS\include\deprecated_definitions.h)(0x6A888C98)
+I (.\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x6A888C98)
+I (.\FreeRTOS\include\mpu_wrappers.h)(0x6A888C98)
+I (.\FreeRTOS\include\task.h)(0x6A888C98)
+I (.\FreeRTOS\include\list.h)(0x6A888C98)

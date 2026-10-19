@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-17",
+  "user_request": "10 seconds; automatically disable all motors at beginning",
+  "previous_evidence": {
+    "dry_run_state": 4,
+    "dry_run_cut": 1,
+    "dry_run_cause": 0,
+    "VM0V": "confirmed by user",
+    "actual_rotation": "seen per user; full end-state not provided"
+  },
+  "parameters": {
+    "address": 1,
+    "direction": 0,
+    "speed_raw": 1,
+    "run_ms": 10000,
+    "cut_ms": 10500,
+    "prepare_limit_ms": 5000,
+    "default_dry_run": 1
+  },
+  "sequence": [
+    "disable1",
+    "disable2",
+    "disable3",
+    "disable4",
+    "verify_all_disabled",
+    "enable1",
+    "verify_only_1_enabled",
+    "fixed_speed1",
+    "stop_at_10s",
+    "cut_VM_at_10_5s"
+  ],
+  "validation": {
+    "ARMCC_main_and_Safety": "passed",
+    "host_actual_C_mock_checks": 94,
+    "full_rebuild": "pending user",
+    "hardware": "not performed for this version"
+  },
+  "sha256": {
+    "3.stm32f407工程/USER/main.c": "7f0a8b1057afc0325925501b6b0ed331c7f52247e49e13deec35c5c8d3a4f792",
+    "3.stm32f407工程/SYSTEM/SAFETY/safety.c": "eab92e1e8d62d9f5c1b6c87b0e354f257bb1494050a2c29afa8d7ea00397edf7",
+    "3.stm32f407工程/SYSTEM/SAFETY/safety.h": "6cae26bd61cb2522b81bbc12038f56870dd67497dcfe53cf3bc197cddcd18524"
+  },
+  "requirements": {
+    "R_unchanged": [
+      "PWR-01",
+      "RUN-01"
+    ],
+    "E_reviewed": [
+      "LOC-03",
+      "MOT-02",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": "unchanged"
+  }
+}

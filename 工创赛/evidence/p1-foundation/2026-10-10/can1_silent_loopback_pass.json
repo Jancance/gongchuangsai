@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-10",
+  "evidence_level": "USER_HARDWARE_DEBUG_SCREENSHOT_AND_CURRENT_SOURCE_READ_ONLY_CHECK",
+  "screenshot": "evidence/p1-foundation/2026-10-10/can1_silent_loopback_pass.png",
+  "screenshot_sha256": "F4032726CB78C75897E197E1F030DCC76E68966AACCA35016939BB41312D28E5",
+  "watch": {
+    "g_can_test_result": 1,
+    "g_rtos_fault": 0,
+    "g_stack_a_words": 212,
+    "g_rx_stack_words": 217,
+    "g_key_stack_words": 233,
+    "g_heap_free_bytes": 15200,
+    "g_heap_min_bytes": 15200,
+    "g_vm_test_request": 0,
+    "g_rx_task_create": 1,
+    "g_key_task_create": 1
+  },
+  "task_a_minimum_stack_free_bytes": 848,
+  "task_a_configured_stack_words": 256,
+  "pc": "0x08001E0E in FreeRTOS idle cleanup; Thread/PSP",
+  "acceptance": "CAN1_CONTROLLER_SILENT_LOOPBACK_PASS",
+  "verified_algorithm_scope": ["PCLK1 derived value42MHz guard", "CAN1 initialization", "FIFO0 acceptance filter", "extended data-frame ID0x12345", "DLC8", "all eight received bytes equal10 11 12 13 14 15 16 17"],
+  "mode": "CAN_Mode_Silent_LoopBack",
+  "nominal_bitrate_configuration": 500000,
+  "physical_bitrate_measured": false,
+  "transceiver_and_wiring_verified": false,
+  "motor_can_transaction_verified": false,
+  "current_source_sha256": {
+    "USER/main.c": "EEE50C7E55E6FF11A64F8E5048BD9DFFB04C99A5FD4547065796E330AF7792AE",
+    "SYSTEM/CAN/can.c": "A65596C6C57682C31865C8B2ACADBFE4AA46032288A9D56275DC38D013EA74FD",
+    "USER/stm32f4xx_conf.h": "8BB6976AF199B1CE05DC5E8D5BF5266115C0AD737D6D07D8063A297DCCEA79BF"
+  },
+  "conf_can_header_now_present": true,
+  "current_clock_or_task_stack_changes_needed": false,
+  "next_action": "Keep all power off and obtain a readable photo of left rear ID1 motor CAN module/nearby terminal settings; identify the second termination before normal-mode read-only version communication",
+  "pending_engineering_items": ["motor-side termination setting", "branch wiring signal integrity", "normal-mode version reply and firmware identity", "separate software request0 shutdown confirmation", "reset/emergency/default-safe and loaded-power behavior"],
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"], "Q": "Official clarification unchanged; controller test does not close motor or motion acceptance"},
+  "firmware_modified_by_assistant": false,
+  "hardware_commands_sent_by_assistant": false
+}

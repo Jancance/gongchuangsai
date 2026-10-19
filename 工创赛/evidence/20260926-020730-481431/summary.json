@@ -1,0 +1,34 @@
+{
+  "version": "tabletop-color-probe-v1-candidate",
+  "requested_seconds": 10.0,
+  "elapsed_seconds": 10.027,
+  "max_host_age_ms": 150,
+  "stall_ms": 500,
+  "host_read_frames": 150,
+  "processed_frames": 136,
+  "host_read_fps": 14.96,
+  "processing_fps": 13.56,
+  "intentionally_skipped_before_processing": 13,
+  "unconsumed_at_end": 1,
+  "stale_input_frames": 0,
+  "stale_result_frames": 0,
+  "p95_input_host_age_ms": 64.27,
+  "max_input_host_age_ms": 68.34,
+  "p95_analysis_ms": 75.73,
+  "p95_result_host_age_ms": 136.28,
+  "max_result_host_age_ms": 143.09,
+  "completed": true,
+  "error": null,
+  "capture_forced_shutdown": false,
+  "capture_events": [
+    {
+      "event": "ready",
+      "controls": "gain: 30\nwhite_balance_temperature_auto: 0\nwhite_balance_temperature: 4600\nexposure_auto: 1 (Manual Mode)\nexposure_absolute: 50\n",
+      "buffersize_set_returned_true": true,
+      "buffersize_note": "Return value is not proof of zero driver backlog."
+    }
+  ],
+  "probe_sha256": "73d826baf5698d75db5cf380c95c30f645adf93dd2f4ecd11efc7fbb80a4856d",
+  "diagnostic_sha256": "5a1faa9eee6a3b09d14edf6fb0de24bea238b885e1a3a7a0af1643d858bb0f56",
+  "caveat": "HOST READ COMPLETION AGE ONLY. Cannot prove exposure age, camera/USB buffering, sensor unique frames or frame loss. Skips are application overwrite, not sensor drops. No robot actions."
+}

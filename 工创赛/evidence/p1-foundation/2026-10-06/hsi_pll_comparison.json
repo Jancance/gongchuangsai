@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-06",
+  "evidence_sources": [
+    "C:/Users/TENDER~1/AppData/Local/Temp/codex-clipboard-e702955e-a2f0-4b6c-8b3e-2eeb4385a6a4.png",
+    "C:/Users/TENDER~1/AppData/Local/Temp/codex-clipboard-b193d276-d3fa-4f50-a042-bb1283158a4c.png"
+  ],
+  "PC": "0x0800038A",
+  "RCC_CR": "0x1037c83",
+  "RCC_PLLCFGR": "0x7005410",
+  "RCC_CFGR": "0x9400",
+  "decoded": {
+    "M": 16,
+    "N": 336,
+    "P": 2,
+    "Q": 7,
+    "source": "HSI",
+    "HSIRDY": true,
+    "HSERDY": true,
+    "PLLON": true,
+    "PLLRDY": false,
+    "SWS": 0
+  },
+  "result": "temporary HSI PLL comparison also not locked",
+  "cause": "not established",
+  "next_gate": "measure VDD VDDA VCAP; instrument and test point availability pending",
+  "VCAP_reference_when_VOS_1": {
+    "min_V": 1.2,
+    "typ_V": 1.26,
+    "max_V": 1.32,
+    "source": "ST DS8626 Rev12"
+  },
+  "firmware_edits_by_assistant": false,
+  "hardware_voltage_measured": false,
+  "FreeRTOS_gate_passed": false
+}

@@ -1,0 +1,85 @@
+{
+  "date": "2026-10-09",
+  "source": "User transcribed menu values for all four wheel motors and confirmed the bus is CAN1",
+  "evidence_level": "USER_REPORTED_MENU_VALUES_AND_CONNECTION",
+  "bus": "CAN1",
+  "physical_wiring_user_report": "Four wheel motors separately connected to the four power-board interfaces U3/U4/U5/U6",
+  "additional_can1_nodes_in_schematic": "35 and 28 mechanism motors through main-board H22 and connector-board H2; actual current connection and addresses not yet confirmed",
+  "communication_mode": "CAN1_MAP",
+  "historical_mode_report_scope_correction_2026_10_11": "User confirms left-rear mode had not actually been selected; original mode field is historical transcription, not proof of actual post-installation selection for all four motors.",
+  "left_rear_current_mode_and_read": "After selecting CAN1_MAP, ID1 version transaction PASS; ExtId0100/DLC6/data1F00CA23146B. SoftwareV2.0.2, HWraw2314, user confirms FWType=FW_Emm.",
+  "other_three_current_mode_verification": "USER_CONFIRMED_ACTUAL_CAN1_MAP_2026_10_11; ID2_ID3_ID4_SINGLE_NODE_TRANSACTION_AND_RAW_PASS",
+  "per_motor_version_transaction_status": {"left_rear_ID1": "PASS_RAW_VERIFIED_V2.0.2_HW2314", "right_rear_ID2": "PASS_RAW_VERIFIED_V2.0.2_HW2314", "front_left_ID3": "PASS_RAW_VERIFIED_V2.0.2_HW2314", "front_right_ID4": "PASS_RAW_VERIFIED_V2.0.2_HW2314"},
+  "all_four_shared_CAN1_basic_transactions": "USER_FOUR_MATCHING_SCREENSHOTS_PASS_2026_10_11",
+  "shared_CAN1_evidence": "../2026-10-11/four_motor_shared_CAN1_basic_pass.json",
+  "current_FwType_user_confirmed": {"left_rear_ID1": "FW_Emm", "right_rear_ID2": "FW_Emm", "front_left_ID3": "FW_Emm", "front_right_ID4": "FW_Emm"},
+  "bitrate_bits_per_second": 500000,
+  "checksum_mode": "fixed 0x6B",
+  "motors": [
+    { "wheel_position": "左后", "address": 1 },
+    { "wheel_position": "右后", "address": 2 },
+    { "wheel_position": "左前", "address": 3 },
+    { "wheel_position": "右前", "address": 4 }
+  ],
+  "menu_parameters_consistent": true,
+  "addresses_unique": true,
+  "motor_can_modules": "USER_PREVIOUSLY_CONFIRMED_INSTALLED",
+  "motor_can_transceiver_model_user_report": "SIT65HVD230 (SIT / 芯力特)",
+  "motor_can_transceiver_evidence": "evidence/p1-foundation/2026-10-10/motor_can_sit65hvd230_identification.json",
+  "termination_resistance_ohms": 118.3,
+  "connected_can1_measurement": {
+    "reading_ohms": 118.3,
+    "measurement_location": "MCU CAN1 CANH-to-CANL",
+    "source": "User reply after instruction to connect all four motor CAN lines and keep the bus unpowered",
+    "evidence_level": "USER_REPORTED_READING; topology and power state not independently verified",
+    "interpretation": "Consistent with approximately one effective 120-ohm termination. Does not distinguish missing motor-side termination from a disconnected bus segment.",
+    "two_end_termination_verified": false,
+    "next_measurement_location": "Left rear motor address 1 CANH-to-CANL, with MCU CAN1 and all existing CAN wiring retained and all power off"
+  },
+  "left_rear_motor_end_measurement": {
+    "reading_ohms": 119.6,
+    "source": "User reply 是119.6欧 to the requested left rear address1 H-to-L power-off measurement",
+    "interpretation": "Close to 118.3 ohms at the master; consistent with the left rear node seeing the same approximate 120-ohm load, not proof of all node connections or of high-speed communication"
+  },
+  "main_board_terminations_from_original_and_latest_schematic": {
+    "CAN1": "R7 120 ohms between CAN_H and CAN_L",
+    "CAN2": "R11 120 ohms between CAN_H2 and CAN_L2; does not terminate CAN1",
+    "RXD_series_resistors": "R8 and R12 are 100-ohm series resistors on RXD, not CAN bus terminations"
+  },
+  "isolated_mcu_interface_measurements": {
+    "reported_resistance_readings_ohms": [118.3, 118.7],
+    "interfaces": ["MCU CAN1", "MCU CAN2"],
+    "individual_reading_to_interface_assignment": "NOT_SPECIFIED",
+    "connection_condition": "User confirmed master board and motor nodes were disconnected; these are measurements of the two independent MCU CAN interfaces",
+    "interpretation": "Each is consistent with approximately one 120-ohm termination on its isolated interface. They are not two terminations on the same connected CAN1 bus.",
+    "connected_four_motor_can1_resistance": "NEW_USER_READING_118.3_OHMS_RECORDED_SEPARATELY",
+    "measurement_power_condition": "Power-off measurement was instructed; no independent power-state evidence"
+  },
+  "physical_can_transaction": "ALL_FOUR_SINGLE_NODE_AND_SHARED_CAN1_BASIC_VERSION_READ_PASS_2026_10_11; CONTINUOUS_RELIABILITY_AND_MOTION_PENDING",
+  "can1_controller_silent_loopback": "USER_SCREENSHOT_PASS_2026-10-10",
+  "can1_controller_evidence": "evidence/p1-foundation/2026-10-10/can1_silent_loopback_pass.json",
+  "firmware_type_and_version": "NOT_YET_READ_FROM_HARDWARE",
+  "isolated_left_rear_can_resistance_user_report_ohms": 64500,
+  "latest_user_approach": "Follow supplied ZDT manual and simplify first communication test; retain existing short wiring/PCB, do not mandate additional resistor steps before the read",
+  "next_action": "Manual normal-mode CAN version read to left rear ID1, extended0x0100/data1F6B, bounded wait and raw reply/ESR capture; terminate/wiring diagnosis based on actual failures, not assumed communication success",
+  "requirements_checked": {
+    "R": ["RUN-01", "PWR-01"],
+    "E": ["LOC-03", "RUN-05", "RUN-06", "MOT-04"],
+    "Q": "Official clarification items unchanged; electrical and firmware verification are engineering pending items"
+  },
+  "firmware_modified": false,
+  "can_or_motion_commands_sent_by_assistant": false,
+  "source_review": {
+    "main_c_can_references": false,
+    "stm32f4xx_conf_h_can_include_present": false,
+    "uvprojx_can_source_registered": false,
+    "standard_library_can_source_exists": true,
+    "sha256": {
+      "USER/main.c": "FEEF5A475B9C3298C114C22132CC7AF4C2EF715E2608C0716AF0643B0B0A4E12",
+      "USER/stm32f4xx_conf.h": "8DFC890BB86A6DEB575A63FAF80E0C6E2CE240725B1E1CD1BDCBA0A26511685B",
+      "gongxun-f407.uvprojx": "4C8BBF42CCA3BC141FC680958760A387C2F12582448A397FA4664922E27D3CAE"
+    }
+  },
+  "termination_reference": "https://www.ti.com/tool/TIDA-01238",
+  "termination_reference_scope": "Two physical bus ends normally each have 120-ohm termination; their parallel DC resistance is approximately 60 ohms. Resistance alone does not prove topology, line polarity, grounding, or communication."
+}

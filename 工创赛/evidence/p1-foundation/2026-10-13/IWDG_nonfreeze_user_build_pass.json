@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-13",
+  "source": "user supplied complete Keil Rebuild log and actual watchdog.c read-only check",
+  "compiler": "ARMCC V5.06 update 5 build 528",
+  "errors": 0,
+  "warnings": 0,
+  "build_seconds": 2,
+  "program_size_bytes": {"code": 15720, "ro_data": 424, "rw_data": 416, "zi_data": 22528},
+  "actual_source": {"debug_freeze": 0, "temporary_stop_feed_symbol_present": false, "watchdog_c_sha256": "00E6CA0F48ED5AF5B72FFB705D8BCEBF6785E23BBCBC5AC89844763A6C29F5C5"},
+  "acceptance": "PASS: non-freezing configuration full build and link",
+  "flash_or_runtime_evidence_in_log": false,
+  "next": "VM request 0; download and run about 5 seconds, halt about 8 seconds, resume about 3 seconds, then observe saved IWDG reset cause and VM defaults",
+  "pending": ["non-freezing debug halt timeout reset observation", "standalone runtime", "complete vehicle safety"],
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_questions": "unchanged"
+}

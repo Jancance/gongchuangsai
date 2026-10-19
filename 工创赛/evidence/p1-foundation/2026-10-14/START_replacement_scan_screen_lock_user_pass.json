@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-14",
+  "source": "user explicit replacement-scan lock report",
+  "bound_code": "532+123+325+132",
+  "screen_lines": [
+    "532+123+",
+    "325+132"
+  ],
+  "new_start_line": false,
+  "physical_vm_volts": 0,
+  "acceptance": "PASS: user reports bound screen retained after replacement QR and no additional START",
+  "new_photo_provided": false,
+  "independent_new_frame_rx_evidence_provided": false,
+  "next": "hold momentary PC13 across reset, rescan while held, verify no START; release and press once to accept new code",
+  "pending": [
+    "reset while key held",
+    "release/repress after reset",
+    "full formal READY and motion control"
+  ],
+  "requirements_checked": {
+    "R": [
+      "QR-01",
+      "RUN-01",
+      "FIELD-02"
+    ],
+    "E": [
+      "QR-03",
+      "RUN-06"
+    ],
+    "Q": [
+      "QR-04"
+    ]
+  }
+}

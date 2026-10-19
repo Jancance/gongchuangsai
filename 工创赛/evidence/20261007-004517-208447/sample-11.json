@@ -1,0 +1,149 @@
+{
+  "event": "sample-11",
+  "previous": {
+    "state": "SEARCHING",
+    "targets": [],
+    "unknown_candidates": 2,
+    "ready": false,
+    "motion_allowed": false,
+    "units": "pixels",
+    "note": "当前为原始像素诊断，速度未补偿相机自身运动，禁止用于抓取指令",
+    "timestamp_source": "host_read_completion",
+    "timestamp": 4272.510771496,
+    "retired_ids": [],
+    "detector_regions": [
+      {
+        "bbox_px": [
+          0,
+          344,
+          586,
+          616
+        ],
+        "area_px2": 247493.0,
+        "label": "UNKNOWN",
+        "reason": "TOUCHES_BORDER",
+        "proposal_source": "combined_silhouette"
+      },
+      {
+        "bbox_px": [
+          0,
+          0,
+          127,
+          58
+        ],
+        "area_px2": 2862.0,
+        "label": "UNKNOWN",
+        "reason": "TOUCHES_BORDER",
+        "proposal_source": "combined_silhouette"
+      }
+    ],
+    "circle_diagnostics": [],
+    "frame_index": 388,
+    "watch_color": "black",
+    "detector_call_ms": 41.84937100035313,
+    "result_host_age_ms": 70.9490419994836,
+    "recorded_monotonic": 4272.581720538,
+    "last_watched_ids_before_frame": [
+      "T006"
+    ],
+    "internal_tracks_not_actionable": [
+      {
+        "id": "T006",
+        "color": "black",
+        "center_px": [
+          438.1060103821377,
+          545.2934976129422
+        ],
+        "bbox_px": [
+          283,
+          394,
+          329,
+          303
+        ],
+        "area_px2": 79945.0,
+        "read_time": 4272.279960051,
+        "proposal_source": "combined_silhouette",
+        "radius_px": null,
+        "geometry_reference_changed": false,
+        "consecutive_observations": 52,
+        "visible_in_last_frame": false,
+        "identity_continuity_unverified": false,
+        "state": "OBSERVED"
+      }
+    ],
+    "diagnostic_io_ms": 0.18724599976849277
+  },
+  "current": {
+    "state": "SEARCHING",
+    "targets": [],
+    "unknown_candidates": 2,
+    "ready": false,
+    "motion_allowed": false,
+    "units": "pixels",
+    "note": "当前为原始像素诊断，速度未补偿相机自身运动，禁止用于抓取指令",
+    "timestamp_source": "host_read_completion",
+    "timestamp": 4272.550382363,
+    "retired_ids": [],
+    "detector_regions": [
+      {
+        "bbox_px": [
+          0,
+          339,
+          584,
+          621
+        ],
+        "area_px2": 247328.5,
+        "label": "UNKNOWN",
+        "reason": "TOUCHES_BORDER",
+        "proposal_source": "combined_silhouette"
+      },
+      {
+        "bbox_px": [
+          0,
+          0,
+          127,
+          58
+        ],
+        "area_px2": 2799.5,
+        "label": "UNKNOWN",
+        "reason": "TOUCHES_BORDER",
+        "proposal_source": "combined_silhouette"
+      }
+    ],
+    "circle_diagnostics": [],
+    "frame_index": 389,
+    "watch_color": "black",
+    "detector_call_ms": 43.89071099922148,
+    "result_host_age_ms": 82.41280499987624,
+    "recorded_monotonic": 4272.632795168,
+    "last_watched_ids_before_frame": [
+      "T006"
+    ],
+    "internal_tracks_not_actionable": [
+      {
+        "id": "T006",
+        "color": "black",
+        "center_px": [
+          438.1060103821377,
+          545.2934976129422
+        ],
+        "bbox_px": [
+          283,
+          394,
+          329,
+          303
+        ],
+        "area_px2": 79945.0,
+        "read_time": 4272.279960051,
+        "proposal_source": "combined_silhouette",
+        "radius_px": null,
+        "geometry_reference_changed": false,
+        "consecutive_observations": 52,
+        "visible_in_last_frame": false,
+        "identity_continuity_unverified": false,
+        "state": "OBSERVED"
+      }
+    ]
+  },
+  "note": "Raw frames before drawing. Event is evidence, not a root-cause diagnosis."
+}

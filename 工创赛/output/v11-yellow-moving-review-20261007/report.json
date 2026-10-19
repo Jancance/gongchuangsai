@@ -1,0 +1,146 @@
+{
+  "source": "D:\\Codex\\工创赛\\evidence\\20261007-003307-733760.zip",
+  "sha256": "7838a2ace674b9cbcea1a41f7905d77cc06a4070ff1aded29ce45fd30dc32f8e",
+  "matches_v11": {
+    "vision_app/code/project_detector.py": true,
+    "vision_app/code/config/material_color_thresholds.json": true
+  },
+  "run": {
+    "frames": 978,
+    "states": {
+      "FOLLOWING_PIXEL": 962,
+      "SEARCHING": 16
+    },
+    "transition_counts": {
+      "sample-01": 1,
+      "first-frame": 1,
+      "first-yellow-visible": 1,
+      "sample-02": 1,
+      "sample-03": 1,
+      "sample-04": 1,
+      "sample-05": 1,
+      "sample-06": 1,
+      "sample-07": 1,
+      "sample-08": 1,
+      "sample-09": 1,
+      "sample-10": 1,
+      "first-yellow-loss": 9,
+      "first-yellow-reappearance": 9,
+      "sample-11": 1,
+      "first-yellow-id-change": 3,
+      "first-other-color-candidate": 2,
+      "first-yellow-with-red": 2,
+      "sample-12": 1
+    },
+    "saved_events": [
+      "first-frame",
+      "first-other-color-candidate",
+      "first-yellow-id-change",
+      "first-yellow-loss",
+      "first-yellow-reappearance",
+      "first-yellow-visible",
+      "first-yellow-with-red",
+      "sample-01",
+      "sample-02",
+      "sample-03",
+      "sample-04",
+      "sample-05",
+      "sample-06",
+      "sample-07",
+      "sample-08",
+      "sample-09",
+      "sample-10",
+      "sample-11",
+      "sample-12"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "yellow",
+    "longest_watched_loss_s": 0.33487837300026513,
+    "periodic_samples": {
+      "interval_s": 2.0,
+      "limit": 12,
+      "saved": 12
+    }
+  },
+  "observed_labels": {
+    "yellow": 962,
+    "red": 2
+  },
+  "duration_s": 48.40817491200005,
+  "yellow_gaps": [
+    {
+      "first_missing_frame": 382,
+      "return_frame": 383,
+      "duration_s": 0.06111216599992986
+    },
+    {
+      "first_missing_frame": 436,
+      "return_frame": 442,
+      "duration_s": 0.33487837300026513
+    },
+    {
+      "first_missing_frame": 599,
+      "return_frame": 601,
+      "duration_s": 0.10274454000000333
+    },
+    {
+      "first_missing_frame": 656,
+      "return_frame": 657,
+      "duration_s": 0.07045321500027057
+    },
+    {
+      "first_missing_frame": 885,
+      "return_frame": 887,
+      "duration_s": 0.12710645700008172
+    },
+    {
+      "first_missing_frame": 891,
+      "return_frame": 892,
+      "duration_s": 0.06551450699998895
+    },
+    {
+      "first_missing_frame": 930,
+      "return_frame": 931,
+      "duration_s": 0.0676235139999335
+    },
+    {
+      "first_missing_frame": 943,
+      "return_frame": 944,
+      "duration_s": 0.062415310999767826
+    },
+    {
+      "first_missing_frame": 953,
+      "return_frame": 954,
+      "duration_s": 0.03689928699986922
+    }
+  ],
+  "yellow_id_changes": [
+    {
+      "frame": 442,
+      "previous_id": "T001",
+      "current_id": "T002",
+      "observed_reference_distance_px": 206.88396098351356
+    },
+    {
+      "frame": 756,
+      "previous_id": "T002",
+      "current_id": "T005",
+      "observed_reference_distance_px": 123.50737265026673
+    },
+    {
+      "frame": 887,
+      "previous_id": "T005",
+      "current_id": "T006",
+      "observed_reference_distance_px": 139.91942219316428
+    }
+  ],
+  "result_host_age_ms_p95_max": [
+    80.60904999977083,
+    100.85457100012718
+  ],
+  "scope": "Current tabletop yellow output review; short losses and hand/glare remain unresolved. No zero-loss, scene accuracy or grasp acceptance."
+}

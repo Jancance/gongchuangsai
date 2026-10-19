@@ -1,0 +1,153 @@
+{
+  "source": "D:\\Codex\\工创赛\\evidence\\20261007-063948-136571.zip",
+  "sha256": "398e5c36437505615db141eb79f1d8356ea9111062e9314edc695dca41c9bf92",
+  "matches_v13": {
+    "vision_app/code/project_detector.py": true,
+    "vision_app/code/config/material_color_thresholds.json": true
+  },
+  "run": {
+    "frames": 784,
+    "states": {
+      "FOLLOWING_PIXEL": 784
+    },
+    "transition_counts": {
+      "sample-01": 1,
+      "first-frame": 1,
+      "first-other-color-candidate": 784,
+      "first-black-with-yellow": 784,
+      "first-black-visible": 1,
+      "sample-02": 1,
+      "sample-03": 1,
+      "sample-04": 1,
+      "sample-05": 1,
+      "sample-06": 1,
+      "sample-07": 1,
+      "sample-08": 1,
+      "sample-09": 1,
+      "sample-10": 1,
+      "sample-11": 1,
+      "first-black-with-red": 10,
+      "first-black-loss": 2,
+      "sample-12": 1,
+      "first-black-reappearance": 2,
+      "first-black-id-change": 2
+    },
+    "saved_events": [
+      "first-black-id-change",
+      "first-black-loss",
+      "first-black-reappearance",
+      "first-black-visible",
+      "first-black-with-red",
+      "first-black-with-yellow",
+      "first-frame",
+      "first-other-color-candidate",
+      "sample-01",
+      "sample-02",
+      "sample-03",
+      "sample-04",
+      "sample-05",
+      "sample-06",
+      "sample-07",
+      "sample-08",
+      "sample-09",
+      "sample-10",
+      "sample-11",
+      "sample-12"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "black",
+    "longest_watched_loss_s": 6.222093426000129,
+    "periodic_samples": {
+      "interval_s": 2.0,
+      "limit": 12,
+      "saved": 12
+    }
+  },
+  "result_count": 784,
+  "duration_s": 37.179533812000045,
+  "observed_labels": {
+    "yellow": 784,
+    "black": 664,
+    "red": 10
+  },
+  "target_combinations": [
+    {
+      "colours": [
+        "black",
+        "yellow"
+      ],
+      "count": 663
+    },
+    {
+      "colours": [
+        "black",
+        "red",
+        "yellow"
+      ],
+      "count": 1
+    },
+    {
+      "colours": [
+        "red",
+        "yellow"
+      ],
+      "count": 9
+    },
+    {
+      "colours": [
+        "yellow"
+      ],
+      "count": 111
+    }
+  ],
+  "complete_pair_episodes": [
+    {
+      "first_frame": 1,
+      "last_frame": 515,
+      "duration_s": 21.923795572000017
+    },
+    {
+      "first_frame": 517,
+      "last_frame": 518,
+      "duration_s": 0.07703252800001792
+    },
+    {
+      "first_frame": 628,
+      "last_frame": 629,
+      "duration_s": 0.10512101199992685
+    },
+    {
+      "first_frame": 641,
+      "last_frame": 784,
+      "duration_s": 7.855955882999979
+    }
+  ],
+  "last_positions": [
+    {
+      "color": "yellow",
+      "id": "T001",
+      "center_px": [
+        479.5129776119741,
+        551.8596743229812
+      ]
+    },
+    {
+      "color": "black",
+      "id": "T010",
+      "center_px": [
+        814.7545304936609,
+        517.1170230735448
+      ]
+    }
+  ],
+  "result_host_age_ms_p50_p95_max": [
+    57.11538650007242,
+    85.12566044985303,
+    110.52608699992561
+  ],
+  "scope": "Separated static cross-placement supported. Black handling losses, red hand false positives, glare and identity remain unresolved; no whole-run or grasp acceptance."
+}

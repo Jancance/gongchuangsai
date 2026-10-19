@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-07",
+  "source": "user product image codex-clipboard-f25911af-5ce4-49b9-a4d6-a730f08f852d.jpg and statement that MCU schematic has CAN",
+  "visible_product_variant": "光耦脉冲+串口TTL",
+  "visible_note": "默认串口，可插入小模块实现232/485/CAN通讯",
+  "visible_board_family": "X42S_V2.0",
+  "image_kind": "product illustration, not individual installed-board evidence",
+  "mcu_side_can_transceivers": "two TJA1050 channels in previously supplied schematic",
+  "motor_side_can_modules_installed": "PENDING_USER_CONFIRMATION",
+  "actual_firmware_type": "UNVERIFIED",
+  "next_question": "Do all four motor endpoints have the matching manufacturer CAN submodule installed?",
+  "conclusion": "Do not redesign MCU board; verify compatible CAN physical layer on motor endpoints separately",
+  "firmware_modified": false,
+  "motor_commands_sent": false,
+  "requirements_checked": ["LOC-03 (E)", "LOC-07 (E)", "RUN-06 (E)", "MOT-04 (E)"]
+}

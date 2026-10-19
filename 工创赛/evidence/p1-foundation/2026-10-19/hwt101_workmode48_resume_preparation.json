@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-19",
+  "hardware_observation": {
+    "mode": 2,
+    "state": 9,
+    "result": 2,
+    "cause": 4,
+    "elapsed_ms": 81080,
+    "tx_bytes": 20,
+    "rezero_count": 1,
+    "trip_state": 6,
+    "trip_kind": 2,
+    "trip_wz_dps": 0,
+    "trip_prev_deg": 0,
+    "trip_yaw_deg": 157.928467,
+    "before_deg": 3.20251465,
+    "after_sampling_started": false
+  },
+  "resume_exception": {
+    "state": 6,
+    "requires_capture_zero_event": true,
+    "new_angle_sample": true,
+    "previous_yaw": 0,
+    "max_abs_rate_dps": 0.5,
+    "max_origin_difference_deg": 2,
+    "max_events": 1
+  },
+  "request_value": 3,
+  "capture_ms": 20000,
+  "timers_reset": false,
+  "checks": 2254,
+  "new_resume_checks": 27,
+  "build": {
+    "code": 34840,
+    "ro": 452,
+    "rw": 1292,
+    "zi": 25284,
+    "errors": 0,
+    "warnings": 0
+  },
+  "hardware": "not flashed by assistant; full hardware flow and drift effect pending",
+  "requirements": [
+    "RUN-01",
+    "PWR-01",
+    "LOC-03",
+    "LOC-05",
+    "RUN-06",
+    "MOT-04"
+  ],
+  "sha256": {
+    "3.stm32f407工程/USER/hwt101.c": "c432420703e66e8d2571d2b3118847c9149a5f93e5b8be0e01f8f5b1ef46126e",
+    "3.stm32f407工程/USER/hwt101.h": "9402bd6f870818a6e2dc762d107a3e702ba1578774ab01bf92ed21bbc52b9686",
+    "3.stm32f407工程/Objects/gongxun-f407.axf": "2f39ebd167dd230a846e56c9f0a9af1052683ff409e3dbf9ecac61e303ef4326",
+    "工创赛/evidence/p1-foundation/2026-10-19/hwt101_workmode48_resume_private_checks.c": "3d0d6799fa48969cc4027f78dfd059624ac945fa63e86961d4affaf119411e15"
+  }
+}

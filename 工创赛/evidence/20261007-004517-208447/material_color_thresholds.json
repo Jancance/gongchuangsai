@@ -1,0 +1,179 @@
+{
+  "format_version": 1,
+  "color_space": "OpenCV_HSV",
+  "camera_device": "/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0",
+  "image_width": 1280,
+  "image_height": 960,
+  "calibration_file": "config/decxin_camera_unconfigured.yaml",
+  "colors": [
+    {
+      "color_id": 1,
+      "name": "red",
+      "display_bgr": [
+        0,
+        0,
+        255
+      ],
+      "ranges": [
+        {
+          "lower": [
+            0,
+            90,
+            35
+          ],
+          "upper": [
+            12,
+            255,
+            255
+          ]
+        },
+        {
+          "lower": [
+            165,
+            90,
+            35
+          ],
+          "upper": [
+            179,
+            255,
+            255
+          ]
+        }
+      ]
+    },
+    {
+      "color_id": 2,
+      "name": "yellow",
+      "display_bgr": [
+        0,
+        255,
+        255
+      ],
+      "ranges": [
+        {
+          "lower": [
+            18,
+            90,
+            35
+          ],
+          "upper": [
+            34,
+            255,
+            255
+          ]
+        }
+      ]
+    },
+    {
+      "color_id": 3,
+      "name": "blue",
+      "display_bgr": [
+        255,
+        0,
+        0
+      ],
+      "ranges": [
+        {
+          "lower": [
+            100,
+            150,
+            35
+          ],
+          "upper": [
+            135,
+            255,
+            255
+          ]
+        }
+      ]
+    },
+    {
+      "color_id": 4,
+      "name": "green",
+      "display_bgr": [
+        0,
+        255,
+        0
+      ],
+      "ranges": [
+        {
+          "lower": [
+            35,
+            60,
+            35
+          ],
+          "upper": [
+            85,
+            255,
+            255
+          ]
+        }
+      ]
+    },
+    {
+      "color_id": 5,
+      "name": "black",
+      "display_bgr": [
+        80,
+        80,
+        80
+      ],
+      "ranges": [
+        {
+          "lower": [
+            0,
+            0,
+            0
+          ],
+          "upper": [
+            179,
+            255,
+            44
+          ]
+        }
+      ]
+    },
+    {
+      "color_id": 6,
+      "name": "light_blue",
+      "display_bgr": [
+        255,
+        255,
+        0
+      ],
+      "ranges": [
+        {
+          "lower": [
+            90,
+            25,
+            100
+          ],
+          "upper": [
+            115,
+            149,
+            255
+          ]
+        }
+      ]
+    }
+  ],
+  "saved_at_utc": "2026-09-28T02:18:38.680779+00:00",
+  "calibrated_for_this_camera": false,
+  "source": "project candidate HSV ranges; recalibrate with own samples",
+  "_candidate_update": {
+    "version": "lightblue-saturation-candidate-2026-10-06",
+    "basis": "Lightblue top saturation median 140, deepblue mostly 255; replay checked.",
+    "blue_s_min": 150,
+    "lightblue_s_max": 149,
+    "requires_live_validation": true
+  },
+  "round_face_color_candidate": {
+    "version": "paired-face-candidate-v8-20261006",
+    "lightblue_s_max": 189,
+    "requires_live_validation": true,
+    "current_pale_component": true,
+    "component_candidate_version": "v10-current-frame-pale-component",
+    "reject_unverified_blue_family": true,
+    "conflict_candidate_version": "v11-current-color-conflict-rejection"
+  }
+}

@@ -1,0 +1,37 @@
+P1_PREFLIGHT=BLOCKED
+- status must be READY_FOR_REVIEW
+- mcu.physical_pin_reviewed must be true
+- mcu.alternate_function_reviewed must be true
+- motor_bus.electrical_levels_verified must be true
+- motor_bus.can1_transceiver_3v3_compatible must be true
+- motor_bus.can1_termination_reviewed must be true
+- motor_bus.can2_transceiver_3v3_compatible must be true
+- motor_bus.can2_termination_reviewed must be true
+- serial_interfaces.hwt101_usart2.verified must be true
+- serial_interfaces.maixcam2_usart3.verified must be true
+- serial_interfaces.display_uart4.verified must be true
+- safety.hardware_estop_cuts_actuator_enable must be true
+- safety.global_enable_safe_during_reset must be true
+- safety.servo_power_safe_during_reset must be true
+- safety.boot0_and_nrst_reviewed must be true
+- safety.watchdog_and_brownout_plan_reviewed must be true
+- mechanical_inputs.axis35_origin.electrical_interface_verified must be true
+- mechanical_inputs.axis28_origin.electrical_interface_verified must be true
+- motor_bus.protocol_mode is not configured
+- motor_bus.bitrate is not configured
+- motor_bus.can1_transceiver_part is not configured
+- motor_bus.can2_transceiver_part is not configured
+- serial_interfaces.hwt101_usart2.electrical_standard is not configured
+- serial_interfaces.maixcam2_usart3.electrical_standard is not configured
+- serial_interfaces.display_uart4.electrical_standard is not configured
+- motor_bus.exact_models must be a non-empty list
+- motor_bus.manual_paths must be a non-empty list
+- motor_bus.node_ids must be a non-empty list
+- serial_interfaces.hwt101_usart2.electrical_standard is not a reviewed MCU-safe interface
+- serial_interfaces.maixcam2_usart3.electrical_standard is not a reviewed MCU-safe interface
+- serial_interfaces.display_uart4.electrical_standard is not a reviewed MCU-safe interface
+- artifacts.cubemx_ioc is not configured
+- artifacts.schematic_pdf is not configured
+- artifacts.pin_mux_report is not configured
+- artifacts.power_budget is not configured
+- artifacts.reset_state_review is not configured

@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-17",
+  "scope": "Static Safety feedback snapshot expiry and freshness recovery only",
+  "baseline": {
+    "report_count": 376,
+    "speed_fresh": 15,
+    "position_fresh": 15,
+    "allowed": 0,
+    "block_reason": 8,
+    "hold": 0,
+    "feedback_counts": [
+      16,
+      16,
+      16,
+      16
+    ]
+  },
+  "held": {
+    "other_three_counts": "not visible",
+    "speed_fresh": 0,
+    "allowed": 0,
+    "hold": 1,
+    "position_fresh": 0,
+    "block_reason": 56,
+    "collector_masks": [
+      15,
+      15
+    ],
+    "feedback_errors": 0,
+    "visible_right_front_count": 20,
+    "report_count": 376
+  },
+  "restored": {
+    "feedback_counts": [
+      27,
+      28,
+      27,
+      27
+    ],
+    "platform_ready": 1,
+    "safety_stack_words": 224,
+    "rtos_fault": 0,
+    "hold": 0,
+    "can_ready": 1,
+    "safety_fault": 0,
+    "position_fresh": 15,
+    "block_reason": 8,
+    "speed_fresh": 15,
+    "allowed": 0,
+    "report_count": 463
+  },
+  "shutdown": {
+    "source": "user direct report; no meter screenshot",
+    "vm_volts": 0
+  },
+  "limitations": [
+    "No exact expiry latency or boundary measurement",
+    "No motion, braking, fault latch or rearm validation",
+    "Static 1000ms threshold does not establish motion safety"
+  ],
+  "images": [
+    "codex-clipboard-72145867-2463-40c3-b9b4-695ba8620e1e.png",
+    "codex-clipboard-05ca55ed-ddf8-41fa-8390-6b48d7805a5e.png",
+    "codex-clipboard-9313ae94-bcd5-4b5a-ba59-afa699e28a95.png",
+    "codex-clipboard-a51f27bb-3a00-452d-800d-67cd7b9d4757.png",
+    "codex-clipboard-24303c04-4cdb-4a6c-b29f-a59d69f6fc12.png"
+  ]
+}

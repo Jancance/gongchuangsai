@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-13",
+  "source": "user supplied complete Keil Rebuild log",
+  "project": "gongxun-f407",
+  "compiler": "ARMCC V5.06 update 5 build 528",
+  "errors": 0,
+  "warnings": 0,
+  "build_seconds": 3,
+  "program_size_bytes": {"code": 15728, "ro_data": 424, "rw_data": 420, "zi_data": 22524},
+  "compiled_watchdog_units": ["watchdog.c", "stm32f4xx_iwdg.c", "stm32f4xx_dbgmcu.c"],
+  "actual_source_integration_read_only_checked": true,
+  "acceptance": "full build and link passed; runtime acceptance pending",
+  "flash_or_runtime_evidence_in_this_log": false,
+  "next": "normal startup and two observations of increasing watchdog feed count with VM request 0",
+  "pending": ["healthy feeding", "debug halt freeze", "actual watchdog reset and VM default off", "temporary stop-feed variable cleanup", "final non-freezing configuration verification"],
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_questions": "unchanged; no official rule inferred from watchdog parameters"
+}

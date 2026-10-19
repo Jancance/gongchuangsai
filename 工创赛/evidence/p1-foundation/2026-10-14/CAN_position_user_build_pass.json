@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-14",
+  "source": "user full Keil Rebuild log and actual CAN position/main read-only check",
+  "compiler": "ARMCC V5.06 update 5 build 528",
+  "errors": 0,
+  "warnings": 0,
+  "build_seconds": 2,
+  "program_size_bytes": {
+    "code": 19200,
+    "ro_data": 424,
+    "rw_data": 556,
+    "zi_data": 22612
+  },
+  "acceptance": "PASS: real-time position reader full build and link",
+  "actual_interface_and_branch_checked": true,
+  "flash_or_runtime_evidence_in_log": false,
+  "next": "download, static VM/status health, request ID1 position, inspect SIGN/RAW and raw DLC7 frame",
+  "pending": [
+    "ID1 actual position",
+    "IDs2/3/4",
+    "static repeatability",
+    "continuous feedback and control"
+  ],
+  "requirements_checked": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ]
+  }
+}

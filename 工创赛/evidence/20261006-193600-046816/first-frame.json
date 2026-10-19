@@ -1,0 +1,78 @@
+{
+  "event": "first-frame",
+  "previous": null,
+  "current": {
+    "state": "STALE_RESULT",
+    "targets": [],
+    "unknown_candidates": 0,
+    "ready": false,
+    "motion_allowed": false,
+    "units": "pixels",
+    "timestamp_source": "host_read_completion",
+    "timestamp": 3925.974666742,
+    "retired_ids": [],
+    "detector_regions": [
+      {
+        "bbox_px": [
+          288,
+          207,
+          326,
+          342
+        ],
+        "area_px2": 83552.5,
+        "label": "UNKNOWN",
+        "reason": "AMBIGUOUS_COLOR",
+        "proposal_source": "combined_silhouette",
+        "usable_fraction": 0.9997376246283015,
+        "color_fractions": {
+          "red": 0.0,
+          "yellow": 0.0,
+          "blue": 0.4302210780209206,
+          "green": 0.0,
+          "black": 0.22373995525950735,
+          "lightblue": 0.36374770361298225
+        },
+        "dark_fraction": 0.22373995525950735,
+        "silhouette_center_px": [
+          442.48620129060566,
+          382.91978097603305
+        ]
+      },
+      {
+        "bbox_px": [
+          657,
+          192,
+          288,
+          348
+        ],
+        "area_px2": 74950.5,
+        "label": "blue",
+        "reason": "DOMINANT_COLOR_EVIDENCE",
+        "proposal_source": "combined_silhouette",
+        "usable_fraction": 1.0,
+        "color_fractions": {
+          "red": 0.0,
+          "yellow": 0.0,
+          "blue": 0.7658344504021448,
+          "green": 0.0,
+          "black": 0.25466376228775695,
+          "lightblue": 9.774352100089366e-05
+        },
+        "dark_fraction": 0.25466376228775695,
+        "silhouette_center_px": [
+          807.1212333473426,
+          371.9648990555989
+        ]
+      }
+    ],
+    "circle_diagnostics": [],
+    "frame_index": 1,
+    "watch_color": "lightblue",
+    "detector_call_ms": 192.7684849997604,
+    "result_host_age_ms": 205.5269299999054,
+    "recorded_monotonic": 3926.180193672,
+    "last_watched_ids_before_frame": null,
+    "internal_tracks_not_actionable": []
+  },
+  "note": "Raw frames before drawing. Event is evidence, not a root-cause diagnosis."
+}

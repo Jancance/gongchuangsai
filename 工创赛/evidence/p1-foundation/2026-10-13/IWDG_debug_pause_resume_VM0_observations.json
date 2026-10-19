@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-13",
+  "context": "user returned two screenshots and VM measurement in response to debug pause/resume test instructions",
+  "sources": ["IWDG_debug_pause_observation.png", "IWDG_debug_resume_observation.png"],
+  "observations": {
+    "watchdog_init_result": [1, 1],
+    "watchdog_started": [1, 1],
+    "watchdog_feed_count": [697, 1024],
+    "watchdog_test_stop_feed": [0, 0],
+    "reset_iwdg": [0, 0],
+    "reset_flags_hex": ["0x14000000", "0x14000000"],
+    "vm_test_request": [0, 0],
+    "rtos_fault": [0, 0],
+    "safety_fault": [0, 0],
+    "safety_ready": [1, 1],
+    "can_guard_ready": [0, 0],
+    "safety_count": [703, 1030],
+    "app_stack_min_words": [210, 210],
+    "safety_stack_min_words": [232, 232],
+    "heap_min_bytes": [14064, 14064],
+    "physical_vm_volts_user_reported": 0
+  },
+  "acceptance": "debug pause/resume workflow observation accepted: counters continue, no IWDG reset recorded, faults remain clear and VM measured off",
+  "limits": ["exact halt duration not independently measured", "no before/after pair within the same halt to independently prove static counter", "not evidence of watchdog timeout reset or final non-freezing configuration"],
+  "next": "establish healthy powered baseline with VM request 1 and stop-feed test 0 before actual timeout reset test",
+  "requirements_checked": {"R": ["PWR-01"], "E": ["LOC-03", "RUN-06", "MOT-04"]},
+  "official_questions": "unchanged"
+}

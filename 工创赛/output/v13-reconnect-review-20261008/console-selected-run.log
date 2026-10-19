@@ -1,0 +1,117 @@
+Diagnostic folder: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897
+Watch color: green ; keep F mode; Q quits. No robot control.
+Camera: /dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0, 1280x960, MJPG, requested 30.0 FPS; reconnect every 1.0s
+Undistortion: OFF (raw image)
+Serial: /dev/ttyS7, 115200 baud; RX control: AA 01/02/03/04/05/14/15 BB; task: AA 06 <15 ASCII bytes> BB
+Controls: F = moving follow, A = turntable, M = stop-reference material, R = ring station, S = stacked ring, D = measurement, I = idle, Q or Esc = quit
+Turntable tracking: Hough until stable, then local radial tracking
+Camera connected: /dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0, 1280x960, 30.0 FPS
+Mode=FOLLOW FPS=0.0 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-01
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/first-frame
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/first-green-visible
+Mode=FOLLOW FPS=21.5 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-02
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/first-green-id-change
+Mode=FOLLOW FPS=22.3 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-03
+Mode=FOLLOW FPS=22.5 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.5 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-04
+Mode=FOLLOW FPS=22.5 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.4 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-05
+Mode=FOLLOW FPS=22.4 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.4 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-06
+Mode=FOLLOW FPS=22.5 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.5 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-07
+Mode=FOLLOW FPS=22.4 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-08
+Mode=FOLLOW FPS=21.6 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.0 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-09
+Mode=FOLLOW FPS=20.5 Units=px targets=1 Ready=False Serial=DISABLED
+[ WARN:0] global ./modules/videoio/src/cap_v4l.cpp (802) requestBuffers VIDEOIO(V4L2:/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): failed VIDIOC_REQBUFS: errno=19 (No such device)
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): 采集过程中摄像头读取失败; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=采集过程中摄像头读取失败 Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera connected: /dev/v4l/by-id/usb-DECXIN_DECXIN_CAMERA_01.00.00-video-index0, 1280x960, 30.0 FPS
+Mode=FOLLOW FPS=0.0 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-10
+Mode=FOLLOW FPS=21.3 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.6 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-11
+Mode=FOLLOW FPS=21.6 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.7 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897/sample-12
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.8 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.3 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.4 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.5 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.5 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.4 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.2 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.8 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.8 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.8 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.1 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=22.0 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.9 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=21.8 Units=px targets=1 Ready=False Serial=DISABLED
+Run saved: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897
+Evidence ZIP: /home/orangepi/p2-integrated-20261003/color-follow-audits/20261007-071416-797897.zip

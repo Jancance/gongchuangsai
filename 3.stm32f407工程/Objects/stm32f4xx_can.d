@@ -1,0 +1,17 @@
+.\objects\stm32f4xx_can.o: StdPeriph_Driver\src\stm32f4xx_can.c
+.\objects\stm32f4xx_can.o: .\StdPeriph_Driver\inc\stm32f4xx_can.h
+.\objects\stm32f4xx_can.o: .\CORE\stm32f4xx.h
+.\objects\stm32f4xx_can.o: .\CORE\core_cm4.h
+.\objects\stm32f4xx_can.o: D:\Keil_v5\ARM\arm5_compiler\Bin\..\include\stdint.h
+.\objects\stm32f4xx_can.o: .\CORE\cmsis_version.h
+.\objects\stm32f4xx_can.o: .\CORE\cmsis_compiler.h
+.\objects\stm32f4xx_can.o: .\CORE\cmsis_armcc.h
+.\objects\stm32f4xx_can.o: .\CORE\mpu_armv7.h
+.\objects\stm32f4xx_can.o: .\CORE\system_stm32f4xx.h
+.\objects\stm32f4xx_can.o: .\USER\stm32f4xx_conf.h
+.\objects\stm32f4xx_can.o: .\StdPeriph_Driver\inc\stm32f4xx_gpio.h
+.\objects\stm32f4xx_can.o: .\CORE\stm32f4xx.h
+.\objects\stm32f4xx_can.o: .\StdPeriph_Driver\inc\stm32f4xx_rcc.h
+.\objects\stm32f4xx_can.o: .\StdPeriph_Driver\inc\misc.h
+.\objects\stm32f4xx_can.o: .\StdPeriph_Driver\inc\stm32f4xx_usart.h
+.\objects\stm32f4xx_can.o: .\StdPeriph_Driver\inc\stm32f4xx_can.h

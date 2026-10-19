@@ -1,0 +1,19 @@
+schema_version: 1
+parser:
+  version: p2-four-segment-v1
+  pattern: "DDD+DDD+DDD+DDD"
+  official_mapping_confirmed: false
+  execution_locked_until_confirmed: true
+  segments:
+    - batch_1_pickup_order
+    - batch_1_position_symbols
+    - batch_2_pickup_order
+    - batch_2_position_symbols
+  unresolved_semantics:
+    - exact_color_digit_mapping
+    - batch_1_rough_vs_temporary_mapping
+    - batch_2_rough_vs_stacking_mapping
+consensus:
+  window_frames: 5
+  minimum_votes: 3
+  reject_channel_conflict: true

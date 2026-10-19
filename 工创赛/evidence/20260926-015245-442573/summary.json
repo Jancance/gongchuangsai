@@ -1,0 +1,27 @@
+{
+  "version": "tabletop-color-probe-v1-candidate",
+  "expected_counts": {
+    "black": 1,
+    "blue": 1
+  },
+  "requested_seconds": 10.0,
+  "elapsed_seconds": 10.077,
+  "processed_frames": 124,
+  "matching_frames": 124,
+  "mismatch_frames": 0,
+  "matching_fraction": 1.0,
+  "frames_with_unknown": 124,
+  "max_unknown_count": 3,
+  "observed_patterns": {
+    "{\"black\": 1, \"blue\": 1}": 124
+  },
+  "application_processing_fps": 12.31,
+  "max_read_completion_gap_ms": 118.59,
+  "p95_analysis_ms": 74.56,
+  "completed": true,
+  "error": null,
+  "scope": "STATIC DEVELOPMENT OBSERVATION ONLY. UNKNOWN not counted as a known object. No hardware acceptance.",
+  "caveat": "Application read completion timing; no sensor timestamps, frame uniqueness, latency or track IDs.",
+  "controls_readback": "gain: 30\nwhite_balance_temperature_auto: 0\nwhite_balance_temperature: 4600\nexposure_auto: 1 (Manual Mode)\nexposure_absolute: 50\n",
+  "probe_sha256": "73d826baf5698d75db5cf380c95c30f645adf93dd2f4ecd11efc7fbb80a4856d"
+}

@@ -1,0 +1,214 @@
+{
+  "scope": "Development samples only; no accuracy claim. Independent rule hits are NOT object counts.",
+  "method": "All rules applied to every full image; no center crop or expected-color input.",
+  "ranges_hsv": {
+    "red": [
+      [
+        [
+          0,
+          90,
+          35
+        ],
+        [
+          12,
+          255,
+          255
+        ]
+      ],
+      [
+        [
+          165,
+          90,
+          35
+        ],
+        [
+          179,
+          255,
+          255
+        ]
+      ]
+    ],
+    "yellow": [
+      [
+        [
+          18,
+          90,
+          35
+        ],
+        [
+          38,
+          255,
+          255
+        ]
+      ]
+    ],
+    "blue": [
+      [
+        [
+          100,
+          100,
+          35
+        ],
+        [
+          135,
+          255,
+          255
+        ]
+      ]
+    ],
+    "green": [
+      [
+        [
+          35,
+          60,
+          35
+        ],
+        [
+          85,
+          255,
+          255
+        ]
+      ]
+    ],
+    "lightblue": [
+      [
+        [
+          90,
+          25,
+          100
+        ],
+        [
+          115,
+          180,
+          255
+        ]
+      ]
+    ]
+  },
+  "black_gray_max": 60,
+  "min_contour_area": 500,
+  "close_kernel": 5,
+  "lightblue_rule": "New provisional rule; not validated.",
+  "samples": [
+    {
+      "file": "red-e50-g30.png",
+      "expected": "red",
+      "lighting": "night",
+      "sha256": "fb579d5e3230b9821251f8dede334dc4654a392fde8101e60234c16a7f28af3d",
+      "counts": {
+        "red": 1,
+        "yellow": 0,
+        "blue": 3,
+        "green": 0,
+        "black": 4,
+        "lightblue": 0
+      },
+      "status": "UNKNOWN_MULTIPLE_RULE_HITS"
+    },
+    {
+      "file": "yellow-e50-g30.png",
+      "expected": "yellow",
+      "lighting": "night",
+      "sha256": "3d15fb77077fc913059ddde7e2385e1c81218cad02f63b1358539aefc2f5ee21",
+      "counts": {
+        "red": 0,
+        "yellow": 1,
+        "blue": 3,
+        "green": 0,
+        "black": 5,
+        "lightblue": 0
+      },
+      "status": "UNKNOWN_MULTIPLE_RULE_HITS"
+    },
+    {
+      "file": "blue-e50-g30.png",
+      "expected": "blue",
+      "lighting": "night",
+      "sha256": "7db98ebb5881a76b87be23a579a15b1d33e2e24324abe1a4fe4473b6df495633",
+      "counts": {
+        "red": 0,
+        "yellow": 0,
+        "blue": 4,
+        "green": 0,
+        "black": 5,
+        "lightblue": 1
+      },
+      "status": "UNKNOWN_MULTIPLE_RULE_HITS"
+    },
+    {
+      "file": "blue-day-e50-g30.png",
+      "expected": "blue",
+      "lighting": "day",
+      "sha256": "a5217156f2cd47f241b0d1d271acbe9698e6bdd4726aa833452a83ea5a69bdab",
+      "counts": {
+        "red": 0,
+        "yellow": 0,
+        "blue": 1,
+        "green": 0,
+        "black": 1,
+        "lightblue": 1
+      },
+      "status": "UNKNOWN_MULTIPLE_RULE_HITS"
+    },
+    {
+      "file": "lightblue-e50-g30.png",
+      "expected": "lightblue",
+      "lighting": "day",
+      "sha256": "78cf7d1c059b97d720f39fabdf8266cf8a4d5918c1c11c9b525700f373de0982",
+      "counts": {
+        "red": 0,
+        "yellow": 0,
+        "blue": 0,
+        "green": 0,
+        "black": 0,
+        "lightblue": 1
+      },
+      "status": "ONE_RULE_CANDIDATE"
+    },
+    {
+      "file": "green-day-e50-g30.png",
+      "expected": "green",
+      "lighting": "day",
+      "sha256": "7f6ba33ab4f18cd4f80f8b77ff267ef2c666be99b48dc712b0c4c7f4b9d87c8b",
+      "counts": {
+        "red": 0,
+        "yellow": 0,
+        "blue": 0,
+        "green": 1,
+        "black": 0,
+        "lightblue": 0
+      },
+      "status": "ONE_RULE_CANDIDATE"
+    },
+    {
+      "file": "black-day-e50-g30.png",
+      "expected": "black",
+      "lighting": "day",
+      "sha256": "669fd7240548acb789ebe241e8c2faea0651ba96bc3dfc52e9dbfcc5a583e83a",
+      "counts": {
+        "red": 0,
+        "yellow": 0,
+        "blue": 1,
+        "green": 0,
+        "black": 1,
+        "lightblue": 0
+      },
+      "status": "UNKNOWN_MULTIPLE_RULE_HITS"
+    },
+    {
+      "file": "empty-day-e50-g30.png",
+      "expected": "empty",
+      "lighting": "day",
+      "sha256": "c0db95fa39711de278c97e801606b8fa5134ffb07308140323d14e8bb34d1985",
+      "counts": {
+        "red": 0,
+        "yellow": 0,
+        "blue": 0,
+        "green": 0,
+        "black": 0,
+        "lightblue": 0
+      },
+      "status": "NO_CANDIDATE"
+    }
+  ]
+}

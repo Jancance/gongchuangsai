@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-14",
+  "source": "user cannot keep paused or set VM request; screenshot and actual watchdog.c read-only check",
+  "screenshot": "CAN_speed_watch_halt_iwdg_reset.png",
+  "observed": {
+    "actual_debug_freeze_macro": 0,
+    "reset_iwdg": 1,
+    "reset_flags": "0x24000000",
+    "vm_request": 0,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "platform_ready": 1,
+    "can_ready": 0
+  },
+  "diagnosis": "non-freezing IWDG continues during CPU halt, so watchdog reset restarts program and restores VM request default 0; matches reported pause/restart behavior",
+  "next": "user changes WATCHDOG_DEBUG_FREEZE to 1U for current bench Watch workflow, Rebuild/download, run initialization before Stop, then continue speed test",
+  "actual_source_modified_by_assistant": false,
+  "scope": "freeze debug CPU halt only; normal runtime watchdog and supervisor kept",
+  "previous_nonfreeze_acceptance": "retained as historical verified configuration; current planned bench change is explicit",
+  "pending": [
+    "bench macro1 build/download",
+    "ID1 speed reply"
+  ],
+  "requirements_checked": {
+    "R": [
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "RUN-06",
+      "MOT-04"
+    ]
+  }
+}
