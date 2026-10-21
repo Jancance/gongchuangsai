@@ -1,0 +1,55 @@
+static uint32_t CAN1_ControlSingle(uint8_t address,
+                                   const uint8_t *request,
+                                   uint8_t request_length,
+                                   CanRxMsg *reply)
+{
+    uint32_t result, trace, i;
+    CanRxMsg empty = {0};
+
+    /* 只允许四轮地址，不允许广播 */
+    if ((address < 1U) || (address > 4U) || (reply == NULL))
+    {
+        return 7U;
+    }
+
+    trace = ((g_can_ctrl_fault_latched == 0U) && (request != NULL) &&
+        (request_length >= 2U) && (request_length <= 8U)) ? 1U : 0U;
+    if (trace)
+    {
+        g_can_ctrl_trace_address = address;
+        g_can_ctrl_trace_length = request_length;
+        for (i = 0U; i < 8U; i++) g_can_ctrl_trace_request[i] =
+            (i < request_length) ? request[i] : 0U;
+        g_can_ctrl_trace_result = 0U; g_can_ctrl_trace_phase = 1U;
+        g_can_ctrl_trace_rx_count = g_can_ctrl_trace_flush_count = 0U;
+        g_can_ctrl_trace_tx_ms = g_can_ctrl_trace_total_ms = 0U;
+        g_can_ctrl_trace_last_rx = empty;
+        g_can_ctrl_trace_pe2_start = (GPIOE->ODR & GPIO_Pin_2) ? 1U : 0U;
+        s_can_ctrl_trace_tick = xTaskGetTickCount();
+        s_can_ctrl_trace_active = 1U;
+    }
+    result = CAN1_ExchangeSingle(address, request,
+                                 request_length, 3U, reply);
+
+    if ((result == 1U) && (reply->Data[1] != 0x02U))
+    {
+        /* 非02不能作为成功确认，原始回复仍保留 */
+        result = 8U;
+    }
+
+    if (trace)
+    {
+        g_can_ctrl_trace_total_ms = (uint32_t)(xTaskGetTickCount() - s_can_ctrl_trace_tick);
+        g_can_ctrl_trace_pe2_end = (GPIOE->ODR & GPIO_Pin_2) ? 1U : 0U;
+        g_can_ctrl_trace_esr = CAN1->ESR;
+        g_can_ctrl_trace_result = result;
+        s_can_ctrl_trace_active = 0U;
+        if (result != 1U) g_can_ctrl_fault_latched = 1U;
+    }
+    if (result != 1U)
+    {
+        CAN1_ResetSession();
+    }
+
+    return result;
+}

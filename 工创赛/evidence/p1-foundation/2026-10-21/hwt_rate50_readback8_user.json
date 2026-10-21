@@ -1,0 +1,28 @@
+{
+  "rate50_active": 0,
+  "rate50_result": 1,
+  "rate50_state": 0,
+  "rate50_command": 3,
+  "rate50_raw": 8,
+  "reply_hex": "55 5F 08 00 06 00 00 00 00 00 C2",
+  "checksum_valid": true,
+  "VM_RTOS_Safety": [
+    0,
+    0,
+    0
+  ],
+  "rrate_old_snapshot": 6,
+  "angle_rate_counts_both_screens": 1028,
+  "update_tick_both_screens": 56150,
+  "checksum_uart_overflow_errors": [
+    0,
+    0,
+    0
+  ],
+  "scope": "fixed setting sequence and immediate RRATE8 readback supported; two screenshots same counters/time so no50Hz frequency calculation; power-off retention and max gaps unverified",
+  "screenshot_sha256": {
+    "hwt_rate50_readback8_user.png": "6a4370373e21b7be18f682beaed6c17a636594b16e5a908a7aefef75108e162e",
+    "hwt_rate50_readback8_user_second.png": "6671669fa943c80a2c53c9379f61ad8db508c77c331fb5e482f9c7a74240d68c"
+  },
+  "next": "VM switch remains off, no more config requests; two continuous Run snapshots about10s apart of HWT frame/error counters and update tick"
+}

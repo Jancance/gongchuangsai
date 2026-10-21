@@ -1,0 +1,31 @@
+{
+  "user_report": "VM indicator did not light",
+  "phase": 4,
+  "trip": 3,
+  "session_state": 4,
+  "exec_request": 0,
+  "command_rpm": 0,
+  "vm_request": 0,
+  "rtos_fault": 0,
+  "safety_fault": 0,
+  "source_valid": 1,
+  "angle_age_ms": 97,
+  "rate_age_ms": 98,
+  "can_min_stack_words": 245,
+  "can_min_stack_bytes": 980,
+  "heap_min_bytes": 11328,
+  "relative_deg": 5,
+  "source_matches_tested_main_tokens": true,
+  "root_cause": "not yet isolated; trip3 is shared by multiple platform/exclusivity checks; final ages are not trip-time evidence",
+  "next_read": [
+    "g_heading_exec_cause",
+    "g_heading_exec_backend_session",
+    "g_chassis_auto_state",
+    "g_chassis_auto_result",
+    "g_chassis_auto_cause",
+    "g_chassis_auto_io_result",
+    "g_chassis_auto_start_mask[2]"
+  ],
+  "actual_firmware_modified": false,
+  "screenshot_sha256": "0331ce79054515ffb1a9a6dd9e3f3fddc16051335b00e2e9ddd824cd780acb50"
+}

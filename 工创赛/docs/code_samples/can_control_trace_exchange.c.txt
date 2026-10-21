@@ -1,0 +1,125 @@
+static uint32_t CAN1_ExchangeSingle(uint8_t address,
+                                    const uint8_t *request,
+                                    uint8_t request_length,
+                                    uint8_t reply_length,
+                                    CanRxMsg *reply)
+{
+    CanTxMsg tx;
+    CanRxMsg rx;
+    TickType_t start_tick;
+    uint32_t result;
+    uint8_t mailbox;
+    uint8_t status;
+    
+    uint8_t flush_count;
+    /* 请求和回复均限制在单个CAN帧内 */
+    if ((address == 0U) || (reply == NULL) || (request == NULL) ||
+        (request_length < 2U) || (request_length > 8U) ||
+        (reply_length < 2U) || (reply_length > 8U))
+    {
+        return 7U;
+    }
+
+    memset(reply, 0, sizeof(*reply));
+
+    /* 同一连续会话只初始化一次，避免每条请求反复重置CAN */
+    if (s_can1_normal_ready == 0U)
+    {
+        result = CAN1_InitMode(CAN_Mode_Normal);
+        if (result != 1U)
+        {
+            return result;
+        }
+        s_can1_normal_ready = 1U;
+    }
+
+    /* FIFO0最多容纳3帧，有限清理前一请求遗留的数据 */
+    for (flush_count = 0U; flush_count < 3U; flush_count++)
+    {
+        if (CAN_MessagePending(CAN1, CAN_FIFO0) == 0U)
+        {
+            break;
+        }
+        CAN_Receive(CAN1, CAN_FIFO0, &rx);
+        if (s_can_ctrl_trace_active) g_can_ctrl_trace_flush_count++;
+    }
+
+    memset(&tx, 0, sizeof(tx));
+    tx.ExtId = (uint32_t)address << 8;
+    tx.IDE = CAN_Id_Extended;
+    tx.RTR = CAN_RTR_Data;
+    /* 按实际请求长度复制，包括功能码和末尾校验字节 */
+    tx.DLC = request_length;
+    memcpy(tx.Data, request, request_length);
+
+    if (s_can_ctrl_trace_active) g_can_ctrl_trace_phase = 2U;
+    mailbox = CAN_Transmit(CAN1, &tx);
+    if (mailbox == CAN_TxStatus_NoMailBox)
+    {
+        return 4U;
+    }
+
+    start_tick = xTaskGetTickCount();
+
+    while (1)
+    {
+        status = CAN_TransmitStatus(CAN1, mailbox);
+        if (status == CAN_TxStatus_Ok)
+        {
+            if (s_can_ctrl_trace_active) g_can_ctrl_trace_tx_ms =
+                (uint32_t)(xTaskGetTickCount() - s_can_ctrl_trace_tick);
+            break;
+        }
+
+        if ((status == CAN_TxStatus_Failed) ||
+            ((TickType_t)(xTaskGetTickCount() - start_tick) >=
+             pdMS_TO_TICKS(CAN1_SINGLE_TX_WAIT_MS)))
+        {
+            CAN_CancelTransmit(CAN1, mailbox);
+            return 4U;
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(1U));
+    }
+
+    start_tick = xTaskGetTickCount();
+
+    if (s_can_ctrl_trace_active) g_can_ctrl_trace_phase = 3U;
+    while ((TickType_t)(xTaskGetTickCount() - start_tick) <
+           pdMS_TO_TICKS(CAN1_SINGLE_REPLY_WAIT_MS))
+    {
+        if (CAN_MessagePending(CAN1, CAN_FIFO0) != 0U)
+        {
+            CAN_Receive(CAN1, CAN_FIFO0, &rx);
+            if (s_can_ctrl_trace_active)
+            {
+                g_can_ctrl_trace_rx_count++;
+                g_can_ctrl_trace_last_rx = rx;
+            }
+
+            if ((rx.IDE == CAN_Id_Extended) &&
+                (rx.RTR == CAN_RTR_Data) &&
+                (rx.ExtId == tx.ExtId))
+            {
+                /* 保存原始回复，异常时也能查看 */
+                *reply = rx;
+
+                /* 回复功能码必须与本次请求一致 */
+                if ((rx.DLC != 0U) && (rx.Data[0] == request[0]))
+                {
+                    if ((rx.DLC == reply_length) &&
+                        (rx.Data[reply_length - 1U] == 0x6BU))
+                    {
+                        return 1U;
+                    }
+
+                    return 6U;
+                }
+            }
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(1U));
+    }
+
+    return 5U;
+}

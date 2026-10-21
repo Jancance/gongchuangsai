@@ -1,0 +1,18 @@
+{
+  "user_clarification": "VM switch held pressed during preceding failed +5 trial; do not attribute E2 to released switch",
+  "change": "Only APP_HEADING_SESSION_TEST from 1U to 0U; KEY/STATIC/TURN remain0",
+  "rationale": "Current session Safety deliberately clears VM request in idle/failure, preventing sustained static supply measurement. Reuse existing supervised VM request with session temporarily disabled.",
+  "verification": {
+    "main.c": "ARMCC isolated compilation without diagnostics",
+    "can.c": "ARMCC isolated compilation without diagnostics"
+  },
+  "actual_sources_unchanged": true,
+  "actual_sha256": {
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\app_config.h": "25d6c14e0b45618bbd7ff86786ff7c9607f914ab9ae0c44e6cd3a794b1b8e842",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\main.c": "1db44bd79ce88da336d5f4c8616f3c317611a1ad73c79ca72e0ced1fb1bb6a3a",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\SYSTEM\\CAN\\can.c": "330874c3a9624aaf4d574f001c615eb9761a022a971fd2d8bcfa02c1285134bc"
+  },
+  "limits": "Candidate translation-unit checks only; no complete link/download/hardware acceptance. Generic mode retains manual action interfaces, all requests must remain0; this is not a dedicated power-only firmware.",
+  "next": "User single config edit and full Rebuild only, no download/request this step",
+  "pending": "Static measurement procedure with load and guard conditions to be specified after build review; no strong GPIO override or protection removal"
+}

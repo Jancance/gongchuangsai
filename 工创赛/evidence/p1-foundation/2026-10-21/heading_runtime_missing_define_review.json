@@ -1,0 +1,10 @@
+{
+  "reported_rebuild": "2 errors: HEADING_SOURCE_FRESH_MS undefined; 0 warnings",
+  "cause": "missing 1000Hz guard and HEADING_SOURCE_FRESH_MS definition between source block outer if and typedef",
+  "two_previous_guards": "correct",
+  "fix": "restore four-line guard and constant before typedef; no threshold change",
+  "fixed_tokens_match_tested_main": true,
+  "isolated_ARMCC_actual_config": "pass no diagnostics",
+  "actual_main_unchanged": true,
+  "pending": "user restore block, complete Rebuild; no download"
+}

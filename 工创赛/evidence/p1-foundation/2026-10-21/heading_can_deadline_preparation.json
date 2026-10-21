@@ -1,0 +1,17 @@
+{
+  "verified_defect": "CAN producer may wait 100ms TX + 200ms RX while submission deadline is 100ms",
+  "new_mode_candidate_ms": {
+    "TX": 20,
+    "RX": 30
+  },
+  "legacy_ms": {
+    "TX": 100,
+    "RX": 200
+  },
+  "host_real_exchange_function": "pass new/legacy frames, timeout bounds, late boundary, tick wrap",
+  "deadline_crossing_model": "original wait can cross 100ms, candidate normal transaction phases return sooner",
+  "ARMCC_actual_can_module_candidate": "pass no diagnostics new/legacy",
+  "actual_can_unchanged": true,
+  "original_sha256": "21ec50ab968f68eeea5be80c1e5cd0c6a8e0c1b83e5f1a33b785839d66afcfef",
+  "hardware_root_cause": "not uniquely established by screenshots; correction needs user full build and retest"
+}

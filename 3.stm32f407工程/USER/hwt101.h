@@ -42,4 +42,15 @@ extern volatile uint32_t g_hwt_cal_rezero_count, g_hwt_cal_rezero_ms;
 extern volatile float g_hwt_cal_rezero_prev_deg;
 extern volatile uint32_t g_hwt_cal_resume_count; /* 与采集归零配对的退出恢复次数 */
 extern volatile uint32_t g_hwt_update_tick; /* 采样任务最后推进时刻 */
+/* 仅静态VM0手动读RRATE，默认不请求；不设置参数。 */
+extern volatile uint32_t g_hwt_rrate_request, g_hwt_rrate_result;
+extern volatile uint32_t g_hwt_rrate_raw, g_hwt_rrate_reply_count;
+extern volatile uint8_t g_hwt_rrate_reply[11];
+/* 静态一次性50Hz设置：默认不请求。result1还须频率/断电保持验证。 */
+extern volatile uint32_t g_hwt_rate50_request, g_hwt_rate50_active;
+extern volatile uint32_t g_hwt_rate50_result, g_hwt_rate50_state;
+extern volatile uint32_t g_hwt_rate50_command, g_hwt_rate50_raw;
+extern volatile uint8_t g_hwt_rate50_reply[11];
+
+
 #endif

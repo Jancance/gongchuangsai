@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-20",
+  "scope": "Pure target-heading controller only; no runtime integration, flash, CAN traffic, VM output, or physical motion",
+  "remote_sync": {
+    "origin_main": "158e3df438c5f7cae93c05e8f13295f87cc8244d",
+    "local_cache_head": "158e3df438c5f7cae93c05e8f13295f87cc8244d",
+    "status": "current"
+  },
+  "files": {
+    "heading_controller.c": "3A216C5C2E12AD4D1B6DA582DD1DC4488949B8260D1BD14F0F3E338432B3A7A3",
+    "heading_controller.h": "A2F4749A7B9DF5AC279F755171608CD621034FA46883473527A5F3FCE0AA47D7",
+    "gongxun-f407.uvprojx": "3F275F9BA7D86136AD28ABB66EC695277C65B740CD5BBEE1B7EBEBB31307CFB0"
+  },
+  "checks": {
+    "armcc_compile_exit": 0,
+    "gcc_module_exit": 0,
+    "gcc_test_exit": 0,
+    "host_assertions": 53,
+    "host_result": "PASS",
+    "keil_rebuild_errors": 0,
+    "keil_rebuild_warnings": 0,
+    "keil_size": {"code": 35604, "ro_data": 452, "rw_data": 1332, "zi_data": 25284},
+    "axf_sha256": "5D48589BD474F3C4EDBA005AE5A506F25F8ADD1DC52DFC1735B514D229EC99B0"
+  },
+  "covered": [
+    "wrap to [-180,180)",
+    "shortest cross-boundary error",
+    "5/3/1 RPM command bands",
+    "overshoot direction reversal",
+    "continuous settle time and yaw-rate gate",
+    "sensor invalid fault",
+    "timeout and uint32 tick wrap",
+    "cancel and invalid configuration"
+  ],
+  "defaults_are_engineering_candidates": {
+    "coarse_rpm": 5,
+    "medium_rpm": 3,
+    "fine_rpm": 1,
+    "coarse_error_deg": 25.0,
+    "medium_error_deg": 8.0,
+    "tolerance_deg": 2.0,
+    "settle_rate_dps": 3.0,
+    "settle_ms": 700,
+    "timeout_ms": 20000
+  },
+  "requirements": {
+    "R": ["RUN-01", "PWR-01"],
+    "E": ["LOC-03", "LOC-05", "LOC-07", "RUN-06", "MOT-01", "MOT-02", "MOT-03", "MOT-04"],
+    "Q": "unchanged"
+  }
+}

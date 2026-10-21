@@ -3,6 +3,28 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include <string.h>
+#include "app_config.h"
+
+/* 新目标航向模式不允许单次交易长于指令提交监督期限。 */
+#if APP_HEADING_SESSION_TEST
+#define CAN1_SINGLE_TX_WAIT_MS 20U
+#define CAN1_SINGLE_REPLY_WAIT_MS 30U
+#else
+#define CAN1_SINGLE_TX_WAIT_MS 100U
+#define CAN1_SINGLE_REPLY_WAIT_MS 200U
+#endif
+/* 首次控制交易失败快照；仅读取硬件状态，不改帧或等待期限。 */
+volatile uint32_t g_can_ctrl_fault_latched = 0U;
+volatile uint32_t g_can_ctrl_trace_result = 0U, g_can_ctrl_trace_phase = 0U;
+volatile uint32_t g_can_ctrl_trace_address = 0U, g_can_ctrl_trace_length = 0U;
+volatile uint8_t g_can_ctrl_trace_request[8] = {0U};
+volatile uint32_t g_can_ctrl_trace_pe2_start = 0U, g_can_ctrl_trace_pe2_end = 0U;
+volatile uint32_t g_can_ctrl_trace_esr = 0U;
+volatile uint32_t g_can_ctrl_trace_rx_count = 0U, g_can_ctrl_trace_flush_count = 0U;
+volatile uint32_t g_can_ctrl_trace_tx_ms = 0U, g_can_ctrl_trace_total_ms = 0U;
+volatile CanRxMsg g_can_ctrl_trace_last_rx = {0};
+static uint32_t s_can_ctrl_trace_active = 0U;
+static TickType_t s_can_ctrl_trace_tick = 0U;
 
 /* 当前所有CAN调用都来自任务A，不允许其他任务并发使用 */
 static uint32_t s_can1_normal_ready = 0U;
@@ -228,6 +250,7 @@ static uint32_t CAN1_ExchangeSingle(uint8_t address,
             break;
         }
         CAN_Receive(CAN1, CAN_FIFO0, &rx);
+        if (s_can_ctrl_trace_active) g_can_ctrl_trace_flush_count++;
     }
 
     memset(&tx, 0, sizeof(tx));
@@ -238,6 +261,7 @@ static uint32_t CAN1_ExchangeSingle(uint8_t address,
     tx.DLC = request_length;
     memcpy(tx.Data, request, request_length);
 
+    if (s_can_ctrl_trace_active) g_can_ctrl_trace_phase = 2U;
     mailbox = CAN_Transmit(CAN1, &tx);
     if (mailbox == CAN_TxStatus_NoMailBox)
     {
@@ -251,12 +275,14 @@ static uint32_t CAN1_ExchangeSingle(uint8_t address,
         status = CAN_TransmitStatus(CAN1, mailbox);
         if (status == CAN_TxStatus_Ok)
         {
+            if (s_can_ctrl_trace_active) g_can_ctrl_trace_tx_ms =
+                (uint32_t)(xTaskGetTickCount() - s_can_ctrl_trace_tick);
             break;
         }
 
         if ((status == CAN_TxStatus_Failed) ||
             ((TickType_t)(xTaskGetTickCount() - start_tick) >=
-             pdMS_TO_TICKS(100U)))
+             pdMS_TO_TICKS(CAN1_SINGLE_TX_WAIT_MS)))
         {
             CAN_CancelTransmit(CAN1, mailbox);
             return 4U;
@@ -267,12 +293,18 @@ static uint32_t CAN1_ExchangeSingle(uint8_t address,
 
     start_tick = xTaskGetTickCount();
 
+    if (s_can_ctrl_trace_active) g_can_ctrl_trace_phase = 3U;
     while ((TickType_t)(xTaskGetTickCount() - start_tick) <
-           pdMS_TO_TICKS(200U))
+           pdMS_TO_TICKS(CAN1_SINGLE_REPLY_WAIT_MS))
     {
         if (CAN_MessagePending(CAN1, CAN_FIFO0) != 0U)
         {
             CAN_Receive(CAN1, CAN_FIFO0, &rx);
+            if (s_can_ctrl_trace_active)
+            {
+                g_can_ctrl_trace_rx_count++;
+                g_can_ctrl_trace_last_rx = rx;
+            }
 
             if ((rx.IDE == CAN_Id_Extended) &&
                 (rx.RTR == CAN_RTR_Data) &&
@@ -300,6 +332,7 @@ static uint32_t CAN1_ExchangeSingle(uint8_t address,
 
     return 5U;
 }
+
 /* 保留原查询入口，四种读取函数继续使用原来的调用方式 */
 static uint32_t CAN1_ReadParameter(uint8_t address,
                                   uint8_t command,
@@ -391,7 +424,8 @@ static uint32_t CAN1_ControlSingle(uint8_t address,
                                    uint8_t request_length,
                                    CanRxMsg *reply)
 {
-    uint32_t result;
+    uint32_t result, trace, i;
+    CanRxMsg empty = {0};
 
     /* 只允许四轮地址，不允许广播 */
     if ((address < 1U) || (address > 4U) || (reply == NULL))
@@ -399,6 +433,22 @@ static uint32_t CAN1_ControlSingle(uint8_t address,
         return 7U;
     }
 
+    trace = ((g_can_ctrl_fault_latched == 0U) && (request != NULL) &&
+        (request_length >= 2U) && (request_length <= 8U)) ? 1U : 0U;
+    if (trace)
+    {
+        g_can_ctrl_trace_address = address;
+        g_can_ctrl_trace_length = request_length;
+        for (i = 0U; i < 8U; i++) g_can_ctrl_trace_request[i] =
+            (i < request_length) ? request[i] : 0U;
+        g_can_ctrl_trace_result = 0U; g_can_ctrl_trace_phase = 1U;
+        g_can_ctrl_trace_rx_count = g_can_ctrl_trace_flush_count = 0U;
+        g_can_ctrl_trace_tx_ms = g_can_ctrl_trace_total_ms = 0U;
+        g_can_ctrl_trace_last_rx = empty;
+        g_can_ctrl_trace_pe2_start = (GPIOE->ODR & GPIO_Pin_2) ? 1U : 0U;
+        s_can_ctrl_trace_tick = xTaskGetTickCount();
+        s_can_ctrl_trace_active = 1U;
+    }
     result = CAN1_ExchangeSingle(address, request,
                                  request_length, 3U, reply);
 
@@ -408,6 +458,15 @@ static uint32_t CAN1_ControlSingle(uint8_t address,
         result = 8U;
     }
 
+    if (trace)
+    {
+        g_can_ctrl_trace_total_ms = (uint32_t)(xTaskGetTickCount() - s_can_ctrl_trace_tick);
+        g_can_ctrl_trace_pe2_end = (GPIOE->ODR & GPIO_Pin_2) ? 1U : 0U;
+        g_can_ctrl_trace_esr = CAN1->ESR;
+        g_can_ctrl_trace_result = result;
+        s_can_ctrl_trace_active = 0U;
+        if (result != 1U) g_can_ctrl_fault_latched = 1U;
+    }
     if (result != 1U)
     {
         CAN1_ResetSession();

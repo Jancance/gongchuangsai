@@ -1,0 +1,37 @@
+{
+  "source": "Two user screenshots",
+  "address": 1,
+  "disable_result": 1,
+  "reply": {
+    "Data": "F3 02 6B",
+    "RTR": 0,
+    "ExtId": "0x0100",
+    "DLC": 3,
+    "IDE": 4
+  },
+  "poll_flags": [
+    2,
+    3,
+    3,
+    3
+  ],
+  "ctrl_trace": {
+    "result": 1,
+    "flush_count": 0,
+    "esr": 0,
+    "tx_ms": 1,
+    "length": 5,
+    "pe2_start": 1,
+    "phase": 3,
+    "pe2_end": 1,
+    "address": 1,
+    "total_ms": 1,
+    "fault_latched": 0,
+    "rx_count": 1
+  },
+  "scope": "Successful one-node disable acknowledgment plus driver reported enable bit cleared; no independent shaft-force test or full motion acceptance",
+  "historical_E2": "Not reproduced for this command under current stable VM. Earlier initial cause not uniquely established.",
+  "source_checks": "Actual main/can hashes unchanged; restoring SESSION1 gives same config hash as previously verified diagnostic session build",
+  "next": "Run VM request0 and release switch; exit debug; only SESSION0->1, other three flags0; full Rebuild, no download/request yet",
+  "hardware_operated_by_assistant": false
+}

@@ -1,0 +1,10 @@
+/* 执行器同一时刻的状态，仅供任务读取；不是运动许可或物理停车证明。 */
+typedef struct
+{
+    uint32_t state, active, result, cause;
+    uint32_t session, segment, rotation_stop_mask;
+    uint32_t heading_mode, dry_run, cut_vm;
+} ChassisAutoStatus;
+
+/* 1仅表示复制成功；0为指针无效。不发CAN，不修改状态。 */
+uint32_t ChassisAuto_ReadStatus(ChassisAutoStatus *status);

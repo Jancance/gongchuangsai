@@ -1,0 +1,12 @@
+/* 首次控制交易失败快照；仅读取硬件状态，不改帧或等待期限。 */
+volatile uint32_t g_can_ctrl_fault_latched = 0U;
+volatile uint32_t g_can_ctrl_trace_result = 0U, g_can_ctrl_trace_phase = 0U;
+volatile uint32_t g_can_ctrl_trace_address = 0U, g_can_ctrl_trace_length = 0U;
+volatile uint8_t g_can_ctrl_trace_request[8] = {0U};
+volatile uint32_t g_can_ctrl_trace_pe2_start = 0U, g_can_ctrl_trace_pe2_end = 0U;
+volatile uint32_t g_can_ctrl_trace_esr = 0U;
+volatile uint32_t g_can_ctrl_trace_rx_count = 0U, g_can_ctrl_trace_flush_count = 0U;
+volatile uint32_t g_can_ctrl_trace_tx_ms = 0U, g_can_ctrl_trace_total_ms = 0U;
+volatile CanRxMsg g_can_ctrl_trace_last_rx = {0};
+static uint32_t s_can_ctrl_trace_active = 0U;
+static TickType_t s_can_ctrl_trace_tick = 0U;

@@ -1,0 +1,15 @@
+{
+  "source": "Explicit user correction",
+  "supersedes": "vm_static_request1_measured0_user.json interpretation for that static test",
+  "correction": "User forgot to press VM switch during preceding static request1 measurement; after pressing switch and repeating, VM indicator illuminated briefly and measured VM22V",
+  "vm_output_volts": null,
+  "vm_indicator": "Brief illumination",
+  "conditions": "Previously confirmed all VM loads disconnected, generic mode and short supervised request instructions",
+  "conclusion": "Prior static0V reading explicitly corrected by user due switch not pressed. Reported22V point pending: VM output vs VM_EN, because preceding instruction moved probe to VM_EN. Short illumination confirmed by user.",
+  "limits": "Does not verify loaded supply, sustained voltage, prior +5 switch position, actual fault cutoff cause or original F3 E2 cause. Earlier user statement that +5 switch was held remains separate.",
+  "expected_cutoff": "Brief supply compatible with CAN missing-node protection while motors disconnected; needs fault evidence for definitive attribution",
+  "next": "Keep VM loads disconnected and switch released. Clarify red-probe measurement point before further electrical tests or reconnecting loads.",
+  "hardware_operated_by_assistant": false,
+  "reported_volts": 22,
+  "measurement_point_pending": "VM output (power) versus VM_EN (logic control)"
+}

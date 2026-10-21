@@ -1,0 +1,6 @@
+/* 回传速率只读：request1手动读取，result1只表示收到本次5F回复。 */
+volatile uint32_t g_hwt_rrate_request = 0U, g_hwt_rrate_result = 0U;
+volatile uint32_t g_hwt_rrate_raw = 0U, g_hwt_rrate_reply_count = 0U;
+volatile uint8_t g_hwt_rrate_reply[11] = {0U};
+static uint32_t s_read_rrate = 0U;
+static const uint8_t s_rrate_command[5] = {0xFFU, 0xAAU, 0x27U, 0x03U, 0x00U};

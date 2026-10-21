@@ -1,0 +1,122 @@
+/* 静态一次性50Hz设置：0未请求，1读回8，2发送超时，3回复超时，
+ * 4错误/互斥，5读回非8，9入口拒绝。result1仍须实测频率及断电保持。 */
+volatile uint32_t g_hwt_rate50_request = 0U, g_hwt_rate50_active = 0U;
+volatile uint32_t g_hwt_rate50_result = 0U, g_hwt_rate50_state = 0U;
+volatile uint32_t g_hwt_rate50_command = 0U, g_hwt_rate50_raw = 0U;
+volatile uint8_t g_hwt_rate50_reply[11] = {0U};
+static uint32_t s_rate50_used = 0U, s_rate50_tick, s_rate50_start;
+static uint32_t s_rate50_epoch, s_rate50_rx_base, s_rate50_read_tick;
+static const uint8_t s_rate50_commands[4][5] = {
+    {0xFFU,0xAAU,0x69U,0x88U,0xB5U}, /* 解锁；绝不能用0x76归零替代 */
+    {0xFFU,0xAAU,0x03U,0x08U,0x00U}, /* 仅修改RRATE到50Hz */
+    {0xFFU,0xAAU,0x00U,0x00U,0x00U}, /* 保存，不重启/不恢复出厂 */
+    {0xFFU,0xAAU,0x27U,0x03U,0x00U}  /* 只读回RRATE */
+};
+
+static uint32_t Hwt_Rate50Safe(void)
+{
+    return ((APP_HWT_STATIC_TEST == 1U) && (APP_HWT_TURN_TEST == 0U) &&
+        (APP_HEADING_SESSION_TEST == 0U) && (g_vm_test_request == 0U) &&
+        (g_rtos_fault == 0U) && (g_safety_fault == 0U) &&
+        (g_hwt_cal_active == 0U) && (g_hwt_cal_request == 0U) &&
+        (g_hwt_version_state == 0U) && (g_hwt_version_request == 0U) &&
+        (g_hwt_a7_request == 0U) && (g_hwt_rrate_request == 0U)) ? 1U : 0U;
+}
+
+static void Hwt_Rate50Finish(uint32_t result)
+{
+    taskENTER_CRITICAL();
+    USART_ITConfig(USART2, USART_IT_TXE, DISABLE);
+    s_tx_owner = 0U;
+    g_hwt_rate50_result = result;
+    g_hwt_rate50_active = 0U;
+    g_hwt_rate50_state = 0U;
+    taskEXIT_CRITICAL();
+}
+
+static void Hwt_Rate50Send(uint32_t now)
+{
+    taskENTER_CRITICAL();
+    USART_ITConfig(USART2, USART_IT_TXE, DISABLE);
+    s_tx_command = s_rate50_commands[g_hwt_rate50_command];
+    s_version_index = 0U; s_tx_owner = 3U;
+    s_rate50_tick = now;
+    if (g_hwt_rate50_command == 3U)
+    {
+        s_rate50_rx_base = s_parser.register_count;
+        s_rate50_read_tick = now;
+    }
+    g_hwt_rate50_state = 1U;
+    USART_ITConfig(USART2, USART_IT_TXE, ENABLE);
+    taskEXIT_CRITICAL();
+}
+
+/* 仅由TaskA的HWT101_Update调用，全部等待按状态推进，不阻塞任务。 */
+static void Hwt_Rate50Update(uint32_t now)
+{
+    uint32_t i;
+    if (g_hwt_rate50_active == 0U)
+    {
+        if (g_hwt_rate50_request == 0U) return;
+        i = g_hwt_rate50_request;
+        g_hwt_rate50_request = 0U;
+        if ((i != 1U) || s_rate50_used || !Hwt_Rate50Safe() ||
+            (g_hwt_version_result != 1U) || (g_hwt_valid_mask != 3U) ||
+            (g_hwt_rrate_result != 1U) || (g_hwt_rrate_raw != 6U) ||
+            ((uint32_t)(now - s_parser.register_tick) < 1500U))
+        { g_hwt_rate50_result = 9U; return; }
+        s_rate50_used = 1U; g_hwt_rate50_active = 1U;
+        g_hwt_rate50_result = 0U; g_hwt_rate50_raw = 0U;
+        g_hwt_rate50_command = 0U;
+        s_rate50_epoch = s_error_epoch; s_rate50_start = now;
+        Hwt_Rate50Send(now);
+        return;
+    }
+    g_hwt_rate50_request = 0U; /* 忙时不排队，也不重新发送 */
+    if (!Hwt_Rate50Safe() || (s_error_epoch != s_rate50_epoch) ||
+        ((uint32_t)(now - s_rate50_start) >= 8000U))
+    {
+        /* 冲突请求丢弃，防止退出本事务后紧接着发送其他命令。 */
+        g_hwt_version_request = g_hwt_a7_request = 0U;
+        g_hwt_rrate_request = g_hwt_cal_request = 0U;
+        Hwt_Rate50Finish(4U); return;
+    }
+    if (g_hwt_rate50_state == 1U)
+    {
+        if ((uint32_t)(now - s_rate50_tick) >= 200U)
+        { Hwt_Rate50Finish(2U); return; }
+        if (s_version_index < 5U) return;
+        if (USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET) return;
+        s_tx_owner = 0U;
+        if (g_hwt_rate50_command == 3U)
+            g_hwt_rate50_state = 3U;
+        else
+        { g_hwt_rate50_state = 2U; s_rate50_tick = now; }
+    }
+    if (g_hwt_rate50_state == 2U)
+    {
+        /* 命令间至少100ms；保存后留1500ms静默隔离再读回。 */
+        i = (g_hwt_rate50_command == 2U) ? 1500U : 100U;
+        if ((uint32_t)(now - s_rate50_tick) < i) return;
+        g_hwt_rate50_command++;
+        Hwt_Rate50Send(now);
+        return;
+    }
+    if (g_hwt_rate50_state == 3U)
+    {
+        if ((uint32_t)(now - s_rate50_read_tick) >= 1000U)
+        { Hwt_Rate50Finish(3U); return; }
+        if ((s_parser.register_count == s_rate50_rx_base) ||
+            ((uint32_t)(s_parser.register_tick - s_rate50_read_tick) >= 1000U) ||
+            ((uint32_t)(now - s_parser.register_tick) >= 1000U)) return;
+        g_hwt_rate50_raw = (uint32_t)s_parser.register_data[0] |
+            ((uint32_t)s_parser.register_data[1] << 8);
+        g_hwt_rate50_reply[0] = 0x55U; g_hwt_rate50_reply[1] = 0x5FU;
+        for (i = 0U; i < 8U; i++)
+            g_hwt_rate50_reply[i + 2U] = s_parser.register_data[i];
+        g_hwt_rate50_reply[10] = 0U;
+        for (i = 0U; i < 10U; i++) g_hwt_rate50_reply[10] =
+            (uint8_t)(g_hwt_rate50_reply[10] + g_hwt_rate50_reply[i]);
+        Hwt_Rate50Finish((g_hwt_rate50_raw == 8U) ? 1U : 5U);
+    }
+}

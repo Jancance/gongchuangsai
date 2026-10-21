@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-20",
+  "user_rebuild": {
+    "code": 35604,
+    "ro_data": 452,
+    "rw_data": 1332,
+    "zi_data": 25284,
+    "errors": 0,
+    "warnings": 0,
+    "seconds": 4
+  },
+  "read_only_source_review": {
+    "ErrorDeg_normalizes_target_and_current_before_subtraction": true,
+    "heading_controller_in_USER_group": true,
+    "runtime_heading_control_not_yet_connected": true
+  },
+  "user_instruction": "Do not modify actual code or project; give manual edits for user to perform",
+  "manual": "docs/P1_HEADING_DRY_SELFTEST_MANUAL_2026-10-20.md",
+  "private_candidate": {
+    "app_config_static_test": 1,
+    "app_config_turn_test": 0,
+    "main_calls_pure_selftest_once_before_TaskA_while": true,
+    "armcc_main_compile_exit": 0,
+    "armcc_heading_compile_exit": 0,
+    "gcc_manual_runner_strict_compile_exit": 0,
+    "manual_runner_result": 1,
+    "manual_runner_case": 0,
+    "manual_runner_ccw": [5, 3, 1, 0, 0],
+    "manual_runner_cw": [-5, -3, -1, 0, 0],
+    "manual_runner_cross_error_deg": 2.0,
+    "current_controller_boundary_checks": 58,
+    "boundary_result": "PASS",
+    "actual_source_and_project_hashes_unchanged": true,
+    "linked_or_flashed_candidate": false,
+    "real_CAN_or_motor_actions": false
+  },
+  "pending": [
+    "User manually applies guide sections1-4 and provides full Rebuild",
+    "On-board pure selftest, APP stack and heap observations",
+    "Runtime target-heading integration and physical feedback/stop/accuracy acceptance"
+  ],
+  "requirements": {
+    "R": ["RUN-01", "PWR-01"],
+    "E": ["LOC-03", "LOC-05", "RUN-06", "MOT-04"],
+    "Q": "unchanged"
+  }
+}

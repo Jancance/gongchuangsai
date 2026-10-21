@@ -1,0 +1,13 @@
+{
+  "candidate_host": "pass fake ISR/clock/readback; not hardware timing",
+  "candidate_ARMCC": "full hwt module compile no diagnostics",
+  "actual_hwt_unchanged": true,
+  "commands": [
+    "FF AA 69 88 B5",
+    "FF AA 03 08 00",
+    "FF AA 00 00 00",
+    "FF AA 27 03 00"
+  ],
+  "scope": "bounded static one-shot, initialRRATE6, readback8 required; actual50Hz/retention not proven",
+  "pending": "user hand edits, full build, then controlled static request"
+}

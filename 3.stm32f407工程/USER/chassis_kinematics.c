@@ -169,3 +169,24 @@ uint32_t Chassis_BasicTestCommands(const ChassisGeometry *geometry, uint32_t ste
     if (!Chassis_Inverse(geometry, &body, 1.0f, &logical, NULL)) return 0U;
     return Chassis_EncodeEmm(&logical, 1U, commands);
 }
+
+/* 纯指令转换：正值逆时针、负值顺时针，不发送CAN。 */
+uint32_t Chassis_HeadingCommands(int32_t command_rpm,
+    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+{
+    ChassisWheelSpeeds logical = {{0.0f, 0.0f, 0.0f, 0.0f}};
+    if (commands == 0) return 0U;
+    /* 先检查有符号范围再取反，避免最小负整数溢出。 */
+    if ((command_rpm < -5) || (command_rpm > 5))
+    {
+        (void)Chassis_EncodeEmm(&logical, 5U, commands);
+        return 0U;
+    }
+    /* 轮序：左后、右后、左前、右前；逆时针时左轮后退。 */
+    logical.rpm[CHASSIS_LEFT_REAR] = -(float)command_rpm;
+    logical.rpm[CHASSIS_RIGHT_REAR] = (float)command_rpm;
+    logical.rpm[CHASSIS_LEFT_FRONT] = -(float)command_rpm;
+    logical.rpm[CHASSIS_RIGHT_FRONT] = (float)command_rpm;
+    return Chassis_EncodeEmm(&logical, 5U, commands);
+}
+

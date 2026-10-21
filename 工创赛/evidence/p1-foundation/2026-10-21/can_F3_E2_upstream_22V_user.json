@@ -1,0 +1,9 @@
+{
+  "source": "user report after upstream measurement instruction",
+  "point": "Power board 24V point, Q2 input side, relative to GND",
+  "volts": 22,
+  "conditions": "User was instructed external VM switch off, main supply on, no new start request; conditions not independently measured",
+  "conclusion": "Upstream voltage present at measurement time; does not prove switched VM voltage",
+  "next": "All power removed including debug USB; identify VM switch software-control continuity, do not bridge contacts",
+  "hardware_operated_by_assistant": false
+}

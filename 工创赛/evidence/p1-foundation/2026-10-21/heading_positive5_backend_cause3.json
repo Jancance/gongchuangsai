@@ -1,0 +1,19 @@
+{
+  "exec_phase": 4,
+  "exec_trip": 3,
+  "exec_state": 4,
+  "exec_cause": 2,
+  "backend_session": 1,
+  "backend_state": 10,
+  "backend_result": 2,
+  "backend_cause": 3,
+  "backend_io_result": 0,
+  "rotation_start_mask": 0,
+  "vm_request": 0,
+  "rtos_fault": 0,
+  "safety_fault": 0,
+  "interpretation": "backend accepted session; no recorded rotation command success; cause3 can arise from submission watchdog or later feedback check; last IO result may remain 0 if watchdog invalidates in-flight transaction",
+  "verified_design_conflict": "single CAN producer computes submissions but transaction TX100/RX200 can outlast100ms watchdog",
+  "hardware_root_cause": "not uniquely established",
+  "screenshot_sha256": "a245ab7473bacc7396be50fef9a3381ea98d1d86ce31518fe1ccbe17949282c8"
+}

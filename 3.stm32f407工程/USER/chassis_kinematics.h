@@ -68,5 +68,7 @@ uint32_t Chassis_EmmFeedbackToLogical(const int32_t driver_rpm[CHASSIS_WHEEL_COU
 /* 不含供电/使能/时间推进；实际发送仍须控制状态机授权 */
 uint32_t Chassis_BasicTestCommands(const ChassisGeometry *geometry, uint32_t step,
     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
-
+/* 航向控制轮速转四轮指令：正值逆时针、负值顺时针，不发送CAN。 */
+uint32_t Chassis_HeadingCommands(int32_t command_rpm,
+    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
 #endif

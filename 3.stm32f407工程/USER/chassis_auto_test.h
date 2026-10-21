@@ -50,6 +50,35 @@ void ChassisAuto_Init(void);
 uint32_t ChassisAuto_Begin(uint32_t dry_run);
 void ChassisAuto_CanStep(void);
 void ChassisAuto_Abort(void);
+/* 1接受正常停车请求，0当前阶段不接受；并非物理停车完成。 */
+uint32_t ChassisAuto_RequestStop(void);
+/* 单次旋转：1接受，0拒绝；不等于目标角已到位。 */
+uint32_t ChassisAuto_BeginHeading(uint32_t dry_run, int32_t command_rpm);
+/* 同一转向的下一组轮速更新；1接受排队，0拒绝，不表示已发完。 */
+uint32_t ChassisAuto_UpdateHeading(int32_t command_rpm);
 /* Safety任务独立调用，不发送/等待CAN */
 void ChassisAuto_SafetyUpdate(uint32_t vm_request);
+/* TaskA到CAN任务的纯数据交接；1有效，0无效/过期。 */
+#define CHASSIS_HEADING_MAILBOX_MAX_AGE_MS 100U
+typedef struct
+{
+    int32_t command_rpm;
+    uint32_t stop_required;
+    uint32_t sequence;
+} ChassisHeadingRequest;
+
+uint32_t ChassisAuto_HeadingPublish(int32_t command_rpm, uint32_t stop_required);
+uint32_t ChassisAuto_HeadingRead(ChassisHeadingRequest *request);
+/* 执行器同一时刻的状态，仅供任务读取；不是运动许可或物理停车证明。 */
+typedef struct
+{
+    uint32_t state, active, result, cause;
+    uint32_t session, segment, rotation_stop_mask;
+    uint32_t heading_mode, dry_run, cut_vm;
+} ChassisAutoStatus;
+
+/* 1仅表示复制成功；0为指针无效。不发CAN，不修改状态。 */
+uint32_t ChassisAuto_ReadStatus(ChassisAutoStatus *status);
+
+
 #endif

@@ -1,0 +1,10 @@
+{
+  "source": "User reported continuity check following all-power-off instruction",
+  "pressed": "contacts 1-2 connected",
+  "released": "contacts 2-3 connected",
+  "schematic_mapping": "1=PE2 VM_IO, 2=VM_EN, 3=GND",
+  "engineering_interpretation": "Pressed permits PE2 software control; released forces VM_EN low. Pressed does not mean unconditional VM power.",
+  "pending": "Which mechanical position was maintained during the preceding +5 degree request? Actual energized VM output remains unmeasured.",
+  "not_proven": "Complete emergency stop or power-stage acceptance",
+  "assistant_operated_hardware": false
+}

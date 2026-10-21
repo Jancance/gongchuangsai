@@ -1,0 +1,13 @@
+{
+  "user_build": "35744/564/1444/25452,0 errors 0 warnings,3s",
+  "actual_issue": "TX macro applied in CAN1_LoopbackTest instead of CAN1_ExchangeSingle",
+  "corrected_lines": {
+    "152": "loopback TX restore100U",
+    "269": "ExchangeSingle TX use CAN1_SINGLE_TX_WAIT_MS"
+  },
+  "RX30": "correct",
+  "fixed_tokens_match_tested_candidate": true,
+  "ARMCC_with_actual_config": "pass no diagnostics",
+  "actual_can_unchanged": true,
+  "hardware": "no download/retest; pending two user corrections and rebuild"
+}

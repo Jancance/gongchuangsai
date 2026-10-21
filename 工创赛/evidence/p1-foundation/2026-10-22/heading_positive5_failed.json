@@ -1,0 +1,14 @@
+{
+  "source": "User screenshots and report: VM briefly lit then switched off; physical rotation uncertain",
+  "exec": {"phase": 4, "trip": 6, "relative_deg": 5, "state": 4, "cause": 2, "target_deg": -0.377807617, "error_deg": 5},
+  "backend": {"result": 2, "cause": 1, "io_result": 8, "last_address": 1, "rotation_stop_mask": 0},
+  "trace": {"fault_latched": 1, "result": 8, "phase": 3, "address": 1, "length": 5, "pe2_start": 1, "pe2_end": 1, "tx_ms": 1, "total_ms": 1, "rx_count": 1, "esr": 0, "flush_count": 0},
+  "source_snapshot": {"valid": 1, "angle_age_ms": 26, "rate_age_ms": 7, "yaw_deg": -5.37780762, "rate_dps": 0, "vm_request": 0, "rtos_fault": 0, "safety_fault": 0},
+  "interpretation": "Actual can.c maps matching control reply with Data[1] other than 02 to result8. Preparation command failed before speed stage; raw request and reply are collapsed, so E2 cannot yet be asserted for this attempt. End-state fresh source does not independently prove trigger-time freshness.",
+  "next": "External VM switch released. Preserve failure, no reset or new request. Expand g_can_ctrl_trace_request and g_can_ctrl_trace_last_rx including Data and capture. Do not enlarge target yet.",
+  "requirements_R": ["RUN-01", "PWR-01"],
+  "requirements_E": ["LOC-03", "LOC-05", "LOC-07", "RUN-06", "MOT-02", "MOT-04"],
+  "pending": ["Raw reply reason", "Actual turn and stop", "Real-time XY", "Official Q remains pending"],
+  "firmware_modified": false,
+  "hardware_operated_by_assistant": false
+}

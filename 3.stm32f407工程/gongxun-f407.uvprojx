@@ -10,7 +10,7 @@
       <TargetName>Target 1</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\arm5_compiler</pCCUsed>
+      <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -185,8 +185,6 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
-            <RvdsCdeCp>0</RvdsCdeCp>
-            <nBranchProt>0</nBranchProt>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -353,7 +351,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <ClangAsOpt>4</ClangAsOpt>
+            <uClangAs>0</uClangAs>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -415,6 +413,16 @@
               <FilePath>.\USER\chassis_kinematics.h</FilePath>
             </File>
             <File>
+              <FileName>heading_controller.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\heading_controller.c</FilePath>
+            </File>
+            <File>
+              <FileName>heading_controller.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\USER\heading_controller.h</FilePath>
+            </File>
+            <File>
               <FileName>chassis_auto_test.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\USER\chassis_auto_test.c</FilePath>
@@ -443,6 +451,11 @@
               <FileName>hwt101_parser.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\USER\hwt101_parser.h</FilePath>
+            </File>
+            <File>
+              <FileName>heading_session.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\heading_session.c</FilePath>
             </File>
           </Files>
         </Group>

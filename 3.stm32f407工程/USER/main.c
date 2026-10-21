@@ -17,6 +17,8 @@
 #include "screen.h"
 #include "saoma.h"
 #include <stdio.h>
+#include "heading_controller.h"
+#include "heading_session.h"
 
 /* 临时静态供电测试：0关闭，1请求开启 */
 volatile uint32_t g_vm_test_request = 0U;
@@ -166,7 +168,7 @@ volatile uint32_t g_start_request = 0U;
 volatile uint32_t g_start_accept_count = 0U;
 volatile uint32_t g_start_deny_count = 0U;
 char g_start_task_code[16] = {0};
-#if !APP_CHASSIS_KEY_TEST_ENABLE
+#if !APP_CHASSIS_KEY_TEST_ENABLE && !APP_HEADING_SESSION_TEST
 static uint32_t s_start_gate_revision = 0U;
 #endif
 static uint32_t s_start_pending = 0U;
@@ -470,7 +472,7 @@ static void App_StartGateUpdate(void)
                g_scan_display_result == SCREEN_OK) ? 1U : 0U;
     g_start_gate_ready = (platform_ok != 0U && code_ok != 0U &&
                           g_start_request == 0U) ? 1U : 0U;
-#if !APP_CHASSIS_KEY_TEST_ENABLE
+#if !APP_CHASSIS_KEY_TEST_ENABLE && !APP_HEADING_SESSION_TEST
     s_start_gate_revision = g_saoma_accept_count;
 #endif
     if (s_start_pending != 0U)
@@ -713,6 +715,392 @@ static void App_CanJogService(void)
         App_CanPollStep();
     }
 }
+#if APP_HWT_STATIC_TEST && !APP_HWT_TURN_TEST
+/* 以下仅显示任务间数据，不作为运动允许信号。 */
+volatile uint32_t g_heading_bus_valid = 0U;
+volatile int32_t g_heading_bus_rpm = 0;
+volatile uint32_t g_heading_bus_stop = 1U;
+volatile uint32_t g_heading_bus_sequence = 0U;
+volatile uint32_t g_heading_publish_result = 0U;
+#endif
+#if APP_HEADING_SESSION_TEST || (APP_HWT_STATIC_TEST && !APP_HWT_TURN_TEST)
+#if configTICK_RATE_HZ != 1000U
+#error Heading_source_requires_1000Hz_tick
+#endif
+#define HEADING_SOURCE_FRESH_MS 100U
+typedef struct
+{
+    uint32_t sequence, sample_ms, angle_ms, rate_ms, healthy;
+    float yaw_deg, rate_dps;
+} AppHeadingSource;
+
+static AppHeadingSource s_heading_source = {0};
+static uint32_t s_heading_source_ready = 0U;
+volatile uint32_t g_heading_source_valid = 0U;
+volatile uint32_t g_heading_source_sequence = 0U;
+volatile uint32_t g_heading_source_age_ms = 0U;
+volatile uint32_t g_heading_source_angle_age_ms = 0U;
+volatile uint32_t g_heading_source_rate_age_ms = 0U;
+volatile float g_heading_source_yaw_deg = 0.0f;
+volatile float g_heading_source_rate_dps = 0.0f;
+
+/* 唯一生产者TaskA：紧接HWT101_Update调用，不代表运动许可。 */
+static void App_HeadingSourcePublish(void)
+{
+    AppHeadingSource value = {0};
+    uint32_t now;
+    taskENTER_CRITICAL();
+    now = (uint32_t)xTaskGetTickCount();
+    value.sample_ms = now;
+    /* 用真实接收帧龄期还原时间，不能用本次发布时刻冒充新帧。 */
+    value.angle_ms = g_hwt_update_tick - g_hwt_angle_age_ms;
+    value.rate_ms = g_hwt_update_tick - g_hwt_rate_age_ms;
+    value.yaw_deg = g_hwt_yaw_deg;
+    value.rate_dps = g_hwt_wz_dps;
+    value.healthy = ((g_hwt_version_result == 1U) &&
+        (g_hwt_valid_mask == 3U) &&
+        (g_hwt_angle_age_ms < HEADING_SOURCE_FRESH_MS) &&
+        (g_hwt_rate_age_ms < HEADING_SOURCE_FRESH_MS) &&
+        ((uint32_t)(now - g_hwt_update_tick) < HEADING_SOURCE_FRESH_MS) &&
+        ((uint32_t)(now - value.angle_ms) < HEADING_SOURCE_FRESH_MS) &&
+        ((uint32_t)(now - value.rate_ms) < HEADING_SOURCE_FRESH_MS) &&
+        (value.yaw_deg >= -180.0f && value.yaw_deg <= 180.0f) &&
+        (value.rate_dps >= -2000.0f && value.rate_dps <= 2000.0f) &&
+        (g_hwt_cal_active == 0U) && (g_hwt_cal_request == 0U) &&
+        (g_hwt_cal_end_tx_result != 2U) &&
+        (g_hwt_version_state == 0U) && (g_hwt_version_request == 0U) &&
+        (g_hwt_a7_request == 0U)) ? 1U : 0U;
+    /* 序号只在完整发布时递增；读者不修改它，允许uint32回绕。 */
+    value.sequence = s_heading_source.sequence + 1U;
+    s_heading_source = value;
+    s_heading_source_ready = 1U;
+    taskEXIT_CRITICAL();
+}
+
+/* 唯一观察者CAN任务：只取快照，禁止从这些Watch变量驱动电机。 */
+static void App_HeadingSourceObserve(void)
+{
+    AppHeadingSource value;
+    uint32_t now, ready, valid;
+    taskENTER_CRITICAL();
+    value = s_heading_source;
+    ready = s_heading_source_ready;
+    now = (uint32_t)xTaskGetTickCount();
+    taskEXIT_CRITICAL();
+    valid = ((ready == 1U) && (value.healthy == 1U) &&
+        ((uint32_t)(now - value.sample_ms) < HEADING_SOURCE_FRESH_MS) &&
+        ((uint32_t)(now - value.angle_ms) < HEADING_SOURCE_FRESH_MS) &&
+        ((uint32_t)(now - value.rate_ms) < HEADING_SOURCE_FRESH_MS)) ? 1U : 0U;
+    g_heading_source_sequence = value.sequence;
+    g_heading_source_age_ms = now - value.sample_ms;
+    g_heading_source_angle_age_ms = now - value.angle_ms;
+    g_heading_source_rate_age_ms = now - value.rate_ms;
+    g_heading_source_yaw_deg = value.yaw_deg;
+    g_heading_source_rate_dps = value.rate_dps;
+    /* 失效仍保留原始观测值供排查，必须同时检查valid。 */
+    g_heading_source_valid = valid;
+}
+#endif
+#if APP_HEADING_SESSION_TEST
+/* 只允许CAN任务操作会话对象；Safety只锁存trip并撤销执行。 */
+#define HR_IDLE 0U
+#define HR_WAIT 1U
+#define HR_RUN 2U
+#define HR_DONE 3U
+#define HR_FAULT 4U
+#define HR_CANCELLED 5U
+volatile uint32_t g_heading_exec_request = 0U; /* 1开始一次，2取消 */
+volatile float g_heading_exec_relative_deg = 5.0f;
+volatile uint32_t g_heading_exec_phase = HR_IDLE;
+volatile uint32_t g_heading_exec_trip = 0U;
+volatile uint32_t g_heading_exec_state = HS_IDLE;
+volatile uint32_t g_heading_exec_cause = 0U;
+volatile uint32_t g_heading_exec_action = HS_ACTION_NONE;
+volatile int32_t g_heading_exec_rpm = 0;
+volatile float g_heading_exec_target_deg = 0.0f;
+volatile float g_heading_exec_error_deg = 0.0f;
+volatile uint32_t g_heading_exec_backend_session = 0U;
+static HeadingSession s_heading_exec = {0};
+static uint32_t s_heading_exec_wait_ms = 0U;
+static float s_heading_exec_relative = 0.0f;
+
+/* trip:1取消，2源失效/配置冲突，3平台/互斥，4等待超时，
+ * 5执行器会话归属，6会话/提交失败，7运行总截止。首次原因锁存。 */
+/* 首次失败快照：仅记录，不改变原有判定、截止或VM动作。 */
+volatile uint32_t g_heading_fault_phase = 0U;
+volatile uint32_t g_heading_fault_source_flags = 0U;
+volatile uint32_t g_heading_fault_sample_age_ms = 0U;
+volatile uint32_t g_heading_fault_angle_age_ms = 0U;
+volatile uint32_t g_heading_fault_rate_age_ms = 0U;
+volatile uint32_t g_heading_fault_hwt_update_age_ms = 0U;
+volatile uint32_t g_heading_fault_tick_ms = 0U;
+
+static void App_HeadingRuntimeTrip(uint32_t cause)
+{
+    uint32_t now, flags;
+    taskENTER_CRITICAL();
+    if (g_heading_exec_trip == 0U)
+    {
+        now = (uint32_t)xTaskGetTickCount();
+        g_heading_fault_phase = g_heading_exec_phase;
+        g_heading_fault_tick_ms = now;
+        g_heading_fault_sample_age_ms = now - s_heading_source.sample_ms;
+        g_heading_fault_angle_age_ms = now - s_heading_source.angle_ms;
+        g_heading_fault_rate_age_ms = now - s_heading_source.rate_ms;
+        g_heading_fault_hwt_update_age_ms = now - g_hwt_update_tick;
+        flags = 0U;
+        if (s_heading_source_ready != 1U) flags |= 0x001U;
+        if (s_heading_source.healthy != 1U) flags |= 0x002U;
+        if (g_heading_fault_sample_age_ms >= HS_SOURCE_MS) flags |= 0x004U;
+        if (g_heading_fault_angle_age_ms >= HS_SOURCE_MS) flags |= 0x008U;
+        if (g_heading_fault_rate_age_ms >= HS_SOURCE_MS) flags |= 0x010U;
+        if (g_hwt_cal_active != 0U) flags |= 0x020U;
+        if (g_hwt_cal_request != 0U) flags |= 0x040U;
+        if (g_hwt_cal_end_tx_result == 2U) flags |= 0x080U;
+        if (g_hwt_version_state != 0U) flags |= 0x100U;
+        if (g_hwt_version_request != 0U) flags |= 0x200U;
+        if (g_hwt_a7_request != 0U) flags |= 0x400U;
+        g_heading_fault_source_flags = flags;
+        g_heading_exec_trip = cause;
+    }
+    g_heading_exec_rpm = 0;
+    g_chassis_auto_request = 0U;
+    ChassisAuto_Abort();
+    g_vm_test_request = 0U;
+    taskEXIT_CRITICAL();
+}
+
+
+static uint32_t App_HeadingRuntimeExclusive(void)
+{
+    return ((g_chassis_auto_request == 0U) &&
+        (g_can_jog_request == 0U) && (s_can_jog_preparing == 0U) &&
+        (g_wheel_test_active == 0U) && (g_wheel_test_cut_vm == 0U) &&
+        (App_CanJogOtherRequest() == 0U) && (g_can_feedback_enable == 0U) &&
+        (g_can_poll_enable == 1U) && (g_can_test_result == 1U) &&
+        (g_rtos_fault == 0U) && (g_safety_fault == 0U) &&
+        (g_motion_diag_fault_latched == 0U) &&
+        (g_motion_auto_stop_state == MOTION_STOP_IDLE) &&
+        (g_motion_auto_stop_cut_vm == 0U) &&
+        (g_motion_diag_hold_report == 0U) &&
+        (g_motion_diag_hold_stop_service == 0U) &&
+        (g_motion_diag_fail_stop_once == 0U)) ? 1U : 0U;
+}
+
+/* 由调用者在临界区内使用，独立复查真实帧年龄及配置互斥。 */
+static uint32_t App_HeadingRuntimeSource(uint32_t now)
+{
+    return ((s_heading_source_ready == 1U) && (s_heading_source.healthy == 1U) &&
+        ((uint32_t)(now - s_heading_source.sample_ms) < HS_SOURCE_MS) &&
+        ((uint32_t)(now - s_heading_source.angle_ms) < HS_SOURCE_MS) &&
+        ((uint32_t)(now - s_heading_source.rate_ms) < HS_SOURCE_MS) &&
+        (g_hwt_cal_active == 0U) && (g_hwt_cal_request == 0U) &&
+        (g_hwt_cal_end_tx_result != 2U) &&
+        (g_hwt_version_state == 0U) && (g_hwt_version_request == 0U) &&
+        (g_hwt_a7_request == 0U)) ? 1U : 0U;
+}
+
+static uint32_t App_HeadingRuntimeOwns(const ChassisAutoStatus *status)
+{
+    return ((status->session == g_heading_exec_backend_session) &&
+        (status->heading_mode == 1U) && (status->segment == 2U) &&
+        (status->dry_run == 0U)) ? 1U : 0U;
+}
+
+/* Safety每20ms调用；不修改会话对象，不发CAN，不等待CAN任务。 */
+static void App_HeadingRuntimeSafety(void)
+{
+    ChassisAutoStatus status;
+    uint32_t now, normal_done;
+    taskENTER_CRITICAL();
+    now = (uint32_t)xTaskGetTickCount();
+    (void)ChassisAuto_ReadStatus(&status);
+    if ((g_heading_exec_phase != HR_WAIT) && (g_heading_exec_phase != HR_RUN))
+    {
+        if (status.active != 0U) App_HeadingRuntimeTrip(5U);
+        g_vm_test_request = 0U;
+    }
+    else if (g_heading_exec_trip != 0U)
+        App_HeadingRuntimeTrip(g_heading_exec_trip);
+    else if (g_heading_exec_request == 2U) App_HeadingRuntimeTrip(1U);
+    else if (!App_HeadingRuntimeSource(now)) App_HeadingRuntimeTrip(2U);
+    else if (!App_HeadingRuntimeExclusive() || (g_vm_test_request != 1U))
+        App_HeadingRuntimeTrip(3U);
+    else if (g_heading_exec_phase == HR_WAIT)
+    {
+        if ((uint32_t)(now - s_heading_exec_wait_ms) >= 5000U)
+            App_HeadingRuntimeTrip(4U);
+        else if (status.active != 0U || status.result != 0U)
+            App_HeadingRuntimeTrip(5U);
+    }
+    else
+    {
+        normal_done = ((g_heading_exec_state == HS_STOPPING) &&
+            App_HeadingRuntimeOwns(&status) && (status.active == 0U) &&
+            (status.result == 1U) && (status.rotation_stop_mask == 0x0FU)) ? 1U : 0U;
+        if (!App_HeadingRuntimeOwns(&status)) App_HeadingRuntimeTrip(5U);
+        else if ((uint32_t)(now - s_heading_exec_wait_ms) >=
+                 (HS_RUN_MS + HS_STOP_MS)) App_HeadingRuntimeTrip(7U);
+        else if (!normal_done && ((status.active != 1U) ||
+                 (status.result != 0U) || (g_safety_ready != 1U) ||
+                 (g_can_guard_ready != 1U))) App_HeadingRuntimeTrip(3U);
+    }
+    taskEXIT_CRITICAL();
+}
+
+/* 只由唯一CAN任务调用，每轮计算后最多执行原执行器的一步交易。 */
+static void App_HeadingRuntimeStep(void)
+{
+    HeadingSessionInput input = {0};
+    HeadingSessionOutput output = {0};
+    ChassisAutoStatus status;
+    uint32_t request, accepted = 0U, now;
+
+    App_HeadingSourceObserve();
+    taskENTER_CRITICAL();
+    now = (uint32_t)xTaskGetTickCount();
+    request = g_heading_exec_request;
+    g_heading_exec_request = 0U;
+    (void)ChassisAuto_ReadStatus(&status);
+    if (g_heading_exec_phase >= HR_DONE)
+    {
+        /* 终态保持观察结果；新request不排队，上电后只运行一次。 */
+        g_vm_test_request = 0U;
+        taskEXIT_CRITICAL();
+        return;
+    }
+    if ((request == 2U) &&
+        ((g_heading_exec_phase == HR_WAIT) || (g_heading_exec_phase == HR_RUN)))
+        App_HeadingRuntimeTrip(1U);
+    if ((request == 1U) && (g_heading_exec_phase == HR_IDLE))
+    {
+        s_heading_exec_relative = g_heading_exec_relative_deg;
+        /* 首轮只接受正负5度，不从Watch开放任意大角度。 */
+        if (((s_heading_exec_relative != 5.0f) && (s_heading_exec_relative != -5.0f)) ||
+            !App_HeadingRuntimeSource(now) || !App_HeadingRuntimeExclusive() ||
+            (g_vm_test_request != 0U) || (g_heading_exec_trip != 0U) ||
+            (status.active != 0U) || (status.result != 0U) ||
+            (status.cut_vm != 0U) ||
+            !(s_heading_source.rate_dps >= -3.0f && s_heading_source.rate_dps <= 3.0f))
+            App_HeadingRuntimeTrip(3U);
+        else
+        {
+            s_heading_exec_wait_ms = now;
+            g_heading_exec_phase = HR_WAIT;
+            g_vm_test_request = 1U;
+        }
+    }
+    if ((g_heading_exec_phase == HR_WAIT) && (g_heading_exec_trip == 0U))
+    {
+        if (!App_HeadingRuntimeSource(now)) App_HeadingRuntimeTrip(2U);
+        else if (!App_HeadingRuntimeExclusive() || g_vm_test_request != 1U)
+            App_HeadingRuntimeTrip(3U);
+        else if ((uint32_t)(now - s_heading_exec_wait_ms) >= 5000U)
+            App_HeadingRuntimeTrip(4U);
+        else if (App_CanJogReady() == 1U)
+        {
+            input.now_ms = now;
+            input.sample_ms = s_heading_source.sample_ms;
+            input.sequence = s_heading_source.sequence;
+            input.healthy = input.platform_ok = 1U;
+            input.yaw_deg = s_heading_source.yaw_deg;
+            input.rate_dps = s_heading_source.rate_dps;
+            input.backend_active = status.active;
+            input.backend_result = status.result;
+            input.backend_stop_mask = status.rotation_stop_mask;
+            if (HeadingSession_Start(&s_heading_exec, &input,
+                s_heading_exec_relative, &output) != 1U)
+                App_HeadingRuntimeTrip(6U);
+            else
+            {
+                accepted = ChassisAuto_BeginHeading(0U, output.command_rpm);
+                HeadingSession_ReportBegin(&s_heading_exec, accepted, &output);
+                if (accepted != 1U) App_HeadingRuntimeTrip(6U);
+                else
+                {
+                    (void)ChassisAuto_ReadStatus(&status);
+                    g_heading_exec_backend_session = status.session;
+                    g_heading_exec_phase = HR_RUN;
+                    s_heading_exec_wait_ms = now;
+                }
+            }
+        }
+    }
+    if ((g_heading_exec_phase == HR_RUN) && (g_heading_exec_trip == 0U))
+    {
+        (void)ChassisAuto_ReadStatus(&status);
+        if (!App_HeadingRuntimeOwns(&status)) App_HeadingRuntimeTrip(5U);
+        else
+        {
+            input.now_ms = now;
+            input.sample_ms = s_heading_source.sample_ms;
+            input.sequence = s_heading_source.sequence;
+            input.healthy = App_HeadingRuntimeSource(now);
+            input.platform_ok = ((App_HeadingRuntimeExclusive() == 1U) &&
+                (g_vm_test_request == 1U) &&
+                ((App_CanJogReady() == 1U) ||
+                 ((s_heading_exec.state == HS_STOPPING) &&
+                  (status.active == 0U) && (status.result == 1U) &&
+                  (status.rotation_stop_mask == 0x0FU)))) ? 1U : 0U;
+            input.yaw_deg = s_heading_source.yaw_deg;
+            input.rate_dps = s_heading_source.rate_dps;
+            input.backend_active = status.active;
+            input.backend_result = status.result;
+            input.backend_stop_mask = status.rotation_stop_mask;
+            HeadingSession_Step(&s_heading_exec, &input, &output);
+            if (output.action == HS_ACTION_UPDATE)
+            {
+                accepted = ChassisAuto_UpdateHeading(output.command_rpm);
+                HeadingSession_ReportUpdate(&s_heading_exec, accepted, &output);
+            }
+            else if (output.action == HS_ACTION_STOP)
+            {
+                accepted = ChassisAuto_RequestStop();
+                HeadingSession_ReportStop(&s_heading_exec, accepted, &output);
+            }
+            if (output.action == HS_ACTION_ABORT) App_HeadingRuntimeTrip(6U);
+            else if (output.action == HS_ACTION_COMPLETE)
+            {
+                g_heading_exec_phase = HR_DONE;
+                g_vm_test_request = 0U;
+            }
+        }
+    }
+    if (g_heading_exec_trip != 0U)
+    {
+        if (g_heading_exec_trip == 1U)
+        {
+            HeadingSession_Cancel(&s_heading_exec, &output);
+            g_heading_exec_phase = HR_CANCELLED;
+        }
+        else
+        {
+            /* 只让CAN任务终结会话；故障不伪装成正常到位。 */
+            input.healthy = input.platform_ok = 0U;
+            input.backend_result = 2U;
+            input.now_ms = now;
+            HeadingSession_Step(&s_heading_exec, &input, &output);
+            g_heading_exec_phase = HR_FAULT;
+        }
+        output.action = HS_ACTION_ABORT;
+        output.command_rpm = 0;
+    }
+    g_heading_exec_state = output.state;
+    g_heading_exec_cause = output.cause;
+    g_heading_exec_action = output.action;
+    g_heading_exec_rpm = output.command_rpm;
+    if (g_heading_exec_phase != HR_IDLE)
+    {
+        g_heading_exec_target_deg = s_heading_exec.controller.target_deg;
+        g_heading_exec_error_deg = s_heading_exec.controller.error_deg;
+    }
+    taskEXIT_CRITICAL();
+
+    /* 真正的CAN交易放在临界区外，仍只有这一个CAN任务。 */
+    if ((g_heading_exec_phase == HR_RUN) && (g_heading_exec_trip == 0U))
+        ChassisAuto_CanStep();
+}
+#endif
 
 static void App_CanTask(void *argument)
 {
@@ -721,11 +1109,32 @@ static void App_CanTask(void *argument)
     while (1)
     {
         g_can_task_count++;
+        #if APP_HEADING_SESSION_TEST
+                App_HeadingRuntimeStep();
+        #endif
+        #if APP_HWT_STATIC_TEST && !APP_HWT_TURN_TEST
+                App_HeadingSourceObserve();
+                {
+                    ChassisHeadingRequest heading_request = {0, 1U, 0U};
+                    uint32_t valid = ChassisAuto_HeadingRead(&heading_request);
+                    /* 只观察：不会把这里的轮速发给电机。 */
+                    g_heading_bus_rpm = heading_request.command_rpm;
+                    g_heading_bus_stop = heading_request.stop_required;
+                    g_heading_bus_sequence = heading_request.sequence;
+                    g_heading_bus_valid = valid;
+                }
+        #endif
         if (g_can_test_result == 1U)
         {
-                    /* 同一轮只执行一个查询，位置请求优先于转速/版本/状态 */
+            
+        /* 同一轮只执行一个查询，位置请求优先于转速/版本/状态 */
         /* 静态停止测试优先，每轮仍只执行一笔CAN交易 */
         /* 自动停止优先，每轮只执行一笔CAN交易 */
+        #if APP_HEADING_SESSION_TEST
+                if (g_chassis_auto_active == 0U) App_CanPollStep();
+        #endif
+                if (APP_HEADING_SESSION_TEST == 0U)
+                {
         if (g_chassis_auto_active == 1U)
         {
             g_chassis_auto_request = 0U;
@@ -1071,6 +1480,7 @@ static void App_CanTask(void *argument)
                 /* 无手动请求时，按地址1到4循环采状态 */
                  App_CanFeedbackStep();
             }
+            } /* 原调试交易只在非目标航向模式执行 */
         App_CanPollRefresh();
         App_CanFeedbackRefresh();
         /* 临时故障注入，正式监督与正常轮询仍继续运行 */
@@ -1111,9 +1521,189 @@ static void App_CanTask(void *argument)
             g_motion_diag_report_count++;
         }
         g_can_task_stack_words = uxTaskGetStackHighWaterMark(NULL);
-        vTaskDelay(pdMS_TO_TICKS(50U));
+        vTaskDelay(pdMS_TO_TICKS(APP_HEADING_SESSION_TEST ? 10U : 50U));
     }
 }
+
+/* 仅虚拟数据的软件自检：0未执行，1通过，2失败。case非0定位失败组。 */
+volatile uint32_t g_heading_dry_result = 0U;
+volatile uint32_t g_heading_dry_case = 0U;
+volatile int32_t g_heading_dry_ccw[5] = {0};
+volatile int32_t g_heading_dry_cw[5] = {0};
+volatile float g_heading_dry_cross_error = 0.0f;
+
+static void App_HeadingDryRun(void)
+{
+    HeadingController controller = {0};
+    HeadingControllerOutput output = {0};
+    const HeadingControllerConfig *config = &g_heading_controller_default_config;
+    static const float yaw[2][5] = {
+        {0.0f, 25.0f, 39.0f, 44.0f, 44.0f},
+        {0.0f, -25.0f, -39.0f, -44.0f, -44.0f}
+    };
+    static const uint32_t tick[5] = {0U, 100U, 200U, 300U, 1000U};
+    static const int32_t expected[5] = {5, 3, 1, 0, 0};
+    uint32_t direction, i, expected_state;
+    int32_t expected_command;
+    float error;
+
+    g_heading_dry_result = 2U;
+    /* 两组各5次计算，虚拟tick不会让任务真实等待这些时间。 */
+    for (direction = 0U; direction < 2U; direction++)
+    {
+        g_heading_dry_case = direction + 1U;
+        if (HeadingController_Start(&controller, config,
+            (direction == 0U) ? 45.0f : -45.0f, 0.0f, 0U) != 1U) return;
+        for (i = 0U; i < 5U; i++)
+        {
+            if (HeadingController_Step(&controller, tick[i], yaw[direction][i],
+                0.0f, 1U, &output) != 1U) return;
+            expected_command = (direction == 0U) ? expected[i] : -expected[i];
+            if (direction == 0U) g_heading_dry_ccw[i] = output.command_rpm;
+            else g_heading_dry_cw[i] = output.command_rpm;
+            expected_state = (i < 3U) ? HEADING_CTRL_TURNING :
+                ((i == 3U) ? HEADING_CTRL_SETTLING : HEADING_CTRL_DONE);
+            if ((output.command_rpm != expected_command) ||
+                (output.state != expected_state) ||
+                (output.cause != HEADING_CAUSE_NONE) ||
+                (output.stop_required != ((i < 3U) ? 0U : 1U))) return;
+        }
+    }
+
+    /* +179到-179最短误差为+2度，在当前2度候选容差内。 */
+    g_heading_dry_case = 3U;
+    if (HeadingController_Start(&controller, config, -179.0f, 179.0f, 0U) != 1U)
+        return;
+    if (HeadingController_Step(&controller, 0U, 179.0f, 0.0f, 1U, &output) != 1U)
+        return;
+    g_heading_dry_cross_error = output.error_deg;
+    if ((output.error_deg < 1.999f) || (output.error_deg > 2.001f) ||
+        (output.state != HEADING_CTRL_SETTLING) || (output.command_rpm != 0)) return;
+    if (HeadingController_Step(&controller, 700U, -179.0f, 0.0f, 1U, &output) != 1U)
+        return;
+    if ((output.state != HEADING_CTRL_DONE) || (output.stop_required != 1U)) return;
+
+    g_heading_dry_case = 4U;
+    if (HeadingController_Start(&controller, config, 45.0f, 0.0f, 0U) != 1U) return;
+    if (HeadingController_Step(&controller, 1U, 0.0f, 0.0f, 0U, &output) != 1U)
+        return;
+    if ((output.state != HEADING_CTRL_FAULT) ||
+        (output.cause != HEADING_CAUSE_SENSOR_INVALID) ||
+        (output.command_rpm != 0) || (output.stop_required != 1U)) return;
+
+    g_heading_dry_case = 5U;
+    if (HeadingController_Start(&controller, config, 45.0f, 0.0f, 0U) != 1U) return;
+    if (HeadingController_Step(&controller, config->timeout_ms,
+        0.0f, 0.0f, 1U, &output) != 1U) return;
+    if ((output.state != HEADING_CTRL_FAULT) ||
+        (output.cause != HEADING_CAUSE_TIMEOUT) ||
+        (output.command_rpm != 0) || (output.stop_required != 1U)) return;
+
+    g_heading_dry_case = 6U;
+    if (HeadingController_Start(&controller, config, 45.0f, 0.0f, 0U) != 1U) return;
+    HeadingController_Cancel(&controller, &output);
+    if ((output.state != HEADING_CTRL_CANCELLED) ||
+        (output.cause != HEADING_CAUSE_CANCELLED) ||
+        (output.command_rpm != 0) || (output.stop_required != 1U)) return;
+
+    /* 验证刚修正的两角分别归一化，不允许误返回0。 */
+    g_heading_dry_case = 7U;
+    error = HeadingController_ErrorDeg(179.0f, -3500.0f);
+    if ((error < 78.999f) || (error > 79.001f)) return;
+    error = HeadingController_ErrorDeg(-179.0f, 3500.0f);
+    if ((error < -79.001f) || (error > -78.999f)) return;
+
+    g_heading_dry_case = 0U;
+    g_heading_dry_result = 1U;
+}
+
+#if APP_HWT_STATIC_TEST && !APP_HWT_TURN_TEST
+/* 1开始一次预览，2取消；默认0，拒绝请求不会留待以后自动执行。 */
+volatile uint32_t g_heading_live_request = 0U;
+/* 相对本次开始时的航向，第一轮保持0度；范围仅用于静态预览。 */
+volatile float g_heading_live_relative_deg = 0.0f;
+volatile float g_heading_live_target_deg = 0.0f;
+volatile float g_heading_live_error_deg = 0.0f;
+volatile int32_t g_heading_live_command_rpm = 0;
+volatile uint32_t g_heading_live_state = HEADING_CTRL_IDLE;
+volatile uint32_t g_heading_live_cause = 0U;
+volatile uint32_t g_heading_live_stop_required = 0U;
+/* 拒绝原因：1本次上电已用，2静态条件不满足，3HWT未就绪，4角度无效。 */
+volatile uint32_t g_heading_live_reject = 0U;
+/* 仅供Watch观察：转换结果与四轮目标，不发送CAN。 */
+volatile uint32_t g_heading_live_encode_result = 0U;
+volatile ChassisMotorCommand g_heading_live_motor[4] = {0};
+static HeadingController s_heading_live_controller = {0};
+static uint32_t s_heading_live_used = 0U;
+
+static uint32_t App_HeadingLiveHealthy(uint32_t now)
+{
+    /* 沿现有解析器500ms新鲜度，仅用于本次不驱动电机的输入检查。 */
+    return ((g_hwt_version_result == 1U) && (g_hwt_valid_mask == 3U) &&
+        (g_hwt_angle_age_ms <= 500U) && (g_hwt_rate_age_ms <= 500U) &&
+        ((uint32_t)(now - g_hwt_update_tick) <= 100U) &&
+        (g_hwt_cal_active == 0U) && (g_hwt_cal_request == 0U) &&
+        (g_hwt_cal_end_tx_result != 2U) &&
+        (g_hwt_version_state == 0U) && (g_hwt_version_request == 0U) &&
+        (g_hwt_a7_request == 0U)) ? 1U : 0U;
+}
+
+/* 只由TaskA在HWT101_Update之后调用，不读写电机或VM输出。 */
+static void App_HeadingLiveStep(void)
+{
+    HeadingControllerOutput output = {0};
+    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT] = {0};
+    uint32_t i;
+    uint32_t now = (uint32_t)xTaskGetTickCount();
+    uint32_t request = g_heading_live_request;
+    uint32_t healthy = App_HeadingLiveHealthy(now);
+    uint32_t static_ok = ((g_vm_test_request == 0U) &&
+        (g_rtos_fault == 0U) && (g_safety_fault == 0U)) ? 1U : 0U;
+    float relative;
+
+    g_heading_live_request = 0U;
+    if ((request == 2U) &&
+        ((s_heading_live_controller.state == HEADING_CTRL_TURNING) ||
+         (s_heading_live_controller.state == HEADING_CTRL_SETTLING)))
+        HeadingController_Cancel(&s_heading_live_controller, &output);
+    if (request == 1U)
+    {
+        g_heading_live_reject = 0U;
+        relative = g_heading_live_relative_deg;
+        if (s_heading_live_used != 0U) g_heading_live_reject = 1U;
+        else if (static_ok == 0U) g_heading_live_reject = 2U;
+        else if (healthy == 0U) g_heading_live_reject = 3U;
+        else if (!(relative >= -90.0f && relative <= 90.0f))
+            g_heading_live_reject = 4U; /* 此写法也拒绝NaN/无穷值。 */
+        else if (HeadingController_Start(&s_heading_live_controller,
+            &g_heading_controller_default_config,
+            g_hwt_yaw_deg + relative, g_hwt_yaw_deg, now) != 1U)
+            g_heading_live_reject = 4U;
+        else s_heading_live_used = 1U;
+    }
+    /* 失效时传0，让控制器锁定故障并把建议轮速撤为0。 */
+    (void)HeadingController_Step(&s_heading_live_controller, now,
+        g_hwt_yaw_deg, g_hwt_wz_dps,
+        ((healthy != 0U) && (static_ok != 0U)) ? 1U : 0U, &output);
+    g_heading_live_state = output.state;
+    g_heading_live_cause = output.cause;
+    g_heading_live_target_deg = output.target_deg;
+    g_heading_live_error_deg = output.error_deg;
+    g_heading_live_command_rpm = output.command_rpm;
+    g_heading_live_stop_required = output.stop_required;
+        /* 将本轮航向输出转换为四轮指令，仅发布观察结果。 */
+    g_heading_live_encode_result =
+        Chassis_HeadingCommands(output.command_rpm, commands);
+
+    for (i = 0U; i < CHASSIS_WHEEL_COUNT; i++)
+    {
+        g_heading_live_motor[i] = commands[i];
+    }
+    /* TaskA发布完整的一轮计算结果；CAN任务只读取预览。 */
+    g_heading_publish_result = ChassisAuto_HeadingPublish(
+        output.command_rpm, output.stop_required);
+}
+#endif
 
 /* 任务A：每100毫秒计数一次 */
 static void App_TestTaskA(void *argument)
@@ -1128,7 +1718,8 @@ static void App_TestTaskA(void *argument)
     g_serial_send_ok = App_DebugSendString("F407 FreeRTOS READY\r\n");
     /* 已验收的基础平台就绪后，只请求一次提示音 */
     Buzzer_Start(APP_INIT_BEEP_COUNT);
-    
+        /* 一次性虚拟角度自检，不驱动小车。 */
+    App_HeadingDryRun();
     while (1)
     {
         g_test_count_a++;
@@ -1136,6 +1727,12 @@ static void App_TestTaskA(void *argument)
         /* 每100毫秒更新响停状态 */
         Buzzer_Update();
         HWT101_Update();
+        #if APP_HEADING_SESSION_TEST || (APP_HWT_STATIC_TEST && !APP_HWT_TURN_TEST)
+        App_HeadingSourcePublish();
+        #endif
+        #if APP_HWT_STATIC_TEST && !APP_HWT_TURN_TEST
+        App_HeadingLiveStep();
+        #endif
         /* 一轮最多处理64字节；只有任务A交接并更新屏幕 */
         SAOMA_Update();
         /* 确认启动请求后，保留本轮码和屏幕，不替换任务对象 */
@@ -1363,7 +1960,17 @@ static void App_KeyTask(void *argument)
 
     while (1)
     {
-#if APP_HWT_STATIC_TEST
+#if APP_HEADING_SESSION_TEST
+        if (Key_GetEvent() != 0U)
+        {
+            g_start_key_count++;
+            /* PC13只取消，不用按键启动本次开发试验。 */
+            taskENTER_CRITICAL();
+            if ((g_heading_exec_phase == HR_WAIT) || (g_heading_exec_phase == HR_RUN))
+                g_heading_exec_request = 2U;
+            taskEXIT_CRITICAL();
+        }
+#elif APP_HWT_STATIC_TEST
         if (Key_GetEvent() != 0U) g_start_key_count++;
 #elif APP_HWT_TURN_TEST
         {
@@ -1416,8 +2023,10 @@ static void App_SafetyTask(void *argument)
 
     while (1)
     {
-#if APP_HWT_STATIC_TEST
-        g_vm_test_request = 0U; /* 静态采集固件不允许电机VM */
+#if APP_HEADING_SESSION_TEST
+        App_HeadingRuntimeSafety();
+#elif APP_HWT_STATIC_TEST
+        g_vm_test_request = 0U;
 #elif APP_HWT_TURN_TEST
         App_HwtTurnSafety();
 #endif

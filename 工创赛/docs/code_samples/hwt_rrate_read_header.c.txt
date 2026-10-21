@@ -1,0 +1,4 @@
+/* 仅静态VM0手动读RRATE，默认不请求；不设置参数。 */
+extern volatile uint32_t g_hwt_rrate_request, g_hwt_rrate_result;
+extern volatile uint32_t g_hwt_rrate_raw, g_hwt_rrate_reply_count;
+extern volatile uint8_t g_hwt_rrate_reply[11];

@@ -1,0 +1,31 @@
+{
+  "first": {
+    "angle": 593,
+    "rate": 593,
+    "tick": 59360,
+    "checksum": 0,
+    "uart_errors": 1,
+    "overflows": 0
+  },
+  "second": {
+    "angle": 744,
+    "rate": 744,
+    "tick": 74460,
+    "checksum": 0,
+    "uart_errors": 1,
+    "overflows": 0
+  },
+  "delta_ms": 15100,
+  "angle_delta": 151,
+  "rate_delta": 151,
+  "angle_hz": 10.0,
+  "rate_hz": 10.0,
+  "incremental_errors": {
+    "checksum": 0,
+    "uart": 0,
+    "overflow": 0
+  },
+  "interpretation": "about10Hz valid received angle and rate frames, mean100ms apart, no freshness margin; live Watch not atomic and does not bound max interval",
+  "source_of_10Hz": "user screenshots; official HWT101 default10Hz is corroboration not proof of current RRATE register",
+  "next": "confirm host configuration connection; candidate50Hz is engineering choice; do not alter100ms source or submission watchdog or guess unlock commands"
+}

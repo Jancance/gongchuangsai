@@ -1,5 +1,321 @@
 # P1 执行记录
 
+## 2026-10-22电控组1.3：+5度请求准备阶段非02应答失败
+
+用户反馈VM短亮后自动关闭、无法判断实际转动，提出希望扩大幅度。两图记录phase4/trip6、backend result2/cause1/io8/address1、停止mask0；首次控制锁存1/result8/phase3/length5、PE2前后1、收帧1/约1ms/ESR0。源终态有效、龄期26/7ms、VM及两fault0。只读实际D:/新建文件夹4工程can.c、chassis_auto_test.c及main：ControlSingle收到匹配回复但Data[1]非02映射8，准备阶段失败后切VM，不能当作目标5度太小或完成停车；尚未进入速度阶段。请求和原始回复折叠，不能直接认定本轮仍为E2，也不能从终态有效推断触发时全部源条件。
+
+当前只松开外部VM开关、保留失败不复位不重发，展开trace_request与trace_last_rx的Data及ID/DLC截图，再定修复。暂不扩大目标、不放宽保护。两图和结构化记录见evidence/p1-foundation/2026-10-22/。核R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；原始原因、真实转角停车/X/Y仍待验，官方Q继续待技术答疑确认。助手未改实际源或操作硬件。
+
+## 2026-10-21用户可满足运输条件，下一项保持VM开关按下的一次+5度复测
+
+用户对完整装机载物、平整地面及机构断电后收拢可靠固定回答“可以实现”。按此前条件执行准备，不宣称独立实物验收。恢复会话源码未变、闲置源17/8ms及三项会话/锁存/故障0，静态VM22V持续及1号失能F3 02/flags02均已有独立本轮证据。
+
+当前唯一下一项按既有完整装机载物地面条件摆好并固定录像，VM外部开关按下且保持允许直到结束/异常中止；若调试曾暂停先F5连续Run至少3秒使源新鲜，保持relative5.0，源有效/帧龄<100ms/两fault0/phase/trip/request及锁存0时仅exec_request1一次，不手改VM请求。连续观察约18秒，不重复请求/Stop/单步；异常或仍持续异常转动松开外部VM开关，实际停稳或明确失败后Stop，保留Watch1/2及原始控制诊断。不复位抹首因，记录灯、实际小幅转动与自动停车。证据heading_after_static_ready_for_positive5.json；该项仅试验安排，尚无本次结果。
+
+R核RUN-01/PWR-01/MECH-01/02，E LOC-03/05/07、RUN-06、MOT-04，官方Q待技术答疑确认。原E2及会话真实转角/停车/X/Y仍未闭环，助手未操作硬件或改源。
+
+## 2026-10-21恢复会话板上闲置通过，复测前确认机构断电运输姿态
+
+两图源valid1、角度/角速度帧龄17/8ms、yaw0.153808594/rate0；VM请求/RTOS/Safety fault0、Safety ready/CAN test1、guard ready0/cause0/valid0及各flags0；会话phase/trip/request/state/cause/后端及诊断锁存均0、relative5。CAN余栈325字/1300字节、最小堆11328字节，HWT三接收错误0。VM0时CAN gate0属等待，不能误判通信坏。接受截图时默认闲置与源状态，不扩展为连续运动或最大间隔证明。证据heading_restore_after_F3_idle_watch1/2.png及heading_restore_after_F3_idle_pass.json。
+
+准备一次+5度复测前，前序四轮已接回、机构VM断开，尚需用户确认完整装机载物地面条件及机械臂/升降等在断电时已收拢可靠固定、不会下滑伸出/拖地。不擅自要求接回机构供电或恢复自动动作。当前唯一下一项仅询问运输姿态/测试条件，VM开关松开、不写请求；确认前不启动运动。R核RUN-01/PWR-01/MECH-01/02，E LOC-03/05/07、RUN-06/MOT-04；官方Q待技术答疑确认。原E2、会话转角停车/X/Y仍未闭环，助手未改源或操作硬件。
+
+## 2026-10-21恢复航向模式完整Rebuild通过，下一项下载默认态观察
+
+用户Rebuild37760/588/1604/25492、0错0警告/3秒；本机日志一致，actual main/can/app_config SHA均与此前已验证诊断会话记录完全相同，KEY0/STATIC0/TURN0/SESSION1。证据heading_restore_after_static_F3_actual_rebuild_pass.json，未重复新增编译测试。稳定22V及1号F3失能通过保留，不扩大为原会话故障已修。
+
+当前唯一下一项VM外部开关松开，下载复位当前会话固件，F5连续Run约5秒，无PC13/任何请求。截图Watch1源valid及两帧龄/VM/两fault，Watch2顶部phase/trip/request、首次控制锁存；预期源1/两帧<100ms、VM/两fault与会话三项/锁存0。四轮维持接入，搬运机构VM按静态试验状态继续隔离，本步不动；任何后续运动须先核实完整装机载物及机构运输姿态，不凭配置恢复自动放行动作。R核RUN-01/PWR-01，E LOC-03/05/07、RUN-06/MOT-04，官方Q待技术答疑确认。实际会话复测/原E2/转角停车/X/Y未闭环，助手未改真实源或操纵硬件。
+
+## 2026-10-21稳定VM下1号失能应答与状态位通过，准备恢复航向配置
+
+两图disable_address1/request0/result1，ExtId0100/IDE04/RTR0/DLC3/Data F3 02 6B；poll flags为02/03/03/03，1号使能位清0，其余3台未变。trace fault_latched0/result1/phase3/address1/length5、PE2前后1、TX/total1ms、rx_count1/ESR0/flush0。接受单节点失能应答+驱动器状态反馈，不等于独立机械锁轴测量或全车动作验收。原F3 E2在本次稳定供电下未复现，不将原首次根因唯一归于用户开关。证据can_disable_ID1_stable_VM_pass_reply/trace.png和can_disable_ID1_stable_VM_pass.json。
+
+只读核actual main/can SHA均与已验证诊断会话准备记录一致；将当前config的SESSION0恢复1后字节哈希与此前已验证诊断会话配置相同，不再新增隔离编译/测试。当前唯一下一项用户先在Run中VM请求0并松开开关，退出Debug，仅将APP_HEADING_SESSION_TEST恢复1，KEY/STATIC/TURN均保持0，完整Rebuild发日志；本轮不下载或发heading请求，不恢复机构供电/改其他源码。R核RUN-01/PWR-01；E LOC-03/05/07、RUN-06、MOT-04；官方Q待技术答疑确认。原会话+5度/首次E2、真实转角停车/X/Y仍未闭环，助手未改真实源或操纵硬件。
+
+## 2026-10-21用户确认接回四轮后VM22V且灯持续亮，进入1号单条失能复核
+
+用户补报“VM实测电压22V和灯是持续亮”，结合先前四轮valid0F/flags全03/guard ready1/两fault0，接受本次接轮静态供电与状态读取局部通过，不再按此轮缺VM处理，不扩展为运动带载/续航热设计通过。证据vm_four_wheel_22V_steady_user_pass.json及vm_four_wheel_static_guard_ready.png/json。
+
+当前唯一下一项按P1_DISABLE_ID1_AFTER_STABLE_VM_2026-10-21.md：保持四宏0、机构VM断开、平整地面；既有健康持续VM供电后，在Run中仅g_can_disable_address1/request1一次，等2秒，仍供电时取原始F3回复及flags[0]最低位，随后VM请求0/松开开关。预期result1/F3 02 6B与使能位清0分别判断；不强求flags全字固定，不发速度/恢复会话、不修改超时或保护。实际main请求门控及原CAN包装已只读核对，未改源码/发硬件命令。R核RUN-01/PWR-01，E LOC-03/05/07、RUN-06/MOT-04；Q待答疑确认，原E2/真实失能/运动停车/X/Y未闭环。
+
+## 2026-10-21接回四轮后静态CAN门禁就绪，待补VM实测与灯持续情况
+
+用户图VM请求1、RTOS/Safety fault0、Safety ready1、CAN test1、CAN guard ready1/cause0、poll valid0F、四个flags均03；CAN余栈0x125=293字/1172字节，最小堆0x2C38=11320字节，HWT三接收错误0。按既有状态表03为使能+驱动器目标到位，未见04/08保护位，不等于底盘位姿到位。接受截图时刻四轮静态读取/软件新鲜度门禁，不签持续带载供电或运动。证据vm_four_wheel_static_guard_ready.png/json。
+
+用户未附VM实测电压及灯是否持续亮；当前唯一下一项若试验尚未结束，在Run中将VM请求改0并松开外部开关，补报刚才VM电压与灯持续/短亮情况，不重新请求/发运动。原F3 E2尚未唯一归因。R核RUN-01/PWR-01，E LOC-03/05/RUN-06/MOT-04，官方Q待技术答疑确认。助手未改源码或操作硬件。
+
+## 2026-10-21确认22V测点为VM输出，短时空载开启通过，进入四轮静态供电复核
+
+用户明确红表在VM输出，不是VM_EN；接受本次按下开关、请求开启后短时空载输出22V及灯亮，不再走允许信号/Q2故障推断。此前0V系用户忘按开关的明确更正，历史证据保留；不擅自认定更早+5试验同样忘按，原F3 E2未唯一归因。证据vm_output22V_point_confirmed_user.json。
+
+下一项保持KEY/STATIC/TURN/SESSION四宏0及38976固件，不改码/重编译：全断电含USB后接回四轮原有完整插头/供电CAN，不改地址1左后2右后3左前4右前，搬运机构继续断开。VM松开上电Run约5秒且请求0/两fault0/ready1/CAN test1时，按下保持VM开关，仅请求VM1一次做静态供电/轮询；不按PC13、不写任何CAN动作请求。连续Run观察约5秒，记录VM电压/灯能否保持、g_can_guard_ready/cause、g_can_poll_valid_mask/flags及原五项截图；异常立即松开VM，不重复请求/复位抹故障。正常观察后请求0并松开VM。缺节点保护不放宽，若关断/自行复位据实回传。
+
+R核RUN-01/PWR-01；E LOC-03/05/07、RUN-06、MOT-04，官方Q待技术答疑确认。空载开启只局部通过，接轮后持续供电、首条F3控制接受/原E2、真实运动停车和X/Y未闭环，助手未改真实源或操作硬件。
+
+## 2026-10-21用户更正静态0V读数：此前忘按VM开关，按下后灯短暂亮/测得22V，测点待确认
+
+用户明确“之前忘记按下按键”，重做后灯短暂亮起、电压22V。先前静态request1测VM0V记录保留但其开启通路故障推断撤销；此更正不静默推翻更早用户“+5度时保持按下”的另一次反馈。因紧接上一条已让用户将红表移到VM_EN，不能擅自认定本次22V一定是VM输出；证据vm_static_request1_corrected22V_user.json将实际测点标待确认。
+
+当前唯一下一项仅确认红表是在VM输出还是VM_EN/H2第6脚/R13控制端；VM开关松开、所有VM负载继续断开，不再请求或接回负载。若VM输出22V，支持本次短时空载开启通路通过；若VM_EN测22V，则与约3.3V逻辑允许预期不符，先核测点/线路，不继续开关测试。灯短亮与缺CAN保护相容，但无fault时序证据不唯一归因。R核RUN-01/PWR-01；E LOC-03/05、RUN-06、MOT-04；官方Q待技术答疑确认，带载供电/原F3 E2/运动/X/Y仍未闭环。助手未改源码或操作硬件。
+
+## 2026-10-21全部VM负载断开后短时请求1，用户仍测VM0V/灯未亮
+
+用户报告“一直都是0V没有亮过”。接受本次测量窗口未观察到VM升压，不宣称已独立证明PE2实际高电平、请求被执行的精确时段或Q2损坏。证据vm_static_request1_measured0_user.json；前置Q2输入22V、开关按下1-2通且全部VM负载已断开。
+
+下一项仅改测电源板VM_EN（H2第6脚或R13接控制线一端），保持负载断开、不改源码/保护。先松开开关复位并Run约5秒，确认请求0/RTOS0/Safety fault0/ready1/CAN test1；故障条件不满足不触发。按下保持开关，在Run中一次VM请求1，捕捉最初1～2秒电压后请求0/松开，不Stop维持供电。CAN缺失约3秒可能关断/随后IWDG复位，晚读不能代表请求期间；不猜端子脚序，找不到测点先发照片。约3.3V则检查下游Q6/Q2，约0V则再分PE2/开关/排线或实际允许状态，不能仅凭结果判唯一元件。R核RUN-01/PWR-01，E LOC-03/RUN-06/MOT-04；官方Q待技术答疑确认，VM/E2/实际运动未闭环，助手未操作硬件。
+
+## 2026-10-21用户确认全部VM负载断开，进入一次短时静态开启测量
+
+用户此前按request0步骤实测VM0V，并明确全部VM负载均断开；证据vm_static_request0_measured0_user.json、vm_all_loads_disconnected_user.json。当前通用模式四宏0，既有Safety监督保持。只读确认缺失CAN节点在VM请求后3000ms宽限到期锁存并关VM，之后IWDG可能复位，不能从晚读0V判定从未开启。
+
+唯一下一项保持负载断开、先摆好GND至VM直流表，连续Run且vm请求0/两fault0/ready1/test1时按下VM开关并保持，只写g_vm_test_request1一次，观察最初1～2秒读数后立即写回0并松开开关。全程不Stop延长供电、不发CAN控制/机构请求、不扩大保护；可先手机录像表头。若未捕获也不反复请求，回报是否读到电压及Watch状态，约3秒后节点缺失保护可预期。R已核RUN-01/PWR-01；E LOC-03/RUN-06/MOT-04；官方Q待技术答疑确认，VM开启与E2及实际运动未闭环。助手未改源或操作硬件。
+
+## 2026-10-21通用模式板上闲置五项符合预期，下一项断电隔离VM负载
+
+用户截图VM请求0、RTOS/Safety fault0、Safety ready1、CAN test1；CAN余栈325字、最小堆11320字节，HWT三接收错误0。旧heading source变量cannot evaluate符合SESSION/STATIC均0配置，不修复为恢复会话。仅该时刻软件默认健康，不代表物理VM0或供电路径通过。证据vm_static_mode_idle_pass.png/json。
+
+下一项仅全断电（含调试USB），拔下电源板VM输出所接电机/机构供电插头隔离负载；VM/CAN合用插头可整只断开，不退针/短接或修改PCB。不重新上电/写请求，先确认断开的接口。后续供电测量需考虑缺失CAN节点在VM请求后3000ms启动宽限到期会锁存故障并关VM，不把这种预期关断当器件损坏、不放宽门槛/强写GPIO。R已核RUN-01/PWR-01，E LOC-03/RUN-06/MOT-04，官方Q待技术答疑确认。VM_EN/VM、电机E2与运动/X/Y未闭环，助手未改真实源或操作硬件。
+
+## 2026-10-21通用模式完整Rebuild通过，下一项只验默认VM0
+
+用户提供Code38976/RO588/RW1496/ZI25368、0错0警告/3秒；本机完整日志相同，实际KEY/STATIC/TURN/SESSION四宏全0，app_config与候选字节一致，actual main/can SHA与准备记录相同。首次PowerShell用正斜杠查JSON的反斜杠键误报不一致，已用Python Path精确键复核，两源均未变，非源变更。证据vm_static_mode_actual_rebuild_pass.json。无需重复编译。
+
+当前唯一下一项VM外部开关保持关闭，下载复位新固件，F5连续Run约5秒，不按PC13/不写任何请求；截图g_vm_test_request、g_rtos_fault、g_safety_fault、g_safety_ready、g_can_test_result。预期0/0/0/1/1，仅默认静态健康，不代表物理VM/运动通过；VM关闭下CAN guard0可为正常等待。本模式旧heading变量可能已被链接移除，不恢复会话模式或为Watch报错改源码。后续另安排负载隔离及静态供电测量，本轮不开VM。R已核RUN-01/PWR-01；E LOC-03/05/07、RUN-06、MOT-02/04，官方Q待技术答疑确认；实际VM_EN/VM、E2原因、转角停车/X/Y未闭环。助手未改真实源或操作硬件。
+
+## 2026-10-21用户确认失败试验开关保持按下，准备临时退出航向模式作VM静态排查
+
+用户明确刚才保持按下，结合按下1-2通及Q2输入22V，不把松开档当本次唯一根因。当前SESSION模式Safety在闲置/失败主动清VM请求，无法直接沿此模式作持续供电测量；不强写PE2或绕过监督。按P1_VM_STATIC_MODE_PREPARATION_2026-10-21.md，仅由用户将实际app_config.h的APP_HEADING_SESSION_TEST从1改0，其余KEY/STATIC/TURN均0且所有代码不改，完整Rebuild后发日志，先不下载/发请求。回到通用模式仍含手动动作入口，不宣称专用纯电源模式，后续静态测试须明确负载/门禁条件。
+
+实际main/can复制到tmp/p1_vm_static_mode_20261021，两完整模块在候选配置下ARMCC无诊断，actual main/can/config SHA未变；证据vm_static_mode_preparation.json。未整套链接/操作硬件，真实构建及VM_EN/VM实测仍待闭环。已核R RUN-01/PWR-01；E LOC-03/05/07、RUN-06、MOT-02/04，官方Q待技术答疑确认。
+
+## 2026-10-21用户实测VM开关：按下1-2通，松开2-3通
+
+用户在断电通断检查指引后报告“按下12导通，松开23导通”。按现有成品图1=PE2 VM_IO、2=VM_EN、3=GND，确认按下为软件允许档（仍由PE2决定供电），松开为强制关闭档。替代旧“按下/松开对应待实测”的未知状态；旧图及历史记录不改，非新增竞赛规则。用户此前报Q2输入侧22V及本次开关测量分别归档can_F3_E2_upstream_22V_user.json、vm_switch_pressed12_released23_user.json。
+
+尚未确认刚才+5度交易期间开关保持按下还是松开，不能直接断言这就是F3 E2的唯一根因。下一项仅询问该试验时的实际档位，不重发请求；若松开，已有强制关断通路可解释PE2为1但VM仍关闭，后续复测仍需重新核对既定条件。若已按下，继续查VM_EN/VM实际电压与保护。R核RUN-01/PWR-01，E核RUN-06/MOT-04；官方Q仍待技术答疑确认。VM电压、E2原因及实际运动未闭环，无源码修改/硬件操作。
+
+## 2026-10-21首次诊断取得F3 E2回帧：本次非CAN超时，暂不重复运动
+
+用户VM灯没亮、车未转动。两图exec phase4/trip6/state4/cause2、relative5/target-110.724487/error5，backend result2/cause1/io8/address1/rotation_stop_mask0；首次锁存1、result8/phase3/address1/length5，请求F3 AB 00 00 6B，PE2 start/end均1，TX/total均1ms，rx_count1/flush0，ExtId0100/IDE04/RTR0/DLC3/Data F3 E2 6B，ESR0。ExtId有效，StdId不作为扩展帧地址解释。证据can_trace_F3_E2_watch2_top/bottom.png及can_trace_F3_E2_failure.json。
+
+只读核对实际can.c的非02返回8逻辑、实际main会话路径；按pdf技能用PyMuPDF读取本地厂家X42S V1.0.5_260527手册第42/43/50页：本次发送格式与使能控制表一致；E2为命令参数/数据范围或条件不满足，含低压、堵转/过流/过热等可能条件，不能唯一判低压。此次已收到匹配回复，历史io5超时另存，不静默覆盖；PE2允许位不是实际VM电压，灯未亮也不能证明整段从未短暂供电。
+
+当前暂停+5度请求、不放宽等待/保护、不把E2当成功。唯一下一项保留失败状态、关闭外部VM开关，取得左后ID1电机当前显示/错误照片，不改菜单/清故障；只作为当前状态旁证，不当首次低压锁存。随后依证据决定无运动静态VM电压/开关通路诊断。R核RUN-01/PWR-01；E核LOC-03/05/07、RUN-06、MOT-02/04；官方Q待技术答疑确认。实际VM/保护原因、转角停车与X/Y未闭环。未改真实源码、未发硬件命令。
+
+## 2026-10-21接续电控组1.2：诊断实际构建已核
+
+只读核对实际D:/新建文件夹4/工创赛/代码/stm32/3.stm32f407工程：can.c与已验证候选去注释/空白后完全一致；本机21:18:15完整构建Code37760/RO588/RW1604/ZI25492、0错0警告/3秒，KEY0/STATIC0/TURN0/SESSION1与CAN20/30ms保持。读取已有构建日志，没有重新编译、修改实际源或操作硬件。证据evidence/p1-foundation/2026-10-21/can_control_trace_actual_build_verified.json含源/日志SHA。
+
+下一项按P1_CAN_CONTROL_TRACE_CAPTURE_2026-10-21.md，VM关闭下载复位后，源与闲置状态满足时仅一次+5度诊断取证，保存原始RX/PE2/ESR/时长及实物现象；不强开VM、不清锁存、不扩大保护。R已核RUN-01/PWR-01；E已核LOC-03/05/07、RUN-06、MOT-02/04；官方Q待技术答疑确认，CAN/VM根因、物理转角停车及X/Y未闭环。
+
+## 2026-10-21HWT50Hz后+5度仍失败，已取得1号准备CAN回复超时
+
+用户报告VM还是没亮。Watch2 exec phase4/trip3/state4/cause2、relative5/target-110.724487/error5，backend result2/cause1/io5/address1、旋转停止mask0。Watch1源valid1/年龄15与6ms/yaw-115.724487/rate0，VM与两fault0、接收错误0，CAN余栈245字/980字节，最小堆11320。按实际执行器路径，cause1+address1为首条失能准备交易失败；io5为当前窗口未获得匹配回复，不等于绝对无帧或电源损坏。HWT源不再是此次记录的阻点，转动未通过。图/JSON归档heading_after50Hz_can1_prepare_timeout_watch1/2.png/json。
+
+只读Power_Enable为PE2置高、Safety按门禁调用；之前存在原限时转动实测，不能随意跳过软件强开VM。新增首次控制失败被动诊断候选：命令、FIFO回复数量/最后原帧、阶段/发送和总时长、PE2 ODR开始结束、ESR和清FIFO数量。首次控制失败后锁存，后台只读轮询不覆盖；ODR不等于实际VM电压。实际Exchange/Control函数GCC严格mock用例覆盖无RX/错ID/非02/TX超时/PE2/首因保持/参数拒绝，通过，完整can候选ARMCC无诊断；实际源未改，未整套链接/下载/发硬件命令。证据can_control_trace_preparation.json。
+
+当前用户按P1_CAN_FIRST_CONTROL_FAILURE_TRACE_2026-10-21.md仅手改can.c三处（变量和两完整私有函数），完整Rebuild先不下载，主程序/HWT/电源及20/30与100ms保护不动。先取得事务与PE2证据，再决定应答架构/电源测量，不扩大超时或继续盲重试。检查R RUN-01/PWR-01、E LOC-03/05/07、RUN-06、MOT-02/04，官方Q仍待技术答疑确认，实际CAN/VM/转角停车及X/Y未闭环。
+
+## 2026-10-21恢复航向模式后30秒源观察符合预期，进入一次+5度受控复测
+
+用户明确“没有看到valid跳成0”，Watch1 valid1、帧龄期17/18ms、yaw2.65869141度/rate0、VM/RTOS/Safety fault及checksum/UART/overflow均0，CAN余栈0x145=325字=1300字节、最小堆0x2C38=11320；Watch2 phase/trip/request均0。接受本次预热后30秒有限人工观察与闲置状态，不把Live Watch采样当最大间隔、故障响应或动态资源证明。原图/读数/SHA见heading_after50Hz_idle30s_watch1/2.png、heading_after50Hz_idle30s_user_pass.json。
+
+下一项仍用当前37208固件及已保存50Hz，不改码/重设参数/重复下载，按既定完整装机载物地面条件一次相对+5度。外部VM开关打开后先F5连续Run≥3秒，再于Run中request1一次，relative5.0；约18秒期间不Stop/单步、不再次排队，异常外部关VM，实际停止或失败后Stop留Watch与实物现象。Watch1保留13项，Watch2保留phase/trip/request并补relative/state/cause/target/error及backend result/cause/io_result/stop_mask2/last_address。不手改VM或状态造通过，目标是接受时yaw+5度非绝对5。助手未操作硬件或改实际源。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q仍待技术答疑确认，真实转角/停车/完整源故障响应及X/Y未闭环。
+
+## 2026-10-21恢复航向会话模式完整构建通过，进行VM关闭的源观察
+
+用户Rebuild37208/588/1540/25476、0错0警告/3秒；实际app_config与隔离新模式一致、main/hwt源码与本轮候选token一致，KEY0/STATIC0/TURN0/SESSION1及默认heading0/rate50_0已核。证据heading_mode_after50Hz_actual_rebuild_pass.json。助手未改实际源或操作硬件，不再重复构建。
+
+下一项VM外部开关关闭、下载复位，连续Run先约5秒完成启动版本读取，再观察30秒，期间不暂停或设置任何请求。沿原Watch1的13项，Watch2仅加exec_phase/trip/request；预热后要求观察到source_valid维持1、两帧龄期<100ms，VM/RTOS/Safety fault和三exec均0，接收错误无新增。起始版本未就绪时valid0属预期，不混入预热后观察。末尾Stop截图并反馈是否曾看到0；该有限观察仍不能证明最大间隔分布或动态故障响应，不自动签运动许可。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q保持待技术答疑确认，源更完整时效/故障与实车转角停车/X/Y待闭环。
+
+## 2026-10-21准备仅切换配置恢复目标航向模式
+
+用户“下一步”。只读核对当前STATIC1/KEY1/SESSION0/TURN0、HWT50Hz设置请求默认0且服务限静态、目标会话请求默认0/闲置以及独立Safety入口。准备仅app_config四宏KEY0/STATIC0/TURN0/SESSION1，当前实际main/hwt101源码复制到隔离目录，配新模式ARMCC编译均无诊断，实际main/hwt/header/config SHA前后未变。证据heading_mode_restore_after50Hz_preparation.json、tmp/p1_restore_heading_mode_20261021/。未额外编写测试或修改实际源，无链接下载/硬件动作。
+
+当前唯一下一项用户退出Debug、保持VM外部关闭，仅手改四宏后完整Rebuild并回传日志；Watch13项保持，本轮不下载或发请求。此后先核新模式源状态，平均50Hz/保存证据不代替最大帧间隔和动态安全，暂不直接恢复实车+5度。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q待技术答疑确认，源连续性/运动停车/X/Y未闭环。
+
+## 2026-10-21断电步骤后新读回8，当前Watch精简为13项
+
+用户按断电保持操作后提交三图，RRATE result1/raw8/count1、帧55 5F 08 00 06 00 00 00 00 00 C2校验正确；rate50服务active/result/state/command/raw和request全部0，说明本次RAM重新初始化且未重执行设置。VM/RTOS/Safety fault0，source_valid1、年龄13/14ms，接收错误均0。根据用户按断电步骤操作的上下文支持本次保持通过，照片不能独立证明供电实际中断，证据边界明确保留。归档三图与SHA/JSON：hwt_rate50_powercycle_rrate8_overview/second/reply.png，hwt_rate50_powercycle_readback8.json。
+
+用户追加要求明确哪些Watch可以删除。交付P1_WATCH_CURRENT_MINIMAL_2026-10-21.md：当前保留VM/故障、源有效及帧龄、航向/角速度、三种接收错误和CAN栈/最小堆共13项；移除所有重复行、已完成配置/版本读取/帧计数及当前未用会话/执行器项。只删除观察条目，不删除源码或重置数值，不重设HWT。现仍静态模式，后续恢复会话时再在Watch2组织执行/首次故障项，先验证源连续性，再进入受控转角。助手未改实际固件/配置或操作硬件。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；Q仍待技术答疑确认，最大帧间隔/源失效/运动停车及X/Y未闭环。
+
+## 2026-10-21设置后有效帧平均50Hz实测通过，进入真实断电保持检查
+
+用户两张Live Watch包含重复组。用上方同组angle/rate1166→2022、update_tick58950→76080ms，856帧/17.13s≈49.9708Hz；下方同组angle1175→2005、rate1176→2005、tick59140→75730ms，约50.0301/49.9699Hz，均支持平均50Hz。重复行非原子采样且时刻不同，不把上下组混算，不解释成计数回退。checksum0/overflow0，UART错误1保持，无新增错误；不是“从未发生UART错误”。原图与计算归档hwt_rate50_frequency_first/second.png和hwt_rate50_measured_frequency.json。接受本观察区间平均接收速率，不扩大为最大帧间隔或100ms连续时效通过。
+
+下一项仅断电保持：VM外部开关关闭，主控与HWT真实断电，排除调试USB回供，不用主控RST代替；约5秒后按原方式上电，现有静态固件不重新设置50Hz，连续Run≥5秒完成版本后rrate_request1一次，再约2秒Stop，读result/raw/reply_count/原帧及VM/fault，预期raw8。新RAM里的rate50_result可能0属正常，不能以它代替参数读回；不发rate50_request。助手未改实际固件或操作硬件。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q保持待技术答疑确认，持久化、最大间隔/失效响应、物理VM/转角停车/X/Y未闭环。
+
+## 2026-10-21固定50Hz设置完成并即时读回8，下一项实测接收频率
+
+用户两张图显示rate50 active0/result1/state0/command3/raw8，完整原帧55 5F 08 00 06 00 00 00 00 00 C2，校验正确，版本1/state0、VM/RTOS/Safety fault0。旧rrate_raw6保留符合独立读取快照设计。接受此次固定设置序列执行及即时寄存器8读回；不升级为实际50Hz、最大帧间隔或断电持久化通过。两图angle/rate_count同为0x404=1028、update_tick同为0xDB56=56150ms，属于相同计数时刻，无法算频率。当前checksum/UART/overflow均0，仅为本次累计读数。
+
+原图SHA/JSON归档hwt_rate50_readback8_user.png、hwt_rate50_readback8_user_second.png、hwt_rate50_readback8_user.json。下一项VM外部开关关闭，不再发设置或运动请求，无需改码/重置；连续Run中两次约10秒间隔记录原6个HWT计数/错误/时间字段，先验实际接收频率，再验断电保持/源100ms余量。助手未改实际固件或操作硬件。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q继续待技术答疑确认，真实频率/间隔、持久化/源失效/物理VM/转角停车/X/Y未闭环。
+
+## 2026-10-21静态50Hz固定配置服务完整构建通过，进入一次受限参数设置
+
+用户Rebuild40296/600/1524/25452、0错0警告/3秒。实际hwt101.c/h与已测候选token完全一致，前轮遗漏RRATE extern已补齐，固定69解锁/03写08/00保存/27读03命令、owner3及互斥/调用链均在候选范围；main未变，STATIC1/SESSION0/TURN0/KEY1已核。证据hwt_rate50_actual_rebuild_pass.json。助手未改实际固件或操作硬件，不重复构建。
+
+下一项VM外部开关关闭、下载复位，Run≥5秒，版本1/state0及VM/两fault0后先Run中rrate_request1；候选读取result1/raw6后额外等2秒满足5F静默窗，再Run中rate50_request1一次，约5秒后Stop记录active/result/state/command/raw和11字节reply及VM/fault。非6/读取失败则不发设置、不盲重试。原rrate_raw保留6是旧快照，不能据此否定新rate50_raw8。result1/raw8仍需实际频率/最大帧间隔和断电保持验证，不启运动。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q保持待技术答疑确认，参数实际生效/时效/物理VM/转角停车/X/Y待闭环。
+
+## 2026-10-21RRATE实读6，准备一次性50Hz固定配置服务
+
+用户截图result1/raw6/reply_count1，回复55 5F 06 00 06 00 00 00 00 00 C0，校验正确、版本1/state0、VM/RTOS/Safety fault均0；前16位6与此前10Hz实测相符，后16位6按型号寄存器相邻BAUD解释，不合并为速率。原图/JSON归档hwt_rrate6_read_user_pass.png/json。
+
+本次检索取得厂商HWT101专用GitBook协议RRATE08=50Hz及配置解锁/保存要求，同名厂商协议文档PDF转载明确解锁FF AA 69 88 B5、保存FF AA 00 00 00。不同旧资料/型号命令不静默混用，76在专用协议为归零，本次不发送。新增P1_HWT_RATE50_MANUAL_2026-10-21.md及两个样本：静态一次性固定四帧、默认不请求、读6前置/VM0/互斥、owner3复用TXE、100ms命令间隔/1500ms保存后隔离/200ms发送/1000ms读回/8秒总截止，读回8后仍待实测和断电验证，不改100ms运动保护或其他参数，不自动回滚/重试。SAVE保存当前配置，本代码只改RRATE，失败后参数状态未知须先读，不当作未修改。
+
+GCC严格编译/模拟正常序列和拒绝/中止/截止/不重试/读回非8等通过；实际完整hwt候选含ISR/互斥/调用链经ARMCC无诊断。新互斥置于局部声明之后，最终候选已复核编译；真实源未改、未整套链接/烧录。证据hwt_rate50_preparation.json、tmp/hwt_rate50_20261021/。下一项用户按指南手改实际hwt.c/h、完整Rebuild，静态配置/main保持，本轮不下载。补齐前轮缺失RRATE头声明。本项不等于设置生效或运动通过。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q继续待技术答疑确认，实际50Hz/间隔/断电保持、源响应/物理VM/转角停车/X/Y未闭环。
+
+## 2026-10-21板内RRATE读取服务实际构建通过，进入一次静态只读取证
+
+用户完整Rebuild39292/580/1476/25444、0错0警告/3秒；实际hwt101.c与已测候选token一致、main未变及STATIC1/TURN0/SESSION0/KEY1已核对。hwt101.h未加入3行RRATE extern声明，确认为当前唯一头文件差异；同名变量已定义且由服务使用，对当前Watch和完整构建无影响，不据此重复构建，未来跨模块引用前补齐。证据hwt_rrate_read_actual_rebuild_pass.json。助手未改实际源码或操纵硬件。
+
+下一项VM外部开关关闭时下载复位，连续Run约5秒，核version_result1/state0及VM/fault0，Run中只写rrate_request1一次，再Run约2秒Stop；记录result/raw/reply_count/展开11字节reply和版本/VM/两fault。静默隔离不满足或冲突可返回9，不手改结果造通过。仅取得校验有效候选5F，缺地址回显仍需原帧和当前10Hz实测交叉确认，不能称已写50Hz。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q保持待技术答疑确认，RRATE板上身份/值、后续配置/时效及VM/运动/X/Y仍待闭环。
+
+## 2026-10-21准备用户手动加入板内RRATE只读入口
+
+按用户“下一步”，在现有USART2 TXE/5F读取服务上准备静态只读03寄存器，不写任何参数。新增3份样本和P1_HWT_RRATE_READ_MANUAL_2026-10-21.md：用户切STATIC1/SESSION0/TURN0/KEY1，hwt头加声明、c加变量并替换完整Hwt_VersionUpdate，main/硬件不动。独立RRATE raw/result/reply不覆盖版本/A7，VM0/静态/故障/校准互斥，版本已成功且距5F≥1500ms后受理，读取中条件变坏中止，200/1000ms原截止保留。5F无地址回显风险明确保留，不把候选有效回复当作特定寄存器已无歧义确认。
+
+相同读取函数GCC严格编译和mock用例通过：27/03只读包、候选回复/校验、版本A7隔离及回归、TX/RX截止/UART错、VM改变/校准冲突、静默边界、旧回复时间拒绝及重复请求清除。实际hwt101.c与main的静态配置隔离候选ARMCC无诊断；实际固件未改，无整套链接/烧录/硬件命令。证据hwt_rrate_read_preparation.json及tmp/hwt_rrate_read_20261021/。当前用户手改后完整Rebuild，先不下载；RRATE读回、50Hz设置/验证、源时效/转角停车/X/Y未完成。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q保持待技术答疑确认。
+
+## 2026-10-21HWT101板载无外引IO，改用现有STM32双向串口配置路径
+
+用户明确HWT101焊在主控板，未引出IO。撤销USB-TTL接线/拍接口作为当前前置；保持成品PCB与现有接线，不要求拆焊、飞线或另加串口TX。只读hwt101.c及版本验收记录，确认现有USART2 PD5 TX/PD6 RX和曾实际成功的5F版本回复，可复用STM32发送受限速率读取/配置命令。USB-TTL暂不需要连接。
+
+后续准备手动hwt101.c/h的静态互斥读取/参数设置方案，先核RRATE再选择型号匹配的50Hz工程候选与读回/实测；版本/解锁/保存边界继续保留，不因已有串口成功就宣布所有配置支持。当前未新增配置代码、未改实际固件/PCB或发串口命令，仍保持VM关闭及100ms保护。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q不变，参数设置/确认、源时效/转角停车/X/Y未闭环。
+
+## 2026-10-21用户确认有USB转TTL，切至上位机配置路径准备
+
+用户答“有USB转TTL，但还没连接”。因此不新增STM32配置代码，先核实适配器实际针序/TTL电平和HWT101现有端子。在整车断电/VM关闭条件下索取USB-TTL正反面及模块端子照片，未发接线或写入命令；不把供电跳帽当作TX电平证据，不允许STM32 TX与适配器TX并联或未确认混供电。后续逐线连接/上位机读回/50Hz候选及实际频率/时效验证仍待执行。R RUN-01/PWR-01，E LOC-03/05/07、RUN-06/MOT-02/04边界保持，官方Q不变。
+
+## 2026-10-21有效帧实测10Hz，等待确认配置连接方式
+
+两张Watch：angle/rate各593→744、update_tick59360→74460ms，151帧/15.1秒≈10Hz。checksum0/overflow0、UART错误1均无增量，不把已有UART错误清零或解释成当前持续错误。结合首次失败角度99/角速度100ms、源更新10ms，确认100ms边界与当前约100ms帧周期缺少余量。原图和计算归档hwt_rate10Hz_first/second.png、hwt_measured_rate10Hz.json。
+
+已核对厂家HWT101页面（2026-10-21）默认10Hz、可调范围和115200默认参数；不以默认值替代实物RRATE读回。通用WIT SDK的0x03/50Hz编码不自动确认本机解锁/保存兼容。型号页指向的厂家产品资料yuque入口403，未获取专用完整流程，不静默代用其他型号。50Hz约20ms作为工程候选、现有两类11字节帧预算约1100B/s；未写配置或宣称性能通过。通过异步问题确认用户是否已有维特上位机连接或仅STM32；这是缺少连接条件，不是权限请求。保持VM外部开关关闭、不再发运动，待连接方式后准备用户手动配置步骤。详见P1_HWT_RATE10HZ_AND_NEXT_2026-10-21.md。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04，官方Q保持待技术答疑确认。实际速率设置/读回、源时效/响应和VM/转角停车/X/Y未闭环，助手未改实际固件或操纵硬件。
+
+## 2026-10-21首次失败快照确认角速度帧100ms边界，转静态接收频率取证
+
+用户报告source_valid在0/1切换，图示exec phase4/trip2、backend0；首次fault_phase1/flags0x10，发布年龄10ms、角度99ms、角速度100ms、HWT更新10ms、tick0x9524=38180ms。明确此次由角速度真实帧达到100ms新鲜度边界触发，不是该时刻HWT采集任务长时间未更新；稍后valid1、年龄62/63ms与新帧恢复一致。CAN余栈289字、最小堆11320字节。原图/JSON见heading_source_first_rate100_user.png/json。该证据并不能单独区分模块频率、无线缓冲/抖动、丢帧或解析错误；不放宽门槛或认定10Hz。
+
+下一项关闭VM外部开关、不再发request，Run保持连续，在运行中两次相隔约10秒截图g_hwt_angle_count/rate_count/checksum_errors/uart_errors/overflows/update_tick；用计数及真实update_tick增量估算频率并检查错误增量。两张Live Watch非原子采样，频率仅近似，不能代替间隔最大值/分布。无需改代码或复位，保留首次故障。助手未操作硬件/改源码，运动仍未通过。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q仍待技术答疑确认，源时效下层原因/物理VM/目标角停车/X/Y未闭环。
+
+## 2026-10-21首次失败快照用户整工程构建通过，等待触发时刻取证
+
+用户完整Rebuild36000/564/1472/25456、0错0警告/3秒；实际main与已测诊断候选token一致，实际can仍匹配20/30ms候选，模式保持SESSION1/其他0。源码核对及构建证据heading_first_fault_actual_rebuild_pass.json。诊断只记录首次条件，不改变源/提交门槛和保护，不代表source trip2根因已修复。助手未改实际固件、未下载或操作硬件。
+
+下一项用户外部VM关闭时下载复位诊断版，再在既定完整装机载物地面条件下、外部开关可随时关闭，连续Run≥3秒确认默认phase0/trip0/源有效，在Run中只发一次+5度请求；连续观察约18秒后于实际停止或失败终态Stop，保留exec_trip及7个fault快照字段和VM/动作观察。不重写请求或复位抹掉首次证据，不手改VM。异常外部关VM，Debug暂停不作为停车。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q仍待技术答疑确认。真实源失败首次原因/调度、实物VM/转角/停车/X/Y仍待闭环。
+
+## 2026-10-21期限修正后复测转为源trip2，准备锁存首次源条件
+
+用户连续说明写request1时测VM0V、指示未亮、车没转；第一图默认phase0、请求/VM0、源有效。第二图phase4/trip2、session state/cause0、backend_session0及后端状态/结果/cause/io/start_mask全0，源后续valid1、角度/角速度年龄0x26/31=38/49ms，CAN最小余栈0x121=289字=1156字节、最小堆11328。原图与读数见heading_after_canfix_idle_user.png、heading_after_canfix_source_trip2.png/json。启动前VM0V符合默认软件关闭；本次尚未建立执行器会话，不能将旧trip3超时作为此次已证实根因，也不能用后续源恢复排除当时失效。
+
+新样本只在App_HeadingRuntimeTrip首次调用时临界区锁存阶段/源条件flags/发布与两帧年龄/HWT任务更新年龄/时刻，保留原VM撤销及Abort、所有门槛不变；实际固件未改。加入诊断后的原Runtime联动用例（实际controller/session+mock执行器）通过，新增99/100边界既有回归、首次flags0x1C/100ms龄期、WAIT/RUN阶段、配置请求0x40、数据恢复/重复Trip不覆盖通过；候选main实际配置ARMCC编译无诊断。复用主机脚本时原源样本编译条件仍旧STATIC0导致未包含，已仅修测试拼接为实际main的SESSION或STATIC条件，再通过；未改生产判定。证据heading_first_fault_preparation.json及tmp/heading_first_fault_20261021/。下一项用户按P1_HEADING_SOURCE_FIRST_FAULT_MANUAL_2026-10-21.md替换一个函数并完整Rebuild，先不下载/运动，不扩大100ms期限或手改VM。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q仍待技术答疑确认，真实首次条件/源时效/VM/转角停车及X/Y未闭环。
+
+## 2026-10-21CAN等待参数位置实际纠正，完整构建通过，安排一次复测
+
+用户完整Rebuild35744/564/1444/25452、0错0警告/3秒。实际can.c与已测候选token完全相同，回环发送100ms已恢复，ExchangeSingle使用SESSION TX20/RX30，旧模式100/200；实际main仍匹配会话候选、独立提交监督100ms和SESSION1/其他0均已核对。证据heading_can_deadline_actual_rebuild_pass.json，助手未改固件或操作硬件。无需重复构建或原静态观察。
+
+下一项仅一次相对+5度复测：外部VM关闭时下载并复位新固件，按既定完整装机载物地面条件，打开外部VM后F5连续运行≥3秒；确认默认phase0/trip0/源有效后，在Run中只写request1一次，relative保持5.0。不手改VM，不转动中Stop，不重复启动；观察约18秒，实际停稳/已退出后Stop保存现有Watch，补last_address并报告VM和动作现象。失败时继续依据首次trip/backend_cause/io_result排查，不签修复或实车通过。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q不变，实物VM/目标角/停车和X/Y仍待验。
+
+## 2026-10-21CAN等待参数手改构建通过，但TX替换位置需纠正
+
+用户Rebuild35744/564/1444/25452、0错0警告/3秒。实际can.c对比已测候选，唯一两处差异：LoopbackTest第152行发送等待误用新TX宏、ExchangeSingle第269行发送等待仍100U；回复宏和其他源码一致。不把构建通过当作正确替换完成。隔离副本恢复回环100U、ExchangeSingle改新TX宏后，与已测候选token完全一致，以实际配置ARMCC编译无诊断；实际源SHA未变。下一项用户仅纠正这两处、完整Rebuild，先不下载。证据heading_can_deadline_placement_review.json。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q保持待技术答疑确认，实车VM/会话故障与目标角停车/X/Y仍待闭环。
+
+## 2026-10-21读取执行器cause3，发现CAN交易等待与独立提交监督时限冲突
+
+用户新图exec_cause2/backend_session1，backend state10/result2/cause3/io_result0/start_mask[2]0，其余失败终态同前。确认执行器接受会话，没有记录成功旋转启动；未测失败时分支/时刻，不能仅凭终态认定唯一根因。原图与读数归档heading_positive5_backend_cause3.png/json。
+
+实际源码复核CAN1_ExchangeSingle使用TX100ms+RX200ms等待，Runtime唯一CAN任务同时负责会话提交，独立提交监督100ms，构成确定的设计时限冲突。会话失活后在途IO返回可能因active检查未写回，使原始IO保持0。新增新模式CAN20/30ms工程候选指南，保留100ms源/提交监督，旧模式100/200ms不改。提取实际Exchange函数GCC严格编译/模拟运行，新旧帧、发送失败/缺回复/期限边界/最后期限前有效回复/时间回绕通过，并模拟原等待跨100ms、新等待先返回；实际完整can模块隔离候选ARMCC新/旧模式编译无诊断。证据heading_can_deadline_preparation.json，脚本tmp/check_heading_can_deadline_20261021.py。初始化独立等待不纳入50ms两阶段候选预算，合法实际应答时延与RTOS调度仍待实测。
+
+下一项用户仅按P1_HEADING_CAN_DEADLINE_FIX_MANUAL_2026-10-21.md手改实际can.c并完整Rebuild，不下载/重发启动；助手未改实际固件、未操作硬件。此修正解决可复现的超时遮蔽机制，不宣称已修复实际电源或CAN无应答。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q保持待技术答疑确认，+5度/实际VM/物理停止及X/Y未通过。
+
+## 2026-10-21首次+5度用户报告VM未亮，phase4/trip3，先读取后端首次原因
+
+用户提供新截图并报告VM没有亮；截图exec_phase4/trip3/state4、request0/rpm0/VM请求0、RTOS/Safety fault0、source_valid1，两帧龄期0x61/0x62=97/98ms，CAN余栈0xF5=245字=980字节、最小堆11328。源码只读核对仍与已测候选token一致。只能确认软件终态失败并撤销VM请求，不能确认电源损坏、确切触发条件或物理动作；trip3被入口/等待/运行监督多个分支复用，最终帧龄期不证明触发时数据状态。没有绕过门禁或修改实际固件。
+
+下一项让用户保持失败状态，不复位、不再次request1、不手改VM，补Watch exec_cause/backend_session、chassis_auto_state/result/cause/io_result/start_mask[2]。这些原有字段可能保留更早执行器失败原因，应先读取再选择诊断或修复，不凭截图猜根因。证据heading_positive5_vm_dark_trip3.png/json。检查R RUN-01/PWR-01、E LOC-03/05/07、RUN-06、MOT-02/04；官方Q保持待技术答疑确认。该次+5度测试未通过，实际VM、目标角/停车、调度/失效响应及X/Y仍未闭环。
+
+## 2026-10-21新模式默认不启动静态Watch通过，安排首次+5度受控试验
+
+用户截图phase/request/trip/state/rpm、VM请求和两fault全0，源有效、角度/角速度年龄6/7ms。CAN最小余栈0x145=325字=1300字节，最小堆0x2C40=11328字节；此资源证据仅闲置路径，不扩展为活动会话资源通过。原图/读数/SHA见heading_runtime_idle_user_pass.png/json。接受本观察时刻默认软件不启动，不补造物理电压或连续时效。
+
+新增首次+5度试验操作文件：完整装机载物地面条件，外部VM开关打开后保持Run≥3秒，再在Run中只写exec_request1一次，relative5.0；观察约18秒，自动停稳后Stop保留phase/trip/state/cause、target/error及后端result/cause/stop_mask2、VM/fault和资源。不从Debug暂停状态排队运动，不在转动中Stop，不扩大角度或重写终态。助手未改源码或操作硬件，实测未执行/未通过。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q仍待技术答疑确认，动态时效/失效响应、实车转角/物理停车及X/Y仍待闭环。
+
+## 2026-10-21真实目标航向会话接入完整Rebuild通过
+
+用户完整构建35744/564/1444/25452、0错0警告/3秒；实际main与已测候选去注释/空白后完全一致，配置SESSION1/STATIC0/TURN0/KEY0、后端锁存模式s_mode及实际构建日志已只读核对。前轮条件/宏缺失问题均完成，不重复要求。证据heading_runtime_actual_rebuild_pass.json，实际固件未被助手修改，未下载/发CAN或操作硬件。下一项用户关闭VM外部开关后下载新模式，静止且不设置任何请求，Run约3秒、Stop记录默认phase0/request0/trip0/state0/rpm0/VM0/两fault0和source_valid1/帧年龄<100ms，连同CAN余栈和最小堆。软件构建不等于默认实机/连续时效/失效响应/真实目标转角/物理停车/X/Y通过。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q继续待技术答疑确认。
+
+## 2026-10-21会话构建两处未定义宏，定位源快照块缺失
+
+用户Rebuild报main758/787行HEADING_SOURCE_FRESH_MS未定义，2错0警告；新附件与实际main代码token相同。前轮两处外层条件已正确，但源快照外层if与typedef之间缺少原1kHz guard及100ms宏定义。隔离副本只恢复四行后，与已测完整候选token一致，以实际配置ARMCC编译无诊断，实际main哈希未变。用户下一项只补四行、完整Rebuild，先不下载；不改100ms期限或其他配置。证据heading_runtime_missing_define_review.json。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q保持待技术答疑确认，用户整工程构建与实机默认VM0/时效/转角停车/X/Y仍待闭环。
+
+## 2026-10-21会话接入两份粘贴代码审阅，定位相邻条件范围错误
+
+用户两份附件SHA256均E79402B816BD966B967711E6A253A1D33B7C2EEC83F30785057E9A53B7292C84，与实际保存main去注释/空白后相同；配置已正确选择SESSION1/STATIC0/TURN0/KEY0并含互斥检查。仅main第718行旧邮箱变量块和第726行真实源快照块的外层条件改反，其余与已测候选一致。已准备隔离副本，仅恢复旧邮箱STATIC条件并扩展源快照SESSION条件；修正后token与前轮已测main一致，以实际配置ARMCC Cortex-M4.fp编译无诊断。实际main前后SHA256不变，未自动修改固件或下载/操纵硬件。下一项用户只改两行后完整Rebuild，其他代码/config保持。证据heading_runtime_paste_review.json及tmp/heading_runtime_paste_review_20261021/main_corrected_candidate.c。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q继续待技术答疑确认，真实整工程构建/实机默认VM0/时效/闭环/物理停车/X/Y未闭环。
+
+## 2026-10-21模式取值修正实际构建通过，准备完整会话接入
+
+用户Rebuild38908/576/1456/25432、0错0警告/2秒，实际ReadStatus已读取s_mode，不再重复该接口构建。新增P1_HEADING_RUNTIME_BINDING_MANUAL_2026-10-21.md及heading_runtime_main.c.txt，用户手动接入真实源、执行器和独立Safety，建立与旧模式互斥的SESSION开发入口；默认无VM/请求，首轮只允许±5度，固定目标/一次会话/终态保持，SETTLING零速与最终停车分开，实际接口接受结果及会话号/旋转段/锁存模式/stop_mask校验，取消/源失效/冲突/截止后Abort与VM兜底。CAN新模式周期候选10ms，活动期间不叠加第二交易，旧手动交易仍保留但新模式跳过。
+
+隔离main新模式与旧静态模式由ARMCC Cortex-M4.fp编译无诊断，实际源码未改。第一轮新模式编译发现旧扫码revision只赋值未使用警告，已收紧其两处编译条件后通过；没有修改实际固件。主机联调链接实际heading_controller/session代码、mock执行器，覆盖开始/重复/临时稳定/正常停车/终态、源过期/取消/错会话/错模式/配置、动作拒绝/等待与运行截止/互斥/非法角度/回绕。初始测试跳过700ms被100ms源序号期限正确拒绝，改为10ms连续输入的测试后通过，生产期限不放宽。证据heading_runtime_compile_preparation.json、heading_runtime_host_preparation.json。未完整链接新固件、未下载或发物理CAN/操作硬件。用户按指南手改实际main/config后完整Rebuild；新固件默认VM0、RTOS时效/源失效/物理停车/目标误差/X/Y仍待闭环。检查R RUN-01/PWR-01，E LOC-03/05/07、RUN-06、MOT-02/04；官方Q仍待技术答疑确认。
+
+## 2026-10-21执行器快照构建通过，修正助手样本的模式字段来源
+
+用户完整Rebuild38908/576/1456/25432、0错0警告/3秒；实际源码与原样本一致，接口未调用、大小不变符合预期。只读Begin/CanStep路径发现status.dry_run应来自s_mode，而非g_chassis_auto_dry_run；后者是请求参数，BeginHeading传入的实际模式可与其不同。此为助手上一版样本错误，非用户粘贴问题。已改docs样本和指南，实际固件不改。新增主机回归：请求1/实际锁存0与请求0/实际锁存1两种情况均读锁存值，其他字段/固定旋转索引/无状态修改检查通过；实际chassis_auto_test.c仅改该行的隔离副本经ARMCC Cortex-M4.fp编译无诊断。证据heading_backend_snapshot_mode_correction.json。下一项用户只改ReadStatus中的该行后完整Rebuild，main和静态模式保持、不下载。真实会话与动作/Safety绑定、连续时效/物理停车/到位/X/Y仍待闭环。检查R RUN-01/PWR-01，E LOC-03/05、RUN-06、MOT-02/04；官方Q仍待技术答疑确认。
+
+## 2026-10-21真实航向源静态截图通过，准备执行器状态快照
+
+用户Watch截图：valid1、sequence0x2B8=696、发布/角度/角速度龄期1/4/5ms、yaw0.0384521484度、rate0，VM请求/RTOS fault/Safety fault全0。接受观察时刻静态源交接；不推断连续100ms时效、断流响应、物理VM或运动通过。原PNG/SHA和读数记录于heading_source_static_watch_pass.png/json。
+
+下一项只读执行器一致快照：新增P1_HEADING_BACKEND_SNAPSHOT_MANUAL_2026-10-21.md及两个样本，用户在实际chassis_auto_test.h/c加入状态类型和ReadStatus，复制active/result/state/cause/会话号/segment/旋转stop_mask[2]/航向模式/演练标志/cut_vm。GCC C99 Wall/Wextra/Werror用例覆盖空指针、闲置/活动/终态字段、固定旋转mask索引及不改变状态；mock临界区不能证明RTOS并发。未修改实际固件、未做ARMCC或完整构建、未发CAN或操纵硬件。用户手改后完整Rebuild，main和静态模式保持，本轮不下载。证据heading_backend_snapshot_preparation.json。检查R RUN-01/PWR-01，E LOC-03/05、RUN-06、MOT-02/04，官方Q保持待技术答疑确认。完整会话/动作/Safety绑定、实际停止/误差及X/Y仍待闭环。
+
+## 2026-10-21真实航向源快照用户完整构建通过
+
+用户提交ARMCC V5.06 update5完整Rebuild：Code38908/RO576/RW1456/ZI25432，0错0警告、3秒。只读实际外部工程确认源码与已测样本token一致、两个调用位置正确且唯一、静态模式1/旧转向0；实际构建日志亦匹配。证据evidence/p1-foundation/2026-10-21/heading_source_snapshot_rebuild_pass.json。本项构建完成，不重复要求；下一项VM外部开关关闭，下载静态程序后保持车静止Run约3秒、Stop观察真实源字段及VM/fault。截图仅验观察时刻，不代替连续时效、HWT失效响应、完整会话/动作/Safety整合、物理停车或X/Y。助手未修改实际固件、未下载或操纵硬件。检查R RUN-01/PWR-01，E LOC-03/05、RUN-06、MOT-02/04；官方Q仍待技术答疑确认。
+
+## 2026-10-21新聊天接续：准备真实航向源快照静态观察
+
+只读当前计划及实际D:/新建文件夹4/工创赛/代码/stm32/3.stm32f407工程源码和构建日志，确认会话模块0错0警告构建已完成；项目内副本与实际外部工程有差异，不以旧副本回退进度。保留用户手动修改方式。新增P1_HEADING_SOURCE_SNAPSHOT_MANUAL_2026-10-21.md及code_samples/heading_source_snapshot_main.c.txt，先在TaskA实际HWT更新后发布完整姿态/真实帧时间/快照序号，CAN任务只观察；与旧500ms静态预览分开，新源以100ms严格边界检查。GCC严格编译运行、时间/序号回绕、失效/请求互斥及插入位置检查通过；非1kHz编译拒绝，实际main/config/session哈希前后未变。证据heading_source_snapshot_preparation.json。未做ARMCC/整工程构建、下载、CAN动作或板上验收。当前用户手改三个位置后完整Rebuild；真实会话、backend快照/动作与独立Safety接入、物理停车和X/Y仍待完成。检查R RUN-01/PWR-01、E LOC-03/05、RUN-06、MOT-02/04；官方Q仍待技术答疑确认。
+
+## 2026-10-21 动态接口四处手改问题修复，实际构建通过
+
+用户两份粘贴代码哈希相同，核对出direction_age未声明、Init重复清零、Begin漏清零、首次START后残留无条件s_run_tick重置共4处。用户按小段说明修正后提交Rebuild38316/576/1420/25404、0错0警告/3秒；实际工程D:/新建文件夹4/工创赛/代码/stm32/3.stm32f407工程的源/头文件及构建日志已只读核对，4处均已修正。此前修正隔离副本与通过mock检查的候选代码token一致且ARMCC编译通过；此次用户真实整工程构建独立记录，不扩为硬件证据。下一项完整受控会话/源时效与Safety整合，不重复接口构建或静态数据交接用例，当前不下载、不运动。R RUN-01/PWR-01，E LOC-03/05、RUN-06、MOT-02/04已检查；官方Q待技术答疑确认，动态执行闭环/物理停车/X/Y未闭环。
+
+## 2026-10-21 跨任务交接通过，准备正常停车接口
+
+来源：本聊天用户Rebuild37952/576/1392/25408、0错0警告/4秒，及非零/取消两张Watch截图。接受TaskA到CAN任务的有限数据交接，不签物理发送或停车通过。按[P1正常停车接口指南](P1_HEADING_ORDERLY_STOP_MANUAL_2026-10-21.md)准备实际源码的隔离候选：提前停止不续段、在途启动、重复请求不续截止、停止应答失败、500ms截止、非零速超时、VM撤销、反馈过期及原三段回归均由mock运行通过；真实头文件/宏ARMCC候选编译通过。实际固件未改，仍由用户手改两文件并Rebuild，主流程未接新API。R RUN-01/PWR-01，E LOC-03/05、RUN-06、MOT-02/04已检查，官方Q保持待技术答疑确认，动态执行/物理停车/转角及X/Y未闭环。
+
+## 2026-10-21 四轮编码预览确认及CAN交接接口准备
+
+用户本聊天Rebuild37688/564/1352/25408、0错0警告，先后截图确认+45度四轮direction1/speed5、取消state5/cause4且speed全0、-45度direction0/speed5，encode_result1。截图中的VM请求为0，不替代物理电压测量。下一项见[P1 CAN交接接口手动指南](P1_HEADING_CAN_MAILBOX_MANUAL_2026-10-21.md)：只准备Publish/Read纯数据接口，失效输出0速/停止请求，临界区一致性和100ms候选时效由后续真实调度验证。模拟tick及空临界区检查不能签并发或运动通过。助手未修改实际固件/Keil工程、未操纵硬件。用户手改两个文件后Rebuild；真实执行整合、物理停车及X/Y仍待验，已检查R RUN-01/PWR-01，E LOC-03/05、RUN-06、MOT-02/04，官方Q不变。
+
+## 2026-10-20 虚拟自检及真实航向静态预览板上用例通过
+
+用户连续提供Rebuild及Watch截图，确认0度到位、正反45度计算、取消及复位新会话连续运行超时。最终state4/cause3/command0/stop1、VM请求和两fault0。此前暂停现场续跑cause2不记作超时通过，根因未确定。详细数值、证据、R/E/Q及未闭环范围见[P1静态预览结果](P1_HEADING_LIVE_PREVIEW_RESULTS_2026-10-20.md)。下一项准备执行层手动接入及隔离验证；未改实际源码/工程，未操作硬件，不签真实闭环/物理停车/X/Y通过。
+
+## 2026-10-20 用户手改边界修正构建通过，准备由用户手动加入虚拟角度自检
+
+用户明确停止助手直接修改代码/工程。此后实际固件只读；用户自行修正ErrorDeg先分别归一化目标/当前再相减，并提供全Rebuild：Code35604/RO452/RW1332/ZI25284，0错0警告/4秒。只读当前实际源确认修正，新增heading文件和USER工程引用保留。此前53项检查属于边界补充前，不沿用其哈希或检查数冒充当前结果。
+
+新增说明P1_HEADING_DRY_SELFTEST_MANUAL_2026-10-20.md：用户手动切APP_HWT_STATIC_TEST1/APP_HWT_TURN_TEST0，main只加纯自检头文件/函数和启动前一次调用；不在while重复，不调用CAN/VM或真实HWT配置。虚拟±45度分段/稳定、±180最短误差、HWT无效/超时/取消和多圈角回归。检查结果1/case0；正序5,3,1,0,0/负序-5,-3,-1,0,0，跨界2.000度。结果仅表示软件用例通过，不能证明小车真实转角。
+
+隔离复制当前源并机械应用指南步骤，ARMCC主main和当前控制器均无错误警告输出；相同指南自检在主机GCC严格编译/执行通过，当前已有边界测试对实际控制器58项通过。检查前后实际main/app_config/heading源码及工程哈希不变，无实际编译产物覆盖、无链接候选或烧录/物理CAN。首次隔离脚本误用了PowerShell只读Host变量，修正测试变量后通过，未影响真实源。当前唯一下一项用户手改指南1～4节、Rebuild并给完整日志，再安排静态板上纯计算观察与APP余栈/堆。
+
+检查R RUN-01/PWR-01；E LOC-03/05、RUN-06/MOT-04；Q不变。证据heading_dry_manual_preparation.json及用户完整构建日志，板上/真实目标角集成和实测尚未通过。
+
+## 2026-10-20 目标航向闭环纯计算层完成，未接入实车动作
+
+开发前按团队规则同步远程，origin/main与本地缓存均为158e3df，无队友新提交。读取10月19日交接及当前工程，确认使能/停止/速度接口、轮向/运动学、PC13三段5RPM、HWT双向限时转向已经在实际代码和证据中，旧10月15日“控制接口待添加”不再作为当前操作。
+
+新增USER/heading_controller.c/h并加入Keil USER组。模块仅输入目标/当前航向、角速度、HWT有效性和tick，输出带符号逻辑转向RPM与stop_required；不引用CAN、VM、FreeRTOS或现有执行器。最短误差归一到[-180,180)，候选分段5/3/1RPM，2度内先停止，角速度不超过3度每秒且连续700ms才完成，20秒超时；HWT无效、超时、取消均输出零速和停止请求。参数均为E候选，最大配置硬限10RPM，不解释为正式运动限值。
+
+ARMCC单文件与GCC严格编译通过；同一实际模块运行53项主机检查，覆盖跨界、方向、超调、分段、稳定计时、速率门、传感器失效、超时/tick回绕、取消及非法配置。完整Keil Rebuild 0错0警告，Code35604/RO452/RW1332/ZI25284；尺寸未增因运行代码尚未引用，证明模块被编译而非已执行。AXF仅本地生成，未下载/烧录/发CAN/操作硬件。证据见2026-10-20/heading_controller_software_verification.json及Objects/codex-heading-controller-build.log。
+
+当前唯一下一项：增加与APP_HWT_TURN_TEST互斥的目标航向干运行模式，复用现有四轮准备、停止确认、PC13取消、HWT/CAN失效和VM兜底；先模拟+45/-45/跨界，再决定完整装机载物5RPM上限实测。正式运动许可、目标角实车误差、连续航向保持与实时X/Y仍未闭环。
+
+检查R RUN-01/PWR-01；E LOC-03/05/07、RUN-06、MOT-01～04；官方Q不变。
+
 > **2026-10-18最新：按用户明确要求假定兼容，先做受限A6试验**：不再把版本确认当本轮前置。hwt101增加显式request1静止确认后1s+前60s记录+A6 01采10s+A6 04退出+静置1s+后60s记录；VM持续0，PC13不运动。只试A6，不改A7/归零/保存/死区/出厂参数。失败时尽力有界退出，发送完成与模块接受/漂移改善分开。2109项模拟检查通过，Keil Code33896/RO448/RW1208/ZI25272、0错0警告。下一项烧写后放稳，version_result1/valid_mask3时cal_request1，F5持续约2分15秒，不碰车不暂停，再报告cal_result/before_deg/after_deg。兼容仍是用户试验假设，不写成厂商确认；实物试验/效果待验。详见P1_HWT101_A6_STATIC_TRIAL_2026-10-18.md。R RUN-01/PWR-01、E LOC-03/05/RUN-06/MOT-04，Q不变。
 
 > **2026-10-18版本回复实测成功，兼容性仍待核对**：用户新版截图result1/tx5/valid_mask3，展开帧55 5F E2 27 0A 00 00 00 00 00 C7，校验正确，接受连续版本请求及双向串口本次交易通过。公开HWT101协议将2E定义16位版本，按此字段为0x27E2=10210；程序raw0x000A27E2只是前四payload字节拼接，不能据此解读为新文档1003X.1.8或宣布A6/A7支持。用户新截图为另一32位版本布局，需维特上位机的明确设备版本或厂商对应说明确认；不凭数值大小判新旧，不发送尚未确认的校准/配置命令。证据hwt101_version_reply_user_pass.json/png，保留静态VM0。R RUN-01/PWR-01、E LOC-03/05/RUN-06，官方Q不变，实际版本格式/校准兼容属工程待核。

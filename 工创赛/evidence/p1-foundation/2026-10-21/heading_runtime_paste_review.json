@@ -1,0 +1,21 @@
+{
+  "pastes_identical": true,
+  "pasted_matches_saved_actual_tokens": true,
+  "fixes": [
+    {
+      "line": 718,
+      "anchor": "g_heading_bus_valid block",
+      "expected": "#if APP_HWT_STATIC_TEST && !APP_HWT_TURN_TEST"
+    },
+    {
+      "line": 726,
+      "anchor": "HEADING_SOURCE_FRESH_MS outer guard",
+      "expected": "#if APP_HEADING_SESSION_TEST || (APP_HWT_STATIC_TEST && !APP_HWT_TURN_TEST)"
+    }
+  ],
+  "corrected_tokens_match_tested_candidate": true,
+  "corrected_ARMCC_with_actual_config": "pass no diagnostics",
+  "actual_main_unchanged": true,
+  "actual_main_sha256": "51a674581b40b75301a1feb6f69cf2ebfe9d4261b2a6dd497f6250997bdf5f72",
+  "pending": "user correct two guards then full rebuild; no download or hardware action"
+}

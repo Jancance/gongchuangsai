@@ -1,0 +1,19 @@
+uint32_t ChassisAuto_ReadStatus(ChassisAutoStatus *status)
+{
+    if (status == 0) return 0U;
+    taskENTER_CRITICAL();
+    status->state = g_chassis_auto_state;
+    status->active = g_chassis_auto_active;
+    status->result = g_chassis_auto_result;
+    status->cause = g_chassis_auto_cause;
+    status->session = g_chassis_auto_session;
+    status->segment = g_chassis_auto_segment;
+    /* 目标航向使用旋转段2，禁止误取前进或横移的停止应答。 */
+    status->rotation_stop_mask = g_chassis_auto_stop_mask[2];
+    status->heading_mode = s_heading_session;
+    /* 读取Begin实际锁存的执行模式，不能读取下一次请求参数。 */
+    status->dry_run = s_mode;
+    status->cut_vm = g_chassis_auto_cut_vm;
+    taskEXIT_CRITICAL();
+    return 1U;
+}

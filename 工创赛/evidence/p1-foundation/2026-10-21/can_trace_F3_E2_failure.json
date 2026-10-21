@@ -1,0 +1,45 @@
+{
+  "user_observation": "VM indicator did not illuminate; vehicle did not rotate",
+  "exec": {
+    "target_deg": -110.724487,
+    "state": 4,
+    "error_deg": 5,
+    "phase": 4,
+    "trip": 6,
+    "cause": 2,
+    "relative_deg": 5
+  },
+  "backend": {
+    "rotation_stop_mask": 0,
+    "last_address": 1,
+    "result": 2,
+    "cause": 1,
+    "io_result": 8
+  },
+  "trace": {
+    "address": 1,
+    "pe2_start": 1,
+    "ESR": 0,
+    "rx_count": 1,
+    "total_ms": 1,
+    "reply": "F3 E2 6B",
+    "ExtId": "0x0100",
+    "phase": 3,
+    "flush_count": 0,
+    "fault_latched": 1,
+    "pe2_end": 1,
+    "request": "F3 AB 00 00 6B",
+    "IDE": "0x04",
+    "result": 8,
+    "tx_ms": 1,
+    "length": 5,
+    "RTR": 0,
+    "DLC": 3
+  },
+  "manufacturer_source": "ZDT_X42S第二代闭环步进电机用户手册V1.0.5_260527.pdf pages42/43/50",
+  "interpretation": "Matching non-success F3 response, not timeout. E2 means parameter/data-range/conditions unmet; manual includes undervoltage and protections as possible conditions. Request matches manual. Cannot uniquely identify low voltage from E2.",
+  "limits": "PE2 ODR is command state, not physical VM measurement. StdId is irrelevant for extended frame. Historical io5 timeout retained separately.",
+  "next": "No repeat motion; preserve failure; obtain address1 motor display/error photo before further static power diagnosis",
+  "assistant_source_modified": false,
+  "hardware_operated": false
+}

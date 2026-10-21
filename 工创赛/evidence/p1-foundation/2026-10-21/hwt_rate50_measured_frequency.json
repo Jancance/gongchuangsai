@@ -1,0 +1,59 @@
+{
+  "first": {
+    "top": {
+      "angle": 1166,
+      "rate": 1166,
+      "tick": 58950
+    },
+    "bottom": {
+      "angle": 1175,
+      "rate": 1176,
+      "tick": 59140
+    }
+  },
+  "second": {
+    "top": {
+      "angle": 2022,
+      "rate": 2022,
+      "tick": 76080
+    },
+    "bottom": {
+      "angle": 2005,
+      "rate": 2005,
+      "tick": 75730
+    }
+  },
+  "calculations_matching_watch_groups": {
+    "top": {
+      "elapsed_ms": 17130,
+      "angle_delta": 856,
+      "rate_delta": 856,
+      "angle_hz": 49.97081144191477,
+      "rate_hz": 49.97081144191477
+    },
+    "bottom": {
+      "elapsed_ms": 16590,
+      "angle_delta": 830,
+      "rate_delta": 829,
+      "angle_hz": 50.03013863773357,
+      "rate_hz": 49.96986136226643
+    }
+  },
+  "error_counts_both": {
+    "checksum": 0,
+    "uart": 1,
+    "overflows": 0
+  },
+  "error_increments": [
+    0,
+    0,
+    0
+  ],
+  "conclusion": "approximately50Hz valid angle and rate reception; duplicated live Watch rows are not atomic and update at different instants",
+  "not_proven": "worst-case gaps,100ms continuous freshness,power-cycle retention,motion",
+  "next": "VM external off; true controller+HWT power cycle, not debugger reset alone; no rate50 request; read RRATE and expect8",
+  "screenshot_sha256": {
+    "hwt_rate50_frequency_first.png": "0a7ede19d82e417b7ad17c57651c0ac5576cb2c0c4f2dded570921a9cf977a0f",
+    "hwt_rate50_frequency_second.png": "00b0acdd333c31f3aee0c7c44e4b8b24e7330f571263bfe74ee7912a29516210"
+  }
+}

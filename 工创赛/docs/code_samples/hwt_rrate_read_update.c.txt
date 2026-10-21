@@ -1,0 +1,134 @@
+static void Hwt_VersionUpdate(uint32_t now)
+{
+    uint32_t i, errors;
+    volatile uint32_t *result;
+    volatile uint8_t *reply;
+    /* 读RRATE过程中失去静态条件立即结束，不等待发送/回复截止。 */
+    if ((s_read_rrate != 0U) && (g_hwt_version_state != 0U) &&
+        ((APP_HWT_STATIC_TEST != 1U) || (APP_HWT_TURN_TEST != 0U) ||
+         (APP_HEADING_SESSION_TEST != 0U) || (g_vm_test_request != 0U) ||
+         (g_rtos_fault != 0U) || (g_safety_fault != 0U) ||
+         (g_hwt_cal_request != 0U) || (g_hwt_cal_active != 0U)))
+    {
+        USART_ITConfig(USART2, USART_IT_TXE, DISABLE);
+        g_hwt_rrate_request = 0U; g_hwt_rrate_result = 4U;
+        g_hwt_version_state = 0U; return;
+    }
+    /* 只读RRATE仅在静态VM0模式受理，不改变原版本/A7行为。 */
+    if ((g_hwt_rrate_request != 0U) &&
+        ((APP_HWT_STATIC_TEST != 1U) || (APP_HWT_TURN_TEST != 0U) ||
+         (APP_HEADING_SESSION_TEST != 0U) || (g_vm_test_request != 0U) ||
+         (g_rtos_fault != 0U) || (g_safety_fault != 0U) ||
+         (g_hwt_cal_request != 0U) || (g_hwt_cal_active != 0U)))
+    { g_hwt_rrate_request = 0U; g_hwt_rrate_result = 9U; }
+    if (g_hwt_cal_active != 0U)
+    {
+        if (g_hwt_a7_request != 0U) g_hwt_a7_result = 9U;
+        g_hwt_a7_request = g_hwt_version_request = 0U;
+        return;
+    }
+    errors = s_error_epoch;
+    if (g_hwt_version_state == 0U)
+    {
+        if ((g_hwt_version_request != 1U) && (g_hwt_a7_request != 1U) &&
+            (g_hwt_rrate_request != 1U)) return;
+        /* 给模块上电初始化留2秒，不依赖用户计时，不重复发设置。 */
+        if ((uint32_t)(now - s_version_start_tick) < 2000U) return;
+        s_read_rrate = ((g_hwt_rrate_request == 1U) &&
+            (g_hwt_version_request != 1U) && (g_hwt_a7_request != 1U)) ? 1U : 0U;
+        /* 5F不回显地址；RRATE前要求已成功读版本，并留出静默隔离窗口。 */
+        if ((s_read_rrate != 0U) && ((g_hwt_version_result != 1U) ||
+            ((uint32_t)(now - s_parser.register_tick) < 1500U)))
+        { g_hwt_rrate_request = 0U; g_hwt_rrate_result = 9U; return; }
+        if ((g_hwt_rrate_request != 0U) && (s_read_rrate == 0U))
+            g_hwt_rrate_result = 9U;
+        g_hwt_rrate_request = 0U;
+        s_read_a7 = ((s_read_rrate == 0U) && (g_hwt_version_request != 1U));
+        if ((s_read_a7 == 0U) && (g_hwt_a7_request != 0U)) g_hwt_a7_result = 9U;
+        g_hwt_version_request = g_hwt_a7_request = 0U;
+        if (s_read_rrate != 0U) g_hwt_rrate_result = 0U;
+        else if (s_read_a7 != 0U) g_hwt_a7_result = 0U;
+        else g_hwt_version_result = 0U;
+        s_version_index = 0U; s_version_tick = now;
+        s_version_rx_base = s_parser.register_count;
+        s_version_error = errors;
+        taskENTER_CRITICAL();
+        s_tx_command = s_read_rrate ? s_rrate_command :
+            (s_read_a7 ? s_a7_command : s_version_command); s_tx_owner = 1U;
+        g_hwt_version_state = 1U;
+        USART_ITConfig(USART2, USART_IT_TXE, ENABLE);
+        taskEXIT_CRITICAL();
+    }
+    else
+    {
+        /* 忙时消耗请求，不交错发送版本、A7或A6。 */
+        if ((g_hwt_a7_request != 0U) && (s_read_a7 == 0U)) g_hwt_a7_result = 9U;
+        if ((g_hwt_rrate_request != 0U) && (s_read_rrate == 0U))
+            g_hwt_rrate_result = 9U;
+        g_hwt_rrate_request = 0U;
+        g_hwt_a7_request = g_hwt_version_request = 0U;
+    }
+    result = s_read_rrate ? &g_hwt_rrate_result :
+        (s_read_a7 ? &g_hwt_a7_result : &g_hwt_version_result);
+    reply = s_read_rrate ? g_hwt_rrate_reply :
+        (s_read_a7 ? g_hwt_a7_reply : g_hwt_version_reply);
+    if (errors != s_version_error)
+    { USART_ITConfig(USART2, USART_IT_TXE, DISABLE);
+      *result = 4U; g_hwt_version_state = 0U; return; }
+    if (g_hwt_version_state == 1U)
+    {
+        if ((uint32_t)(now - s_version_tick) >= 200U)
+        { USART_ITConfig(USART2, USART_IT_TXE, DISABLE);
+          *result = 2U; g_hwt_version_state = 0U; return; }
+        /* 字节由TXE中断连续发送，不受任务10ms轮询间隔影响。 */
+        if (s_version_index < 5U) return;
+        s_version_tick = s_version_last_tx_tick;
+        g_hwt_version_state = 2U;
+    }
+    if (g_hwt_version_state == 2U)
+    {
+        if ((uint32_t)(now - s_version_tick) >= 200U)
+        { USART_ITConfig(USART2, USART_IT_TXE, DISABLE);
+          *result = 2U; g_hwt_version_state = 0U; return; }
+        if (USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET) return;
+        g_hwt_version_state = 3U;
+    }
+    if (g_hwt_version_state == 3U)
+    {
+        if ((s_parser.register_count != s_version_rx_base) &&
+            ((uint32_t)(s_parser.register_tick - s_version_tick) <= 1000U) &&
+            ((uint32_t)(now - s_parser.register_tick) <= 1000U))
+        {
+            /* 用无符号类型组合，不把版本字节误作带符号角度。 */
+            if (s_read_rrate != 0U)
+            {
+                g_hwt_rrate_raw = (uint32_t)s_parser.register_data[0] |
+                    ((uint32_t)s_parser.register_data[1] << 8);
+                g_hwt_rrate_reply_count++;
+            }
+            else if (s_read_a7 != 0U)
+            {
+                g_hwt_a7_raw = (uint32_t)s_parser.register_data[0] |
+                    ((uint32_t)s_parser.register_data[1] << 8);
+                g_hwt_a7_reply_count++;
+            }
+            else
+            {
+                g_hwt_version_raw = (uint32_t)s_parser.register_data[0] |
+                    ((uint32_t)s_parser.register_data[1] << 8) |
+                    ((uint32_t)s_parser.register_data[2] << 16) |
+                    ((uint32_t)s_parser.register_data[3] << 24);
+                g_hwt_version_low16 = g_hwt_version_raw & 0xFFFFU;
+                g_hwt_version_reply_count++;
+            }
+            reply[0] = 0x55U; reply[1] = 0x5FU;
+            for (i = 0U; i < 8U; i++) reply[i + 2U] = s_parser.register_data[i];
+            reply[10] = 0U;
+            for (i = 0U; i < 10U; i++) reply[10] =
+                (uint8_t)(reply[10] + reply[i]);
+            *result = 1U; g_hwt_version_state = 0U;
+        }
+        else if ((uint32_t)(now - s_version_tick) >= 1000U)
+        { *result = 3U; g_hwt_version_state = 0U; }
+    }
+}

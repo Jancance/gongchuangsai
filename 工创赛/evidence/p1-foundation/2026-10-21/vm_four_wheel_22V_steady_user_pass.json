@@ -1,0 +1,10 @@
+{
+  "source": "User physical observation plus preceding Watch screenshot",
+  "vm_output_volts": 22,
+  "indicator": "Continuously illuminated over instructed static observation",
+  "software_evidence": "vm_four_wheel_static_guard_ready.json/png",
+  "scope": "Static power with four wheels connected accepted for this test, no speed commands or full-load thermal acceptance",
+  "next": "One address1 disable request under healthy sustained VM supply; record F3 reply and status bit0 before poweroff",
+  "pending": "Original F3 E2 cause, actual disable acknowledgment/state, session mode retest, physical rotation/stop, XY",
+  "hardware_operated_by_assistant": false
+}

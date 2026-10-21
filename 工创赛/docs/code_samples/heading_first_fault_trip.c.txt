@@ -1,0 +1,43 @@
+/* 首次失败快照：仅记录，不改变原有判定、截止或VM动作。 */
+volatile uint32_t g_heading_fault_phase = 0U;
+volatile uint32_t g_heading_fault_source_flags = 0U;
+volatile uint32_t g_heading_fault_sample_age_ms = 0U;
+volatile uint32_t g_heading_fault_angle_age_ms = 0U;
+volatile uint32_t g_heading_fault_rate_age_ms = 0U;
+volatile uint32_t g_heading_fault_hwt_update_age_ms = 0U;
+volatile uint32_t g_heading_fault_tick_ms = 0U;
+
+static void App_HeadingRuntimeTrip(uint32_t cause)
+{
+    uint32_t now, flags;
+    taskENTER_CRITICAL();
+    if (g_heading_exec_trip == 0U)
+    {
+        now = (uint32_t)xTaskGetTickCount();
+        g_heading_fault_phase = g_heading_exec_phase;
+        g_heading_fault_tick_ms = now;
+        g_heading_fault_sample_age_ms = now - s_heading_source.sample_ms;
+        g_heading_fault_angle_age_ms = now - s_heading_source.angle_ms;
+        g_heading_fault_rate_age_ms = now - s_heading_source.rate_ms;
+        g_heading_fault_hwt_update_age_ms = now - g_hwt_update_tick;
+        flags = 0U;
+        if (s_heading_source_ready != 1U) flags |= 0x001U;
+        if (s_heading_source.healthy != 1U) flags |= 0x002U;
+        if (g_heading_fault_sample_age_ms >= HS_SOURCE_MS) flags |= 0x004U;
+        if (g_heading_fault_angle_age_ms >= HS_SOURCE_MS) flags |= 0x008U;
+        if (g_heading_fault_rate_age_ms >= HS_SOURCE_MS) flags |= 0x010U;
+        if (g_hwt_cal_active != 0U) flags |= 0x020U;
+        if (g_hwt_cal_request != 0U) flags |= 0x040U;
+        if (g_hwt_cal_end_tx_result == 2U) flags |= 0x080U;
+        if (g_hwt_version_state != 0U) flags |= 0x100U;
+        if (g_hwt_version_request != 0U) flags |= 0x200U;
+        if (g_hwt_a7_request != 0U) flags |= 0x400U;
+        g_heading_fault_source_flags = flags;
+        g_heading_exec_trip = cause;
+    }
+    g_heading_exec_rpm = 0;
+    g_chassis_auto_request = 0U;
+    ChassisAuto_Abort();
+    g_vm_test_request = 0U;
+    taskEXIT_CRITICAL();
+}
