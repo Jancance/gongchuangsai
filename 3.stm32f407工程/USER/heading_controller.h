@@ -58,6 +58,19 @@ extern const HeadingControllerConfig g_heading_controller_default_config;
 
 float HeadingController_WrapDeg(float angle_deg);
 float HeadingController_ErrorDeg(float target_deg, float current_deg);
+/* 前进PD：Kp=0.8 RPM/deg，Kd=0.25 RPM/(deg/s)，修正限幅2RPM。 */
+typedef struct
+{
+    uint32_t tick, initialized;
+    float command_rpm, filtered_rate_dps;
+    int32_t quantized_rpm;
+} HeadingHoldController;
+uint32_t HeadingController_HoldCorrection(float target_deg, float yaw_deg,
+    float rate_dps, float *correction_rpm, float *error_deg);
+uint32_t HeadingController_HoldStep(HeadingHoldController *hold,
+    float target_deg, float yaw_deg, float rate_dps, uint32_t now_ms,
+    int32_t *correction_rpm, float *error_deg);
+
 uint32_t HeadingController_ConfigValid(const HeadingControllerConfig *config);
 uint32_t HeadingController_Start(HeadingController *controller,
     const HeadingControllerConfig *config, float target_deg,

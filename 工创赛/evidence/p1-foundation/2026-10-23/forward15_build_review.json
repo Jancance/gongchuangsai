@@ -1,0 +1,85 @@
+{
+  "date": "2026-10-23",
+  "requested_by_user": "increase directly to 15 RPM, no target-step test",
+  "base_rpm": 15,
+  "duration_ms": 8000,
+  "correction_limit_rpm": 2,
+  "wheel_command_range_rpm": [
+    13,
+    17
+  ],
+  "forward_feedback_trip_abs_rpm_above": 17,
+  "other_mode_speed_limits_unchanged": true,
+  "pd_unchanged": true,
+  "source_mailbox_stop_watchdog_protections_preserved": true,
+  "backend_run_ms": 9000,
+  "builds": {
+    "forward15_rebuild": {
+      "code": 38512,
+      "ro": 608,
+      "rw": 1672,
+      "zi": 27496
+    },
+    "forward15_turn_regression": {
+      "code": 39080,
+      "ro": 608,
+      "rw": 1672,
+      "zi": 27496
+    }
+  },
+  "validation": "isolated ARMCC5 builds and source hash/format review only",
+  "hardware_flashed": false,
+  "hardware_tested": false,
+  "original_axf_rebuilt": false,
+  "pushed": false,
+  "sources": [
+    {
+      "file": "app_config.h",
+      "sha256": "a463f51ca42b554553f2b8b28bce53a743fcea5a009a0af6a487f9e1be72e055",
+      "matches_final_build": true,
+      "crlf": true
+    },
+    {
+      "file": "chassis_kinematics.c",
+      "sha256": "d6dd69ce8a20d2e784f23477f1d618f9c128a8a090e1f92a0886131caa60f16b",
+      "matches_final_build": true,
+      "crlf": true
+    },
+    {
+      "file": "chassis_kinematics.h",
+      "sha256": "52c1d9309b6bc63fab9a85e93bf1c399bdfbac11a8aacc7a61218cf0af276efe",
+      "matches_final_build": true,
+      "crlf": true
+    },
+    {
+      "file": "chassis_auto_test.c",
+      "sha256": "c1d0a692727253059898914041d7bc799b2bb88a967dec075fba0deffcac06c9",
+      "matches_final_build": true,
+      "crlf": true
+    },
+    {
+      "file": "chassis_auto_test.h",
+      "sha256": "98b9f8803a0cb3bd7c302c0d7242df46095912ee910de411e4e0c7fed9802b56",
+      "matches_final_build": true,
+      "crlf": true
+    },
+    {
+      "file": "heading_controller.c",
+      "sha256": "d3b5c2a6d902240fb54700227d22c5857e16cd3360971cf92ac3270da3855c40",
+      "matches_final_build": true,
+      "crlf": true
+    },
+    {
+      "file": "heading_controller.h",
+      "sha256": "6f8d744828e30ac7a5b1c07d7f90570c96e74e983936a9661622b520a93316aa",
+      "matches_final_build": true,
+      "crlf": true
+    },
+    {
+      "file": "main.c",
+      "sha256": "d6b1835ce17ce4245e9ae4d9187898115751d894e5aa2820fc03a7cd7ef5bb7d",
+      "matches_final_build": true,
+      "crlf": true
+    }
+  ]
+}

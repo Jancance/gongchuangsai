@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-22",
+  "source": "User Watch screenshot and explicit physical observation",
+  "requested_relative_deg": 30,
+  "target_deg": 103.778687,
+  "current_hwt_yaw_deg": 101.859741,
+  "latched_controller_error_deg": 1.91345215,
+  "inferred_start_hwt_yaw_deg": 73.778687,
+  "current_hwt_net_change_from_inferred_start_deg": 28.081053999999995,
+  "target_minus_current_deg": 1.9189460000000054,
+  "note": "current HWT and saved controller error have different sampling instants; do not conflate them",
+  "heading_exec_state": 3,
+  "heading_exec_cause": 0,
+  "backend_result": 1,
+  "backend_cause": 0,
+  "rotation_stop_ack_mask": 15,
+  "power_wait_state": 4,
+  "power_on_age_ms_at_ready": 1046,
+  "post_settle_mask": 15,
+  "user_observation": "车明显转动后自动停稳，VM灯自行熄灭",
+  "accepted_scope": "single +30 degree requested trial completed within configured +/-2 degree HWT tolerance; user-observed physical motion and automatic settling/VM indicator off",
+  "not_captured": [
+    "top-level exec_phase/trip",
+    "terminal vm_request/rtos_fault/safety_fault",
+    "independent physical angular accuracy"
+  ],
+  "limitations": [
+    "current inferred HWT net turn is about 28.081 degrees, not independently measured exact 30 degrees",
+    "no repeated or negative30 trial",
+    "no independent VM voltage measurement",
+    "no dynamic fault response or full vehicle acceptance"
+  ],
+  "firmware_changed_this_turn": false,
+  "hardware_operated_by_assistant": false,
+  "next": "retain current configuration and this success record; quantify desired angular tolerance before tuning, and separately verify negative30/repeatability"
+}

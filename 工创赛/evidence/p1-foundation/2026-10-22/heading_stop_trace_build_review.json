@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-22",
+  "scope": "HWT event snapshots only; no tolerance, speed, timeout, safety or power behavior edits",
+  "main_sha256": "df6fedfcf1f75283e13d058c6f795692f9c19ba4ced6380328d85ea379a005c4",
+  "source_matches_build": true,
+  "static_control_regression": "Removing only added diagnostics yields byte-equivalent normalized main.c from preceding +30 candidate; all other listed control files unchanged",
+  "build": "Program Size: Code=38804 RO-data=588 RW-data=1632 ZI-data=25872",
+  "full_rebuild_errors": 0,
+  "full_rebuild_warnings": 0,
+  "events": [
+    "start",
+    "first zero-speed mailbox submission with accepted flag",
+    "controller reached / STOP request",
+    "session complete",
+    "first observed software PE2 off",
+    "fresh HWT angle frame >=1000ms after observed off, expires at2000ms"
+  ],
+  "quality": "captured and valid are distinct; invalid event snapshots cannot be treated as live angle; post_status2 means no timely fresh sample",
+  "limits": [
+    "software mailbox request is not actual wheel braking time",
+    "observed PE2 off is not exact switching edge or actual VM voltage",
+    "HWT-only comparison is not independent physical angle proof",
+    "no runtime host simulation or hardware test of new tracing firmware"
+  ],
+  "hardware_download_by_assistant": false
+}

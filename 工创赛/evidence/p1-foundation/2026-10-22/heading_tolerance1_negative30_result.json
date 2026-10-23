@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-22",
+  "scope": "One-30 counterpart with1deg live session tolerance; HWT diagnostic screenshots",
+  "started": 1,
+  "zero_submit_accepted": 1,
+  "post_status": 1,
+  "target_deg": 98.5510254,
+  "start": {
+    "captured": 1,
+    "valid": 1,
+    "event_ms": 13886,
+    "yaw_deg": 128.551025,
+    "error_deg": -30,
+    "rate_dps": 0,
+    "pe2_active": 1
+  },
+  "zero_request": {
+    "captured": 1,
+    "valid": 1,
+    "event_ms": 26105,
+    "yaw_deg": 99.5361328,
+    "error_deg": -0.985107422,
+    "rate_dps": -1.03759766,
+    "pe2_active": 1
+  },
+  "reached": {
+    "captured": 1,
+    "valid": 1,
+    "event_ms": 26809,
+    "yaw_deg": 99.4592285,
+    "error_deg": -0.908203125,
+    "rate_dps": 0,
+    "pe2_active": 1
+  },
+  "completed": {
+    "captured": 1,
+    "valid": 1,
+    "event_ms": 27854,
+    "yaw_deg": 99.4537354,
+    "error_deg": -0.902709961,
+    "rate_dps": 0,
+    "pe2_active": 1
+  },
+  "off_seen": {
+    "captured": 1,
+    "valid": 1,
+    "event_ms": 27864,
+    "yaw_deg": 99.4537354,
+    "error_deg": -0.902709961,
+    "rate_dps": 0,
+    "pe2_active": 0
+  },
+  "after_off": {
+    "captured": 1,
+    "valid": 1,
+    "event_ms": 28884,
+    "yaw_deg": 99.4537354,
+    "error_deg": -0.902709961,
+    "rate_dps": 0,
+    "pe2_active": 0
+  },
+  "computed": {
+    "off_to_after_ms": 1020,
+    "yaw_change_off_to_after_deg": 0.0,
+    "net_hwt_turn_deg": -29.09728960000001
+  },
+  "accepted_scope": "One negative30 HWT session recorded reached/completed and post-off error within1deg, paired with previous positive30 post-off error+0.935668945deg",
+  "limits": [
+    "no top-level terminal phase/trip/fault or raw stop_mask screenshot",
+    "equal endpoint HWT readings do not rule out motion between samples or independently establish physical angular accuracy",
+    "one each direction is not repeatability statistics"
+  ],
+  "firmware_changed_this_turn": false,
+  "next": "User explicitly accepts current turning implementation and ends repeated turning tests; preserve settings and move to next feature design",
+  "user_physical_confirmation": "是的：本次反向转动后自动停稳、VM灯自行熄灭"
+}

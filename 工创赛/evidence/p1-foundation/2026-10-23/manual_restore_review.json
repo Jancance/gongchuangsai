@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-23",
+  "user_request": "shelve serial telemetry and remote start; retain manual Watch debugging",
+  "firmware_source_matches": "pre-serial forward15_limit30_build_20261023",
+  "all_project_c_h_asm_files_matching": 887,
+  "base_rpm": 15,
+  "run_ms": 8000,
+  "command_max_rpm": 17,
+  "feedback_limit_rpm": 30,
+  "serial_telemetry_removed": true,
+  "remote_start_implemented": false,
+  "uart_tx_buffer_bytes": 64,
+  "host_tools_shelved": "工创赛/tmp/serial_telemetry_shelved_20261023",
+  "build": {
+    "code": 38512,
+    "ro": 608,
+    "rw": 1672,
+    "zi": 27496
+  },
+  "errors": 0,
+  "warnings": 0,
+  "hardware_operated": false,
+  "original_project_axf_changed": false,
+  "committed": false,
+  "pushed": false,
+  "key_files": [
+    {
+      "file": "USER/main.c",
+      "sha256": "d6b1835ce17ce4245e9ae4d9187898115751d894e5aa2820fc03a7cd7ef5bb7d"
+    },
+    {
+      "file": "USER/app_config.h",
+      "sha256": "59dac32d701977f86596d043bb619063bbb0817d24b2fc649d5db42de0e1033d"
+    },
+    {
+      "file": "SYSTEM/USART/usart.c",
+      "sha256": "03a164529dc11d0a8bc31559ce715e4f428721061e28bb0049cd595d1eeb1b67"
+    },
+    {
+      "file": "SYSTEM/CAN/can.h",
+      "sha256": "a539938b7e20454026f178e75e1db37759321ad702f12969699dbbed00312795"
+    }
+  ]
+}

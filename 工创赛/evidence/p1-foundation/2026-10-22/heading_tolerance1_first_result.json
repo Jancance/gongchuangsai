@@ -1,0 +1,82 @@
+{
+  "date": "2026-10-22",
+  "scope": "One+30 trial with1deg live session tolerance; HWT evidence only",
+  "started": 1,
+  "zero_submit_accepted": 1,
+  "post_status": 1,
+  "rotation_stop_mask": 15,
+  "target_deg": 129.486694,
+  "start": {
+    "captured": 1,
+    "valid": 1,
+    "event_ms": 12686,
+    "yaw_deg": 99.4866943,
+    "error_deg": 30,
+    "pe2_active": 1
+  },
+  "zero_request": {
+    "captured": 1,
+    "valid": 1,
+    "event_ms": 24916,
+    "angle_sample_ms": 24908,
+    "yaw_deg": 128.50708,
+    "error_deg": 0.979614258,
+    "rate_dps": 1.46484375,
+    "pe2_active": 1
+  },
+  "reached": {
+    "captured": 1,
+    "valid": 1,
+    "event_ms": 25620,
+    "angle_sample_ms": 25608,
+    "yaw_deg": 128.583984,
+    "error_deg": 0.902709961,
+    "rate_dps": 0,
+    "pe2_active": 1
+  },
+  "completed": {
+    "captured": 1,
+    "valid": 1,
+    "event_ms": 26665,
+    "angle_sample_ms": 26648,
+    "yaw_deg": 128.583984,
+    "error_deg": 0.902709961,
+    "rate_dps": 0,
+    "pe2_active": 0
+  },
+  "off_seen": {
+    "captured": 1,
+    "valid": 1,
+    "event_ms": 26665,
+    "angle_sample_ms": 26648,
+    "yaw_deg": 128.583984,
+    "error_deg": 0.902709961,
+    "rate_dps": 0,
+    "pe2_active": 0
+  },
+  "after_off": {
+    "captured": 1,
+    "valid": 1,
+    "event_ms": 27675,
+    "angle_sample_ms": 27668,
+    "yaw_deg": 128.551025,
+    "error_deg": 0.935668945,
+    "rate_dps": 0,
+    "pe2_active": 0
+  },
+  "computed": {
+    "zero_to_reached_ms": 704,
+    "off_to_after_ms": 1010,
+    "reverse_change_after_off_deg": 0.03295899999997687,
+    "hwt_net_angle_start_to_after_deg": 29.064330700000014
+  },
+  "comparison": "Earlier2deg trial after-off error2.07824707deg and reverse change0.1757813deg; this1deg trial after-off error0.935668945deg and reverse change0.032959deg. Single runs from different starting yaw are not repeatability or mechanical-cause proof.",
+  "accepted_scope": "Recorded controller reached, completed, four-wheel stop acknowledgment, and fresh post-off HWT within1deg for this one trial",
+  "not_provided": [
+    "top-level terminal phase/trip/fault screenshot",
+    "fresh user physical motion/settling/VM-lamp observation for this exact trial",
+    "independent physical angle measurement"
+  ],
+  "firmware_changed_this_turn": false,
+  "next": "retain1deg tolerance, obtain physical observation confirmation, then controlled negative30 counterpart and repeatability; do not infer guaranteed1deg physical accuracy"
+}

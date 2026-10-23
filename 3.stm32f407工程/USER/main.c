@@ -17,6 +17,7 @@
 #include "screen.h"
 #include "saoma.h"
 #include <stdio.h>
+#include <string.h>
 #include "heading_controller.h"
 #include "heading_session.h"
 
@@ -810,7 +811,7 @@ static void App_HeadingSourceObserve(void)
 #define HR_FAULT 4U
 #define HR_CANCELLED 5U
 volatile uint32_t g_heading_exec_request = 0U; /* 1开始一次，2取消 */
-volatile float g_heading_exec_relative_deg = 5.0f;
+volatile float g_heading_exec_relative_deg = 30.0f;
 volatile uint32_t g_heading_exec_phase = HR_IDLE;
 volatile uint32_t g_heading_exec_trip = 0U;
 volatile uint32_t g_heading_exec_state = HS_IDLE;
@@ -820,6 +821,32 @@ volatile int32_t g_heading_exec_rpm = 0;
 volatile float g_heading_exec_target_deg = 0.0f;
 volatile float g_heading_exec_error_deg = 0.0f;
 volatile uint32_t g_heading_exec_backend_session = 0U;
+/* 0未检查、1等待PE2开启、2上电等待、3等待四轮新状态、4就绪。 */
+volatile uint32_t g_heading_power_wait_state = 0U;
+volatile uint32_t g_heading_power_on_age_ms = 0U;
+volatile uint32_t g_heading_power_post_settle_mask = 0U;
+/* 分阶段HWT快照；只记录，不改变运动、停车或VM控制。 */
+typedef struct
+{
+    uint32_t captured, valid;
+    uint32_t event_ms, angle_sample_ms, angle_age_ms, rate_age_ms;
+    uint32_t source_sequence, pe2_active;
+    float yaw_deg, error_deg, rate_dps;
+} HeadingStopAngleSample;
+typedef struct
+{
+    uint32_t started, zero_submit_accepted;
+    uint32_t off_observed_ms;
+    uint32_t post_status; /* 0等待，1已采到关闭后新帧，2两秒内无有效帧。 */
+    float target_deg;
+    HeadingStopAngleSample start;
+    HeadingStopAngleSample zero_request;
+    HeadingStopAngleSample reached;
+    HeadingStopAngleSample completed;
+    HeadingStopAngleSample off_seen;
+    HeadingStopAngleSample after_off;
+} HeadingStopTrace;
+volatile HeadingStopTrace g_heading_stop_trace = {0};
 static HeadingSession s_heading_exec = {0};
 static uint32_t s_heading_exec_wait_ms = 0U;
 static float s_heading_exec_relative = 0.0f;
@@ -900,11 +927,98 @@ static uint32_t App_HeadingRuntimeSource(uint32_t now)
         (g_hwt_a7_request == 0U)) ? 1U : 0U;
 }
 
+/* 仅在现有WAIT及临界区内检查；不阻塞、不请求VM、不发CAN。 */
+static uint32_t App_HeadingPowerReady(uint32_t now)
+{
+    PowerCommandStatus power;
+    TickType_t on_age, sample_age, settle_ticks;
+    uint32_t i, mask = 0U;
+    Power_ReadCommandStatus(&power);
+    g_heading_power_post_settle_mask = 0U;
+    g_heading_power_on_age_ms = 0xFFFFFFFFU;
+    if ((power.active != 1U) || (power.enable_seen != 1U))
+    {
+        g_heading_power_wait_state = 1U;
+        return 0U;
+    }
+    on_age = (TickType_t)((TickType_t)now - (TickType_t)power.enable_tick);
+    g_heading_power_on_age_ms = (uint32_t)(on_age * portTICK_PERIOD_MS);
+    settle_ticks = pdMS_TO_TICKS(APP_HEADING_POWER_SETTLE_MS);
+    if (on_age < settle_ticks)
+    {
+        g_heading_power_wait_state = 2U;
+        return 0U;
+    }
+    for (i = 0U; i < 4U; i++)
+    {
+        sample_age = (TickType_t)((TickType_t)now - g_can_poll_tick[i]);
+        /* 必须是本次开启并完成等待后的成功新帧，不接受等待前样本。 */
+        if ((g_can_poll_result[i] == 1U) && (g_can_poll_count[i] != 0U) &&
+            ((g_can_poll_flags[i] & 0x0CU) == 0U) &&
+            (sample_age <= pdMS_TO_TICKS(CAN_POLL_VALID_MS)) &&
+            (sample_age <= (TickType_t)(on_age - settle_ticks)))
+            mask |= 1UL << i;
+    }
+    g_heading_power_post_settle_mask = mask;
+    g_heading_power_wait_state = (mask == 0x0FU) ? 4U : 3U;
+    return (mask == 0x0FU) ? 1U : 0U;
+}
+
+/* 调用者持有临界区；captured只表示事件发生，valid才表示源新鲜。 */
+static void App_HeadingStopCapture(volatile HeadingStopAngleSample *sample,
+    uint32_t now)
+{
+    PowerCommandStatus power;
+    if (sample->captured != 0U) return;
+    Power_ReadCommandStatus(&power);
+    sample->valid = App_HeadingRuntimeSource(now);
+    sample->event_ms = now;
+    sample->angle_sample_ms = s_heading_source.angle_ms;
+    sample->angle_age_ms = now - s_heading_source.angle_ms;
+    sample->rate_age_ms = now - s_heading_source.rate_ms;
+    sample->source_sequence = s_heading_source.sequence;
+    sample->pe2_active = power.active;
+    sample->yaw_deg = s_heading_source.yaw_deg;
+    sample->error_deg = HeadingController_ErrorDeg(
+        g_heading_stop_trace.target_deg, s_heading_source.yaw_deg);
+    sample->rate_dps = s_heading_source.rate_dps;
+    sample->captured = 1U;
+}
+
+/* 每轮观察包括终态；不等待、不延长VM供电，不发送任何动作。 */
+static void App_HeadingStopObserve(uint32_t now)
+{
+    PowerCommandStatus power;
+    uint32_t off_age;
+    if (g_heading_stop_trace.started == 0U) return;
+    Power_ReadCommandStatus(&power);
+    if ((g_heading_stop_trace.off_seen.captured == 0U) && (power.active == 0U))
+    {
+        g_heading_stop_trace.off_observed_ms = now;
+        App_HeadingStopCapture(&g_heading_stop_trace.off_seen, now);
+    }
+    if ((g_heading_stop_trace.off_seen.captured == 0U) ||
+        (g_heading_stop_trace.post_status != 0U)) return;
+    off_age = now - g_heading_stop_trace.off_observed_ms;
+    if (off_age >= 2000U)
+    {
+        g_heading_stop_trace.post_status = 2U;
+        return;
+    }
+    /* 至少一秒后采新角度帧，不能用关断前或缓存中的旧样本。 */
+    if ((off_age >= 1000U) && (App_HeadingRuntimeSource(now) == 1U) &&
+        ((uint32_t)(now - s_heading_source.angle_ms) <= off_age - 1000U))
+    {
+        App_HeadingStopCapture(&g_heading_stop_trace.after_off, now);
+        g_heading_stop_trace.post_status = 1U;
+    }
+}
+
 static uint32_t App_HeadingRuntimeOwns(const ChassisAutoStatus *status)
 {
     return ((status->session == g_heading_exec_backend_session) &&
         (status->heading_mode == 1U) && (status->segment == 2U) &&
-        (status->dry_run == 0U)) ? 1U : 0U;
+        (status->forward_hold_mode == 0U) && (status->dry_run == 0U)) ? 1U : 0U;
 }
 
 /* Safety每20ms调用；不修改会话对象，不发CAN，不等待CAN任务。 */
@@ -954,11 +1068,12 @@ static void App_HeadingRuntimeStep(void)
     HeadingSessionInput input = {0};
     HeadingSessionOutput output = {0};
     ChassisAutoStatus status;
-    uint32_t request, accepted = 0U, now;
+    uint32_t request, accepted = 0U, now, record_zero = 0U;
 
     App_HeadingSourceObserve();
     taskENTER_CRITICAL();
     now = (uint32_t)xTaskGetTickCount();
+    App_HeadingStopObserve(now);
     request = g_heading_exec_request;
     g_heading_exec_request = 0U;
     (void)ChassisAuto_ReadStatus(&status);
@@ -975,8 +1090,9 @@ static void App_HeadingRuntimeStep(void)
     if ((request == 1U) && (g_heading_exec_phase == HR_IDLE))
     {
         s_heading_exec_relative = g_heading_exec_relative_deg;
-        /* 首轮只接受正负5度，不从Watch开放任意大角度。 */
-        if (((s_heading_exec_relative != 5.0f) && (s_heading_exec_relative != -5.0f)) ||
+        /* 本轮只接受正负5度或30度，不允许Watch任意扩大角度。 */
+        if (((s_heading_exec_relative != 5.0f) && (s_heading_exec_relative != -5.0f) &&
+             (s_heading_exec_relative != 30.0f) && (s_heading_exec_relative != -30.0f)) ||
             !App_HeadingRuntimeSource(now) || !App_HeadingRuntimeExclusive() ||
             (g_vm_test_request != 0U) || (g_heading_exec_trip != 0U) ||
             (status.active != 0U) || (status.result != 0U) ||
@@ -997,7 +1113,7 @@ static void App_HeadingRuntimeStep(void)
             App_HeadingRuntimeTrip(3U);
         else if ((uint32_t)(now - s_heading_exec_wait_ms) >= 5000U)
             App_HeadingRuntimeTrip(4U);
-        else if (App_CanJogReady() == 1U)
+        else if ((App_CanJogReady() == 1U) && (App_HeadingPowerReady(now) == 1U))
         {
             input.now_ms = now;
             input.sample_ms = s_heading_source.sample_ms;
@@ -1022,6 +1138,9 @@ static void App_HeadingRuntimeStep(void)
                     g_heading_exec_backend_session = status.session;
                     g_heading_exec_phase = HR_RUN;
                     s_heading_exec_wait_ms = now;
+                    g_heading_stop_trace.target_deg = output.target_deg;
+                    App_HeadingStopCapture(&g_heading_stop_trace.start, now);
+                    g_heading_stop_trace.started = 1U;
                 }
             }
         }
@@ -1050,17 +1169,25 @@ static void App_HeadingRuntimeStep(void)
             HeadingSession_Step(&s_heading_exec, &input, &output);
             if (output.action == HS_ACTION_UPDATE)
             {
+                record_zero = ((output.command_rpm == 0) &&
+                    (g_heading_stop_trace.zero_request.captured == 0U)) ? 1U : 0U;
+                if (record_zero != 0U)
+                    App_HeadingStopCapture(&g_heading_stop_trace.zero_request, now);
                 accepted = ChassisAuto_UpdateHeading(output.command_rpm);
+                if (record_zero != 0U)
+                    g_heading_stop_trace.zero_submit_accepted = accepted;
                 HeadingSession_ReportUpdate(&s_heading_exec, accepted, &output);
             }
             else if (output.action == HS_ACTION_STOP)
             {
+                App_HeadingStopCapture(&g_heading_stop_trace.reached, now);
                 accepted = ChassisAuto_RequestStop();
                 HeadingSession_ReportStop(&s_heading_exec, accepted, &output);
             }
             if (output.action == HS_ACTION_ABORT) App_HeadingRuntimeTrip(6U);
             else if (output.action == HS_ACTION_COMPLETE)
             {
+                App_HeadingStopCapture(&g_heading_stop_trace.completed, now);
                 g_heading_exec_phase = HR_DONE;
                 g_vm_test_request = 0U;
             }
@@ -1100,6 +1227,244 @@ static void App_HeadingRuntimeStep(void)
     if ((g_heading_exec_phase == HR_RUN) && (g_heading_exec_trip == 0U))
         ChassisAuto_CanStep();
 }
+
+/* 前进保持开发入口；request1一次开始，2取消，其余字段只观察。 */
+typedef struct
+{
+    uint32_t request, phase, trip, backend_session;
+    uint32_t run_started, stopping, elapsed_ms, final_valid;
+    int32_t correction_rpm;
+    float start_deg, target_deg, error_deg, final_deg;
+    float rate_dps, peak_error_deg, peak_rate_dps;
+    uint32_t sample_count, max_sample_gap_ms;
+    /* 已接受的非零纠偏提交样本统计，停车后保留，不代表CAN执行次数。 */
+    uint32_t motion_mode; /* 编译选择，仅观察，不用Watch切换方向。 */
+    uint32_t correction_nonzero_samples, correction_peak_abs_rpm;
+    int32_t correction_last_nonzero_rpm;
+} ForwardHoldDebug;
+volatile ForwardHoldDebug g_forward_hold = {.motion_mode = APP_TRANSLATION_HOLD_MODE};
+volatile uint32_t g_translation_hold_selftest = 0U;
+static uint32_t s_hold_wait_ms, s_hold_begin_ms, s_hold_run_ms, s_hold_stop_ms;
+static uint32_t s_hold_sequence, s_hold_new_ms;
+static float s_hold_target;
+static HeadingHoldController s_hold_controller = {0};
+/* 每100ms记录运行期提交值，非实际轮速；容量覆盖8秒，满后不覆盖。 */
+typedef struct
+{
+    uint32_t elapsed_ms;
+    float error_deg, rate_dps;
+    int32_t correction_rpm;
+} ForwardHoldTraceSample;
+volatile ForwardHoldTraceSample g_forward_hold_trace[96];
+volatile uint32_t g_forward_hold_trace_count = 0U;
+static uint32_t s_hold_trace_ms;
+
+/* trip:1取消、2源失效、3平台、4上电等待、5执行器、6偏角、7截止、8提交。 */
+static void App_ForwardHoldTrip(uint32_t cause)
+{
+    taskENTER_CRITICAL();
+    if (g_forward_hold.trip == 0U) g_forward_hold.trip = cause;
+    g_forward_hold.phase = (g_forward_hold.trip == 1U) ? HR_CANCELLED : HR_FAULT;
+    g_forward_hold.correction_rpm = 0;
+    g_forward_hold.final_deg = s_heading_source.yaw_deg;
+    g_forward_hold.final_valid = App_HeadingRuntimeSource((uint32_t)xTaskGetTickCount());
+    g_chassis_auto_request = 0U;
+    ChassisAuto_Abort();
+    g_vm_test_request = 0U;
+    taskEXIT_CRITICAL();
+}
+
+static uint32_t App_ForwardHoldOwns(const ChassisAutoStatus *status)
+{
+    return ((status->session == g_forward_hold.backend_session) &&
+        (status->heading_mode == 1U) && (status->forward_hold_mode == 1U) &&
+        (status->translation_mode == APP_TRANSLATION_HOLD_MODE) &&
+        (status->segment == 2U) && (status->dry_run == 0U)) ? 1U : 0U;
+}
+
+/* 独立Safety监督，既有100ms源/提交失效和有界等待均不放宽。 */
+static void App_ForwardHoldSafety(void)
+{
+    ChassisAutoStatus status;
+    uint32_t now, normal_done;
+    float correction;
+    float error;
+    taskENTER_CRITICAL();
+    if ((g_forward_hold.phase != HR_WAIT) && (g_forward_hold.phase != HR_RUN))
+    { taskEXIT_CRITICAL(); return; }
+    now = (uint32_t)xTaskGetTickCount();
+    (void)ChassisAuto_ReadStatus(&status);
+    if (g_forward_hold.request == 2U) App_ForwardHoldTrip(1U);
+    else if (!App_HeadingRuntimeSource(now) ||
+        ((g_forward_hold.phase == HR_RUN) && ((uint32_t)(now - s_hold_new_ms) >= HS_SOURCE_MS)))
+        App_ForwardHoldTrip(2U);
+    else if ((g_translation_hold_selftest != 1U) ||
+        !App_HeadingRuntimeExclusive() || (g_vm_test_request != 1U))
+        App_ForwardHoldTrip(3U);
+    else if (g_forward_hold.phase == HR_WAIT)
+    {
+        if ((uint32_t)(now - s_hold_wait_ms) >= 5000U) App_ForwardHoldTrip(4U);
+        else if (status.active != 0U || status.result != 0U) App_ForwardHoldTrip(5U);
+    }
+    else
+    {
+        normal_done = ((g_forward_hold.stopping == 1U) &&
+            (status.active == 0U) && (status.result == 1U) &&
+            (status.rotation_stop_mask == 0x0FU)) ? 1U : 0U;
+        if (!App_ForwardHoldOwns(&status)) App_ForwardHoldTrip(5U);
+        else if ((uint32_t)(now - s_hold_begin_ms) >= APP_HEADING_RUN_MS)
+            App_ForwardHoldTrip(7U);
+        else if (g_forward_hold.stopping &&
+            ((uint32_t)(now - s_hold_stop_ms) >= HS_STOP_MS)) App_ForwardHoldTrip(7U);
+        else if (!normal_done && ((status.active != 1U) || (status.result != 0U) ||
+            (g_safety_ready != 1U) || (g_can_guard_ready != 1U))) App_ForwardHoldTrip(5U);
+        else if (HeadingController_HoldCorrection(s_hold_target, s_heading_source.yaw_deg,
+            s_heading_source.rate_dps, &correction, &error) != 1U) App_ForwardHoldTrip(6U);
+    }
+    taskEXIT_CRITICAL();
+}
+
+/* 仅CAN任务执行；本模式清除旧转角请求，避免误触发原地转动。 */
+static void App_ForwardHoldStep(void)
+{
+    ChassisAutoStatus status;
+    uint32_t now, request, delta, accepted;
+    int32_t correction = 0;
+    float error = 0.0f, desired = 0.0f;
+    App_HeadingSourceObserve();
+    taskENTER_CRITICAL();
+    now = (uint32_t)xTaskGetTickCount();
+    request = g_forward_hold.request;
+    g_forward_hold.request = 0U;
+    g_heading_exec_request = 0U;
+    (void)ChassisAuto_ReadStatus(&status);
+    if (g_forward_hold.phase >= HR_DONE)
+    { g_vm_test_request = 0U; taskEXIT_CRITICAL(); return; }
+    if ((request == 2U) && (g_forward_hold.phase != HR_IDLE)) App_ForwardHoldTrip(1U);
+    if ((request == 1U) && (g_forward_hold.phase == HR_IDLE))
+    {
+        if ((g_translation_hold_selftest != 1U) ||
+            !App_HeadingRuntimeSource(now) || !App_HeadingRuntimeExclusive() ||
+            (g_vm_test_request != 0U) || (status.active != 0U) ||
+            (status.result != 0U) || (status.cut_vm != 0U) ||
+            !(s_heading_source.rate_dps >= -3.0f && s_heading_source.rate_dps <= 3.0f))
+            App_ForwardHoldTrip(3U);
+        else
+        {
+            s_hold_wait_ms = now;
+            g_forward_hold.phase = HR_WAIT;
+            g_vm_test_request = 1U;
+        }
+    }
+    App_ForwardHoldSafety();
+    if ((g_forward_hold.phase == HR_WAIT) && (App_CanJogReady() == 1U) &&
+        (App_HeadingPowerReady(now) == 1U))
+    {
+        accepted = ChassisAuto_BeginTranslationHold(0U, APP_TRANSLATION_HOLD_MODE);
+        if (accepted != 1U) App_ForwardHoldTrip(5U);
+        else
+        {
+            (void)ChassisAuto_ReadStatus(&status);
+            g_forward_hold.backend_session = status.session;
+            s_hold_target = s_heading_source.yaw_deg;
+            g_forward_hold.start_deg = g_forward_hold.target_deg = s_hold_target;
+            s_hold_sequence = s_heading_source.sequence;
+            s_hold_begin_ms = s_hold_new_ms = now;
+            s_hold_controller = (HeadingHoldController){0};
+            g_forward_hold.phase = HR_RUN;
+        }
+    }
+    if (g_forward_hold.phase == HR_RUN)
+    {
+        (void)ChassisAuto_ReadStatus(&status);
+        if (!App_ForwardHoldOwns(&status)) App_ForwardHoldTrip(5U);
+        else if (HeadingController_HoldCorrection(s_hold_target, s_heading_source.yaw_deg,
+            s_heading_source.rate_dps, &desired, &error) != 1U) App_ForwardHoldTrip(6U);
+        else
+        {
+            g_forward_hold.error_deg = error;
+            if ((g_forward_hold.run_started == 0U) && (status.state == CHASSIS_AUTO_RUN) &&
+                (g_chassis_auto_start_mask[2] == 0x0FU))
+            {
+                s_hold_run_ms = now;
+                g_forward_hold.run_started = 1U;
+            }
+            if ((g_forward_hold.run_started != 0U) && (g_forward_hold.stopping == 0U))
+                g_forward_hold.elapsed_ms = now - s_hold_run_ms;
+            if ((g_forward_hold.stopping == 0U) && g_forward_hold.run_started &&
+                (g_forward_hold.elapsed_ms >= APP_TRANSLATION_HOLD_RUN_MS))
+            {
+                if (ChassisAuto_RequestStop() != 1U) App_ForwardHoldTrip(8U);
+                else
+                {
+                    g_forward_hold.stopping = 1U;
+                    g_forward_hold.correction_rpm = 0;
+                    s_hold_stop_ms = now;
+                }
+            }
+            delta = s_heading_source.sequence - s_hold_sequence;
+            if (delta > 0x7FFFFFFFU) App_ForwardHoldTrip(2U);
+            else if (delta != 0U)
+            {
+                if (now - s_hold_new_ms > g_forward_hold.max_sample_gap_ms)
+                    g_forward_hold.max_sample_gap_ms = now - s_hold_new_ms;
+                s_hold_sequence = s_heading_source.sequence;
+                s_hold_new_ms = now;
+                g_forward_hold.sample_count++;
+                g_forward_hold.rate_dps = s_heading_source.rate_dps;
+                if (((error < 0.0f) ? -error : error) > g_forward_hold.peak_error_deg)
+                    g_forward_hold.peak_error_deg = ((error < 0.0f) ? -error : error);
+                if (((s_heading_source.rate_dps < 0.0f) ? -s_heading_source.rate_dps : s_heading_source.rate_dps) > g_forward_hold.peak_rate_dps)
+                    g_forward_hold.peak_rate_dps = ((s_heading_source.rate_dps < 0.0f) ? -s_heading_source.rate_dps : s_heading_source.rate_dps);
+                if ((g_forward_hold.trip == 0U) && (g_forward_hold.stopping == 0U))
+                {
+                    if (HeadingController_HoldStep(&s_hold_controller, s_hold_target,
+                        s_heading_source.yaw_deg, s_heading_source.rate_dps, now,
+                        &correction, &error) != 1U) App_ForwardHoldTrip(2U);
+                    else if (ChassisAuto_UpdateForwardHold(correction) != 1U) App_ForwardHoldTrip(8U);
+                    else
+                    {
+                        g_forward_hold.correction_rpm = correction;
+                        if (correction != 0)
+                        {
+                            uint32_t magnitude = (uint32_t)((correction < 0) ? -correction : correction);
+                            g_forward_hold.correction_nonzero_samples++;
+                            if (magnitude > g_forward_hold.correction_peak_abs_rpm)
+                                g_forward_hold.correction_peak_abs_rpm = magnitude;
+                            g_forward_hold.correction_last_nonzero_rpm = correction;
+                        }
+                        if ((g_forward_hold.run_started == 1U) &&
+                            (g_forward_hold_trace_count < 96U) &&
+                            ((g_forward_hold_trace_count == 0U) ||
+                             ((uint32_t)(now - s_hold_trace_ms) >= 100U)))
+                        {
+                            uint32_t index = g_forward_hold_trace_count;
+                            g_forward_hold_trace[index].elapsed_ms = g_forward_hold.elapsed_ms;
+                            g_forward_hold_trace[index].error_deg = error;
+                            g_forward_hold_trace[index].rate_dps = s_heading_source.rate_dps;
+                            g_forward_hold_trace[index].correction_rpm = correction;
+                            s_hold_trace_ms = now;
+                            g_forward_hold_trace_count = index + 1U;
+                        }
+                    }
+                }
+            }
+            if ((g_forward_hold.trip == 0U) && (g_forward_hold.stopping == 1U) &&
+                (status.active == 0U) && (status.result == 1U) &&
+                (status.rotation_stop_mask == 0x0FU))
+            {
+                g_forward_hold.final_deg = s_heading_source.yaw_deg;
+                g_forward_hold.final_valid = App_HeadingRuntimeSource(now);
+                g_forward_hold.correction_rpm = 0;
+                g_forward_hold.phase = HR_DONE;
+                g_vm_test_request = 0U;
+            }
+        }
+    }
+    taskEXIT_CRITICAL();
+    if ((g_forward_hold.phase == HR_RUN) && (g_forward_hold.trip == 0U)) ChassisAuto_CanStep();
+}
+
 #endif
 
 static void App_CanTask(void *argument)
@@ -1109,8 +1474,18 @@ static void App_CanTask(void *argument)
     while (1)
     {
         g_can_task_count++;
+        if (APP_UART_LINK_TEST != 0U)
+        {
+            g_vm_test_request = 0U;
+            Power_Disable();
+            Safety_CanReport(0U, 0U, 0U, g_can_poll_tick);
+            Safety_MotionFeedbackReport(0U, 0U, 0U, NULL, NULL);
+        }
+        else
+        {
         #if APP_HEADING_SESSION_TEST
-                App_HeadingRuntimeStep();
+                if (APP_FORWARD_HOLD_TEST != 0U) App_ForwardHoldStep();
+                else App_HeadingRuntimeStep();
         #endif
         #if APP_HWT_STATIC_TEST && !APP_HWT_TURN_TEST
                 App_HeadingSourceObserve();
@@ -1520,8 +1895,9 @@ static void App_CanTask(void *argument)
             Safety_MotionFeedbackReport(0U, 0U, 0U, NULL, NULL);
             g_motion_diag_report_count++;
         }
+        } /* 串口测试之外才允许原CAN交易路径 */
         g_can_task_stack_words = uxTaskGetStackHighWaterMark(NULL);
-        vTaskDelay(pdMS_TO_TICKS(APP_HEADING_SESSION_TEST ? 10U : 50U));
+        vTaskDelay(pdMS_TO_TICKS(APP_UART_LINK_TEST ? 50U : (APP_HEADING_SESSION_TEST ? 10U : 50U)));
     }
 }
 
@@ -1720,6 +2096,10 @@ static void App_TestTaskA(void *argument)
     Buzzer_Start(APP_INIT_BEEP_COUNT);
         /* 一次性虚拟角度自检，不驱动小车。 */
     App_HeadingDryRun();
+#if APP_HEADING_SESSION_TEST && APP_FORWARD_HOLD_TEST
+    /* 只运行数学自检，失败禁止平移启动，默认不发动作。 */
+    g_translation_hold_selftest = Chassis_TranslationHoldSelfTest() ? 1U : 2U;
+#endif
     while (1)
     {
         g_test_count_a++;
@@ -1785,6 +2165,104 @@ static void App_TestTaskB(void *argument)
     }
 }
 
+#if APP_UART_LINK_TEST
+/* 仅测试数据：无运动命令、无参数写入、无VM允许。 */
+volatile uint32_t g_uart_link_test_value = 0U;
+volatile uint32_t g_uart_link_rx_lines = 0U, g_uart_link_tx_replies = 0U;
+volatile uint32_t g_uart_link_errors = 0U, g_uart_link_dropped = 0U;
+volatile uint32_t g_uart_link_hb_count = 0U;
+static char s_link_line[48], s_link_reply[64];
+static uint32_t s_link_used, s_link_overflow, s_link_pending;
+static uint32_t s_link_last_byte, s_link_hb_tick;
+
+static void App_UartLinkCommand(void)
+{
+    const char *digit;
+    uint32_t value = 0U, valid = 1U;
+    g_uart_link_rx_lines++;
+    if (s_link_pending != 0U) { g_uart_link_dropped++; return; }
+    if ((strncmp(s_link_line, "PING,", 5U) == 0) &&
+        (strlen(s_link_line + 5U) > 0U) && (strlen(s_link_line + 5U) <= 32U))
+        (void)snprintf(s_link_reply, sizeof(s_link_reply), "PONG,%s\r\n", s_link_line + 5U);
+    else if (strncmp(s_link_line, "ECHO,", 5U) == 0)
+        (void)snprintf(s_link_reply, sizeof(s_link_reply), "ECHO,%s\r\n", s_link_line + 5U);
+    else if (strcmp(s_link_line, "INFO") == 0)
+        (void)snprintf(s_link_reply, sizeof(s_link_reply), "INFO,UART1,115200,8N1,VM0\r\n");
+    else if (strcmp(s_link_line, "GET") == 0)
+        (void)snprintf(s_link_reply, sizeof(s_link_reply), "VALUE,%lu\r\n", (unsigned long)g_uart_link_test_value);
+    else if (strncmp(s_link_line, "SET,", 4U) == 0)
+    {
+        digit = s_link_line + 4U;
+        if (*digit == '\0') valid = 0U;
+        while (*digit != '\0')
+        {
+            if ((*digit < '0') || (*digit > '9')) { valid = 0U; break; }
+            value = value * 10U + (uint32_t)(*digit - '0');
+            if (value > 1000U) { valid = 0U; break; }
+            digit++;
+        }
+        if (valid != 0U)
+        {
+            g_uart_link_test_value = value;
+            (void)snprintf(s_link_reply, sizeof(s_link_reply), "VALUE,%lu\r\n", (unsigned long)value);
+        }
+        else
+        {
+            g_uart_link_errors++;
+            (void)snprintf(s_link_reply, sizeof(s_link_reply), "ERR,RANGE\r\n");
+        }
+    }
+    else
+    {
+        g_uart_link_errors++;
+        (void)snprintf(s_link_reply, sizeof(s_link_reply), "ERR,COMMAND\r\n");
+    }
+    s_link_pending = 1U;
+}
+
+static void App_UartLinkByte(uint8_t data)
+{
+    uint32_t now = (uint32_t)xTaskGetTickCount();
+    if ((uint32_t)(now - s_link_last_byte) >= 500U)
+    { s_link_used = 0U; s_link_overflow = 0U; }
+    s_link_last_byte = now;
+    if (data == '\r') return;
+    if (data == '\n')
+    {
+        if ((s_link_overflow == 0U) && (s_link_used > 0U))
+        {
+            s_link_line[s_link_used] = '\0';
+            App_UartLinkCommand();
+        }
+        s_link_used = 0U; s_link_overflow = 0U;
+        return;
+    }
+    if (s_link_overflow != 0U) return;
+    if ((data < 32U) || (data > 126U) || (s_link_used >= sizeof(s_link_line) - 1U))
+    { g_uart_link_errors++; s_link_overflow = 1U; return; }
+    s_link_line[s_link_used++] = (char)data;
+}
+
+static void App_UartLinkPoll(void)
+{
+    uint32_t now = (uint32_t)xTaskGetTickCount();
+    char heartbeat[64];
+    if (s_link_pending != 0U)
+    {
+        if (App_DebugSendString(s_link_reply) == 1U)
+        { s_link_pending = 0U; g_uart_link_tx_replies++; }
+        return;
+    }
+    if ((uint32_t)(now - s_link_hb_tick) >= 1000U)
+    {
+        (void)snprintf(heartbeat, sizeof(heartbeat), "LINK,HB,%lu,%lu,VM0\r\n",
+            (unsigned long)g_uart_link_hb_count, (unsigned long)now);
+        if (App_DebugSendString(heartbeat) == 1U)
+        { g_uart_link_hb_count++; s_link_hb_tick = now; }
+    }
+}
+#endif
+
 /* 独立接收任务：有数据立即处理，无数据进入等待 */
 static void App_UartRxTask(void *argument)
 {
@@ -1798,12 +2276,18 @@ static void App_UartRxTask(void *argument)
         {
             g_serial_rx_count++;
             g_serial_rx_last = data;
+#if APP_UART_LINK_TEST
+            App_UartLinkByte(data);
+#endif
         }
         else
         {
             /* 空闲时记录历史最小剩余栈，单位为字 */
             g_rx_stack_words = uxTaskGetStackHighWaterMark(NULL);
         }
+#if APP_UART_LINK_TEST
+        App_UartLinkPoll();
+#endif
         /* 有数据或正常空闲等待返回，均表示任务仍在运行 */
         Safety_Report(SAFETY_TASK_RX);
     }
@@ -1960,13 +2444,22 @@ static void App_KeyTask(void *argument)
 
     while (1)
     {
+if (APP_UART_LINK_TEST != 0U)
+        { if (Key_GetEvent() != 0U) g_start_key_count++; }
+        else
+        {
 #if APP_HEADING_SESSION_TEST
         if (Key_GetEvent() != 0U)
         {
             g_start_key_count++;
             /* PC13只取消，不用按键启动本次开发试验。 */
             taskENTER_CRITICAL();
-            if ((g_heading_exec_phase == HR_WAIT) || (g_heading_exec_phase == HR_RUN))
+            if (APP_FORWARD_HOLD_TEST != 0U)
+            {
+                if ((g_forward_hold.phase == HR_WAIT) || (g_forward_hold.phase == HR_RUN))
+                    g_forward_hold.request = 2U;
+            }
+            else if ((g_heading_exec_phase == HR_WAIT) || (g_heading_exec_phase == HR_RUN))
                 g_heading_exec_request = 2U;
             taskEXIT_CRITICAL();
         }
@@ -2005,6 +2498,7 @@ static void App_KeyTask(void *argument)
         }
 
 #endif
+        }
         diagnostic_count++;
         if (diagnostic_count >= 100U)
         {
@@ -2023,13 +2517,19 @@ static void App_SafetyTask(void *argument)
 
     while (1)
     {
+if (APP_UART_LINK_TEST != 0U)
+        { g_vm_test_request = 0U; Power_Disable(); }
+        else
+        {
 #if APP_HEADING_SESSION_TEST
-        App_HeadingRuntimeSafety();
+        if (APP_FORWARD_HOLD_TEST != 0U) App_ForwardHoldSafety();
+        else App_HeadingRuntimeSafety();
 #elif APP_HWT_STATIC_TEST
         g_vm_test_request = 0U;
 #elif APP_HWT_TURN_TEST
         App_HwtTurnSafety();
 #endif
+        }
         Safety_Update(g_vm_test_request, g_can_test_result);
         g_safety_stack_words = uxTaskGetStackHighWaterMark(NULL);
         vTaskDelay(pdMS_TO_TICKS(20U));

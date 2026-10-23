@@ -1,0 +1,98 @@
+{
+  "date": "2026-10-24",
+  "requested_scope": "code only, lateral base15RPM",
+  "current_mode": 0,
+  "mode_names": {
+    "0": "forward",
+    "1": "body left",
+    "2": "body right"
+  },
+  "base_rpm": 15,
+  "duration_ms": 8000,
+  "correction_limit_rpm": 2,
+  "command_abs_rpm_range": [
+    13,
+    17
+  ],
+  "feedback_limit_rpm": 30,
+  "builds": {
+    "forward": {
+      "mode": 0,
+      "forward_hold_test": 1,
+      "code": 39296,
+      "ro": 608,
+      "rw": 1680,
+      "zi": 27512
+    },
+    "left": {
+      "mode": 1,
+      "forward_hold_test": 1,
+      "code": 39296,
+      "ro": 608,
+      "rw": 1768,
+      "zi": 27424
+    },
+    "right": {
+      "mode": 2,
+      "forward_hold_test": 1,
+      "code": 39296,
+      "ro": 608,
+      "rw": 1768,
+      "zi": 27424
+    },
+    "turn": {
+      "mode": 0,
+      "forward_hold_test": 0,
+      "code": 39244,
+      "ro": 608,
+      "rw": 1680,
+      "zi": 27512
+    }
+  },
+  "source_checks": [
+    {
+      "file": "app_config.h",
+      "sha256": "a0e2af2ffb5c3080c6392c944db84aa56255d2a1b62ccdd866d8de894a030a3d",
+      "crlf_only": true,
+      "build_sources_match": true
+    },
+    {
+      "file": "chassis_kinematics.c",
+      "sha256": "db61feceae9784f4ef0db18b4f35b121f65e2718e7bca21b08f9e57226e125f9",
+      "crlf_only": true,
+      "build_sources_match": true
+    },
+    {
+      "file": "chassis_kinematics.h",
+      "sha256": "f18dc730c0147ecf14446db0cd87f5ccd7ea9b1b3d7e1ffac71a75ec29af487d",
+      "crlf_only": true,
+      "build_sources_match": true
+    },
+    {
+      "file": "chassis_auto_test.c",
+      "sha256": "0c05542fa167304b8c335bca8b9f92258ec3f9566c25f13d7c8424099e565c99",
+      "crlf_only": true,
+      "build_sources_match": true
+    },
+    {
+      "file": "chassis_auto_test.h",
+      "sha256": "167065777ef3bec1a8e184142d5409293cad6351c83711b0c0dbc48c4f34bd36",
+      "crlf_only": true,
+      "build_sources_match": true
+    },
+    {
+      "file": "main.c",
+      "sha256": "d46923fe6b57085450ee3bc0b291c32f70ce7eebda023c8741628cdb6f526013",
+      "crlf_only": true,
+      "build_sources_match": true
+    }
+  ],
+  "startup_math_selftest": "compiled, not executed here; compares 3 directions x 5 corrections with existing inverse kinematics and checks invalid inputs; motion gated on pass",
+  "no_uart_telemetry_or_remote_start": true,
+  "validation": "4 full isolated ARMCC5 rebuilds, source/hash/encoding and direction/safety review; no runtime simulation",
+  "flashed": false,
+  "hardware_tested": false,
+  "original_axf_rebuilt": false,
+  "committed": false,
+  "pushed": false
+}

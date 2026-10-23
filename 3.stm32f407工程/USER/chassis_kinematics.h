@@ -69,6 +69,13 @@ uint32_t Chassis_EmmFeedbackToLogical(const int32_t driver_rpm[CHASSIS_WHEEL_COU
 uint32_t Chassis_BasicTestCommands(const ChassisGeometry *geometry, uint32_t step,
     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
 /* 航向控制轮速转四轮指令：正值逆时针、负值顺时针，不发送CAN。 */
+/* 前进基础速度见app_config，修正限2RPM，四轮始终逻辑前进。 */
+/* 0前进、1向左、2向右；非法模式或修正清零命令，纯计算不发CAN。 */
+uint32_t Chassis_TranslationHoldCommands(uint32_t mode, int32_t correction_rpm,
+    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+uint32_t Chassis_TranslationHoldSelfTest(void);
+uint32_t Chassis_ForwardHoldCommands(int32_t correction_rpm,
+    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
 uint32_t Chassis_HeadingCommands(int32_t command_rpm,
     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
 #endif

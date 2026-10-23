@@ -1,6 +1,7 @@
 #ifndef HEADING_SESSION_H
 #define HEADING_SESSION_H
 #include "heading_controller.h"
+#include "app_config.h"
 
 /* 纯会话判定模块，无CAN、VM和任务调用；所有时间单位为毫秒。 */
 #define HS_IDLE 0U
@@ -22,7 +23,7 @@
 #define HS_CAUSE_STOP_TIMEOUT 6U
 #define HS_CAUSE_REVERSE 7U
 #define HS_SOURCE_MS 100U
-#define HS_RUN_MS 9000U
+#define HS_RUN_MS APP_HEADING_RUN_MS
 #define HS_STOP_MS 2500U
 
 typedef struct

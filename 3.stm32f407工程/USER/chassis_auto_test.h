@@ -10,6 +10,11 @@
 #define CHASSIS_AUTO_SPEED_LIMIT_RPM (APP_HWT_TURN_TEST ? 10U : (CHASSIS_AUTO_TARGET_RPM + 2U))
 #define CHASSIS_AUTO_PREP_MS 10000U
 #define CHASSIS_AUTO_RUN_MS 10000U
+/* 航向模式单独兜底，晚于会话截止；原定时测试仍为10秒。 */
+#define CHASSIS_HEADING_RUN_MS (APP_HEADING_RUN_MS + 1000U)
+/* 前进保持另有较短兜底，避免沿用原地转角的21秒运行窗口。 */
+#define CHASSIS_FORWARD_HOLD_RUN_MS (APP_FORWARD_HOLD_RUN_MS + 1000U)
+#define CHASSIS_LATERAL_HOLD_RUN_MS (APP_LATERAL_HOLD_RUN_MS + 1000U)
 #define CHASSIS_AUTO_STOP_MS 500U
 #define CHASSIS_AUTO_GAP_MS 1000U
 #define CHASSIS_AUTO_SETTLE_MS 2000U
@@ -53,6 +58,10 @@ void ChassisAuto_Abort(void);
 /* 1接受正常停车请求，0当前阶段不接受；并非物理停车完成。 */
 uint32_t ChassisAuto_RequestStop(void);
 /* 单次旋转：1接受，0拒绝；不等于目标角已到位。 */
+/* 前进保持模式：3RPM基速，修正0表示直行而非停车；停车用RequestStop。 */
+uint32_t ChassisAuto_BeginForwardHold(uint32_t dry_run);
+uint32_t ChassisAuto_BeginTranslationHold(uint32_t dry_run, uint32_t motion_mode);
+uint32_t ChassisAuto_UpdateForwardHold(int32_t correction_rpm);
 uint32_t ChassisAuto_BeginHeading(uint32_t dry_run, int32_t command_rpm);
 /* 同一转向的下一组轮速更新；1接受排队，0拒绝，不表示已发完。 */
 uint32_t ChassisAuto_UpdateHeading(int32_t command_rpm);
@@ -74,7 +83,8 @@ typedef struct
 {
     uint32_t state, active, result, cause;
     uint32_t session, segment, rotation_stop_mask;
-    uint32_t heading_mode, dry_run, cut_vm;
+    uint32_t heading_mode, dry_run, cut_vm, forward_hold_mode;
+    uint32_t translation_mode; /* 0前进、1左移、2右移；只读会话归属。 */
 } ChassisAutoStatus;
 
 /* 1仅表示复制成功；0为指针无效。不发CAN，不修改状态。 */

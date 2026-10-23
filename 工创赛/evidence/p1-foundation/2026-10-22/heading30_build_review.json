@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-22",
+  "default_relative_deg": 30,
+  "runtime_allowed_relative_deg": [
+    -30,
+    -5,
+    5,
+    30
+  ],
+  "heading_session_deadline_ms": 20000,
+  "heading_backend_run_cutoff_ms": 21000,
+  "heading_backend_stop_ack_deadline_ms_after_run_cutoff": 500,
+  "original_timed_test_run_ms": 10000,
+  "total_backend_deadline_ms": 45000,
+  "frontend_power_wait_deadline_ms": 5000,
+  "source_and_mailbox_ms": 100,
+  "can_tx_reply_ms": [
+    20,
+    30
+  ],
+  "power_prepare_ms": 1000,
+  "speed_bands_rpm": [
+    5,
+    3,
+    1
+  ],
+  "candidate_tolerance_deg": 2,
+  "candidate_settle_ms": 700,
+  "source_files": {
+    "USER/main.c": {
+      "sha256": "d62f14fb68133d5d58722e78ca4e8ba38c864c3de6cb502c56f6a1e9e46b2662",
+      "encoding": "GBK",
+      "newlines": "CRLF"
+    },
+    "USER/app_config.h": {
+      "sha256": "140c3e7e01a17f38553388c7677e9fdf0d368cb741886b0df569203ae4357e51",
+      "encoding": "GBK",
+      "newlines": "CRLF"
+    },
+    "USER/heading_session.c": {
+      "sha256": "e028128ab3c3d2f66df17fe933116df6ba0f579aa430eb8bb8088514afb26922",
+      "encoding": "UTF-8",
+      "newlines": "CRLF"
+    },
+    "USER/heading_session.h": {
+      "sha256": "0a38024fe626f2858d04aa9f33316962e29ebab40ea770bd68a2d04b232b9fc4",
+      "encoding": "UTF-8",
+      "newlines": "CRLF"
+    },
+    "USER/chassis_auto_test.c": {
+      "sha256": "310ea7f058254d156ac41ce8e51174e8860ce1aecdb34e7a94de48183815744d",
+      "encoding": "GBK",
+      "newlines": "CRLF"
+    },
+    "USER/chassis_auto_test.h": {
+      "sha256": "a66302bf18e2c7b66fe379635651653a26c7cc6efd6ac210124cb9026ba8e555",
+      "encoding": "GBK",
+      "newlines": "CRLF"
+    },
+    "HARDWARE/POWER/power.c": {
+      "sha256": "71fa1c9d8b6f2d904d4d23b0afc47574cbadaedbff3c186af8a517a529631ff7",
+      "encoding": "GBK",
+      "newlines": "CRLF"
+    },
+    "HARDWARE/POWER/power.h": {
+      "sha256": "51dda3c20ed50e4b58061c4fb632b3b7e1906f77723f13a50083cd6c4db6c24f",
+      "encoding": "GBK",
+      "newlines": "CRLF"
+    },
+    "SYSTEM/CAN/can.c": {
+      "sha256": "54b173eb8767d8fb25e1779a6be3f21ca2c71757c4694cf04513ed2f3eaa5f60",
+      "encoding": "GBK",
+      "newlines": "CRLF"
+    }
+  },
+  "build": "Program Size: Code=38452 RO-data=588 RW-data=1632 ZI-data=25584",
+  "full_rebuild_errors": 0,
+  "full_rebuild_warnings": 0,
+  "host_simulation": false,
+  "hardware_download_or_trial": false,
+  "review": "Only bounded target whitelist/default and coordinated heading deadlines changed; E2 remains failure, prior power gate and immediate fault/cancel shutdown retained; original timed mode remains 10s",
+  "limits": "30 degree motion, timing margin, precise angle and repeatability await user hardware observations; no encoder odometry added"
+}

@@ -4,6 +4,8 @@
 #include "task.h"
 #include <string.h>
 #include "app_config.h"
+#include "power.h"
+#include "safety.h"
 
 /* 新目标航向模式不允许单次交易长于指令提交监督期限。 */
 #if APP_HEADING_SESSION_TEST
@@ -23,6 +25,27 @@ volatile uint32_t g_can_ctrl_trace_esr = 0U;
 volatile uint32_t g_can_ctrl_trace_rx_count = 0U, g_can_ctrl_trace_flush_count = 0U;
 volatile uint32_t g_can_ctrl_trace_tx_ms = 0U, g_can_ctrl_trace_total_ms = 0U;
 volatile CanRxMsg g_can_ctrl_trace_last_rx = {0};
+/* 与原首次失败诊断共用锁存，失败后不覆盖。 */
+typedef struct
+{
+    uint32_t captured;
+    uint32_t command_tick;
+    uint32_t vm_command_active;
+    uint32_t vm_enable_seen;
+    uint32_t vm_enable_count;
+    uint32_t vm_enable_age_ms;
+    uint32_t guard_ready;
+    uint32_t poll_result[4];
+    uint32_t poll_flags[4];
+    uint32_t poll_count[4];
+    uint32_t poll_age_ms[4];
+} CanControlTraceContext;
+volatile CanControlTraceContext g_can_ctrl_trace_context = {0};
+extern volatile uint32_t g_can_poll_result[4];
+extern volatile uint32_t g_can_poll_flags[4];
+extern volatile uint32_t g_can_poll_count[4];
+extern volatile TickType_t g_can_poll_tick[4];
+
 static uint32_t s_can_ctrl_trace_active = 0U;
 static TickType_t s_can_ctrl_trace_tick = 0U;
 
@@ -425,6 +448,8 @@ static uint32_t CAN1_ControlSingle(uint8_t address,
                                    CanRxMsg *reply)
 {
     uint32_t result, trace, i;
+    TickType_t context_tick;
+    PowerCommandStatus power_status;
     CanRxMsg empty = {0};
 
     /* 只允许四轮地址，不允许广播 */
@@ -446,7 +471,33 @@ static uint32_t CAN1_ControlSingle(uint8_t address,
         g_can_ctrl_trace_tx_ms = g_can_ctrl_trace_total_ms = 0U;
         g_can_ctrl_trace_last_rx = empty;
         g_can_ctrl_trace_pe2_start = (GPIOE->ODR & GPIO_Pin_2) ? 1U : 0U;
-        s_can_ctrl_trace_tick = xTaskGetTickCount();
+        /* 临界区内只拷贝快照，不发CAN、不改电源。 */
+        taskENTER_CRITICAL();
+        g_can_ctrl_trace_context.captured = 0U;
+        Power_ReadCommandStatus(&power_status);
+        context_tick = xTaskGetTickCount();
+        g_can_ctrl_trace_context.command_tick = (uint32_t)context_tick;
+        g_can_ctrl_trace_context.vm_command_active = power_status.active;
+        g_can_ctrl_trace_context.vm_enable_seen = power_status.enable_seen;
+        g_can_ctrl_trace_context.vm_enable_count = power_status.enable_count;
+        g_can_ctrl_trace_context.vm_enable_age_ms =
+            ((power_status.active != 0U) && (power_status.enable_seen != 0U)) ?
+            (uint32_t)((TickType_t)(context_tick - (TickType_t)power_status.enable_tick) *
+                portTICK_PERIOD_MS) : 0xFFFFFFFFU;
+        g_can_ctrl_trace_context.guard_ready = g_can_guard_ready;
+        for (i = 0U; i < 4U; i++)
+        {
+            g_can_ctrl_trace_context.poll_result[i] = g_can_poll_result[i];
+            g_can_ctrl_trace_context.poll_flags[i] = g_can_poll_flags[i];
+            g_can_ctrl_trace_context.poll_count[i] = g_can_poll_count[i];
+            g_can_ctrl_trace_context.poll_age_ms[i] =
+                ((g_can_poll_result[i] == 1U) && (g_can_poll_count[i] != 0U)) ?
+                (uint32_t)((TickType_t)(context_tick - g_can_poll_tick[i]) *
+                    portTICK_PERIOD_MS) : 0xFFFFFFFFU;
+        }
+        g_can_ctrl_trace_context.captured = 1U;
+        s_can_ctrl_trace_tick = context_tick;
+        taskEXIT_CRITICAL();
         s_can_ctrl_trace_active = 1U;
     }
     result = CAN1_ExchangeSingle(address, request,

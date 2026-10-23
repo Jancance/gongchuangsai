@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-22",
+  "change": "Only live HeadingSession config overrides tolerance to1deg; legacy pure controller default2deg retained",
+  "live_tolerance_deg": 1,
+  "default_relative_deg": 30,
+  "static_review": "Relative to preceding stop-diagnostic firmware, only app_config candidate constant and HeadingSession tolerance assignment changed; runtime trace, speed, stability, power, safety, CAN, controller algorithm and deadlines byte-identical",
+  "source_sha256": {
+    "USER/main.c": "df6fedfcf1f75283e13d058c6f795692f9c19ba4ced6380328d85ea379a005c4",
+    "USER/app_config.h": "039e026de59cb922d024c1971d075dd2324b94a0e2c661c0dd4ca4610203a502",
+    "USER/heading_session.c": "593f9b4a6bc9a810a1e0dcacd347c98bc75719cd628c262815ee86fa2ba16b74",
+    "USER/heading_controller.c": "d4d49ab12e0203250ba6c4a9552c29589d0dede40de800c5f879d77f020e96ef"
+  },
+  "build": "Program Size: Code=38812 RO-data=588 RW-data=1632 ZI-data=25872",
+  "full_rebuild_errors": 0,
+  "full_rebuild_warnings": 0,
+  "host_runtime_simulation": false,
+  "hardware_trial": false,
+  "limits": "1deg applies to powered-session stable arrival criterion, not guaranteed after-off physical accuracy; retain after-off snapshots to measure rollback/drift",
+  "next": "user original-project Rebuild, download and idle check, then one controlled+30 trial with full stop trace"
+}

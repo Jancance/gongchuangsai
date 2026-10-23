@@ -1,4 +1,5 @@
 #include "chassis_kinematics.h"
+#include "app_config.h"
 #include <float.h>
 #include <stddef.h>
 
@@ -190,3 +191,84 @@ uint32_t Chassis_HeadingCommands(int32_t command_rpm,
     return Chassis_EncodeEmm(&logical, 5U, commands);
 }
 
+
+/* 同时给出前进和受限旋转分量；不反转任何车轮。 */
+uint32_t Chassis_TranslationHoldCommands(uint32_t mode, int32_t correction_rpm,
+    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+{
+    ChassisWheelSpeeds logical = {{0.0f, 0.0f, 0.0f, 0.0f}};
+    float base, lateral;
+    uint32_t limit;
+    Chassis_ClearMotorCommands(commands);
+    if ((commands == NULL) || (mode > 2U) ||
+        (correction_rpm < -2) || (correction_rpm > 2)) return 0U;
+    base = (float)((mode == 0U) ? APP_FORWARD_HOLD_BASE_RPM : APP_LATERAL_HOLD_BASE_RPM);
+    limit = (mode == 0U) ? APP_FORWARD_HOLD_MAX_RPM : APP_LATERAL_HOLD_MAX_RPM;
+    if (mode == 0U)
+    {
+        logical.rpm[0] = base; logical.rpm[1] = base;
+        logical.rpm[2] = base; logical.rpm[3] = base;
+    }
+    else
+    {
+        lateral = (mode == 1U) ? base : -base;
+        logical.rpm[0] = lateral; logical.rpm[1] = -lateral;
+        logical.rpm[2] = -lateral; logical.rpm[3] = lateral;
+    }
+    /* 与既有逆运动学一致：正修正为车体逆时针，平移方向不反转。 */
+    logical.rpm[0] -= (float)correction_rpm;
+    logical.rpm[1] += (float)correction_rpm;
+    logical.rpm[2] -= (float)correction_rpm;
+    logical.rpm[3] += (float)correction_rpm;
+    return Chassis_EncodeEmm(&logical, limit, commands);
+}
+
+uint32_t Chassis_ForwardHoldCommands(int32_t correction_rpm,
+    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+{
+    return Chassis_TranslationHoldCommands(0U, correction_rpm, commands);
+}
+
+/* 启动时纯数学自检：三方向/五级修正与已有逆解交叉核对，不发CAN。 */
+uint32_t Chassis_TranslationHoldSelfTest(void)
+{
+    ChassisMotorCommand actual[4], expected[4];
+    ChassisWheelSpeeds wheels;
+    ChassisBodyVelocity body;
+    uint32_t mode, i, limit;
+    int32_t correction;
+    float k, per_rpm, base, scale;
+    if (!Chassis_GeometryFactors(&g_chassis_geometry, &k, &per_rpm)) return 0U;
+    for (mode = 0U; mode < 3U; mode++)
+    {
+        base = (float)((mode == 0U) ? APP_FORWARD_HOLD_BASE_RPM : APP_LATERAL_HOLD_BASE_RPM);
+        limit = (mode == 0U) ? APP_FORWARD_HOLD_MAX_RPM : APP_LATERAL_HOLD_MAX_RPM;
+        for (correction = -2; correction <= 2; correction++)
+        {
+            body.vx_mm_s = (mode == 0U) ? base * per_rpm : 0.0f;
+            body.vy_mm_s = (mode == 0U) ? 0.0f : ((mode == 1U) ? base : -base) * per_rpm;
+            body.wz_rad_s = (float)correction * per_rpm / k;
+            if (!Chassis_Inverse(&g_chassis_geometry, &body, (float)limit, &wheels, &scale) ||
+                !Chassis_EncodeEmm(&wheels, limit, expected) ||
+                !Chassis_TranslationHoldCommands(mode, correction, actual)) return 0U;
+            for (i = 0U; i < 4U; i++)
+                if ((actual[i].address != expected[i].address) ||
+                    (actual[i].speed_raw != expected[i].speed_raw) ||
+                    (actual[i].direction != expected[i].direction) ||
+                    (actual[i].speed_raw == 0U)) return 0U;
+            if (mode == 0U)
+            {
+                if (!Chassis_ForwardHoldCommands(correction, expected)) return 0U;
+                for (i = 0U; i < 4U; i++)
+                    if ((actual[i].speed_raw != expected[i].speed_raw) ||
+                        (actual[i].direction != expected[i].direction)) return 0U;
+            }
+        }
+    }
+    if (Chassis_TranslationHoldCommands(3U, 0, actual) != 0U) return 0U;
+    for (i = 0U; i < 4U; i++) if (actual[i].speed_raw != 0U) return 0U;
+    if (Chassis_TranslationHoldCommands(1U, 3, actual) != 0U) return 0U;
+    for (i = 0U; i < 4U; i++) if (actual[i].speed_raw != 0U) return 0U;
+    if (Chassis_TranslationHoldCommands(2U, 0, NULL) != 0U) return 0U;
+    return 1U;
+}

@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-22",
+  "source": "User terminal Watch screenshot and explicit physical observation",
+  "requested_relative_deg": -5,
+  "exec_phase": 3,
+  "exec_trip": 0,
+  "exec_request": 0,
+  "can_ctrl_fault_latched": 0,
+  "vm_request_end": 0,
+  "rtos_fault": 0,
+  "safety_fault": 0,
+  "source_valid_end": 1,
+  "source_angle_age_ms_end": 23,
+  "source_rate_age_ms_end": 4,
+  "backend_result": 1,
+  "backend_cause": 0,
+  "power_wait_state": 4,
+  "power_on_age_ms_at_ready": 1046,
+  "post_settle_mask": 15,
+  "last_control_trace": {
+    "result": 1,
+    "address": 4,
+    "length": 4,
+    "rx_count": 1,
+    "total_ms": 1,
+    "esr": 0,
+    "scope": "latest successful transaction; raw payload collapsed"
+  },
+  "user_observation": "方向与+5度测试相反，自动停稳，VM灯自行熄灭",
+  "accepted_scope": "Single -5 degree counterpart session completed with opposite small physical turn, automatic settling and VM indicator off; paired with preceding single +5 trial",
+  "not_verified": [
+    "independent angular accuracy",
+    "repeatability across multiple cycles",
+    "physical VM voltage",
+    "dynamic fault response",
+    "XY positioning or full route acceptance",
+    "unique original E2 root cause"
+  ],
+  "hardware_operated_by_assistant": false,
+  "firmware_changed_this_turn": false,
+  "next": "Repeat controlled paired +/-5 trials with target/error and stable-stop records, then independent angle verification; retain existing protection and no immediate angle increase"
+}

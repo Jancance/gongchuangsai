@@ -1,0 +1,94 @@
+{
+  "date": "2026-10-23",
+  "mode": "5RPM forward PD",
+  "base_rpm": 5,
+  "correction_limit_rpm": 2,
+  "wheel_rpm_bounds": [
+    3,
+    7
+  ],
+  "duration_ms": 8000,
+  "backend_run_limit_ms": 9000,
+  "kp_rpm_per_deg": 0.8,
+  "kd_rpm_per_dps": 0.25,
+  "rate_filter_time_constant_ms": 80,
+  "continuous_correction_slew_rpm_per_s": 10,
+  "quantization_hysteresis_rpm": 0.15,
+  "small_error_deg": 0.3,
+  "small_rate_dps": 0.3,
+  "trip_error_deg": 10,
+  "source_and_mailbox_deadline_ms": 100,
+  "stop_ack_deadline_ms": 500,
+  "trace_capacity": 96,
+  "trace_interval_ms": 100,
+  "trace_meaning": "submitted integer correction, not measured RPM or CAN application timestamp",
+  "builds": {
+    "forward_pd_rebuild": {
+      "code": 38496,
+      "ro": 608,
+      "rw": 1672,
+      "zi": 27496
+    },
+    "forward_pd_turn_regression": {
+      "code": 39064,
+      "ro": 608,
+      "rw": 1672,
+      "zi": 27496
+    }
+  },
+  "validation": "ARMCC5 full isolated builds; source/encoding/hash review only, no runtime controller simulation",
+  "flashed": false,
+  "hardware_tested": false,
+  "committed": false,
+  "pushed": false,
+  "sources": [
+    {
+      "file": "app_config.h",
+      "sha256": "40804bc81c10d6180f39dd9aea899a4bae8c6dde62b562def02626e261dca04e",
+      "matches_build": true,
+      "crlf_only": true
+    },
+    {
+      "file": "heading_controller.c",
+      "sha256": "d3b5c2a6d902240fb54700227d22c5857e16cd3360971cf92ac3270da3855c40",
+      "matches_build": true,
+      "crlf_only": true
+    },
+    {
+      "file": "heading_controller.h",
+      "sha256": "6f8d744828e30ac7a5b1c07d7f90570c96e74e983936a9661622b520a93316aa",
+      "matches_build": true,
+      "crlf_only": true
+    },
+    {
+      "file": "chassis_kinematics.c",
+      "sha256": "f8077e7d1e3fc517ebc519181545b3a252d0399400d2e0bb81a5608f50463d33",
+      "matches_build": true,
+      "crlf_only": true
+    },
+    {
+      "file": "chassis_kinematics.h",
+      "sha256": "cab5450e4592e6cb7787ac081cf66f7a65d4a1f66800e666635f09bf8f0c7c3c",
+      "matches_build": true,
+      "crlf_only": true
+    },
+    {
+      "file": "chassis_auto_test.c",
+      "sha256": "3fd5bdd5cc86df55ed9dc27dc9dd20acc11dd423b9fdcd691763ff854016cfa1",
+      "matches_build": true,
+      "crlf_only": true
+    },
+    {
+      "file": "chassis_auto_test.h",
+      "sha256": "98b9f8803a0cb3bd7c302c0d7242df46095912ee910de411e4e0c7fed9802b56",
+      "matches_build": true,
+      "crlf_only": true
+    },
+    {
+      "file": "main.c",
+      "sha256": "d6b1835ce17ce4245e9ae4d9187898115751d894e5aa2820fc03a7cd7ef5bb7d",
+      "matches_build": true,
+      "crlf_only": true
+    }
+  ]
+}

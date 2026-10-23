@@ -40,6 +40,8 @@ static uint32_t s_finish_requested = 0U;
 static TickType_t s_finish_tick = 0U;
 /* 仅BeginHeading会话使用，旧三段测试不走动态更新。 */
 static uint32_t s_heading_session = 0U;
+static uint32_t s_forward_hold = 0U;
+static uint32_t s_translation_mode = 0U;
 static int32_t s_heading_initial_rpm = 0;
 static int32_t s_heading_pending_rpm = 0, s_heading_applied_rpm = 0;
 static TickType_t s_heading_update_tick = 0U;
@@ -107,7 +109,7 @@ static uint32_t Auto_ZeroSpeedLocked(void)
 static void Auto_CheckLocked(TickType_t now)
 {
     uint32_t i, state = g_chassis_auto_state;
-    TickType_t run_age;
+    TickType_t run_age, run_limit;
     if (g_chassis_auto_active != 1U) return;
     if (!Auto_BaseHealthy()) { Auto_CutLocked(2U); return; }
     /* 任务提交中断时撤销会话；正常停车继续由原截止和反馈监督。 */
@@ -144,8 +146,11 @@ static void Auto_CheckLocked(TickType_t now)
     { Auto_CutLocked(6U); return; }
     if (!s_run_started || (state == CHASSIS_AUTO_SETTLE)) return;
     run_age = (TickType_t)(now - s_run_tick);
-    if (run_age >= pdMS_TO_TICKS(CHASSIS_AUTO_RUN_MS)) s_stop_due = 1U;
-    if ((run_age >= pdMS_TO_TICKS(CHASSIS_AUTO_RUN_MS + CHASSIS_AUTO_STOP_MS)) &&
+    run_limit = pdMS_TO_TICKS((s_forward_hold == 1U) ?
+        ((s_translation_mode == 0U) ? CHASSIS_FORWARD_HOLD_RUN_MS : CHASSIS_LATERAL_HOLD_RUN_MS) :
+        ((s_heading_session == 1U) ? CHASSIS_HEADING_RUN_MS : CHASSIS_AUTO_RUN_MS));
+    if (run_age >= run_limit) s_stop_due = 1U;
+    if ((run_age >= (TickType_t)(run_limit + pdMS_TO_TICKS(CHASSIS_AUTO_STOP_MS))) &&
         (g_chassis_auto_stop_mask[g_chassis_auto_segment] != 0x0FU))
     { Auto_CutLocked(6U); return; }
     if ((s_mode == 0U) && (state == CHASSIS_AUTO_RUN) &&
@@ -154,11 +159,14 @@ static void Auto_CheckLocked(TickType_t now)
         for (i = 0U; i < 4U; i++)
         {
             int32_t raw = g_chassis_auto_driver_rpm[i];
-            TickType_t direction_age = (s_heading_session == 1U) ?
+            uint32_t speed_limit = (s_forward_hold == 1U) ?
+                ((s_translation_mode == 0U) ? APP_FORWARD_HOLD_FEEDBACK_LIMIT_RPM :
+                 APP_LATERAL_HOLD_FEEDBACK_LIMIT_RPM) : CHASSIS_AUTO_SPEED_LIMIT_RPM;
+            TickType_t direction_age = ((s_heading_session == 1U) && (s_forward_hold == 0U)) ?
                 (TickType_t)(now - s_heading_update_tick) : run_age;
             /* 不把1RPM量化为0误判为停转；只拒绝明显超速和新采到的反向 */
-            if ((raw < -(int32_t)CHASSIS_AUTO_SPEED_LIMIT_RPM) ||
-                (raw > (int32_t)CHASSIS_AUTO_SPEED_LIMIT_RPM)) { Auto_CutLocked(8U); return; }
+            if ((raw < -(int32_t)speed_limit) ||
+                (raw > (int32_t)speed_limit)) { Auto_CutLocked(8U); return; }
             if ((s_commands[g_chassis_auto_segment][i].speed_raw != 0U) &&
                 (direction_age >= pdMS_TO_TICKS(500U)) &&
                 ((TickType_t)(now - s_speed_tick[i]) <= direction_age - pdMS_TO_TICKS(500U)) &&
@@ -182,6 +190,8 @@ void ChassisAuto_Init(void)
     s_finish_requested = 0U;
     s_finish_tick = 0U;
     s_heading_session = 0U;
+    s_forward_hold = 0U;
+    s_translation_mode = 0U;
     s_heading_initial_rpm = s_heading_pending_rpm = s_heading_applied_rpm = 0;
     s_heading_update_tick = 0U;
     s_heading_command_tick = 0U;
@@ -222,6 +232,8 @@ uint32_t ChassisAuto_Begin(uint32_t dry_run)
             s_finish_requested = 0U;
             s_finish_tick = 0U;
             s_heading_session = 0U;
+            s_forward_hold = 0U;
+            s_translation_mode = 0U;
             s_heading_initial_rpm = s_heading_pending_rpm = s_heading_applied_rpm = 0;
             s_heading_update_tick = 0U;
             s_heading_command_tick = 0U;
@@ -314,7 +326,9 @@ void ChassisAuto_CanStep(void)
           (s_monitor_between == 0U))) &&
         (s_heading_pending_rpm != s_heading_applied_rpm))
     {
-        if (Chassis_HeadingCommands(s_heading_pending_rpm, s_commands[2]) != 1U)
+        if (((s_forward_hold == 1U) ?
+            Chassis_TranslationHoldCommands(s_translation_mode, s_heading_pending_rpm, s_commands[2]) :
+            Chassis_HeadingCommands(s_heading_pending_rpm, s_commands[2])) != 1U)
         {
             Auto_CutLocked(8U);
             taskEXIT_CRITICAL();
@@ -516,6 +530,8 @@ uint32_t ChassisAuto_BeginHeading(uint32_t dry_run, int32_t command_rpm)
     {
         g_chassis_auto_segment = 2U;
         s_heading_session = 1U;
+        s_forward_hold = 0U;
+        s_translation_mode = 0U;
         s_heading_initial_rpm = command_rpm;
         s_heading_pending_rpm = s_heading_applied_rpm = command_rpm;
         s_heading_update_tick = xTaskGetTickCount();
@@ -539,6 +555,7 @@ uint32_t ChassisAuto_UpdateHeading(int32_t command_rpm)
     {
         /* 当前会话禁止反向：后续完成零速反向互锁后再扩展。 */
         if ((command_rpm < -5) || (command_rpm > 5) ||
+            ((s_forward_hold == 1U) && ((command_rpm < -2) || (command_rpm > 2))) ||
             ((s_heading_initial_rpm > 0) && (command_rpm < 0)) ||
             ((s_heading_initial_rpm < 0) && (command_rpm > 0)))
             Auto_CutLocked(8U);
@@ -565,8 +582,44 @@ uint32_t ChassisAuto_ReadStatus(ChassisAutoStatus *status)
     /* 目标航向使用旋转段2，禁止误取前进或横移的停止应答。 */
     status->rotation_stop_mask = g_chassis_auto_stop_mask[2];
     status->heading_mode = s_heading_session;
+    status->forward_hold_mode = s_forward_hold;
+    status->translation_mode = s_translation_mode;
     status->dry_run = s_mode;
     status->cut_vm = g_chassis_auto_cut_vm;
     taskEXIT_CRITICAL();
     return 1U;
+}
+
+/* 只改原有执行器的命令向量；失能/使能/零速核验和停止保护共用。 */
+uint32_t ChassisAuto_BeginTranslationHold(uint32_t dry_run, uint32_t motion_mode)
+{
+    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT] = {0};
+    uint32_t i, accepted;
+    if (Chassis_TranslationHoldCommands(motion_mode, 0, commands) != 1U) return 0U;
+    taskENTER_CRITICAL();
+    accepted = ChassisAuto_BeginHeading(dry_run, 1);
+    if (accepted == 1U)
+    {
+        s_forward_hold = 1U;
+        s_translation_mode = motion_mode;
+        s_heading_initial_rpm = 0;
+        s_heading_pending_rpm = s_heading_applied_rpm = 0;
+        for (i = 0U; i < CHASSIS_WHEEL_COUNT; i++) s_commands[2][i] = commands[i];
+    }
+    taskEXIT_CRITICAL();
+    return accepted;
+}
+
+uint32_t ChassisAuto_UpdateForwardHold(int32_t correction_rpm)
+{
+    uint32_t accepted = 0U;
+    taskENTER_CRITICAL();
+    if (s_forward_hold == 1U) accepted = ChassisAuto_UpdateHeading(correction_rpm);
+    taskEXIT_CRITICAL();
+    return accepted;
+}
+
+uint32_t ChassisAuto_BeginForwardHold(uint32_t dry_run)
+{
+    return ChassisAuto_BeginTranslationHold(dry_run, 0U);
 }

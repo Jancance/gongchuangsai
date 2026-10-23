@@ -43,8 +43,9 @@ uint32_t HeadingSession_Start(HeadingSession *s, const HeadingSessionInput *in,
         !(((relative_deg >= 5.0f) && (relative_deg <= 45.0f)) ||
           ((relative_deg <= -5.0f) && (relative_deg >= -45.0f)))) return 0U;
 
-    /* 首轮工程候选9秒，从接受会话开始计时，包含执行器准备耗时。 */
+    /* 有限会话截止从接受会话开始计时，包含执行器准备耗时。 */
     config.timeout_ms = HS_RUN_MS;
+    config.tolerance_deg = APP_HEADING_TOLERANCE_DEG;
     if (HeadingController_Start(&s->controller, &config,
         in->yaw_deg + relative_deg, in->yaw_deg, in->now_ms) != 1U) return 0U;
     (void)HeadingController_Step(&s->controller, in->now_ms,

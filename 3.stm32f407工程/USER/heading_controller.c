@@ -193,3 +193,63 @@ void HeadingController_Cancel(HeadingController *controller,
     controller->settle_active = 0U;
     Heading_Output(controller, output);
 }
+
+/* 原始角速度与HWT yaw同向，阻尼项取负；只计算，不操作CAN/VM。 */
+uint32_t HeadingController_HoldCorrection(float target_deg, float yaw_deg,
+    float rate_dps, float *correction_rpm, float *error_deg)
+{
+    float error, command;
+    if ((correction_rpm == NULL) || (error_deg == NULL)) return 0U;
+    *correction_rpm = 0.0f;
+    *error_deg = 0.0f;
+    if (!Heading_Finite(target_deg) || !Heading_Finite(yaw_deg) ||
+        !Heading_Finite(rate_dps) || (Heading_Abs(rate_dps) > 2000.0f) ||
+        (Heading_Abs(target_deg) > 180.0f) ||
+        (Heading_Abs(yaw_deg) > 180.0f)) return 0U;
+    error = HeadingController_ErrorDeg(target_deg, yaw_deg);
+    *error_deg = error;
+    if (Heading_Abs(error) > 10.0f) return 0U;
+    command = 0.8f * error - 0.25f * rate_dps;
+    if ((Heading_Abs(error) <= 0.3f) && (Heading_Abs(rate_dps) <= 0.3f)) command = 0.0f;
+    if (command > 2.0f) command = 2.0f;
+    if (command < -2.0f) command = -2.0f;
+    *correction_rpm = command;
+    return 1U;
+}
+
+/* 仅新鲜源帧调用；80ms角速度低通、10RPM/s限斜率、整数命令迟滞。 */
+uint32_t HeadingController_HoldStep(HeadingHoldController *hold,
+    float target_deg, float yaw_deg, float rate_dps, uint32_t now_ms,
+    int32_t *correction_rpm, float *error_deg)
+{
+    uint32_t elapsed;
+    float desired, filtered, step, difference;
+    if ((hold == NULL) || (correction_rpm == NULL) || (error_deg == NULL)) return 0U;
+    *correction_rpm = 0;
+    if (HeadingController_HoldCorrection(target_deg, yaw_deg, rate_dps,
+        &desired, error_deg) != 1U) return 0U;
+    elapsed = (hold->initialized != 0U) ? now_ms - hold->tick : 20U;
+    if (elapsed >= 100U) return 0U;
+    if ((hold->initialized != 0U) && (elapsed == 0U))
+    { *correction_rpm = hold->quantized_rpm; return 1U; }
+    filtered = (hold->initialized != 0U) ? hold->filtered_rate_dps +
+        ((float)elapsed / (80.0f + (float)elapsed)) *
+        (rate_dps - hold->filtered_rate_dps) : rate_dps;
+    if (HeadingController_HoldCorrection(target_deg, yaw_deg, filtered,
+        &desired, error_deg) != 1U) return 0U;
+    step = 0.01f * (float)elapsed;
+    difference = desired - hold->command_rpm;
+    if (difference > step) difference = step;
+    if (difference < -step) difference = -step;
+    hold->command_rpm += difference;
+    /* 0.65RPM越级，回落到0.35RPM才返回，减少量化边缘抖动。 */
+    if ((hold->command_rpm - (float)hold->quantized_rpm) > 0.65f)
+        hold->quantized_rpm++;
+    else if ((hold->command_rpm - (float)hold->quantized_rpm) < -0.65f)
+        hold->quantized_rpm--;
+    hold->filtered_rate_dps = filtered;
+    hold->tick = now_ms;
+    hold->initialized = 1U;
+    *correction_rpm = hold->quantized_rpm;
+    return 1U;
+}

@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-22",
+  "failure": "L6449E writing original Objects/queue.o; object and AXF absent after failed Rebuild",
+  "observed_processes_before_recovery": "one UV4, no active armcc/armlink",
+  "defender_check": "no matching repository queue.o event returned; does not rule out every protection tool",
+  "single_compile": "original directory, exact Keil-generated queue.__i parameters, ARMCC5.06 update7, exit0, queue.o468296bytes",
+  "recovery_build": "original uvprojx Build (not Rebuild), link completed0errors0warnings, Code38812/RO588/RW1632/ZI25872",
+  "original_axf_sha256": "aaca773912ed716c30812882c518fc9de2cb384b545ce8103228a4c778697fe1",
+  "download_image_sha256": "0b1454cf13c74fe8dab348b4dc210da1ee83e7b1bad31037a0200cfb7f275e6e",
+  "download_image_matches_isolated_complete_rebuild": true,
+  "source_review": {
+    "USER/app_config.h": "039e026de59cb922d024c1971d075dd2324b94a0e2c661c0dd4ca4610203a502",
+    "USER/heading_session.c": "593f9b4a6bc9a810a1e0dcacd347c98bc75719cd628c262815ee86fa2ba16b74"
+  },
+  "scope": "build output recovered; no firmware source changes, no main project build setting changes, no download or hardware action",
+  "root_cause": "not uniquely established; isolated full build and original single compile succeeded, so no evidence for deterministic source syntax failure or permanently unwritable directory",
+  "recurrence_risk": "intermittent original output I/O failure may recur; do not declare permanent fix or force rebuild before this download",
+  "next": "VM external switch released, use existing recovered original AXF to download without another Rebuild; then idle health check for1deg candidate"
+}

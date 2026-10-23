@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-23",
+  "change": "three aggregate diagnostic fields in ForwardHoldDebug; update only after accepted nonzero submission",
+  "fields": [
+    "correction_nonzero_samples",
+    "correction_peak_abs_rpm",
+    "correction_last_nonzero_rpm"
+  ],
+  "control_parameters_unchanged": true,
+  "serial_disabled": true,
+  "build": {
+    "code": 38572,
+    "ro": 608,
+    "rw": 1672,
+    "zi": 27512
+  },
+  "errors": 0,
+  "warnings": 0,
+  "main_sha256": "840e43efdf0bf4ecc00bd63576eb314097709682ee422fcba21cafb0aff514bd",
+  "flashed": false,
+  "hardware_tested": false,
+  "pushed": false,
+  "limitations": "counts submissions on fresh HWT frames, not actual CAN updates; no retrospective result for existing run"
+}

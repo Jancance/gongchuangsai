@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-22",
+  "source": "two user Watch screenshots",
+  "target_deg": 101.564941,
+  "started": 1,
+  "zero_submit_accepted": 1,
+  "post_status": 1,
+  "rotation_stop_mask": 15,
+  "start": {
+    "captured": 1,
+    "valid": 1,
+    "event_ms": 14766,
+    "angle_sample_ms": 14751,
+    "yaw_deg": 71.5649414,
+    "error_deg": 30,
+    "rate_dps": 0,
+    "pe2_active": 1
+  },
+  "zero_request": {
+    "captured": 1,
+    "valid": 1,
+    "event_ms": 26149,
+    "angle_sample_ms": 26132,
+    "yaw_deg": 99.5800781,
+    "error_deg": 1.98486328,
+    "rate_dps": 1.03759766,
+    "pe2_active": 1
+  },
+  "off_seen": {
+    "captured": 1,
+    "valid": 1,
+    "event_ms": 27908,
+    "angle_sample_ms": 27892,
+    "yaw_deg": 99.6624756,
+    "error_deg": 1.90246582,
+    "rate_dps": 0,
+    "pe2_active": 0
+  },
+  "after_off": {
+    "captured": 1,
+    "valid": 1,
+    "event_ms": 28928,
+    "angle_sample_ms": 28912,
+    "yaw_deg": 99.4866943,
+    "error_deg": 2.07824707,
+    "rate_dps": 0,
+    "pe2_active": 0
+  },
+  "computed": {
+    "yaw_forward_zero_to_off_deg": 0.08239749999999901,
+    "yaw_reverse_off_to_after_deg": 0.17578129999999703,
+    "after_vs_off_ms": 1020,
+    "yaw_net_turn_start_to_after_deg": 27.9217529
+  },
+  "interpretation": "Most deficit existed at first zero request near configured 2-degree tolerance; HWT then advances about0.0824deg to off observation and moves back about0.1758deg over the following1020ms. Small reverse-change signal supports investigation, but is not independent mechanical backoff proof. Later error2.078deg is outside2deg although earlier completion was within tolerance.",
+  "not_captured": [
+    "complete reached snapshot",
+    "complete completed snapshot",
+    "top-level exec_phase/trip and terminal faults",
+    "new physical observation for this diagnostic trial"
+  ],
+  "limits": [
+    "PE2 off observation is not exact hardware edge or voltage measurement",
+    "HWT change may contain sensor drift or motion; mechanical cause not independently established",
+    "zero request is mailbox submission rather than actual braking edge"
+  ],
+  "firmware_changed_this_turn": false,
+  "hardware_operated_by_assistant": false,
+  "next": "Discuss tighter angular tolerance based on observed early stop; do not automatically add compensating0.176deg or change shutdown/holding policy"
+}

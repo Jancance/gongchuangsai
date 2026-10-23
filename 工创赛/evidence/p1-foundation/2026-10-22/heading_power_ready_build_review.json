@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-22",
+  "change": "Heading WAIT requires >=1000ms since actual PE2 command rising edge plus post-wait successful healthy status from every wheel; original readiness and 5000ms timeout retained",
+  "engineering_candidate_ms": 1000,
+  "not_voltage_measurement": true,
+  "not_proven_E2_fix": true,
+  "source_sha256": {
+    "USER/main.c": "292b64cb6df576ca341d84a20d24a3833553a66d5c58b79b964a187835bf016f",
+    "USER/app_config.h": "eb601cbc6901222133a6ca0683bae92243c18f78f9ab01c261bc7663eae04f75",
+    "HARDWARE/POWER/power.c": "71fa1c9d8b6f2d904d4d23b0afc47574cbadaedbff3c186af8a517a529631ff7",
+    "HARDWARE/POWER/power.h": "51dda3c20ed50e4b58061c4fb632b3b7e1906f77723f13a50083cd6c4db6c24f",
+    "SYSTEM/CAN/can.c": "54b173eb8767d8fb25e1779a6be3f21ca2c71757c4694cf04513ed2f3eaa5f60"
+  },
+  "build": "Program Size: Code=38384 RO-data=588 RW-data=1632 ZI-data=25584",
+  "full_rebuild_errors": 0,
+  "full_rebuild_warnings": 0,
+  "static_review": [
+    "both original 5000ms deadlines retained",
+    "helper has no delay, CAN transmit, VM write or fault clear",
+    "original App_CanJogReady gate remains required",
+    "E2 remains non-success",
+    "GBK CRLF and isolated source hashes match"
+  ],
+  "host_simulation": false,
+  "new_hardware_trial": false,
+  "preceding_user_trial": {
+    "pe2_enable_age_ms": 584,
+    "poll_result": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "poll_flags": [
+      2,
+      2,
+      2,
+      2
+    ],
+    "poll_count": [
+      2,
+      3,
+      2,
+      2
+    ],
+    "poll_age_ms": [
+      21,
+      10,
+      43,
+      32
+    ],
+    "request": "F3 AB 00 00 6B",
+    "reply": "F3 E2 6B",
+    "ext_id": 256,
+    "reply_ms": 1,
+    "physical_motion_observation": "not supplied for this latest screenshot set"
+  }
+}

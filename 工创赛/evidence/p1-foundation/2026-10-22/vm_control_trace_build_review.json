@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-22",
+  "scope": "Software PE2 timing and pre-control state capture only; not VM voltage measurement or E2 fix",
+  "source_sha256": {
+    "HARDWARE/POWER/power.c": "71fa1c9d8b6f2d904d4d23b0afc47574cbadaedbff3c186af8a517a529631ff7",
+    "HARDWARE/POWER/power.h": "51dda3c20ed50e4b58061c4fb632b3b7e1906f77723f13a50083cd6c4db6c24f",
+    "SYSTEM/CAN/can.c": "54b173eb8767d8fb25e1779a6be3f21ca2c71757c4694cf04513ed2f3eaa5f60"
+  },
+  "source_matches_isolated_build": true,
+  "build": "ARMCC 5.06 update 7, complete Keil Rebuild, 0 errors 0 warnings",
+  "program_size": "Program Size: Code=38168 RO-data=588 RW-data=1620 ZI-data=25588  \r",
+  "format": "GBK/CRLF preserved",
+  "review_checks": [
+    "Power_Disable GPIO cutoff retained without RTOS calls",
+    "SESSION1 KEY0 STATIC0 TURN0 retained",
+    "20ms TX and 30ms reply windows retained",
+    "original first-failure latch retained"
+  ],
+  "host_simulation": false,
+  "hardware_test_of_new_firmware": false,
+  "hardware_download_by_assistant": false
+}

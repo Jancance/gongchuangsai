@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-24",
+  "scope": "standalone no-motion wireless UART bidirectional test",
+  "enabled_macro": "APP_UART_LINK_TEST=1",
+  "uart": "USART1 PA9 TX PA10 RX 115200 8N1",
+  "protocol": [
+    "LINK,HB,<n>,<tick>,VM0",
+    "PING,<token> -> PONG,<token>",
+    "ECHO,<text> -> ECHO,<text>",
+    "SET,<0..1000> -> VALUE,<n>",
+    "GET -> VALUE,<n>",
+    "INFO -> INFO,UART1,115200,8N1,VM0"
+  ],
+  "vm_protection": "Power_Enable disabled at compile time, Safety forces VM0, CAN and key motion paths excluded at runtime; watchdog and task-progress checks preserved",
+  "builds": {
+    "test": {
+      "code": 31608,
+      "ro": 608,
+      "rw": 1724,
+      "zi": 27516
+    },
+    "motion": {
+      "code": 39296,
+      "ro": 608,
+      "rw": 1680,
+      "zi": 27512
+    }
+  },
+  "host_checks_passed": 19,
+  "serial_preflight": {
+    "port": "COM17",
+    "baud": 115200,
+    "opened": false,
+    "heartbeat": false,
+    "sent": 0,
+    "matched": 0,
+    "status": "port_or_io_error",
+    "tests": [],
+    "error": "Exception calling \"Open\" with \"0\" argument(s): \"Could not find file 'COM17'.\"",
+    "log": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\uart_link_captures\\20261024_003635_d8d0ac.jsonl"
+  },
+  "hardware_bidirectional_tested": false,
+  "flashed": false,
+  "original_axf_rebuilt": false,
+  "pushed": false,
+  "firmware_sources": [
+    {
+      "file": "USER/app_config.h",
+      "sha256": "a6f7f2bfd787a9a354441f8b75d0506456ccf14c4e37ee93fbb5f508e9c94746",
+      "build_source_matches": true,
+      "gbk_crlf_preserved": true
+    },
+    {
+      "file": "USER/main.c",
+      "sha256": "c78f6b9d2fc2d90886fdde61b3be5e9bac3a2335bbb959e60eda1ad221e90e08",
+      "build_source_matches": true,
+      "gbk_crlf_preserved": true
+    },
+    {
+      "file": "HARDWARE/POWER/power.c",
+      "sha256": "3563e4ba3af82614d955f757024757912aaa58275d91979a3d2ef9035e8967bc",
+      "build_source_matches": true,
+      "gbk_crlf_preserved": true
+    }
+  ],
+  "host_script_sha256": "6082105da1f647ff5d2be170454ce4d4141d8ff3dfd510f8e2786e68d6f9da6c"
+}

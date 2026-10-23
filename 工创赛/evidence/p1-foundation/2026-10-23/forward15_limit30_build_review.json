@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-23",
+  "user_authorized": "raise overspeed limit",
+  "base_rpm": 15,
+  "command_max_rpm": 17,
+  "feedback_abs_rpm_trip_above": 30,
+  "duration_ms": 8000,
+  "scope": "forward hold mode only",
+  "other_protections_unchanged": true,
+  "build": {
+    "code": 38512,
+    "ro": 608,
+    "rw": 1672,
+    "zi": 27496
+  },
+  "errors": 0,
+  "warnings": 0,
+  "flashed": false,
+  "hardware_tested": false,
+  "pushed": false,
+  "previous_failure": {
+    "phase": 4,
+    "trip": 5,
+    "backend_cause": 8,
+    "elapsed_ms": 418,
+    "reported_driver_rpm": [
+      21,
+      -24,
+      18,
+      -28
+    ],
+    "reason": "feedback exceeds previous 17RPM limit; speed discrepancy root cause unresolved"
+  },
+  "sources": [
+    {
+      "file": "app_config.h",
+      "sha256": "59dac32d701977f86596d043bb619063bbb0817d24b2fc649d5db42de0e1033d"
+    },
+    {
+      "file": "chassis_auto_test.c",
+      "sha256": "7ad5055794c4b7ebab710853b93759c5fe99c14cec15b0aa1dfc23422451d477"
+    }
+  ]
+}
