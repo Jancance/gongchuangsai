@@ -40,8 +40,8 @@ uint32_t HeadingSession_Start(HeadingSession *s, const HeadingSessionInput *in,
     HS_Out(s, HS_ACTION_NONE, out);
     if ((s->used != 0U) || (s->state != HS_IDLE) || !HS_Fresh(in) ||
         (in->backend_active != 0U) || (in->backend_result != 0U) ||
-        !(((relative_deg >= 5.0f) && (relative_deg <= 45.0f)) ||
-          ((relative_deg <= -5.0f) && (relative_deg >= -45.0f)))) return 0U;
+        !(((relative_deg >= 5.0f) && (relative_deg <= ((APP_TEST_MODE == 3U) ? 90.0f : 45.0f))) ||
+          ((relative_deg <= -5.0f) && (relative_deg >= ((APP_TEST_MODE == 3U) ? -90.0f : -45.0f))))) return 0U;
 
     /* 有限会话截止从接受会话开始计时，包含执行器准备耗时。 */
     config.timeout_ms = HS_RUN_MS;

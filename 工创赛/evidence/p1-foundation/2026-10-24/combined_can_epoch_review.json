@@ -1,0 +1,23 @@
+{
+  "local_only": true,
+  "fix_flashed": false,
+  "runtime_verified": false,
+  "last_combined_completed": 1,
+  "last_combined_index": 1,
+  "last_fault": 32,
+  "root_cause_status": "code path permits pre-settle samples to mark ready; observed failure consistent, exact node unrecorded",
+  "protection_unchanged": [
+    "CAN protect bits checked with existing fresh data",
+    "3-second initial readiness deadline",
+    "1-second data freshness",
+    "fault latching",
+    "watchdog"
+  ],
+  "new_policy": "CAN ready requires all four valid fresh samples collected after the current power-request settle interval",
+  "fields": 55,
+  "host_tests": 24,
+  "files": {
+    "USER/main.c": "21fb7e7f55f039f08634f6462c9fa0ecabc38926224e766bfdfea64509d68705",
+    "SYSTEM/SAFETY/safety.c": "2266369360570682a9b50e1b75ff18192d15a9dab13a0ff6488a1aba0f1c7c51"
+  }
+}

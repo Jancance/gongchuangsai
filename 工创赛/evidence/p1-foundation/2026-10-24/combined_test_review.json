@@ -1,0 +1,65 @@
+{
+  "local_only": true,
+  "default_test_mode": 1,
+  "combined_mode": 3,
+  "hardware_verified": false,
+  "runtime_simulated": false,
+  "flashed": false,
+  "sequence": [
+    "forward_8s",
+    "left_8s",
+    "relative_turn_30deg",
+    "forward_8s"
+  ],
+  "gap_ms": 1000,
+  "stage_timeout_ms": 35000,
+  "total_timeout_ms": 120000,
+  "variants": {
+    "combo": {
+      "test_mode": 3,
+      "size": "Code=43756 RO-data=608 RW-data=1788 ZI-data=27524  ",
+      "errors": 0,
+      "warnings": 0
+    },
+    "link": {
+      "test_mode": 1,
+      "size": "Code=25822 RO-data=462 RW-data=1816 ZI-data=27392  ",
+      "errors": 0,
+      "warnings": 0
+    },
+    "serial": {
+      "test_mode": 2,
+      "size": "Code=42700 RO-data=664 RW-data=1836 ZI-data=29156  ",
+      "errors": 0,
+      "warnings": 0
+    },
+    "manual": {
+      "test_mode": 0,
+      "size": "Code=39296 RO-data=608 RW-data=1768 ZI-data=27424  ",
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "files": {
+    "USER/main.c": {
+      "sha256": "036f35769bfc351d18bb6d63b2074ea3771a25b775f4a99892f608573d0cd909",
+      "crlf": 3069,
+      "crcrlf": 0
+    },
+    "USER/app_config.h": {
+      "sha256": "b2d387c697d0f1949af8261a61c327b3a261cc27d0614ce5f32ba3ff1b8b3ed5",
+      "crlf": 97,
+      "crcrlf": 0
+    },
+    "USER/chassis_auto_test.c": {
+      "sha256": "ef7f27a8c35f7a62739e36aa883716b43520b8ce5461dc907314eb49585338af",
+      "crlf": 651,
+      "crcrlf": 0
+    },
+    "USER/chassis_auto_test.h": {
+      "sha256": "873e316cdb88f79f180f97faae173ca9dfcaad6f64230237c3eab7045a5edcab",
+      "crlf": 97,
+      "crcrlf": 0
+    }
+  }
+}

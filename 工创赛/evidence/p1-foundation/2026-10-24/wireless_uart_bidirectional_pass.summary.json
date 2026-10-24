@@ -1,0 +1,48 @@
+{
+    "port":  "COM17",
+    "baud":  115200,
+    "opened":  true,
+    "heartbeat":  true,
+    "sent":  7,
+    "matched":  7,
+    "status":  "bidirectional_pass",
+    "tests":  [
+                  {
+                      "command":  "PING,c0b3957af4c9",
+                      "expected":  "PONG,c0b3957af4c9",
+                      "matched":  true
+                  },
+                  {
+                      "command":  "ECHO,c0b3957af4c9",
+                      "expected":  "ECHO,c0b3957af4c9",
+                      "matched":  true
+                  },
+                  {
+                      "command":  "SET,569",
+                      "expected":  "VALUE,569",
+                      "matched":  true
+                  },
+                  {
+                      "command":  "GET",
+                      "expected":  "VALUE,569",
+                      "matched":  true
+                  },
+                  {
+                      "command":  "INFO",
+                      "expected":  "INFO,UART1,115200,8N1,VM0",
+                      "matched":  true
+                  },
+                  {
+                      "command":  "SET,1001",
+                      "expected":  "ERR,RANGE",
+                      "matched":  true
+                  },
+                  {
+                      "command":  "GET",
+                      "expected":  "VALUE,569",
+                      "matched":  true
+                  }
+              ],
+    "error":  null,
+    "log":  "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\uart_link_captures\\20261024_145024_2c47d5.jsonl"
+}

@@ -5,6 +5,7 @@
 #include "freertos_hooks.h"
 #include "task.h"
 #include <stddef.h>
+#include "power.h"
 
 /* 将新读到的3A供原CAN监督使用，不伪造采样时间 */
 extern volatile uint32_t g_can_poll_result[4];
@@ -47,6 +48,12 @@ static int32_t s_heading_pending_rpm = 0, s_heading_applied_rpm = 0;
 static TickType_t s_heading_update_tick = 0U;
 /* 最近一次合法轮速提交时间，与实际四轮更新起点分开。 */
 static TickType_t s_heading_command_tick = 0U;
+#if APP_TEST_MODE == 3U
+static uint32_t s_sequence_hold, s_sequence_continue;
+#define AUTO_SEQUENCE_HOLD() (s_sequence_hold)
+#else
+#define AUTO_SEQUENCE_HOLD() (0U)
+#endif
 
 /* 以下带Locked的函数只在短临界区内操作内存，不等待CAN */
 static void Auto_CutLocked(uint32_t cause)
@@ -187,6 +194,9 @@ void ChassisAuto_Init(void)
     g_chassis_auto_session = g_chassis_auto_result = g_chassis_auto_cause = 0U;
     g_chassis_auto_io_result = g_chassis_auto_last_address = 0U;
     s_vm_requested = s_used = s_mode = 0U;
+#if APP_TEST_MODE == 3U
+    s_sequence_hold = s_sequence_continue = 0U;
+#endif
     s_finish_requested = 0U;
     s_finish_tick = 0U;
     s_heading_session = 0U;
@@ -241,7 +251,14 @@ uint32_t ChassisAuto_Begin(uint32_t dry_run)
             s_monitor_cursor = 0U;
             for (i = 0U; i < 3U; i++) g_chassis_auto_start_mask[i] = g_chassis_auto_stop_mask[i] = 0U;
             g_chassis_auto_active = 1U;
+#if APP_TEST_MODE == 3U
+            /* 后续段保持使能，只重新核对零速/状态，不重复失能和使能。 */
+            Auto_EnterLocked(s_sequence_continue ? CHASSIS_AUTO_VERIFY_ON :
+                             CHASSIS_AUTO_DISABLE, s_total_tick);
+            s_sequence_continue = 0U;
+#else
             Auto_EnterLocked(CHASSIS_AUTO_DISABLE, s_total_tick);
+#endif
             accepted = 1U;
         }
     }
@@ -260,10 +277,54 @@ void ChassisAuto_SafetyUpdate(uint32_t vm_request)
         { g_chassis_auto_state = CHASSIS_AUTO_CANCELLED; g_chassis_auto_result = 3U; }
         g_chassis_auto_active = g_chassis_auto_cut_vm = 0U;
         s_used = 0U;
+#if APP_TEST_MODE == 3U
+        s_sequence_hold = s_sequence_continue = 0U;
+#endif
     }
     else Auto_CheckLocked(xTaskGetTickCount());
     taskEXIT_CRITICAL();
 }
+
+#if APP_TEST_MODE == 3U
+/* 整组许可只在首次闲置申请；故障/取消后的组不能从这里重开。 */
+uint32_t ChassisAuto_BeginSequence(void)
+{
+    uint32_t accepted = 0U;
+    taskENTER_CRITICAL();
+    if (!s_sequence_hold && !s_vm_requested && !s_used &&
+        !g_chassis_auto_active && !g_chassis_auto_cut_vm &&
+        (g_chassis_auto_state == CHASSIS_AUTO_IDLE) &&
+        !g_chassis_auto_result && !g_rtos_fault && !g_safety_fault &&
+        !g_can_ctrl_fault_latched)
+    { s_sequence_hold = 1U; s_sequence_continue = 0U; accepted = 1U; }
+    taskEXIT_CRITICAL();
+    return accepted;
+}
+/* 仅释放已成功停稳且仍上电的本组会话，不清故障，不重新初始化。 */
+uint32_t ChassisAuto_ReleaseCompleted(uint32_t session)
+{
+    uint32_t accepted = 0U;
+    PowerCommandStatus power;
+    taskENTER_CRITICAL();
+    Power_ReadCommandStatus(&power);
+    if (s_sequence_hold && (session == g_chassis_auto_session) &&
+        s_vm_requested && s_used && !g_chassis_auto_active &&
+        !g_chassis_auto_cut_vm && (power.active == 1U) && Auto_BaseHealthy() &&
+        (g_chassis_auto_state == CHASSIS_AUTO_DONE) &&
+        (g_chassis_auto_result == 1U) && (g_chassis_auto_cause == 0U) &&
+        (g_chassis_auto_stop_mask[2] == 0x0FU) && Auto_ZeroSpeedLocked() &&
+        !g_can_ctrl_fault_latched)
+    {
+        s_sequence_continue = 1U;
+        s_used = 0U;
+        g_chassis_auto_result = 0U;
+        g_chassis_auto_state = CHASSIS_AUTO_IDLE;
+        accepted = 1U;
+    }
+    taskEXIT_CRITICAL();
+    return accepted;
+}
+#endif
 
 void ChassisAuto_Abort(void)
 {
@@ -374,7 +435,8 @@ void ChassisAuto_CanStep(void)
             {
                 g_chassis_auto_state = CHASSIS_AUTO_DONE;
                 g_chassis_auto_result = 1U; g_chassis_auto_cause = 0U;
-                g_chassis_auto_active = 0U; g_chassis_auto_cut_vm = 1U;
+                g_chassis_auto_active = 0U;
+                g_chassis_auto_cut_vm = AUTO_SEQUENCE_HOLD() ? 0U : 1U;
             }
             else
             {

@@ -1,0 +1,66 @@
+{
+  "user_confirmed": true,
+  "user_observations": [
+    "forward then left then counterclockwise90 then new-heading forward",
+    "VM stays on between stages",
+    "final automatic stop",
+    "VM lamp goes off"
+  ],
+  "software_complete": true,
+  "elapsed_ms": 56304,
+  "stages": [
+    {
+      "index": 0,
+      "completion_tick_ms": 64200,
+      "target_deg": 88.692,
+      "yaw_deg": 88.181,
+      "recorded_error_deg": 0.51,
+      "max_sampled_abs_error_deg": 0.725,
+      "vm_request_at_completion": 1,
+      "pe2_at_completion": 1
+    },
+    {
+      "index": 1,
+      "completion_tick_ms": 74400,
+      "target_deg": 88.187,
+      "yaw_deg": 88.401,
+      "recorded_error_deg": -0.214,
+      "max_sampled_abs_error_deg": 0.56,
+      "vm_request_at_completion": 1,
+      "pe2_at_completion": 1
+    },
+    {
+      "index": 2,
+      "completion_tick_ms": 99700,
+      "target_deg": 178.401,
+      "yaw_deg": 177.484,
+      "recorded_error_deg": 0.922,
+      "max_sampled_abs_error_deg": 90.0,
+      "vm_request_at_completion": 1,
+      "pe2_at_completion": 1
+    },
+    {
+      "index": 3,
+      "completion_tick_ms": 109900,
+      "target_deg": 177.484,
+      "yaw_deg": 177.138,
+      "recorded_error_deg": 0.34,
+      "max_sampled_abs_error_deg": 0.67,
+      "vm_request_at_completion": 0,
+      "pe2_at_completion": 0
+    }
+  ],
+  "commands": {
+    "START": 1,
+    "ARM": 1,
+    "KEEP": 246
+  },
+  "late_keep_rejected": 1,
+  "note": "At completion one in-flight KEEP met terminal state; no motion restart, no fault or link loss. Gaps include old backlog; rotation peak90 is initial goal error. End errors and latest yaw from different update instants.",
+  "not_verified": [
+    "precise XY trajectory/distance",
+    "fault injection suite",
+    "loaded/high-speed robustness"
+  ],
+  "local_only": true
+}

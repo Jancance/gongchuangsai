@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-24",
+  "github_snapshot": {
+    "commit": "5f132adc946ff926bb1613216dc1e408d7ee3c32",
+    "branch": "main",
+    "remote_confirmed_equal": true,
+    "files_committed": 94,
+    "new_remote_control_changes_uploaded": false
+  },
+  "current_flags": {
+    "APP_UART_LINK_TEST": 0,
+    "APP_SERIAL_MOTION_CONTROL": 1,
+    "APP_TRANSLATION_HOLD_MODE": 0
+  },
+  "builds": {
+    "serial": {
+      "code": 42700,
+      "ro": 664,
+      "rw": 1748,
+      "zi": 29244
+    },
+    "manual": {
+      "code": 39296,
+      "ro": 608,
+      "rw": 1680,
+      "zi": 27512
+    },
+    "linktest": {
+      "code": 31608,
+      "ro": 608,
+      "rw": 1724,
+      "zi": 27516
+    },
+    "left": {
+      "code": 42700,
+      "ro": 664,
+      "rw": 1836,
+      "zi": 29156
+    }
+  },
+  "host_unit_tests": {
+    "passed": 16,
+    "scope": "Python CRC parser and host motion controller; no MCU execution or hardware"
+  },
+  "limits": {
+    "telemetry_period_ms": 100,
+    "host_keepalive_ms": 200,
+    "firmware_keepalive_deadline_ms": 1000,
+    "arm_reference_age_ms": 500,
+    "arm_lifetime_ms": 2000,
+    "source_deadline_ms": 100,
+    "base_rpm": 15,
+    "correction_limit_rpm": 2,
+    "feedback_limit_rpm": 30,
+    "run_ms": 8000
+  },
+  "firmware_sources": [
+    {
+      "file": "USER/main.c",
+      "sha256": "daa9f67b8aab2e3087906dc0d93b6c875abd7c575a30dc6664ba3498a9f5eab6",
+      "gbk_crlf_preserved": true
+    },
+    {
+      "file": "USER/app_config.h",
+      "sha256": "972d9dacc64cea720e0bd683b9f372b351737d29d6ca98ca5785518d87dae4ee",
+      "gbk_crlf_preserved": true
+    },
+    {
+      "file": "SYSTEM/USART/usart.c",
+      "sha256": "f85a99853e07f8505a4e0b0bf88057a8c5656135be4b428fd50fc1a5a457b9b3",
+      "gbk_crlf_preserved": true
+    },
+    {
+      "file": "SYSTEM/CAN/can.h",
+      "sha256": "c6fb41ed2c6fd21ae5328abf62a176df7c5676afed11f6a8125c95980fca1a97",
+      "gbk_crlf_preserved": true
+    }
+  ],
+  "preflight": {
+    "action": "monitor",
+    "port": "COM17",
+    "opened": false,
+    "valid_frames": 0,
+    "invalid_frames": 0,
+    "sent_commands": 0,
+    "nonzero_frames": 0,
+    "max_abs_rpm": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "max_abs_error_deg": 0,
+    "sequence_gaps": 0,
+    "last": null,
+    "error": "[WinError 2] 系统找不到指定的文件。",
+    "baseline": "5f132ad",
+    "status": "no_telemetry",
+    "capture_prefix": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\serial_motion_captures\\20261024_024454_478300",
+    "limits": "software observations only; physical stop and actual trajectory require on-site confirmation"
+  },
+  "flashed": false,
+  "hardware_motion_executed": false,
+  "wireless_link_verified": false,
+  "new_code_committed": false,
+  "new_code_pushed": false,
+  "limitations": "user cannot validate hardware now; only code/build/host software checks complete; actual wireless timing and MCU command parsing untested at runtime"
+}

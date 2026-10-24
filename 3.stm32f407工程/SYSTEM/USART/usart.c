@@ -1,10 +1,11 @@
 #include "stm32f4xx.h"
 #include "usart.h"
+#include "app_config.h"
 #include "FreeRTOS.h"
 #include "queue.h"
 
 /* 当前只允许任务A提交请求，中断负责逐字节发送 */
-static uint8_t g_tx_buffer[64];
+static uint8_t g_tx_buffer[APP_SERIAL_MOTION_CONTROL ? 768U : 64U];
 static volatile uint16_t g_tx_length = 0U;
 static volatile uint16_t g_tx_position = 0U;
 /* 接收中断写入，任务A读取 */

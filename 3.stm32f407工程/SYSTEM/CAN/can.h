@@ -3,6 +3,8 @@
 
 #include "stm32f4xx.h"
 #include "stm32f4xx_can.h"
+/* 首次控制故障锁存，只供遥测读取，不从串口清除。 */
+extern volatile uint32_t g_can_ctrl_fault_latched;
 /* 在FreeRTOS任务中调用一次，返回测试结果 */
 uint32_t CAN1_LoopbackTest(void);
 uint32_t CAN1_ReadVersion(uint8_t address, CanRxMsg *reply);

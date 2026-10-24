@@ -207,7 +207,7 @@ static void Safety_CanGuardUpdate(uint32_t vm_request)
     uint32_t enabled;
     uint32_t valid;
     uint32_t protect;
-    uint32_t fresh = 0U;
+    uint32_t fresh = 0U, ready_fresh = 0U;
     uint32_t i;
 
     g_can_guard_ready = 0U;
@@ -249,6 +249,13 @@ static void Safety_CanGuardUpdate(uint32_t vm_request)
              pdMS_TO_TICKS(SAFETY_CAN_FRESH_MS)))
         {
             fresh |= 1UL << i;
+            /* 就绪只计本次上电稳定后采到的状态；原保护位仍按fresh检查。 */
+            if (((TickType_t)(now - s_can_power_tick) >=
+                 pdMS_TO_TICKS(APP_HEADING_POWER_SETTLE_MS)) &&
+                ((TickType_t)(now - ticks[i]) <=
+                 (TickType_t)(now - s_can_power_tick) -
+                 pdMS_TO_TICKS(APP_HEADING_POWER_SETTLE_MS)))
+                ready_fresh |= 1UL << i;
         }
     }
 
@@ -260,7 +267,7 @@ static void Safety_CanGuardUpdate(uint32_t vm_request)
         g_safety_fault |= SAFETY_FAULT_CAN_PROTECT;
         return;
     }
-    if ((enabled == 1U) && (fresh == 0x0FU))
+    if ((enabled == 1U) && (ready_fresh == 0x0FU))
     {
         s_can_was_ready = 1U;
         g_can_guard_ready = 1U;
@@ -272,7 +279,7 @@ static void Safety_CanGuardUpdate(uint32_t vm_request)
          pdMS_TO_TICKS(SAFETY_CAN_BOOT_MS)))
     {
         g_can_guard_bad_nodes =
-            (enabled == 1U) ? (0x0FU & ~fresh) : 0x0FU;
+            (enabled == 1U) ? (0x0FU & ~ready_fresh) : 0x0FU;
         g_can_guard_cause = (enabled == 1U) ? 2U : 1U;
         g_safety_fault |= SAFETY_FAULT_CAN_DATA;
     }

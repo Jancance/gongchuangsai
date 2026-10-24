@@ -1,0 +1,55 @@
+{
+  "current_code_mode": 3,
+  "local_only": true,
+  "user_confirmed": [
+    "forward then left then counterclockwise turn",
+    "VM lamp on between stages",
+    "final stop and VM lamp off"
+  ],
+  "completed_stages": 2,
+  "whole_sequence_pass": false,
+  "turn_timeout_before_change_ms": 20000,
+  "turn_final_recorded_error_deg": 3.724,
+  "new_timeout_combo_ms": 30000,
+  "new_timeout_other_modes_ms": 20000,
+  "new_timeout_flashed": false,
+  "new_timeout_runtime_verified": false,
+  "continuous_vm_runtime_observed": true,
+  "host_tests": 25,
+  "commands": {
+    "START": 1,
+    "ARM": 1,
+    "STOP": 1,
+    "KEEP": 183
+  },
+  "stages": {
+    "0": {
+      "observed_tick_span": [
+        48800,
+        60500
+      ],
+      "max_sampled_abs_error_deg": 0.703,
+      "gap_samples_with_vm_on": 10
+    },
+    "1": {
+      "observed_tick_span": [
+        60600,
+        70700
+      ],
+      "max_sampled_abs_error_deg": 0.505,
+      "gap_samples_with_vm_on": 10
+    },
+    "2": {
+      "observed_tick_span": [
+        70800,
+        90800
+      ],
+      "max_sampled_abs_error_deg": 90.0,
+      "gap_samples_with_vm_on": 0
+    }
+  },
+  "builds": {
+    "combo": "Code=47964 RO-data=664 RW-data=1876 ZI-data=29284  ",
+    "single": "Code=42748 RO-data=664 RW-data=1836 ZI-data=29156  "
+  }
+}

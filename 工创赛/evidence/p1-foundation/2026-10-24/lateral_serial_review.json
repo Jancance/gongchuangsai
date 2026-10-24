@@ -1,0 +1,35 @@
+{
+  "local_only": true,
+  "hardware_verified": false,
+  "flashed": false,
+  "default_test_mode": 1,
+  "translation_mode": 1,
+  "host_tests": 18,
+  "link_host_checks": 19,
+  "variants": {
+    "link": {
+      "mode": 1,
+      "direction": 1,
+      "size": "Code=25822 RO-data=462 RW-data=1816 ZI-data=27392  ",
+      "main_sha256": "7bb600ab1429f8529782ace175be829d50369426f00b64357d2295f7d14bb473"
+    },
+    "left": {
+      "mode": 2,
+      "direction": 1,
+      "size": "Code=42700 RO-data=664 RW-data=1836 ZI-data=29156  ",
+      "main_sha256": "7bb600ab1429f8529782ace175be829d50369426f00b64357d2295f7d14bb473"
+    },
+    "right": {
+      "mode": 2,
+      "direction": 2,
+      "size": "Code=42700 RO-data=664 RW-data=1836 ZI-data=29156  ",
+      "main_sha256": "7bb600ab1429f8529782ace175be829d50369426f00b64357d2295f7d14bb473"
+    },
+    "manual": {
+      "mode": 0,
+      "direction": 1,
+      "size": "Code=39296 RO-data=608 RW-data=1768 ZI-data=27424  ",
+      "main_sha256": "7bb600ab1429f8529782ace175be829d50369426f00b64357d2295f7d14bb473"
+    }
+  }
+}

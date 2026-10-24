@@ -804,6 +804,14 @@ static void App_HeadingSourceObserve(void)
 #endif
 #if APP_HEADING_SESSION_TEST
 /* 只允许CAN任务操作会话对象；Safety只锁存trip并撤销执行。 */
+#if APP_TEST_MODE == 3U
+static uint32_t s_combined_keep_vm, s_combined_powered_segment;
+#define App_StageDoneVm() (s_combined_keep_vm)
+#define App_StageStartVm() (s_combined_powered_segment)
+#else
+#define App_StageDoneVm() (0U)
+#define App_StageStartVm() (0U)
+#endif
 #define HR_IDLE 0U
 #define HR_WAIT 1U
 #define HR_RUN 2U
@@ -1032,7 +1040,7 @@ static void App_HeadingRuntimeSafety(void)
     if ((g_heading_exec_phase != HR_WAIT) && (g_heading_exec_phase != HR_RUN))
     {
         if (status.active != 0U) App_HeadingRuntimeTrip(5U);
-        g_vm_test_request = 0U;
+        g_vm_test_request = (g_heading_exec_phase == HR_DONE) ? App_StageDoneVm() : 0U;
     }
     else if (g_heading_exec_trip != 0U)
         App_HeadingRuntimeTrip(g_heading_exec_trip);
@@ -1080,7 +1088,7 @@ static void App_HeadingRuntimeStep(void)
     if (g_heading_exec_phase >= HR_DONE)
     {
         /* 终态保持观察结果；新request不排队，上电后只运行一次。 */
-        g_vm_test_request = 0U;
+        g_vm_test_request = (g_heading_exec_phase == HR_DONE) ? App_StageDoneVm() : 0U;
         taskEXIT_CRITICAL();
         return;
     }
@@ -1092,9 +1100,10 @@ static void App_HeadingRuntimeStep(void)
         s_heading_exec_relative = g_heading_exec_relative_deg;
         /* 本轮只接受正负5度或30度，不允许Watch任意扩大角度。 */
         if (((s_heading_exec_relative != 5.0f) && (s_heading_exec_relative != -5.0f) &&
-             (s_heading_exec_relative != 30.0f) && (s_heading_exec_relative != -30.0f)) ||
+             (s_heading_exec_relative != 30.0f) && (s_heading_exec_relative != -30.0f) &&
+             !((APP_TEST_MODE == 3U) && (s_heading_exec_relative == 90.0f))) ||
             !App_HeadingRuntimeSource(now) || !App_HeadingRuntimeExclusive() ||
-            (g_vm_test_request != 0U) || (g_heading_exec_trip != 0U) ||
+            (g_vm_test_request != App_StageStartVm()) || (g_heading_exec_trip != 0U) ||
             (status.active != 0U) || (status.result != 0U) ||
             (status.cut_vm != 0U) ||
             !(s_heading_source.rate_dps >= -3.0f && s_heading_source.rate_dps <= 3.0f))
@@ -1189,7 +1198,7 @@ static void App_HeadingRuntimeStep(void)
             {
                 App_HeadingStopCapture(&g_heading_stop_trace.completed, now);
                 g_heading_exec_phase = HR_DONE;
-                g_vm_test_request = 0U;
+                g_vm_test_request = App_StageDoneVm();
             }
         }
     }
@@ -1244,10 +1253,37 @@ typedef struct
 } ForwardHoldDebug;
 volatile ForwardHoldDebug g_forward_hold = {.motion_mode = APP_TRANSLATION_HOLD_MODE};
 volatile uint32_t g_translation_hold_selftest = 0U;
+#if APP_TEST_MODE == 3U
+/* request 1启动整组一次，2取消；state 0空闲1运行2间隔3完成4失败5取消。 */
+typedef struct
+{
+    uint32_t request, state, index, cause, completed;
+    uint32_t phase[4], session[4], elapsed_ms[4];
+    float final_yaw[4], final_error[4];
+} CombinedTestDebug;
+volatile CombinedTestDebug g_combined_test = {0};
+static uint32_t s_combined_turn, s_combined_mode;
+static uint32_t s_combined_begin_ms, s_combined_stage_ms, s_combined_gap_ms;
+static uint32_t s_combined_end_ms;
+#define App_TestTranslationMode() (s_combined_mode)
+#else
+#define App_TestTranslationMode() (APP_TRANSLATION_HOLD_MODE)
+#endif
 static uint32_t s_hold_wait_ms, s_hold_begin_ms, s_hold_run_ms, s_hold_stop_ms;
 static uint32_t s_hold_sequence, s_hold_new_ms;
 static float s_hold_target;
 static HeadingHoldController s_hold_controller = {0};
+#if APP_SERIAL_MOTION_CONTROL
+volatile uint32_t g_serial_motion_state = 0U, g_serial_motion_result = 0U;
+volatile uint32_t g_serial_motion_rejected = 0U, g_serial_motion_accepted = 0U;
+volatile uint32_t g_serial_motion_link_lost = 0U;
+static uint32_t s_serial_token_seq, s_serial_token_tick, s_serial_arm_ms;
+static uint32_t s_serial_keepalive_ms, s_serial_start_permit;
+static uint32_t s_serial_tx_seq, s_serial_dropped, s_serial_tx_tick;
+static uint32_t s_serial_proto_ok;
+static void App_SerialMotionSafety(void);
+#endif
+
 /* 每100ms记录运行期提交值，非实际轮速；容量覆盖8秒，满后不覆盖。 */
 typedef struct
 {
@@ -1278,7 +1314,7 @@ static uint32_t App_ForwardHoldOwns(const ChassisAutoStatus *status)
 {
     return ((status->session == g_forward_hold.backend_session) &&
         (status->heading_mode == 1U) && (status->forward_hold_mode == 1U) &&
-        (status->translation_mode == APP_TRANSLATION_HOLD_MODE) &&
+        (status->translation_mode == App_TestTranslationMode()) &&
         (status->segment == 2U) && (status->dry_run == 0U)) ? 1U : 0U;
 }
 
@@ -1339,13 +1375,18 @@ static void App_ForwardHoldStep(void)
     g_heading_exec_request = 0U;
     (void)ChassisAuto_ReadStatus(&status);
     if (g_forward_hold.phase >= HR_DONE)
-    { g_vm_test_request = 0U; taskEXIT_CRITICAL(); return; }
+    { g_vm_test_request = (g_forward_hold.phase == HR_DONE) ? App_StageDoneVm() : 0U; taskEXIT_CRITICAL(); return; }
     if ((request == 2U) && (g_forward_hold.phase != HR_IDLE)) App_ForwardHoldTrip(1U);
     if ((request == 1U) && (g_forward_hold.phase == HR_IDLE))
     {
+#if APP_SERIAL_MOTION_CONTROL && (APP_TEST_MODE != 3U)
+        if (s_serial_start_permit != 1U)
+        { App_ForwardHoldTrip(3U); taskEXIT_CRITICAL(); return; }
+        s_serial_start_permit = 0U;
+#endif
         if ((g_translation_hold_selftest != 1U) ||
             !App_HeadingRuntimeSource(now) || !App_HeadingRuntimeExclusive() ||
-            (g_vm_test_request != 0U) || (status.active != 0U) ||
+            (g_vm_test_request != App_StageStartVm()) || (status.active != 0U) ||
             (status.result != 0U) || (status.cut_vm != 0U) ||
             !(s_heading_source.rate_dps >= -3.0f && s_heading_source.rate_dps <= 3.0f))
             App_ForwardHoldTrip(3U);
@@ -1360,7 +1401,7 @@ static void App_ForwardHoldStep(void)
     if ((g_forward_hold.phase == HR_WAIT) && (App_CanJogReady() == 1U) &&
         (App_HeadingPowerReady(now) == 1U))
     {
-        accepted = ChassisAuto_BeginTranslationHold(0U, APP_TRANSLATION_HOLD_MODE);
+        accepted = ChassisAuto_BeginTranslationHold(0U, App_TestTranslationMode());
         if (accepted != 1U) App_ForwardHoldTrip(5U);
         else
         {
@@ -1392,7 +1433,7 @@ static void App_ForwardHoldStep(void)
             if ((g_forward_hold.run_started != 0U) && (g_forward_hold.stopping == 0U))
                 g_forward_hold.elapsed_ms = now - s_hold_run_ms;
             if ((g_forward_hold.stopping == 0U) && g_forward_hold.run_started &&
-                (g_forward_hold.elapsed_ms >= APP_TRANSLATION_HOLD_RUN_MS))
+                (g_forward_hold.elapsed_ms >= ((App_TestTranslationMode() == 0U) ? APP_FORWARD_HOLD_RUN_MS : APP_LATERAL_HOLD_RUN_MS)))
             {
                 if (ChassisAuto_RequestStop() != 1U) App_ForwardHoldTrip(8U);
                 else
@@ -1457,13 +1498,442 @@ static void App_ForwardHoldStep(void)
                 g_forward_hold.final_valid = App_HeadingRuntimeSource(now);
                 g_forward_hold.correction_rpm = 0;
                 g_forward_hold.phase = HR_DONE;
-                g_vm_test_request = 0U;
+                g_vm_test_request = App_StageDoneVm();
             }
         }
     }
     taskEXIT_CRITICAL();
     if ((g_forward_hold.phase == HR_RUN) && (g_forward_hold.trip == 0U)) ChassisAuto_CanStep();
 }
+
+#if APP_TEST_MODE == 3U
+/* 独立组合测试，唯一CAN任务每轮调用一次，不阻塞、不增加任务。
+ * 固定顺序：前进8秒、左移8秒、相对转向+90度、前进8秒。
+ * 段间停车核验后保持VM，至少间隔1秒；仅整组完成或异常断VM。 */
+static void App_CombinedTestStop(uint32_t cause)
+{
+    /* STOP是幂等的；已完成/失败不覆盖首因，不清原单段trip。 */
+    if (g_combined_test.state >= 3U)
+    { g_vm_test_request = 0U; Power_Disable(); return; }
+    s_combined_keep_vm = 0U;
+    s_combined_end_ms = (uint32_t)xTaskGetTickCount();
+    g_combined_test.cause = cause;
+    g_combined_test.state = (cause == 1U) ? 5U : 4U;
+    g_forward_hold.request = 0U;
+    g_heading_exec_request = 0U;
+    if (s_combined_turn) App_HeadingRuntimeTrip(1U);
+    else App_ForwardHoldTrip(1U);
+    ChassisAuto_Abort();
+    g_vm_test_request = 0U;
+    Power_Disable();
+}
+/* 独立安全任务也检查整组取消与时限，防止CAN任务等待时漏掉取消。 */
+static void App_CombinedTestSafety(void)
+{
+    uint32_t now = (uint32_t)xTaskGetTickCount();
+    taskENTER_CRITICAL();
+    if ((g_combined_test.state == 1U) || (g_combined_test.state == 2U))
+    {
+        if (g_combined_test.request == 2U) App_CombinedTestStop(1U);
+        else if ((uint32_t)(now - s_combined_begin_ms) >= 120000U)
+            App_CombinedTestStop(2U);
+        else if (!App_HeadingRuntimeSource(now) || !App_HeadingRuntimeExclusive() ||
+                 g_can_ctrl_fault_latched) App_CombinedTestStop(3U);
+        else if ((g_combined_test.state == 2U) &&
+                 ((g_vm_test_request != 1U) || (g_safety_ready != 1U) ||
+                  (g_can_guard_ready != 1U))) App_CombinedTestStop(3U);
+        else if (g_combined_test.state == 1U)
+        {
+            if (s_combined_turn) App_HeadingRuntimeSafety();
+            else App_ForwardHoldSafety();
+        }
+    }
+    else { g_vm_test_request = 0U; }
+    taskEXIT_CRITICAL();
+}
+static void App_CombinedTestStep(void)
+{
+    ChassisAutoStatus status;
+    PowerCommandStatus power;
+    uint32_t now = (uint32_t)xTaskGetTickCount(), request, phase, index;
+    ForwardHoldDebug empty = {0};
+    taskENTER_CRITICAL();
+    request = g_combined_test.request;
+    g_combined_test.request = 0U;
+    if (request == 2U && (g_combined_test.state < 3U))
+    { App_CombinedTestStop(1U); taskEXIT_CRITICAL(); return; }
+    if (g_combined_test.state == 0U)
+    {
+        /* 其他单段Watch入口在本模式不参与调度。整组每次上电只运行一次。 */
+        g_forward_hold.request = 0U; g_heading_exec_request = 0U;
+        if (request != 1U) { taskEXIT_CRITICAL(); return; }
+        if (s_serial_start_permit != 1U)
+        { App_CombinedTestStop(3U); taskEXIT_CRITICAL(); return; }
+        s_serial_start_permit = 0U;
+        (void)ChassisAuto_ReadStatus(&status); Power_ReadCommandStatus(&power);
+        if (status.active || status.result || status.cut_vm || power.active ||
+            g_vm_test_request || !App_HeadingRuntimeSource(now) ||
+            !App_HeadingRuntimeExclusive() || g_can_ctrl_fault_latched ||
+            (g_translation_hold_selftest != 1U) ||
+            (g_forward_hold.phase != HR_IDLE) || (g_heading_exec_phase != HR_IDLE))
+        { App_CombinedTestStop(3U); taskEXIT_CRITICAL(); return; }
+        if (!ChassisAuto_BeginSequence())
+        { App_CombinedTestStop(3U); taskEXIT_CRITICAL(); return; }
+        s_combined_keep_vm = 1U;
+        s_combined_powered_segment = 0U;
+        s_combined_begin_ms = s_combined_stage_ms = now;
+        s_combined_mode = 0U; s_combined_turn = 0U;
+        g_forward_hold.motion_mode = 0U; g_forward_hold.request = 1U;
+        g_combined_test.state = 1U;
+    }
+    if (g_combined_test.state >= 3U)
+    { g_forward_hold.request = g_heading_exec_request = 0U;
+      g_vm_test_request = 0U; taskEXIT_CRITICAL(); return; }
+    if (g_combined_test.state == 2U)
+    {
+        /* 保留上一段诊断，仅本组成功且仍上电的停稳会话允许释放。 */
+        if ((uint32_t)(now - s_combined_gap_ms) < 1000U)
+        { taskEXIT_CRITICAL(); return; }
+        Power_ReadCommandStatus(&power); (void)ChassisAuto_ReadStatus(&status);
+        if ((g_vm_test_request != 1U) || (power.active != 1U) ||
+            !ChassisAuto_ReleaseCompleted(g_combined_test.session[g_combined_test.index]))
+        { App_CombinedTestStop(4U); taskEXIT_CRITICAL(); return; }
+        g_combined_test.index++;
+        index = g_combined_test.index;
+        s_combined_keep_vm = (index < 3U) ? 1U : 0U;
+        s_combined_powered_segment = 1U;
+        s_combined_turn = (index == 2U) ? 1U : 0U;
+        s_combined_stage_ms = now;
+        if (s_combined_turn)
+        { g_heading_exec_relative_deg = 90.0f; g_heading_exec_request = 1U; }
+        else
+        {
+            /* 只重置已存档的成功平移前端；原故障状态从未走到此路径。 */
+            if (g_forward_hold.trip != 0U)
+            { App_CombinedTestStop(4U); taskEXIT_CRITICAL(); return; }
+            s_combined_mode = (index == 1U) ? 1U : 0U;
+            empty.motion_mode = s_combined_mode;
+            g_forward_hold = empty;
+            g_forward_hold_trace_count = 0U;
+            g_forward_hold.request = 1U;
+        }
+        g_combined_test.state = 1U;
+    }
+    if (g_combined_test.state == 1U)
+    {
+        if ((uint32_t)(now - s_combined_stage_ms) >= 35000U)
+        { App_CombinedTestStop(2U); taskEXIT_CRITICAL(); return; }
+        /* 单段执行可能等待CAN，必须先退出临界区；Safety仍可抢占取消。 */
+        taskEXIT_CRITICAL();
+        if (s_combined_turn) App_HeadingRuntimeStep();
+        else App_ForwardHoldStep();
+        taskENTER_CRITICAL();
+        if (g_combined_test.state >= 3U)
+        { taskEXIT_CRITICAL(); return; }
+        phase = s_combined_turn ? g_heading_exec_phase : g_forward_hold.phase;
+        if (phase == HR_FAULT || phase == HR_CANCELLED)
+        { App_CombinedTestStop(5U); taskEXIT_CRITICAL(); return; }
+        if (phase == HR_DONE)
+        {
+            (void)ChassisAuto_ReadStatus(&status); Power_ReadCommandStatus(&power);
+            /* 正常DONE也会置cut_vm请求断电，此处等待关电而非判故障。 */
+            if (status.active || status.state != CHASSIS_AUTO_DONE ||
+                status.result != 1U || status.cause || status.rotation_stop_mask != 15U ||
+                !(s_combined_turn ? App_HeadingRuntimeOwns(&status) : App_ForwardHoldOwns(&status)))
+            { App_CombinedTestStop(4U); taskEXIT_CRITICAL(); return; }
+            /* 等安全任务确实发出关闭命令，不把VM请求0当作PE2已关。 */
+            if ((g_combined_test.index < 3U) ?
+                ((g_vm_test_request == 1U) && (power.active == 1U) && !status.cut_vm) :
+                (!g_vm_test_request && !power.active))
+            {
+                index = g_combined_test.index;
+                g_combined_test.phase[index] = phase;
+                g_combined_test.session[index] = status.session;
+                g_combined_test.elapsed_ms[index] = now - s_combined_stage_ms;
+                g_combined_test.final_yaw[index] = s_heading_source.yaw_deg;
+                g_combined_test.final_error[index] = s_combined_turn ?
+                    g_heading_exec_error_deg : g_forward_hold.error_deg;
+                g_combined_test.completed++;
+                s_combined_gap_ms = now;
+                g_combined_test.state = (index == 3U) ? 3U : 2U;
+                if (index == 3U) s_combined_end_ms = now;
+            }
+        }
+    }
+    taskEXIT_CRITICAL();
+}
+#endif
+
+#if APP_SERIAL_MOTION_CONTROL
+/* RC1/ TM1：CRC16-CCITT，ARM/START两步，只启动既有单次平移会话。 */
+static uint16_t App_SerialCrc(const char *data, uint32_t length)
+{
+    uint16_t crc = 0xFFFFU;
+    uint32_t i, bit;
+    for (i = 0U; i < length; i++)
+    {
+        crc ^= (uint16_t)((uint16_t)(uint8_t)data[i] << 8);
+        for (bit = 0U; bit < 8U; bit++)
+            crc = (uint16_t)((crc & 0x8000U) ? ((crc << 1) ^ 0x1021U) : (crc << 1));
+    }
+    return crc;
+}
+static int32_t App_SerialMilli(float value)
+{
+    if (!(value >= -2000.0f && value <= 2000.0f)) return (-2147483647L - 1L);
+    return (int32_t)(value * 1000.0f);
+}
+static uint32_t App_SerialUInt(const char **text, uint32_t *out)
+{
+    uint32_t n = 0U, digit;
+    const char *p = *text;
+    if (*p < '0' || *p > '9') return 0U;
+    while (*p >= '0' && *p <= '9')
+    {
+        digit = (uint32_t)(*p - '0');
+        if (n > (0xFFFFFFFFU - digit) / 10U) return 0U;
+        n = n * 10U + digit; p++;
+    }
+    if (*p != ',') return 0U;
+    *text = p + 1; *out = n; return 1U;
+}
+static uint32_t App_SerialIdleReady(uint32_t now)
+{
+    ChassisAutoStatus status;
+    PowerCommandStatus power;
+    (void)ChassisAuto_ReadStatus(&status);
+    Power_ReadCommandStatus(&power);
+#if APP_TEST_MODE == 3U
+    if ((g_combined_test.state != 0U) || (g_combined_test.request != 0U)) return 0U;
+#endif
+    return ((g_forward_hold.phase == HR_IDLE) && (g_forward_hold.request == 0U) &&
+        (g_vm_test_request == 0U) && (power.active == 0U) &&
+        (status.active == 0U) && (status.result == 0U) && (status.cut_vm == 0U) &&
+        (g_translation_hold_selftest == 1U) && (s_serial_proto_ok == 1U) &&
+        App_HeadingRuntimeSource(now) && App_HeadingRuntimeExclusive() &&
+        (g_can_ctrl_fault_latched == 0U) &&
+        (s_heading_source.rate_dps >= -3.0f && s_heading_source.rate_dps <= 3.0f)) ? 1U : 0U;
+}
+static void App_SerialReject(uint32_t reason)
+{ g_serial_motion_rejected++; g_serial_motion_result = reason; }
+static void App_SerialMotionCommand(char *line)
+{
+    char *last = strrchr(line, ',');
+    const char *p;
+    uint32_t seq, tick, crc = 0U, i, digit, now;
+    if ((strncmp(line, "RC1,", 4U) != 0) || (last == NULL) || strlen(last + 1) != 4U)
+    { App_SerialReject(4U); return; }
+    for (i = 1U; i <= 4U; i++)
+    {
+        char c = last[i];
+        if (c >= '0' && c <= '9') digit = (uint32_t)(c - '0');
+        else if (c >= 'A' && c <= 'F') digit = (uint32_t)(c - 'A') + 10U;
+        else { App_SerialReject(4U); return; }
+        crc = (crc << 4) | digit;
+    }
+    if ((uint32_t)App_SerialCrc(line, (uint32_t)(last - line + 1)) != crc)
+    { App_SerialReject(4U); return; }
+    *last = '\0'; p = line + 4;
+    if (!App_SerialUInt(&p, &seq) || !App_SerialUInt(&p, &tick))
+    { App_SerialReject(4U); return; }
+    taskENTER_CRITICAL();
+    now = (uint32_t)xTaskGetTickCount();
+    if (strcmp(p, "STOP") == 0)
+    {
+        s_serial_start_permit = 0U;
+#if APP_TEST_MODE == 3U
+        App_CombinedTestStop(1U);
+#else
+        if ((g_forward_hold.phase == HR_WAIT) || (g_forward_hold.phase == HR_RUN) ||
+            (g_forward_hold.request == 1U)) g_forward_hold.request = 2U;
+#endif
+        g_serial_motion_state = 3U; g_serial_motion_result = 3U;
+        g_serial_motion_accepted++;
+    }
+    else if (strcmp(p, "ARM") == 0)
+    {
+        if ((s_serial_tx_seq == 0U) || ((uint32_t)(s_serial_tx_seq - 1U - seq) > 5U) ||
+            ((uint32_t)(now - tick) >= 500U)) App_SerialReject(5U);
+        else if ((g_serial_motion_state != 0U) || !App_SerialIdleReady(now)) App_SerialReject(6U);
+        else
+        {
+            s_serial_token_seq = seq; s_serial_token_tick = tick; s_serial_arm_ms = now;
+            g_serial_motion_state = 1U; g_serial_motion_result = 1U;
+            g_serial_motion_accepted++;
+        }
+    }
+    else if ((seq != s_serial_token_seq) || (tick != s_serial_token_tick)) App_SerialReject(5U);
+    else if (strcmp(p, "START") == 0)
+    {
+        if (g_serial_motion_state == 2U) { /* 重复帧只确认，不重新启动或续期。 */ }
+        else if ((g_serial_motion_state != 1U) || ((uint32_t)(now - s_serial_arm_ms) >= 2000U) ||
+            !App_SerialIdleReady(now)) App_SerialReject(6U);
+        else
+        {
+            s_serial_start_permit = 1U; s_serial_keepalive_ms = now;
+#if APP_TEST_MODE == 3U
+            g_combined_test.request = 1U;
+#else
+            g_forward_hold.request = 1U;
+#endif
+            g_serial_motion_state = 2U; g_serial_motion_result = 2U;
+            g_serial_motion_accepted++;
+        }
+    }
+    else if (strcmp(p, "KEEP") == 0)
+    {
+        if (g_serial_motion_state != 2U) App_SerialReject(6U);
+        else { s_serial_keepalive_ms = now; g_serial_motion_accepted++; }
+    }
+    else App_SerialReject(4U);
+    taskEXIT_CRITICAL();
+}
+static void App_SerialMotionByte(uint8_t data)
+{
+    static char line[64];
+    static uint32_t used, invalid, last_ms;
+    uint32_t now = (uint32_t)xTaskGetTickCount();
+    if ((uint32_t)(now - last_ms) >= 200U) { used = 0U; invalid = 0U; }
+    last_ms = now;
+    if (data == '\r') return;
+    if (data == '\n')
+    {
+        if (!invalid && used) { line[used] = '\0'; App_SerialMotionCommand(line); }
+        used = invalid = 0U; return;
+    }
+    if (invalid) return;
+    if (data < 32U || data > 126U || used >= sizeof(line) - 1U)
+    { invalid = 1U; App_SerialReject(4U); return; }
+    line[used++] = (char)data;
+}
+static void App_SerialMotionSafety(void)
+{
+    uint32_t now;
+    taskENTER_CRITICAL();
+    now = (uint32_t)xTaskGetTickCount();
+    if ((g_serial_motion_state == 1U) && ((uint32_t)(now - s_serial_arm_ms) >= 2000U))
+    { g_serial_motion_state = 0U; g_serial_motion_result = 7U; s_serial_start_permit = 0U; }
+    if (g_serial_motion_state == 2U)
+    {
+#if APP_TEST_MODE == 3U
+        if (g_combined_test.state >= 3U) g_serial_motion_state = 3U;
+        else if ((uint32_t)(now - s_serial_keepalive_ms) >= 1000U)
+        {
+            s_serial_start_permit = 0U; g_serial_motion_link_lost = 1U;
+            g_serial_motion_result = 8U; g_serial_motion_state = 3U;
+            App_CombinedTestStop(1U);
+        }
+#else
+        if ((g_forward_hold.phase == HR_IDLE) && (g_forward_hold.request == 2U))
+        {
+            s_serial_start_permit = 0U;
+            g_serial_motion_state = 3U; g_serial_motion_result = 3U;
+            App_ForwardHoldTrip(1U);
+        }
+        else if (g_forward_hold.phase >= HR_DONE) g_serial_motion_state = 3U;
+        else if ((uint32_t)(now - s_serial_keepalive_ms) >= 1000U)
+        {
+            s_serial_start_permit = 0U; g_serial_motion_link_lost = 1U;
+            g_serial_motion_result = 8U; g_serial_motion_state = 3U;
+            App_ForwardHoldTrip(1U);
+        }
+#endif
+    }
+    taskEXIT_CRITICAL();
+}
+static void App_SerialMotionTelemetry(void)
+{
+    static int32_t values[(APP_TEST_MODE == 3U) ? 55U : 48U];
+    static char frame[768];
+    uint32_t now = (uint32_t)xTaskGetTickCount(), i, used = 4U;
+    int count;
+    uint16_t crc;
+    PowerCommandStatus power;
+    ChassisAutoStatus status;
+    if ((uint32_t)(now - s_serial_tx_tick) < 100U) return;
+    s_serial_tx_tick = now;
+    taskENTER_CRITICAL();
+    Power_ReadCommandStatus(&power); (void)ChassisAuto_ReadStatus(&status);
+    values[0] = (int32_t)(s_serial_tx_seq++); /* seq */
+    values[1] = (int32_t)(now); /* tick_ms */
+    values[2] = (int32_t)(g_forward_hold.phase); /* phase */
+    values[3] = (int32_t)(g_forward_hold.trip); /* trip */
+    values[4] = (int32_t)(g_forward_hold.elapsed_ms); /* elapsed_ms */
+    values[5] = (int32_t)(App_HeadingRuntimeSource(now)); /* source_valid */
+    values[6] = (int32_t)(App_SerialMilli(s_heading_source.yaw_deg)); /* yaw_mdeg */
+    values[7] = (int32_t)(App_SerialMilli(g_forward_hold.target_deg)); /* target_mdeg */
+    values[8] = (int32_t)(App_SerialMilli(g_forward_hold.error_deg)); /* error_mdeg */
+    values[9] = (int32_t)(App_SerialMilli(s_heading_source.rate_dps)); /* rate_mdps */
+    values[10] = (int32_t)(now - s_heading_source.angle_ms); /* angle_age_ms */
+    values[11] = (int32_t)(now - s_heading_source.rate_ms); /* rate_age_ms */
+    values[12] = (int32_t)(g_forward_hold.correction_rpm); /* correction_rpm */
+    values[13] = (int32_t)(g_chassis_auto_driver_rpm[0]); /* rpm1 */
+    values[14] = (int32_t)(g_chassis_auto_driver_rpm[1]); /* rpm2 */
+    values[15] = (int32_t)(g_chassis_auto_driver_rpm[2]); /* rpm3 */
+    values[16] = (int32_t)(g_chassis_auto_driver_rpm[3]); /* rpm4 */
+    values[17] = (int32_t)(g_vm_test_request); /* vm_request */
+    values[18] = (int32_t)(power.active); /* pe2_active */
+    values[19] = (int32_t)(status.state); /* backend_state */
+    values[20] = (int32_t)(status.active); /* backend_active */
+    values[21] = (int32_t)(status.result); /* backend_result */
+    values[22] = (int32_t)(status.cause); /* backend_cause */
+    values[23] = (int32_t)(status.rotation_stop_mask); /* stop_mask */
+    values[24] = (int32_t)(g_can_ctrl_fault_latched); /* can_fault */
+    values[25] = (int32_t)(g_rtos_fault); /* rtos_fault */
+    values[26] = (int32_t)(g_safety_fault); /* safety_fault */
+    values[27] = (int32_t)(g_forward_hold.motion_mode); /* motion_mode */
+    values[28] = (int32_t)(g_forward_hold.correction_nonzero_samples); /* nonzero_samples */
+    values[29] = (int32_t)(g_forward_hold.correction_peak_abs_rpm); /* peak_abs_rpm */
+    values[30] = (int32_t)(g_forward_hold.correction_last_nonzero_rpm); /* last_nonzero_rpm */
+    values[31] = (int32_t)(g_serial_motion_state); /* remote_state */
+    values[32] = (int32_t)(g_serial_motion_result); /* remote_result */
+    values[33] = (int32_t)(s_serial_token_seq); /* token_seq */
+    values[34] = (int32_t)(s_serial_token_tick); /* token_tick */
+    values[35] = (int32_t)(s_serial_dropped); /* telemetry_dropped */
+    values[36] = (int32_t)(g_serial_motion_rejected); /* remote_rejected */
+    values[37] = (int32_t)(g_translation_hold_selftest); /* selftest */
+    values[38] = (int32_t)((APP_TRANSLATION_HOLD_MODE == 0U) ? APP_FORWARD_HOLD_BASE_RPM : APP_LATERAL_HOLD_BASE_RPM); /* base_rpm */
+    values[39] = (int32_t)((APP_TRANSLATION_HOLD_MODE == 0U) ? APP_FORWARD_HOLD_FEEDBACK_LIMIT_RPM : APP_LATERAL_HOLD_FEEDBACK_LIMIT_RPM); /* feedback_limit_rpm */
+    values[40] = (int32_t)(App_SerialMilli(g_forward_hold.peak_error_deg)); /* peak_error_mdeg */
+    values[41] = (int32_t)(g_forward_hold.max_sample_gap_ms); /* max_sample_gap_ms */
+    values[42] = (int32_t)(g_uart1_rx_errors); /* uart_rx_errors */
+    values[43] = (int32_t)(g_rx_stack_words); /* rx_stack_words */
+    values[44] = (int32_t)(g_heap_min_bytes); /* heap_min_bytes */
+    values[45] = (int32_t)(g_serial_motion_link_lost); /* link_lost */
+    values[46] = (int32_t)(s_serial_proto_ok); /* protocol_selftest */
+    values[47] = (int32_t)(g_serial_motion_accepted); /* remote_accepted */
+#if APP_TEST_MODE == 3U
+    /* 整组阶段独立于单段DONE，避免电脑在第一段完成时误判整组完成。 */
+    values[2] = (g_combined_test.state == 0U) ? 0 :
+        ((g_combined_test.state >= 3U) ? (int32_t)g_combined_test.state : 2);
+    values[3] = (int32_t)g_combined_test.cause;
+    values[4] = (g_combined_test.state == 0U) ? 0 : (int32_t)(((g_combined_test.state >= 3U) ? s_combined_end_ms : now) - s_combined_begin_ms);
+    values[7] = App_SerialMilli(s_combined_turn ? g_heading_exec_target_deg : g_forward_hold.target_deg);
+    values[8] = App_SerialMilli(s_combined_turn ? g_heading_exec_error_deg : g_forward_hold.error_deg);
+    values[12] = s_combined_turn ? g_heading_exec_rpm : g_forward_hold.correction_rpm;
+    values[27] = 3; /* 编译为组合测试，主机必须显式--mode 3 */
+    values[48] = (int32_t)g_combined_test.state;
+    values[49] = (int32_t)g_combined_test.index;
+    values[50] = (int32_t)g_combined_test.completed;
+    values[51] = (int32_t)g_can_guard_cause;
+    values[52] = (int32_t)g_can_guard_bad_nodes;
+    values[53] = (int32_t)g_heading_power_wait_state;
+    values[54] = (int32_t)g_heading_power_post_settle_mask;
+#endif
+    taskEXIT_CRITICAL();
+    frame[0] = 'T'; frame[1] = 'M'; frame[2] = '1'; frame[3] = ',';
+    for (i = 0U; i < ((APP_TEST_MODE == 3U) ? 55U : 48U); i++)
+    {
+        count = snprintf(&frame[used], sizeof(frame) - used, "%ld,", (long)values[i]);
+        if ((count < 0) || ((uint32_t)count >= sizeof(frame) - used)) { s_serial_dropped++; return; }
+        used += (uint32_t)count;
+    }
+    crc = App_SerialCrc(frame, used);
+    count = snprintf(&frame[used], sizeof(frame) - used, "%04X\r\n", (unsigned int)crc);
+    if ((count < 0) || ((uint32_t)count >= sizeof(frame) - used)) { s_serial_dropped++; return; }
+    if (App_DebugSendString(frame) != 1U) s_serial_dropped++;
+}
+#endif
 
 #endif
 
@@ -1483,9 +1953,16 @@ static void App_CanTask(void *argument)
         }
         else
         {
+#if APP_SERIAL_MOTION_CONTROL
+        App_SerialMotionSafety();
+#endif
         #if APP_HEADING_SESSION_TEST
+                #if APP_TEST_MODE == 3U
+                App_CombinedTestStep();
+#else
                 if (APP_FORWARD_HOLD_TEST != 0U) App_ForwardHoldStep();
                 else App_HeadingRuntimeStep();
+#endif
         #endif
         #if APP_HWT_STATIC_TEST && !APP_HWT_TURN_TEST
                 App_HeadingSourceObserve();
@@ -2082,6 +2559,28 @@ static void App_HeadingLiveStep(void)
 #endif
 
 /* 任务A：每100毫秒计数一次 */
+/* 独立串口测试任务：替代业务任务A，不执行扫码显示或运动门控。 */
+static void App_UartLinkTestTask(void *argument)
+{
+    (void)argument;
+    USART1_EnableReceive();
+    HWT101_EnableReceive();
+    Buzzer_Start(APP_INIT_BEEP_COUNT);
+    while (1)
+    {
+        HWT101_Update();
+        Buzzer_Update();
+        g_test_count_a++;
+        g_test_tick = xTaskGetTickCount();
+        g_stack_a_words = uxTaskGetStackHighWaterMark(NULL);
+        g_heap_free_bytes = xPortGetFreeHeapSize();
+        g_heap_min_bytes = xPortGetMinimumEverFreeHeapSize();
+        /* 完成真实接收解析后报告进展，原安全监督和看门狗不变。 */
+        Safety_Report(SAFETY_TASK_APP);
+        vTaskDelay(pdMS_TO_TICKS(10U));
+    }
+}
+
 static void App_TestTaskA(void *argument)
 {
     TickType_t screen_start_tick = xTaskGetTickCount();
@@ -2096,6 +2595,9 @@ static void App_TestTaskA(void *argument)
     Buzzer_Start(APP_INIT_BEEP_COUNT);
         /* 一次性虚拟角度自检，不驱动小车。 */
     App_HeadingDryRun();
+#if APP_SERIAL_MOTION_CONTROL
+    s_serial_proto_ok = (App_SerialCrc("123456789", 9U) == 0x29B1U) ? 1U : 0U;
+#endif
 #if APP_HEADING_SESSION_TEST && APP_FORWARD_HOLD_TEST
     /* 只运行数学自检，失败禁止平移启动，默认不发动作。 */
     g_translation_hold_selftest = Chassis_TranslationHoldSelfTest() ? 1U : 2U;
@@ -2136,6 +2638,9 @@ static void App_TestTaskA(void *argument)
             g_scan_log_send_ok = App_DebugSendString(scan_log);
         }
         App_StartGateUpdate();
+#if APP_SERIAL_MOTION_CONTROL
+        App_SerialMotionTelemetry();
+#endif
         g_test_tick = xTaskGetTickCount();
         /* 查询当前任务的最小剩余栈及堆余量 */
         g_stack_a_words = uxTaskGetStackHighWaterMark(NULL);
@@ -2173,7 +2678,7 @@ volatile uint32_t g_uart_link_errors = 0U, g_uart_link_dropped = 0U;
 volatile uint32_t g_uart_link_hb_count = 0U;
 static char s_link_line[48], s_link_reply[64];
 static uint32_t s_link_used, s_link_overflow, s_link_pending;
-static uint32_t s_link_last_byte, s_link_hb_tick;
+static uint32_t s_link_last_byte, s_link_hb_tick, s_link_yaw_pending;
 
 static void App_UartLinkCommand(void)
 {
@@ -2253,12 +2758,30 @@ static void App_UartLinkPoll(void)
         { s_link_pending = 0U; g_uart_link_tx_replies++; }
         return;
     }
+    /* 与命令回复共用同一个发送入口，避免两个任务竞争串口。 */
+    if (s_link_yaw_pending != 0U)
+    {
+        float yaw;
+        uint32_t valid, age;
+        taskENTER_CRITICAL();
+        yaw = g_hwt_yaw_deg;
+        valid = g_hwt_valid_mask;
+        age = now - g_hwt_update_tick;
+        taskEXIT_CRITICAL();
+        /* 定点毫度，避免依赖浮点printf；无效值用哨兵表示。 */
+        (void)snprintf(heartbeat, sizeof(heartbeat), "LINK,YAW,%ld,%lu,%lu\r\n",
+            (((yaw >= -180.0f) && (yaw <= 180.0f)) ?
+                (long)(yaw * 1000.0f) : (-2147483647L - 1L)),
+            (unsigned long)valid, (unsigned long)age);
+        if (App_DebugSendString(heartbeat) == 1U) s_link_yaw_pending = 0U;
+        return;
+    }
     if ((uint32_t)(now - s_link_hb_tick) >= 1000U)
     {
         (void)snprintf(heartbeat, sizeof(heartbeat), "LINK,HB,%lu,%lu,VM0\r\n",
             (unsigned long)g_uart_link_hb_count, (unsigned long)now);
         if (App_DebugSendString(heartbeat) == 1U)
-        { g_uart_link_hb_count++; s_link_hb_tick = now; }
+        { g_uart_link_hb_count++; s_link_hb_tick = now; s_link_yaw_pending = 1U; }
     }
 }
 #endif
@@ -2278,6 +2801,8 @@ static void App_UartRxTask(void *argument)
             g_serial_rx_last = data;
 #if APP_UART_LINK_TEST
             App_UartLinkByte(data);
+#elif APP_SERIAL_MOTION_CONTROL
+            App_SerialMotionByte(data);
 #endif
         }
         else
@@ -2454,13 +2979,18 @@ if (APP_UART_LINK_TEST != 0U)
             g_start_key_count++;
             /* PC13只取消，不用按键启动本次开发试验。 */
             taskENTER_CRITICAL();
+#if APP_TEST_MODE == 3U
+            g_combined_test.request = 2U;
+#else
             if (APP_FORWARD_HOLD_TEST != 0U)
             {
-                if ((g_forward_hold.phase == HR_WAIT) || (g_forward_hold.phase == HR_RUN))
+                if ((g_forward_hold.phase == HR_WAIT) || (g_forward_hold.phase == HR_RUN) ||
+                    (APP_SERIAL_MOTION_CONTROL && (g_forward_hold.request == 1U)))
                     g_forward_hold.request = 2U;
             }
             else if ((g_heading_exec_phase == HR_WAIT) || (g_heading_exec_phase == HR_RUN))
                 g_heading_exec_request = 2U;
+#endif
             taskEXIT_CRITICAL();
         }
 #elif APP_HWT_STATIC_TEST
@@ -2521,9 +3051,16 @@ if (APP_UART_LINK_TEST != 0U)
         { g_vm_test_request = 0U; Power_Disable(); }
         else
         {
+#if APP_SERIAL_MOTION_CONTROL
+        App_SerialMotionSafety();
+#endif
 #if APP_HEADING_SESSION_TEST
+        #if APP_TEST_MODE == 3U
+        App_CombinedTestSafety();
+#else
         if (APP_FORWARD_HOLD_TEST != 0U) App_ForwardHoldSafety();
         else App_HeadingRuntimeSafety();
+#endif
 #elif APP_HWT_STATIC_TEST
         g_vm_test_request = 0U;
 #elif APP_HWT_TURN_TEST
@@ -2560,15 +3097,20 @@ int main(void)
     configASSERT(g_watchdog_init_result == 1U);
     
     /* 每个任务栈为256个字，即1024字节 */
-    g_test_create_a = xTaskCreate(App_TestTaskA, "TestA",
-                                 256U, NULL, 2U, NULL);
+    /* 编译常量选择任务，只创建一方；关闭测试即可恢复业务。 */
+    if (APP_UART_LINK_TEST != 0U)
+        g_test_create_a = xTaskCreate(App_UartLinkTestTask, "UartTest",
+                                     256U, NULL, 2U, NULL);
+    else
+        g_test_create_a = xTaskCreate(App_TestTaskA, "TestA",
+                                     (APP_SERIAL_MOTION_CONTROL ? 512U : 256U), NULL, 2U, NULL);
     configASSERT(g_test_create_a == pdPASS);
     g_test_create_b = xTaskCreate(App_TestTaskB, "TestB",
                                  256U, NULL, 1U, NULL);
     configASSERT(g_test_create_b == pdPASS);
     /* 本轮接收任务栈256字，优先级3 */
     g_rx_task_create = xTaskCreate(App_UartRxTask, "UartRx",
-                                   256U, NULL, 3U, NULL);
+                                   (APP_SERIAL_MOTION_CONTROL ? 384U : 256U), NULL, 3U, NULL);
     configASSERT(g_rx_task_create == pdPASS);
     /* 本轮按键扫描任务，栈256字、优先级2 */
     g_key_task_create = xTaskCreate(App_KeyTask, "Key",

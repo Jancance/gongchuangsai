@@ -1,5 +1,32 @@
 # P1无线串口双向收发专用测试（2026-10-24）
 
+## 2026-10-24最新实测：COM17专用无线串口双向收发通过
+
+用户先说明未下载最新程序，首次COM17打开成功但8秒无数据，sent0；随后按指导下载APP_TEST_MODE=1并回复“已运行”。本机实际执行test_wireless_uart.ps1 -Port COM17 -WaitSeconds 8，115200/8N1，收到专用LINK心跳，7条指令全部正确匹配，status=bidirectional_pass、opened=true、heartbeat=true、sent=matched=7，无I/O错误。随机串PING/PONG及ECHO匹配，SET569/GET569正确，INFO确认UART1/115200/8N1/VM0，SET1001被ERR,RANGE拒绝后GET仍569。证明本次PC下发→板端处理→回传双向链路可用，不是仅识别端口或本地回显。
+
+全程只发无运动测试指令，无发车、横移或VM开启命令；VM0为专用测试模式声明，不是电压测量。串口已关闭释放。证据evidence/p1-foundation/2026-10-24/wireless_uart_bidirectional_pass.summary.json及.jsonl。无线物理路径/车端接线依用户现场准备，此回包试验未另行隔离有线/无线对照，不宣称长距离、移动中抗干扰、长期可靠性或串口控制运动已验收。下一步可切APP_TEST_MODE=2重建下载串口单次横移固件，再先监听健康数据、具备原运动条件后明确发起一次横移；本轮未切模式、未自动接续发车。组合动作/90度仍未实测。仅本地更新证据/交接，未提交推送。核R RUN-01/PWR-01、E LOC-03/RUN-06，Q不变。
+
+
+## 2026-10-24最新：串口自动横移接入完成，单一开关切换，当前仍无线收发测试
+
+用户要求无线收发通过后方便切换自动横移。复用已有CRC串口控制草稿与BeginTranslationHold，不另写运动闭环；新增统一APP_TEST_MODE：1为专用无线收发（当前默认），2为串口单次平移自动测试，0为原手动平移；APP_UART_LINK_TEST与APP_SERIAL_MOTION_CONTROL均由此派生，不再分别修改。APP_TRANSLATION_HOLD_MODE当前1左移，改2右移；每轮基础15RPM、8秒、修正±2、反馈保护30RPM及原停止/看门狗保持。
+
+主机p1_serial_motion.py默认仅监听，预期方向改为1左移；明确run-once后等3帧健康数据、核对编译方向/速度、自检/姿态/故障/VM状态，ARM确认后仅START一次。主控继续执行原VM上电至少1秒及四轮状态就绪检查，完成准备后自动横移；STM32本地PD闭环，不由电脑逐帧算轮速。遥测100ms，主机KEEP200ms，主控1秒失联取消、主机600ms无新遥测尝试STOP；到时自动停车、停帧核对并关闭VM。不重试启动、不清故障。原无线模块测试task/function切换保留，不需要增加另一套任务。
+
+主机自动保存raw、RX/TX JSONL和summary，每秒输出关键状态；默认监听或收到LINK测试协议均不发车。run-once的含义是本次明确请求自动执行一轮，不是固件上电自动发车。脚本只核模式，不能远程把左移改右移。四轮转速是缓存反馈，PE2是控制命令，软件完成不替代实车轨迹和停车观察。正式比赛入口与该开发测试接口须分离（R RUN-01）；R PWR-01、E LOC-03/RUN-06已核，官方Q不变。
+
+最终四个完整隔离构建0错0警告：link25822/462/1816/27392；serial left/right42700/664/1836/29156；manual left39296/608/1768/27424。18项主机测试通过，含左右移等待准备/运行/完成、方向不符拒绝、LINK协议不触发启动、丢包/失联/取消及不重发；原19项无线主机协议检查通过。这些是主机软件模拟与编译证据，未执行MCU运行模拟、未烧录、未打开COM或发车；无线与横移仍待实测。原工程AXF保留。证据lateral_serial_*_rebuild.log和lateral_serial_review.json；操作见docs/P1_TEST_MODE_SWITCH_2026-10-24.md。当前本地完成未提交推送，已上传回退点仍5f132ad。
+
+
+## 2026-10-24最新：无线收发独立测试入口，暂停串口发车
+
+当前按用户要求先验证小模块，采取最小测试入口：简单模块优先由现有任务调用测试函数，需要独立周期/等待时才创建任务；测完关闭调用或编译开关，不固定要求每模块建任务。本轮已实现UartTest替代TestA（不重复创建业务任务），复用原UartRx进行PING/PONG、ECHO、SET/GET；UartTest每10ms解析HWT并上报真实APP任务进展，不运行扫码显示/运动门控。LED、按键、安全与CAN内部回环监督保留；CAN测试分支不进行外部电机交易，VM由已有Power/Safety测试分支强制关闭，看门狗不绕过。原自动发车草稿保留但APP_SERIAL_MOTION_CONTROL=0，不参与当前测试。
+
+当前APP_UART_LINK_TEST=1，APP_SERIAL_MOTION_CONTROL=0；未启用的手动运动选择APP_TRANSLATION_HOLD_MODE=1（左横移），每轮基础15RPM、8秒及原保护不变。串口115200/8N1，每秒LINK,HB后追加LINK,YAW,<毫度>,<valid_mask>,<age_ms>；无效角度数值哨兵-2147483648，valid_mask及age必须一起检查，不以数据存在代表姿态健康。消息共用原RX任务发送入口，回复优先、忙时重试；原主机测试脚本忽略额外YAW行，仍可使用。专用测试不接受发车指令。测试结束仅改APP_UART_LINK_TEST=0，保持SERIAL_MOTION_CONTROL=0，重新编译下载即可恢复手动左横移流程；不要手改Watch切换测试模式。
+
+隔离测试完整构建Code25822/RO462/RW1816/ZI27392，0错误0警告，日志uart_isolated_rebuild.log；恢复手动左移构建结果见uart_isolated_manual_rebuild.log。主机原19项协议自检通过，未打开COM、未发字节。固件运行/无线双向链路、横移方向和姿态纠偏仍未实际验证，未烧录，未覆盖原工程AXF。R核RUN-01/PWR-01、E核LOC-03/RUN-06，Q不变。本轮仅本地完成，未提交或推送；GitHub回退点仍5f132ad。后续先独立确认无线收发，再继续手动横移，不把两项同时改成自动发车。
+
+
 本次只测试无线串口收发，不读取运动变量、不调PD、不发车。固件和电脑端测试脚本已经本地完成；尚未烧录，实际无线链路还未验证。
 
 ## 接线和模式

@@ -55,6 +55,10 @@ void ChassisAuto_Init(void);
 uint32_t ChassisAuto_Begin(uint32_t dry_run);
 void ChassisAuto_CanStep(void);
 void ChassisAuto_Abort(void);
+#if APP_TEST_MODE == 3U
+uint32_t ChassisAuto_BeginSequence(void);
+uint32_t ChassisAuto_ReleaseCompleted(uint32_t session);
+#endif
 /* 1接受正常停车请求，0当前阶段不接受；并非物理停车完成。 */
 uint32_t ChassisAuto_RequestStop(void);
 /* 单次旋转：1接受，0拒绝；不等于目标角已到位。 */

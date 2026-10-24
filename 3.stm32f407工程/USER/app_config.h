@@ -19,12 +19,23 @@
 /* 当前顺时针对照；0恢复已验证逆时针，1为顺时针。 */
 #define APP_HWT_TURN_CLOCKWISE 1U
 /* 串口双向专用测试：VM强制关闭，所有运动入口禁用；0恢复原运动配置。 */
-#define APP_UART_LINK_TEST 1U
+/* 测试入口：0手动运动，1无线收发，2串口单次平移。改此处后重新编译下载。 */
+/* 3为组合动作测试，默认关闭；不与串口发车同时启用。 */
+#define APP_TEST_MODE 3U
+#if APP_TEST_MODE > 3U
+#error App_test_mode_invalid
+#endif
+#define APP_UART_LINK_TEST (APP_TEST_MODE == 1U)
+/* 串口平移开发模式：CRC遥测、两步启动、1秒通信失效取消。 */
+#define APP_SERIAL_MOTION_CONTROL ((APP_TEST_MODE == 2U) || (APP_TEST_MODE == 3U))
 #define APP_HEADING_SESSION_TEST 1U
 /* 前进航向保持开发模式；0切回已验证的原地转角会话。 */
 #define APP_FORWARD_HOLD_TEST 1U
+#if APP_SERIAL_MOTION_CONTROL && (APP_UART_LINK_TEST || !APP_HEADING_SESSION_TEST || !APP_FORWARD_HOLD_TEST)
+#error Serial_motion_requires_exclusive_translation_runtime
+#endif
 /* 平移模式：0前进、1车体左移、2车体右移；仅编译选择，不在运动中切换。 */
-#define APP_TRANSLATION_HOLD_MODE 0U
+#define APP_TRANSLATION_HOLD_MODE 2U
 #define APP_LATERAL_HOLD_BASE_RPM 15U
 #define APP_LATERAL_HOLD_MAX_RPM (APP_LATERAL_HOLD_BASE_RPM + 2U)
 #define APP_LATERAL_HOLD_FEEDBACK_LIMIT_RPM 30U
@@ -63,7 +74,7 @@
 /* 航向调试上电准备试验值，不代表测得VM电压已稳定。 */
 #define APP_HEADING_POWER_SETTLE_MS 1000U
 /* 30度低速分段减速试验的有限会话截止，包含执行器准备。 */
-#define APP_HEADING_RUN_MS 20000U
+#define APP_HEADING_RUN_MS ((APP_TEST_MODE == 3U) ? 30000U : 20000U)
 /* 当前实车航向会话到位容差；旧软件自检默认配置保持原值。 */
 #define APP_HEADING_TOLERANCE_DEG 1.0f
 #if (APP_HEADING_RUN_MS <= 1000U) || (APP_HEADING_RUN_MS > 30000U)
