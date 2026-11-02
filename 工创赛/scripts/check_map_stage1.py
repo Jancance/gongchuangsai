@@ -3,7 +3,7 @@ from pathlib import Path
 import re
 
 ROOT=Path(__file__).resolve().parents[2]
-OUT=ROOT/'工创赛/evidence/integration/2026-11-02/map_stage1'
+OUT=ROOT/'工创赛/evidence/integration/2026-11-03/emm_migration/stage1_checks'
 FW=ROOT/'3.stm32f407工程';SRC=FW/'USER'
 ARM=Path('D:/Keil_v5/ARM/arm5_compiler/bin')
 UNIT=r'''
@@ -48,7 +48,7 @@ static uint32_t ChassisAuto_ReadStatus(ChassisAutoStatus *p){*p=fixture_backend;
 static void Power_ReadCommandStatus(PowerCommandStatus *p){*p=fixture_power;}
 static uint32_t ChassisAuto_RearmCompleted(uint32_t session){if(!rearm_ok)return 0;fixture_backend.result=0;return 1;}
 static void HeadingSession_Init(void *p){memset(p,0,4);}
-static uint32_t App_SerialIdleReady(uint32_t now){return !APP_X_OFFLINE_ONLY && ready && !g_combined_test.state;}
+static uint32_t App_SerialIdleReady(uint32_t now){return !APP_MOTOR_OFFLINE_ONLY && ready && !g_combined_test.state;}
 static void MotionStop(void){stop_calls++;g_combined_test.state=5;g_vm_test_request=0;}
 static uint32_t App_SerialDiagnosticWindow(uint32_t now,uint32_t ms){return 1;}
 static uint16_t App_SerialCrc(const char *p,uint32_t n){uint16_t c=0xffff;uint32_t i,j;for(i=0;i<n;i++){c^=(uint16_t)(uint8_t)p[i]<<8;for(j=0;j<8;j++)c=(uint16_t)((c&0x8000)?(c<<1)^0x1021:c<<1);}return c;}
@@ -95,7 +95,7 @@ void test_entry(void){
  for(i=0;i<2;i++){exported_actions[i][0]=(float)action[i].kind;exported_actions[i][1]=action[i].distance_mm;exported_actions[i][2]=action[i].reference_mm_s;exported_actions[i][3]=(float)action[i].run_ms;}
  exported_run_ms=action[0].run_ms;exported_rpm=action[0].base_rpm;
  reset_fixture();ready=0;start();ck(g_stage1_state==0 && g_stage1_denied==1 && !g_combined_test.request);
-#if APP_X_OFFLINE_ONLY
+#if APP_MOTOR_OFFLINE_ONLY
  ready=1;start();ck(!g_stage1_run_id && !g_combined_test.request);return;
 #else
  ready=1;g_radar_zone_selected=2;start();ck(g_stage1_state==0 && !g_combined_test.request);
@@ -133,7 +133,7 @@ void test_entry(void){
 def main():
     """复用已有ARM执行框架，仅替换被测模块，断言仍在实际C内。"""
     base=(ROOT/'工创赛/evidence/p1-foundation/2026-11-02/radar_servo_boot_profile/check_actual_c.py').read_text(encoding='utf8')
-    runner=base[base.index('reports=[]'):]
+    runner=base[base.index('reports=[]'):].replace('APP_X_OFFLINE_ONLY','APP_MOTOR_OFFLINE_ONLY')
     runner=runner.replace("[(\'unit.c\',\'unit.o\'),(str(SRC/\'radar_servo.c\'),\'driver.o\'),(str(SRC/\'radar_servo_logic.c\'),\'logic.o\')]",
         "[('unit.c','unit.o'),(str(SRC/'field_map.c'),'map.o'),(str(SRC/'app_entry.c'),'entry.o'),(str(SRC/'motion_profile.c'),'profile.o'),(str(SRC/'chassis_kinematics.c'),'kinematics.o')]")
     runner=runner.replace("'unit.o','driver.o','logic.o'", "'unit.o','map.o','entry.o','profile.o','kinematics.o'")

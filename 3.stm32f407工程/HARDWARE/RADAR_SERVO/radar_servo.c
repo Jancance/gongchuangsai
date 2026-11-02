@@ -2,7 +2,7 @@
 #include "radar_servo_logic.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_tim.h"
-#include "zdt_x_config.h"
+#include "zdt_emm_config.h"
 #include "app_entry_config.h"
 volatile uint32_t g_radar_servo_state=0U;
 volatile float g_radar_servo_angle_deg[2]={RADAR_SERVO1_INIT_DEG,RADAR_SERVO2_INIT_DEG};
@@ -10,7 +10,7 @@ volatile uint32_t g_radar_servo_departure_done=0U,g_radar_servo_departure_id=0U;
 volatile uint32_t g_radar_servo_pulse_us[2]={0U,0U};
 uint32_t RadarServo_Init(void)
 {
-#if APP_X_OFFLINE_ONLY
+#if APP_MOTOR_OFFLINE_ONLY
     /* 离线构建不初始化GPIO/TIM，不产生舵机动作。 */
     g_radar_servo_state=2U;return 0U;
 #else
@@ -60,7 +60,7 @@ uint32_t RadarServo_SetAngle(uint32_t id, float angle_deg)
 {
     uint16_t pulse;
     if (g_radar_servo_state!=1U || !RadarServo_Encode(id,angle_deg,&pulse)) return 0U;
-#if !APP_X_OFFLINE_ONLY
+#if !APP_MOTOR_OFFLINE_ONLY
     if (id==1U) TIM_SetCompare1(TIM4,pulse);else TIM_SetCompare2(TIM4,pulse);
     g_radar_servo_angle_deg[id-1U]=angle_deg;g_radar_servo_pulse_us[id-1U]=pulse;
     return 1U;
@@ -79,7 +79,7 @@ void RadarServo_DebugService(uint32_t safe_idle)
     if (request==0U) return;
     id=g_radar_servo_test_id;angle=g_radar_servo_test_angle_deg;
     g_radar_servo_test_request=0U;
-#if APP_IS_DEBUG && !APP_X_OFFLINE_ONLY
+#if APP_IS_DEBUG && !APP_MOTOR_OFFLINE_ONLY
     if (safe_idle!=1U || g_radar_servo_state!=1U) g_radar_servo_test_result=2U;
     else if (request!=1U || id<1U || id>2U || !(angle>=0.0f && angle<=RADAR_SERVO_TEST_MAX_DEG))
         g_radar_servo_test_result=3U;
@@ -108,7 +108,7 @@ volatile uint32_t g_radar_servo_key_result=0U,g_radar_servo_key_sequence=0U,g_ra
 uint32_t RadarServo_KeyTest(uint32_t zone,uint32_t safe_idle)
 {
     uint32_t ok=0U;
-#if APP_IS_DEBUG && !APP_X_OFFLINE_ONLY
+#if APP_IS_DEBUG && !APP_MOTOR_OFFLINE_ONLY
     if (g_radar_servo_key_test_enable!=1U || safe_idle!=1U || g_radar_servo_state!=1U)
         g_radar_servo_key_result=2U;
     else if (zone<1U || zone>2U) g_radar_servo_key_result=3U;

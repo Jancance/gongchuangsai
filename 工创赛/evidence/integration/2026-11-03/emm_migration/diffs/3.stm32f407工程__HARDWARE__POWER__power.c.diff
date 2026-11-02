@@ -1,0 +1,11 @@
+--- before/3.stm32f407工程/HARDWARE/POWER/power.c
++++ 3.stm32f407工程/HARDWARE/POWER/power.c
+@@ -36,7 +36,7 @@
+ /* 请求开启VM，实际供电仍受外部开关控制 */
+ void Power_Enable(void)
+ {
+-#if APP_X_OFFLINE_ONLY
++#if APP_MOTOR_OFFLINE_ONLY
+     Power_Disable();return;
+ #else
+ #if APP_UART_LINK_TEST

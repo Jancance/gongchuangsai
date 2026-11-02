@@ -1,0 +1,57 @@
+--- before/3.stm32f407工程/USER/chassis_auto_test.c
++++ 3.stm32f407工程/USER/chassis_auto_test.c
+@@ -1,6 +1,6 @@
+ #include "chassis_auto_test.h"
+ #include "chassis_direction_guard.h"
+-#include "zdt_x_protocol.h"
++#include "zdt_emm_protocol.h"
+ #include "motion_distance_limits.h"
+ #include "chassis_kinematics.h"
+ #include "can.h"
+@@ -289,7 +289,7 @@
+         if(address>=1U && address<=4U) {
+             const ChassisDirectionGuard *d=&s_direction_guard[address-1U];
+             g_chassis_auto_fault_diagnostic.target_decirpm=d->target_deci;
+-            g_chassis_auto_fault_diagnostic.measured_decirpm=ZdtX_RpmDeci(g_chassis_auto_driver_rpm[address-1U]);
++            g_chassis_auto_fault_diagnostic.measured_decirpm=ZdtEmm_RpmDeci(g_chassis_auto_driver_rpm[address-1U]);
+             g_chassis_auto_fault_diagnostic.target_ack_ms=d->ack_ms;
+             g_chassis_auto_fault_diagnostic.speed_sample_ms=(uint32_t)s_speed_tick[address-1U]*portTICK_PERIOD_MS;
+             g_chassis_auto_fault_diagnostic.reverse_samples=d->reverse_samples;
+@@ -605,7 +605,7 @@
+                     s_distance_reference.acceleration_mm_s2<=0.0f;
+ #endif
+                 reason=DirectionGuard_Check(&s_direction_guard[i],(uint32_t)now*portTICK_PERIOD_MS,
+-                    (uint32_t)s_speed_tick[i]*portTICK_PERIOD_MS,ZdtX_RpmDeci(raw),endpoint_window);
++                    (uint32_t)s_speed_tick[i]*portTICK_PERIOD_MS,ZdtEmm_RpmDeci(raw),endpoint_window);
+                 if(reason) { Auto_CutDetailLocked(8U,reason,0U,i+1U); return; }
+             }
+ }
+@@ -1130,7 +1130,7 @@
+ #if APP_POSITION_DIAGNOSTIC
+     if (Auto_PositionMonitor(session)) return;
+ #endif
+-    if (is_speed) result = CAN1_ReadXSystemSnapshot((uint8_t)(i + 1U), &reply, &rpm);
++    if (is_speed) result = CAN1_ReadEmmSystemSnapshot((uint8_t)(i + 1U), &reply, &rpm);
+     else result = CAN1_ReadStatus((uint8_t)(i + 1U), &reply);
+     taskENTER_CRITICAL();
+     if ((session == g_chassis_auto_session) && g_chassis_auto_active)
+@@ -1328,8 +1328,8 @@
+     else if (state == CHASSIS_AUTO_START)
+     {
+         ChassisMotorCommand command = s_commands[g_chassis_auto_segment][index];
+-        result = (s_mode == 1U) ? 1U : CAN1_SetXSpeedRaw(command.address,
+-            command.direction, command.speed_raw, 1000U, &reply); /* X RPM/s; outer profile unchanged. */
++        result = (s_mode == 1U) ? 1U : CAN1_SetEmmSpeedRaw(command.address,
++            command.direction, command.speed_raw, ZDT_EMM_MOTION_ACCELERATION, &reply); /* Emm加速度档位，外层轨迹保持。 */
+     }
+     else if (state == CHASSIS_AUTO_STOP)
+         result = (s_mode == 1U) ? 1U : CAN1_StopMotor((uint8_t)(index + 1U), &reply);
+@@ -1850,7 +1850,7 @@
+     snapshot->speed_valid_mask=snapshot->ack_valid_mask=0U;
+     for(i=0U;i<4U;i++) {
+         snapshot->acknowledged_decirpm[i]=s_direction_guard[i].target_deci;
+-        snapshot->measured_decirpm[i]=ZdtX_RpmDeci(g_chassis_auto_driver_rpm[i]);
++        snapshot->measured_decirpm[i]=ZdtEmm_RpmDeci(g_chassis_auto_driver_rpm[i]);
+         snapshot->ack_ms[i]=s_direction_guard[i].ack_ms;
+         snapshot->sample_ms[i]=(uint32_t)s_speed_tick[i]*portTICK_PERIOD_MS;
+         snapshot->age_ms[i]=(uint32_t)(now-s_speed_tick[i])*portTICK_PERIOD_MS;

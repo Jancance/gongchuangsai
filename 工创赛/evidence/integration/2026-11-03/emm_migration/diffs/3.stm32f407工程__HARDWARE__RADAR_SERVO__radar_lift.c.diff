@@ -1,0 +1,26 @@
+--- before/3.stm32f407工程/HARDWARE/RADAR_SERVO/radar_lift.c
++++ 3.stm32f407工程/HARDWARE/RADAR_SERVO/radar_lift.c
+@@ -1,12 +1,12 @@
+ #include "radar_lift.h"
+ #include "stm32f4xx.h"
+-#include "zdt_x_config.h"
++#include "zdt_emm_config.h"
+ #include "app_entry_config.h"
+ volatile uint32_t g_radar_lift_enable=0U,g_radar_lift_request=0U;
+ volatile uint32_t g_radar_lift_steps=32U,g_radar_lift_direction=0U;
+ volatile uint32_t g_radar_lift_state=0U,g_radar_lift_result=0U,g_radar_lift_sequence=0U;
+ volatile uint32_t g_radar_lift_done=0U,g_radar_lift_phase_bits=0U;
+-#if APP_IS_DEBUG && !APP_X_OFFLINE_ONLY
++#if APP_IS_DEBUG && !APP_MOTOR_OFFLINE_ONLY
+ static uint32_t initialized=0U,phase=7U,last_tick,start_tick,total,direction;
+ static const uint8_t phases[8]={1U,3U,2U,6U,4U,12U,8U,9U};
+ static void setup(void)
+@@ -35,7 +35,7 @@
+ {
+     uint32_t request=g_radar_lift_request;
+     g_radar_lift_request=0U;
+-#if APP_IS_DEBUG && !APP_X_OFFLINE_ONLY
++#if APP_IS_DEBUG && !APP_MOTOR_OFFLINE_ONLY
+     if (g_radar_lift_state==1U && (safe_idle!=1U || g_radar_lift_enable!=1U)) {
+         g_radar_lift_state=3U;g_radar_lift_result=2U;
+     }

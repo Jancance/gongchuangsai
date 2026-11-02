@@ -1,0 +1,165 @@
+--- before/3.stm32f407工程/SYSTEM/CAN/can.c
++++ 3.stm32f407工程/SYSTEM/CAN/can.c
+@@ -49,6 +49,10 @@
+ static uint32_t s_can_ctrl_trace_active = 0U;
+ static TickType_t s_can_ctrl_trace_tick = 0U;
+ 
++/* 只读源码确认项，不写驱动参数；前端据此在申请VM之前拒绝启动。 */
++uint32_t CAN1_EmmSettingsConfirmed(void)
++{ return ZDT_EMM_SETTINGS_CONFIRMED && !APP_MOTOR_OFFLINE_ONLY; }
++
+ /* 当前所有CAN调用都来自任务A，不允许其他任务并发使用 */
+ static uint32_t s_can1_normal_ready = 0U;
+ /* 标记下一次查询需重新初始化，不在这里发送或切换硬件模式 */
+@@ -389,22 +393,22 @@
+     }
+     return result;
+ }
+-/* X实时转速只读：CAN回帧35、符号、速度高低字节、6B */
++/* Emm实时转速为整数RPM，输入缩放不影响反馈单位。 */
+ uint32_t CAN1_ReadSpeed(uint8_t address, CanRxMsg *reply, float *rpm)
+ {
+  uint32_t result;
+  if(!rpm || !reply)return 7U;*rpm=0.0f;
+  result=CAN1_ReadParameter(address,0x35U,5U,reply);
+- if(result==1U && !ZdtX_DecodeSpeed(reply->Data,reply->DLC,rpm))result=6U;
++ if(result==1U && !ZdtEmm_DecodeSpeed(reply->Data,reply->DLC,rpm))result=6U;
+  if(result!=1U)CAN1_ResetSession();return result;
+ }
+-/* X当前位置只读；符号与32位幅值分开，避免int32溢出 */
++/* Emm实时位置为65536计数/圈，符号与幅值分开。 */
+ uint32_t CAN1_ReadPosition(uint8_t address,CanRxMsg *reply,uint8_t *sign,uint32_t *raw)
+ {
+  uint32_t result;
+  if(!sign || !raw || !reply)return 7U;*sign=0U;*raw=0U;
+  result=CAN1_ReadParameter(address,0x36U,7U,reply);
+- if(result==1U && !ZdtX_DecodePosition(reply->Data,reply->DLC,sign,raw))result=6U;
++ if(result==1U && !ZdtEmm_DecodePosition(reply->Data,reply->DLC,sign,raw))result=6U;
+  if(result!=1U)CAN1_ResetSession();return result;
+ }
+ /* 控制应答统一处理：只接受02，其他应答保留并返回8 */
+@@ -424,10 +428,10 @@
+         return 7U;
+     }
+ 
+-#if APP_X_OFFLINE_ONLY
++#if APP_MOTOR_OFFLINE_ONLY
+     /* 离线候选拒绝启用驱动和所有非零速度；STOP和读取不受影响。 */
+     if(request && ((request_length==5U && request[0]==0xF3U && request[2]) ||
+-       (request_length==8U && request[0]==0xF6U && (request[4] || request[5]))))return 7U;
++       (request_length==7U && request[0]==0xF6U && (request[2] || request[3]))))return 7U;
+ #endif
+     trace = ((g_can_ctrl_fault_latched == 0U) && (request != NULL) &&
+         (request_length >= 2U) && (request_length <= 8U)) ? 1U : 0U;
+@@ -474,7 +478,7 @@
+     result = CAN1_ExchangeSingle(address, request,
+                                  request_length, 3U, reply);
+ 
+-    if ((result == 1U) && !ZdtX_DecodeAck(request[0],reply->Data,reply->DLC))
++    if ((result == 1U) && !ZdtEmm_DecodeAck(request[0],reply->Data,reply->DLC))
+     {
+         /* 非02不能作为成功确认，原始回复仍保留 */
+         result = 8U;
+@@ -508,6 +512,16 @@
+         return 7U;
+     }
+ 
++    if(enabled) {
++#if !ZDT_EMM_SETTINGS_CONFIRMED
++        return 9U;
++#else
++        CanRxMsg check_reply;float checked_rpm;uint32_t checked;
++        checked=CAN1_ReadEmmSystemSnapshot(address,&check_reply,&checked_rpm);
++        if(checked!=1U)return checked;
++#endif
++    }
++
+     request[2] = enabled;
+ 
+     return CAN1_ControlSingle(address, request, 5U, reply);
+@@ -519,36 +533,37 @@
+     uint8_t request[4] = {0xFEU, 0x98U, 0U, 0x6BU};
+ 
+     uint32_t result=CAN1_ControlSingle(address, request, 4U, reply);
+-    XLoad_RecordCommand(address,0,XLOAD_STOP_ACK,result,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
++    ChassisLoad_RecordCommand(address,0,CHASSIS_LOAD_STOP_ACK,result,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
+     return result;
+ }
+ 
+-/* X原始速度控制：方向0为CW，1为CCW */
++/* Emm速度控制：方向0为CW、1为CCW，输入缩小10倍。 */
+ /* CW/CCW与整车前后方向的对应关系仍需实测 */
+-static uint32_t CAN1_XSpeed(uint8_t address,uint8_t direction,uint16_t speed_raw,
++static uint32_t CAN1_EmmSpeed(uint8_t address,uint8_t direction,uint16_t speed_raw,
+     uint16_t acceleration,uint8_t sync,CanRxMsg *reply)
+ {
+- uint8_t request[8];
+- if(speed_raw>ZDT_X_APP_MAX_SPEED_RAW || !ZdtX_EncodeSpeed(direction,speed_raw,acceleration,sync,request))return 7U;
++ uint8_t request[7];
++ if(speed_raw && !ZDT_EMM_SETTINGS_CONFIRMED)return 9U;
++ if(speed_raw>ZDT_EMM_APP_MAX_SPEED_RAW || !ZdtEmm_EncodeSpeed(direction,speed_raw,acceleration,sync,request))return 7U;
+  { uint32_t result;int32_t target=direction?-(int32_t)speed_raw:(int32_t)speed_raw;
+-   XLoad_RecordCommand(address,target,XLOAD_TX,0U,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
+-   result=CAN1_ControlSingle(address,request,8U,reply);
+-   XLoad_RecordCommand(address,target,sync?XLOAD_STAGED_ACK:XLOAD_ACK,result,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
++   ChassisLoad_RecordCommand(address,target,CHASSIS_LOAD_TX,0U,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
++   result=CAN1_ControlSingle(address,request,7U,reply);
++   ChassisLoad_RecordCommand(address,target,sync?CHASSIS_LOAD_STAGED_ACK:CHASSIS_LOAD_ACK,result,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
+    return result; }
+ }
+-uint32_t CAN1_SetXSpeedRaw(uint8_t address,uint8_t direction,uint16_t speed_raw,
++uint32_t CAN1_SetEmmSpeedRaw(uint8_t address,uint8_t direction,uint16_t speed_raw,
+     uint16_t acceleration,CanRxMsg *reply)
+-{ return CAN1_XSpeed(address,direction,speed_raw,acceleration,0U,reply); }
+-uint32_t CAN1_StageXSpeedRaw(uint8_t address,uint8_t direction,uint16_t speed_raw,
++{ return CAN1_EmmSpeed(address,direction,speed_raw,acceleration,0U,reply); }
++uint32_t CAN1_StageEmmSpeedRaw(uint8_t address,uint8_t direction,uint16_t speed_raw,
+     uint16_t acceleration,CanRxMsg *reply)
+-{ return CAN1_XSpeed(address,direction,speed_raw,acceleration,1U,reply); }
++{ return CAN1_EmmSpeed(address,direction,speed_raw,acceleration,1U,reply); }
+ 
+ /* 复用速度采样时隙：仅一条读取请求，有界接收五包系统状态回复。 */
+-uint32_t CAN1_ReadXSystemSnapshot(uint8_t address,CanRxMsg *reply,float *rpm)
+-{
+-    CanTxMsg tx;CanRxMsg rx;XSystemSnapshot sample={0};
++uint32_t CAN1_ReadEmmSystemSnapshot(uint8_t address,CanRxMsg *reply,float *rpm)
++{
++    CanTxMsg tx;CanRxMsg rx;ChassisSystemSnapshot sample={0};
+     TickType_t start;uint32_t result=5U;uint8_t packet=0U,length=0U,i,offset,mailbox,status;
+-    uint8_t data[36]={0};uint32_t raw;
++    uint8_t data[30]={0};ZdtEmmSystemData decoded;
+     if(address<1U || address>4U || !reply || !rpm)return 7U;
+     *rpm=0.0f;memset(reply,0,sizeof(*reply));
+     if(!s_can1_normal_ready){result=CAN1_InitMode(CAN_Mode_Normal);if(result!=1U)goto finished;s_can1_normal_ready=1U;}
+@@ -571,22 +586,19 @@
+         *reply=rx;
+         if((rx.ExtId&0xFFU)!=packet){result=6U;break;}
+         offset=packet?1U:0U;
+-        if((uint32_t)length+rx.DLC-offset>36U){result=6U;break;}
++        if((uint32_t)length+rx.DLC-offset>30U){result=6U;break;}
+         for(i=offset;i<rx.DLC;i++)data[length++]=rx.Data[i];
+         packet++;
+-        if(length==36U){
+-            if(data[1]!=37U || data[2]!=12U || data[35]!=0x6BU || data[13]>1U ||
+-               data[18]>1U || data[21]>1U || data[26]>1U){result=6U;break;}
+-            raw=((uint32_t)data[19]<<8)|data[20];
+-            sample.speed_decirpm=data[18]?-(int32_t)raw:(int32_t)raw;
+-            sample.position_deci_deg=((uint32_t)data[22]<<24)|((uint32_t)data[23]<<16)|((uint32_t)data[24]<<8)|data[25];
+-            sample.position_sign=data[21];sample.phase_ma=(uint16_t)(((uint16_t)data[7]<<8)|data[8]);
+-            sample.bus_mv=(uint16_t)(((uint16_t)data[3]<<8)|data[4]);
+-            sample.home_flags=data[33];sample.motor_flags=data[34];
++        if(length==30U){
++            if(!ZdtEmm_DecodeSystem(data,length,&decoded)){result=6U;break;}
++            sample.speed_decirpm=decoded.speed_decirpm;
++            sample.position_deci_deg=decoded.position_deci_deg;sample.position_sign=decoded.position_sign;
++            sample.phase_ma=decoded.phase_ma;sample.bus_mv=decoded.bus_mv;
++            sample.home_flags=decoded.home_flags;sample.motor_flags=decoded.motor_flags;
+             *rpm=(float)sample.speed_decirpm*0.1f;result=1U;break;
+-        }
++        }
+     }
+ finished:
+-    XLoad_RecordSnapshot(address,result,&sample,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
++    ChassisLoad_RecordSnapshot(address,result,&sample,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
+     if(result!=1U)CAN1_ResetSession();return result;
+ }

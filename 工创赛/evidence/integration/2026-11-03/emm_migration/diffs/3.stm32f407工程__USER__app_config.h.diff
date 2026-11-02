@@ -1,0 +1,10 @@
+--- before/3.stm32f407工程/USER/app_config.h
++++ 3.stm32f407工程/USER/app_config.h
+@@ -1,6 +1,6 @@
+ #ifndef APP_CONFIG_H
+ #define APP_CONFIG_H
+-#include "zdt_x_config.h"
++#include "zdt_emm_config.h"
+ #include "app_entry_config.h"
+ #if !APP_IS_DEBUG || APP_DEBUG_MODE != 3U
+ #error Perimeter_candidate_requires_debug_mode3

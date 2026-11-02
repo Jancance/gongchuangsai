@@ -43,7 +43,7 @@ uint32_t Chassis_Inverse(const ChassisGeometry *geometry,
 uint32_t Chassis_Forward(const ChassisGeometry *geometry,
     const ChassisWheelSpeeds *wheels, ChassisBodyVelocity *body);
 
-/* X固件：速度原始单位为0.1RPM；不使用Emm的S_Vel_IS选项。 */
+/* Emm须启用S_Vel_IS：命令0.1RPM；反馈仍为整数RPM。 */
 typedef struct
 {
     uint8_t address;
@@ -56,7 +56,7 @@ extern const uint8_t g_chassis_forward_direction[CHASSIS_WHEEL_COUNT];
 
 /* 纯适配不发帧；返回1成功、0不可表示/无效且全部目标速度清零 */
 /* 逻辑RPM按0.1RPM量化；max_raw为物理RPM上限，输出speed_raw为十分之一RPM。 */
-uint32_t Chassis_EncodeX(const ChassisWheelSpeeds *logical,
+uint32_t Chassis_EncodeEmm(const ChassisWheelSpeeds *logical,
     uint16_t max_raw, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
 
 /* 输入为CAN1_ReadSpeed已解析的带符号RPM；valid_mask须是四轮新鲜有效位 */

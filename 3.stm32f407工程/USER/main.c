@@ -526,6 +526,7 @@ static void App_StartGateUpdate(void)
 /* 仅用于人工静态锁轴，不是正式运动许可；发送前检查条件 */
 static uint32_t App_CanEnableTestReady(void)
 {
+    if(!CAN1_EmmSettingsConfirmed())return 0U;
     return ((g_vm_test_request == 1U) &&
             (g_rtos_fault == 0U) && (g_safety_fault == 0U) &&
             (g_safety_ready == 1U) && (g_can_guard_ready == 1U) &&
@@ -579,7 +580,7 @@ static void App_CanJogStartStep(void)
     if ((index >= 4U) || (Safety_WheelTestStartAllowed(s_can_jog_session) != 1U))
         return;
     if (s_can_jog_dry_run == 1U) result = 1U; /* 演练模拟，不发F6 */
-    else result = CAN1_SetXSpeedRaw((uint8_t)(index + 1U),
+    else result = CAN1_SetEmmSpeedRaw((uint8_t)(index + 1U),
         g_chassis_forward_direction[index], 1U, 0U, &reply);
     g_can_jog_start_results[index] = result;
     g_can_jog_start_result = result;
@@ -2309,11 +2310,12 @@ static uint32_t App_SerialUInt(const char **text, uint32_t *out)
 }
 static uint32_t App_SerialIdleReady(uint32_t now)
 {
-#if APP_X_OFFLINE_ONLY
+#if APP_MOTOR_OFFLINE_ONLY
     (void)now;return 0U;
 #else
     ChassisAutoStatus status;
     PowerCommandStatus power;
+    if(!CAN1_EmmSettingsConfirmed())return 0U;
     (void)ChassisAuto_ReadStatus(&status);
     Power_ReadCommandStatus(&power);
 #if APP_TEST_MODE == 3U
@@ -2969,17 +2971,17 @@ static void App_BatchDiagnosticTelemetry(void)
 }
 
 
-static void App_XLoadTelemetry(void)
+static void App_ChassisLoadTelemetry(void)
 {
     static uint32_t cursor=0U,session=0U,last=0U;
     static char frame[512];
-    XLoadRecord record;XLoadStatistics stats;PowerCommandStatus power;
+    ChassisLoadRecord record;ChassisLoadStatistics stats;PowerCommandStatus power;
     uint32_t now=xTaskGetTickCount(),n,i,j,used;int count;uint16_t crc;
     const uint8_t *bytes;static const char hex[]="0123456789ABCDEF";
     Power_ReadCommandStatus(&power);
     if(g_chassis_auto_active || power.active || g_vm_test_request || (uint32_t)(now-last)<70U ||
        !App_SerialDiagnosticWindow(now,40U))return;
-    if(!XLoad_Read(0U,&record,&stats))return;
+    if(!ChassisLoad_Read(0U,&record,&stats))return;
     if(session!=stats.session){session=stats.session;cursor=0U;}
     if(cursor>=stats.count)return;
     n=stats.count-cursor;if(n>8U)n=8U;
@@ -2987,7 +2989,7 @@ static void App_XLoadTelemetry(void)
         (unsigned long)cursor,(unsigned long)n,(unsigned long)stats.count,(unsigned long)stats.dropped);
     if(count<0 || (uint32_t)count>=sizeof(frame))return;used=(uint32_t)count;
     for(i=0U;i<n;i++){
-        if(!XLoad_Read(cursor+i,&record,&stats))return;
+        if(!ChassisLoad_Read(cursor+i,&record,&stats))return;
         bytes=(const uint8_t*)&record;
         for(j=0U;j<sizeof(record);j++){if(used+2U>=sizeof(frame)-8U)return;frame[used++]=hex[bytes[j]>>4];frame[used++]=hex[bytes[j]&15U];}
     }
@@ -3022,10 +3024,10 @@ static void App_SerialMotionTelemetry(void)
     values[10] = (int32_t)(App_HeadingFrameAge(&s_heading_source,now,1U)); /* angle_age_ms */
     values[11] = (int32_t)(App_HeadingFrameAge(&s_heading_source,now,2U)); /* rate_age_ms */
     values[12] = FineRpm_Deci(g_forward_hold.correction_rpm); /* correction_rpm */
-    values[13] = ZdtX_RpmDeci(g_chassis_auto_driver_rpm[0]); /* rpm1 */
-    values[14] = ZdtX_RpmDeci(g_chassis_auto_driver_rpm[1]); /* rpm2 */
-    values[15] = ZdtX_RpmDeci(g_chassis_auto_driver_rpm[2]); /* rpm3 */
-    values[16] = ZdtX_RpmDeci(g_chassis_auto_driver_rpm[3]); /* rpm4 */
+    values[13] = ZdtEmm_RpmDeci(g_chassis_auto_driver_rpm[0]); /* rpm1 */
+    values[14] = ZdtEmm_RpmDeci(g_chassis_auto_driver_rpm[1]); /* rpm2 */
+    values[15] = ZdtEmm_RpmDeci(g_chassis_auto_driver_rpm[2]); /* rpm3 */
+    values[16] = ZdtEmm_RpmDeci(g_chassis_auto_driver_rpm[3]); /* rpm4 */
     values[17] = (int32_t)(g_vm_test_request); /* vm_request */
     values[18] = (int32_t)(power.active); /* pe2_active */
     values[19] = (int32_t)(status.state); /* backend_state */
@@ -3557,7 +3559,7 @@ static void App_CanTask(void *argument)
             {
                 /* 方向固定0、速度固定0、加速度参数固定10 */
                 /* 10仅为本次静态测试参数，不代表整车运动限值 */
-                g_can_zero_result = CAN1_SetXSpeedRaw(
+                g_can_zero_result = CAN1_SetEmmSpeedRaw(
                     (uint8_t)address, 0U, 0U, 10U, &reply);
             }
 
@@ -3623,7 +3625,7 @@ static void App_CanTask(void *argument)
             sprintf(log, "SPEED:A%lu R%lu RPM%ld\r\n",
                     (unsigned long)address,
                     (unsigned long)g_can_speed_result,
-                    (long)ZdtX_RpmDeci(g_can_speed_rpm));
+                    (long)ZdtEmm_RpmDeci(g_can_speed_rpm));
             (void)App_DebugSendString(log);
         }
         /* VM已请求开启后，读取指定电机版本 */
@@ -4018,7 +4020,7 @@ static void App_TestTaskA(void *argument)
         App_MotionFaultTelemetry();
         App_MotionTimingTelemetry();
         App_BatchDiagnosticTelemetry();
-        App_XLoadTelemetry();
+        App_ChassisLoadTelemetry();
 #if APP_POSITION_DIAGNOSTIC
         App_WheelLogTelemetry();
         App_PositionTelemetry();

@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000,APP_X_OFFLINE_ONLY=0</Define>
+              <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000,APP_MOTOR_OFFLINE_ONLY=0</Define>
               <Undefine></Undefine>
               <IncludePath>.\CORE;.\USER;.\StdPeriph_Driver\inc;.\FreeRTOS\include;.\FreeRTOS\portable\RVDS\ARM_CM4F;.\HARDWARE\LED;.\HARDWARE\BUZZER;.\SYSTEM\USART;.\HARDWARE\KEY;.\HARDWARE\POWER;.\SYSTEM\CAN;.\SYSTEM\SAFETY;.\SYSTEM\WATCHDOG;.\HARDWARE\SCREEN;.\HARDWARE\SAOMA;.\HARDWARE\RADAR_SERVO</IncludePath>
             </VariousControls>
@@ -465,19 +465,19 @@
               <FilePath>.\USER\chassis_direction_guard.h</FilePath>
             </File>
             <File>
-              <FileName>zdt_x_config.h</FileName>
+              <FileName>zdt_emm_config.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\USER\zdt_x_config.h</FilePath>
+              <FilePath>.\USER\zdt_emm_config.h</FilePath>
             </File>
             <File>
-              <FileName>zdt_x_protocol.h</FileName>
+              <FileName>zdt_emm_protocol.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\USER\zdt_x_protocol.h</FilePath>
+              <FilePath>.\USER\zdt_emm_protocol.h</FilePath>
             </File>
             <File>
-              <FileName>x_load_diag.h</FileName>
+              <FileName>chassis_load_diag.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\USER\x_load_diag.h</FilePath>
+              <FilePath>.\USER\chassis_load_diag.h</FilePath>
             </File>
             <File>
               <FileName>runtime_route.c</FileName>
@@ -490,9 +490,9 @@
               <FilePath>.\USER\runtime_route.h</FilePath>
             </File>
             <File>
-              <FileName>x_load_diag.c</FileName>
+              <FileName>chassis_load_diag.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\USER\x_load_diag.c</FilePath>
+              <FilePath>.\USER\chassis_load_diag.c</FilePath>
             </File>
             <File>
               <FileName>heading_controller.c</FileName>

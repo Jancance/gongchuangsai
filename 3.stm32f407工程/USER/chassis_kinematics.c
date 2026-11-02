@@ -108,7 +108,7 @@ static void Chassis_ClearMotorCommands(ChassisMotorCommand *commands)
     }
 }
 
-uint32_t Chassis_EncodeX(const ChassisWheelSpeeds *logical,
+uint32_t Chassis_EncodeEmm(const ChassisWheelSpeeds *logical,
     uint16_t max_raw, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
 {
     ChassisMotorCommand result[CHASSIS_WHEEL_COUNT];
@@ -170,7 +170,7 @@ uint32_t Chassis_BasicTestCommands(const ChassisGeometry *geometry, uint32_t ste
     else if (step == 1U) body.vy_mm_s = mm_s_per_rpm;
     else body.wz_rad_s = mm_s_per_rpm / k;
     if (!Chassis_Inverse(geometry, &body, 1.0f, &logical, NULL)) return 0U;
-    return Chassis_EncodeX(&logical, 1U, commands);
+    return Chassis_EncodeEmm(&logical, 1U, commands);
 }
 
 /* 纯指令转换：正值逆时针、负值顺时针，不发送CAN。 */
@@ -182,7 +182,7 @@ uint32_t Chassis_HeadingCommands(float command_rpm,
     /* 先检查有符号范围再取反，避免最小负整数溢出。 */
     if (!(command_rpm >= -5.0f && command_rpm <= 5.0f))
     {
-        (void)Chassis_EncodeX(&logical, 5U, commands);
+        (void)Chassis_EncodeEmm(&logical, 5U, commands);
         return 0U;
     }
     /* 轮序：左后、右后、左前、右前；逆时针时左轮后退。 */
@@ -190,7 +190,7 @@ uint32_t Chassis_HeadingCommands(float command_rpm,
     logical.rpm[CHASSIS_RIGHT_REAR] = (float)command_rpm;
     logical.rpm[CHASSIS_LEFT_FRONT] = -(float)command_rpm;
     logical.rpm[CHASSIS_RIGHT_FRONT] = (float)command_rpm;
-    return Chassis_EncodeX(&logical, 5U, commands);
+    return Chassis_EncodeEmm(&logical, 5U, commands);
 }
 
 uint32_t Chassis_TurnBrakeCommands(float command_rpm,
@@ -202,7 +202,7 @@ uint32_t Chassis_TurnBrakeCommands(float command_rpm,
     /* 先检查有符号范围再取反，避免最小负整数溢出。 */
     if (!(command_rpm >= -(float)cap && command_rpm <= (float)cap))
     {
-        (void)Chassis_EncodeX(&logical, cap, commands);
+        (void)Chassis_EncodeEmm(&logical, cap, commands);
         return 0U;
     }
     /* 轮序：左后、右后、左前、右前；逆时针时左轮后退。 */
@@ -210,7 +210,7 @@ uint32_t Chassis_TurnBrakeCommands(float command_rpm,
     logical.rpm[CHASSIS_RIGHT_REAR] = (float)command_rpm;
     logical.rpm[CHASSIS_LEFT_FRONT] = -(float)command_rpm;
     logical.rpm[CHASSIS_RIGHT_FRONT] = (float)command_rpm;
-    return Chassis_EncodeX(&logical, cap, commands);
+    return Chassis_EncodeEmm(&logical, cap, commands);
 }
 
 
@@ -244,7 +244,7 @@ static uint32_t Chassis_TranslationCommandsAtSpeed(uint32_t mode, uint32_t base_
     logical.rpm[1] += (float)correction_rpm;
     logical.rpm[2] -= (float)correction_rpm;
     logical.rpm[3] += (float)correction_rpm;
-    return Chassis_EncodeX(&logical, limit, commands);
+    return Chassis_EncodeEmm(&logical, limit, commands);
 }
 
 uint32_t Chassis_TranslationHoldCommandsAtSpeed(uint32_t mode, uint32_t base_rpm,
@@ -292,7 +292,7 @@ uint32_t Chassis_LeftTrimCommands(uint32_t base_rpm, float correction_rpm,
     logical.rpm[3]=(float)base_rpm-(float)trim+(float)effective;
     for (i=0U;i<4U;i++)
         if (Chassis_Abs(logical.rpm[i])>54.0f) return 0U;
-    return Chassis_EncodeX(&logical,54U,commands);
+    return Chassis_EncodeEmm(&logical,54U,commands);
 }
 
 uint32_t Chassis_TranslationHoldCommands(uint32_t mode, float correction_rpm,
@@ -329,7 +329,7 @@ uint32_t Chassis_TranslationHoldSelfTest(void)
             body.vy_mm_s = (mode == 0U || mode == 3U) ? 0.0f : ((mode == 1U) ? base : -base) * per_rpm;
             body.wz_rad_s = (float)correction * per_rpm / k;
             if (!Chassis_Inverse(&g_chassis_geometry, &body, (float)limit, &wheels, &scale) ||
-                !Chassis_EncodeX(&wheels, limit, expected) ||
+                !Chassis_EncodeEmm(&wheels, limit, expected) ||
                 !Chassis_TranslationHoldCommands(mode, correction, actual)) return 0U;
             for (i = 0U; i < 4U; i++)
                 if ((actual[i].address != expected[i].address) ||

@@ -1,4 +1,5 @@
 #include "field_map.h"
+#include "zdt_emm_config.h"
 #include <string.h>
 static uint32_t inside(FieldPoint p)
 { return p.x_mm>=0.0f && p.x_mm<FIELD_SIZE_MM && p.y_mm>=0.0f && p.y_mm<FIELD_SIZE_MM; }
@@ -79,6 +80,12 @@ uint32_t FieldMap_Stage1(FieldStage1Plan *p)
     {float d=FIELD_QR_PLANE_Y_MM;memcpy(&bits,&d,4U);hash=hash_word(hash,bits);}
     {float d=VEHICLE_BODY_LENGTH_MM;memcpy(&bits,&d,4U);hash=hash_word(hash,bits);}
     {float d=VEHICLE_BODY_WIDTH_MM;memcpy(&bits,&d,4U);hash=hash_word(hash,bits);}
+    /* 协议/缩放/加速度/确认状态也参与指纹，避免同路线混淆固件。 */
+    hash=hash_word(hash,0x454D4D31U);
+    hash=hash_word(hash,ZDT_EMM_SPEED_INPUT_DIV10);
+    hash=hash_word(hash,ZDT_EMM_MOTION_ACCELERATION);
+    hash=hash_word(hash,ZDT_EMM_APP_MAX_SPEED_RAW);
+    hash=hash_word(hash,ZDT_EMM_SETTINGS_CONFIRMED);
     p->config_id=hash;return 1U;
 }
 uint32_t FieldMap_TaskCodeValid(const char *code)
