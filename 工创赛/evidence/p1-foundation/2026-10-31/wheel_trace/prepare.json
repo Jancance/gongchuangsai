@@ -1,0 +1,41 @@
+{
+  "candidate": "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\fine_rpm_wheeltrace_straight210_20261031",
+  "baseline": "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\fine_rpm_sequential_p100_straight210_20261031",
+  "changes": [
+    "USER\\chassis_auto_test.c"
+  ],
+  "capacity": 3072,
+  "event_bytes": 24,
+  "trace_ram_bytes": 73728,
+  "types": {
+    "1": "speed_command_ACK",
+    "2": "speed_feedback",
+    "3": "position_feedback",
+    "4": "STOP_ACK",
+    "5": "speed_command_TX_begin"
+  },
+  "units": {
+    "commands": "0.1RPM magnitude and direction",
+    "feedback": "signed integerRPM",
+    "position": "counts65536/rev and sign"
+  },
+  "control_changed": false,
+  "extra_CAN_polls": false,
+  "extra_serial_frames": false,
+  "flashed": true,
+  "started": true,
+  "single_model_trace_counts": {
+    "used": 2048,
+    "dropped": 0,
+    "capacity": 3072
+  },
+  "full_model_saturation_test": {
+    "used": 3072,
+    "dropped": 12318,
+    "all_95223_assertions_passed": true
+  },
+  "image_sha256": "e3bfa718f7133df0d88ab41af2a25d9253f1105d63de85bf495eba2865018508",
+  "software_complete": true,
+  "vehicle_evidence": "vehicle/run_once/20261031_223353_961100",
+  "ram_dump_exported": false
+}

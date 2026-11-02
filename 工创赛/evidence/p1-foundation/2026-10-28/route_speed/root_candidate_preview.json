@@ -1,0 +1,60 @@
+{
+  "ok": true,
+  "error": 0,
+  "segment": 0,
+  "budget_ms": 76075,
+  "rows": [
+    {
+      "segment": 1,
+      "kind": "FORWARD",
+      "amount": 30.0,
+      "requested_speed": 5.0,
+      "nominal_speed": 5.0,
+      "minimum_time_s": 8.895326614379883,
+      "rpm": 15,
+      "reference_mm_s": 50.0,
+      "peak_cm_s": 5.0,
+      "plan_duration_s": 8.895326614379883,
+      "run_ms": 12896,
+      "reference_acceleration_mm_s2": 23.521183013916016,
+      "reference_jerk_mm_s3": 30.563549041748047
+    },
+    {
+      "segment": 2,
+      "kind": "LEFT",
+      "amount": 20.0,
+      "requested_speed": 3.0,
+      "nominal_speed": 3.0,
+      "minimum_time_s": 8.678322792053223,
+      "rpm": 10,
+      "reference_mm_s": 30.0,
+      "peak_cm_s": 3.0,
+      "plan_duration_s": 8.678322792053223,
+      "run_ms": 12679,
+      "reference_acceleration_mm_s2": 23.873157501220703,
+      "reference_jerk_mm_s3": 31.61947250366211
+    },
+    {
+      "segment": 3,
+      "kind": "TURN",
+      "amount": 90.0,
+      "requested_speed": 5.0,
+      "rpm": 4,
+      "nominal_speed": 4.4210524559021,
+      "minimum_time_s": 20.357142578125
+    }
+  ],
+  "message": "参数检查通过；不是实车或避障验收",
+  "candidate_preview": true,
+  "trial_switch": false,
+  "direction_caps_cm_s": {
+    "FORWARD": 20.0,
+    "LEFT": 20.0,
+    "RIGHT": 20.0
+  },
+  "custom_enabled": false,
+  "config_path": "C:\\Users\\lenovo\\Desktop\\工创赛\\3.stm32f407工程\\USER\\route_config.h",
+  "config_sha256": "64e281db72cf71b8c736b995ac3a0ca7da167fd2b193b21f19d808f68c408ff6",
+  "hardware_accessed": false,
+  "limits": "候选预览估计S曲线参考峰值和时间，最终以固件检查为准；未证明实际地速/定位/避障。120秒总保护保留。"
+}

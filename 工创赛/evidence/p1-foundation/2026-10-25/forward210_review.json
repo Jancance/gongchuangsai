@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-25",
+  "baseline_commit": "54bb617",
+  "user_correction": "237cm was mistaken; continuous210cm requested",
+  "scope": "PLAN6 forward210 at15RPM debug only; PLAN5 retired and rejected",
+  "source_sha256": {
+    "main.c": "e824626a0f0eda16d075b6ca9f056de6a5542a23b946fdfe72c781f45ceef786",
+    "chassis_auto_test.c": "2d0e884029278d475673e560616e0c3351ade16bd2afef43bc24135176871a31",
+    "app_entry.c": "41a89fa864cad2b06ecb91b168fa684de1f133300e8c390828d44b8461d8928f",
+    "app_entry.h": "c3f09ed33b64943db82ba4aa58a8826005a4209883c9687025a4534e5bbc625f",
+    "motion_distance_limits.h": "78648e7ce93d97d744650a4527d3910ca32f4ed33769b6fc78cd6b7bc426f2a5"
+  },
+  "host_sha256": "689252f49ebfea461b15a6f70db00b9c7b33d4aa4efcfc1210d6e3e681f114c6",
+  "builds": {
+    "debug": "Code=60432 RO-data=868 RW-data=2028 ZI-data=34340",
+    "competition": "Code=53372 RO-data=652 RW-data=1944 ZI-data=29376"
+  },
+  "host_tests": 89,
+  "actual_C_simulated_checks": {
+    "backend": 162,
+    "entry": 131,
+    "competition": 44
+  },
+  "source_build_match": true,
+  "ordinary_limits_unchanged": true,
+  "exception": {
+    "direction": 0,
+    "rpm": 15,
+    "mm": 2100,
+    "run_ms": 60000,
+    "stage_ms": 65000,
+    "backend_total_ms": 75000,
+    "group_ms": 120000
+  },
+  "flashed": false,
+  "serial_opened": false,
+  "motion_started": false,
+  "pushed": false,
+  "limits": [
+    "No fixed5mm stop compensation applied",
+    "No ground measurement from mistaken237cm test",
+    "RTOS/CAN mocked ARM simulation not MCU hardware validation"
+  ]
+}

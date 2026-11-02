@@ -1,5 +1,78 @@
 #ifndef APP_CONFIG_H
 #define APP_CONFIG_H
+#include "zdt_x_config.h"
+#include "app_entry_config.h"
+#if !APP_IS_DEBUG || APP_DEBUG_MODE != 3U
+#error Perimeter_candidate_requires_debug_mode3
+#endif
+#define APP_PERIMETER_TRIAL_ACTIVE 1U
+#define APP_PERIMETER_GROUP_MS 300000U
+#include "route_config.h"
+/* Explicit single-turn debug candidate. Ordinary rotation remains capped at5RPM. */
+#ifndef APP_TURN_BRAKE_TRIAL_ENABLE
+#define APP_TURN_BRAKE_TRIAL_ENABLE 1U
+#endif
+#if APP_TURN_BRAKE_TRIAL_ENABLE > 1U
+#error Turn_brake_trial_enable_invalid
+#endif
+#define APP_TURN_BRAKE_TRIAL_ACTIVE (APP_TURN_BRAKE_TRIAL_ENABLE && APP_ROUTE_USE_CUSTOM && APP_IS_DEBUG && (APP_TEST_MODE == 3U))
+#ifndef APP_TURN_BRAKE_TRIAL_DPS
+#define APP_TURN_BRAKE_TRIAL_DPS 30U
+#endif
+#if APP_TURN_BRAKE_TRIAL_DPS != 15U && APP_TURN_BRAKE_TRIAL_DPS != 30U
+#error Turn_brake_trial_speed_invalid
+#endif
+#define APP_TURN_BRAKE_MAX_RPM ((APP_TURN_BRAKE_TRIAL_DPS == 30U) ? 27U : 13U)
+#define APP_TURN_BRAKE_FEEDBACK_RPM ((APP_TURN_BRAKE_TRIAL_DPS == 30U) ? 40U : 30U)
+
+/* 低速距离S曲线候选，默认关闭；仅调试mode3，仍不超过15RPM。
+ * 下列数值为软件候选，未做载物/刹车实测，不作为提速许可。 */
+#ifndef APP_DISTANCE_SCURVE_ENABLE
+#define APP_DISTANCE_SCURVE_ENABLE 0U
+#endif
+#if APP_DISTANCE_SCURVE_ENABLE > 1U
+#error Distance_scurve_enable_invalid
+#endif
+#define APP_DISTANCE_SCURVE_ACTIVE ((APP_DISTANCE_SCURVE_ENABLE || (APP_ROUTE_USE_CUSTOM && APP_ROUTE_SPEED_TRIAL_ENABLE)) && APP_IS_DEBUG && (APP_TEST_MODE == 3U))
+#if (APP_ROUTE_SPEED_TRIAL_ENABLE != 0U) && (APP_ROUTE_SPEED_TRIAL_ENABLE != 1U)
+#error Route_speed_trial_enable_invalid
+#endif
+#define APP_ROUTE_SPEED_TRIAL_ACTIVE (APP_ROUTE_SPEED_TRIAL_ENABLE && APP_ROUTE_USE_CUSTOM && APP_DISTANCE_SCURVE_ACTIVE)
+/* 左移地面标定候选：默认关闭，仅新路线调试构建启用。 */
+#ifndef APP_LEFT_TRIM_ENABLE
+#define APP_LEFT_TRIM_ENABLE 0U
+#endif
+#if APP_LEFT_TRIM_ENABLE > 1U
+#error Left_trim_enable_invalid
+#endif
+#define APP_LEFT_TRIM_ACTIVE (APP_LEFT_TRIM_ENABLE && APP_ROUTE_SPEED_TRIAL_ACTIVE)
+#define APP_LEFT_DISTANCE_SCALE 0.99761905f
+#define APP_LEFT_BACKWARD_RATIO 0.01670644f
+#define APP_DISTANCE_SCURVE_ACCEL_MM_S2 40.0f
+#define APP_DISTANCE_SCURVE_JERK_MM_S3 80.0f
+#define APP_DISTANCE_SCURVE_TRACK_MM 50.0f
+#define APP_DISTANCE_SCURVE_ARRIVAL_MM 2.0f
+#define APP_DISTANCE_SCURVE_FINAL_WAIT_MS 2000U
+/* 位置跟随候选：P目标经过二阶临界阻尼平滑，单位RPM。
+ * 低速预留1RPM及A/jerk余量；20cm/s专用余量见motion_trial20.h。
+ * 末端接近为整数1RPM，不能据此宣称实际轮速jerk连续。 */
+#define APP_DISTANCE_SCURVE_FOLLOW_KP 0.5f
+#define APP_DISTANCE_SCURVE_FOLLOW_RPM 1.0f
+#define APP_DISTANCE_SCURVE_FOLLOW_OMEGA 1.0f
+#define APP_DISTANCE_SCURVE_APPROACH_RPM 1U
+/* 20cm/s单条调试预设，默认关闭；不得用于定时/横移/比赛入口。 */
+#ifndef APP_SPEED20_TRIAL_ENABLE
+#define APP_SPEED20_TRIAL_ENABLE 0U
+#endif
+#if APP_SPEED20_TRIAL_ENABLE > 1U
+#error Speed20_trial_enable_invalid
+#endif
+#define APP_SPEED20_TRIAL_ACTIVE (APP_SPEED20_TRIAL_ENABLE && APP_DISTANCE_SCURVE_ACTIVE)
+#define APP_SPEED20_TRIAL_RPM 52U
+#define APP_SPEED20_TRIAL_MM 2100.0f
+#define APP_SPEED20_TRIAL_MM_S 200.0f
+#define APP_SPEED20_FEEDBACK_RPM 80U
+#define APP_SPEED20_RUN_MS 25000U
 
 /* 初始化提示次数：0静音，1默认，可改为3 */
 #define APP_INIT_BEEP_COUNT    2U
@@ -21,13 +94,18 @@
 /* 串口双向专用测试：VM强制关闭，所有运动入口禁用；0恢复原运动配置。 */
 /* 测试入口：0手动运动，1无线收发，2串口单次平移。改此处后重新编译下载。 */
 /* 3为组合动作测试，默认关闭；不与串口发车同时启用。 */
-#define APP_TEST_MODE 3U
+/* APP_ENTRY / APP_DEBUG_MODE见app_entry_config.h，不再在此修改。 */
 #if APP_TEST_MODE > 3U
 #error App_test_mode_invalid
 #endif
-#define APP_UART_LINK_TEST (APP_TEST_MODE == 1U)
+#define APP_UART_LINK_TEST (APP_IS_DEBUG && (APP_TEST_MODE == 1U))
 /* 串口平移开发模式：CRC遥测、两步启动、1秒通信失效取消。 */
-#define APP_SERIAL_MOTION_CONTROL ((APP_TEST_MODE == 2U) || (APP_TEST_MODE == 3U))
+#define APP_SERIAL_MOTION_CONTROL (APP_IS_DEBUG && ((APP_TEST_MODE == 2U) || (APP_TEST_MODE == 3U)))
+/* 位置诊断只读：0可关闭采样/PM1输出，不改变TM1和运动入口。 */
+#define APP_POSITION_DIAGNOSTIC (APP_SERIAL_MOTION_CONTROL || APP_IS_COMPETITION)
+#if (APP_POSITION_DIAGNOSTIC != 0U) && (APP_POSITION_DIAGNOSTIC != 1U)
+#error Position_diagnostic_invalid
+#endif
 #define APP_HEADING_SESSION_TEST 1U
 /* 前进航向保持开发模式；0切回已验证的原地转角会话。 */
 #define APP_FORWARD_HOLD_TEST 1U
@@ -95,3 +173,7 @@
 #endif
 
 #endif
+
+/* Offline experiment. Not a vehicle-ready firmware or persistent motor configuration. */
+#define APP_FINE_RPM_OFFLINE_ONLY 0U
+#define APP_FINE_RPM_VEHICLE 1U

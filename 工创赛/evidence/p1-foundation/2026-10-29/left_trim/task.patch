@@ -1,0 +1,174 @@
+--- before/app_config.h
++++ after/app_config.h
+@@ -16,6 +16,16 @@
+ #error Route_speed_trial_enable_invalid
+ #endif
+ #define APP_ROUTE_SPEED_TRIAL_ACTIVE (APP_ROUTE_SPEED_TRIAL_ENABLE && APP_ROUTE_USE_CUSTOM && APP_DISTANCE_SCURVE_ACTIVE)
++/* 左移地面标定候选：默认关闭，仅新路线调试构建启用。 */
++#ifndef APP_LEFT_TRIM_ENABLE
++#define APP_LEFT_TRIM_ENABLE 0U
++#endif
++#if APP_LEFT_TRIM_ENABLE > 1U
++#error Left_trim_enable_invalid
++#endif
++#define APP_LEFT_TRIM_ACTIVE (APP_LEFT_TRIM_ENABLE && APP_ROUTE_SPEED_TRIAL_ACTIVE)
++#define APP_LEFT_DISTANCE_SCALE 0.99761905f
++#define APP_LEFT_BACKWARD_RATIO 0.01670644f
+ #define APP_DISTANCE_SCURVE_ACCEL_MM_S2 40.0f
+ #define APP_DISTANCE_SCURVE_JERK_MM_S3 80.0f
+ #define APP_DISTANCE_SCURVE_TRACK_MM 50.0f
+--- before/chassis_kinematics.c
++++ after/chassis_kinematics.c
+@@ -247,6 +247,31 @@
+     Chassis_ClearMotorCommands(commands);
+     if (!Chassis_ProfileCorrectionRpm(base_rpm,correction_rpm,&effective)) return 0U;
+     return Chassis_TranslationCommandsAtSpeed(mode,base_rpm,effective,0U,MOTION_PROFILE_BASE_CEILING,commands);
++}
++
++uint32_t Chassis_LeftTrimCommands(uint32_t base_rpm, int32_t correction_rpm,
++    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
++{
++    ChassisWheelSpeeds logical;
++    uint32_t trim, room, i;
++    int32_t effective;
++    Chassis_ClearMotorCommands(commands);
++    if (!APP_LEFT_TRIM_ACTIVE || !commands || base_rpm>52U ||
++        !(APP_LEFT_BACKWARD_RATIO>=0.0f && APP_LEFT_BACKWARD_RATIO<=0.02f) ||
++        !Chassis_ProfileCorrectionRpm(base_rpm,correction_rpm,&effective)) return 0U;
++    trim=(uint32_t)((float)base_rpm*APP_LEFT_BACKWARD_RATIO+0.5f);
++    room=54U-base_rpm-trim;
++    if (room>base_rpm-trim) room=base_rpm-trim;
++    if (room>2U) room=2U;
++    if (effective>(int32_t)room) effective=(int32_t)room;
++    if (effective<-(int32_t)room) effective=-(int32_t)room;
++    logical.rpm[0]=(float)base_rpm-(float)trim-(float)effective;
++    logical.rpm[1]=-(float)base_rpm-(float)trim+(float)effective;
++    logical.rpm[2]=-(float)base_rpm-(float)trim-(float)effective;
++    logical.rpm[3]=(float)base_rpm-(float)trim+(float)effective;
++    for (i=0U;i<4U;i++)
++        if (Chassis_Abs(logical.rpm[i])>54.0f) return 0U;
++    return Chassis_EncodeEmm(&logical,54U,commands);
+ }
+ 
+ uint32_t Chassis_TranslationHoldCommands(uint32_t mode, int32_t correction_rpm,
+@@ -346,6 +371,7 @@
+     if (mode > 2U || !Chassis_Finite(encoder_mm)) return 0U;
+     result = encoder_mm;
+     if (mode == 0U) result *= CHASSIS_FORWARD_DISTANCE_SCALE;
++    if (mode == 1U && APP_LEFT_TRIM_ACTIVE) result *= APP_LEFT_DISTANCE_SCALE;
+     if (!Chassis_Finite(result)) return 0U;
+     *progress_mm = result;
+     return 1U;
+@@ -377,7 +403,7 @@
+     sign[0]=0U; sign[1]=1U; sign[2]=0U; sign[3]=1U;
+     if (!Chassis_CalibrateDistanceMm(0U,300.0f,&mean) ||
+         Chassis_Abs(mean - 306.54762f) > 0.01f ||
+-        !Chassis_CalibrateDistanceMm(1U,300.0f,&mean) || mean != 300.0f ||
++        !Chassis_CalibrateDistanceMm(1U,300.0f,&mean) || Chassis_Abs(mean - (APP_LEFT_TRIM_ACTIVE ? 300.0f*APP_LEFT_DISTANCE_SCALE : 300.0f)) > 0.01f ||
+         !Chassis_CalibrateDistanceMm(2U,300.0f,&mean) || mean != 300.0f ||
+         Chassis_CalibrateDistanceMm(3U,300.0f,&mean) ||
+         Chassis_CalibrateDistanceMm(0U,300.0f,NULL)) return 0U;
+--- before/chassis_kinematics.h
++++ after/chassis_kinematics.h
+@@ -79,6 +79,9 @@
+ uint32_t Chassis_ProfileCorrectionRpm(uint32_t base_rpm, int32_t requested, int32_t *effective);
+ uint32_t Chassis_TranslationProfileCommands(uint32_t mode, uint32_t base_rpm,
+     int32_t correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
++/* 候选专用：整数后向分量显式取整，并共享54RPM余量；不发送CAN。 */
++uint32_t Chassis_LeftTrimCommands(uint32_t base_rpm, int32_t correction_rpm,
++    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+ uint32_t Chassis_TranslationHoldCommands(uint32_t mode, int32_t correction_rpm,
+     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+ uint32_t Chassis_TranslationHoldSelfTest(void);
+--- before/motion_route_trial.h
++++ after/motion_route_trial.h
+@@ -41,6 +41,12 @@
+         factor*2.0f*ROUTE_TRIAL_FOLLOW_RPM*APP_DISTANCE_SCURVE_FOLLOW_OMEGA;
+     limits->jerk=APP_DISTANCE_SCURVE_JERK_MM_S3-
+         factor*6.0f*ROUTE_TRIAL_FOLLOW_RPM*APP_DISTANCE_SCURVE_FOLLOW_OMEGA*APP_DISTANCE_SCURVE_FOLLOW_OMEGA;
++    if (direction==1U && APP_LEFT_TRIM_ACTIVE)
++    {
++        /* 连续分量的A/J预算预留；整数取整台阶仍须实物检验。 */
++        limits->acceleration/=(1.0f+APP_LEFT_BACKWARD_RATIO);
++        limits->jerk/=(1.0f+APP_LEFT_BACKWARD_RATIO);
++    }
+     *rpm=base;return 1U;
+ }
+ static __inline uint32_t MotionRoute_Deadline(float duration_s)
+--- before/chassis_auto_test.c
++++ after/chassis_auto_test.c
+@@ -45,6 +45,15 @@
+ static AutoPositionPoint s_position_history[4][AUTO_POSITION_HISTORY];
+ static uint32_t s_position_history_count[4], s_position_history_head[4];
+ static uint32_t s_alignment_seen, s_alignment_ms;
++static uint32_t s_left_trim_tick, s_left_trim_valid, s_left_trim_rpm;
++static float s_left_trim_mm, s_position_trim_mm[4];
++static void Auto_LeftTrimAdvance(uint32_t now_ms)
++{
++    if (s_left_trim_valid)
++        s_left_trim_mm-=(float)(now_ms-s_left_trim_tick)*0.001f*(float)s_left_trim_rpm*
++            (3.14159265358979323846f*77.0f/60.0f);
++    s_left_trim_tick=now_ms; s_left_trim_valid=1U;
++}
+ static void Auto_PositionRemember(uint32_t wheel, uint32_t ms, float mm)
+ {
+     uint32_t n = s_position_history_head[wheel];
+@@ -82,6 +91,8 @@
+     uint32_t i;
+     s_position = empty; s_position.session = session;
+     s_alignment_seen = s_alignment_ms = 0U;
++    s_left_trim_tick=s_left_trim_valid=s_left_trim_rpm=0U;s_left_trim_mm=0.0f;
++    for(i=0U;i<4U;i++) s_position_trim_mm[i]=0.0f;
+     for (i=0U;i<4U;i++) s_position_history_count[i]=s_position_history_head[i]=0U;
+     if (session == 0U) s_endpoint_count = 0U;
+     s_endpoint_index = CHASSIS_POSITION_ENDPOINT_CAPACITY;
+@@ -445,6 +456,8 @@
+                 mm=(float)(current-start)*3.14159265358979323846f*g_chassis_geometry.wheel_diameter_mm/65536.0f;
+                 if (g_chassis_forward_direction[i]) mm=-mm;
+                 mm*=projection[s_translation_mode][i];
++                if(s_route_trial && s_translation_mode==1U && APP_LEFT_TRIM_ACTIVE)
++                    mm-=((i==0U || i==3U)?1.0f:-1.0f)*s_position_trim_mm[i];
+                 Auto_PositionRemember(i,ms,mm);
+             }
+             s_distance_seen_ms[i] = ms; s_distance_seen_raw[i] = s_position.raw[i];
+@@ -937,6 +950,11 @@
+         {
+             s_position.sign[i] = sign; s_position.raw[i] = raw;
+             s_position_tick[i] = xTaskGetTickCount();
++            if(s_route_trial && s_translation_mode==1U && APP_LEFT_TRIM_ACTIVE)
++            {
++                Auto_LeftTrimAdvance((uint32_t)s_position_tick[i]*portTICK_PERIOD_MS);
++                s_position_trim_mm[i]=s_left_trim_mm;
++            }
+             s_position_valid |= 1UL << i;
+         }
+         else
+@@ -1057,8 +1075,10 @@
+     {
+         if (((s_forward_hold == 1U) ?
+ #if APP_DISTANCE_SCURVE_ACTIVE
+-            (s_profile_active ? Chassis_TranslationProfileCommands(s_translation_mode,
+-                s_translation_base_rpm,effective_heading,s_commands[2]) :
++            (s_profile_active ? ((s_route_trial && s_translation_mode==1U && APP_LEFT_TRIM_ACTIVE) ?
++                Chassis_LeftTrimCommands(s_translation_base_rpm,effective_heading,s_commands[2]) :
++                Chassis_TranslationProfileCommands(s_translation_mode,
++                s_translation_base_rpm,effective_heading,s_commands[2])) :
+ #endif
+             Chassis_TranslationHoldCommandsAtSpeed(s_translation_mode, s_translation_base_rpm, effective_heading, s_commands[2])
+ #if APP_DISTANCE_SCURVE_ACTIVE
+@@ -1213,6 +1233,15 @@
+             s_motor_index++;
+             if (s_motor_index == 4U)
+             {
++#if APP_POSITION_DIAGNOSTIC
++                if(s_route_trial && s_translation_mode==1U && APP_LEFT_TRIM_ACTIVE &&
++                    (state==CHASSIS_AUTO_START || state==CHASSIS_AUTO_STOP))
++                {
++                    Auto_LeftTrimAdvance((uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
++                    s_left_trim_rpm=state==CHASSIS_AUTO_STOP ? 0U :
++                        (uint32_t)((float)s_translation_applied_base*APP_LEFT_BACKWARD_RATIO+0.5f);
++                }
++#endif
+                 if (state == CHASSIS_AUTO_DISABLE) Auto_EnterLocked(CHASSIS_AUTO_VERIFY_OFF, xTaskGetTickCount());
+                 else if (state == CHASSIS_AUTO_ENABLE) Auto_EnterLocked(CHASSIS_AUTO_VERIFY_ON, xTaskGetTickCount());
+                 else if (state == CHASSIS_AUTO_START) Auto_EnterLocked(CHASSIS_AUTO_RUN, xTaskGetTickCount());

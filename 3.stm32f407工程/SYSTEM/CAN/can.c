@@ -389,57 +389,23 @@ uint32_t CAN1_ReadStatus(uint8_t address, CanRxMsg *reply)
     }
     return result;
 }
-/* Emm实时转速只读：CAN回帧35、符号、速度高低字节、6B */
-uint32_t CAN1_ReadSpeed(uint8_t address, CanRxMsg *reply, int32_t *rpm)
+/* X实时转速只读：CAN回帧35、符号、速度高低字节、6B */
+uint32_t CAN1_ReadSpeed(uint8_t address, CanRxMsg *reply, float *rpm)
 {
-    uint32_t result;
-    uint32_t magnitude;
-    if (rpm == NULL) return 7U;
-    *rpm = 0;
-    result = CAN1_ReadParameter(address, 0x35U, 5U, reply);
-    if (result == 1U)
-    {
-        if (reply->Data[1] > 1U)
-        {
-            result = 6U;
-        }
-        else
-        {
-            magnitude = ((uint32_t)reply->Data[2] << 8) |
-                        reply->Data[3];
-            *rpm = (reply->Data[1] == 0U) ?
-                   (int32_t)magnitude : -(int32_t)magnitude;
-        }
-    }
-    if (result != 1U) CAN1_ResetSession();
-    return result;
+ uint32_t result;
+ if(!rpm || !reply)return 7U;*rpm=0.0f;
+ result=CAN1_ReadParameter(address,0x35U,5U,reply);
+ if(result==1U && !ZdtX_DecodeSpeed(reply->Data,reply->DLC,rpm))result=6U;
+ if(result!=1U)CAN1_ResetSession();return result;
 }
-/* Emm当前位置只读；符号与32位幅值分开，避免int32溢出 */
-uint32_t CAN1_ReadPosition(uint8_t address, CanRxMsg *reply,
-                           uint8_t *sign, uint32_t *raw)
+/* X当前位置只读；符号与32位幅值分开，避免int32溢出 */
+uint32_t CAN1_ReadPosition(uint8_t address,CanRxMsg *reply,uint8_t *sign,uint32_t *raw)
 {
-    uint32_t result;
-    if (sign == NULL || raw == NULL) return 7U;
-    *sign = 0U;
-    *raw = 0U;
-    result = CAN1_ReadParameter(address, 0x36U, 7U, reply);
-    if (result == 1U)
-    {
-        if (reply->Data[1] > 1U)
-        {
-            result = 6U;
-        }
-        else
-        {
-            *sign = reply->Data[1];
-            *raw = ((uint32_t)reply->Data[2] << 24) |
-                   ((uint32_t)reply->Data[3] << 16) |
-                   ((uint32_t)reply->Data[4] << 8) |
-                   (uint32_t)reply->Data[5];
-        }
-    }
-    if (result != 1U) CAN1_ResetSession();
-    return result;
+ uint32_t result;
+ if(!sign || !raw || !reply)return 7U;*sign=0U;*raw=0U;
+ result=CAN1_ReadParameter(address,0x36U,7U,reply);
+ if(result==1U && !ZdtX_DecodePosition(reply->Data,reply->DLC,sign,raw))result=6U;
+ if(result!=1U)CAN1_ResetSession();return result;
 }
 /* 控制应答统一处理：只接受02，其他应答保留并返回8 */
 static uint32_t CAN1_ControlSingle(uint8_t address,
@@ -458,6 +424,11 @@ static uint32_t CAN1_ControlSingle(uint8_t address,
         return 7U;
     }
 
+#if APP_X_OFFLINE_ONLY
+    /* 离线候选拒绝启用驱动和所有非零速度；STOP和读取不受影响。 */
+    if(request && ((request_length==5U && request[0]==0xF3U && request[2]) ||
+       (request_length==8U && request[0]==0xF6U && (request[4] || request[5]))))return 7U;
+#endif
     trace = ((g_can_ctrl_fault_latched == 0U) && (request != NULL) &&
         (request_length >= 2U) && (request_length <= 8U)) ? 1U : 0U;
     if (trace)
@@ -503,7 +474,7 @@ static uint32_t CAN1_ControlSingle(uint8_t address,
     result = CAN1_ExchangeSingle(address, request,
                                  request_length, 3U, reply);
 
-    if ((result == 1U) && (reply->Data[1] != 0x02U))
+    if ((result == 1U) && !ZdtX_DecodeAck(request[0],reply->Data,reply->DLC))
     {
         /* 非02不能作为成功确认，原始回复仍保留 */
         result = 8U;
@@ -547,40 +518,75 @@ uint32_t CAN1_StopMotor(uint8_t address, CanRxMsg *reply)
 {
     uint8_t request[4] = {0xFEU, 0x98U, 0U, 0x6BU};
 
-    return CAN1_ControlSingle(address, request, 4U, reply);
+    uint32_t result=CAN1_ControlSingle(address, request, 4U, reply);
+    XLoad_RecordCommand(address,0,XLOAD_STOP_ACK,result,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
+    return result;
 }
 
-/* Emm原始速度控制：方向0为CW，1为CCW */
+/* X原始速度控制：方向0为CW，1为CCW */
 /* CW/CCW与整车前后方向的对应关系仍需实测 */
-uint32_t CAN1_SetEmmSpeedRaw(uint8_t address, uint8_t direction,
-                             uint16_t speed_raw, uint8_t acceleration,
-                             CanRxMsg *reply)
+static uint32_t CAN1_XSpeed(uint8_t address,uint8_t direction,uint16_t speed_raw,
+    uint16_t acceleration,uint8_t sync,CanRxMsg *reply)
 {
-    uint8_t request[7] = {
-        0xF6U, 0U, 0U, 0U, 0U, 0U, 0x6BU
-    };
-
-    /* 3000是协议输入上限，不是整车允许的安全速度 */
-    if ((direction > 1U) || (speed_raw > 3000U))
-    {
-        return 7U;
-    }
-
-    request[1] = direction;
-    request[2] = (uint8_t)(speed_raw >> 8);
-    request[3] = (uint8_t)speed_raw;
-    request[4] = acceleration;
-
-    /* 加速度0有直接启动含义，实际运动参数后续单独确定 */
-    return CAN1_ControlSingle(address, request, 7U, reply);
+ uint8_t request[8];
+ if(speed_raw>ZDT_X_APP_MAX_SPEED_RAW || !ZdtX_EncodeSpeed(direction,speed_raw,acceleration,sync,request))return 7U;
+ { uint32_t result;int32_t target=direction?-(int32_t)speed_raw:(int32_t)speed_raw;
+   XLoad_RecordCommand(address,target,XLOAD_TX,0U,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
+   result=CAN1_ControlSingle(address,request,8U,reply);
+   XLoad_RecordCommand(address,target,sync?XLOAD_STAGED_ACK:XLOAD_ACK,result,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
+   return result; }
 }
+uint32_t CAN1_SetXSpeedRaw(uint8_t address,uint8_t direction,uint16_t speed_raw,
+    uint16_t acceleration,CanRxMsg *reply)
+{ return CAN1_XSpeed(address,direction,speed_raw,acceleration,0U,reply); }
+uint32_t CAN1_StageXSpeedRaw(uint8_t address,uint8_t direction,uint16_t speed_raw,
+    uint16_t acceleration,CanRxMsg *reply)
+{ return CAN1_XSpeed(address,direction,speed_raw,acceleration,1U,reply); }
 
-
-
-
-
-
-
-
-
-
+/* 复用速度采样时隙：仅一条读取请求，有界接收五包系统状态回复。 */
+uint32_t CAN1_ReadXSystemSnapshot(uint8_t address,CanRxMsg *reply,float *rpm)
+{
+    CanTxMsg tx;CanRxMsg rx;XSystemSnapshot sample={0};
+    TickType_t start;uint32_t result=5U;uint8_t packet=0U,length=0U,i,offset,mailbox,status;
+    uint8_t data[36]={0};uint32_t raw;
+    if(address<1U || address>4U || !reply || !rpm)return 7U;
+    *rpm=0.0f;memset(reply,0,sizeof(*reply));
+    if(!s_can1_normal_ready){result=CAN1_InitMode(CAN_Mode_Normal);if(result!=1U)goto finished;s_can1_normal_ready=1U;}
+    for(i=0U;i<3U && CAN_MessagePending(CAN1,CAN_FIFO0);i++)CAN_Receive(CAN1,CAN_FIFO0,&rx);
+    memset(&tx,0,sizeof(tx));tx.ExtId=(uint32_t)address<<8;tx.IDE=CAN_Id_Extended;tx.RTR=CAN_RTR_Data;
+    tx.DLC=3U;tx.Data[0]=0x43U;tx.Data[1]=0x7AU;tx.Data[2]=0x6BU;
+    mailbox=CAN_Transmit(CAN1,&tx);if(mailbox==CAN_TxStatus_NoMailBox){result=4U;goto finished;}
+    start=xTaskGetTickCount();
+    do {
+        status=CAN_TransmitStatus(CAN1,mailbox);
+        if(status==CAN_TxStatus_Failed || (TickType_t)(xTaskGetTickCount()-start)>=pdMS_TO_TICKS(CAN1_SINGLE_TX_WAIT_MS)){
+            CAN_CancelTransmit(CAN1,mailbox);result=4U;goto finished;}
+    }while(status!=CAN_TxStatus_Ok);
+    start=xTaskGetTickCount();result=5U;
+    while((TickType_t)(xTaskGetTickCount()-start)<pdMS_TO_TICKS(CAN1_SINGLE_REPLY_WAIT_MS)){
+        if(!CAN_MessagePending(CAN1,CAN_FIFO0))continue;
+        CAN_Receive(CAN1,CAN_FIFO0,&rx);
+        if(rx.IDE!=CAN_Id_Extended || rx.RTR!=CAN_RTR_Data || (rx.ExtId>>8)!=address)continue;
+        if(rx.DLC<2U || rx.DLC>8U || rx.Data[0]!=0x43U)continue;
+        *reply=rx;
+        if((rx.ExtId&0xFFU)!=packet){result=6U;break;}
+        offset=packet?1U:0U;
+        if((uint32_t)length+rx.DLC-offset>36U){result=6U;break;}
+        for(i=offset;i<rx.DLC;i++)data[length++]=rx.Data[i];
+        packet++;
+        if(length==36U){
+            if(data[1]!=37U || data[2]!=12U || data[35]!=0x6BU || data[13]>1U ||
+               data[18]>1U || data[21]>1U || data[26]>1U){result=6U;break;}
+            raw=((uint32_t)data[19]<<8)|data[20];
+            sample.speed_decirpm=data[18]?-(int32_t)raw:(int32_t)raw;
+            sample.position_deci_deg=((uint32_t)data[22]<<24)|((uint32_t)data[23]<<16)|((uint32_t)data[24]<<8)|data[25];
+            sample.position_sign=data[21];sample.phase_ma=(uint16_t)(((uint16_t)data[7]<<8)|data[8]);
+            sample.bus_mv=(uint16_t)(((uint16_t)data[3]<<8)|data[4]);
+            sample.home_flags=data[33];sample.motor_flags=data[34];
+            *rpm=(float)sample.speed_decirpm*0.1f;result=1U;break;
+        }
+    }
+finished:
+    XLoad_RecordSnapshot(address,result,&sample,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
+    if(result!=1U)CAN1_ResetSession();return result;
+}

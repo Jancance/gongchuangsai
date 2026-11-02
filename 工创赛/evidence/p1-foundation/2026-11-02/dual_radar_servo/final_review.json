@@ -1,0 +1,39 @@
+{
+  "changed_existing_sources": [
+    "gongxun-f407-offline.uvprojx",
+    "gongxun-f407.uvprojx",
+    "USER/main.c"
+  ],
+  "new_modules": [
+    "HARDWARE/RADAR_SERVO/radar_servo.c",
+    "HARDWARE/RADAR_SERVO/radar_servo.h",
+    "HARDWARE/RADAR_SERVO/radar_servo_config.h",
+    "HARDWARE/RADAR_SERVO/radar_servo_logic.c",
+    "HARDWARE/RADAR_SERVO/radar_servo_logic.h",
+    "HARDWARE/RADAR_SERVO/radar_zone_switch.c",
+    "HARDWARE/RADAR_SERVO/radar_zone_switch.h"
+  ],
+  "all_other_existing_sources_unchanged": true,
+  "main_original_bytes_recoverable_by_removing_only_added_hooks": true,
+  "GBK_CRLF_new_modules": true,
+  "tests": [
+    {
+      "offline": 0,
+      "checks": 5431,
+      "failures": 0,
+      "peripherals": "stubs, not hardware"
+    },
+    {
+      "offline": 1,
+      "checks": 5422,
+      "failures": 0,
+      "peripherals": "stubs, not hardware"
+    }
+  ],
+  "vehicle_sha256": "5d01fa6f5143c4c8412f3be7b1a0fd10de2956ba2e062de4174236aabe4496c8",
+  "offline_sha256": "e69f92fd24a669b2aa300d64c192d80ba1d91384e2fa2c23cb6e517b390cd84d",
+  "hardware_accessed": false,
+  "current_board_image": "unchanged A baseline",
+  "initial_test_fixture_issue": "Direct ARM entry skipped C runtime RW initialization; stub PCLK initialized explicitly, original assertions all passed",
+  "initial_build_issue": "Added explicit standard-library TIM header/source dependency; final builds 0 errors 0 warnings"
+}

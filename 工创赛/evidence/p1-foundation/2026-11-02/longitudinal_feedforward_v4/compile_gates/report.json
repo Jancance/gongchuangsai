@@ -1,0 +1,158 @@
+[
+  {
+    "name": "defaults",
+    "command": [
+      "D:/Keil_v5/ARM/arm5_compiler/bin/armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "-I",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-11-02\\longitudinal_feedforward_v4\\candidate\\USER",
+      "-c",
+      "unit.c",
+      "-o",
+      "defaults.o"
+    ],
+    "returncode": 0,
+    "output": "",
+    "passed": true
+  },
+  {
+    "name": "vehicle_off",
+    "command": [
+      "D:/Keil_v5/ARM/arm5_compiler/bin/armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "-I",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-11-02\\longitudinal_feedforward_v4\\candidate\\USER",
+      "-DAPP_X_OFFLINE_ONLY=0",
+      "-c",
+      "unit.c",
+      "-o",
+      "vehicle_off.o"
+    ],
+    "returncode": 0,
+    "output": "",
+    "passed": true
+  },
+  {
+    "name": "forward_vehicle_rejected",
+    "command": [
+      "D:/Keil_v5/ARM/arm5_compiler/bin/armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "-I",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-11-02\\longitudinal_feedforward_v4\\candidate\\USER",
+      "-DAPP_X_OFFLINE_ONLY=0",
+      "-DAPP_FF_FORWARD_ENABLE=1",
+      "-c",
+      "unit.c",
+      "-o",
+      "forward_vehicle_rejected.o"
+    ],
+    "returncode": 1,
+    "output": "\"C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-11-02\\longitudinal_feedforward_v4\\candidate\\USER\\longitudinal_feedforward.h\", line 24: Error:  #35: #error directive: Feedforward_trial_requires_offline_build\n  #error Feedforward_trial_requires_offline_build\n   ^\nunit.c: 0 warnings, 1 error\n",
+    "passed": true
+  },
+  {
+    "name": "backward_vehicle_rejected",
+    "command": [
+      "D:/Keil_v5/ARM/arm5_compiler/bin/armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "-I",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-11-02\\longitudinal_feedforward_v4\\candidate\\USER",
+      "-DAPP_X_OFFLINE_ONLY=0",
+      "-DAPP_FF_BACKWARD_ENABLE=1",
+      "-c",
+      "unit.c",
+      "-o",
+      "backward_vehicle_rejected.o"
+    ],
+    "returncode": 1,
+    "output": "\"C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-11-02\\longitudinal_feedforward_v4\\candidate\\USER\\longitudinal_feedforward.h\", line 24: Error:  #35: #error directive: Feedforward_trial_requires_offline_build\n  #error Feedforward_trial_requires_offline_build\n   ^\nunit.c: 0 warnings, 1 error\n",
+    "passed": true
+  },
+  {
+    "name": "invalid_switch",
+    "command": [
+      "D:/Keil_v5/ARM/arm5_compiler/bin/armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "-I",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-11-02\\longitudinal_feedforward_v4\\candidate\\USER",
+      "-DAPP_FF_FORWARD_ENABLE=2",
+      "-c",
+      "unit.c",
+      "-o",
+      "invalid_switch.o"
+    ],
+    "returncode": 1,
+    "output": "\"C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-11-02\\longitudinal_feedforward_v4\\candidate\\USER\\longitudinal_feedforward.h\", line 18: Error:  #35: #error directive: Invalid_feedforward_switch\n  #error Invalid_feedforward_switch\n   ^\nunit.c: 0 warnings, 1 error\n",
+    "passed": true
+  },
+  {
+    "name": "negative_ratio",
+    "command": [
+      "D:/Keil_v5/ARM/arm5_compiler/bin/armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "-I",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-11-02\\longitudinal_feedforward_v4\\candidate\\USER",
+      "-DAPP_FF_BACKWARD_PERMILLE=-1",
+      "-c",
+      "unit.c",
+      "-o",
+      "negative_ratio.o"
+    ],
+    "returncode": 1,
+    "output": "\"C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-11-02\\longitudinal_feedforward_v4\\candidate\\USER\\longitudinal_feedforward.h\", line 21: Error:  #35: #error directive: Invalid_feedforward_ratio\n  #error Invalid_feedforward_ratio\n   ^\nunit.c: 0 warnings, 1 error\n",
+    "passed": true
+  },
+  {
+    "name": "excessive_ratio",
+    "command": [
+      "D:/Keil_v5/ARM/arm5_compiler/bin/armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "-I",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-11-02\\longitudinal_feedforward_v4\\candidate\\USER",
+      "-DAPP_FF_FORWARD_PERMILLE=21",
+      "-c",
+      "unit.c",
+      "-o",
+      "excessive_ratio.o"
+    ],
+    "returncode": 1,
+    "output": "\"C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-11-02\\longitudinal_feedforward_v4\\candidate\\USER\\longitudinal_feedforward.h\", line 21: Error:  #35: #error directive: Invalid_feedforward_ratio\n  #error Invalid_feedforward_ratio\n   ^\nunit.c: 0 warnings, 1 error\n",
+    "passed": true
+  },
+  {
+    "name": "independent_ratios",
+    "command": [
+      "D:/Keil_v5/ARM/arm5_compiler/bin/armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "-I",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-11-02\\longitudinal_feedforward_v4\\candidate\\USER",
+      "-DAPP_FF_FORWARD_ENABLE=1",
+      "-DAPP_FF_BACKWARD_ENABLE=1",
+      "-DAPP_FF_FORWARD_PERMILLE=5",
+      "-DAPP_FF_BACKWARD_PERMILLE=20",
+      "-c",
+      "unit.c",
+      "-o",
+      "independent_ratios.o"
+    ],
+    "returncode": 0,
+    "output": "",
+    "passed": true
+  }
+]

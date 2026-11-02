@@ -1,0 +1,27 @@
+{
+  "baseline": "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\fine_rpm_sequential_straight210_20261031",
+  "candidate": "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\fine_rpm_sequential_p100_straight210_20261031",
+  "changes": [
+    "USER\\heading_controller.c"
+  ],
+  "old": "command = 0.8f * error - 0.25f * rate_dps;",
+  "new": "command = 1.0f * error - 0.25f * rate_dps;",
+  "deadband_deg": 0.3,
+  "D": 0.25,
+  "P": 1.0,
+  "crlf_before": 263,
+  "lf_before": 263,
+  "source_sha_before": "59199c59c0bc71640cb7ca8fe0a3725a9af98e2d8cc62038b307e0f57f826a18",
+  "source_sha_after": "06e0af899342e7ba66a82ba14c18cfd60e1c08ba5c3c351a9948abf6f9627b21",
+  "flashed": true,
+  "started": true,
+  "image_sha256": "7edd1164c60d020e7a6dba36ba1e44a885437652620c0f8546e0e1eeb73a8f30",
+  "build_errors": 0,
+  "build_warnings": 0,
+  "model_checks": {
+    "scenarios": 14,
+    "assertions": 95223,
+    "passed": true
+  },
+  "software_complete_after_user_reported_power_recovery": true
+}

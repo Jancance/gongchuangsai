@@ -22,6 +22,8 @@ static uint32_t s_bad = 0U;
 static uint32_t s_seen_errors = 0U;
 static uint32_t s_active = 0U;
 static TickType_t s_last_tick = 0U;
+static TickType_t s_frame_start_tick = 0U;
+volatile uint32_t g_saoma_frame_start_ms=0U,g_saoma_frame_end_ms=0U;
 char SAOMA_Data[SAOMA_TASK_LENGTH + 1U] = {0};
 volatile uint8_t SAOMA_DataReady = 0U;
 volatile uint32_t g_saoma_rx_count = 0U;
@@ -117,6 +119,8 @@ static void SAOMA_Finish(void)
         s_frame[15] = '\0';
         memcpy(SAOMA_Data, s_frame, sizeof(SAOMA_Data));
         SAOMA_DataReady = 1U;
+        g_saoma_frame_start_ms=(uint32_t)s_frame_start_tick*portTICK_PERIOD_MS;
+        g_saoma_frame_end_ms=(uint32_t)s_last_tick*portTICK_PERIOD_MS;
         g_saoma_accept_count++;
         g_saoma_last_result = 1U;
     }
@@ -165,6 +169,7 @@ void SAOMA_Update(void)
             SAOMA_Finish();
             continue;
         }
+        if(s_active==0U) s_frame_start_tick=item.tick;
         s_active = 1U;
         if (s_length < SAOMA_TASK_LENGTH)
         {

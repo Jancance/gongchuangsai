@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-25",
+  "scope": "DWT timing intervals for translation critical section, nested backend start and action loading; CT1 frozen fault diagnostic",
+  "host_tests": 77,
+  "builds": {
+    "default": "Code=58200 RO-data=788 RW-data=2012 ZI-data=33172",
+    "route_a": "Code=58196 RO-data=768 RW-data=2012 ZI-data=33172",
+    "route_b": "Code=58200 RO-data=748 RW-data=2012 ZI-data=33172",
+    "single": "Code=49648 RO-data=708 RW-data=1940 ZI-data=32924",
+    "manual": "Code=41632 RO-data=652 RW-data=1836 ZI-data=27892",
+    "link": "Code=26534 RO-data=462 RW-data=1884 ZI-data=27860",
+    "off": "Code=53004 RO-data=788 RW-data=1984 ZI-data=31024"
+  },
+  "source_sha256": {
+    "main.c": "bd963bb9f7297323e4fe145c427d75c3f210bb1eb4f3a5587afbc59e016dccdc",
+    "hwt101.c": "690b864c1144baf247a93cffb8be585675a0612002333edaf006026b5dbb3c90",
+    "hwt101.h": "eb01b7feb7e18c73495c472b09497514ab14de6941013683315b61f929b56429"
+  },
+  "source_build_match": true,
+  "encoding": "GBK/CRLF preserved",
+  "backend_config_and_default_action_table_unchanged": true,
+  "flashed": false,
+  "serial_opened": false,
+  "hardware_measured": false,
+  "pushed": false,
+  "limits": [
+    "no measured durations or causal proof of ORE in this turn",
+    "intervals include nested computation but exclude marker bookkeeping tail and critical entry/exit; not complete interrupt latency proof",
+    "timing instrumentation and per-arm reset add bounded overhead, not calibrated on MCU",
+    "event cycle is ISR/diagnostic handling timestamp, not hardware byte arrival time",
+    "counter wraps and debugger halts constrain correlations; correlate arm/tick too",
+    "HF2 remains unchanged and timing frames never renew control"
+  ]
+}

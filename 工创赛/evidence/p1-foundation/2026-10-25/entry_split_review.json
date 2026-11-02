@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-25",
+  "baseline_commit": "54bb617",
+  "scope": "compile-time debug/competition entry boundary, idle-only runtime debug presets",
+  "default_entry": "debug, APP_DEBUG_MODE3 compatibility engine",
+  "debug_presets": {
+    "0": "previous default timed4 actions",
+    "1": "left30cm",
+    "2": "forward30cm",
+    "3": "right30cm",
+    "4": "left/front/right30cm"
+  },
+  "competition_status": "task-code snapshot only; autonomous task/field planner unimplemented; motion gate always denies",
+  "builds": {
+    "debug": "Code=59900 RO-data=848 RW-data=2028 ZI-data=34340",
+    "competition": "Code=53024 RO-data=652 RW-data=1944 ZI-data=29376"
+  },
+  "host_tests": 88,
+  "actual_c_checks": {
+    "debug_selector_and_serial_handler": 114,
+    "competition_module": 38
+  },
+  "simulation_limits": "ARM Cortex-M3 soft-float Unicorn, mocked power/backend/RTOS; no scheduling or hardware validation",
+  "competition_parser_symbols_absent": true,
+  "source_build_match": true,
+  "source_sha256": {
+    "3.stm32f407工程\\USER\\main.c": "85890083e751f68470e7f69d38753f8d8fa79840073eea4980f9f0fe447af334",
+    "3.stm32f407工程\\USER\\app_config.h": "abe53fa2069e294a70b56a428a430ae8eae996280b3e9110beb4d9c9d51e8eec",
+    "3.stm32f407工程\\USER\\app_entry_config.h": "cdcbedc0e5f7f7a53aaf07092443fc93735a2de76bd34c33ff364a84b848edf7",
+    "3.stm32f407工程\\USER\\app_entry.c": "24a71ba9d6ffb3ea2a0504dd082984f848942164461fdab5ca5a05256988fcba",
+    "3.stm32f407工程\\USER\\app_entry.h": "1f05f6489ccc6de511b2d63dc164bebbffde9e8b851144b50457a76cfdf35de7",
+    "3.stm32f407工程\\gongxun-f407.uvprojx": "d7326f1058aed2316b31fdf8a67829cf05f4f00f6e679c1cc0b72817a336c1aa",
+    "工创赛\\scripts\\p1_serial_motion.py": "8df3e94e08cfc5f1a334089a39ea6449bb1f0961ca750b85af94ab4a75cad8ea"
+  },
+  "flashed": false,
+  "serial_opened": false,
+  "motion_started": false,
+  "pushed": false,
+  "remaining": [
+    "No MCU verification of PLAN handshake, added RX stack usage or66-field TM1",
+    "Competition autonomy is not implemented and cannot drive",
+    "Legacy APP_DEBUG_MODE0/1/2 profiles not rebuilt in this two-entry check",
+    "Runtime preset selection only before ARM/START; one-shot per boot remains"
+  ]
+}

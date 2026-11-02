@@ -1,0 +1,30 @@
+--- USER/chassis_auto_test.c (before)
+
++++ USER/chassis_auto_test.c
+
+@@ -841,4 +841,24 @@
+
+ #if APP_TEST_MODE == 3U
+ /* 整组许可只在首次闲置申请；故障/取消后的组不能从这里重开。 */
++/* Only a normally completed, zero-speed, powered-off sequence may be reused.
++ * This never clears a fault/cancelled result or any global fault latch. */
++uint32_t ChassisAuto_RearmCompleted(uint32_t expected_session)
++{
++    uint32_t accepted=0U;PowerCommandStatus power;
++    taskENTER_CRITICAL();Power_ReadCommandStatus(&power);
++    if(expected_session==g_chassis_auto_session && !s_vm_requested && !s_used &&
++       !s_sequence_hold && !g_chassis_auto_active && !g_chassis_auto_cut_vm && !power.active &&
++       g_chassis_auto_state==CHASSIS_AUTO_DONE && g_chassis_auto_result==1U &&
++       !g_chassis_auto_cause && g_chassis_auto_segment<3U &&
++       g_chassis_auto_stop_mask[g_chassis_auto_segment]==15U &&
++       Auto_ZeroSpeedLocked() && !s_fault_diagnostic_valid &&
++       !g_rtos_fault && !g_safety_fault && !g_can_ctrl_fault_latched &&
++       !g_motion_diag_fault_latched && !g_motion_auto_stop_cut_vm &&
++       !g_wheel_test_active && !g_wheel_test_cut_vm) {
++        g_chassis_auto_state=CHASSIS_AUTO_IDLE;g_chassis_auto_result=0U;
++        s_sequence_continue=0U;accepted=1U;
++    }
++    taskEXIT_CRITICAL();return accepted;
++}
+ uint32_t ChassisAuto_BeginSequence(void)
+ {

@@ -1,0 +1,118 @@
+{
+  "hardware_accessed": false,
+  "downloaded": false,
+  "baseline_image_unchanged": true,
+  "ki0_models_exactly_match_current_pd": true,
+  "lateral_and_longitudinal_separated": true,
+  "three_normal_models": [
+    {
+      "scenario": 0,
+      "tau_s": 0.07999999821186066,
+      "sensor_delay_ticks": 0.0,
+      "by_ki": {
+        "0": {
+          "abs_lateral_mm": 2.2044498920440674,
+          "longitudinal_error_mm": -6.21044921875,
+          "elapsed_ms": 20690.0
+        },
+        "001": {
+          "abs_lateral_mm": 2.2044498920440674,
+          "longitudinal_error_mm": -6.21044921875,
+          "elapsed_ms": 20690.0
+        },
+        "002": {
+          "abs_lateral_mm": 1.3061856031417847,
+          "longitudinal_error_mm": -1.981689453125,
+          "elapsed_ms": 20780.0
+        },
+        "003": {
+          "abs_lateral_mm": 1.2202997207641602,
+          "longitudinal_error_mm": -1.13427734375,
+          "elapsed_ms": 20740.0
+        }
+      }
+    },
+    {
+      "scenario": 1,
+      "tau_s": 0.07999999821186066,
+      "sensor_delay_ticks": 4.0,
+      "by_ki": {
+        "0": {
+          "abs_lateral_mm": 1.285946011543274,
+          "longitudinal_error_mm": 1.729736328125,
+          "elapsed_ms": 20840.0
+        },
+        "001": {
+          "abs_lateral_mm": 1.2862435579299927,
+          "longitudinal_error_mm": 1.71337890625,
+          "elapsed_ms": 20800.0
+        },
+        "002": {
+          "abs_lateral_mm": 1.411169171333313,
+          "longitudinal_error_mm": 1.694580078125,
+          "elapsed_ms": 20800.0
+        },
+        "003": {
+          "abs_lateral_mm": 1.287277102470398,
+          "longitudinal_error_mm": 1.662353515625,
+          "elapsed_ms": 20820.0
+        }
+      }
+    },
+    {
+      "scenario": 2,
+      "tau_s": 0.20000000298023224,
+      "sensor_delay_ticks": 0.0,
+      "by_ki": {
+        "0": {
+          "abs_lateral_mm": 5.93219518661499,
+          "longitudinal_error_mm": -5.61474609375,
+          "elapsed_ms": 20130.0
+        },
+        "001": {
+          "abs_lateral_mm": 5.93219518661499,
+          "longitudinal_error_mm": -5.61474609375,
+          "elapsed_ms": 20130.0
+        },
+        "002": {
+          "abs_lateral_mm": 6.261059761047363,
+          "longitudinal_error_mm": -2.055908203125,
+          "elapsed_ms": 20090.0
+        },
+        "003": {
+          "abs_lateral_mm": 6.462432861328125,
+          "longitudinal_error_mm": -1.262451171875,
+          "elapsed_ms": 20140.0
+        }
+      }
+    }
+  ],
+  "pd_controller_mean_tail_error_deg": 0.20890141697600484,
+  "integral_controller_mean_tail_error_deg": 0.12557208716558912,
+  "controller_cases_improved": 10,
+  "controller_cases_worse": 1,
+  "motion_assertions_by_ki": {
+    "0": 103977,
+    "001": 103928,
+    "002": 104132,
+    "003": 103966
+  },
+  "controller_assertions": [
+    232019,
+    232091
+  ],
+  "changed_sources": [
+    "USER\\heading_controller.c",
+    "USER\\heading_controller.h",
+    "USER\\main.c",
+    "USER\\zdt_x_config.h"
+  ],
+  "new_sources": [
+    "USER\\heading_integral_trial.h"
+  ],
+  "unchanged_sources": 53,
+  "default_image_sha256": "690f135af75a098c54ba33579a6e3f618b4ffcace50414d3eeff3e884933d85d",
+  "integral_offline_image_sha256": "89e0d42be824408f394564ee1c631aa306f2ceb512f273edb65f329b81d3658e",
+  "adopt_now": false,
+  "limits": "Actual C STM32 controller/backend in synthetic plants; vendor X internal loops and real 2.5cm lateral drift are not identified by these models."
+}

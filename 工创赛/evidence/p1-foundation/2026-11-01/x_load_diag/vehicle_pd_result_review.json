@@ -1,0 +1,83 @@
+{
+  "status": "software_complete",
+  "valid_frames": 496,
+  "invalid_frames": 0,
+  "max_abs_error_deg": 0.615,
+  "max_abs_rpm": [
+    51.2,
+    51.8,
+    50.2,
+    54.5
+  ],
+  "load_diagnostic": {
+    "session": 1,
+    "expected_records": 2023,
+    "received_records": 2023,
+    "dropped": 0,
+    "complete": true
+  },
+  "error": null,
+  "last": {
+    "tick_ms": 93935,
+    "elapsed_ms": 21972,
+    "phase": 3,
+    "trip": 0,
+    "distance_progress_milli_mm": 2100151,
+    "stop_mask": 15,
+    "vm_request": 0,
+    "pe2_active": 0,
+    "can_fault": 0,
+    "rtos_fault": 0,
+    "safety_fault": 0
+  },
+  "tick_reversal_count": 0,
+  "wheel_sample_statistics": {
+    "1": {
+      "samples": 42,
+      "mean_current_ma_unweighted": 149.6904761904762,
+      "peak_current_ma": 381,
+      "mean_shortfall_rpm_unweighted": 0.5023809523809517,
+      "median_interval_ms": 506,
+      "max_interval_ms": 528,
+      "near_2700ma_samples": 0
+    },
+    "2": {
+      "samples": 41,
+      "mean_current_ma_unweighted": 167.4878048780488,
+      "peak_current_ma": 432,
+      "mean_shortfall_rpm_unweighted": -0.30975609756097566,
+      "median_interval_ms": 506.0,
+      "max_interval_ms": 539,
+      "near_2700ma_samples": 0
+    },
+    "3": {
+      "samples": 41,
+      "mean_current_ma_unweighted": 64.09756097560975,
+      "peak_current_ma": 206,
+      "mean_shortfall_rpm_unweighted": 0.1707317073170725,
+      "median_interval_ms": 506.0,
+      "max_interval_ms": 528,
+      "near_2700ma_samples": 0
+    },
+    "4": {
+      "samples": 42,
+      "mean_current_ma_unweighted": 85.21428571428571,
+      "peak_current_ma": 228,
+      "mean_shortfall_rpm_unweighted": -0.12380952380952374,
+      "median_interval_ms": 506,
+      "max_interval_ms": 528,
+      "near_2700ma_samples": 0
+    }
+  },
+  "heading_only_projected_right_cm": 1.188894248683615,
+  "projection_covered_mm": 2100.151,
+  "physical_measurement": {
+    "right_cm": 2.1,
+    "short_cm": 1.5,
+    "derived_forward_cm": 208.5,
+    "raw_user_text": "右偏 2.1cm欠1.5cm"
+  },
+  "physical_stop_and_oscillation": "pending user",
+  "readback_summary_file": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\evidence\\p1-foundation\\2026-11-01\\x_load_diag\\run_pd_once\\20261101_224351_733000.summary.json",
+  "limits": "Sparse snapshot statistics cannot rule out short current-limit events; projection is not independent ground lateral measurement."
+}

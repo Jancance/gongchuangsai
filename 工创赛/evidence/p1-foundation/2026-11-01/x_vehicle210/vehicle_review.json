@@ -1,0 +1,71 @@
+{
+  "status": "software_complete",
+  "opened": true,
+  "valid_frames": 261,
+  "invalid_frames": 0,
+  "sent_commands": 101,
+  "max_abs_rpm": [
+    61.0,
+    59.9,
+    50.0,
+    54.4
+  ],
+  "max_abs_error_deg": 0.862,
+  "error": null,
+  "heading_observation": {
+    "reference_yaw_deg": -1.614,
+    "initial_observed_yaw_deg": -1.614,
+    "peak_departure_deg": 0.8629999999999995,
+    "vm_off_yaw_deg": -1.73,
+    "post_stop_yaw_deg": -1.796,
+    "post_stop_vs_reference_deg": -0.18199999999998795,
+    "post_stop_vs_vm_off_deg": -0.0660000000000025
+  },
+  "position_frames": 126,
+  "batch_frames": 17,
+  "last": {
+    "tick_ms": 57851,
+    "phase": 3,
+    "trip": 0,
+    "elapsed_ms": 22092,
+    "distance_progress_milli_mm": 2100013,
+    "distance_target_milli_mm": 2100000,
+    "distance_reached": 1,
+    "distance_fault_reason": 0,
+    "stop_mask": 15,
+    "vm_request": 0,
+    "pe2_active": 0,
+    "rpm1": 0.0,
+    "rpm2": 0.0,
+    "rpm3": 0.0,
+    "rpm4": 0.0,
+    "can_fault": 0,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "remote_accepted": 101,
+    "remote_rejected": 0,
+    "sequence_completed": 1,
+    "telemetry_schema": "TM6"
+  },
+  "telemetry_tick_monotonic": true,
+  "unexpected_resets_from_tick_reversal": 0,
+  "status_summary_path": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\evidence\\p1-foundation\\2026-11-01\\x_vehicle210\\run_once\\20261101_175748_935900.summary.json",
+  "changed_sources": [
+    "USER\\chassis_auto_test.c",
+    "USER\\main.c",
+    "USER\\zdt_x_config.h"
+  ],
+  "unchanged_sources": 54,
+  "image_sha256": "cac3b1900b8ca76426838c61ea5f6582ccbd0e4111c04ebc18fb5acfdb980903",
+  "physical_ruler_result": {
+    "lateral_right_cm": 2.5,
+    "actual_forward_cm_user_report": 210,
+    "user_text": "右偏2.5cm 走210cm",
+    "short_or_over_cm": "not separately quantified",
+    "previous_Emm_same_heading_right_cm": 2.65,
+    "difference_right_cm": -0.15,
+    "repeatability_not_established": true
+  },
+  "physical_stop_and_oscillation": "pending user observation",
+  "user_skipped_lowrpm": true
+}

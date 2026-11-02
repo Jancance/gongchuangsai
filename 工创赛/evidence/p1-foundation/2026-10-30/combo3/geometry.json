@@ -1,0 +1,189 @@
+{
+  "schema": "p1-perimeter-preview-v1",
+  "hardware_accessed": false,
+  "configuration": {
+    "schema": "p1-perimeter-preview-v1",
+    "purpose": "仅无障碍动作与回到起始位姿验证；不是正式比赛路线或可执行固件配置",
+    "field": {
+      "width_mm": 2400,
+      "height_mm": 2400,
+      "start_zone_id": 1,
+      "start_zone_mm": [
+        2100,
+        2100,
+        2400,
+        2400
+      ],
+      "inner_regions_allowed_for_trial": true,
+      "inner_regions_policy_source": "用户明确本轮压到白色功能区/启停区2没事，主要验证返回原位置；地图外边界仍保留",
+      "background_layout_confirmed": false
+    },
+    "footprint": {
+      "length_mm": 283,
+      "width_mm": 254,
+      "source": "轮心距206/212mm与轮径77mm、轮宽42mm估算轮组包络，非完整整车外廓实测",
+      "full_vehicle_confirmed": false,
+      "assumed_centre_matches_odometry": true
+    },
+    "start_pose": {
+      "x_mm": 1800,
+      "y_mm": 1800,
+      "heading_deg": -90
+    },
+    "coordinate_convention": "地图左下角(0,0)，X向右、Y向上；车头角逆时针为正；动作前/后/左/右均相对当前车头",
+    "required_boundary_margin_mm": 100,
+    "actions": [
+      {
+        "kind": "FORWARD",
+        "amount": 100,
+        "speed": 20,
+        "label": "前进100cm"
+      },
+      {
+        "kind": "RIGHT",
+        "amount": 100,
+        "speed": 20,
+        "label": "右移100cm"
+      },
+      {
+        "kind": "TURN",
+        "amount": -90,
+        "speed": 30,
+        "label": "顺时针90度"
+      }
+    ]
+  },
+  "rows": [
+    {
+      "index": 1,
+      "kind": "FORWARD",
+      "amount": 100,
+      "speed": 20,
+      "label": "前进100cm",
+      "start_pose": [
+        1800.0,
+        1800.0,
+        -90.0
+      ],
+      "profile": {
+        "rpm": 51,
+        "reference_mm_s": 200.0,
+        "peak_cm_s": 14.458224487304687,
+        "plan_duration_s": 13.832956314086914,
+        "run_ms": 17833,
+        "reference_acceleration_mm_s2": 23.521183013916016,
+        "reference_jerk_mm_s3": 30.563549041748047
+      },
+      "backward_model_is_unvalidated": false,
+      "nominal_lower_time_s": 5.0,
+      "end_pose": [
+        1800.0,
+        800.0,
+        -90.0
+      ],
+      "boundary_clearance_mm": {
+        "left_mm": 1673.0,
+        "right_mm": 473.0,
+        "bottom_mm": 658.5,
+        "top_mm": 458.5
+      },
+      "minimum_boundary_clearance_mm": 458.5,
+      "boundary_pass": true
+    },
+    {
+      "index": 2,
+      "kind": "RIGHT",
+      "amount": 100,
+      "speed": 20,
+      "label": "右移100cm",
+      "start_pose": [
+        1800.0,
+        800.0,
+        -90.0
+      ],
+      "profile": {
+        "rpm": 52,
+        "reference_mm_s": 200.0,
+        "peak_cm_s": 14.575973510742188,
+        "plan_duration_s": 13.721211433410645,
+        "run_ms": 17722,
+        "reference_acceleration_mm_s2": 23.873157501220703,
+        "reference_jerk_mm_s3": 31.61947250366211
+      },
+      "backward_model_is_unvalidated": false,
+      "nominal_lower_time_s": 5.0,
+      "end_pose": [
+        800.0,
+        799.9999999999999,
+        -90.0
+      ],
+      "boundary_clearance_mm": {
+        "left_mm": 673.0,
+        "right_mm": 473.0,
+        "bottom_mm": 658.4999999999999,
+        "top_mm": 1458.5
+      },
+      "minimum_boundary_clearance_mm": 473.0,
+      "boundary_pass": true
+    },
+    {
+      "index": 3,
+      "kind": "TURN",
+      "amount": -90,
+      "speed": 30,
+      "label": "顺时针90度",
+      "start_pose": [
+        800.0,
+        799.9999999999999,
+        -90.0
+      ],
+      "nominal_lower_time_s": 3.0,
+      "profile": null,
+      "end_pose": [
+        800.0,
+        799.9999999999999,
+        -180.0
+      ],
+      "boundary_clearance_mm": {
+        "left_mm": 609.8651794120814,
+        "right_mm": 1409.8651794120815,
+        "bottom_mm": 609.8651794120813,
+        "top_mm": 1409.8651794120815
+      },
+      "minimum_boundary_clearance_mm": 609.8651794120813,
+      "boundary_pass": true
+    }
+  ],
+  "start_pose": [
+    1800.0,
+    1800.0,
+    -90.0
+  ],
+  "end_pose": [
+    800.0,
+    799.9999999999999,
+    -180.0
+  ],
+  "closure_error_mm_deg": [
+    -1000.0,
+    -1000.0000000000001,
+    -90.0
+  ],
+  "closed": false,
+  "initial_footprint_inside_start_zone": false,
+  "boundary_geometry_pass": true,
+  "returned_footprint_inside_start_zone": false,
+  "minimum_boundary_clearance_mm": 458.5,
+  "travel_cm": 200,
+  "turn_absolute_deg": 90,
+  "translation_profile_reference_s": 27.55416774749756,
+  "turn_time_lower_bound_s": 3.0,
+  "current_style_conservative_budget_ms": 86055,
+  "current_firmware_capacity": 8,
+  "firmware_executable": false,
+  "vehicle_approved": false,
+  "blockers": [
+    "Independent combo3 candidate must be flashed and explicitly started; no vehicle validation yet"
+  ],
+  "limits": "外边界几何只对配置中的矩形外廓成立；内区本轮允许经过，不代表正式比赛路线合规。时间为标量参考与下限，非实车预计完成时间。"
+}

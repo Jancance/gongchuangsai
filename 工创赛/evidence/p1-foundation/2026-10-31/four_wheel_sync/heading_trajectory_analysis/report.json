@@ -1,0 +1,108 @@
+{
+  "method": "Trapezoidal integration of -sin(yaw-target) times positive encoder distance increments. Right positive, using firmware yaw sign. Bins split distance proportionally, not independent ground truth.",
+  "limitations": [
+    "TM telemetry about100ms, not full rate controller or actual wheel execution timestamps",
+    "Assumes velocity follows chassis heading; ignores lateral slip, wheel scale error and initial alignment bias",
+    "Zero-command fraction means sampled command endpoints zero, not proof every instant zero",
+    "No independent intermediate ground trajectory exists; only two ruler endpoints",
+    "No causal lag or PD tuning conclusion from these logs alone"
+  ],
+  "runs": {
+    "sequential": {
+      "source": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\evidence\\p1-foundation\\2026-10-31\\four_wheel_sync\\sequential_straight210\\vehicle\\run_once\\20261031_174637_604300.jsonl",
+      "sha256": "3aa9696d363b914bfb79d96edaeba3b981b03724b8765a95e55c2de259847d86",
+      "samples": 310,
+      "target_yaw_deg": 0.395,
+      "progress_mm": 2100.01,
+      "unobserved_initial_mm": 0.0,
+      "max_distance_interval_ms": 100,
+      "mean_relative_yaw_distance_weighted_deg": -0.3294680391998132,
+      "heading_only_predicted_right_mm": 12.075614492088146,
+      "measured_right_mm": 27.5,
+      "unexplained_right_mm": 15.424385507911854,
+      "equivalent_remaining_constant_angle_deg": 0.42082480538890443,
+      "max_observed_heading_error_deg": 0.488,
+      "max_observed_correction_rpm": 0.6,
+      "bins": [
+        {
+          "start_mm": 0,
+          "end_mm": 700,
+          "ds": 700.0,
+          "right_mm": 3.8776523818410014,
+          "max_error": 0.455,
+          "max_correction": 0.6,
+          "mean_error_deg": 0.3173920535714287,
+          "both_endpoints_zero_command_distance_fraction": 0.11933857142857142
+        },
+        {
+          "start_mm": 700,
+          "end_mm": 1400,
+          "ds": 700.0,
+          "right_mm": 4.711011655253725,
+          "max_error": 0.51,
+          "max_correction": 0.6,
+          "mean_error_deg": 0.3856046507142858,
+          "both_endpoints_zero_command_distance_fraction": 0.0
+        },
+        {
+          "start_mm": 1400,
+          "end_mm": 2100,
+          "ds": 700.0,
+          "right_mm": 3.4869173810644347,
+          "max_error": 0.422,
+          "max_correction": 0.5,
+          "mean_error_deg": 0.2854094128571427,
+          "both_endpoints_zero_command_distance_fraction": 0.1819457142857144
+        }
+      ]
+    },
+    "sync": {
+      "source": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\evidence\\p1-foundation\\2026-10-31\\four_wheel_sync\\sync_straight210\\vehicle\\run_once\\20261031_175022_727500.jsonl",
+      "sha256": "864f69cae59550d2f2a65220382f304f6a1fb543ce818df32aa2642fc2666f20",
+      "samples": 313,
+      "target_yaw_deg": 0.373,
+      "progress_mm": 2100.089,
+      "unobserved_initial_mm": 0.0,
+      "max_distance_interval_ms": 100,
+      "mean_relative_yaw_distance_weighted_deg": -0.3147445220178765,
+      "heading_only_predicted_right_mm": 11.536409142440045,
+      "measured_right_mm": 28.5,
+      "unexplained_right_mm": 16.963590857559957,
+      "equivalent_remaining_constant_angle_deg": 0.46279992114635626,
+      "max_observed_heading_error_deg": 0.477,
+      "max_observed_correction_rpm": 0.6,
+      "bins": [
+        {
+          "start_mm": 0,
+          "end_mm": 700,
+          "ds": 700.0,
+          "right_mm": 3.1558662935109836,
+          "max_error": 0.383,
+          "max_correction": 0.5,
+          "mean_error_deg": 0.2583123464285714,
+          "both_endpoints_zero_command_distance_fraction": 0.1768057142857143
+        },
+        {
+          "start_mm": 700,
+          "end_mm": 1400,
+          "ds": 700.0,
+          "right_mm": 4.499699055155116,
+          "max_error": 0.477,
+          "max_correction": 0.6,
+          "mean_error_deg": 0.3683081078571429,
+          "both_endpoints_zero_command_distance_fraction": 0.0
+        },
+        {
+          "start_mm": 1400,
+          "end_mm": 2100,
+          "ds": 700.0,
+          "right_mm": 3.8804981758178316,
+          "max_error": 0.422,
+          "max_correction": 0.5,
+          "mean_error_deg": 0.3176248399999999,
+          "both_endpoints_zero_command_distance_fraction": 0.0874571428571429
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "action": "step1",
+  "matched_image": "S",
+  "before": {
+    "g_vm_test_request": 0,
+    "g_chassis_auto_active": 0,
+    "g_safety_fault": 0,
+    "g_rtos_fault": 0,
+    "g_can_ctrl_fault_latched": 0,
+    "g_reset_iwdg": 0,
+    "g_chassis_auto_cause": 0
+  },
+  "gpioe_odr_before": 128,
+  "chassis_commands_sent": false,
+  "programmed": false,
+  "reset_called": false,
+  "test_result": 1,
+  "test_sequence": 1,
+  "issued_servo_command": {
+    "id": 1,
+    "angle_deg": 10.0
+  },
+  "after": {
+    "g_vm_test_request": 0,
+    "g_chassis_auto_active": 0,
+    "g_safety_fault": 0,
+    "g_rtos_fault": 0,
+    "g_can_ctrl_fault_latched": 0,
+    "g_reset_iwdg": 0,
+    "g_chassis_auto_cause": 0
+  },
+  "gpioe_odr_after": 128,
+  "servo_state": 1,
+  "servo_pulse_us": [
+    611,
+    500
+  ],
+  "servo_angles_deg": [
+    10.0,
+    0.0
+  ],
+  "TIM4": {
+    "CR1": 129,
+    "PSC": 83,
+    "ARR": 19999,
+    "CCR1": 611,
+    "CCR2": 500,
+    "CCER": 17
+  }
+}

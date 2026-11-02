@@ -1,0 +1,159 @@
+--- before/chassis_auto_test.c
++++ after/chassis_auto_test.c
+@@ -39,11 +39,50 @@
+ static uint32_t s_position_valid, s_position_due;
+ static ChassisPositionEndpoints s_endpoints[CHASSIS_POSITION_ENDPOINT_CAPACITY];
+ static uint32_t s_endpoint_count, s_endpoint_index;
++/* 有界历史仅供同一时刻的位置比较，不外推，不延长400ms时效。 */
++#define AUTO_POSITION_HISTORY 16U
++typedef struct { uint32_t ms; float mm; } AutoPositionPoint;
++static AutoPositionPoint s_position_history[4][AUTO_POSITION_HISTORY];
++static uint32_t s_position_history_count[4], s_position_history_head[4];
++static uint32_t s_alignment_seen, s_alignment_ms;
++static void Auto_PositionRemember(uint32_t wheel, uint32_t ms, float mm)
++{
++    uint32_t n = s_position_history_head[wheel];
++    s_position_history[wheel][n].ms = ms;
++    s_position_history[wheel][n].mm = mm;
++    s_position_history_head[wheel] = (n+1U)%AUTO_POSITION_HISTORY;
++    if (s_position_history_count[wheel] < AUTO_POSITION_HISTORY)
++        s_position_history_count[wheel]++;
++}
++static uint32_t Auto_PositionAt(uint32_t wheel, uint32_t ms, float *mm)
++{
++    uint32_t j, count = s_position_history_count[wheel];
++    AutoPositionPoint upper = {0U,0.0f};
++    uint32_t have_upper = 0U;
++    for (j=0U; j<count; j++)
++    {
++        AutoPositionPoint point = s_position_history[wheel]
++            [(s_position_history_head[wheel]+AUTO_POSITION_HISTORY-1U-j)%AUTO_POSITION_HISTORY];
++        int32_t offset = (int32_t)(point.ms-ms);
++        if (!offset) { *mm=point.mm; return 1U; }
++        if (offset>0) { upper=point; have_upper=1U; }
++        else
++        {
++            uint32_t span=upper.ms-point.ms;
++            if (!have_upper || !span || span>=400U) return 0U;
++            *mm=point.mm+(upper.mm-point.mm)*(float)(ms-point.ms)/(float)span;
++            return 1U;
++        }
++    }
++    return 0U;
++}
+ static void Auto_PositionReset(uint32_t session)
+ {
+     ChassisPositionSnapshot empty = {0};
+     uint32_t i;
+     s_position = empty; s_position.session = session;
++    s_alignment_seen = s_alignment_ms = 0U;
++    for (i=0U;i<4U;i++) s_position_history_count[i]=s_position_history_head[i]=0U;
+     if (session == 0U) s_endpoint_count = 0U;
+     s_endpoint_index = CHASSIS_POSITION_ENDPOINT_CAPACITY;
+     if (session && s_endpoint_count < CHASSIS_POSITION_ENDPOINT_CAPACITY)
+@@ -360,7 +399,8 @@
+ static void Auto_DistanceCheckLocked(TickType_t now)
+ {
+     uint32_t i, rpm;
+-    float mean, spread;
++    float mean, spread, low=0.0f, high=0.0f;
++    uint32_t common_ms=0U, oldest_age=0U;
+     ChassisPositionEndpoints *base;
+     if (!s_distance_mode || s_finish_requested || s_stop_due ||
+         (g_chassis_auto_state != CHASSIS_AUTO_RUN
+@@ -381,6 +421,8 @@
+         uint32_t ms = (uint32_t)s_position_tick[i] * portTICK_PERIOD_MS;
+         if ((TickType_t)(now - s_position_tick[i]) >= pdMS_TO_TICKS(400U))
+         { Auto_DistanceFaultLocked(3U); return; }
++        if (!s_position_history_count[i])
++            Auto_PositionRemember(i,base->start_ms[i],0.0f);
+         if (ms != s_distance_seen_ms[i])
+         {
+             int64_t old = (int64_t)s_distance_seen_raw[i], current = (int64_t)s_position.raw[i];
+@@ -393,16 +435,50 @@
+             if (dt > 2000U || change > (int64_t)dt * (s_route_trial ? ((ROUTE_TRIAL_FEEDBACK_RPM+30U)*65536U+59999U)/60000U :
+                     MotionDistanceJumpCountsPerMs(s_translation_mode,s_distance_max_rpm,s_distance_target_mm)) + 512)
+             { Auto_DistanceFaultLocked(4U); return; }
++            {
++                static const int8_t projection[3][4]={{1,1,1,1},{1,-1,-1,1},{-1,1,1,-1}};
++                int64_t start=(int64_t)base->start_raw[i];
++                float mm;
++                if (s_translation_mode>2U || base->start_sign[i]>1U || s_position.sign[i]>1U)
++                { Auto_DistanceFaultLocked(5U); return; }
++                if (base->start_sign[i]) start=-start;
++                mm=(float)(current-start)*3.14159265358979323846f*g_chassis_geometry.wheel_diameter_mm/65536.0f;
++                if (g_chassis_forward_direction[i]) mm=-mm;
++                mm*=projection[s_translation_mode][i];
++                Auto_PositionRemember(i,ms,mm);
++            }
+             s_distance_seen_ms[i] = ms; s_distance_seen_raw[i] = s_position.raw[i];
+             s_distance_seen_sign[i] = s_position.sign[i];
+         }
+     }
+-    /* 原始编码与四轮差异保持名义mm，只将距离任务进度换算为校准mm。 */
+-    if (!Chassis_TranslationPositionMm(s_translation_mode,base->start_sign,base->start_raw,s_position.sign,s_position.raw,&mean,&spread) ||
+-        !Chassis_CalibrateDistanceMm(s_translation_mode,mean,&mean) ||
+-        mean < -5.0f || spread > 50.0f || mean < s_distance_progress_mm - 5.0f ||
+-        mean > s_distance_target_mm + 50.0f)
++    /* 最旧的最新样本是共同时间；其它轮只在历史包围区间内插值。 */
++    for (i=0U;i<4U;i++)
++    {
++        uint32_t age=(uint32_t)(now-s_position_tick[i])*portTICK_PERIOD_MS;
++        if (!i || age>oldest_age) { oldest_age=age; common_ms=(uint32_t)s_position_tick[i]*portTICK_PERIOD_MS; }
++    }
++    mean=0.0f;
++    for (i=0U;i<4U;i++)
++    {
++        float mm;
++        if (!Auto_PositionAt(i,common_ms,&mm))
++        {
++            /* 数据持续更新但历史不相交也不能无限等待。 */
++            uint32_t since=s_alignment_seen ? (uint32_t)now*portTICK_PERIOD_MS-s_alignment_ms :
++                (uint32_t)(now-s_run_tick)*portTICK_PERIOD_MS;
++            if (since>=400U) Auto_DistanceFaultLocked(3U);
++            return;
++        }
++        if (!i || mm<low) low=mm;
++        if (!i || mm>high) high=mm;
++        mean+=mm*0.25f;
++    }
++    spread=high-low;
++    if (!Chassis_CalibrateDistanceMm(s_translation_mode,mean,&mean) ||
++        mean < -5.0f || spread > 50.0f || mean < s_distance_progress_mm-5.0f ||
++        mean > s_distance_target_mm+50.0f)
+     { Auto_DistanceFaultLocked(5U); return; }
++    s_alignment_seen=1U; s_alignment_ms=common_ms;
+     s_distance_progress_mm = mean;
+ #if APP_DISTANCE_SCURVE_ACTIVE
+     if (s_profile_active)
+@@ -420,14 +496,25 @@
+             s_distance_reached = 1U; s_finish_requested = s_stop_due = 1U;
+             s_finish_tick = now; return;
+         }
+-        if (mean-s_distance_reference.position_mm > APP_DISTANCE_SCURVE_TRACK_MM ||
+-            s_distance_reference.position_mm-mean > APP_DISTANCE_SCURVE_TRACK_MM)
+-        { Auto_DistanceFaultLocked(7U); return; }
++        {
++            MotionProfileSample observed_reference;
++            float observed_elapsed=(float)(uint32_t)(common_ms-(uint32_t)s_run_tick*portTICK_PERIOD_MS)/1000.0f;
++            if ((int32_t)(common_ms-(uint32_t)s_run_tick*portTICK_PERIOD_MS)<0) observed_elapsed=0.0f;
++            if (!MotionProfile_Sample(&s_distance_profile,observed_elapsed,&observed_reference))
++            { Auto_DistanceFaultLocked(8U); return; }
++            if (mean-observed_reference.position_mm > APP_DISTANCE_SCURVE_TRACK_MM ||
++                observed_reference.position_mm-mean > APP_DISTANCE_SCURVE_TRACK_MM)
++            { Auto_DistanceFaultLocked(7U); return; }
++            /* 跟随修正使用同一时刻的误差，速度前馈仍按当前时刻推进。 */
++            float current_reference=s_distance_reference.position_mm;
++            float equivalent_progress=mean+current_reference-observed_reference.position_mm;
++            if (!Auto_ProfileFollowRpmLocked(elapsed,equivalent_progress,now,&ref_rpm))
++            { Auto_DistanceFaultLocked(8U); return; }
++        }
+         if (s_profile_done && elapsed >= s_distance_profile.duration_s +
+                 (float)APP_DISTANCE_SCURVE_FINAL_WAIT_MS/1000.0f)
+         { Auto_DistanceFaultLocked(9U); return; }
+-        if (!Auto_ProfileFollowRpmLocked(elapsed,mean,now,&ref_rpm) ||
+-            !(ref_rpm >= -0.001f && ref_rpm <= (float)s_distance_max_rpm+0.001f))
++        if (!(ref_rpm >= -0.001f && ref_rpm <= (float)s_distance_max_rpm+0.001f))
+         { Auto_DistanceFaultLocked(8U); return; }
+         rpm = (ref_rpm <= 0.0f) ? 0U : (uint32_t)(ref_rpm+0.5f);
+         if (rpm > s_distance_max_rpm) rpm = s_distance_max_rpm;

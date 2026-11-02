@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-24",
+  "scope": "pre-start and post-settle position endpoints, historical PE1, host wheel travel conversion",
+  "host_tests": 46,
+  "builds": {
+    "combo": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=52388 RO-data=728 RW-data=1936 ZI-data=31408"
+    },
+    "single": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=45220 RO-data=664 RW-data=1868 ZI-data=31188"
+    },
+    "link": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=25858 RO-data=462 RW-data=1824 ZI-data=27392"
+    },
+    "manual": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=39432 RO-data=608 RW-data=1776 ZI-data=27424"
+    },
+    "off": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=49992 RO-data=728 RW-data=1912 ZI-data=29376"
+    }
+  },
+  "source_sha256": {
+    "main.c": "9390b3cfbe84388737a771e0749dfad0199373e7a670b07ae646e862864dbdf5",
+    "chassis_auto_test.c": "068f98ee26d553b9fbeae57e03a6d198d33d4fea8cf27e9ef0df29b2ba134479",
+    "chassis_auto_test.h": "2e1cd8921431459fb2b58cf80f24031d12e65ba5ff5bbe60ed5db16d5eb7e6a5",
+    "app_config.h": "7412678396ecddcd2bcf23dca63707cba926b1a7dfea1106f7baa7d69d1a885a"
+  },
+  "hardware_tested": false,
+  "flashed": false,
+  "serial_opened": false,
+  "pushed": false,
+  "limits": [
+    "first8 actions recorded per reset",
+    "extra bounded queries can extend preparation/settle but existing timeouts unchanged",
+    "historical endpoints are not current valid position",
+    "wheel travel uses nominal77mm and verified forward sign mapping; not actual chassis displacement"
+  ]
+}

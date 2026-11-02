@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-25",
+  "baseline_commit": "54bb617",
+  "scope": "heading quantization design and offline verification only",
+  "actual_C_assertions": 3589,
+  "model_cases": 54,
+  "model_scenarios": 18,
+  "original_and_isolated_source_match": true,
+  "production_firmware_changed": false,
+  "flashed": false,
+  "serial_opened": false,
+  "motion_started": false,
+  "pushed": false,
+  "candidate": "zero tier0.35RPM enter/0.15RPM exit, upper1/2RPM thresholds1.65/1.35 unchanged; optional200ms minimum gear-change dwell only",
+  "preserved": "originalPD0.8/-0.25,0.3deg deadband,80ms rate filter,10RPM/s slope,integer output<=2RPM;invalid/stale returns failure and zero output",
+  "model_ranges": {
+    "baseline_tail_mean_abs_deg": [
+      0.4564213752746582,
+      0.7312501668930054
+    ],
+    "cadenced_tail_mean_abs_deg": [
+      0.19600127637386322,
+      0.3585571348667145
+    ],
+    "cadenced_max_command_changes_per_60s": 238,
+    "example_high_delay": "gain2deg/s/RPM,delay300ms,drift-0.08deg/s:baseline12 changes/60s,candidate221; lower error is not proof of acceptable CAN load"
+  },
+  "decision": "do not activate candidate yet; obtain generated-command/batch-start/four-wheel-ack timing and design batch-aware admission plus bounded switching cadence; same-value updates must keep100ms mailbox fresh; fault/stop bypass cadence",
+  "limits": [
+    "First-order yaw-only toy model, not identified chassis plant",
+    "No CAN transaction, sequential wheel application,slip,load,lateral position or ground distance model",
+    "100ms TM1 cannot reconstruct10-20ms control or complete batch timing",
+    "No claim right4cm drift or forward4.75cm excess fixed"
+  ],
+  "source_sha256": {
+    "3.stm32f407工程\\USER\\heading_controller.c": "d3b5c2a6d902240fb54700227d22c5857e16cd3360971cf92ac3270da3855c40",
+    "3.stm32f407工程\\USER\\heading_controller.h": "6f8d744828e30ac7a5b1c07d7f90570c96e74e983936a9661622b520a93316aa",
+    "工创赛\\tmp\\heading_quantization_offline_20261025\\candidate.c": "0dfea735fe3e4f68a4ec32f245c76b3da8dd5046b522e99fe55a1a24a8b9d707"
+  }
+}

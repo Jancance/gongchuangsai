@@ -1,0 +1,137 @@
+{
+  "hardware_accessed": false,
+  "runs": [
+    {
+      "run": 1,
+      "source": "run_pd_once",
+      "history": {
+        "session": 1,
+        "expected_records": 2023,
+        "received_records": 2023,
+        "dropped": 0,
+        "complete": true
+      },
+      "wheels": [
+        {
+          "wheel": 1,
+          "samples": 48,
+          "median_gap_ms": 506,
+          "max_gap_ms": 528,
+          "ack_pairing_errors": 0
+        },
+        {
+          "wheel": 2,
+          "samples": 48,
+          "median_gap_ms": 506,
+          "max_gap_ms": 539,
+          "ack_pairing_errors": 0
+        },
+        {
+          "wheel": 3,
+          "samples": 48,
+          "median_gap_ms": 506,
+          "max_gap_ms": 528,
+          "ack_pairing_errors": 0
+        },
+        {
+          "wheel": 4,
+          "samples": 48,
+          "median_gap_ms": 506,
+          "max_gap_ms": 528,
+          "ack_pairing_errors": 0
+        }
+      ],
+      "tm_rows": 202,
+      "duration_s": 20.24,
+      "physical_measurement": {
+        "right_cm": 2.1,
+        "short_cm": 1.5,
+        "derived_forward_cm": 208.5,
+        "raw_user_text": "\u53f3\u504f 2.1cm\u6b201.5cm"
+      },
+      "physical_stop_confirmed": false,
+      "direction": "forward",
+      "control": {
+        "P": 1,
+        "D": 0.25,
+        "deadband_deg": 0.3,
+        "integral": false
+      }
+    },
+    {
+      "run": 2,
+      "source": "run_pd_repeat_once",
+      "history": {
+        "session": 1,
+        "expected_records": 2056,
+        "received_records": 2056,
+        "dropped": 0,
+        "complete": true
+      },
+      "wheels": [
+        {
+          "wheel": 1,
+          "samples": 46,
+          "median_gap_ms": 506,
+          "max_gap_ms": 528,
+          "ack_pairing_errors": 0
+        },
+        {
+          "wheel": 2,
+          "samples": 46,
+          "median_gap_ms": 506,
+          "max_gap_ms": 528,
+          "ack_pairing_errors": 0
+        },
+        {
+          "wheel": 3,
+          "samples": 46,
+          "median_gap_ms": 506,
+          "max_gap_ms": 528,
+          "ack_pairing_errors": 0
+        },
+        {
+          "wheel": 4,
+          "samples": 47,
+          "median_gap_ms": 517.0,
+          "max_gap_ms": 528,
+          "ack_pairing_errors": 0
+        }
+      ],
+      "tm_rows": 203,
+      "duration_s": 20.251,
+      "physical_measurement": {
+        "right_cm": 2.75,
+        "short_cm": 1.75,
+        "derived_forward_cm": 208.25,
+        "user_report": "\u53f3\u504f  2.75\u6b201.75cm",
+        "forward_distance_is_derived": true
+      },
+      "physical_stop_confirmed": false,
+      "direction": "forward",
+      "control": {
+        "P": 1,
+        "D": 0.25,
+        "deadband_deg": 0.3,
+        "integral": false
+      }
+    }
+  ],
+  "source_sha256": {
+    "\u5de5\u521b\u8d5b/evidence/p1-foundation/2026-11-01/x_load_diag/run_pd_once/20261101_224351_733000.raw": "f60ee364dd2ec671ba2299e23b581318be00eaf4c084668382a0073733747ddd",
+    "\u5de5\u521b\u8d5b/evidence/p1-foundation/2026-11-01/x_load_diag/run_pd_once/20261101_224351_733000.jsonl": "95004f33b13ed60f87061c3f71121f8e7a6dacd22b7b96ef69d43227678cdac6",
+    "\u5de5\u521b\u8d5b/evidence/p1-foundation/2026-11-01/x_load_diag/run_pd_once/20261101_224351_733000.summary.json": "dbaece070907a459c95ae98c5f53f8ae5aac232aa36edc5d2d59cd56892161c4",
+    "\u5de5\u521b\u8d5b/evidence/p1-foundation/2026-11-01/x_load_diag/vehicle_pd_result_review.json": "2ee463500b648438d0d9f8ddcbd8f4d227a28a894169c094aeec7c37e285e24f",
+    "\u5de5\u521b\u8d5b/evidence/p1-foundation/2026-11-01/x_load_diag/run_pd_repeat_once/20261101_225425_816300.raw": "613abd6f9a4dfb43c0f650009b06946cdf940640bc0b0f08828771bd1b261dbd",
+    "\u5de5\u521b\u8d5b/evidence/p1-foundation/2026-11-01/x_load_diag/run_pd_repeat_once/20261101_225425_816300.jsonl": "78add392114bf9aaf57eb3ddf41a60f05d3e45828468b04ef2478acfe5335eb8",
+    "\u5de5\u521b\u8d5b/evidence/p1-foundation/2026-11-01/x_load_diag/run_pd_repeat_once/20261101_225425_816300.summary.json": "9e0843cf0d48f6c447aaaa623e2ec1df85ab67c83b62d0096ffdb6b85b526b64",
+    "\u5de5\u521b\u8d5b/evidence/p1-foundation/2026-11-01/x_load_diag/vehicle_pd_repeat_result_review.json": "552ebbbc304cb605c6a0c1df4ed7009347b271eb427d2a8466ac182e6507d5a2"
+  },
+  "backward_measured": false,
+  "ground_trajectory_measured": false,
+  "limits": [
+    "Only two forward runs; backward parameters must remain unvalidated extrapolation.",
+    "Per-wheel ~0.5s sampling cannot resolve fast inner-loop dynamics or separate short delay from tau.",
+    "Two endpoint ruler measurements do not identify lateral slip dynamics or true ground trajectories."
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "date": "2026-10-24",
+  "source_baseline": "54bb617 plus local motion/distance changes",
+  "variant": "distance_sched_87cm_20261024, one distance-forward870mm max15RPM",
+  "status": "software_complete",
+  "target_mm": 870,
+  "trigger_estimate_mm": 870.206,
+  "settled_wheel_mm": [
+    866.4917221907255,
+    875.9927198218928,
+    866.1890486065157,
+    875.8229273234338
+  ],
+  "settled_wheel_mean_mm": 871.124104485642,
+  "distance_reached": 1,
+  "distance_fault_reason": 0,
+  "total_elapsed_ms": 20600,
+  "base_rpm_transitions": [
+    {
+      "tick_ms": 23400,
+      "rpm": 15,
+      "progress_mm": 0.0
+    },
+    {
+      "tick_ms": 36300,
+      "rpm": 8,
+      "progress_mm": 753.585
+    },
+    {
+      "tick_ms": 38700,
+      "rpm": 3,
+      "progress_mm": 832.141
+    }
+  ],
+  "heading": {
+    "reference_yaw_deg": -179.406,
+    "initial_observed_yaw_deg": -179.406,
+    "peak_departure_deg": 0.7429999999999382,
+    "vm_off_yaw_deg": 179.884,
+    "post_stop_yaw_deg": 179.851,
+    "post_stop_vs_reference_deg": -0.7429999999999382,
+    "post_stop_vs_vm_off_deg": -0.03299999999998704
+  },
+  "firmware_peak_heading_error_deg": 0.747,
+  "valid_tm_frames": 229,
+  "pm_frames": 116,
+  "pe_frames": 1,
+  "invalid_lines": 1,
+  "max_captured_active_position_age_ms": 178,
+  "commands": {
+    "ARM": 1,
+    "START": 1,
+    "KEEP": 89
+  },
+  "final_stop_mask": 15,
+  "final_rpm": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "vm_request": 0,
+  "pe2": 0,
+  "faults": 0,
+  "link_lost": 0,
+  "rx_stack_words": 303,
+  "heap_min_bytes": 9792,
+  "actual_displacement_cm": 89.0,
+  "user_observation": "slight right drift; user did not separately confirm final lamp or oscillation for this retry",
+  "first_failure_preserved": "distance_87cm_first_failure_review.json",
+  "calibration_changed": false,
+  "capture": "工创赛\\evidence\\p1-foundation\\2026-10-24\\distance_sched_run\\20261024_181932_510000.summary.json",
+  "pushed": false,
+  "limits": [
+    "encoder estimate not independently measured chassis distance",
+    "yaw wrap at+/-180 accounted for; HWT relative heading, not external orientation measurement",
+    "position ages from captured snapshots, not complete MCU worst-case proof",
+    "startup backlog and1 invalid line retained; aggregate sequence gaps not runtime loss count",
+    "legacy host summary baseline5f132ad; actual source54bb617 plus local changes"
+  ],
+  "measurement_approximate": true,
+  "measurement_reference": "left rear wheel center, user reported approximately89cm; exact tape projection/uncertainty unspecified",
+  "actual_minus_nominal_target_mm": 20.0,
+  "actual_minus_settled_estimate_mm": 18.875895514358035,
+  "single_sample_scale_candidate_not_applied": 1.0216684344023557,
+  "assessment": "encoder distance stopping and sampled heading control completed; physical distance accuracy and straightness not signed off; no calibration parameter applied"
+}

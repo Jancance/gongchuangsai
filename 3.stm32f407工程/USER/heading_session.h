@@ -2,6 +2,7 @@
 #define HEADING_SESSION_H
 #include "heading_controller.h"
 #include "app_config.h"
+#include "turn_brake.h"
 
 /* 纯会话判定模块，无CAN、VM和任务调用；所有时间单位为毫秒。 */
 #define HS_IDLE 0U
@@ -28,16 +29,18 @@
 
 typedef struct
 {
+    uint32_t max_rpm; /* 0=default5; explicit cap1..5 */
     uint32_t now_ms, sample_ms, sequence;
     uint32_t healthy, platform_ok;
     uint32_t backend_active, backend_result, backend_stop_mask;
+    uint32_t backend_running;
     float yaw_deg, rate_dps;
 } HeadingSessionInput;
 
 typedef struct
 {
     uint32_t state, cause, action;
-    int32_t command_rpm;
+    float command_rpm;
     float target_deg, error_deg;
 } HeadingSessionOutput;
 
@@ -48,11 +51,18 @@ typedef struct
     uint32_t last_sequence, last_new_ms, stop_ms;
     uint32_t begin_accepted, stop_accepted;
     int32_t initial_sign;
+    uint32_t turn_trial;
+    uint32_t turn_running_seen;
+    TurnBrake brake;
 } HeadingSession;
 
 void HeadingSession_Init(HeadingSession *session);
 uint32_t HeadingSession_Start(HeadingSession *session,
     const HeadingSessionInput *input, float relative_deg, HeadingSessionOutput *out);
+/* 仅独立外围候选调用；原相对角入口和限值不变。 */
+uint32_t HeadingSession_StartReference(HeadingSession *session,
+    const HeadingSessionInput *input, float nominal_deg, float target_deg,
+    HeadingSessionOutput *out);
 void HeadingSession_Step(HeadingSession *session,
     const HeadingSessionInput *input, HeadingSessionOutput *out);
 void HeadingSession_ReportBegin(HeadingSession *session,

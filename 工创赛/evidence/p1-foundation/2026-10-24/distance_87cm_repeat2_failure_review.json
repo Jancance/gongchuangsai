@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-24",
+  "request": "repeat87cm with consistent reference to resolve ambiguous left89/right87 measurement",
+  "variant": "unchanged tested distance_sched_87cm_20261024",
+  "source_and_build_verified": true,
+  "code_changed": false,
+  "rebuild_needed": false,
+  "flash": "Verify OK/Application running18:33:19",
+  "user_ready": "placed at marked start, forward1.5m clear and observing",
+  "status": "aborted during preparation, not87cm completed",
+  "host_status": "motion_fault_or_cancelled",
+  "total_elapsed_ms": 1067,
+  "progress_mm": 0,
+  "recorded_rpm_max": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "endpoint_frames": 0,
+  "source_at_abort": {
+    "source_valid": 0,
+    "angle_age_ms": -1,
+    "rate_age_ms": -1,
+    "yaw_mdeg": -178665
+  },
+  "backend_cause": 9,
+  "sequence_cause": 5,
+  "stop_mask": 0,
+  "vm_request": 0,
+  "pe2": 0,
+  "final_rpm": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "faults": {
+    "can_fault": 0,
+    "rtos_fault": 0,
+    "safety_fault": 0
+  },
+  "postfault_source_recovered": true,
+  "postfault_vm": 0,
+  "postfault_pe2": 0,
+  "postfault_phase": 4,
+  "automatic_retry": false,
+  "interpretation": "HWT source became invalid in preparation, software aborted. Parser invalidation is compatible with age-1 fields; hardware cause not determined, no HWT error counters in current telemetry. No distance or yaw-path measurement produced.",
+  "earlier_measurement_note": "user later reported left89/right87; measurement geometry not clarified, not interpreted as lateral2cm or calibration",
+  "user_physical_confirmation_this_attempt": "pending",
+  "capture": "工创赛\\evidence\\p1-foundation\\2026-10-24\\distance_87cm_repeat2_run\\20261024_183349_298500.summary.json",
+  "postfault_capture": "工创赛\\evidence\\p1-foundation\\2026-10-24\\distance_87cm_repeat2_postfault\\20261024_183415_034100.summary.json",
+  "pushed": false
+}

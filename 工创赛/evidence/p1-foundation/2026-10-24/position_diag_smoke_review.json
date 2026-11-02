@@ -1,0 +1,144 @@
+{
+  "date": "2026-10-24",
+  "source_baseline": "54bb617 plus local motion interfaces and position diagnostic",
+  "variant": "position_diag_smoke_20261024, two forward15RPM/2000ms stages",
+  "flashed": true,
+  "flash_evidence": "position_diag_smoke_download.log Verify OK/Application running",
+  "status": "software_complete",
+  "elapsed_ms": 8993,
+  "sessions": {
+    "1": {
+      "position_attempts_seen": 61,
+      "all_four_valid_frames": 13,
+      "wheels": [
+        {
+          "address": 1,
+          "observed_unique_samples": 11,
+          "first_signed": 740,
+          "last_signed": 33830,
+          "signed_delta_observed_window": 33090,
+          "observed_increases_in_body_forward": true,
+          "min_observed_sample_gap_ms": 132,
+          "max_observed_sample_gap_ms": 264,
+          "max_valid_snapshot_age_ms": 914,
+          "crossed_65536_in_observed_window": false
+        },
+        {
+          "address": 2,
+          "observed_unique_samples": 10,
+          "first_signed": -952,
+          "last_signed": -32042,
+          "signed_delta_observed_window": -31090,
+          "observed_increases_in_body_forward": true,
+          "min_observed_sample_gap_ms": 132,
+          "max_observed_sample_gap_ms": 264,
+          "max_valid_snapshot_age_ms": 813,
+          "crossed_65536_in_observed_window": false
+        },
+        {
+          "address": 3,
+          "observed_unique_samples": 11,
+          "first_signed": 1966,
+          "last_signed": 32282,
+          "signed_delta_observed_window": 30316,
+          "observed_increases_in_body_forward": true,
+          "min_observed_sample_gap_ms": 132,
+          "max_observed_sample_gap_ms": 264,
+          "max_valid_snapshot_age_ms": 980,
+          "crossed_65536_in_observed_window": false
+        },
+        {
+          "address": 4,
+          "observed_unique_samples": 10,
+          "first_signed": -4063,
+          "last_signed": -32270,
+          "signed_delta_observed_window": -28207,
+          "observed_increases_in_body_forward": true,
+          "min_observed_sample_gap_ms": 132,
+          "max_observed_sample_gap_ms": 264,
+          "max_valid_snapshot_age_ms": 947,
+          "crossed_65536_in_observed_window": false
+        }
+      ]
+    },
+    "2": {
+      "position_attempts_seen": 61,
+      "all_four_valid_frames": 14,
+      "wheels": [
+        {
+          "address": 1,
+          "observed_unique_samples": 10,
+          "first_signed": 36787,
+          "last_signed": 67165,
+          "signed_delta_observed_window": 30378,
+          "observed_increases_in_body_forward": true,
+          "min_observed_sample_gap_ms": 132,
+          "max_observed_sample_gap_ms": 264,
+          "max_valid_snapshot_age_ms": 880,
+          "crossed_65536_in_observed_window": true
+        },
+        {
+          "address": 2,
+          "observed_unique_samples": 11,
+          "first_signed": -34139,
+          "last_signed": -67199,
+          "signed_delta_observed_window": -33060,
+          "observed_increases_in_body_forward": true,
+          "min_observed_sample_gap_ms": 132,
+          "max_observed_sample_gap_ms": 264,
+          "max_valid_snapshot_age_ms": 847,
+          "crossed_65536_in_observed_window": true
+        },
+        {
+          "address": 3,
+          "observed_unique_samples": 10,
+          "first_signed": 37415,
+          "last_signed": 65165,
+          "signed_delta_observed_window": 27750,
+          "observed_increases_in_body_forward": true,
+          "min_observed_sample_gap_ms": 132,
+          "max_observed_sample_gap_ms": 264,
+          "max_valid_snapshot_age_ms": 946,
+          "crossed_65536_in_observed_window": false
+        },
+        {
+          "address": 4,
+          "observed_unique_samples": 10,
+          "first_signed": -37295,
+          "last_signed": -65001,
+          "signed_delta_observed_window": -27706,
+          "observed_increases_in_body_forward": true,
+          "min_observed_sample_gap_ms": 132,
+          "max_observed_sample_gap_ms": 264,
+          "max_valid_snapshot_age_ms": 913,
+          "crossed_65536_in_observed_window": false
+        }
+      ]
+    }
+  },
+  "pm_frames": 51,
+  "tm_frames": 102,
+  "invalid_serial_lines": 1,
+  "max_telemetry_error_deg": 0.494,
+  "gap_vm_held": true,
+  "final_vm": 0,
+  "final_pe2": 0,
+  "final_stop_mask": 15,
+  "position_invalid_after_power_off": true,
+  "can_rtos_safety_faults": [
+    0,
+    0,
+    0
+  ],
+  "user_observation": "both forward, no obvious sway, VM stays lit between stages and off after stop; user confirmed all",
+  "limits": [
+    "observed sample gaps are between PM1-captured samples, not all MCU samples",
+    "no start/end baseline or actual tape measurement; not total distance accuracy",
+    "not proof of all wheels multiturm continuity beyond observed values",
+    "one invalid line and startup backlog retained; aggregate sequence_gaps not runtime loss count",
+    "host summary legacy baseline5f132ad is not actual source baseline"
+  ],
+  "capture_summary": "工创赛\\evidence\\p1-foundation\\2026-10-24\\position_diag_run\\20261024_173310_521200.summary.json",
+  "pushed": false,
+  "max_age_ms_on_frames_with_new_position_updates": 213
+}

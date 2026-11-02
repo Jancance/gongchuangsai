@@ -1,0 +1,184 @@
+
+========================================================================
+
+** ELF Header Information
+
+    File Name: unit.axf
+
+    Machine class: ELFCLASS32 (32-bit)
+    Data encoding: ELFDATA2LSB (Little endian)
+    Header version: EV_CURRENT (Current version)
+    Operating System ABI: none
+    ABI Version: 0
+    File Type: ET_EXEC (Executable) (2)
+    Machine: EM_ARM (ARM)
+
+    Image Entry point: 0x08000001
+    Flags: EF_ARM_HASENTRY + EF_ARM_ABI_FLOAT_SOFT (0x05000202)
+
+    ARM ELF revision: 5 (ABI version 2)
+
+    Conforms to Soft float procedure-call standard
+
+    Built with
+    Component: ARM Compiler 5.06 update 7 (build 960) Tool: armcc [4d365d]
+    Component: ARM Compiler 5.06 update 7 (build 960) Tool: armlink [4d3601]
+
+    Header size: 52 bytes (0x34)
+    Program header entry size: 32 bytes (0x20)
+    Section header entry size: 40 bytes (0x28)
+
+    Program header entries: 1
+    Section header entries: 10
+
+    Program header offset: 5960 (0x00001748)
+    Section header offset: 5992 (0x00001768)
+
+    Section header string table index: 9
+
+========================================================================
+
+** Program header #0 (PT_LOAD) [PF_X + PF_W + PF_R + PF_ARM_ENTRY]
+    Size : 2288 bytes (2128 bytes in file)
+    Virtual address: 0x08000000 (Alignment 4)
+
+
+========================================================================
+
+** Section #1 'ER_ROM' (SHT_PROGBITS) [SHF_ALLOC + SHF_EXECINSTR]
+    Size   : 2092 bytes (alignment 4)
+    Address: 0x08000000
+
+
+** Section #2 'RW_RAM' (SHT_PROGBITS) [SHF_ALLOC + SHF_WRITE]
+    Size   : 36 bytes (alignment 4)
+    Address: 0x20000000
+
+
+** Section #3 'RW_RAM' (SHT_NOBITS) [SHF_ALLOC + SHF_WRITE]
+    Size   : 160 bytes (alignment 4)
+    Address: 0x20000024
+
+
+** Section #4 '.debug_frame' (SHT_PROGBITS)
+    Size   : 620 bytes
+
+
+** Section #5 '.symtab' (SHT_SYMTAB)
+    Size   : 1408 bytes (alignment 4)
+    String table #6 '.strtab'
+    Last local symbol no. 71
+
+    Symbol table .symtab (87 symbols, 71 local)
+
+      #  Symbol Name                Value      Bind  Sec  Type  Vis  Size
+    ========================================================================
+
+      1  $t                         0x08000000   Lc    1   --   De 
+      2  $d                         0x0800029c   Lc    1   --   De 
+      3  $t                         0x080002bc   Lc    1   --   De 
+      4  $d                         0x0800064c   Lc    1   --   De 
+      5  $t                         0x08000654   Lc    1   --   De 
+      6  $d                         0x08000662   Lc    1   --   De 
+      7  $t                         0x08000668   Lc    1   --   De 
+      8  $d                         0x08000684   Lc    1   --   De 
+      9  $t                         0x08000688   Lc    1   --   De 
+     10  $d                         0x080006ac   Lc    1   --   De 
+     11  $t                         0x080006b4   Lc    1   --   De 
+     12  $d                         0x080006de   Lc    1   --   De 
+     13  $t                         0x080006e8   Lc    1   --   De 
+     14  $d                         0x080006f8   Lc    1   --   De 
+     15  $t                         0x080006fc   Lc    1   --   De 
+     16  $d                         0x0800071a   Lc    1   --   De 
+     17  $t                         0x08000724   Lc    1   --   De 
+     18  $d                         0x08000812   Lc    1   --   De 
+     19  $t                         0x0800081c   Lc    1   --   De 
+     20  $d                         0x08000826   Lc    1   --   De 
+     21  $d.realdata                0x20000000   Lc    2   --   De 
+     22  unit.c                     0x00000000   Lc  Abs  File  De 
+     23  i.CAN1_InitMode            0x080003c4   Lc    1  Sect  De 
+     24  CAN1_InitMode              0x080003c5   Lc    1  Code  De   0x4
+     25  i.CAN1_ReadXSystemSnapshot 0x080003c8   Lc    1  Sect  De 
+     26  i.CAN1_ResetSession        0x08000654   Lc    1  Sect  De 
+     27  CAN1_ResetSession          0x08000655   Lc    1  Code  De   0xe
+     28  i.CAN_CancelTransmit       0x08000668   Lc    1  Sect  De 
+     29  CAN_CancelTransmit         0x08000669   Lc    1  Code  De   0x2
+     30  i.CAN_MessagePending       0x0800066c   Lc    1  Sect  De 
+     31  CAN_MessagePending         0x0800066d   Lc    1  Code  De   0x18
+     32  i.CAN_Receive              0x08000688   Lc    1  Sect  De 
+     33  CAN_Receive                0x08000689   Lc    1  Code  De   0x24
+     34  i.CAN_Transmit             0x080006b4   Lc    1  Sect  De 
+     35  CAN_Transmit               0x080006b5   Lc    1  Code  De   0x2a
+     36  i.CAN_TransmitStatus       0x080006e8   Lc    1  Sect  De 
+     37  CAN_TransmitStatus         0x080006e9   Lc    1  Code  De   0x10
+     38  i.XLoad_RecordSnapshot     0x080006fc   Lc    1  Sect  De 
+     39  i.fresh                    0x08000724   Lc    1  Sect  De 
+     40  fresh                      0x08000725   Lc    1  Code  De   0xee
+     41  i.test_entry               0x08000000   Lc    1  Sect  De 
+     42  i.xTaskGetTickCount        0x0800081c   Lc    1  Sect  De 
+     43  xTaskGetTickCount          0x0800081d   Lc    1  Code  De   0xa
+     44  .bss                       0x20000024   Lc    3  Sect  De   0xa0
+     45  queue                      0x20000024   Lc    3  Data  De   0x80
+     46  sent                       0x200000a4   Lc    3  Data  De   0x10
+     47  captured                   0x200000b4   Lc    3  Data  De   0x10
+     48  .data                      0x20000000   Lc    2  Sect  De   0x24
+     49  ready                      0x20000000   Lc    2  Data  De   0x1
+     50  head                       0x20000001   Lc    2  Data  De   0x1
+     51  tail                       0x20000002   Lc    2  Data  De   0x1
+     52  tx_mode                    0x20000003   Lc    2  Data  De   0x1
+     53  depth                      0x20000004   Lc    2  Data  De   0x4
+     54  tick                       0x20000008   Lc    2  Data  De   0x4
+     55  s_can1_normal_ready        0x2000000c   Lc    2  Data  De   0x4
+     56  tx_calls                   0x20000010   Lc    2  Data  De   0x4
+     57  reset_calls                0x20000014   Lc    2  Data  De   0x4
+     58  received                   0x20000018   Lc    2  Data  De   0x4
+     59  record_result              0x2000001c   Lc    2  Data  De   0x4
+     60  record_calls               0x20000020   Lc    2  Data  De   0x4
+     61  dc.s                       0x00000000   Lc  Abs  File  De 
+     62  ../clib/microlib/string/memset.c
+                                    0x00000000   Lc  Abs  File  De 
+     63  .text                      0x080002bc   Lc    1  Sect  De 
+     64  ../fplib/microlib/fpmul.c  0x00000000   Lc  Abs  File  De 
+     65  .text                      0x080002e0   Lc    1  Sect  De 
+     66  ../fplib/microlib/fpflt.c  0x00000000   Lc  Abs  File  De 
+     67  .text                      0x08000344   Lc    1  Sect  De 
+     68  ../clib/microlib/stubs.s   0x00000000   Lc  Abs  File  De 
+     69  .text                      0x08000356   Lc    1  Sect  De 
+     70  ../fplib/microlib/fpepilogue.c
+                                    0x00000000   Lc  Abs  File  De 
+     71  .text                      0x08000356   Lc    1  Sect  De 
+     72  BuildAttributes$$THM_ISAv4$P$D$K$B$S$PE$A:L22UL41UL21$X:L11$S22US41US21$IEEE1$IW$USESV6$~STKCKD$USESV7$~SHL$OTIME$ROPI$EBA8$MICROLIB$REQ8$PRES8$EABIv2
+                                    0x00000000   Gb  Abs   --   Hi 
+     73  test_entry                 0x08000001   Gb    1  Code  Hi   0x29c
+     74  __aeabi_memset             0x080002bd   Gb    1  Code  Hi   0xe
+     75  __aeabi_memset4            0x080002bd   Gb    1  Code  Hi 
+     76  __aeabi_memset8            0x080002bd   Gb    1  Code  Hi 
+     77  __aeabi_memclr             0x080002cb   Gb    1  Code  Hi   0x4
+     78  __aeabi_memclr4            0x080002cb   Gb    1  Code  Hi 
+     79  __aeabi_memclr8            0x080002cb   Gb    1  Code  Hi 
+     80  _memset$wrapper            0x080002cf   Gb    1  Code  Hi   0x12
+     81  __aeabi_fmul               0x080002e1   Gb    1  Code  Hi   0x64
+     82  __aeabi_i2f                0x08000345   Gb    1  Code  Hi   0x12
+     83  __I$use$fp                 0x08000357   Gb    1  Code  Hi 
+     84  _float_round               0x08000357   Gb    1  Code  Hi   0x12
+     85  _float_epilogue            0x08000369   Gb    1  Code  Hi   0x5c
+     86  CAN1_ReadXSystemSnapshot   0x080003c9   Gb    1  Code  Hi   0x284
+     87  XLoad_RecordSnapshot       0x080006fd   Gb    1  Code  Hi   0x1e
+
+
+** Section #6 '.strtab' (SHT_STRTAB)
+    Size   : 1064 bytes
+
+
+** Section #7 '.note' (SHT_NOTE)
+    Size   : 28 bytes (alignment 4)
+
+
+** Section #8 '.comment' (SHT_PROGBITS)
+    Size   : 588 bytes
+
+
+** Section #9 '.shstrtab' (SHT_STRTAB)
+    Size   : 72 bytes
+
+

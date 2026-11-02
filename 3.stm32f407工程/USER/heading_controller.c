@@ -209,7 +209,7 @@ uint32_t HeadingController_HoldCorrection(float target_deg, float yaw_deg,
     error = HeadingController_ErrorDeg(target_deg, yaw_deg);
     *error_deg = error;
     if (Heading_Abs(error) > 10.0f) return 0U;
-    command = 0.8f * error - 0.25f * rate_dps;
+    command = 1.0f * error - 0.25f * rate_dps;
     if ((Heading_Abs(error) <= 0.3f) && (Heading_Abs(rate_dps) <= 0.3f)) command = 0.0f;
     if (command > 2.0f) command = 2.0f;
     if (command < -2.0f) command = -2.0f;
@@ -220,7 +220,7 @@ uint32_t HeadingController_HoldCorrection(float target_deg, float yaw_deg,
 /* 仅新鲜源帧调用；80ms角速度低通、10RPM/s限斜率、整数命令迟滞。 */
 uint32_t HeadingController_HoldStep(HeadingHoldController *hold,
     float target_deg, float yaw_deg, float rate_dps, uint32_t now_ms,
-    int32_t *correction_rpm, float *error_deg)
+    float *correction_rpm, float *error_deg)
 {
     uint32_t elapsed;
     float desired, filtered, step, difference;
@@ -231,7 +231,7 @@ uint32_t HeadingController_HoldStep(HeadingHoldController *hold,
     elapsed = (hold->initialized != 0U) ? now_ms - hold->tick : 20U;
     if (elapsed >= 100U) return 0U;
     if ((hold->initialized != 0U) && (elapsed == 0U))
-    { *correction_rpm = hold->quantized_rpm; return 1U; }
+    { *correction_rpm = (float)hold->quantized_deci_rpm*0.1f; return 1U; }
     filtered = (hold->initialized != 0U) ? hold->filtered_rate_dps +
         ((float)elapsed / (80.0f + (float)elapsed)) *
         (rate_dps - hold->filtered_rate_dps) : rate_dps;
@@ -242,14 +242,22 @@ uint32_t HeadingController_HoldStep(HeadingHoldController *hold,
     if (difference > step) difference = step;
     if (difference < -step) difference = -step;
     hold->command_rpm += difference;
-    /* 0.65RPM越级，回落到0.35RPM才返回，减少量化边缘抖动。 */
-    if ((hold->command_rpm - (float)hold->quantized_rpm) > 0.65f)
-        hold->quantized_rpm++;
-    else if ((hold->command_rpm - (float)hold->quantized_rpm) < -0.65f)
-        hold->quantized_rpm--;
+    /* 0.1RPM resolution, proportional hysteresis; bounded updates preserve slew. */
+    {
+        uint32_t quantize_step;
+        for(quantize_step=0U;quantize_step<40U;quantize_step++) {
+            if(hold->command_rpm*10.0f-(float)hold->quantized_deci_rpm>0.65f)
+                hold->quantized_deci_rpm++;
+            else if(hold->command_rpm*10.0f-(float)hold->quantized_deci_rpm < -0.65f)
+                hold->quantized_deci_rpm--;
+            else break;
+        }
+        if(hold->quantized_deci_rpm>20)hold->quantized_deci_rpm=20;
+        if(hold->quantized_deci_rpm < -20)hold->quantized_deci_rpm=-20;
+    }
     hold->filtered_rate_dps = filtered;
     hold->tick = now_ms;
     hold->initialized = 1U;
-    *correction_rpm = hold->quantized_rpm;
+    *correction_rpm = (float)hold->quantized_deci_rpm*0.1f;
     return 1U;
 }

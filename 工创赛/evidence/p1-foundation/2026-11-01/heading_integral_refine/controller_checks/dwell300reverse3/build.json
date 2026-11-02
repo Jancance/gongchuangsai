@@ -1,0 +1,35 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-DHEADING_INTEGRAL_TRIAL_ENABLE=1",
+      "-DHEADING_INTEGRAL_TRIAL_KI=0.03f",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armlink.exe",
+      "--entry",
+      "test_entry",
+      "--scatter",
+      "unit.sct",
+      "unit.o",
+      "--library_type=microlib",
+      "-o",
+      "unit.axf"
+    ],
+    "returncode": 0,
+    "output": ""
+  }
+]

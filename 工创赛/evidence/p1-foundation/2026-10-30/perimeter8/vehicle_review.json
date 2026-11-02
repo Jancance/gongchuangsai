@@ -1,0 +1,179 @@
+{
+  "result": "software_complete",
+  "starts": 1,
+  "elapsed_ms": 121324,
+  "completed_actions": 8,
+  "trip": 0,
+  "stop_mask": 15,
+  "vm_output": 0,
+  "faults": {
+    "can_fault": 0,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "backend_cause": 0
+  },
+  "checkpoints": {
+    "0": {
+      "checkpoint": 0,
+      "captured": 1,
+      "tick_ms": 38904,
+      "x_mm": 2100,
+      "y_mm": 2100,
+      "heading_mdeg": -90000,
+      "valid": 1,
+      "reasons": 0,
+      "continuity_lost": 0,
+      "age_ms": 153,
+      "target_x_mm": 2100,
+      "target_y_mm": 2100,
+      "target_heading_mdeg": -90000
+    },
+    "1": {
+      "checkpoint": 1,
+      "captured": 1,
+      "tick_ms": 58285,
+      "x_mm": 2083,
+      "y_mm": 299,
+      "heading_mdeg": -90472,
+      "valid": 1,
+      "reasons": 0,
+      "continuity_lost": 0,
+      "age_ms": 44,
+      "target_x_mm": 2100,
+      "target_y_mm": 300,
+      "target_heading_mdeg": -90000
+    },
+    "2": {
+      "checkpoint": 2,
+      "captured": 1,
+      "tick_ms": 78568,
+      "x_mm": 282,
+      "y_mm": 312,
+      "heading_mdeg": -90988,
+      "valid": 1,
+      "reasons": 0,
+      "continuity_lost": 0,
+      "age_ms": 44,
+      "target_x_mm": 300,
+      "target_y_mm": 300,
+      "target_heading_mdeg": -90000
+    },
+    "3": {
+      "checkpoint": 3,
+      "captured": 1,
+      "tick_ms": 88500,
+      "x_mm": 284,
+      "y_mm": 312,
+      "heading_mdeg": 179285,
+      "valid": 1,
+      "reasons": 0,
+      "continuity_lost": 0,
+      "age_ms": 44,
+      "target_x_mm": 300,
+      "target_y_mm": 300,
+      "target_heading_mdeg": -180000
+    },
+    "4": {
+      "checkpoint": 4,
+      "captured": 1,
+      "tick_ms": 98476,
+      "x_mm": 285,
+      "y_mm": 310,
+      "heading_mdeg": 88890,
+      "valid": 1,
+      "reasons": 0,
+      "continuity_lost": 0,
+      "age_ms": 44,
+      "target_x_mm": 300,
+      "target_y_mm": 300,
+      "target_heading_mdeg": 90000
+    },
+    "5": {
+      "checkpoint": 5,
+      "captured": 1,
+      "tick_ms": 118726,
+      "x_mm": 335,
+      "y_mm": 2110,
+      "heading_mdeg": 88406,
+      "valid": 1,
+      "reasons": 0,
+      "continuity_lost": 0,
+      "age_ms": 44,
+      "target_x_mm": 300,
+      "target_y_mm": 2100,
+      "target_heading_mdeg": 90000
+    },
+    "6": {
+      "checkpoint": 6,
+      "captured": 1,
+      "tick_ms": 128680,
+      "x_mm": 336,
+      "y_mm": 2108,
+      "heading_mdeg": 178632,
+      "valid": 1,
+      "reasons": 0,
+      "continuity_lost": 0,
+      "age_ms": 44,
+      "target_x_mm": 300,
+      "target_y_mm": 2100,
+      "target_heading_mdeg": -180000
+    },
+    "7": {
+      "checkpoint": 7,
+      "captured": 1,
+      "tick_ms": 138645,
+      "x_mm": 338,
+      "y_mm": 2108,
+      "heading_mdeg": -91900,
+      "valid": 1,
+      "reasons": 0,
+      "continuity_lost": 0,
+      "age_ms": 44,
+      "target_x_mm": 300,
+      "target_y_mm": 2100,
+      "target_heading_mdeg": -90000
+    },
+    "8": {
+      "checkpoint": 8,
+      "captured": 1,
+      "tick_ms": 158805,
+      "x_mm": 2137,
+      "y_mm": 2047,
+      "heading_mdeg": -91301,
+      "valid": 1,
+      "reasons": 0,
+      "continuity_lost": 0,
+      "age_ms": 64,
+      "target_x_mm": 2100,
+      "target_y_mm": 2100,
+      "target_heading_mdeg": -90000
+    }
+  },
+  "estimated_map_return_error_mm": [
+    37,
+    -53
+  ],
+  "estimated_body_return_error_cm": {
+    "forward": 5.3,
+    "left": 3.7
+  },
+  "estimated_heading_difference_deg": -1.301,
+  "physical_feedback": {
+    "forward_cm": 4.5,
+    "left_cm": 2.75,
+    "map_delta_mm": [
+      27.5,
+      -45
+    ],
+    "distance_cm": 5.273755777432247,
+    "stop_lamp_smoothness_heading": "Not explicitly answered in measurement reply; telemetry wheel0/VM0 recorded separately",
+    "measurement_precision": "not established"
+  },
+  "source_and_previous_images_preserved": true,
+  "axf_sha256": "a20c626471d4ae25b8ffc8b57673c3a01903122d0ca7013b61ca91268ae4d070",
+  "estimated_minus_measured_map_delta_mm": [
+    9.5,
+    -8
+  ],
+  "comparison_scope": "One perimeter run; endpoint estimate vs ruler only, no absolute path accuracy or fitted compensation"
+}

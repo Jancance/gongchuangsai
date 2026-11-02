@@ -1,0 +1,58 @@
+{
+  "user_observation_updated": "Gradual cumulative drift, more visible at higher speed; supersedes earlier assumption that drift begins only during deceleration",
+  "bins": [
+    {
+      "start_cm": 0,
+      "end_cm": 70,
+      "distance_mm": 700.0,
+      "right_mm": 3.5098083018302177,
+      "duration_ms": 7639.174153136074,
+      "mean_error_deg": 0.2872831378571429,
+      "estimated_right_mm_per_s": 0.4594486565526658
+    },
+    {
+      "start_cm": 70,
+      "end_cm": 140,
+      "distance_mm": 700.0,
+      "right_mm": 4.282430497944636,
+      "duration_ms": 3504.5496897507333,
+      "mean_error_deg": 0.3505240592857143,
+      "estimated_right_mm_per_s": 1.2219631270941491
+    },
+    {
+      "start_cm": 140,
+      "end_cm": 210,
+      "distance_mm": 700.0,
+      "right_mm": 3.0002558074732346,
+      "duration_ms": 7509.153854954905,
+      "mean_error_deg": 0.24557518428571426,
+      "estimated_right_mm_per_s": 0.39954645562276236
+    }
+  ],
+  "speed_groups": {
+    "base3to14": {
+      "distance_mm": 151.44500000000005,
+      "right_mm": 0.413277836152108,
+      "duration_ms": 4200,
+      "mean_error_deg": 0.15635455115718566,
+      "estimated_right_mm_per_s": 0.09839948479812095
+    },
+    "base15to39": {
+      "distance_mm": 982.5989999999999,
+      "right_mm": 4.5405368790638905,
+      "duration_ms": 8500,
+      "mean_error_deg": 0.264761734441008,
+      "estimated_right_mm_per_s": 0.5341808093016341
+    },
+    "base40plus": {
+      "distance_mm": 959.5289999999999,
+      "right_mm": 5.827605368386343,
+      "duration_ms": 5000,
+      "mean_error_deg": 0.3479826169922953,
+      "estimated_right_mm_per_s": 1.1655210736772685
+    }
+  },
+  "heading_only_total_right_cm": 1.0792790693376673,
+  "measured_right_cm": 2.25,
+  "limits": "Projected drift from yaw and encoder distance only; no independent intermediate lateral ground measurements. Speed groups based on requested base, cannot prove causal effect of speed."
+}

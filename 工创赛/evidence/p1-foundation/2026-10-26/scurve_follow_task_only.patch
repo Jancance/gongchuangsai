@@ -1,0 +1,176 @@
+--- app_config.h.before
++++ app_config.h
+@@ -16,6 +16,13 @@
+ #define APP_DISTANCE_SCURVE_TRACK_MM 50.0f
+ #define APP_DISTANCE_SCURVE_ARRIVAL_MM 2.0f
+ #define APP_DISTANCE_SCURVE_FINAL_WAIT_MS 2000U
++/* 位置跟随候选：P目标经过二阶临界阻尼平滑，单位RPM。
++ * 为修正预留1RPM及其加速度/jerk余量，仍不突破原15RPM/40/80上限。
++ * 末端接近为整数1RPM，不能据此宣称实际轮速jerk连续。 */
++#define APP_DISTANCE_SCURVE_FOLLOW_KP 0.5f
++#define APP_DISTANCE_SCURVE_FOLLOW_RPM 1.0f
++#define APP_DISTANCE_SCURVE_FOLLOW_OMEGA 1.0f
++#define APP_DISTANCE_SCURVE_APPROACH_RPM 1U
+ 
+ /* 初始化提示次数：0静音，1默认，可改为3 */
+ #define APP_INIT_BEEP_COUNT    2U
+--- chassis_auto_test.c.before
++++ chassis_auto_test.c
+@@ -7,6 +7,9 @@
+ #include "task.h"
+ #include <stddef.h>
+ #include "power.h"
++#if APP_DISTANCE_SCURVE_ACTIVE
++#include <math.h>
++#endif
+ 
+ /* 将新读到的3A供原CAN监督使用，不伪造采样时间 */
+ extern volatile uint32_t g_can_poll_result[4];
+@@ -78,6 +81,9 @@
+ static MotionProfileSample s_distance_reference;
+ static uint32_t s_profile_active, s_profile_done;
+ static float s_profile_mm_per_rpm_s;
++static float s_profile_follow_rpm, s_profile_follow_rate;
++static TickType_t s_profile_follow_tick;
++
+ #endif
+ #if APP_POSITION_DIAGNOSTIC
+ static uint32_t s_distance_max_rpm;
+@@ -303,6 +309,49 @@
+     return 1U;
+ }
+ 
++#if APP_DISTANCE_SCURVE_ACTIVE
++/* P目标限幅后，经精确离散的二阶临界阻尼滤波；每次最多更新一次。
++ * 对|u|<=C，连续滤波的保守界为|c|<=C、|c'|<=2*C*w、|c''|<=6*C*w*w。
++ * prepare在原速度/加速度/jerk总预算中扣除这些余量；整数命令/到距停止另验。 */
++static uint32_t Auto_ProfileFollowRpmLocked(float elapsed, float progress, TickType_t now, float *rpm)
++{
++    float c = APP_DISTANCE_SCURVE_FOLLOW_RPM, w = APP_DISTANCE_SCURVE_FOLLOW_OMEGA;
++    float desired = APP_DISTANCE_SCURVE_FOLLOW_KP *
++        (s_distance_reference.position_mm-progress) / s_profile_mm_per_rpm_s;
++    TickType_t ticks = (TickType_t)(now-s_profile_follow_tick);
++    float value;
++    if (!(desired >= -1.0e6f && desired <= 1.0e6f) ||
++        !(s_profile_follow_rpm >= -c-0.001f && s_profile_follow_rpm <= c+0.001f) ||
++        !(s_profile_follow_rate >= -2.0f*c*w-0.001f && s_profile_follow_rate <= 2.0f*c*w+0.001f)) return 0U;
++    if (desired > c) desired = c;
++    if (desired < -c) desired = -c;
++    if (ticks >= pdMS_TO_TICKS(10U))
++    {
++        float dt = (float)ticks * portTICK_PERIOD_MS / 1000.0f;
++        float y, b, decay;
++        /* 调度迟到时不回放多步；较长缺口仍由原源/位置保护处理。 */
++        if (dt > 0.1f) dt = 0.1f;
++        y = s_profile_follow_rpm-desired;
++        b = s_profile_follow_rate+w*y;
++        decay = expf(-w*dt);
++        value = desired+(y+b*dt)*decay;
++        s_profile_follow_rate = (s_profile_follow_rate-w*b*dt)*decay;
++        s_profile_follow_rpm = value;
++        s_profile_follow_tick = now;
++    }
++    value = s_distance_reference.speed_mm_s/s_profile_mm_per_rpm_s+s_profile_follow_rpm;
++    if (!(value >= -c-0.001f && value <= (float)s_distance_max_rpm+0.001f)) return 0U;
++    if (value < 0.0f) value = 0.0f;
++    if (value > (float)s_distance_max_rpm) value = (float)s_distance_max_rpm;
++    /* 从减速段连续接近，防止取整先变0后再补一脚。仍受原duration+2s截止约束。 */
++    if (elapsed >= s_distance_profile.boundary_s[4] &&
++        value < (float)APP_DISTANCE_SCURVE_APPROACH_RPM)
++        value = (float)APP_DISTANCE_SCURVE_APPROACH_RPM;
++    *rpm = value;
++    return 1U;
++}
++#endif
++
+ /* 独立时限和反馈检查，CAN停推进时由Safety继续调用 */
+ #if APP_POSITION_DIAGNOSTIC
+ static void Auto_DistanceFaultLocked(uint32_t reason)
+@@ -375,14 +424,14 @@
+         if (s_profile_done && elapsed >= s_distance_profile.duration_s +
+                 (float)APP_DISTANCE_SCURVE_FINAL_WAIT_MS/1000.0f)
+         { Auto_DistanceFaultLocked(9U); return; }
+-        ref_rpm = s_distance_reference.speed_mm_s / s_profile_mm_per_rpm_s;
+-        if (!(ref_rpm >= -0.001f && ref_rpm <= (float)s_distance_max_rpm+0.001f))
++        if (!Auto_ProfileFollowRpmLocked(elapsed,mean,now,&ref_rpm) ||
++            !(ref_rpm >= -0.001f && ref_rpm <= (float)s_distance_max_rpm+0.001f))
+         { Auto_DistanceFaultLocked(8U); return; }
+         rpm = (ref_rpm <= 0.0f) ? 0U : (uint32_t)(ref_rpm+0.5f);
+         if (rpm > s_distance_max_rpm) rpm = s_distance_max_rpm;
+         if (rpm != s_translation_base_rpm) Auto_BatchChangedLocked(now,3U);
+         s_translation_base_rpm = rpm;
+-        return; /* 包含正常起步/末段的0RPM；参考结束后只零速等待，不补走。 */
++        return; /* 末端有限接近；到距、源失效、跟随误差及原截止仍优先。 */
+     }
+ #endif
+     rpm = Chassis_DistanceRpm(s_distance_target_mm - mean, s_distance_max_rpm);
+@@ -506,6 +555,7 @@
+     s_heading_command_tick = 0U;
+ #if APP_DISTANCE_SCURVE_ACTIVE
+     s_profile_active = s_profile_done = 0U;
++    s_profile_follow_rpm = s_profile_follow_rate = 0.0f; s_profile_follow_tick = 0U;
+ #endif
+ #if APP_IS_DEBUG
+     {
+@@ -565,6 +615,7 @@
+         s_heading_session = 0U;
+ #if APP_DISTANCE_SCURVE_ACTIVE
+         s_profile_active = s_profile_done = 0U;
++        s_profile_follow_rpm = s_profile_follow_rate = 0.0f; s_profile_follow_tick = 0U;
+ #endif
+         s_forward_hold = 0U; s_distance_mode = s_distance_reached = s_distance_fault_reason = 0U;
+         s_translation_mode = 0U;
+@@ -1026,6 +1077,9 @@
+     if ((state == CHASSIS_AUTO_START) && !s_run_started)
+     {
+         s_run_tick = now;
++#if APP_DISTANCE_SCURVE_ACTIVE
++        s_profile_follow_tick = now;
++#endif
+         s_run_started = 1U;
+         if (s_heading_session == 1U) s_heading_update_tick = now;
+     }
+@@ -1283,9 +1337,12 @@
+         float factor;
+         if (!Chassis_CalibrateDistanceMm(motion_mode,
+                 3.14159265358979323846f*g_chassis_geometry.wheel_diameter_mm/60.0f,&factor)) return 0U;
+-        limits.speed = factor*(float)base_rpm;
+-        limits.acceleration = APP_DISTANCE_SCURVE_ACCEL_MM_S2;
+-        limits.jerk = APP_DISTANCE_SCURVE_JERK_MM_S3;
++        limits.speed = factor*((float)base_rpm-APP_DISTANCE_SCURVE_FOLLOW_RPM);
++        limits.acceleration = APP_DISTANCE_SCURVE_ACCEL_MM_S2 -
++            factor*2.0f*APP_DISTANCE_SCURVE_FOLLOW_RPM*APP_DISTANCE_SCURVE_FOLLOW_OMEGA;
++        limits.jerk = APP_DISTANCE_SCURVE_JERK_MM_S3 -
++            factor*6.0f*APP_DISTANCE_SCURVE_FOLLOW_RPM*
++                APP_DISTANCE_SCURVE_FOLLOW_OMEGA*APP_DISTANCE_SCURVE_FOLLOW_OMEGA;
+         if (!MotionProfile_Prepare(&prepared->profile,distance_mm,&limits) ||
+             prepared->profile.duration_s*1000.0f + APP_DISTANCE_SCURVE_FINAL_WAIT_MS >= (float)run_ms ||
+             !Chassis_TranslationProfileCommands(motion_mode,0U,0,prepared->commands[2])) return 0U;
+@@ -1318,9 +1375,12 @@
+         float factor;
+         if (!Chassis_CalibrateDistanceMm(prepared->motion_mode,
+                 3.14159265358979323846f*g_chassis_geometry.wheel_diameter_mm/60.0f,&factor) ||
+-            prepared->profile.limits.speed != factor*(float)prepared->base_rpm ||
+-            prepared->profile.limits.acceleration != APP_DISTANCE_SCURVE_ACCEL_MM_S2 ||
+-            prepared->profile.limits.jerk != APP_DISTANCE_SCURVE_JERK_MM_S3 ||
++            prepared->profile.limits.speed != factor*((float)prepared->base_rpm-APP_DISTANCE_SCURVE_FOLLOW_RPM) ||
++            prepared->profile.limits.acceleration != APP_DISTANCE_SCURVE_ACCEL_MM_S2 -
++                factor*2.0f*APP_DISTANCE_SCURVE_FOLLOW_RPM*APP_DISTANCE_SCURVE_FOLLOW_OMEGA ||
++            prepared->profile.limits.jerk != APP_DISTANCE_SCURVE_JERK_MM_S3 -
++                factor*6.0f*APP_DISTANCE_SCURVE_FOLLOW_RPM*
++                    APP_DISTANCE_SCURVE_FOLLOW_OMEGA*APP_DISTANCE_SCURVE_FOLLOW_OMEGA ||
+             prepared->profile.boundary_s[0] != 0.0f || prepared->profile.position[0] != 0.0f ||
+             prepared->profile.speed[0] != 0.0f || prepared->profile.acceleration[0] != 0.0f)
+             return 0U;
+@@ -1361,8 +1421,10 @@
+ #if APP_DISTANCE_SCURVE_ACTIVE
+                 s_distance_profile = prepared->profile;
+                 s_profile_active = 1U; s_profile_done = 0U;
+-                s_profile_mm_per_rpm_s = prepared->profile.limits.speed/(float)prepared->base_rpm;
++                s_profile_mm_per_rpm_s = prepared->profile.limits.speed/
++                    ((float)prepared->base_rpm-APP_DISTANCE_SCURVE_FOLLOW_RPM);
+                 s_distance_reference = (MotionProfileSample){0};
++                s_profile_follow_rpm = s_profile_follow_rate = 0.0f; s_profile_follow_tick = 0U;
+                 s_translation_base_rpm = s_translation_applied_base = 0U;
+                 /* 初批必须是零速，避免错误准备向量绕过曲线起步。 */
+                 for (uint32_t wheel = 0U; wheel < CHASSIS_WHEEL_COUNT; wheel++)

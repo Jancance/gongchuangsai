@@ -1,0 +1,70 @@
+{
+  "read_only": true,
+  "health": {
+    "g_vm_test_request": 0,
+    "g_chassis_auto_active": 0,
+    "g_safety_fault": 0,
+    "g_rtos_fault": 0,
+    "g_can_ctrl_fault_latched": 0,
+    "g_reset_iwdg": 0,
+    "g_chassis_auto_cause": 0
+  },
+  "servo_pwm_us": [
+    2500,
+    2500
+  ],
+  "state": 3,
+  "result": 2,
+  "sequence": 3,
+  "done": 1,
+  "phase_bits": 1,
+  "enable": 0,
+  "request": 0,
+  "PB": {
+    "registers": {
+      "MODER": 107137,
+      "OTYPER": 0,
+      "PUPDR": 172288,
+      "IDR": 31992,
+      "ODR": 0
+    },
+    "pins": {
+      "8": {
+        "mode": 1,
+        "open_drain": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  "PD": {
+    "registers": {
+      "MODER": 22030378,
+      "OTYPER": 0,
+      "PUPDR": 44045328,
+      "IDR": 34815,
+      "ODR": 1024
+    },
+    "pins": {
+      "10": {
+        "mode": 1,
+        "open_drain": 0,
+        "input": 1,
+        "output": 1
+      },
+      "11": {
+        "mode": 1,
+        "open_drain": 0,
+        "input": 0,
+        "output": 0
+      },
+      "12": {
+        "mode": 1,
+        "open_drain": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  "VM_gpio": false
+}

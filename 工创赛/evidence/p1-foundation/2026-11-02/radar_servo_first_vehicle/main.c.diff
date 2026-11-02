@@ -1,0 +1,10 @@
+--- before/USER/main.c
++++ after/USER/main.c
+@@ -4337,6 +4337,10 @@
+     {
+         RadarZoneSwitch_Service((uint32_t)(xTaskGetTickCount()*portTICK_PERIOD_MS)); 
++        RadarServo_DebugService((g_vm_test_request==0U && g_chassis_auto_active==0U &&+
++            g_safety_fault==0U && g_rtos_fault==0U && g_can_ctrl_fault_latched==0U)?1U:0U);+
+ if (APP_UART_LINK_TEST != 0U)
+         { if (Key_GetEvent() != 0U) g_start_key_count++; }
+         else

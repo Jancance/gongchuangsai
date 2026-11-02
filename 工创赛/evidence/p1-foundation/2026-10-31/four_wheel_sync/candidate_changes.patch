@@ -1,0 +1,469 @@
+--- base/USER\app_config.h
++++ sync/USER\app_config.h
+@@ -176,3 +176,4 @@
+ /* Offline experiment. Not a vehicle-ready firmware or persistent motor configuration. */
+ #define APP_FINE_RPM_OFFLINE_ONLY 0U
+ #define APP_FINE_RPM_VEHICLE 1U
++#define APP_FOUR_WHEEL_SYNC_TRIAL 1U
+--- base/USER\chassis_auto_test.c
++++ sync/USER\chassis_auto_test.c
+@@ -1,4 +1,7 @@
+ #include "chassis_auto_test.h"
++#include "sync_batch.h"
++static SyncBatch s_sync_batch;
++extern uint32_t App_SyncTriggerSourceHealthy(void);
+ #include "motion_distance_limits.h"
+ #include "chassis_kinematics.h"
+ #include "can.h"
+@@ -213,6 +216,7 @@
+     {
+         ChassisBatchDiagnostic empty = {0};
+         s_batch_current = empty;
++        s_batch_current.sync_generation=s_sync_batch.generation;
+         s_batch_current.session = g_chassis_auto_session;
+         s_batch_current.batch_id = ++s_batch_id;
+         s_batch_current.segment = g_chassis_auto_segment;
+@@ -243,7 +247,8 @@
+         s_batch_current.failed_address = index + 1U;
+         s_batch_current.io_result = result;
+     }
+-    if (s_batch_current.ack_mask == 15U) Auto_BatchEndLocked(1U, now);
++    s_batch_current.sync_cache_mask=s_sync_batch.mask;
++    /* 四个缓存ACK不是四轮已执行，只有统一触发应答才结束成功批次。 */
+ }
+ #else
+ #define Auto_BatchChangedLocked(t,s) ((void)0)
+@@ -302,6 +307,7 @@
+         s_endpoints[s_endpoint_index].outcome = 2U;
+ #endif
+     Auto_BatchEndLocked(2U, xTaskGetTickCount());
++    SyncBatch_Abort(&s_sync_batch);
+     g_chassis_auto_active = 0U;
+     g_chassis_auto_cut_vm = 1U;
+     g_chassis_auto_state = CHASSIS_AUTO_FAULT;
+@@ -322,6 +328,9 @@
+ static void Auto_EnterLocked(uint32_t state, TickType_t now)
+ {
+     if (state == CHASSIS_AUTO_STOP) Auto_BatchEndLocked(3U, now);
++    if(state==CHASSIS_AUTO_START)
++        SyncBatch_Begin(&s_sync_batch,g_chassis_auto_session,(uint32_t)now*portTICK_PERIOD_MS);
++    else SyncBatch_Abort(&s_sync_batch);
+     g_chassis_auto_state = state;
+     s_phase_tick = now;
+     /* 普通首次批次没有前端发布时间，以选择START时刻为生成边界。 */
+@@ -567,6 +576,12 @@
+     TickType_t run_age, run_limit;
+     if (g_chassis_auto_active != 1U) return;
+     if (!Auto_BaseHealthy()) { Auto_CutLocked(2U); return; }
++    if(state==CHASSIS_AUTO_START &&
++       ((s_sync_batch.phase==SYNC_BATCH_STAGING &&
++         (uint32_t)(now*portTICK_PERIOD_MS-s_sync_batch.begin_ms)>=SYNC_BATCH_STAGE_MS) ||
++        (s_sync_batch.phase==SYNC_BATCH_CLAIMED &&
++         (uint32_t)(now*portTICK_PERIOD_MS-s_sync_batch.trigger_ms)>=SYNC_BATCH_REPLY_MS)))
++    { Auto_CutDetailLocked(4U,4U,9U,0U); return; }
+     /* 任务提交中断时撤销会话；正常停车继续由原截止和反馈监督。 */
+     if ((s_heading_session == 1U) && (s_finish_requested == 0U) &&
+         (s_stop_due == 0U) && (state <= CHASSIS_AUTO_RUN) &&
+@@ -645,6 +660,23 @@
+ #endif
+ }
+ 
++/* CAN提交触发邮箱前调用；不等待，不改变保护阈值。 */
++uint32_t ChassisAuto_SyncTriggerClaim(uint32_t session,uint32_t generation)
++{
++    uint32_t accepted=0U;PowerCommandStatus power;TickType_t now;
++    taskENTER_CRITICAL();now=xTaskGetTickCount();Auto_CheckLocked(now);
++    Power_ReadCommandStatus(&power);
++    if(g_chassis_auto_active && g_chassis_auto_state==CHASSIS_AUTO_START &&
++       g_chassis_auto_session==session && s_motor_index==4U &&
++       g_chassis_auto_start_mask[g_chassis_auto_segment]==15U &&
++       !s_stop_due && !s_finish_requested && s_vm_requested && power.active &&
++       !g_can_ctrl_fault_latched && App_SyncTriggerSourceHealthy())
++        accepted=SyncBatch_Claim(&s_sync_batch,session,generation,(uint32_t)now*portTICK_PERIOD_MS);
++#if APP_IS_DEBUG
++    if(accepted && s_batch_open)s_batch_current.sync_trigger_ms=s_sync_batch.trigger_ms;
++#endif
++    taskEXIT_CRITICAL();return accepted;
++}
+ void ChassisAuto_Init(void)
+ {
+     uint32_t i;
+@@ -656,6 +688,7 @@
+     g_chassis_auto_segment = g_chassis_auto_active = g_chassis_auto_cut_vm = 0U;
+     g_chassis_auto_session = g_chassis_auto_result = g_chassis_auto_cause = 0U;
+     g_chassis_auto_io_result = g_chassis_auto_last_address = 0U;
++    { SyncBatch empty={0};s_sync_batch=empty; }
+     s_vm_requested = s_used = s_mode = 0U;
+ #if APP_POSITION_DIAGNOSTIC
+     {
+@@ -1108,7 +1141,7 @@
+ /* 仅CAN任务调用：一轮至多一笔有界交易，不在临界区内等待 */
+ void ChassisAuto_CanStep(void)
+ {
+-    uint32_t state, session, index, result, expected, i;
++    uint32_t state, session, index, result, expected, i,sync_generation;
+     float effective_heading;
+     TickType_t now;
+     CanRxMsg reply = {0};
+@@ -1116,6 +1149,7 @@
+     now = xTaskGetTickCount(); Auto_CheckLocked(now);
+     if (!g_chassis_auto_active) { taskEXIT_CRITICAL(); return; }
+     state = g_chassis_auto_state; session = g_chassis_auto_session;
++    sync_generation=s_sync_batch.generation;
+     effective_heading = s_heading_pending_rpm;
+ #if APP_DISTANCE_SCURVE_ACTIVE
+     if (s_profile_active && !Chassis_ProfileCorrectionRpm(s_translation_base_rpm,
+@@ -1155,6 +1189,7 @@
+         g_chassis_auto_start_mask[2] = 0U;
+         Auto_EnterLocked(CHASSIS_AUTO_START, now);
+         state = CHASSIS_AUTO_START;
++        sync_generation=s_sync_batch.generation;
+     }
+ 
+     if ((state == CHASSIS_AUTO_START || state == CHASSIS_AUTO_RUN) && s_stop_due)
+@@ -1245,17 +1280,51 @@
+     }
+     if (state == CHASSIS_AUTO_RUN)
+     { taskEXIT_CRITICAL(); Auto_Monitor(session); return; }
++    if(state==CHASSIS_AUTO_START && s_motor_index==4U)
++    {
++        if(!SyncBatch_Ready(&s_sync_batch,session,sync_generation,(uint32_t)now*portTICK_PERIOD_MS))
++        { Auto_CutDetailLocked(4U,4U,9U,0U);taskEXIT_CRITICAL();return; }
++        taskEXIT_CRITICAL();
++        result=(s_mode==1U) ? (ChassisAuto_SyncTriggerClaim(session,sync_generation) ? 1U : 9U) :
++            CAN1_TriggerSync(session,sync_generation,&reply);
++        taskENTER_CRITICAL();now=xTaskGetTickCount();
++        g_chassis_auto_last_address=0U;g_chassis_auto_io_result=result;
++#if APP_IS_DEBUG
++            if(s_batch_open && s_batch_current.session==session && s_sync_batch.generation==sync_generation) {
++                s_batch_current.sync_trigger_ms=s_sync_batch.trigger_ms;
++                s_batch_current.sync_reply_ms=(uint32_t)now*portTICK_PERIOD_MS;
++                s_batch_current.sync_result=result;
++            }
++#endif
++        Auto_CheckLocked(now);
++        if(g_chassis_auto_active && g_chassis_auto_session==session &&
++           g_chassis_auto_state==CHASSIS_AUTO_START && s_sync_batch.generation==sync_generation)
++        {
++            if(result!=1U || !SyncBatch_Finish(&s_sync_batch,result,(uint32_t)now*portTICK_PERIOD_MS))
++                Auto_CutDetailLocked(4U,4U,result,0U);
++            else {
++                if(!s_run_started) {
++                    s_run_tick=(TickType_t)(s_sync_batch.trigger_ms/portTICK_PERIOD_MS);
++#if APP_DISTANCE_SCURVE_ACTIVE
++                    s_profile_follow_tick=s_run_tick;
++#endif
++                    s_run_started=1U;
++                }
++                if(s_heading_session)s_heading_update_tick=(TickType_t)(s_sync_batch.trigger_ms/portTICK_PERIOD_MS);
++#if APP_POSITION_DIAGNOSTIC
++                if(s_route_trial && s_translation_mode==1U && APP_LEFT_TRIM_ACTIVE) {
++                    Auto_LeftTrimAdvance(s_sync_batch.trigger_ms);
++                    s_left_trim_rpm=(uint32_t)((float)s_translation_applied_base*APP_LEFT_BACKWARD_RATIO+0.5f);
++                }
++#endif
++                Auto_BatchEndLocked(1U,now);
++                Auto_EnterLocked(CHASSIS_AUTO_RUN,now);
++            }
++        }
++        taskEXIT_CRITICAL();return;
++    }
+     index = s_motor_index;
+     if (index >= 4U) { Auto_CutLocked(6U); taskEXIT_CRITICAL(); return; }
+-    if ((state == CHASSIS_AUTO_START) && !s_run_started)
+-    {
+-        s_run_tick = now;
+-#if APP_DISTANCE_SCURVE_ACTIVE
+-        s_profile_follow_tick = now;
+-#endif
+-        s_run_started = 1U;
+-        if (s_heading_session == 1U) s_heading_update_tick = now;
+-    }
+     if (state == CHASSIS_AUTO_START) Auto_BatchSendLocked(index, xTaskGetTickCount());
+     taskEXIT_CRITICAL();
+ 
+@@ -1266,7 +1335,7 @@
+     else if (state == CHASSIS_AUTO_START)
+     {
+         ChassisMotorCommand command = s_commands[g_chassis_auto_segment][index];
+-        result = (s_mode == 1U) ? 1U : CAN1_SetEmmSpeedRaw(command.address,
++        result = (s_mode == 1U) ? 1U : CAN1_StageEmmSpeedRaw(command.address,
+             command.direction, command.speed_raw, 0U, &reply);
+     }
+     else if (state == CHASSIS_AUTO_STOP)
+@@ -1278,8 +1347,11 @@
+         (g_chassis_auto_state == state))
+     {
+         g_chassis_auto_last_address = index + 1U; g_chassis_auto_io_result = result;
+-        if (state == CHASSIS_AUTO_START)
+-            Auto_BatchReplyLocked(session, index, result, xTaskGetTickCount());
++        if (state == CHASSIS_AUTO_START) {
++            if(result==1U && !SyncBatch_Ack(&s_sync_batch,session,sync_generation,index,result,
++                 (uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS))result=9U;
++            Auto_BatchReplyLocked(session,index,result,xTaskGetTickCount());
++        }
+         if (result != 1U)
+             Auto_CutLocked((state == CHASSIS_AUTO_START) ? 4U :
+                            ((state == CHASSIS_AUTO_STOP) ? 5U : 1U));
+@@ -1294,7 +1366,7 @@
+             {
+ #if APP_POSITION_DIAGNOSTIC
+                 if(s_route_trial && s_translation_mode==1U && APP_LEFT_TRIM_ACTIVE &&
+-                    (state==CHASSIS_AUTO_START || state==CHASSIS_AUTO_STOP))
++                    state==CHASSIS_AUTO_STOP)
+                 {
+                     Auto_LeftTrimAdvance((uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
+                     s_left_trim_rpm=state==CHASSIS_AUTO_STOP ? 0U :
+@@ -1303,7 +1375,7 @@
+ #endif
+                 if (state == CHASSIS_AUTO_DISABLE) Auto_EnterLocked(CHASSIS_AUTO_VERIFY_OFF, xTaskGetTickCount());
+                 else if (state == CHASSIS_AUTO_ENABLE) Auto_EnterLocked(CHASSIS_AUTO_VERIFY_ON, xTaskGetTickCount());
+-                else if (state == CHASSIS_AUTO_START) Auto_EnterLocked(CHASSIS_AUTO_RUN, xTaskGetTickCount());
++                else if (state == CHASSIS_AUTO_START) { s_monitor_between=0U; }
+                 else Auto_EnterLocked(CHASSIS_AUTO_SETTLE, xTaskGetTickCount());
+             }
+             else if (state != CHASSIS_AUTO_STOP) s_monitor_between = 1U;
+--- base/USER\chassis_auto_test.h
++++ sync/USER\chassis_auto_test.h
+@@ -61,6 +61,7 @@
+ } ChassisAutoFaultDiagnostic;
+ extern volatile ChassisAutoFaultDiagnostic g_chassis_auto_fault_diagnostic;
+ void ChassisAuto_ReadFaultDiagnostic(ChassisAutoFaultDiagnostic *snapshot);
++uint32_t ChassisAuto_SyncTriggerClaim(uint32_t session,uint32_t generation);
+ /* 调试批次历史，只观察速度指令通信，不证明机械响应；全部时间为uint32毫秒。
+  * outcome:1四轮确认、2故障中断、3停止/撤VM中断；dry_run=1无真实CAN。
+  * generation_source:0首次发送选择、1邮箱发布、2直接更新API、3距离减速。
+@@ -75,6 +76,7 @@
+     uint32_t base_rpm, pending_changes;
+     float pending_rpm;
+     uint32_t send_ms[4], reply_ms[4], result[4];
++    uint32_t sync_generation,sync_cache_mask,sync_trigger_ms,sync_reply_ms,sync_result;
+ } ChassisBatchDiagnostic;
+ typedef struct
+ {
+--- base/USER\main.c
++++ sync/USER\main.c
+@@ -1858,6 +1858,11 @@
+     taskEXIT_CRITICAL();
+     return state;
+ }
++uint32_t App_SyncTriggerSourceHealthy(void)
++{
++    return g_vm_test_request==1U &&
++        App_HeadingRuntimeSource((uint32_t)xTaskGetTickCount()) && App_HeadingRuntimeExclusive();
++}
+ static uint32_t App_MotionAccept(void)
+ {
+ #if APP_FINE_RPM_OFFLINE_ONLY
+@@ -2720,10 +2725,10 @@
+ static void App_BatchDiagnosticTelemetry(void)
+ {
+ #if APP_IS_DEBUG
+-    static char frame[448];
++    static char frame[512];
+     static ChassisBatchDiagnostic record;
+     static ChassisBatchStatistics statistics;
+-    static uint32_t cursor, last, values[35];
++    static uint32_t cursor, last, values[40];
+     uint32_t now = (uint32_t)xTaskGetTickCount(), i, used = 4U;
+     int count;
+     uint16_t crc;
+@@ -2772,8 +2777,10 @@
+     values[32] = statistics.max_call_ms;
+     values[33] = statistics.total_success;
+     values[34] = statistics.total_interrupted;
+-    memcpy(frame, "BT2,", 4U);
+-    for (i = 0U; i < 35U; i++)
++    values[35]=record.sync_generation;values[36]=record.sync_cache_mask;
++    values[37]=record.sync_trigger_ms;values[38]=record.sync_reply_ms;values[39]=record.sync_result;
++    memcpy(frame, "BT3,", 4U);
++    for (i = 0U; i < 40U; i++)
+     {
+         if (i == 13U || i == 16U)
+             count = snprintf(frame+used, sizeof(frame)-used, "%ld,", (long)(int32_t)values[i]);
+@@ -2914,7 +2921,7 @@
+     values[65]=(int32_t)g_debug_plan_id;
+ #endif
+     taskEXIT_CRITICAL();
+-    frame[0] = 'T'; frame[1] = 'M'; frame[2] = '2'; frame[3] = ',';
++    frame[0] = 'T'; frame[1] = 'M'; frame[2] = '3'; frame[3] = ',';
+     for (i = 0U; i < ((APP_TEST_MODE == 3U) ? 66U : 49U); i++)
+     {
+         count = snprintf(&frame[used], sizeof(frame) - used, "%ld,", (long)values[i]);
+--- base/USER\sync_batch.h
++++ sync/USER\sync_batch.h
+@@ -0,0 +1,49 @@
++#ifndef SYNC_BATCH_H
++#define SYNC_BATCH_H
++#include <stdint.h>
++/* 同步命令只允许完整一代：四轮先缓存，再单次触发；无效后不重试。 */
++#define SYNC_BATCH_STAGE_MS 100U
++#define SYNC_BATCH_REPLY_MS 50U
++#define SYNC_BATCH_STAGING 1U
++#define SYNC_BATCH_CLAIMED 2U
++#define SYNC_BATCH_COMMITTED 3U
++#define SYNC_BATCH_INVALID 4U
++typedef struct {
++    uint32_t session,generation,mask,phase,begin_ms,trigger_ms;
++} SyncBatch;
++static __inline void SyncBatch_Abort(SyncBatch *b) {
++    b->mask=0U;b->phase=SYNC_BATCH_INVALID;
++}
++static __inline void SyncBatch_Begin(SyncBatch *b,uint32_t session,uint32_t now) {
++    b->generation++;if(!b->generation)b->generation++;
++    b->session=session;b->mask=0U;b->phase=SYNC_BATCH_STAGING;
++    b->begin_ms=now;b->trigger_ms=0U;
++}
++static __inline uint32_t SyncBatch_Ack(SyncBatch *b,uint32_t session,
++    uint32_t generation,uint32_t index,uint32_t result,uint32_t now) {
++    if(b->phase!=SYNC_BATCH_STAGING || b->session!=session ||
++       b->generation!=generation || index>=4U || result!=1U ||
++       b->mask!=((1UL<<index)-1U) || (uint32_t)(now-b->begin_ms)>=SYNC_BATCH_STAGE_MS) {
++        SyncBatch_Abort(b);return 0U;
++    }
++    b->mask|=1UL<<index;return 1U;
++}
++static __inline uint32_t SyncBatch_Ready(const SyncBatch *b,uint32_t session,
++    uint32_t generation,uint32_t now) {
++    return b->phase==SYNC_BATCH_STAGING && b->session==session &&
++        b->generation==generation && b->mask==15U &&
++        (uint32_t)(now-b->begin_ms)<SYNC_BATCH_STAGE_MS;
++}
++static __inline uint32_t SyncBatch_Claim(SyncBatch *b,uint32_t session,
++    uint32_t generation,uint32_t now) {
++    if(!SyncBatch_Ready(b,session,generation,now))return 0U;
++    b->phase=SYNC_BATCH_CLAIMED;b->trigger_ms=now;return 1U;
++}
++static __inline uint32_t SyncBatch_Finish(SyncBatch *b,uint32_t result,uint32_t now) {
++    if(b->phase!=SYNC_BATCH_CLAIMED || result!=1U ||
++       (uint32_t)(now-b->trigger_ms)>=SYNC_BATCH_REPLY_MS) {
++        SyncBatch_Abort(b);return 0U;
++    }
++    b->phase=SYNC_BATCH_COMMITTED;return 1U;
++}
++#endif
+--- base/SYSTEM\CAN\can.c
++++ sync/SYSTEM\CAN\can.c
+@@ -6,6 +6,8 @@
+ #include "app_config.h"
+ #include "power.h"
+ #include "safety.h"
++#include "chassis_auto_test.h"
++static uint32_t s_sync_trigger_session,s_sync_trigger_generation;
+ 
+ /* 新目标航向模式不允许单次交易长于指令提交监督期限。 */
+ #if APP_HEADING_SESSION_TEST
+@@ -230,7 +232,7 @@
+ /* 只读版本：1成功，4发送失败，5无回复，6格式异常 */
+ /* 共用短帧查询，供版本和状态读取使用 */
+ /* 通用单帧收发：只允许独立CAN任务串行调用 */
+-static uint32_t CAN1_ExchangeSingle(uint8_t address,
++static uint32_t CAN1_ExchangeDirected(uint8_t address,uint8_t reply_address,
+                                     const uint8_t *request,
+                                     uint8_t request_length,
+                                     uint8_t reply_length,
+@@ -245,7 +247,9 @@
+     
+     uint8_t flush_count;
+     /* 请求和回复均限制在单个CAN帧内 */
+-    if ((address == 0U) || (reply == NULL) || (request == NULL) ||
++    if ((reply_address == 0U) || (reply == NULL) || (request == NULL) ||
++        (address==0U && !(reply_address==1U && request_length==3U &&
++          request[0]==0xFFU && request[1]==0x66U && request[2]==0x6BU)) ||
+         (request_length < 2U) || (request_length > 8U) ||
+         (reply_length < 2U) || (reply_length > 8U))
+     {
+@@ -285,7 +289,15 @@
+     memcpy(tx.Data, request, request_length);
+ 
+     if (s_can_ctrl_trace_active) g_can_ctrl_trace_phase = 2U;
+-    mailbox = CAN_Transmit(CAN1, &tx);
++    if (address==0U) {
++        /* 只把一次短邮箱提交放进临界区；等待应答仍可被Safety抢占。 */
++        taskENTER_CRITICAL();
++        if(!ChassisAuto_SyncTriggerClaim(s_sync_trigger_session,s_sync_trigger_generation)) {
++            taskEXIT_CRITICAL();return 9U;
++        }
++        mailbox=CAN_Transmit(CAN1,&tx);
++        taskEXIT_CRITICAL();
++    } else mailbox = CAN_Transmit(CAN1, &tx);
+     if (mailbox == CAN_TxStatus_NoMailBox)
+     {
+         return 4U;
+@@ -331,7 +343,7 @@
+ 
+             if ((rx.IDE == CAN_Id_Extended) &&
+                 (rx.RTR == CAN_RTR_Data) &&
+-                (rx.ExtId == tx.ExtId))
++                (rx.ExtId == ((uint32_t)reply_address << 8)))
+             {
+                 /* 保存原始回复，异常时也能查看 */
+                 *reply = rx;
+@@ -357,6 +369,12 @@
+ }
+ 
+ /* 保留原查询入口，四种读取函数继续使用原来的调用方式 */
++static uint32_t CAN1_ExchangeSingle(uint8_t address,const uint8_t *request,
++    uint8_t request_length,uint8_t reply_length,CanRxMsg *reply)
++{
++    if(!address)return 7U;
++    return CAN1_ExchangeDirected(address,address,request,request_length,reply_length,reply);
++}
+ static uint32_t CAN1_ReadParameter(uint8_t address,
+                                   uint8_t command,
+                                   uint8_t reply_length,
+@@ -453,7 +471,9 @@
+     CanRxMsg empty = {0};
+ 
+     /* 只允许四轮地址，不允许广播 */
+-    if ((address < 1U) || (address > 4U) || (reply == NULL))
++    if ((reply == NULL) ||
++        (((address < 1U) || (address > 4U)) && !(address==0U && request &&
++          request_length==3U && request[0]==0xFFU && request[1]==0x66U && request[2]==0x6BU)))
+     {
+         return 7U;
+     }
+@@ -500,8 +520,8 @@
+         taskEXIT_CRITICAL();
+         s_can_ctrl_trace_active = 1U;
+     }
+-    result = CAN1_ExchangeSingle(address, request,
+-                                 request_length, 3U, reply);
++    result = CAN1_ExchangeDirected(address,address ? address : 1U,request,
++                                 request_length,3U,reply);
+ 
+     if ((result == 1U) && (reply->Data[1] != 0x02U))
+     {
+@@ -584,3 +604,20 @@
+ 
+ 
+ 
++
++/* 缓存只改同步标志；速度单位、方向、加速度、应答与超时仍沿用原路径。 */
++uint32_t CAN1_StageEmmSpeedRaw(uint8_t address,uint8_t direction,
++    uint16_t speed_raw,uint8_t acceleration,CanRxMsg *reply)
++{
++    uint8_t request[7]={0xF6U,0U,0U,0U,0U,1U,0x6BU};
++    if(direction>1U || speed_raw>3000U)return 7U;
++    request[1]=direction;request[2]=(uint8_t)(speed_raw>>8);
++    request[3]=(uint8_t)speed_raw;request[4]=acceleration;
++    return CAN1_ControlSingle(address,request,7U,reply);
++}
++uint32_t CAN1_TriggerSync(uint32_t session,uint32_t generation,CanRxMsg *reply)
++{
++    uint8_t request[3]={0xFFU,0x66U,0x6BU};
++    s_sync_trigger_session=session;s_sync_trigger_generation=generation;
++    return CAN1_ControlSingle(0U,request,3U,reply);
++}
+--- base/SYSTEM\CAN\can.h
++++ sync/SYSTEM\CAN\can.h
+@@ -7,6 +7,9 @@
+ extern volatile uint32_t g_can_ctrl_fault_latched;
+ /* 在FreeRTOS任务中调用一次，返回测试结果 */
+ uint32_t CAN1_LoopbackTest(void);
++uint32_t CAN1_StageEmmSpeedRaw(uint8_t address,uint8_t direction,
++    uint16_t speed_raw,uint8_t acceleration,CanRxMsg *reply);
++uint32_t CAN1_TriggerSync(uint32_t session,uint32_t generation,CanRxMsg *reply);
+ uint32_t CAN1_ReadVersion(uint8_t address, CanRxMsg *reply);
+ uint32_t CAN1_ReadStatus(uint8_t address, CanRxMsg *reply);
+ void CAN1_ResetSession(void);

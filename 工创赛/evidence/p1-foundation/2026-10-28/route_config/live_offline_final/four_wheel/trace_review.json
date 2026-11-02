@@ -1,0 +1,458 @@
+{
+  "ok": true,
+  "source": "software_simulation_only",
+  "sample_count": 6648,
+  "cases": [
+    {
+      "ok": true,
+      "errors": [],
+      "metrics": {
+        "samples": 2012,
+        "duration_s": 20.110000610351562,
+        "reference_peak_cm_s": 20.0,
+        "reference_max_abs_acceleration_cm_s2": 2.3521183013916014,
+        "reference_max_abs_jerk_cm_s3": 3.0563549041748046,
+        "max_abs_tracking_error_mm": 8.246292114257812,
+        "last_backend_encoder_cm": 210.02646484375,
+        "last_model_calibrated_encoder_cm": 210.097900390625,
+        "reference_speed_at_first_stop_cm_s": 0.8200774192810059,
+        "base_rpm_at_first_stop": 1.0,
+        "max_speed_calls_per_10ms": 1,
+        "final_result": 1,
+        "final_cause": 0,
+        "final_distance_reason": 0
+      },
+      "markers": [
+        {
+          "time_s": 10.5,
+          "label": "进入减速参考段"
+        },
+        {
+          "time_s": 19.77255630493164,
+          "label": "计划参考终点"
+        },
+        {
+          "time_s": 19.040000915527344,
+          "label": "后端停车请求（不等于已发出停止指令）"
+        },
+        {
+          "time_s": 19.040000915527344,
+          "label": "后端编码到距"
+        },
+        {
+          "time_s": 19.040000915527344,
+          "label": "进入逐轮STOP"
+        },
+        {
+          "time_s": 19.07000160217285,
+          "label": "进入停稳确认"
+        },
+        {
+          "time_s": 20.110000610351562,
+          "label": "后端DONE"
+        }
+      ],
+      "case_id": 0,
+      "label": "四轮相同响应",
+      "expected": "正常到距并停稳"
+    },
+    {
+      "ok": true,
+      "errors": [],
+      "metrics": {
+        "samples": 2004,
+        "duration_s": 20.030000686645508,
+        "reference_peak_cm_s": 20.0,
+        "reference_max_abs_acceleration_cm_s2": 2.3521183013916014,
+        "reference_max_abs_jerk_cm_s3": 3.0563549041748046,
+        "max_abs_tracking_error_mm": 10.378501892089844,
+        "last_backend_encoder_cm": 210.0038330078125,
+        "last_model_calibrated_encoder_cm": 210.109423828125,
+        "reference_speed_at_first_stop_cm_s": 1.0061508178710938,
+        "base_rpm_at_first_stop": 2.0,
+        "max_speed_calls_per_10ms": 1,
+        "final_result": 1,
+        "final_cause": 0,
+        "final_distance_reason": 0
+      },
+      "markers": [
+        {
+          "time_s": 10.5,
+          "label": "进入减速参考段"
+        },
+        {
+          "time_s": 19.77255630493164,
+          "label": "计划参考终点"
+        },
+        {
+          "time_s": 18.96000099182129,
+          "label": "后端停车请求（不等于已发出停止指令）"
+        },
+        {
+          "time_s": 18.96000099182129,
+          "label": "后端编码到距"
+        },
+        {
+          "time_s": 18.96000099182129,
+          "label": "进入逐轮STOP"
+        },
+        {
+          "time_s": 18.990001678466797,
+          "label": "进入停稳确认"
+        },
+        {
+          "time_s": 20.030000686645508,
+          "label": "后端DONE"
+        }
+      ],
+      "case_id": 1,
+      "label": "四轮独立延迟0/20/40/60ms",
+      "expected": "正常到距并停稳"
+    },
+    {
+      "ok": true,
+      "errors": [],
+      "metrics": {
+        "samples": 436,
+        "duration_s": 4.350000381469727,
+        "reference_peak_cm_s": 9.326641082763672,
+        "reference_max_abs_acceleration_cm_s2": 2.3521183013916014,
+        "reference_max_abs_jerk_cm_s3": 3.0563549041748046,
+        "max_abs_tracking_error_mm": 18.086669921875,
+        "last_backend_encoder_cm": 16.74041748046875,
+        "last_model_calibrated_encoder_cm": 17.775343322753905,
+        "reference_speed_at_first_stop_cm_s": 9.326641082763672,
+        "base_rpm_at_first_stop": 24.0,
+        "max_speed_calls_per_10ms": 1,
+        "final_result": 2,
+        "final_cause": 3,
+        "final_distance_reason": 5
+      },
+      "markers": [
+        {
+          "time_s": 10.5,
+          "label": "进入减速参考段"
+        },
+        {
+          "time_s": 19.77255630493164,
+          "label": "计划参考终点"
+        },
+        {
+          "time_s": 4.350000381469727,
+          "label": "后端故障并请求撤VM"
+        }
+      ],
+      "case_id": 2,
+      "label": "第三轮速度增益降低20%",
+      "expected": "原保护触发故障并请求撤VM"
+    },
+    {
+      "ok": true,
+      "errors": [],
+      "metrics": {
+        "samples": 312,
+        "duration_s": 3.1100001335144043,
+        "reference_peak_cm_s": 6.410013580322266,
+        "reference_max_abs_acceleration_cm_s2": 2.3521183013916014,
+        "reference_max_abs_jerk_cm_s3": 3.0563549041748046,
+        "max_abs_tracking_error_mm": 9.781845092773438,
+        "last_backend_encoder_cm": 8.05767593383789,
+        "last_model_calibrated_encoder_cm": 8.51803970336914,
+        "reference_speed_at_first_stop_cm_s": 6.410013580322266,
+        "base_rpm_at_first_stop": 16.0,
+        "max_speed_calls_per_10ms": 1,
+        "final_result": 2,
+        "final_cause": 3,
+        "final_distance_reason": 0
+      },
+      "markers": [
+        {
+          "time_s": 10.5,
+          "label": "进入减速参考段"
+        },
+        {
+          "time_s": 19.77255630493164,
+          "label": "计划参考终点"
+        },
+        {
+          "time_s": 3,
+          "label": "测试适配器开始注入异常/停车请求"
+        },
+        {
+          "time_s": 3.1100001335144043,
+          "label": "后端故障并请求撤VM"
+        }
+      ],
+      "case_id": 3,
+      "label": "第三轮速度应答缺失",
+      "expected": "原保护触发故障并请求撤VM"
+    },
+    {
+      "ok": true,
+      "errors": [],
+      "metrics": {
+        "samples": 307,
+        "duration_s": 3.06000018119812,
+        "reference_peak_cm_s": 6.2924072265625,
+        "reference_max_abs_acceleration_cm_s2": 2.3521183013916014,
+        "reference_max_abs_jerk_cm_s3": 3.0563549041748046,
+        "max_abs_tracking_error_mm": 9.781845092773438,
+        "last_backend_encoder_cm": 7.5467987060546875,
+        "last_model_calibrated_encoder_cm": 8.194156646728516,
+        "reference_speed_at_first_stop_cm_s": 6.2924072265625,
+        "base_rpm_at_first_stop": 16.0,
+        "max_speed_calls_per_10ms": 1,
+        "final_result": 2,
+        "final_cause": 3,
+        "final_distance_reason": 0
+      },
+      "markers": [
+        {
+          "time_s": 10.5,
+          "label": "进入减速参考段"
+        },
+        {
+          "time_s": 19.77255630493164,
+          "label": "计划参考终点"
+        },
+        {
+          "time_s": 3,
+          "label": "测试适配器开始注入异常/停车请求"
+        },
+        {
+          "time_s": 3.06000018119812,
+          "label": "后端故障并请求撤VM"
+        }
+      ],
+      "case_id": 4,
+      "label": "第一轮位置应答缺失",
+      "expected": "原保护触发故障并请求撤VM"
+    },
+    {
+      "ok": true,
+      "errors": [],
+      "metrics": {
+        "samples": 302,
+        "duration_s": 3.010000228881836,
+        "reference_peak_cm_s": 6.174802017211914,
+        "reference_max_abs_acceleration_cm_s2": 2.3521183013916014,
+        "reference_max_abs_jerk_cm_s3": 3.0563549041748046,
+        "max_abs_tracking_error_mm": 9.489311218261719,
+        "last_backend_encoder_cm": 7.30889892578125,
+        "last_model_calibrated_encoder_cm": 7.867594909667969,
+        "reference_speed_at_first_stop_cm_s": 6.151280212402344,
+        "base_rpm_at_first_stop": 16.0,
+        "max_speed_calls_per_10ms": 1,
+        "final_result": 2,
+        "final_cause": 5,
+        "final_distance_reason": 0
+      },
+      "markers": [
+        {
+          "time_s": 10.5,
+          "label": "进入减速参考段"
+        },
+        {
+          "time_s": 19.77255630493164,
+          "label": "计划参考终点"
+        },
+        {
+          "time_s": 3,
+          "label": "测试适配器开始注入异常/停车请求"
+        },
+        {
+          "time_s": 3.000000238418579,
+          "label": "后端停车请求（不等于已发出停止指令）"
+        },
+        {
+          "time_s": 3.000000238418579,
+          "label": "进入逐轮STOP"
+        },
+        {
+          "time_s": 3.010000228881836,
+          "label": "后端故障并请求撤VM"
+        }
+      ],
+      "case_id": 5,
+      "label": "第二轮停止应答缺失",
+      "expected": "原保护触发故障并请求撤VM"
+    },
+    {
+      "ok": true,
+      "errors": [],
+      "metrics": {
+        "samples": 310,
+        "duration_s": 3.0900001525878906,
+        "reference_peak_cm_s": 6.362971496582031,
+        "reference_max_abs_acceleration_cm_s2": 2.3521183013916014,
+        "reference_max_abs_jerk_cm_s3": 3.0563549041748046,
+        "max_abs_tracking_error_mm": 9.781845092773438,
+        "last_backend_encoder_cm": 7.803275299072266,
+        "last_model_calibrated_encoder_cm": 8.387783813476563,
+        "reference_speed_at_first_stop_cm_s": 6.362971496582031,
+        "base_rpm_at_first_stop": 16.0,
+        "max_speed_calls_per_10ms": 1,
+        "final_result": 2,
+        "final_cause": 8,
+        "final_distance_reason": 0
+      },
+      "markers": [
+        {
+          "time_s": 10.5,
+          "label": "进入减速参考段"
+        },
+        {
+          "time_s": 19.77255630493164,
+          "label": "计划参考终点"
+        },
+        {
+          "time_s": 3,
+          "label": "测试适配器开始注入异常/停车请求"
+        },
+        {
+          "time_s": 3.0900001525878906,
+          "label": "后端故障并请求撤VM"
+        }
+      ],
+      "case_id": 6,
+      "label": "第二轮反馈超速",
+      "expected": "原保护触发故障并请求撤VM"
+    },
+    {
+      "ok": true,
+      "errors": [],
+      "metrics": {
+        "samples": 304,
+        "duration_s": 3.0300002098083496,
+        "reference_peak_cm_s": 6.221844482421875,
+        "reference_max_abs_acceleration_cm_s2": 2.3521183013916014,
+        "reference_max_abs_jerk_cm_s3": 3.0563549041748046,
+        "max_abs_tracking_error_mm": 9.781845092773438,
+        "last_backend_encoder_cm": 7.30889892578125,
+        "last_model_calibrated_encoder_cm": 8.002520751953124,
+        "reference_speed_at_first_stop_cm_s": 6.221844482421875,
+        "base_rpm_at_first_stop": 16.0,
+        "max_speed_calls_per_10ms": 1,
+        "final_result": 2,
+        "final_cause": 8,
+        "final_distance_reason": 0
+      },
+      "markers": [
+        {
+          "time_s": 10.5,
+          "label": "进入减速参考段"
+        },
+        {
+          "time_s": 19.77255630493164,
+          "label": "计划参考终点"
+        },
+        {
+          "time_s": 3,
+          "label": "测试适配器开始注入异常/停车请求"
+        },
+        {
+          "time_s": 3.0300002098083496,
+          "label": "后端故障并请求撤VM"
+        }
+      ],
+      "case_id": 7,
+      "label": "第四轮反馈反向",
+      "expected": "原保护触发故障并请求撤VM"
+    },
+    {
+      "ok": true,
+      "errors": [],
+      "metrics": {
+        "samples": 310,
+        "duration_s": 3.0900001525878906,
+        "reference_peak_cm_s": 6.362971496582031,
+        "reference_max_abs_acceleration_cm_s2": 2.3521183013916014,
+        "reference_max_abs_jerk_cm_s3": 3.0563549041748046,
+        "max_abs_tracking_error_mm": 9.781845092773438,
+        "last_backend_encoder_cm": 7.803275299072266,
+        "last_model_calibrated_encoder_cm": 8.387783813476563,
+        "reference_speed_at_first_stop_cm_s": 6.362971496582031,
+        "base_rpm_at_first_stop": 16.0,
+        "max_speed_calls_per_10ms": 1,
+        "final_result": 2,
+        "final_cause": 3,
+        "final_distance_reason": 0
+      },
+      "markers": [
+        {
+          "time_s": 10.5,
+          "label": "进入减速参考段"
+        },
+        {
+          "time_s": 19.77255630493164,
+          "label": "计划参考终点"
+        },
+        {
+          "time_s": 3,
+          "label": "测试适配器开始注入异常/停车请求"
+        },
+        {
+          "time_s": 3.0900001525878906,
+          "label": "后端故障并请求撤VM"
+        }
+      ],
+      "case_id": 8,
+      "label": "航向命令过期",
+      "expected": "原保护触发故障并请求撤VM"
+    },
+    {
+      "ok": true,
+      "errors": [],
+      "metrics": {
+        "samples": 351,
+        "duration_s": 3.500000238418579,
+        "reference_peak_cm_s": 7.327339172363281,
+        "reference_max_abs_acceleration_cm_s2": 2.3521183013916014,
+        "reference_max_abs_jerk_cm_s3": 3.0563549041748046,
+        "max_abs_tracking_error_mm": 41.622406005859375,
+        "last_backend_encoder_cm": 7.30889892578125,
+        "last_model_calibrated_encoder_cm": 11.002701568603516,
+        "reference_speed_at_first_stop_cm_s": 6.151280212402344,
+        "base_rpm_at_first_stop": 16.0,
+        "max_speed_calls_per_10ms": 1,
+        "final_result": 2,
+        "final_cause": 6,
+        "final_distance_reason": 0
+      },
+      "markers": [
+        {
+          "time_s": 10.5,
+          "label": "进入减速参考段"
+        },
+        {
+          "time_s": 19.77255630493164,
+          "label": "计划参考终点"
+        },
+        {
+          "time_s": 3,
+          "label": "测试适配器开始注入异常/停车请求"
+        },
+        {
+          "time_s": 3.000000238418579,
+          "label": "后端停车请求（不等于已发出停止指令）"
+        },
+        {
+          "time_s": 3.500000238418579,
+          "label": "后端故障并请求撤VM"
+        }
+      ],
+      "case_id": 9,
+      "label": "停车期间CAN任务停顿",
+      "expected": "原保护触发故障并请求撤VM"
+    }
+  ],
+  "limits": [
+    "全部曲线来自电脑上的实际C代码模拟，没有实车日志或地面尺量。",
+    "ref是规划参考；sent是桩接口接到的发送目标，阶梯显示；model是假定的一阶轮速响应；cached是后端缓存反馈。",
+    "停车后仍显示原计划的参考曲线用于对照，不表示停车后继续下发；实际桩目标见sent和调用计数。",
+    "backend进度来自异步采样，model_cal为模拟编码均值经现有前进比例校准；两者都不是地面位移。",
+    "参考加速度和jerk检查不证明整数RPM命令或真实轮速的加速度、jerk连续。七段S曲线允许jerk分段跳变。",
+    "10ms调度、瞬时桩交易；RUN前置状态由适配器设置，VM准备、HWT控制器、真实总线/RTOS时序、滑移不在模型内。",
+    "异常场景中的model记录截至后端提出撤VM请求；模型未继续计算断电后的机械滑行或停车距离。"
+  ]
+}

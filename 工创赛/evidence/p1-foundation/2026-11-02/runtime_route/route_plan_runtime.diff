@@ -1,0 +1,25 @@
+--- USER/route_plan.h (before)
+
++++ USER/route_plan.h
+
+@@ -44,11 +44,4 @@
+
+         !(geometry->wheelbase_mm>0.0f && geometry->wheelbase_mm<1000.0f))
+     { check->error=ROUTE_GEOMETRY; return 0U; }
+-    {
+-        static const RouteRow expected[]={APP_ROUTE_ROWS(ROUTE_ROW)};
+-        if(count!=8U) {check->error=ROUTE_COUNT;return 0U;}
+-        for(i=0U;i<count;i++) if(rows[i].kind!=expected[i].kind ||
+-            rows[i].amount!=expected[i].amount || rows[i].speed!=expected[i].speed)
+-        {check->error=ROUTE_KIND;return 0U;}
+-    }
+     for (i=0U;i<count;i++) {
+         const RouteRow *row=&rows[i];
+@@ -64,5 +57,5 @@
+
+             factor=6.0f*geometry->wheel_diameter_mm/(geometry->track_width_mm+geometry->wheelbase_mm);
+             minimum=1.0f; maximum=5.0f;
+-            if(APP_TURN_BRAKE_TRIAL_ACTIVE && (count==1U || count==8U) &&
++            if(APP_TURN_BRAKE_TRIAL_ACTIVE && (count>=1U && count<=MOTION_ACTION_CAPACITY) &&
+                (row->amount==90.0f || row->amount==-90.0f)) maximum=(APP_TURN_BRAKE_TRIAL_DPS==30U)?27.2f:13.6f;
+         } else if (row->kind>=MOTION_FORWARD_DISTANCE && row->kind<=MOTION_BACKWARD_DISTANCE) {

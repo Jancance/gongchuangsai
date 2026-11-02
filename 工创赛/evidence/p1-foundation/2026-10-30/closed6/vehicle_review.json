@@ -1,0 +1,149 @@
+{
+  "date_local": "2026-10-30",
+  "axf_sha256": "9933943629c92235b8472f22ce8f432915b99f4e2810b1acac36ab796a4a2838",
+  "download_verified": true,
+  "result": "software_complete",
+  "starts": 1,
+  "completed_actions": 6,
+  "elapsed_ms": 83633,
+  "stop_mask": 15,
+  "vm_output": 0,
+  "trip": 0,
+  "faults": {
+    "can_fault": 0,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "backend_cause": 0
+  },
+  "checkpoints": {
+    "0": {
+      "checkpoint": 0,
+      "captured": 1,
+      "tick_ms": 45566,
+      "x_mm": 1800,
+      "y_mm": 1800,
+      "heading_mdeg": -90000,
+      "valid": 1,
+      "reasons": 0,
+      "continuity_lost": 0,
+      "age_ms": 153,
+      "target_x_mm": 1800,
+      "target_y_mm": 1800,
+      "target_heading_mdeg": -90000
+    },
+    "1": {
+      "checkpoint": 1,
+      "captured": 1,
+      "tick_ms": 60569,
+      "x_mm": 1792,
+      "y_mm": 799,
+      "heading_mdeg": -90395,
+      "valid": 1,
+      "reasons": 0,
+      "continuity_lost": 0,
+      "age_ms": 44,
+      "target_x_mm": 1800,
+      "target_y_mm": 800,
+      "target_heading_mdeg": -90000
+    },
+    "2": {
+      "checkpoint": 2,
+      "captured": 1,
+      "tick_ms": 76331,
+      "x_mm": 791,
+      "y_mm": 802,
+      "heading_mdeg": -90961,
+      "valid": 1,
+      "reasons": 0,
+      "continuity_lost": 0,
+      "age_ms": 44,
+      "target_x_mm": 800,
+      "target_y_mm": 800,
+      "target_heading_mdeg": -90000
+    },
+    "3": {
+      "checkpoint": 3,
+      "captured": 1,
+      "tick_ms": 86285,
+      "x_mm": 793,
+      "y_mm": 803,
+      "heading_mdeg": 179159,
+      "valid": 1,
+      "reasons": 0,
+      "continuity_lost": 0,
+      "age_ms": 44,
+      "target_x_mm": 800,
+      "target_y_mm": 800,
+      "target_heading_mdeg": -180000
+    },
+    "4": {
+      "checkpoint": 4,
+      "captured": 1,
+      "tick_ms": 96239,
+      "x_mm": 796,
+      "y_mm": 804,
+      "heading_mdeg": -91378,
+      "valid": 1,
+      "reasons": 0,
+      "continuity_lost": 0,
+      "age_ms": 44,
+      "target_x_mm": 800,
+      "target_y_mm": 800,
+      "target_heading_mdeg": -90000
+    },
+    "5": {
+      "checkpoint": 5,
+      "captured": 1,
+      "tick_ms": 111946,
+      "x_mm": 1796,
+      "y_mm": 777,
+      "heading_mdeg": -90730,
+      "valid": 1,
+      "reasons": 0,
+      "continuity_lost": 0,
+      "age_ms": 44,
+      "target_x_mm": 1800,
+      "target_y_mm": 800,
+      "target_heading_mdeg": -90000
+    },
+    "6": {
+      "checkpoint": 6,
+      "captured": 1,
+      "tick_ms": 127784,
+      "x_mm": 1800,
+      "y_mm": 1778,
+      "heading_mdeg": -90285,
+      "valid": 1,
+      "reasons": 0,
+      "continuity_lost": 0,
+      "age_ms": 54,
+      "target_x_mm": 1800,
+      "target_y_mm": 1800,
+      "target_heading_mdeg": -90000
+    }
+  },
+  "estimated_return_error_mm": [
+    0,
+    -22
+  ],
+  "estimated_heading_difference_deg": -0.285,
+  "user_measurement": {
+    "original_body_forward_cm": 1.75,
+    "original_body_right_cm": 0.4,
+    "map_delta_mm": [
+      -4,
+      -17.5
+    ],
+    "distance_cm": 1.7951323071016243,
+    "reference": "same chassis reference point against original start mark; initial heading map down",
+    "resolution_and_repeatability": "not established"
+  },
+  "physical_stop_lamp_smoothness_heading_reply": "Not explicitly answered in measurement reply; telemetry confirms wheel0/VM0 only",
+  "odometry_vs_measurement_difference_mm": [
+    4,
+    -4.5
+  ],
+  "single_run_only": true,
+  "position_compensation_enabled": false,
+  "original_images_and_sources_unchanged": true
+}

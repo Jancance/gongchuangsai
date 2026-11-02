@@ -1,0 +1,37 @@
+{
+  "schema": "p1-perimeter-preview-v1",
+  "purpose": "仅无障碍动作与回到起始位姿验证；不是正式比赛路线或可执行固件配置",
+  "field": {
+    "width_mm": 2400,
+    "height_mm": 2400,
+    "start_zone_id": 1,
+    "start_zone_mm": [2100, 2100, 2400, 2400],
+    "inner_regions_allowed_for_trial": true,
+    "inner_regions_policy_source": "用户明确本轮压到白色功能区/启停区2没事，主要验证返回原位置；地图外边界仍保留",
+    "background_layout_confirmed": false
+  },
+  "footprint": {
+    "length_mm": 283,
+    "width_mm": 254,
+    "source": "轮心距206/212mm与轮径77mm、轮宽42mm估算轮组包络，非完整整车外廓实测",
+    "full_vehicle_confirmed": false,
+    "assumed_centre_matches_odometry": true
+  },
+  "start_pose": {"x_mm": 2250, "y_mm": 2250, "heading_deg": -90},
+  "coordinate_convention": "地图左下角(0,0)，X向右、Y向上；车头角逆时针为正；动作前/后/左/右均相对当前车头",
+  "required_boundary_margin_mm": 5,
+  "actions": [
+    {"kind": "FORWARD", "amount": 15, "speed": 5, "label": "前进15cm出区"},
+    {"kind": "RIGHT", "amount": 15, "speed": 5, "label": "右移15cm向场地内侧"},
+    {"kind": "FORWARD", "amount": 180, "speed": 20, "label": "右侧前进180cm，地图向下"},
+    {"kind": "RIGHT", "amount": 180, "speed": 20, "label": "底部右移180cm，地图向左"},
+    {"kind": "TURN", "amount": -90, "speed": 30, "label": "顺时针90°，车头朝左"},
+    {"kind": "TURN", "amount": -90, "speed": 30, "label": "顺时针90°，车头朝上"},
+    {"kind": "FORWARD", "amount": 180, "speed": 20, "label": "左侧前进180cm，地图向上"},
+    {"kind": "TURN", "amount": 90, "speed": 30, "label": "逆时针90°，车头朝左"},
+    {"kind": "TURN", "amount": 90, "speed": 30, "label": "逆时针90°，车头恢复向下"},
+    {"kind": "LEFT", "amount": 180, "speed": 20, "label": "顶部左移180cm，地图向右"},
+    {"kind": "BACKWARD", "amount": 15, "speed": 5, "label": "后退15cm回区"},
+    {"kind": "LEFT", "amount": 15, "speed": 5, "label": "左移15cm返回起始中心并停车"}
+  ]
+}

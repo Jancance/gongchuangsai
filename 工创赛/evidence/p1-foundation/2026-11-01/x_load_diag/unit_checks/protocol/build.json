@@ -1,0 +1,33 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 0,
+    "output": "\"unit.c\", line 37: Warning:  #177-D: variable \"i\"  was declared but never referenced\n  static void fresh(uint8_t address){uint8_t data[36]={0},pos=0,pkt=0,i;\n                                                                      ^\nunit.c: 1 warning, 0 errors\n"
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armlink.exe",
+      "--entry",
+      "test_entry",
+      "--scatter",
+      "unit.sct",
+      "unit.o",
+      "--library_type=microlib",
+      "-o",
+      "unit.axf"
+    ],
+    "returncode": 0,
+    "output": ""
+  }
+]

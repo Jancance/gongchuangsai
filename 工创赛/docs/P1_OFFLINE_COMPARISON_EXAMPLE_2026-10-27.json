@@ -1,0 +1,75 @@
+{
+  "description": "Historical low-speed measurements only; no 20cm/s physical result. Right lateral offset positive; null unknown.",
+  "runs": [
+    {
+      "label": "A1-分档30cm",
+      "version": "01_distance_cal",
+      "log": "../releases/p1_low_speed_validation_2026-10-26/measurements/A1_20261026_204633/run/20261026_204707_728000.jsonl",
+      "ground": {
+        "target_cm": 30,
+        "forward_cm": 30.1,
+        "lateral_cm_right_positive": null,
+        "smoothness": "未反馈",
+        "stopped": true,
+        "vm_lamp_off": true
+      },
+      "conditions": "实际前移约30.1cm，横偏未量；停稳灯灭由随后A2就位答复确认"
+    },
+    {
+      "label": "A2-分档210cm",
+      "version": "01_distance_cal",
+      "log": "../releases/p1_low_speed_validation_2026-10-26/measurements/A2_20261026_204944/run/20261026_205013_632200.jsonl",
+      "ground": {
+        "target_cm": 210,
+        "forward_cm": 210,
+        "lateral_cm_right_positive": 4,
+        "smoothness": "未反馈",
+        "stopped": null,
+        "vm_lamp_off": null
+      },
+      "conditions": "前移约210cm/右约4cm；原run遥测超时，补采完成不改写原结果"
+    },
+    {
+      "label": "A2-遥测收尾修复",
+      "version": "telemetry_priority_default",
+      "log": "../evidence/p1-foundation/2026-10-26/telemetry_fix_forward210_20261026_212828/run/20261026_212901_400000.jsonl",
+      "ground": {
+        "target_cm": 210,
+        "forward_cm": 210,
+        "lateral_cm_right_positive": 3.25,
+        "smoothness": "未反馈",
+        "stopped": null,
+        "vm_lamp_off": null
+      },
+      "conditions": "单轮尺量；与其他版本初始HWT方向/条件未保证同质"
+    },
+    {
+      "label": "B1-S曲线30cm",
+      "version": "telemetry_priority_candidate_B1",
+      "log": "../evidence/p1-foundation/2026-10-26/scurve_B1_forward30_20261026_213526/run/20261026_213910_902000.jsonl",
+      "ground": {
+        "target_cm": 30,
+        "forward_cm": 30,
+        "lateral_cm_right_positive": 0.8,
+        "smoothness": "速度太慢看不太出来",
+        "stopped": true,
+        "vm_lamp_off": true
+      },
+      "conditions": "停稳灯灭由随后B2就位答复确认；未判定平顺改善"
+    },
+    {
+      "label": "B2-S曲线210cm",
+      "version": "telemetry_priority_candidate_B2",
+      "log": "../evidence/p1-foundation/2026-10-26/scurve_B2_forward210_20261026_214229/run/20261026_214301_632300.jsonl",
+      "ground": {
+        "target_cm": 210,
+        "forward_cm": 209.25,
+        "lateral_cm_right_positive": 0.75,
+        "smoothness": "未反馈",
+        "stopped": null,
+        "vm_lamp_off": null
+      },
+      "conditions": "原distance reason9失败；尺量与编码进度分别记录；不证明曲线降低横偏"
+    }
+  ]
+}

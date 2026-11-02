@@ -1,0 +1,237 @@
+{
+  "checks": [
+    {
+      "run": "brake30_final",
+      "prototype_model_acceptance": true,
+      "source_unchanged": true,
+      "captured_stop_tail_s_at_least": 1.49,
+      "captured_final_rate_below_dps": 0.1
+    },
+    {
+      "run": "brake15_final",
+      "prototype_model_acceptance": true,
+      "source_unchanged": true,
+      "captured_stop_tail_s_at_least": 1.49,
+      "captured_final_rate_below_dps": 0.1
+    },
+    {
+      "run": "brake30_noise_final",
+      "prototype_model_acceptance": true,
+      "source_unchanged": true,
+      "captured_stop_tail_s_at_least": 1.49,
+      "captured_final_rate_below_dps": 0.1
+    }
+  ],
+  "prototype_cases": 162,
+  "all_comparison_cases": 486,
+  "results": [
+    {
+      "run": "brake30_final",
+      "cases": 54,
+      "completed": 54,
+      "worst_final_error_deg": 0.724945068359375,
+      "worst_overshoot_deg": 0.0,
+      "max_reversals": 0.0,
+      "max_command_step_rpm": 1.0,
+      "summary": {
+        "name": "brake_30dps_prototype",
+        "cases": 54,
+        "completed": 54,
+        "median_done_s": 9.649999618530273,
+        "worst_overshoot_deg": 0.0,
+        "worst_final_error_deg": 0.724945068359375,
+        "max_command_jump_rpm": 1.0,
+        "worst_accel_dps2": 18.915939331054688,
+        "max_reversals": 0.0,
+        "peak_rate_range_dps": [
+          25.085023880004883,
+          31.5587100982666
+        ]
+      },
+      "model_acceptance": true,
+      "live_source_unchanged": true,
+      "assumptions": {
+        "dt_ms": 10,
+        "extra_command_lag_ms": [
+          0,
+          80,
+          160
+        ],
+        "per_wheel_delivery_ms": [
+          0,
+          20,
+          40,
+          60
+        ],
+        "batch_period_ms": 70,
+        "motor_tau_ms": [
+          80,
+          200,
+          400
+        ],
+        "speed_gain": [
+          0.9,
+          1,
+          1.1
+        ],
+        "sensor_lag_ms": 20,
+        "sensor_yaw_noise_deg": 0.0,
+        "sensor_rate_noise_dps": 0.0,
+        "directions": [
+          "CCW",
+          "CW"
+        ],
+        "timeout_ms": 30000,
+        "prototype_speed_ceiling": 30,
+        "prototype_brake_accel_dps2": 15,
+        "prototype_jerk_slew_dps3": 60,
+        "prototype_lookahead_s": 0.7,
+        "prototype_delay_allowance_s": 0.8,
+        "prototype_feedback_filter_ms": 80,
+        "settle_entry_deg": 0.8,
+        "settle_exit_deg": 0.9
+      }
+    },
+    {
+      "run": "brake15_final",
+      "cases": 54,
+      "completed": 54,
+      "worst_final_error_deg": 0.731353759765625,
+      "worst_overshoot_deg": 0.0,
+      "max_reversals": 0.0,
+      "max_command_step_rpm": 1.0,
+      "summary": {
+        "name": "brake_15dps_prototype",
+        "cases": 54,
+        "completed": 54,
+        "median_done_s": 11.079999923706055,
+        "worst_overshoot_deg": 0.0,
+        "worst_final_error_deg": 0.731353759765625,
+        "max_command_jump_rpm": 1.0,
+        "worst_accel_dps2": 18.912792205810547,
+        "max_reversals": 0.0,
+        "peak_rate_range_dps": [
+          13.926189422607422,
+          17.021047592163086
+        ]
+      },
+      "model_acceptance": true,
+      "live_source_unchanged": true,
+      "assumptions": {
+        "dt_ms": 10,
+        "extra_command_lag_ms": [
+          0,
+          80,
+          160
+        ],
+        "per_wheel_delivery_ms": [
+          0,
+          20,
+          40,
+          60
+        ],
+        "batch_period_ms": 70,
+        "motor_tau_ms": [
+          80,
+          200,
+          400
+        ],
+        "speed_gain": [
+          0.9,
+          1,
+          1.1
+        ],
+        "sensor_lag_ms": 20,
+        "sensor_yaw_noise_deg": 0.0,
+        "sensor_rate_noise_dps": 0.0,
+        "directions": [
+          "CCW",
+          "CW"
+        ],
+        "timeout_ms": 30000,
+        "prototype_speed_ceiling": 15,
+        "prototype_brake_accel_dps2": 15,
+        "prototype_jerk_slew_dps3": 60,
+        "prototype_lookahead_s": 0.7,
+        "prototype_delay_allowance_s": 0.8,
+        "prototype_feedback_filter_ms": 80,
+        "settle_entry_deg": 0.8,
+        "settle_exit_deg": 0.9
+      }
+    },
+    {
+      "run": "brake30_noise_final",
+      "cases": 54,
+      "completed": 54,
+      "worst_final_error_deg": 0.732696533203125,
+      "worst_overshoot_deg": 0.0,
+      "max_reversals": 0.0,
+      "max_command_step_rpm": 1.0,
+      "summary": {
+        "name": "brake_30dps_prototype",
+        "cases": 54,
+        "completed": 54,
+        "median_done_s": 9.519999980926514,
+        "worst_overshoot_deg": 0.0,
+        "worst_final_error_deg": 0.732696533203125,
+        "max_command_jump_rpm": 1.0,
+        "worst_accel_dps2": 18.915939331054688,
+        "max_reversals": 0.0,
+        "peak_rate_range_dps": [
+          25.192462921142578,
+          31.5587100982666
+        ]
+      },
+      "model_acceptance": true,
+      "live_source_unchanged": true,
+      "assumptions": {
+        "dt_ms": 10,
+        "extra_command_lag_ms": [
+          0,
+          80,
+          160
+        ],
+        "per_wheel_delivery_ms": [
+          0,
+          20,
+          40,
+          60
+        ],
+        "batch_period_ms": 70,
+        "motor_tau_ms": [
+          80,
+          200,
+          400
+        ],
+        "speed_gain": [
+          0.9,
+          1,
+          1.1
+        ],
+        "sensor_lag_ms": 40,
+        "sensor_yaw_noise_deg": 0.15,
+        "sensor_rate_noise_dps": 0.5,
+        "directions": [
+          "CCW",
+          "CW"
+        ],
+        "timeout_ms": 30000,
+        "prototype_speed_ceiling": 30,
+        "prototype_brake_accel_dps2": 15,
+        "prototype_jerk_slew_dps3": 60,
+        "prototype_lookahead_s": 0.7,
+        "prototype_delay_allowance_s": 0.8,
+        "prototype_feedback_filter_ms": 80,
+        "settle_entry_deg": 0.8,
+        "settle_exit_deg": 0.9
+      }
+    }
+  ],
+  "hardware_accessed": false,
+  "model_stage_passed": true,
+  "vehicle_firmware_ready": false,
+  "remaining": "Integrate fixed-angle input wrapping, time-based control, torque/command limits, sensor/CAN/stop/VM guards and finite timeouts; whole firmware build and controlled physical acceptance remain.",
+  "build_warnings": [],
+  "test_fixture_sha256": "6c07cddd5e17a6242669ca45d138f036ce4d762ef5829cbb9ed949cbf501526d",
+  "runner_sha256": "22b3b6119bb8c56186e3947c295c4c2c2506b89f369f2acb3d68dbab3febd7ef"
+}

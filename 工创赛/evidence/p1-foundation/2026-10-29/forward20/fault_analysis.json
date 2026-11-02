@@ -1,0 +1,50 @@
+{
+  "distance_fault_reason": 5,
+  "fault_tick_ms": 53633,
+  "last_good_progress_mm": 1022.508,
+  "zero_baseline_evidence": "first valid session1 PM1 positions all zero, including 44200ms before nonzero movement",
+  "final_cached_position_mm": [
+    1014.6356811523438,
+    1037.7755126953125,
+    986.4833374023438,
+    1002.9864501953125
+  ],
+  "position_sample_ms": [
+    53557,
+    53623,
+    53458,
+    53491
+  ],
+  "sample_skew_ms": 165,
+  "raw_spread_mm": 51.29217529296875,
+  "spread_threshold_mm": 50.0,
+  "before_update_spread_mm": 28.15234375,
+  "comparison_time_ms": 53458,
+  "offline_linear_interpolated_mm": [
+    994.8496834280196,
+    1005.1026895741014,
+    986.4833426235114,
+    996.3497632404931
+  ],
+  "offline_linear_interpolated_spread_mm": 18.619346950590057,
+  "interpolation_brackets_ms": [
+    [
+      53392,
+      53557
+    ],
+    [
+      53425,
+      53623
+    ],
+    [
+      53458,
+      53458
+    ],
+    [
+      53359,
+      53491
+    ]
+  ],
+  "timing_only_difference_at_20cm_s_mm": 33.0,
+  "conclusion": "raw spread above 50mm directly reproduces distance fault5; asynchronous sampling materially contributes. Common-time interpolation is offline evidence only, not proof of true simultaneous wheel displacement or ground slip. No protection changed."
+}

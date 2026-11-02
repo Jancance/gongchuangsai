@@ -1,0 +1,109 @@
+{
+  "date": "2026-10-26",
+  "baseline": "54bb617",
+  "changed_firmware_files": [
+    "3.stm32f407工程/USER/main.c"
+  ],
+  "source_sha256": "3337179fcaf6e5343cd5af94c3aee3b8906d8c62a0642f1603d52be226b07774",
+  "source_before_sha256": "5d10e4f231d2a0a78f7ec258ac3b55a55d71fabc091ae447b959c60c91a15e81",
+  "unchanged_from_previous_review": {
+    "app_config.h": "87423ebd6b240c9902f01d29e1267089dbdbca138415109d82c839b592553c5e",
+    "chassis_auto_test.c": "be45ffe7c7b9dc5b367d16f6c3dc58762559d9dd713bc6427731e1bc4712f775",
+    "chassis_auto_test.h": "129eddcc29fb533a48ae1b8977b8149faece80649dd31148f3637adf9ac3e2b8",
+    "chassis_kinematics.c": "5dbf6870afcb52be383427fd732a29aa5b15105dbc6cf75240c03dfb9b8b87a4",
+    "chassis_kinematics.h": "5c0d95b5d4f6e47fdccd94c1ba3fbc477716314120a3ef631b049c85c57b8387",
+    "3.stm32f407工程/SYSTEM/CAN/can.c": "54b173eb8767d8fb25e1779a6be3f21ca2c71757c4694cf04513ed2f3eaa5f60",
+    "3.stm32f407工程/SYSTEM/CAN/can.h": "c6fb41ed2c6fd21ae5328abf62a176df7c5676afed11f6a8125c95980fca1a97",
+    "3.stm32f407工程/USER/heading_controller.c": "d3b5c2a6d902240fb54700227d22c5857e16cd3360971cf92ac3270da3855c40",
+    "test_p1_serial_motion.py": "97041074c5578d85643ed2dd4c25e23c09607300db11cf89554cf6da71b4e151",
+    "SYSTEM/USART/usart.c": "f85a99853e07f8505a4e0b0bf88057a8c5656135be4b428fd50fc1a5a457b9b3",
+    "SYSTEM/USART/usart.h": "f0604d18e6c39a3868446c9722f4ac86c6accc9705ed5df049e4d24ac24cf6a9"
+  },
+  "builds": {
+    "default": {
+      "full_rebuild": true,
+      "errors": 0,
+      "warnings": 0,
+      "code": 62408,
+      "ro": 868,
+      "rw": 2064,
+      "zi": 37064,
+      "project": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\telemetry_priority_default_20261026\\gongxun-f407.uvprojx",
+      "axf_sha256": "ecca1d075c43e0d7bea23a17e349f347cef775f6f3d166224f35a2df7509e127",
+      "log": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\evidence\\p1-foundation\\2026-10-26\\telemetry_priority_default_build.log"
+    },
+    "candidate": {
+      "full_rebuild": true,
+      "errors": 0,
+      "warnings": 0,
+      "code": 70260,
+      "ro": 1232,
+      "rw": 2076,
+      "zi": 37492,
+      "project": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\telemetry_priority_candidate_20261026\\gongxun-f407.uvprojx",
+      "axf_sha256": "eaac6041c8181c582485e14a3acd79f23a9d2886aadb384fe3115992903fc33e",
+      "log": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\evidence\\p1-foundation\\2026-10-26\\telemetry_priority_candidate_build.log"
+    },
+    "competition": {
+      "full_rebuild": true,
+      "errors": 0,
+      "warnings": 0,
+      "code": 53716,
+      "ro": 652,
+      "rw": 1944,
+      "zi": 29376,
+      "project": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\telemetry_priority_competition_20261026\\gongxun-f407.uvprojx",
+      "axf_sha256": "6e63a1ca59beae34f00d9745123663468270f380043c205f6680b5c94f2a4b4d",
+      "log": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\evidence\\p1-foundation\\2026-10-26\\telemetry_priority_competition_build.log"
+    }
+  },
+  "policy_tests": {
+    "actual_c_assertions": 288,
+    "production_policy_and_dispatch_extracted": true,
+    "old_phase_lock_reproduced": true,
+    "wraparound_and_busy_retry": true,
+    "diagnostic_16_record_drain": true,
+    "forced_700ms_outage_remains_outage": true,
+    "hardware_accessed": false,
+    "limits": "Actual C send policy and dispatch; telemetry packing/state providers mocked. Busy durations injected; no MCU/UART timing proof."
+  },
+  "host_regression": {
+    "command": "python -X utf8 -m unittest discover -s 工创赛/scripts -p test_p1_serial_motion.py",
+    "tests": 96,
+    "result": "OK",
+    "production_script_modified": false
+  },
+  "trigger": "A2 last TM tick62300 followed by CT2/BT1/PM1 but no new TM for >0.6s. Host STOP; post-stop monitor confirmed done 1/1 and VM0.",
+  "fix": [
+    "TM dispatched first",
+    "Only queue acceptance advances 100ms clock; busy retries next TaskA iteration",
+    "All five diagnostics gated to window after accepted TM and before next due time"
+  ],
+  "limits": [
+    "Policy/dispatch extracted; packing and RTOS/UART timing mocked",
+    "Busy duration injected, not measured on the vehicle",
+    "No hardware operation this change; board still frozen01",
+    "Host timeout, CAN, motion and VM/fault/watchdog unchanged",
+    "S curve default off; no speed raise; old frozen release unchanged"
+  ],
+  "requirements": {
+    "R": [
+      "RUN-01",
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "LOC-05",
+      "MOT-02",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": "unchanged"
+  },
+  "git": "fetch/pull ff-only current54bb617, no divergence; local only, no commit/push",
+  "subsequent_hardware_test": {
+    "review": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\evidence\\p1-foundation\\2026-10-26\\telemetry_priority_forward210_physical_review.json",
+    "status": "software_complete",
+    "single_run_only": true
+  }
+}

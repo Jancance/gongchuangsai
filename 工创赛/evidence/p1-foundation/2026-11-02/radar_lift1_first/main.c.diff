@@ -1,0 +1,16 @@
+--- before/main.c
++++ USER/main.c
+@@ -7,6 +7,8 @@
+ #include "app_config.h" 
+ #include "radar_servo.h"+
++#include "radar_lift.h" 
+ #include "radar_zone_switch.h"
+ #include "fine_rpm_telemetry.h"
+@@ -4351,6 +4353,12 @@
+     {
+         RadarZoneSwitch_Service((uint32_t)(xTaskGetTickCount()*portTICK_PERIOD_MS)); 
++        RadarLift_Service((uint32_t)(xTaskGetTickCount()*portTICK_PERIOD_MS),+
++            (g_vm_test_request==0U && g_chassis_auto_active==0U &&+
++             g_safety_fault==0U && g_rtos_fault==0U && g_can_ctrl_fault_latched==0U)?1U:0U);+
+         RadarServo_DebugService((g_vm_test_request==0U && g_chassis_auto_active==0U && 
+             g_safety_fault==0U && g_rtos_fault==0U && g_can_ctrl_fault_latched==0U)?1U:0U);

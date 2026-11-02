@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-24",
+  "scope": "forward/left/right projected-distance API and direction-tagged PE2 records",
+  "host_tests": 58,
+  "public_header_client_compiled": true,
+  "builds": {
+    "default": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=55756 RO-data=788 RW-data=1968 ZI-data=31544"
+    },
+    "forward": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=55748 RO-data=728 RW-data=1968 ZI-data=31544"
+    },
+    "left": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=55748 RO-data=728 RW-data=1968 ZI-data=31544"
+    },
+    "right": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=55748 RO-data=728 RW-data=1968 ZI-data=31544"
+    },
+    "mixed": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=55752 RO-data=768 RW-data=1968 ZI-data=31544"
+    },
+    "single": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=47220 RO-data=708 RW-data=1896 ZI-data=31304"
+    },
+    "link": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=25910 RO-data=462 RW-data=1848 ZI-data=27392"
+    },
+    "manual": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=39740 RO-data=652 RW-data=1800 ZI-data=27424"
+    },
+    "off": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=50588 RO-data=788 RW-data=1940 ZI-data=29396"
+    }
+  },
+  "source_sha256": {
+    "main.c": "322240ccda87ad4a0cd2126de6695de284e9d76a3e0b5ed53503e9e3c9a8e924",
+    "motion_control.h": "ab573425add5acdb13b45f70c416f965dee39fdb4d124df12f674575facecb8e",
+    "motion_action_plan.h": "0ff20717209d8c7243a24b46ac060587ff92899fb1094bfe935c630aa324fe34",
+    "chassis_auto_test.c": "f27d103e6aec7cdaa06ba593faf551ebba1bade4c63128082e0cacaf22511681",
+    "chassis_auto_test.h": "29c2171e835fb7dccc6a38eace8e84f8e6ff49cffc99f90fa45d2aa13f2f696c",
+    "chassis_kinematics.c": "4dbc9ea4e15d8a8749131c1b52809e67e0d543c04d4ada811c6497b29ef6e387",
+    "chassis_kinematics.h": "4943d28a127a19327c579d358e28b1a033e9387348dd56ecc525c764cc1f6898"
+  },
+  "flashed": false,
+  "serial_opened": false,
+  "hardware_tested": false,
+  "calibration_applied": false,
+  "pushed": false,
+  "limits": [
+    "lateral distance and new C self-tests not executed on MCU this turn",
+    "ideal45-degree X mecanum model, lateral slip and accuracy not calibrated",
+    "previous HWT invalidation and deceleration cause8 unresolved, all protections retained"
+  ]
+}

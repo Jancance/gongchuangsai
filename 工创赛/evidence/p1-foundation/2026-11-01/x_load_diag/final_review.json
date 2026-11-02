@@ -1,0 +1,72 @@
+{
+  "hardware_accessed": false,
+  "downloaded": false,
+  "vehicle_ready_user_confirmed": false,
+  "user_selected_not_ready": true,
+  "ki": 0.03,
+  "integral_limit_rpm": 0.3,
+  "p": 1,
+  "d": 0.25,
+  "deadband_deg": 0.3,
+  "current_limit_unchanged_ma": 3000,
+  "capture_capacity": 3072,
+  "record_bytes": 24,
+  "ram_buffer_bytes": 73728,
+  "images": {
+    "pd_offline": {
+      "path": "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\x_load_diag_offline_20261101\\Objects\\gongxun-f407.axf",
+      "sha256": "002ff8d32f50103aecc2c9df22930fea011e1fd4e4c1b3a09d31bc5856e1192e"
+    },
+    "pd_vehicle": {
+      "path": "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\x_load_diag_offline_20261101\\ObjectsVehicle\\gongxun-f407.axf",
+      "sha256": "2794bff48b652849849749c72020e96c3b0eef3cd7b7c7cf345cc6fb3ac9de73"
+    },
+    "integral_offline": {
+      "path": "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\x_load_integral_offline_20261101\\ObjectsIntegralOffline\\gongxun-f407.axf",
+      "sha256": "23e7675ebb344e3c16e5f7cd060d6f6f9d80bdd9970661f22469a6c4ed17107c"
+    },
+    "integral_vehicle": {
+      "path": "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\x_load_integral_offline_20261101\\ObjectsIntegralVehicle\\gongxun-f407.axf",
+      "sha256": "5d37c174094ec673669e869573eec19f0fa971558ef0f07c63a6587a6c6b6b72"
+    }
+  },
+  "build_errors": 0,
+  "build_warnings": 0,
+  "host_tests_passed": 23,
+  "pd_motion_assertions": 103977,
+  "integral_motion_assertions": 103966,
+  "pd_models_equal_baseline": true,
+  "integral_models_equal_previous_i": true,
+  "safety_power_watchdog_route_unchanged": true,
+  "source_changes": {
+    "x_load_diag_offline_20261101": [
+      "USER\\chassis_auto_test.c",
+      "USER\\main.c",
+      "USER\\x_load_diag.c",
+      "USER\\x_load_diag.h",
+      "USER\\zdt_x_config.h",
+      "SYSTEM\\CAN\\can.c",
+      "SYSTEM\\CAN\\can.h"
+    ],
+    "x_load_integral_offline_20261101": [
+      "USER\\chassis_auto_test.c",
+      "USER\\heading_controller.c",
+      "USER\\heading_controller.h",
+      "USER\\heading_integral_trial.h",
+      "USER\\main.c",
+      "USER\\x_load_diag.c",
+      "USER\\x_load_diag.h",
+      "USER\\zdt_x_config.h",
+      "SYSTEM\\CAN\\can.c",
+      "SYSTEM\\CAN\\can.h"
+    ]
+  },
+  "source_encoding": "New firmware modules GBK/CRLF; changed modules retain their existing encoding and CRLF; untouched LF files preserved.",
+  "limits": [
+    "One 0x43 request replaces each speed query, but five-frame replies increase bus/CPU time; actual RTOS/wireless timing requires vehicle validation.",
+    "Motion-model CAN functions are stubs; real parser/logger/export separately tested in actual C.",
+    "Phase current is not measured wheel torque or definitive proof of saturation.",
+    "Overflow, missing records or clipped speed cannot support complete loading conclusions.",
+    "I and diagnostics both differ from last live run; use the preserved PD diagnostic candidate for causal comparison."
+  ]
+}

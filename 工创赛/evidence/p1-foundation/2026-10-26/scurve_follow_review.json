@@ -1,0 +1,119 @@
+{
+  "date": "2026-10-26",
+  "baseline": "54bb617",
+  "changed_files": [
+    "USER/app_config.h",
+    "USER/chassis_auto_test.c"
+  ],
+  "source_sha256": {
+    "app_config.h": "defd982fb9da9573ca925f6632e44691c49d87fc186b2c6b2251f1899b2b679a",
+    "chassis_auto_test.c": "4cc5d165733066a7dd55dff840897ae92b479193199f940fa39a363e31c3d25e",
+    "main.c": "3337179fcaf6e5343cd5af94c3aee3b8906d8c62a0642f1603d52be226b07774"
+  },
+  "builds": {
+    "default": {
+      "errors": 0,
+      "warnings": 0,
+      "code": 62408,
+      "ro": 868,
+      "rw": 2064,
+      "zi": 37064,
+      "project": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\scurve_follow_default_20261026\\gongxun-f407.uvprojx",
+      "axf_sha256": "41a25922db57e4cb4703e6f0fdc5518ab82bceec8499bc98d01fa8beaf2d6d80"
+    },
+    "candidate": {
+      "errors": 0,
+      "warnings": 0,
+      "code": 71680,
+      "ro": 1280,
+      "rw": 2088,
+      "zi": 37496,
+      "project": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\scurve_follow_candidate_20261026\\gongxun-f407.uvprojx",
+      "axf_sha256": "694fddf1544f422c45a9fd593c4479431e704862259a347a6b0784030df2b437"
+    },
+    "competition": {
+      "errors": 0,
+      "warnings": 0,
+      "code": 53716,
+      "ro": 652,
+      "rw": 1944,
+      "zi": 29376,
+      "project": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\scurve_follow_competition_20261026\\gongxun-f407.uvprojx",
+      "axf_sha256": "d8e6c6fdfd0e77b21b20cc0ee7a668bbff75f1e717da94435ce29575cd3b4d22"
+    }
+  },
+  "actual_c_tests": {
+    "default": {
+      "actual_c_assertions": 286,
+      "variant": "default",
+      "hardware_accessed": false,
+      "limits": "Actual chassis backend/kinematics/planner with stubbed RTOS/CAN; quantized delayed plant is an approximation, not vehicle/timing validation."
+    },
+    "candidate": {
+      "actual_c_assertions": 211084,
+      "variant": "candidate",
+      "hardware_accessed": false,
+      "limits": "Actual chassis backend/kinematics/planner with stubbed RTOS/CAN; quantized delayed plant is an approximation, not vehicle/timing validation."
+    }
+  },
+  "host_regression_tests": 96,
+  "hardware_accessed": false,
+  "trigger": "B2 ground209.25cm/right0.75cm; calibrated encoder2097.486mm and reason9 at existing profile duration+2s deadline",
+  "algorithm": {
+    "position_gain_per_second": 0.5,
+    "correction_bound_rpm": 1,
+    "critical_damping_omega_per_second": 1,
+    "filter_update_ms": 10,
+    "max_filter_dt_ms": 100,
+    "reserve_speed_rpm": 1,
+    "reserve_acceleration_rpm_s": 2,
+    "reserve_jerk_rpm_s2": 6,
+    "terminal_approach_rpm": 1,
+    "arrival_tolerance_mm": 2,
+    "final_window_ms": 2000,
+    "total_candidate_base_rpm_cap": 15,
+    "nominal_reference_peak_rpm_at_15": 14
+  },
+  "preserved": [
+    "distance calibration",
+    "source/position freshness",
+    "50mm tracking error",
+    "original run/stop deadlines",
+    "VM/fault/watchdog",
+    "four-wheel frozen batch",
+    "telemetry priority fix",
+    "host protocol and timeout",
+    "S curve default off"
+  ],
+  "limits": [
+    "Physical jerk not certified: 1RPM quantization, terminal floor, heading correction and original arrival/emergency stop remain",
+    "Encoder position following is not groundXY closure",
+    "Exact exponential is evaluated in locked backend at most100Hz; runtime/stack cost needs vehicle telemetry",
+    "Continuous filter reserve bound applies to nominal plus filtered correction before quantization/clamps/terminal floor, not to complete wheel or chassis dynamics",
+    "Scalar delayed plant stubs are not measured MCU/CAN/motor timing",
+    "New follower not flashed; board still prior B2 fault candidate"
+  ],
+  "test_notes": [
+    "Candidate211084 assertions include loops; not211084 independent scenarios",
+    "Three directions,300/1000/2100mm valid plans,0/80/160ms command delay,0.97/1/1.03 modeled gain",
+    "Frozen2.514mm residual still faults if it cannot move; original stop ack/zero feedback and stale-source regressions retained",
+    "Initial test fixture jumped directly to long terminal progress without historical raw encoders; fixture seeded, protections not changed",
+    "ARM instruction budget raised for expanded simulation; not a firmware timeout change"
+  ],
+  "next_user_direction": "First competition target20cm/s; prepare coordinated speed/feedback/accel/timeout tier configuration; few short runs per tier, no repeated low-speed smoothness comparisons. Not enabled this change.",
+  "requirements": {
+    "R": [
+      "RUN-01",
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "LOC-05",
+      "MOT-02",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": "unchanged"
+  },
+  "git": "fetch/pull ff-only54bb617 current, local only, no commit/push"
+}

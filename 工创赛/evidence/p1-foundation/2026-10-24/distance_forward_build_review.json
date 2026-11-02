@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-24",
+  "host_tests": 50,
+  "builds": {
+    "87cm": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=55240 RO-data=716 RW-data=1968 ZI-data=31480"
+    },
+    "default": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=55252 RO-data=776 RW-data=1968 ZI-data=31480"
+    },
+    "single": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=47108 RO-data=696 RW-data=1896 ZI-data=31240"
+    },
+    "link": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=25910 RO-data=462 RW-data=1848 ZI-data=27392"
+    },
+    "manual": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=39740 RO-data=640 RW-data=1800 ZI-data=27424"
+    },
+    "off": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=50564 RO-data=776 RW-data=1940 ZI-data=29396"
+    }
+  },
+  "source_sha256": {
+    "main.c": "9005a7c3f8a47f3c4e978e1901a5130a7adda0a8036e7167660ed5c736256ad6",
+    "app_config.h": "7412678396ecddcd2bcf23dca63707cba926b1a7dfea1106f7baa7d69d1a885a",
+    "chassis_auto_test.c": "933bfc3a721ef58784d1e79e598c4eab6d45dabcc80ac3f25e8e4f47ae8b4ba5",
+    "chassis_auto_test.h": "2b59760c3e3ad34a0f73601e37a11efdfcfdfd6e13499c544da79b505e7cdf18",
+    "chassis_kinematics.c": "d76bc2ee6fb4df7cb7a1b8d10ad2843b6ee0958908e480ed07a9b241ca25d1b1",
+    "chassis_kinematics.h": "0284c951a1afd3f064646d90e30ffffdf9acbf38b2dbc4b916a6e5924d66b2c7",
+    "motion_control.h": "48f645438e8f736ed1f660c24255eb67e499b3d17acf5897a9eb853b018283be",
+    "motion_action_plan.h": "3f61464e591c3f3471ee6ec564082f1db9fff999a18943abd430779f83ff7990"
+  },
+  "flashed_variant": "distance_sched_87cm_20261024",
+  "source_default_route": "unchanged4 stages, new fifth field distance_mm=0",
+  "pushed": false
+}

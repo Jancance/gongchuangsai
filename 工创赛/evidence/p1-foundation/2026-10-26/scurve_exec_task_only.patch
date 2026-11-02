@@ -1,0 +1,410 @@
+--- app_config.h.before
++++ app_config.h
+@@ -1,6 +1,21 @@
+ #ifndef APP_CONFIG_H
+ #define APP_CONFIG_H
+ #include "app_entry_config.h"
++
++/* 低速距离S曲线候选，默认关闭；仅调试mode3，仍不超过15RPM。
++ * 下列数值为软件候选，未做载物/刹车实测，不作为提速许可。 */
++#ifndef APP_DISTANCE_SCURVE_ENABLE
++#define APP_DISTANCE_SCURVE_ENABLE 0U
++#endif
++#if APP_DISTANCE_SCURVE_ENABLE > 1U
++#error Distance_scurve_enable_invalid
++#endif
++#define APP_DISTANCE_SCURVE_ACTIVE (APP_DISTANCE_SCURVE_ENABLE && APP_IS_DEBUG && (APP_TEST_MODE == 3U))
++#define APP_DISTANCE_SCURVE_ACCEL_MM_S2 40.0f
++#define APP_DISTANCE_SCURVE_JERK_MM_S3 80.0f
++#define APP_DISTANCE_SCURVE_TRACK_MM 50.0f
++#define APP_DISTANCE_SCURVE_ARRIVAL_MM 2.0f
++#define APP_DISTANCE_SCURVE_FINAL_WAIT_MS 2000U
+ 
+ /* 初始化提示次数：0静音，1默认，可改为3 */
+ #define APP_INIT_BEEP_COUNT    2U
+--- chassis_auto_test.c.before
++++ chassis_auto_test.c
+@@ -73,6 +73,12 @@
+ static uint32_t s_distance_mode, s_distance_reached, s_distance_fault_reason;
+ static uint32_t s_translation_applied_base;
+ static float s_distance_target_mm, s_distance_progress_mm;
++#if APP_DISTANCE_SCURVE_ACTIVE
++static MotionProfile s_distance_profile;
++static MotionProfileSample s_distance_reference;
++static uint32_t s_profile_active, s_profile_done;
++static float s_profile_mm_per_rpm_s;
++#endif
+ #if APP_POSITION_DIAGNOSTIC
+ static uint32_t s_distance_max_rpm;
+ static uint32_t s_distance_seen_ms[4], s_distance_seen_raw[4], s_distance_seen_sign[4];
+@@ -307,7 +313,11 @@
+     float mean, spread;
+     ChassisPositionEndpoints *base;
+     if (!s_distance_mode || s_finish_requested || s_stop_due ||
+-        g_chassis_auto_state != CHASSIS_AUTO_RUN) return;
++        (g_chassis_auto_state != CHASSIS_AUTO_RUN
++#if APP_DISTANCE_SCURVE_ACTIVE
++         && !(s_profile_active && s_run_started && g_chassis_auto_state == CHASSIS_AUTO_START)
++#endif
++        )) return;
+     if (s_endpoint_index >= s_endpoint_count) { Auto_DistanceFaultLocked(1U); return; }
+     base = &s_endpoints[s_endpoint_index];
+     if (base->start_mask != 15U) { Auto_DistanceFaultLocked(1U); return; }
+@@ -343,6 +353,38 @@
+         mean > s_distance_target_mm + 50.0f)
+     { Auto_DistanceFaultLocked(5U); return; }
+     s_distance_progress_mm = mean;
++#if APP_DISTANCE_SCURVE_ACTIVE
++    if (s_profile_active)
++    {
++        uint32_t result;
++        float elapsed = (float)(TickType_t)(now-s_run_tick) * portTICK_PERIOD_MS / 1000.0f;
++        float ref_rpm;
++        result = MotionProfile_Sample(&s_distance_profile,elapsed,&s_distance_reference);
++        if (!result) { Auto_DistanceFaultLocked(8U); return; }
++        s_profile_done = (result == MOTION_PROFILE_DONE);
++        /* 到实际编码目标优先停；参考结束不能冒充实际到距。 */
++        if (mean >= s_distance_target_mm ||
++            (s_profile_done && mean >= s_distance_target_mm-APP_DISTANCE_SCURVE_ARRIVAL_MM))
++        {
++            s_distance_reached = 1U; s_finish_requested = s_stop_due = 1U;
++            s_finish_tick = now; return;
++        }
++        if (mean-s_distance_reference.position_mm > APP_DISTANCE_SCURVE_TRACK_MM ||
++            s_distance_reference.position_mm-mean > APP_DISTANCE_SCURVE_TRACK_MM)
++        { Auto_DistanceFaultLocked(7U); return; }
++        if (s_profile_done && elapsed >= s_distance_profile.duration_s +
++                (float)APP_DISTANCE_SCURVE_FINAL_WAIT_MS/1000.0f)
++        { Auto_DistanceFaultLocked(9U); return; }
++        ref_rpm = s_distance_reference.speed_mm_s / s_profile_mm_per_rpm_s;
++        if (!(ref_rpm >= -0.001f && ref_rpm <= (float)s_distance_max_rpm+0.001f))
++        { Auto_DistanceFaultLocked(8U); return; }
++        rpm = (ref_rpm <= 0.0f) ? 0U : (uint32_t)(ref_rpm+0.5f);
++        if (rpm > s_distance_max_rpm) rpm = s_distance_max_rpm;
++        if (rpm != s_translation_base_rpm) Auto_BatchChangedLocked(now,3U);
++        s_translation_base_rpm = rpm;
++        return; /* 包含正常起步/末段的0RPM；参考结束后只零速等待，不补走。 */
++    }
++#endif
+     rpm = Chassis_DistanceRpm(s_distance_target_mm - mean, s_distance_max_rpm);
+     if (!rpm)
+     {
+@@ -462,6 +504,9 @@
+     s_heading_initial_rpm = s_heading_pending_rpm = s_heading_applied_rpm = 0;
+     s_heading_update_tick = 0U;
+     s_heading_command_tick = 0U;
++#if APP_DISTANCE_SCURVE_ACTIVE
++    s_profile_active = s_profile_done = 0U;
++#endif
+ #if APP_IS_DEBUG
+     {
+         ChassisBatchStatistics empty = {0};
+@@ -518,6 +563,9 @@
+         s_finish_requested = 0U;
+         s_finish_tick = 0U;
+         s_heading_session = 0U;
++#if APP_DISTANCE_SCURVE_ACTIVE
++        s_profile_active = s_profile_done = 0U;
++#endif
+         s_forward_hold = 0U; s_distance_mode = s_distance_reached = s_distance_fault_reason = 0U;
+         s_translation_mode = 0U;
+         s_heading_initial_rpm = s_heading_pending_rpm = s_heading_applied_rpm = 0;
+@@ -840,30 +888,44 @@
+ void ChassisAuto_CanStep(void)
+ {
+     uint32_t state, session, index, result, expected, i;
++    int32_t effective_heading;
+     TickType_t now;
+     CanRxMsg reply = {0};
+     taskENTER_CRITICAL();
+     now = xTaskGetTickCount(); Auto_CheckLocked(now);
+     if (!g_chassis_auto_active) { taskEXIT_CRITICAL(); return; }
+     state = g_chassis_auto_state; session = g_chassis_auto_session;
++    effective_heading = s_heading_pending_rpm;
++#if APP_DISTANCE_SCURVE_ACTIVE
++    if (s_profile_active && !Chassis_ProfileCorrectionRpm(s_translation_base_rpm,
++            s_heading_pending_rpm,&effective_heading))
++    { Auto_CutLocked(8U); taskEXIT_CRITICAL(); return; }
++#endif
+ /* 仅在整组边界接纳新目标，避免一组四轮混入两个不同轮速。 */
+     if ((s_heading_session == 1U) && (s_stop_due == 0U) &&
+         (s_finish_requested == 0U) &&
+         ((state == CHASSIS_AUTO_RUN) ||
+          ((state == CHASSIS_AUTO_START) && (s_motor_index == 0U) &&
+           (s_monitor_between == 0U))) &&
+-        ((s_heading_pending_rpm != s_heading_applied_rpm) ||
++        ((effective_heading != s_heading_applied_rpm) ||
+          (s_distance_mode && s_translation_base_rpm != s_translation_applied_base)))
+     {
+         if (((s_forward_hold == 1U) ?
+-            Chassis_TranslationHoldCommandsAtSpeed(s_translation_mode, s_translation_base_rpm, s_heading_pending_rpm, s_commands[2]) :
+-            Chassis_HeadingCommands(s_heading_pending_rpm, s_commands[2])) != 1U)
++#if APP_DISTANCE_SCURVE_ACTIVE
++            (s_profile_active ? Chassis_TranslationProfileCommands(s_translation_mode,
++                s_translation_base_rpm,effective_heading,s_commands[2]) :
++#endif
++            Chassis_TranslationHoldCommandsAtSpeed(s_translation_mode, s_translation_base_rpm, effective_heading, s_commands[2])
++#if APP_DISTANCE_SCURVE_ACTIVE
++            )
++#endif
++            : Chassis_HeadingCommands(effective_heading, s_commands[2])) != 1U)
+         {
+             Auto_CutLocked(8U);
+             taskEXIT_CRITICAL();
+             return;
+         }
+-        s_heading_applied_rpm = s_heading_pending_rpm;
++        s_heading_applied_rpm = effective_heading;
+         s_translation_applied_base = s_translation_base_rpm;
+         s_heading_update_tick = now;
+         g_chassis_auto_start_mask[2] = 0U;
+@@ -1175,6 +1237,17 @@
+     status->distance_base_rpm = s_translation_base_rpm;
+     status->distance_target_mm = s_distance_target_mm;
+     status->distance_progress_mm = s_distance_progress_mm;
++    status->distance_profile_mode = status->distance_profile_done = 0U;
++    status->distance_reference_mm = status->distance_reference_rpm = 0.0f;
++#if APP_DISTANCE_SCURVE_ACTIVE
++    status->distance_profile_mode = s_profile_active;
++    if (s_profile_active)
++    {
++        status->distance_profile_done = s_profile_done;
++        status->distance_reference_mm = s_distance_reference.position_mm;
++        status->distance_reference_rpm = s_distance_reference.speed_mm_s/s_profile_mm_per_rpm_s;
++    }
++#endif
+     status->dry_run = s_mode;
+     status->cut_vm = g_chassis_auto_cut_vm;
+     taskEXIT_CRITICAL();
+@@ -1202,6 +1275,22 @@
+     else if (!run_ms || run_ms > 10000U) return 0U;
+     if (!Auto_PrepareBasicCommands(prepared->commands) ||
+         !Chassis_TranslationHoldCommandsAtSpeed(motion_mode,base_rpm,0,prepared->commands[2])) return 0U;
++#if APP_DISTANCE_SCURVE_ACTIVE
++    prepared->profile.valid = 0U;
++    if (distance_mm > 0.0f)
++    {
++        MotionProfileLimits limits;
++        float factor;
++        if (!Chassis_CalibrateDistanceMm(motion_mode,
++                3.14159265358979323846f*g_chassis_geometry.wheel_diameter_mm/60.0f,&factor)) return 0U;
++        limits.speed = factor*(float)base_rpm;
++        limits.acceleration = APP_DISTANCE_SCURVE_ACCEL_MM_S2;
++        limits.jerk = APP_DISTANCE_SCURVE_JERK_MM_S3;
++        if (!MotionProfile_Prepare(&prepared->profile,distance_mm,&limits) ||
++            prepared->profile.duration_s*1000.0f + APP_DISTANCE_SCURVE_FINAL_WAIT_MS >= (float)run_ms ||
++            !Chassis_TranslationProfileCommands(motion_mode,0U,0,prepared->commands[2])) return 0U;
++    }
++#endif
+     prepared->motion_mode = motion_mode; prepared->base_rpm = base_rpm;
+     prepared->run_ms = run_ms; prepared->distance_mm = distance_mm;
+     prepared->valid = 1U;
+@@ -1223,6 +1312,24 @@
+ #endif
+     }
+     else if (!prepared->run_ms || prepared->run_ms > 10000U) return 0U;
++#if APP_DISTANCE_SCURVE_ACTIVE
++    if (prepared->distance_mm > 0.0f)
++    {
++        float factor;
++        if (!Chassis_CalibrateDistanceMm(prepared->motion_mode,
++                3.14159265358979323846f*g_chassis_geometry.wheel_diameter_mm/60.0f,&factor) ||
++            prepared->profile.limits.speed != factor*(float)prepared->base_rpm ||
++            prepared->profile.limits.acceleration != APP_DISTANCE_SCURVE_ACCEL_MM_S2 ||
++            prepared->profile.limits.jerk != APP_DISTANCE_SCURVE_JERK_MM_S3 ||
++            prepared->profile.boundary_s[0] != 0.0f || prepared->profile.position[0] != 0.0f ||
++            prepared->profile.speed[0] != 0.0f || prepared->profile.acceleration[0] != 0.0f)
++            return 0U;
++    }
++    if (prepared->distance_mm > 0.0f &&
++        (prepared->profile.valid != 1U || prepared->profile.distance_mm != prepared->distance_mm ||
++         !(prepared->profile.duration_s > 0.0f) ||
++         !(prepared->profile.duration_s*1000.0f + APP_DISTANCE_SCURVE_FINAL_WAIT_MS < (float)prepared->run_ms))) return 0U;
++#endif
+     taskENTER_CRITICAL();
+     if (g_chassis_auto_session == expected_session && g_chassis_auto_state == CHASSIS_AUTO_IDLE &&
+         !g_chassis_auto_active && !g_chassis_auto_cut_vm)
+@@ -1251,6 +1358,20 @@
+                 s_distance_target_mm = prepared->distance_mm;
+                 s_distance_progress_mm = 0.0f;
+                 s_endpoints[s_endpoint_index].distance_mode = 1U;
++#if APP_DISTANCE_SCURVE_ACTIVE
++                s_distance_profile = prepared->profile;
++                s_profile_active = 1U; s_profile_done = 0U;
++                s_profile_mm_per_rpm_s = prepared->profile.limits.speed/(float)prepared->base_rpm;
++                s_distance_reference = (MotionProfileSample){0};
++                s_translation_base_rpm = s_translation_applied_base = 0U;
++                /* 初批必须是零速，避免错误准备向量绕过曲线起步。 */
++                for (uint32_t wheel = 0U; wheel < CHASSIS_WHEEL_COUNT; wheel++)
++                {
++                    s_commands[2][wheel].address = (uint8_t)(wheel+1U);
++                    s_commands[2][wheel].direction = g_chassis_forward_direction[wheel];
++                    s_commands[2][wheel].speed_raw = 0U;
++                }
++#endif
+             }
+ #endif
+         }
+@@ -1292,6 +1413,13 @@
+ uint32_t ChassisAuto_BeginTranslationDistance(uint32_t motion_mode, uint32_t max_rpm, float target_mm)
+ {
+ #if APP_POSITION_DIAGNOSTIC
++#if APP_DISTANCE_SCURVE_ACTIVE
++    ChassisAutoPreparedTranslation prepared;
++    uint32_t session;
++    if (!ChassisAuto_PrepareTranslation(motion_mode,max_rpm,MotionDistanceRunMs(target_mm),target_mm,&prepared)) return 0U;
++    taskENTER_CRITICAL(); session = g_chassis_auto_session; taskEXIT_CRITICAL();
++    return ChassisAuto_BeginPreparedTranslation(&prepared,session);
++#else
+     uint32_t accepted;
+     if (!MotionDistanceAllowed(motion_mode,max_rpm,target_mm) ||
+         !Chassis_DistanceSelfTest()) return 0U;
+@@ -1306,6 +1434,7 @@
+         s_endpoints[s_endpoint_index].distance_mode = 1U;
+     }
+     taskEXIT_CRITICAL(); return accepted;
++#endif
+ #else
+     (void)motion_mode; (void)max_rpm; (void)target_mm; return 0U;
+ #endif
+--- chassis_auto_test.h.before
++++ chassis_auto_test.h
+@@ -3,6 +3,7 @@
+ #include <stdint.h>
+ #include "app_config.h"
+ #include "chassis_kinematics.h"
++#include "motion_profile.h"
+ #define CHASSIS_AUTO_FIRST_SEGMENT (APP_HWT_TURN_TEST ? 2U : 0U)
+ 
+ /* 开发测试：配置选择三段或只逆时针；阈值不作为正式运动限值。 */
+@@ -88,6 +89,9 @@
+ {
+     uint32_t valid, motion_mode, base_rpm, run_ms;
+     float distance_mm;
++#if APP_DISTANCE_SCURVE_ACTIVE
++    MotionProfile profile;
++#endif
+     ChassisMotorCommand commands[3][CHASSIS_WHEEL_COUNT];
+ } ChassisAutoPreparedTranslation;
+ uint32_t ChassisAuto_PrepareTranslation(uint32_t motion_mode, uint32_t base_rpm,
+@@ -138,6 +142,9 @@
+     uint32_t heading_mode, dry_run, cut_vm, forward_hold_mode;
+     uint32_t distance_mode, distance_reached, distance_base_rpm, distance_fault_reason;
+     float distance_target_mm, distance_progress_mm;
++    /* 候选曲线状态，仅本地快照；不改变TM1字段布局。 */
++    uint32_t distance_profile_mode, distance_profile_done;
++    float distance_reference_mm, distance_reference_rpm;
+     uint32_t translation_mode; /* 0前进、1左移、2右移；只读会话归属。 */
+ } ChassisAutoStatus;
+ 
+--- chassis_kinematics.c.before
++++ chassis_kinematics.c
+@@ -194,14 +194,14 @@
+ 
+ 
+ /* 同时给出前进和受限旋转分量；不反转任何车轮。 */
+-uint32_t Chassis_TranslationHoldCommandsAtSpeed(uint32_t mode, uint32_t base_rpm,
+-    int32_t correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
++static uint32_t Chassis_TranslationCommandsAtSpeed(uint32_t mode, uint32_t base_rpm,
++    int32_t correction_rpm, uint32_t minimum_base, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+ {
+     ChassisWheelSpeeds logical = {{0.0f, 0.0f, 0.0f, 0.0f}};
+     float base, lateral;
+     uint32_t limit;
+     Chassis_ClearMotorCommands(commands);
+-    if ((commands == NULL) || (mode > 2U) || (base_rpm < 3U) || (base_rpm > 15U) ||
++    if ((commands == NULL) || (mode > 2U) || (base_rpm < minimum_base) || (base_rpm > 15U) ||
+         (correction_rpm < -2) || (correction_rpm > 2)) return 0U;
+     base = (float)base_rpm;
+     limit = base_rpm + 2U;
+@@ -222,6 +222,29 @@
+     logical.rpm[2] -= (float)correction_rpm;
+     logical.rpm[3] += (float)correction_rpm;
+     return Chassis_EncodeEmm(&logical, limit, commands);
++}
++
++uint32_t Chassis_TranslationHoldCommandsAtSpeed(uint32_t mode, uint32_t base_rpm,
++    int32_t correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
++{ return Chassis_TranslationCommandsAtSpeed(mode,base_rpm,correction_rpm,3U,commands); }
++
++uint32_t Chassis_ProfileCorrectionRpm(uint32_t base_rpm, int32_t requested, int32_t *effective)
++{
++    int32_t limit;
++    if (!effective) return 0U;
++    *effective = 0;
++    if (base_rpm > 15U || requested < -2 || requested > 2) return 0U;
++    limit = (base_rpm < 2U) ? (int32_t)base_rpm : 2;
++    *effective = (requested > limit) ? limit : ((requested < -limit) ? -limit : requested);
++    return 1U;
++}
++uint32_t Chassis_TranslationProfileCommands(uint32_t mode, uint32_t base_rpm,
++    int32_t correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
++{
++    int32_t effective;
++    Chassis_ClearMotorCommands(commands);
++    if (!Chassis_ProfileCorrectionRpm(base_rpm,correction_rpm,&effective)) return 0U;
++    return Chassis_TranslationCommandsAtSpeed(mode,base_rpm,effective,0U,commands);
+ }
+ 
+ uint32_t Chassis_TranslationHoldCommands(uint32_t mode, int32_t correction_rpm,
+--- chassis_kinematics.h.before
++++ chassis_kinematics.h
+@@ -73,6 +73,11 @@
+ /* 0前进、1向左、2向右；非法模式或修正清零命令，纯计算不发CAN。 */
+ uint32_t Chassis_TranslationHoldCommandsAtSpeed(uint32_t mode, uint32_t base_rpm,
+     int32_t correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
++/* S曲线候选专用0..15RPM整数基速；修正限到min(基速,2)，零速不原地纠偏。
++ * 原Hold接口仍为3..15RPM；新函数不发帧、不授权运动。 */
++uint32_t Chassis_ProfileCorrectionRpm(uint32_t base_rpm, int32_t requested, int32_t *effective);
++uint32_t Chassis_TranslationProfileCommands(uint32_t mode, uint32_t base_rpm,
++    int32_t correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+ uint32_t Chassis_TranslationHoldCommands(uint32_t mode, int32_t correction_rpm,
+     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+ uint32_t Chassis_TranslationHoldSelfTest(void);
+--- main.c.before
++++ main.c
+@@ -1478,7 +1478,12 @@
+ {
+     ChassisAutoStatus status;
+     uint32_t now, request, delta, accepted, critical_cycle, begin_cycle;
++#if APP_DISTANCE_SCURVE_ACTIVE
++    /* 唯一CAN任务准备，避免新增轨迹对象占用CAN任务栈；不供其他上下文复用。 */
++    static ChassisAutoPreparedTranslation prepared;
++#else
+     ChassisAutoPreparedTranslation prepared;
++#endif
+     uint32_t prepared_ok, expected_session, mode, base_rpm, run_ms;
+     float distance_mm;
+     int32_t correction = 0;
+@@ -2601,7 +2606,7 @@
+ 
+     values[56] = (int32_t)(s_combined_turn ? MOTION_TURN :
+         ((App_StageDistanceMm() > 0.0f) ? (MOTION_FORWARD_DISTANCE + App_TestTranslationMode()) : App_TestTranslationMode()));
+-    if (status.distance_mode && status.distance_base_rpm >= 3U)
++    if (status.distance_mode && (status.distance_base_rpm >= 3U || status.distance_profile_mode))
+         values[38] = (int32_t)status.distance_base_rpm;
+     values[57] = s_combined_turn ? (-2147483647L - 1L) :
+         App_SerialMilli(MotionRpmToCmPerSec((float)values[38]));
+--- test_p1_serial_motion.py.before
++++ test_p1_serial_motion.py
+@@ -896,4 +896,20 @@
+         self.assertLess(len(self.encode(dict.fromkeys(__import__('p1_serial_motion').BATCH_FIELDS,0xffffffff))),448)
+ 
+ 
++class ScurveClientCompatibilityTests(unittest.TestCase):
++    def test_zero_idle_speed_does_not_arm(self):
++        c=Controller("run-once",expected_mode=3)
++        for n in range(1,5):
++            self.assertEqual(c.consume(record(seq=n,tick_ms=n*100,motion_mode=3,base_rpm=0),n*.1),[])
++        self.assertFalse(c.start_sent)
++
++    def test_running_zero_profile_speed_remains_a_live_session(self):
++        c=Controller("run-once",expected_mode=3)
++        c.stage="running";c.start_sent=True;c.last_keep=1.0
++        r=record(seq=10,tick_ms=1000,motion_mode=3,phase=2,base_rpm=0,backend_active=1,
++                 remote_state=2,distance_mode=1,distance_base_rpm=0,distance_reached=0)
++        self.assertEqual(c.consume(r,1.0),[])
++        self.assertIsNone(c.status)
++        self.assertEqual(c.tick(1.21),[command("KEEP",c.token)])
++
+ if __name__=="__main__":unittest.main()

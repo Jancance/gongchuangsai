@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-24",
+  "scope": "distance public header contract and session-owned centimetre status snapshot",
+  "new_motion_algorithm": false,
+  "distance_compensation_enabled": false,
+  "flashed": false,
+  "serial_opened": false,
+  "car_moved": false,
+  "pushed": false,
+  "host_protocol_tests": 50,
+  "public_header_client_object_compiled": true,
+  "builds": {
+    "combo": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=55252 RO-data=776 RW-data=1968 ZI-data=31480"
+    },
+    "single": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=47108 RO-data=696 RW-data=1896 ZI-data=31240"
+    },
+    "link": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=25910 RO-data=462 RW-data=1848 ZI-data=27392"
+    },
+    "manual": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=39740 RO-data=640 RW-data=1800 ZI-data=27424"
+    },
+    "off": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=50564 RO-data=776 RW-data=1940 ZI-data=29396"
+    }
+  },
+  "source_sha256": {
+    "main.c": "7aabe5533f27c3bdf27df16d459eef60f679ce46eaba090120da3b658be42432",
+    "motion_control.h": "22a3b8b6987974672ff320f1b41b6f60f443484bcfe9224ce23b65aa1c789742"
+  },
+  "limitations": [
+    "new MotionReadStatus fields compiled but not exercised on MCU",
+    "HWT transient invalidation and deceleration cause8 still unresolved",
+    "manual89cm reports approximate, not calibration truth"
+  ]
+}

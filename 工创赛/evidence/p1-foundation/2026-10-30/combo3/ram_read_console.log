@@ -1,0 +1,315 @@
+probe_count 1
+{
+  "connect_mode": "attach",
+  "auto_unlock": false,
+  "resume_on_disconnect": false,
+  "reset_called": false,
+  "halt_called": false,
+  "firmware_loaded": false,
+  "memory_written": false,
+  "symbols": {
+    "s_can_jog_preparing": {
+      "address": "0x200000b0",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "s_hold_wait_ms": {
+      "address": "0x20000300",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "s_diagnostic": {
+      "address": "0x200049f4",
+      "size": 68,
+      "u32": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "s_vm_command_active": {
+      "address": "0x20000690",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "s_vm_enable_seen": {
+      "address": "0x20000694",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "s_vm_enable_tick": {
+      "address": "0x20000698",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "s_vm_enable_count": {
+      "address": "0x2000069c",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "g_vm_test_request": {
+      "address": "0x20000000",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "g_can_jog_request": {
+      "address": "0x2000008c",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "g_heading_power_wait_state": {
+      "address": "0x20000240",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "g_heading_power_on_age_ms": {
+      "address": "0x20000244",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "g_heading_power_post_settle_mask": {
+      "address": "0x20000248",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "g_forward_hold": {
+      "address": "0x20000278",
+      "size": 88,
+      "u32": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    "g_motion_fault_diag_valid": {
+      "address": "0x20000360",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "g_chassis_auto_state": {
+      "address": "0x200003d0",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "g_chassis_auto_active": {
+      "address": "0x200003d8",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "g_chassis_auto_cut_vm": {
+      "address": "0x200003dc",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "g_chassis_auto_result": {
+      "address": "0x200003e4",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "g_chassis_auto_cause": {
+      "address": "0x200003e8",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "g_can_ctrl_fault_latched": {
+      "address": "0x200006e4",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "g_safety_ready": {
+      "address": "0x2000072c",
+      "size": 4,
+      "u32": [
+        1
+      ]
+    },
+    "g_can_guard_ready": {
+      "address": "0x200007bc",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "g_can_poll_result": {
+      "address": "0x200009bc",
+      "size": 16,
+      "u32": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "g_can_poll_flags": {
+      "address": "0x200009cc",
+      "size": 16,
+      "u32": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "g_can_poll_tick": {
+      "address": "0x200009dc",
+      "size": 16,
+      "u32": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "g_can_poll_count": {
+      "address": "0x200009ec",
+      "size": 16,
+      "u32": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "g_combined_test": {
+      "address": "0x20000e64",
+      "size": 80,
+      "u32": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "g_motion_fault_diag": {
+      "address": "0x200014c8",
+      "size": 152,
+      "u32": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "core_state_before": "State.RUNNING",
+  "core_state_after": "State.RUNNING"
+}

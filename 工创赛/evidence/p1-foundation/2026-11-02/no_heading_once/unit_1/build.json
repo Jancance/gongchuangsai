@@ -1,0 +1,58 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-DAPP_X_OFFLINE_ONLY=1",
+      "-DAPP_NO_HEADING_FORWARD_TRIAL=1",
+      "-I",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-11-02\\no_heading_once\\firmware\\USER",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-DAPP_X_OFFLINE_ONLY=1",
+      "-DAPP_NO_HEADING_FORWARD_TRIAL=1",
+      "-I",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-11-02\\no_heading_once\\firmware\\USER",
+      "-c",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-11-02\\no_heading_once\\firmware\\USER\\heading_controller.c",
+      "-o",
+      "heading.o"
+    ],
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armlink.exe",
+      "--entry",
+      "test_entry",
+      "--scatter",
+      "unit.sct",
+      "unit.o",
+      "heading.o",
+      "--library_type=microlib",
+      "-o",
+      "unit.axf"
+    ],
+    "returncode": 0,
+    "output": ""
+  }
+]

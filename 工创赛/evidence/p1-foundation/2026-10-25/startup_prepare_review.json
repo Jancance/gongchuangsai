@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-25",
+  "baseline_commit": "54bb617",
+  "scope": "translation startup prepare outside BASEPRI, locked revalidation and commit",
+  "source_sha256": {
+    "main.c": "fecd49f45c395074c08ff048799606b3161c4e3320a562363102c1114ae755a0",
+    "chassis_auto_test.c": "296884e1890b02680b3edd354c031d238ac2d69570cc7fc11893a566a6db562b",
+    "chassis_auto_test.h": "409b53d88c43350920447b9c81ddac41574ba88c031f4dfa3aed5ebd5b453b1a"
+  },
+  "source_build_match": true,
+  "encoding": "GBK/CRLF",
+  "builds": {
+    "route_a": "Code=59064 RO-data=768 RW-data=2020 ZI-data=34172",
+    "single": "Code=51096 RO-data=708 RW-data=1948 ZI-data=33932",
+    "manual": "Code=41848 RO-data=652 RW-data=1836 ZI-data=27892"
+  },
+  "actual_c_checks": 140,
+  "host_tests": 81,
+  "flashed": false,
+  "serial_opened": false,
+  "hardware_measured": false,
+  "pushed": false,
+  "cancelled_route_b_built_or_run": false,
+  "limits": [
+    "No new MCU critical timing measurement or ORE fix proof",
+    "C tests use Cortex-M3 soft-float Unicorn with RTOS/CAN stubs; no hardware scheduling proof",
+    "Extra CAN task local buffer needs MCU stack high-water verification",
+    "Scope1 now measures prepared commit only; scope0 maximum is each separate masked interval",
+    "Legacy turn and action-load paths are not optimized here"
+  ]
+}

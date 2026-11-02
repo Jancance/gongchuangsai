@@ -1,0 +1,35 @@
+{
+  "local_only": true,
+  "hardware_accessed": false,
+  "custom_enabled": false,
+  "full_rebuild_clean": [
+    "default_final",
+    "custom_final",
+    "competition_final"
+  ],
+  "mode2_existing_warning": "App_SerialDistanceMilli unused, reproduced with pre-task baseline",
+  "python_tests": {
+    "route": 8,
+    "offline": 39,
+    "host": 105
+  },
+  "actual_c_assertions": 7334,
+  "four_wheel_cases": 10,
+  "four_wheel_assertions": 50897,
+  "frozen_package_unchanged": true,
+  "old_package_vs_live_source": "expected mismatch; report retains failed status",
+  "limitations": [
+    "custom distance/turn table max3 under unchanged 120s budget",
+    "no ground/obstacle/physical speed verification",
+    "no runtime config upload or firmware route hash echo"
+  ],
+  "new_files": {
+    "3.stm32f407工程/USER/route_config.h": "df252ed01ae5749b2e3f03d601c437d192cde10d8f8cb7d7126815d16464edc7",
+    "3.stm32f407工程/USER/route_plan.h": "ce116b2d67dfc3d13af9c0c2a7904b7ec25bbcb9873b3fdbaf05fad5c83f0ffd",
+    "工创赛/scripts/p1_route_preview.py": "670617665bb2dd19dbb5e5605daa50d67f301fef743a19ed9cad02fc4e9195a5",
+    "工创赛/scripts/test_p1_route_preview.py": "88a7e9c469b927148545f9a07e81c8fe1d5e8796c6b14601d8b53a529a550650",
+    "工创赛/scripts/p1_route_c_check.py": "e487d2ba7ee410b0a8a5104a77229a8bb71be27f60263956c00bfa6939642b22",
+    "工创赛/scripts/p1_offline_tests/route_config.c": "4553c9084cb301665d2f8830159b041035b7e038006ae20a7094cd68eb814e92",
+    "工创赛/docs/P1_ROUTE_CONFIG_2026-10-28.md": "e267a31ce5d398cd8661300b3850a734ec2343170c118c71c2c42103938f7869"
+  }
+}

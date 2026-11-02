@@ -1,0 +1,212 @@
+{
+  "connect_mode": "attach",
+  "auto_unlock": false,
+  "resume_on_disconnect": false,
+  "reset_called": false,
+  "halt_called": false,
+  "firmware_loaded": false,
+  "memory_written": false,
+  "symbols": {
+    "s_heading_exec": {
+      "address": "0x20000ba0",
+      "size": 152,
+      "u32": [
+        1065353216,
+        1090519040,
+        1103626240,
+        1077936128,
+        196609,
+        5,
+        700,
+        30000,
+        1,
+        0,
+        22927,
+        22927,
+        0,
+        3225601024,
+        1119092736,
+        0,
+        4,
+        2,
+        1,
+        2293,
+        22927,
+        0,
+        1,
+        0,
+        1,
+        1,
+        22927,
+        22927,
+        0,
+        0,
+        3266975264,
+        1119092736,
+        1065353216,
+        1106164897,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "s_motion_turn_max_rpm": {
+      "address": "0x20000210",
+      "size": 4,
+      "u32": [
+        27
+      ]
+    },
+    "s_turn_brake_trial": {
+      "address": "0x2000042c",
+      "size": 4,
+      "u32": [
+        1
+      ]
+    },
+    "g_heading_exec_phase": {
+      "address": "0x2000021c",
+      "size": 4,
+      "u32": [
+        4
+      ]
+    },
+    "g_heading_exec_trip": {
+      "address": "0x20000220",
+      "size": 4,
+      "u32": [
+        6
+      ]
+    },
+    "g_heading_exec_state": {
+      "address": "0x20000224",
+      "size": 4,
+      "u32": [
+        4
+      ]
+    },
+    "g_heading_exec_cause": {
+      "address": "0x20000228",
+      "size": 4,
+      "u32": [
+        2
+      ]
+    },
+    "g_heading_exec_action": {
+      "address": "0x2000022c",
+      "size": 4,
+      "u32": [
+        4
+      ]
+    },
+    "g_heading_exec_backend_session": {
+      "address": "0x2000023c",
+      "size": 4,
+      "u32": [
+        1
+      ]
+    },
+    "g_heading_fault_phase": {
+      "address": "0x20000254",
+      "size": 4,
+      "u32": [
+        2
+      ]
+    },
+    "g_heading_fault_source_flags": {
+      "address": "0x20000258",
+      "size": 4,
+      "u32": [
+        2
+      ]
+    },
+    "g_heading_fault_sample_age_ms": {
+      "address": "0x2000025c",
+      "size": 4,
+      "u32": [
+        8
+      ]
+    },
+    "g_heading_fault_angle_age_ms": {
+      "address": "0x20000260",
+      "size": 4,
+      "u32": [
+        7
+      ]
+    },
+    "g_heading_fault_rate_age_ms": {
+      "address": "0x20000264",
+      "size": 4,
+      "u32": [
+        7
+      ]
+    },
+    "g_heading_fault_hwt_update_age_ms": {
+      "address": "0x20000268",
+      "size": 4,
+      "u32": [
+        8
+      ]
+    },
+    "g_heading_fault_tick_ms": {
+      "address": "0x2000026c",
+      "size": 4,
+      "u32": [
+        22938
+      ]
+    },
+    "g_chassis_auto_state": {
+      "address": "0x200003a0",
+      "size": 4,
+      "u32": [
+        10
+      ]
+    },
+    "g_chassis_auto_cause": {
+      "address": "0x200003b8",
+      "size": 4,
+      "u32": [
+        9
+      ]
+    },
+    "g_hwt_uart_errors": {
+      "address": "0x200004dc",
+      "size": 4,
+      "u32": [
+        1
+      ]
+    },
+    "g_hwt_overflows": {
+      "address": "0x200004e0",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "g_hwt_checksum_errors": {
+      "address": "0x200004ec",
+      "size": 4,
+      "u32": [
+        0
+      ]
+    },
+    "g_chassis_auto_fault_diagnostic": {
+      "address": "0x2000376c",
+      "size": 36,
+      "u32": [
+        0,
+        1,
+        0,
+        0,
+        11,
+        0,
+        0,
+        22938,
+        22938
+      ]
+    }
+  },
+  "core_state_before": "State.RUNNING",
+  "core_state_after": "State.RUNNING"
+}

@@ -1,0 +1,43 @@
+{
+  "hardware_accessed": false,
+  "github_pushed": false,
+  "current_main_unchanged": true,
+  "projects": [
+    {
+      "variant": "baseline",
+      "kind": "offline",
+      "project": "gongxun-f407-baseline_offline.uvprojx",
+      "defines": "APP_X_OFFLINE_ONLY=1,APP_FF_FORWARD_ENABLE=0,APP_FF_BACKWARD_ENABLE=0,APP_FF_FORWARD_PERMILLE=0,APP_FF_BACKWARD_PERMILLE=0,APP_FF_VEHICLE_OPT_IN=0",
+      "output_directory": "Objects_baseline_offline",
+      "build_only": true
+    },
+    {
+      "variant": "baseline",
+      "kind": "vehicle",
+      "project": "gongxun-f407-baseline_vehicle.uvprojx",
+      "defines": "APP_X_OFFLINE_ONLY=0,APP_FF_FORWARD_ENABLE=0,APP_FF_BACKWARD_ENABLE=0,APP_FF_FORWARD_PERMILLE=0,APP_FF_BACKWARD_PERMILLE=0,APP_FF_VEHICLE_OPT_IN=0",
+      "output_directory": "Objects_baseline_vehicle",
+      "build_only": true
+    },
+    {
+      "variant": "ff005",
+      "kind": "offline",
+      "project": "gongxun-f407-ff005_offline.uvprojx",
+      "defines": "APP_X_OFFLINE_ONLY=1,APP_FF_FORWARD_ENABLE=1,APP_FF_BACKWARD_ENABLE=0,APP_FF_FORWARD_PERMILLE=5,APP_FF_BACKWARD_PERMILLE=0,APP_FF_VEHICLE_OPT_IN=0",
+      "output_directory": "Objects_ff005_offline",
+      "build_only": true
+    },
+    {
+      "variant": "ff005",
+      "kind": "vehicle",
+      "project": "gongxun-f407-ff005_vehicle.uvprojx",
+      "defines": "APP_X_OFFLINE_ONLY=0,APP_FF_FORWARD_ENABLE=1,APP_FF_BACKWARD_ENABLE=0,APP_FF_FORWARD_PERMILLE=5,APP_FF_BACKWARD_PERMILLE=0,APP_FF_VEHICLE_OPT_IN=1",
+      "output_directory": "Objects_ff005_vehicle",
+      "build_only": true
+    }
+  ],
+  "forward_difference_permille": 5,
+  "backward_enabled": false,
+  "protected_sources_unchanged": true,
+  "logs_note": "Existing diagnostic sampling unchanged; no high-rate acquisition claim"
+}

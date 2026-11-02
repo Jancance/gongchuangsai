@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-24",
+  "method": "local manual PDF page72 visually inspected, current source and historical evidence reviewed",
+  "firmware": "FW_Emm per existing identity records, not re-read live",
+  "command": "0x36",
+  "position_format": {
+    "sign": {
+      "0": "positive",
+      "1": "negative"
+    },
+    "magnitude_bits": 32,
+    "byte_order": "big-endian",
+    "units_per_turn": 65536
+  },
+  "wheel_diameter_mm": 77,
+  "gear_ratio": 1,
+  "circumference_mm": 241.90263432641407,
+  "mm_per_unit": 0.003691141270849824,
+  "mapping": [
+    {
+      "address": 1,
+      "wheel": "left rear",
+      "existing_forward_direction": 0
+    },
+    {
+      "address": 2,
+      "wheel": "right rear",
+      "existing_forward_direction": 1
+    },
+    {
+      "address": 3,
+      "wheel": "left front",
+      "existing_forward_direction": 0
+    },
+    {
+      "address": 4,
+      "wheel": "right front",
+      "existing_forward_direction": 1
+    }
+  ],
+  "findings": [
+    "CAN1_ReadPosition parses sign and uint32 magnitude correctly",
+    "four-wheel static read historical pass exists from2026-10-14",
+    "active motion executor polls speed/status only, not position",
+    "current TM1 has no position fields, cannot retrieve fresh position via current serial interface"
+  ],
+  "not_confirmed": [
+    "position sign change relative to body forward",
+    "multi-turn continuity/reset behavior across current drive power cycles",
+    "running sample freshness and inter-wheel timing",
+    "distance accuracy/slip"
+  ],
+  "hardware_operated": false,
+  "flashed": false,
+  "sent_serial_commands": 0,
+  "firmware_changed": false,
+  "pushed": false
+}

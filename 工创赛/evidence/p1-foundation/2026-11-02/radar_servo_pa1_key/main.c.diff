@@ -1,0 +1,23 @@
+--- before/main.c
++++ USER/main.c
+@@ -4355,7 +4355,33 @@
+ 
+             g_safety_fault==0U && g_rtos_fault==0U && g_can_ctrl_fault_latched==0U)?1U:0U); 
+-if (APP_UART_LINK_TEST != 0U)
++/* Armed servo test consumes PC13 without starting the chassis. */+
++        if (g_radar_servo_key_test_enable != 0U)+
++        {+
++            if (Key_GetEvent() != 0U)+
++            {+
++                g_start_key_count++;+
++                taskENTER_CRITICAL();+
++                (void)RadarServo_KeyTest(g_radar_zone_ready?g_radar_zone_selected:0U,+
++                    (g_vm_test_request==0U && g_chassis_auto_active==0U &&+
++                     g_safety_fault==0U && g_rtos_fault==0U && g_can_ctrl_fault_latched==0U)?1U:0U);+
++                taskEXIT_CRITICAL();+
++            }+
++        }+
++        else if (APP_UART_LINK_TEST != 0U)
+         { if (Key_GetEvent() != 0U) g_start_key_count++; }
+         else
+         {

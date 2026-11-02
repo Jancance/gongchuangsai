@@ -1,0 +1,126 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-DAPP_X_OFFLINE_ONLY=0",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 0,
+    "output": "\"unit.c\", line 20: Warning:  #177-D: variable \"model_mode\"  was declared but never referenced\n  static uint32_t checks,first_failure,model_mode,model_step,model_fault,model_delayed,model_count;\n                                       ^\n\"unit.c\", line 20: Warning:  #177-D: variable \"model_delayed\"  was declared but never referenced\n  static uint32_t checks,first_failure,model_mode,model_step,model_fault,model_delayed,model_count;\n                                                                         ^\n\"unit.c\", line 20: Warning:  #177-D: variable \"model_count\"  was declared but never referenced\n  static uint32_t checks,first_failure,model_mode,model_step,model_fault,model_delayed,model_count;\n                                                                                       ^\n\"unit.c\", line 21: Warning:  #177-D: variable \"model_gain\"  was declared but never referenced\n  static float model_gain,position[4],velocity[4],target[4],history[4][32];\n               ^\n\"unit.c\", line 21: Warning:  #550-D: variable \"target\"  was set but never used\n  static float model_gain,position[4],velocity[4],target[4],history[4][32];\n                                                  ^\n\"unit.c\", line 21: Warning:  #177-D: variable \"history\"  was declared but never referenced\n  static float model_gain,position[4],velocity[4],target[4],history[4][32];\n                                                            ^\n\"unit.c\", line 87: Warning:  #550-D: variable \"s_combined_mode\"  was set but never used\n  static uint32_t s_combined_turn,s_combined_mode,s_combined_base_rpm,s_combined_run_ms;\n                                  ^\n\"unit.c\", line 87: Warning:  #550-D: variable \"s_combined_base_rpm\"  was set but never used\n  static uint32_t s_combined_turn,s_combined_mode,s_combined_base_rpm,s_combined_run_ms;\n                                                  ^\n\"unit.c\", line 88: Warning:  #550-D: variable \"s_combined_reference_mm_s\"  was set but never used\n  static float s_combined_distance_mm,s_combined_reference_mm_s;\n                                      ^\n\"unit.c\", line 89: Warning:  #550-D: variable \"s_combined_keep_vm\"  was set but never used\n  static uint32_t s_motion_session_open,s_combined_keep_vm,s_combined_begin_ms,s_combined_stage_ms,s_combined_gap_ms,s_combined_end_ms,s_combined_powered_segment;\n                                        ^\n\"unit.c\", line 89: Warning:  #550-D: variable \"s_combined_end_ms\"  was set but never used\n  static uint32_t s_motion_session_open,s_combined_keep_vm,s_combined_begin_ms,s_combined_stage_ms,s_combined_gap_ms,s_combined_end_ms,s_combined_powered_segment;\n                                                                                                                     ^\n\"unit.c\", line 89: Warning:  #550-D: variable \"s_combined_powered_segment\"  was set but never used\n  static uint32_t s_motion_session_open,s_combined_keep_vm,s_combined_begin_ms,s_combined_stage_ms,s_combined_gap_ms,s_combined_end_ms,s_combined_powered_segment;\n                                                                                                                                       ^\n\"unit.c\", line 90: Warning:  #550-D: variable \"g_heading_exec_state\"  was set but never used\n  static uint32_t g_heading_exec_trip,g_heading_exec_phase,g_heading_exec_request,g_heading_exec_state,s_heading_exec,g_heading_stop_trace[4];\n                                                                                  ^\n\"unit.c\", line 91: Warning:  #550-D: variable \"g_heading_exec_relative_deg\"  was set but never used\n  static float g_heading_exec_relative_deg,g_heading_exec_error_deg;\n               ^\n\"unit.c\", line 92: Warning:  #550-D: variable \"s_motion_turn_max_rpm\"  was set but never used\n  static uint32_t s_motion_turn_max_rpm,g_translation_hold_selftest,g_motion_plan_valid,s_serial_start_permit;\n                  ^\n\"unit.c\", line 93: Warning:  #550-D: variable \"g_forward_hold_trace_count\"  was set but never used\n  static uint32_t g_forward_hold_trace_count,g_motion_fault_diag_valid,g_can_jog_request;\n                  ^\n\"unit.c\", line 93: Warning:  #550-D: variable \"g_motion_fault_diag_valid\"  was set but never used\n  static uint32_t g_forward_hold_trace_count,g_motion_fault_diag_valid,g_can_jog_request;\n                                             ^\n\"unit.c\", line 93: Warning:  #550-D: variable \"g_can_jog_request\"  was set but never used\n  static uint32_t g_forward_hold_trace_count,g_motion_fault_diag_valid,g_can_jog_request;\n                                                                       ^\n\"unit.c\", line 148: Warning:  #550-D: variable \"s_route_heading_turn_active\"  was set but never used\n  static uint32_t s_route_heading_turn_active;\n                  ^\n\"unit.c\", line 150: Warning:  #177-D: function \"App_ComboIdlePoll\"  was declared but never referenced\n  static void App_ComboIdlePoll(void)\n              ^\n\"unit.c\", line 167: Warning:  #550-D: variable \"s_route_ack_pending\"  was set but never used\n  static uint32_t s_route_ack_pending,s_route_ack_id,s_route_ack_op,s_route_ack_result,s_route_ack_generation;\n                  ^\n\"unit.c\", line 167: Warning:  #550-D: variable \"s_route_ack_id\"  was set but never used\n  static uint32_t s_route_ack_pending,s_route_ack_id,s_route_ack_op,s_route_ack_result,s_route_ack_generation;\n                                      ^\n\"unit.c\", line 167: Warning:  #550-D: variable \"s_route_ack_op\"  was set but never used\n  static uint32_t s_route_ack_pending,s_route_ack_id,s_route_ack_op,s_route_ack_result,s_route_ack_generation;\n                                                     ^\n\"unit.c\", line 168: Warning:  #550-D: variable \"s_perimeter_odom_started\"  was set but never used\n  static uint32_t s_perimeter_odom_started,s_perimeter_completed_seen;\n                  ^\n\"unit.c\", line 168: Warning:  #550-D: variable \"s_perimeter_completed_seen\"  was set but never used\n  static uint32_t s_perimeter_odom_started,s_perimeter_completed_seen;\n                                           ^\nunit.c: 25 warnings, 0 errors\n"
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-DAPP_X_OFFLINE_ONLY=0",
+      "-c",
+      "src/runtime_route.c",
+      "-o",
+      "route.o"
+    ],
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-DAPP_X_OFFLINE_ONLY=0",
+      "-c",
+      "src/chassis_kinematics.c",
+      "-o",
+      "kinematics.o"
+    ],
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-DAPP_X_OFFLINE_ONLY=0",
+      "-c",
+      "src/motion_profile.c",
+      "-o",
+      "profile.o"
+    ],
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-DAPP_X_OFFLINE_ONLY=0",
+      "-c",
+      "src/heading_controller.c",
+      "-o",
+      "heading.o"
+    ],
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armlink.exe",
+      "--entry",
+      "test_entry",
+      "--scatter",
+      "unit.sct",
+      "unit.o",
+      "route.o",
+      "kinematics.o",
+      "profile.o",
+      "heading.o",
+      "--library_type=microlib",
+      "-o",
+      "unit.axf"
+    ],
+    "returncode": 0,
+    "output": ""
+  }
+]

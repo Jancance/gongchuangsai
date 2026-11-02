@@ -1,0 +1,79 @@
+--- old_integral/USER\heading_controller.c
++++ refined_integral/USER\heading_controller.c
+@@ -227,13 +227,17 @@
+ {
+     if (hold == NULL) return;
+     hold->integral_enabled = (HEADING_INTEGRAL_TRIAL_ENABLE && enabled==1U) ? 1U : 0U;
+-    if (!hold->integral_enabled) hold->integral_rpm=0.0f;
++    if (!hold->integral_enabled) {
++        hold->integral_rpm=0.0f;
++        hold->integral_sign_ms=0U;hold->integral_error_sign=0;
++    }
+ }
+ uint32_t HeadingController_HoldStep(HeadingHoldController *hold,
+     float target_deg, float yaw_deg, float rate_dps, uint32_t now_ms,
+     float *correction_rpm, float *error_deg)
+ {
+     uint32_t elapsed;
++    int32_t error_sign;
+     float desired, filtered, step, difference, raw_pd, next_i, delta_i;
+     if (correction_rpm != NULL) *correction_rpm=0.0f;
+     if (error_deg != NULL) *error_deg=0.0f;
+@@ -260,17 +264,35 @@
+     /* 保留原PD死区，小积分只补偿平稳持续误差，不对大误差累积。 */
+     raw_pd = 1.0f * (*error_deg) - 0.25f * filtered;
+     if (Heading_Abs(*error_deg)<=0.3f && Heading_Abs(filtered)<=0.3f) raw_pd=0.0f;
+-    if (!HEADING_INTEGRAL_TRIAL_ENABLE || !hold->integral_enabled) hold->integral_rpm=0.0f;
++    if (!HEADING_INTEGRAL_TRIAL_ENABLE || !hold->integral_enabled) {
++        hold->integral_rpm=0.0f;
++        hold->integral_sign_ms=0U;hold->integral_error_sign=0;
++    }
+     else if (Heading_Abs(*error_deg)>HEADING_INTEGRAL_MIN_ERROR_DEG &&
+              Heading_Abs(*error_deg)<=HEADING_INTEGRAL_MAX_ERROR_DEG &&
+              Heading_Abs(filtered)<=HEADING_INTEGRAL_MAX_RATE_DPS) {
++        error_sign=(*error_deg>0.0f)?1:-1;
++        if(error_sign!=hold->integral_error_sign) {
++            hold->integral_error_sign=error_sign;hold->integral_sign_ms=0U;
++        } else if(hold->integral_sign_ms<HEADING_INTEGRAL_DWELL_MS) {
++            hold->integral_sign_ms+=elapsed;
++        }
+         delta_i=HEADING_INTEGRAL_TRIAL_KI*(*error_deg)*(float)elapsed*0.001f;
+-        next_i=hold->integral_rpm+delta_i;
++        /* 反向误差先退掉旧积分；未持续足够时间时不积新的反向量。 */
++        if(hold->integral_rpm*(*error_deg)<0.0f) {
++            delta_i*=HEADING_INTEGRAL_REVERSE_FACTOR;
++            next_i=hold->integral_rpm+delta_i;
++            if(next_i*hold->integral_rpm<0.0f)next_i=0.0f;
++        } else if(hold->integral_sign_ms>=HEADING_INTEGRAL_DWELL_MS) {
++            next_i=hold->integral_rpm+delta_i;
++        } else next_i=hold->integral_rpm;
+         if(next_i>HEADING_INTEGRAL_LIMIT_RPM)next_i=HEADING_INTEGRAL_LIMIT_RPM;
+         if(next_i< -HEADING_INTEGRAL_LIMIT_RPM)next_i= -HEADING_INTEGRAL_LIMIT_RPM;
+         /* 总输出将饱和且积分仍向外推时冻结，反向误差可退出饱和。 */
+         if(!((raw_pd+next_i>2.0f && delta_i>0.0f) ||
+              (raw_pd+next_i< -2.0f && delta_i<0.0f))) hold->integral_rpm=next_i;
++    } else {
++        hold->integral_sign_ms=0U;hold->integral_error_sign=0;
+     }
+     desired=raw_pd+hold->integral_rpm;
+     if(desired>2.0f)desired=2.0f;
+--- old_integral/USER\heading_controller.h
++++ refined_integral/USER\heading_controller.h
+@@ -67,6 +67,8 @@
+     int32_t quantized_deci_rpm;
+     float integral_rpm, integral_target_deg;
+     uint32_t integral_enabled;
++    uint32_t integral_sign_ms;
++    int32_t integral_error_sign;
+ } HeadingHoldController;
+ void HeadingController_HoldReset(HeadingHoldController *hold);
+ void HeadingController_HoldSetIntegralEnabled(HeadingHoldController *hold, uint32_t enabled);
+--- old_integral/USER\heading_integral_trial.h
++++ refined_integral/USER\heading_integral_trial.h
+@@ -11,4 +11,6 @@
+ #define HEADING_INTEGRAL_MIN_ERROR_DEG 0.05f
+ #define HEADING_INTEGRAL_MAX_ERROR_DEG 1.0f
+ #define HEADING_INTEGRAL_MAX_RATE_DPS 1.0f
++#define HEADING_INTEGRAL_DWELL_MS 300U
++#define HEADING_INTEGRAL_REVERSE_FACTOR 3.0f
+ #endif

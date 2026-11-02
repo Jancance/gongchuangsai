@@ -1,0 +1,121 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 0,
+    "output": "\"unit.c\", line 39: Warning:  #177-D: variable \"s_perimeter_targets\"  was declared but never referenced\n  static const float s_perimeter_targets[9][3]={\n                     ^\nunit.c: 1 warning, 0 errors\n"
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-c",
+      "src/chassis_kinematics.c",
+      "-o",
+      "kinematics.o"
+    ],
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-c",
+      "src/motion_profile.c",
+      "-o",
+      "profile.o"
+    ],
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-c",
+      "src/heading_controller.c",
+      "-o",
+      "heading.o"
+    ],
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-c",
+      "src/heading_session.c",
+      "-o",
+      "session.o"
+    ],
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armlink.exe",
+      "--entry",
+      "test_entry",
+      "--scatter",
+      "unit.sct",
+      "unit.o",
+      "kinematics.o",
+      "profile.o",
+      "heading.o",
+      "session.o",
+      "--library_type=microlib",
+      "-o",
+      "unit.axf"
+    ],
+    "returncode": 0,
+    "output": ""
+  }
+]

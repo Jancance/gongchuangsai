@@ -68,5 +68,525 @@
     ],
     "historical_fields": 51,
     "note": "sequence mode has whole-sequence phase; ordinary translation retains base 48"
+  },
+  "action_plan_extension": {
+    "total_fields": 56,
+    "fields_after_55": [
+      "sequence_count"
+    ],
+    "capacity": 8,
+    "host_accepts": [
+      48,
+      51,
+      55,
+      56
+    ],
+    "status": "local code only, not flashed"
+  },
+  "motion_api_display_extension": {
+    "total_fields": 58,
+    "fields_after_56": [
+      "action_kind",
+      "target_theoretical_milli_cm_s"
+    ],
+    "speed_unit": "0.001 cm/s, theoretical wheel rim target only",
+    "turn_sentinel": -2147483648,
+    "host_accepts": [
+      48,
+      51,
+      55,
+      56,
+      58
+    ],
+    "verification": "two forward15RPM/2s action-table stages passed; other new API runtime paths untested"
+  },
+  "position_diagnostic": {
+    "prefix": "PM1",
+    "total_fields": 25,
+    "base_fields": [
+      "tick_ms",
+      "session",
+      "sample_sequence",
+      "valid_mask",
+      "vm_active"
+    ],
+    "per_wheel_fields": [
+      "result",
+      "sign",
+      "raw",
+      "sample_ms",
+      "age_ms"
+    ],
+    "wheel_order": [
+      "left rear ID1",
+      "right rear ID2",
+      "left front ID3",
+      "right front ID4"
+    ],
+    "numeric_type": "uint32 decimal, independent sign for raw magnitude",
+    "crc": "CRC16-CCITT-FALSE, covers prefix through final comma",
+    "position_units_per_turn": 65536,
+    "invalid_age": 4294967295,
+    "fresh_ms": 1000,
+    "control_token": false,
+    "status": "local code/build only, not flashed"
+  },
+  "position_endpoints": {
+    "prefix": "PE1",
+    "total_fields": 29,
+    "base_fields": [
+      "tick_ms",
+      "session",
+      "outcome",
+      "start_mask",
+      "end_mask"
+    ],
+    "per_wheel_fields_each_phase": [
+      "sign",
+      "raw",
+      "ms"
+    ],
+    "phase_order": [
+      "start",
+      "end"
+    ],
+    "wheel_order": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "numeric_type": "uint32 decimal; Python signed wide delta",
+    "success": {
+      "outcome": 1,
+      "start_mask": 15,
+      "end_mask": 15
+    },
+    "historical_after_power_off": true,
+    "record_capacity_per_reset": 8,
+    "crc": "CRC16-CCITT-FALSE through last comma",
+    "control_token": false,
+    "status": "local compile/host tests only, not flashed"
+  },
+  "forward_distance_extension": {
+    "total_fields": 64,
+    "historical_distance_fields": 63,
+    "fields_after_58": [
+      "distance_mode",
+      "distance_target_milli_mm",
+      "distance_progress_milli_mm",
+      "distance_base_rpm",
+      "distance_reached",
+      "distance_fault_reason"
+    ],
+    "distance_unit": "0.001mm for target/progress",
+    "host_accepts": [
+      48,
+      51,
+      55,
+      56,
+      58,
+      63,
+      64
+    ],
+    "action_kind": 4,
+    "fault_reasons": {
+      "0": "no dedicated distance reason; inspect backend fault too",
+      "1": "baseline missing",
+      "2": "position incomplete",
+      "3": "400ms position stale",
+      "4": "position jump",
+      "5": "trajectory consistency/reverse/overshoot",
+      "6": "distance timeout"
+    },
+    "physical_distance_accuracy": "not calibrated; user approximately89cm on870mm target, slight right drift"
+  },
+  "lateral_distance_extension": {
+    "action_kinds": {
+      "4": "forward distance",
+      "5": "left distance",
+      "6": "right distance"
+    },
+    "TM1_fields_unchanged": 64,
+    "public_status_direction": "MOVE_FORWARD0/MOVE_LEFT1/MOVE_RIGHT2, meaningful only when distance_mode1",
+    "status": "local build only, not flashed"
+  },
+  "directional_position_endpoints": {
+    "prefix": "PE2",
+    "total_fields": 31,
+    "base_fields": [
+      "tick_ms",
+      "session",
+      "outcome",
+      "start_mask",
+      "end_mask",
+      "translation_mode",
+      "distance_mode"
+    ],
+    "per_wheel_fields_each_phase": [
+      "sign",
+      "raw",
+      "ms"
+    ],
+    "phase_order": [
+      "start",
+      "end"
+    ],
+    "translation_modes": {
+      "0": "forward",
+      "1": "left",
+      "2": "right",
+      "3": "nontranslation"
+    },
+    "numeric_type": "uint32 decimal",
+    "crc": "CRC16-CCITT-FALSE through final comma",
+    "legacy_PE1_accepted": true,
+    "legacy_direction_unknown": true,
+    "control_token": false,
+    "status": "local build only, not flashed"
+  },
+  "fault_diagnostic": {
+    "protocol": "HF1",
+    "fields_in_order": [
+      "fault_tick_ms",
+      "arm_sequence",
+      "trip",
+      "phase",
+      "backend_state",
+      "backend_cause",
+      "backend_session",
+      "source_valid",
+      "angle_age_ms",
+      "rate_age_ms",
+      "hwt_uart_errors",
+      "hwt_overflows",
+      "hwt_checksum_errors",
+      "base_uart_errors",
+      "base_overflows",
+      "base_checksum_errors",
+      "uart_ore",
+      "uart_fe",
+      "uart_ne",
+      "uart_pe",
+      "last_uart_sr",
+      "event_tick_ms",
+      "event_reason",
+      "event_sr",
+      "event_uart_errors",
+      "event_overflows",
+      "event_checksum_errors",
+      "event_seen",
+      "source_sample_age_ms"
+    ],
+    "types": "29 unsigned uint32 decimal values; UINT32_MAX age means missing observation",
+    "checksum": "CRC16-CCITT initial 0xFFFF over prefix including trailing comma, 4 hex digits",
+    "event_reason": {
+      "0": "no receive event latched",
+      "1": "USART2 UART error; event_sr identifies ORE/FE/NE/PE bits",
+      "2": "HWT ring overflow",
+      "4": "HWT frame checksum error"
+    },
+    "semantics": "First translation trip snapshot, captured before abort; periodic 1Hz after fault only. Not a control token. Baselines and event snapshot are diagnostic only."
+  },
+  "backend_fault_diagnostic": {
+    "protocol": "HF2",
+    "fields_in_order": [
+      "fault_tick_ms",
+      "arm_sequence",
+      "trip",
+      "phase",
+      "backend_state",
+      "backend_cause",
+      "backend_session",
+      "source_valid",
+      "angle_age_ms",
+      "rate_age_ms",
+      "hwt_uart_errors",
+      "hwt_overflows",
+      "hwt_checksum_errors",
+      "base_uart_errors",
+      "base_overflows",
+      "base_checksum_errors",
+      "uart_ore",
+      "uart_fe",
+      "uart_ne",
+      "uart_pe",
+      "last_uart_sr",
+      "event_tick_ms",
+      "event_reason",
+      "event_sr",
+      "event_uart_errors",
+      "event_overflows",
+      "event_checksum_errors",
+      "event_seen",
+      "source_sample_age_ms",
+      "backend_fault_reason",
+      "backend_fault_state",
+      "backend_io_result",
+      "backend_address",
+      "backend_command_age_ms",
+      "backend_status_mask",
+      "backend_speed_mask",
+      "backend_feedback_age_ms",
+      "backend_fault_tick_ms"
+    ],
+    "types": "38 uint32 decimal values; first29 identical to legacyHF1",
+    "checksum": "CRC16-CCITT initial0xFFFF over prefix including trailing comma;4hex digits",
+    "backend_fault_reason": {
+      "0": "other branch or no backend fault snapshot",
+      "1": "heading mailbox expired",
+      "2": "status/speed missing or stale",
+      "3": "position endpoint batch stale",
+      "4": "endpoint read failed",
+      "5": "running position read failed",
+      "6": "status/speed monitor read failed",
+      "7": "distance start endpoint mask incomplete",
+      "8": "distance guard; see TM1 distance_fault_reason"
+    },
+    "semantics": "First backend fault snapshot before state modification, frozen until next accepted backend session/init. Read-only diagnostics; does not renew control. Old HF1 decoding preserved."
+  },
+  "critical_timing_diagnostic": {
+    "protocol": "CT1",
+    "fields_in_order": [
+      "fault_tick_ms",
+      "cycle_hz",
+      "timer_enabled",
+      "event_cycle",
+      "hold_critical_count",
+      "hold_critical_last_cycles",
+      "hold_critical_max_cycles",
+      "hold_critical_max_start",
+      "hold_critical_max_end",
+      "hold_critical_max_tick_ms",
+      "hold_critical_max_arm",
+      "hold_critical_last_end",
+      "backend_begin_count",
+      "backend_begin_last_cycles",
+      "backend_begin_max_cycles",
+      "backend_begin_max_start",
+      "backend_begin_max_end",
+      "backend_begin_max_tick_ms",
+      "backend_begin_max_arm",
+      "backend_begin_last_end",
+      "action_load_count",
+      "action_load_last_cycles",
+      "action_load_max_cycles",
+      "action_load_max_start",
+      "action_load_max_end",
+      "action_load_max_tick_ms",
+      "action_load_max_arm",
+      "action_load_last_end"
+    ],
+    "scopes_in_order": [
+      "hold_critical",
+      "backend_begin",
+      "action_load"
+    ],
+    "types": "28 uint32 decimal values, cycle counts interpreted with unsigned modulo2^32 arithmetic",
+    "checksum": "CRC16-CCITT initial0xFFFF over prefix including trailing comma",
+    "semantics": "Frozen at first translation trip, emitted after fault only; first4 fields fault tick, CPU frequency, timer enabled, firstHWT event cycle. Each scope has8 fields. No control tokens or keepalive."
+  },
+  "normal_timing_diagnostic": {
+    "protocol": "CT2",
+    "fields_in_order": [
+      "outcome",
+      "sequence_index",
+      "backend_session",
+      "snapshot_tick_ms",
+      "cycle_hz",
+      "timer_enabled",
+      "event_cycle",
+      "hold_critical_count",
+      "hold_critical_last_cycles",
+      "hold_critical_max_cycles",
+      "hold_critical_max_start",
+      "hold_critical_max_end",
+      "hold_critical_max_tick_ms",
+      "hold_critical_max_arm",
+      "hold_critical_last_end",
+      "backend_begin_count",
+      "backend_begin_last_cycles",
+      "backend_begin_max_cycles",
+      "backend_begin_max_start",
+      "backend_begin_max_end",
+      "backend_begin_max_tick_ms",
+      "backend_begin_max_arm",
+      "backend_begin_last_end",
+      "action_load_count",
+      "action_load_last_cycles",
+      "action_load_max_cycles",
+      "action_load_max_start",
+      "action_load_max_end",
+      "action_load_max_tick_ms",
+      "action_load_max_arm",
+      "action_load_last_end"
+    ],
+    "types": "31 uint32 decimal fields; outcome1 is saved successful translation-stage record; zero-based index0..7",
+    "semantics": "Retain at each successful translation completion, emit only after entire sequence DONE and VM requested/commanded off with final stopmask15. Successful records replay in index order and host deduplicates identical records. No control token or keepalive. Legacy fault CT1 unchanged.",
+    "scopes_in_order": [
+      "hold_critical",
+      "backend_begin",
+      "action_load"
+    ],
+    "checksum": "CRC16-CCITT initial0xFFFF over prefix including trailing comma"
+  },
+  "can_stack_extension_2026_10_25": {
+    "field": "can_stack_words",
+    "append_to": "mode2 TM1 48 fields ->49; mode3 TM1 64 fields ->65; existing positions unchanged",
+    "unit": "FreeRTOS StackType_t words (4 bytes on STM32F407)",
+    "meaning": "CAN task lifetime minimum remaining stack words, sampled by existing uxTaskGetStackHighWaterMark(NULL) in CAN task; 0 is not evidence of sufficient stack",
+    "host_compatibility": "new host supports legacy48/51/55/56/58/63/64 and new49/65 field TM1; old host rejects new frame counts",
+    "frequency": "same 100ms telemetry cadence; no new stack scan, command, CAN query or watchdog action"
+  },
+  "completed_keep_semantics_2026_10_25": {
+    "scope": "same-token KEEP, after original CRC/token validation",
+    "allow": "remote_state3/result2, frontend successful completion, backend inactive result1/cause0/stopmask15, VM request/output off, CAN/RTOS/safety fault0",
+    "effect": "increment accepted only; preserve successful result; do not renew keepalive, start permit or action request",
+    "unchanged": "running KEEP renews1s link guard; STOP, failed/cancelled terminal, wrong token, ARM/START keep original handling"
+  },
+  "debug_entry_presets_2026_10_25": {
+    "field": "debug_plan_id appended after can_stack_words; mode3 TM1 now66 fields; legacy49/65 and earlier remain parseable by new host",
+    "commands": {
+      "PLAN0": "legacy default",
+      "PLAN1": "left30cm",
+      "PLAN2": "forward30cm",
+      "PLAN3": "right30cm",
+      "PLAN4": "left/front/right30cm",
+      "PLAN5": "retired after user corrected target; rejected, not mapped to PLAN6",
+      "PLAN6": "single forward210cm at15RPM, debug mode3 only",
+      "PLAN7": "single forward210cm target200mm/s; dedicated debug S-curve trial only, max base52RPM including tracking reserve"
+    },
+    "admission": "fresh idle telemetry seq/tick (same500ms/window5 gate as ARM), remote_state0, source/exclusive/selftest healthy, no pending/active/previous motion session, VM request/output off",
+    "effect": "copy validated bounded action parameters, echo plan id and accepted counter; does not ARM/START or enable VM",
+    "host": "--plan optional, mode3 run-once only; await echo and accepted increment then fresh health window before ARM/START; ack timeout2s",
+    "competition": "no USART1 RC1 receive dispatch/parser, no PC ARM/START/KEEP or debug preset selection"
+  },
+  "forward237_debug_exception": {
+    "target_mm": 2370,
+    "direction": 0,
+    "rpm": 15,
+    "run_ms": 60000,
+    "stage_ms": 65000,
+    "backend_total_ms": 75000,
+    "group_ms_unchanged": 120000,
+    "ordinary_range_mm_unchanged": [
+      100,
+      1000
+    ],
+    "ordinary_run_ms_unchanged": 30000,
+    "distance_telemetry": "target/progress in milli_mm independently accepts -5..2500mm; angle serialization range unchanged",
+    "host_plan": "forward237",
+    "safety": "same CRC/idle/token/health gates; no new fault clearing or stop bypass",
+    "active": false
+  },
+  "forward210_debug_exception": {
+    "supersedes": "forward237_debug_exception as active profile;237cm record is historical only",
+    "target_mm": 2100,
+    "direction": 0,
+    "rpm": 15,
+    "run_ms": 60000,
+    "stage_ms": 65000,
+    "backend_total_ms": 75000,
+    "group_ms_unchanged": 120000,
+    "host_plan": "forward210",
+    "retired_command": "PLAN5 rejected",
+    "active": true
+  },
+  "batch_diagnostic": {
+    "protocol": "BT1",
+    "fields_in_order": [
+      "session",
+      "batch_id",
+      "segment",
+      "dry_run",
+      "generation_source",
+      "generated_ms",
+      "start_ms",
+      "end_ms",
+      "outcome",
+      "sent_mask",
+      "ack_mask",
+      "failed_address",
+      "io_result",
+      "correction_rpm",
+      "base_rpm",
+      "pending_changes",
+      "pending_rpm",
+      "send_ms1",
+      "send_ms2",
+      "send_ms3",
+      "send_ms4",
+      "reply_ms1",
+      "reply_ms2",
+      "reply_ms3",
+      "reply_ms4",
+      "result1",
+      "result2",
+      "result3",
+      "result4",
+      "overwritten",
+      "max_queue_ms",
+      "max_batch_ms",
+      "max_call_ms",
+      "total_success",
+      "total_interrupted"
+    ],
+    "signed_fields": [
+      "correction_rpm",
+      "pending_rpm"
+    ],
+    "capacity": 16,
+    "only_after_vm_off": true,
+    "role": "communication history only; cannot renew link or drive motion",
+    "resolution_ms": 1,
+    "mechanical_response_measured": false,
+    "details": "P1_CONTROL_BATCH_DIAGNOSTIC_2026-10-26.md"
+  },
+  "speed20_trial_2026_10_27": {
+    "enabled_only": "APP_SPEED20_TRIAL_ENABLE && APP_DISTANCE_SCURVE_ACTIVE; defaults off; never competition",
+    "host_plan": "forward210-20",
+    "plan_id": 7,
+    "distance_mm": 2100,
+    "reference_peak_mm_s": 200,
+    "max_base_rpm_including_position_reserve": 52,
+    "max_wheel_command_rpm_with_heading": 54,
+    "feedback_trip_rpm": 80,
+    "position_follow_reserve_rpm": 2,
+    "position_follow_kp_per_s": 1,
+    "run_ms": 25000,
+    "overall_backend_ms": 45000,
+    "arrival_tolerance_mm": 2,
+    "reference_end_wait_ms": 2000,
+    "unchanged_protections": "100ms source/command;400ms position;500ms stop;50mm tracking; VM/fault latch",
+    "idle_admission": "explicit requested plan; echo7/accepted increment then fresh health; base52/feedback80/count1; unspecified/default cannot arm this profile",
+    "runtime_profile_check": "id7,feedback80,count1,base0..52; distance mode must be forward2100mm; mismatch -> one STOP",
+    "wire_layout": "TM1 unchanged66 fields; no driver unit change",
+    "physical_status": "not flashed; user explicitly cannot vehicle-test; previous B2 fault firmware retained"
+  },
+  "route_speed_trial_2026_10_28": {
+    "state": "software candidate; not vehicle accepted",
+    "plan_id": 0,
+    "host_opt_in": "--action run-once --mode 3 --plan default --route-trial",
+    "firmware_flags": {
+      "APP_ROUTE_USE_CUSTOM": 1,
+      "APP_ROUTE_SPEED_TRIAL_ENABLE": 1
+    },
+    "direction_speed_caps_cm_s": {
+      "FORWARD": 20,
+      "LEFT": 20,
+      "RIGHT": 20
+    },
+    "distance_mm": [
+      100,
+      2100
+    ],
+    "reference": "exact requested mm/s in MotionAction.reference_mm_s; actual speed not calibrated",
+    "base_ceiling_rpm": 52,
+    "feedback_limit_rpm": 80,
+    "frame_fields": "TM1 unchanged; PLAN0 plus feedback80 marks candidate; old host rejects",
+    "deadline": "ceil(profile duration in ms)+2000ms endpoint wait+2000ms margin; max60000ms",
+    "group_budget": "5000ms+sum(distance deadline+6000ms, legacy/turn budgets unchanged); must <=120000ms",
+    "safety": "source/position freshness, stop/VM, fault latch and keepalive unchanged; no automatic retries",
+    "remaining": "physical forward then left/right acceptance; runtime firmware/route version echo not implemented"
   }
 }

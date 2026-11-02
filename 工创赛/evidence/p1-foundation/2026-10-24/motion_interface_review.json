@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-24",
+  "scope": "header contract, existing limits as constants, read-only MotionReadStatus snapshot",
+  "builds": {
+    "combo": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=49992 RO-data=728 RW-data=1912 ZI-data=29376"
+    },
+    "single": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=42824 RO-data=664 RW-data=1844 ZI-data=29156"
+    },
+    "link": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=25858 RO-data=462 RW-data=1824 ZI-data=27392"
+    },
+    "manual": {
+      "result": "0 errors, 0 warnings",
+      "size": "Code=39432 RO-data=608 RW-data=1776 ZI-data=27424"
+    }
+  },
+  "hardware_tested": false,
+  "downloaded": false,
+  "serial_opened": false,
+  "pushed": false,
+  "source_sha256": {
+    "main.c": "86191b3b2b5e032dc185a03b681ff89e949f24c1eafbe02978eeceebe3ed6e22",
+    "motion_control.h": "be4d8a3a77b8bc8a3c4b25df87a5a0329e5a477ceca5317e6debed7ed72f7172"
+  }
+}

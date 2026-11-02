@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-26",
+  "baseline": "54bb617",
+  "first_competition_cruise_goal_cm_s": 20,
+  "goal_status": "engineering goal only; not enabled or physically validated",
+  "module": "static rest-to-rest symmetric jerk-limited scalar S-curve and fixed-heading translation wheel time scaling",
+  "runtime_integration": false,
+  "flashed": false,
+  "serial_opened": false,
+  "motion_started": false,
+  "source_sha256": {
+    "3.stm32f407工程\\USER\\motion_profile.c": "5e3b205b42f9824fa76e334f7c23a65162fdfe69a18e454a64f46fc26777af59",
+    "3.stm32f407工程\\USER\\motion_profile.h": "aa12b374960f6fd31fd25cf0e3652ce30d8cd6855763f7f345e4970972084296",
+    "3.stm32f407工程\\gongxun-f407.uvprojx": "f8b2c369f92b67ae0f7f409130a953bef74bf644a4a7e5d842a78cd14d03b2bc"
+  },
+  "existing_motion_sources_unchanged_from_batch_diag": true,
+  "debug_full_rebuild": {
+    "errors": 0,
+    "warnings": 0,
+    "code": 62244,
+    "ro": 868,
+    "rw": 2060,
+    "zi": 37068
+  },
+  "competition_full_rebuild": {
+    "errors": 0,
+    "warnings": 0,
+    "code": 53672,
+    "ro": 652,
+    "rw": 1944,
+    "zi": 29376
+  },
+  "actual_c_checks": {
+    "actual_c_checks_passed": 46177,
+    "hardware_connected": false,
+    "compiler_target": "ARM Cortex-M3 soft-float; behavior only",
+    "engine": "Unicorn2.1.4",
+    "limits": "Pure planner and kinematics only; no CAN, motors, scheduling or real-time performance proof"
+  },
+  "scenarios": [
+    "2100mm at requested525mm/s",
+    "300mm short segment",
+    "0.01mm numerical boundary",
+    "low target velocity",
+    "long segment",
+    "200mm/s first-pass numerical case",
+    "150mm/s case",
+    "both sides of acceleration plateau and cruise transition",
+    "8 translation directions with reserved wheel capacity",
+    "separate velocity acceleration and jerk bottlenecks",
+    "zero negative NaN infinity input and excessive duration"
+  ],
+  "limits": [
+    "Assertions include loops, not46177 independent physical scenarios",
+    "No motor, CAN, feedback, quantization, braking or real-time execution validation",
+    "No nonzero endpoint velocity, mid-motion retarget, blending, turning or mixed translation/yaw support",
+    "Mathematical input bounds are not vehicle permissions; acceleration jerk and reserve remain to be measured"
+  ],
+  "requirements": {
+    "R": [
+      "RUN-01",
+      "PWR-01"
+    ],
+    "E": [
+      "MOT-01",
+      "MOT-02",
+      "MOT-03",
+      "MOT-04",
+      "RUN-06",
+      "LOC-03"
+    ],
+    "Q": "unchanged"
+  }
+}

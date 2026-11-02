@@ -1,0 +1,79 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 0,
+    "output": "\"unit.c\", line 14: Warning:  #177-D: variable \"model_delayed\"  was declared but never referenced\n  static uint32_t checks,first_failure,model_mode,model_step,model_fault,model_delayed,model_count;\n                                                                         ^\n\"unit.c\", line 15: Warning:  #177-D: variable \"model_gain\"  was declared but never referenced\n  static float model_gain,position[4],velocity[4],target[4],history[4][32];\n               ^\n\"unit.c\", line 15: Warning:  #550-D: variable \"target\"  was set but never used\n  static float model_gain,position[4],velocity[4],target[4],history[4][32];\n                                                  ^\n\"unit.c\", line 15: Warning:  #177-D: variable \"history\"  was declared but never referenced\n  static float model_gain,position[4],velocity[4],target[4],history[4][32];\n                                                            ^\nunit.c: 4 warnings, 0 errors\n"
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-c",
+      "src/chassis_kinematics.c",
+      "-o",
+      "kinematics.o"
+    ],
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-c",
+      "src/motion_profile.c",
+      "-o",
+      "profile.o"
+    ],
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armlink.exe",
+      "--entry",
+      "test_entry",
+      "--scatter",
+      "unit.sct",
+      "unit.o",
+      "kinematics.o",
+      "profile.o",
+      "--library_type=microlib",
+      "-o",
+      "unit.axf"
+    ],
+    "returncode": 0,
+    "output": ""
+  }
+]

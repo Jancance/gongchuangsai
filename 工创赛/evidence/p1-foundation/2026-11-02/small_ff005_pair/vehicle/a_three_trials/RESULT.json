@@ -1,0 +1,119 @@
+{
+  "trials": [
+    {
+      "trial": 1,
+      "summary": "工创赛\\evidence\\p1-foundation\\2026-11-02\\small_ff005_pair\\vehicle\\a_three_trials\\run_1\\20261102_151430_837100.summary.json",
+      "go_commands": [
+        "RQ1,322,32111,50505,GO,558398152,1AB0"
+      ],
+      "software_checks_passed": true,
+      "elapsed_ms": 21897,
+      "encoder_progress_mm": 2100.047,
+      "peak_heading_error_deg": 0.653,
+      "max_heading_sample_gap_ms": 12,
+      "xd1": {
+        "session": 1,
+        "expected_records": 2069,
+        "received_records": 2069,
+        "dropped": 0,
+        "complete": true
+      },
+      "telemetry_dropped": 81,
+      "invalid_frames": 0,
+      "physical_measurement": {
+        "source": "user ruler report",
+        "lateral_direction": "right",
+        "lateral_cm": 2.6,
+        "longitudinal_result": "short",
+        "shortfall_cm": 0.5,
+        "inferred_forward_cm": 209.5,
+        "inferred_forward_is_direct_measurement": false,
+        "unit_note": "cm inherited from ongoing trial question",
+        "user_report": "右偏2.6欠0.5"
+      },
+      "physical_stop_confirmation": null,
+      "physical_shaking_observation": null
+    },
+    {
+      "trial": 2,
+      "summary": "工创赛\\evidence\\p1-foundation\\2026-11-02\\small_ff005_pair\\vehicle\\a_three_trials\\run_2_after_restart\\20261102_151931_316000.summary.json",
+      "go_commands": [
+        "RQ1,253,25211,50507,GO,3801983526,3363"
+      ],
+      "software_checks_passed": true,
+      "elapsed_ms": 21947,
+      "encoder_progress_mm": 2100.206,
+      "peak_heading_error_deg": 0.697,
+      "max_heading_sample_gap_ms": 11,
+      "xd1": {
+        "session": 1,
+        "expected_records": 2030,
+        "received_records": 2030,
+        "dropped": 0,
+        "complete": true
+      },
+      "telemetry_dropped": 94,
+      "invalid_frames": 0,
+      "physical_measurement": {
+        "source": "user ruler report",
+        "lateral_direction": "right",
+        "lateral_cm": 2.2,
+        "longitudinal_result": "short",
+        "shortfall_cm": 0.5,
+        "inferred_forward_cm": 209.5,
+        "inferred_forward_is_direct_measurement": false
+      },
+      "physical_stop_confirmation": null,
+      "physical_shaking_observation": null,
+      "restart_before_run": true
+    },
+    {
+      "trial": 3,
+      "summary": "工创赛\\evidence\\p1-foundation\\2026-11-02\\small_ff005_pair\\vehicle\\a_three_trials\\run_3\\20261102_152231_566600.summary.json",
+      "go_commands": [
+        "RQ1,233,23211,50508,GO,979328757,6901"
+      ],
+      "software_checks_passed": true,
+      "elapsed_ms": 22071,
+      "encoder_progress_mm": 2100.07,
+      "peak_heading_error_deg": 0.67,
+      "max_heading_sample_gap_ms": 11,
+      "xd1": {
+        "session": 1,
+        "expected_records": 1957,
+        "received_records": 1957,
+        "dropped": 0,
+        "complete": true
+      },
+      "telemetry_dropped": 6,
+      "invalid_frames": 0,
+      "physical_measurement": {
+        "source": "user ruler report",
+        "user_report": "3 0.5",
+        "interpretation": "right 3.0cm, short 0.5cm by same order and units as preceding measurements",
+        "lateral_direction": "right",
+        "lateral_cm": 3.0,
+        "longitudinal_result": "short",
+        "shortfall_cm": 0.5,
+        "inferred_forward_cm": 209.5,
+        "inferred_forward_is_direct_measurement": false
+      },
+      "physical_stop_confirmation": null,
+      "physical_shaking_observation": null,
+      "restart_before_run": true
+    }
+  ],
+  "requested_trials": 3,
+  "completed_trials": 3,
+  "mean_right_cm": 2.6,
+  "right_range_cm": [
+    2.2,
+    3.0
+  ],
+  "right_sample_sd_cm": 0.4,
+  "mean_shortfall_cm": 0.5,
+  "decision": "Keep A; do not adopt 0.5% feedforward. Inspect existing logs and mechanical/positioning causes before more tuning",
+  "limits": "Three manually measured trials show persistent right drift; no unique root cause identified; final physical stop/shaking response not explicit",
+  "installed_image": "A",
+  "no_further_motion": true
+}

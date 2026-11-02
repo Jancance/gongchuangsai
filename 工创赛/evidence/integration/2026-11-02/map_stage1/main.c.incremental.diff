@@ -1,0 +1,103 @@
+--- before/USER/main.c
++++ USER/main.c
+@@ -38,7 +38,9 @@
+ #include "runtime_route.h"
+ #include "motion_distance_limits.h" 
+-#include "vehicle_log_config.h"
++#include "vehicle_log_config.h"+
++#include "field_map.h"
+ 
+ /* 临时静态供电测试：0关闭，1请求开启 */
+ volatile uint32_t g_vm_test_request = 0U;
+@@ -2523,6 +2525,8 @@
+ 
+ static void App_SerialMotionCommand(char *line)
+ {
++    if(FieldMap_LocalMode()) { App_SerialReject(9U);return; }+
+     if(strncmp(line,"RQ1,",4U)==0) { App_RuntimeRouteCommand(line);return; }
+     char *last = strrchr(line, ',');
+     const char *p;
+@@ -2641,7 +2645,7 @@
+     {
+ #if APP_TEST_MODE == 3U
+         if (g_combined_test.state >= 3U) g_serial_motion_state = 3U;
+-        else if ((uint32_t)(now - s_serial_keepalive_ms) >= 1000U)
++        else if (!VEHICLE_STAGE1_ENABLE && (uint32_t)(now - s_serial_keepalive_ms) >= 1000U)
+         {
+             s_serial_start_permit = 0U; g_serial_motion_link_lost = 1U;
+             g_serial_motion_result = 8U; g_serial_motion_state = 3U;
+@@ -2655,7 +2659,7 @@
+             App_ForwardHoldTrip(1U);
+         }
+         else if (g_forward_hold.phase >= HR_DONE) g_serial_motion_state = 3U;
+-        else if ((uint32_t)(now - s_serial_keepalive_ms) >= 1000U)
++        else if (!VEHICLE_STAGE1_ENABLE && (uint32_t)(now - s_serial_keepalive_ms) >= 1000U)
+         {
+             s_serial_start_permit = 0U; g_serial_motion_link_lost = 1U;
+             g_serial_motion_result = 8U; g_serial_motion_state = 3U;
+@@ -2766,6 +2770,8 @@
+ }
+ #endif
+ /* PM1与TM1错开至少40ms，静态缓冲不叠加TaskA栈；忙时丢诊断帧。 */
++#include "stage1_runtime.inc"+
+ /* WF1：补齐系统辨识需要的应答目标/真实轮速/样本时刻；低优先级观察帧。 */ 
+ static void App_WheelLogTelemetry(void)@@ -3305,8 +3311,8 @@
+ #endif
+     if(!s_perimeter_odom_started && g_combined_test.state==1U && source.healthy) {
+         if(s_route_heading_reference.valid && ChassisOdometry_SetPose(&s_odometry,
+-            s_runtime_route.committed.id?0.0f:2100.0f,s_runtime_route.committed.id?0.0f:2100.0f,
+-            s_runtime_route.committed.id?0.0f:-90.0f,s_route_heading_reference.origin_deg))
++            (VEHICLE_STAGE1_ENABLE || s_runtime_route.committed.id)?0.0f:2100.0f,(VEHICLE_STAGE1_ENABLE || s_runtime_route.committed.id)?0.0f:2100.0f,
++            (VEHICLE_STAGE1_ENABLE || s_runtime_route.committed.id)?0.0f:-90.0f,s_route_heading_reference.origin_deg))
+             s_perimeter_odom_started=1U;
+     }
+     ChassisAuto_ReadOdometrySamples(&samples);
+@@ -4030,6 +4036,10 @@
+     }
+ #endif
+ #endif
++    if(VEHICLE_STAGE1_ENABLE && !FieldMap_Stage1(&s_stage1_plan))+
++        {g_stage1_state=4U;g_stage1_cause=10U;}+
+     while (1)
+     {
+         g_test_count_a++;
+@@ -4050,7 +4060,9 @@
+         {
+             SAOMA_DataReady = 0U;
+         }
+-        if (SAOMA_DataReady != 0U &&
++        if (SAOMA_DataReady != 0U &&+
++            (!VEHICLE_STAGE1_ENABLE || App_Stage1FreshCode((uint32_t)xTaskGetTickCount())) &&
+             (TickType_t)(xTaskGetTickCount() - screen_start_tick) >=
+             pdMS_TO_TICKS(1000U))
+         {
+@@ -4065,10 +4077,16 @@
+             sprintf(scan_log, "SCAN:%s\r\n", SAOMA_Data);
+             g_scan_log_send_ok = App_DebugSendString(scan_log);
+         }
++        App_Stage1Service();+
+         App_StartGateUpdate();
+ #if APP_SERIAL_MOTION_CONTROL
+         /* 先尝试当前状态；诊断只用成功状态之后的空档。 */
+         App_SerialMotionTelemetry();
++        App_Stage1Telemetry();+
++        App_Stage1CodeTelemetry();+
+         App_RuntimeRouteTelemetry();
+ #if APP_POSITION_DIAGNOSTIC
+         App_PositionEndpointTelemetry();
+@@ -4429,7 +4447,29 @@
+ 
+ /* Armed servo test consumes PC13 without starting the chassis. */ 
+-        if (g_radar_servo_key_test_enable != 0U)+        if (VEHICLE_STAGE1_ENABLE)+
++        {+
++            if(Key_GetEvent()!=0U) {+
++                g_start_key_count++;taskENTER_CRITICAL();+
++                if(g_stage1_state==1U || g_stage1_state==2U) {+
++                    g_stage1_key_request=2U;+
++                    if(g_stage1_state==1U) g_combined_test.request=2U;+
++                } else g_stage1_key_request=1U;+
++                taskEXIT_CRITICAL();+
++            }+
++        }+
++        else if (g_radar_servo_key_test_enable != 0U) 
+         { 

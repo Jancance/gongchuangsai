@@ -1,0 +1,52 @@
+{
+  "software_checks": [
+    {
+      "offline": 0,
+      "checks": 5439,
+      "failures": 0,
+      "peripherals": "stubs, not hardware"
+    },
+    {
+      "offline": 1,
+      "checks": 5423,
+      "failures": 0,
+      "peripherals": "stubs, not hardware"
+    }
+  ],
+  "image_sha256": "0287c747ac2a8dc9a68a9a0a1138d6b182089454173a52e35d385d712b5d1123",
+  "flash_bytes_verified": 101336,
+  "servo1_observation": "user: only servo1 moved a small amount, no abnormal noise/stop/heating reported",
+  "servo2_observation": "user: servo1 returned and servo2 moved a small amount, both normal",
+  "empty_linkages_confirmed": true,
+  "final_command_angles_deg": [
+    0,
+    0
+  ],
+  "final_measured_pulse_registers_us": [
+    500,
+    500
+  ],
+  "final_physical_servo2_return_observation": null,
+  "VM_gpio_low": true,
+  "faults_zero": true,
+  "chassis_commands_sent": false,
+  "limits": "PWM commands and user qualitative observation; no measured angular accuracy, full range, installed linkage or radar scan validation",
+  "current_board": "servo commissioning S, not original A",
+  "source_changes": [
+    {
+      "path": "HARDWARE/RADAR_SERVO/radar_servo.c",
+      "before_sha256": "59b0e08b6dd6e5bb2d7e25968ee01104b9a4653efc5ac8e83e2e5f6901b029dd",
+      "after_sha256": "8d9d19c89ccd2da7667e89c807546acc2f017ed0badcd009b47aadd83d61f7cd"
+    },
+    {
+      "path": "HARDWARE/RADAR_SERVO/radar_servo.h",
+      "before_sha256": "4e29a10c826a593be4403d9aada7083483d5242c535c73a19e2d19f35e44adbb",
+      "after_sha256": "a57d1b1c80b458f93bd667915916888ae9702b191e46fcec94c10bc37f3dca17"
+    },
+    {
+      "path": "USER/main.c",
+      "before_sha256": "b6a81ed43a1006bde176535e38e43ce2124b370ed6248e3ae2df56d45a7a3e4e",
+      "after_sha256": "caa01859ecb7038efc484cedb45cde82a42e9f12f07d7a06237ef5b7cd62b8f6"
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+--- before/3.stm32f407工程\gongxun-f407.uvprojx
++++ after/3.stm32f407工程\gongxun-f407.uvprojx
+@@ -385,6 +385,16 @@
+           <GroupName>USER</GroupName>
+           <Files>
+             <File>
++              <FileName>route_config.h</FileName>
++              <FileType>5</FileType>
++              <FilePath>.\USER\route_config.h</FilePath>
++            </File>
++            <File>
++              <FileName>route_plan.h</FileName>
++              <FileType>5</FileType>
++              <FilePath>.\USER\route_plan.h</FilePath>
++            </File>
++            <File>
+               <FileName>app_entry.c</FileName>
+               <FileType>1</FileType>
+               <FilePath>.\USER\app_entry.c</FilePath>
+--- before/3.stm32f407工程\USER\app_entry.c
++++ after/3.stm32f407工程\USER\app_entry.c
+@@ -1,9 +1,13 @@
+ #include "app_entry.h"
+ #include "motion_trial20.h"
++#include "route_plan.h"
++volatile RouteCheck g_route_check = {0};
+ volatile CompetitionEntryStatus g_competition_entry = {0};
+ uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count)
+ {
++#if !APP_ROUTE_USE_CUSTOM || (APP_TEST_MODE != 3U)
+     static const MotionAction defaults[] = APP_MOTION_ACTIONS;
++#endif
+     static const MotionAction route[] = {
+         {MOTION_LEFT_DISTANCE,15U,0U,0.0f,300.0f},
+         {MOTION_FORWARD_DISTANCE,15U,0U,0.0f,300.0f},
+@@ -12,9 +16,18 @@
+     uint32_t i,n;
+     if (!APP_IS_DEBUG || !actions || !count || id > DEBUG_PLAN_MAX || id == DEBUG_PLAN_FORWARD237) return 0U;
+     if (id == DEBUG_PLAN_DEFAULT) {
++#if APP_ROUTE_USE_CUSTOM && (APP_TEST_MODE == 3U)
++        static const RouteRow configured[] = { APP_ROUTE_ROWS(ROUTE_ROW) };
++        RouteCheck check;
++        n=sizeof(configured)/sizeof(configured[0]);
++        if (!RoutePlan_Convert(configured,n,&g_chassis_geometry,actions,&check))
++        { g_route_check=check; return 0U; }
++        g_route_check=check; *count=n; return 1U;
++#else
+         n = sizeof(defaults)/sizeof(defaults[0]);
+         if (!n || n > MOTION_ACTION_CAPACITY) return 0U;
+         for (i=0U;i<n;i++) actions[i]=defaults[i];
++#endif
+     } else if (id == DEBUG_PLAN_ROUTE_A) {
+         n=3U; for(i=0U;i<n;i++) actions[i]=route[i];
+     } else if (id == DEBUG_PLAN_FORWARD210_20) {
+--- before/3.stm32f407工程\USER\main.c
++++ after/3.stm32f407工程\USER\main.c
+@@ -1685,7 +1685,7 @@
+         }
+         else if (action->kind == MOTION_TURN)
+         {
+-            if (action->base_rpm || action->run_ms || action->distance_mm != 0.0f ||
++            if (action->base_rpm > 5U || action->run_ms || action->distance_mm != 0.0f ||
+                 !(((action->relative_deg >= 5.0f) && (action->relative_deg <= 90.0f)) ||
+                   ((action->relative_deg <= -5.0f) && (action->relative_deg >= -90.0f)))) return 0U;
+             budget += APP_HEADING_RUN_MS + 3500U;
+@@ -1860,7 +1860,8 @@
+     action = &s_motion_actions[index]; s_motion_list_submit = 1U;
+     if (action->kind == MOTION_TURN)
+         accepted = TurnStart((action->relative_deg > 0.0f) ? TURN_CCW : TURN_CW,
+-            (action->relative_deg > 0.0f) ? action->relative_deg : -action->relative_deg, 5U);
++            (action->relative_deg > 0.0f) ? action->relative_deg : -action->relative_deg,
++            action->base_rpm ? action->base_rpm : 5U);
+     else if (action->kind >= MOTION_FORWARD_DISTANCE && action->kind <= MOTION_RIGHT_DISTANCE)
+         accepted = MoveDistanceStart(action->kind - MOTION_FORWARD_DISTANCE, action->base_rpm, action->distance_mm / 10.0f);
+     else accepted = MoveStart(action->kind, action->base_rpm, action->run_ms);
+--- before/3.stm32f407工程\USER\motion_action_plan.h
++++ after/3.stm32f407工程\USER\motion_action_plan.h
+@@ -13,7 +13,7 @@
+ typedef struct
+ {
+     uint32_t kind;
+-    uint32_t base_rpm;       /* 平移3..15；转向填0，沿用5/3/1RPM减速。 */
++    uint32_t base_rpm;       /* 平移3..15；转向1..5为上限，0兼容原5RPM。 */
+     uint32_t run_ms;         /* 平移1..8000ms；转向填0，以角度到位结束。 */
+     float relative_deg;     /* 平移填0；转向±5..±90度。 */
+     float distance_mm;     /* 仅距离平移100..1000mm，其余0。 */
+--- before/工创赛\scripts\p1_four_wheel_sim.py
++++ after/工创赛\scripts\p1_four_wheel_sim.py
+@@ -17,7 +17,7 @@
+          "wheel2_overspeed", "wheel4_reverse", "heading_command_stale", "CAN_stalled_during_stop"]
+ SOURCE_FILES = ["chassis_auto_test.c", "chassis_auto_test.h", "chassis_kinematics.c", "chassis_kinematics.h",
+                 "motion_profile.c", "motion_profile.h", "motion_distance_limits.h", "motion_trial20.h", "app_config.h", "app_entry_config.h",
+-                "app_entry.c", "app_entry.h", "motion_action_plan.h"]
++                "app_entry.c", "app_entry.h", "motion_action_plan.h", "route_plan.h", "route_config.h"]
+ 
+ 
+ def run_sim(out, arm_bin=Path(r"D:\Keil_v5\ARM\arm5_compiler\bin"), unicorn_path=None):

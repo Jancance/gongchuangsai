@@ -1,0 +1,22 @@
+{
+  "before": {
+    "g_vm_test_request": 0,
+    "g_rtos_fault": 0,
+    "g_safety_fault": 0,
+    "g_safety_ready": 1,
+    "g_reset_iwdg": 0,
+    "g_reset_flags": 234881024
+  },
+  "after": {
+    "g_vm_test_request": 0,
+    "g_rtos_fault": 0,
+    "g_safety_fault": 0,
+    "g_safety_ready": 1,
+    "g_reset_iwdg": 0,
+    "g_reset_flags": 335544320
+  },
+  "state": "State.RUNNING",
+  "vm_gpio_high": false,
+  "intentional_reset": true,
+  "reason": "Preserved prior cancelled state; host stale-result bug fixed, user reports power restored and authorizes test. Normal reboot, no safety variable writes."
+}

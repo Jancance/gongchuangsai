@@ -1,0 +1,100 @@
+{
+  "status": "software_complete",
+  "valid_frames": 499,
+  "invalid_frames": 0,
+  "sent_commands": 92,
+  "max_abs_error_deg": 0.725,
+  "max_abs_rpm": [
+    51.1,
+    51.5,
+    50.6,
+    55.7
+  ],
+  "error": null,
+  "load_diagnostic": {
+    "session": 1,
+    "expected_records": 2044,
+    "received_records": 2044,
+    "dropped": 0,
+    "complete": true
+  },
+  "integral_diagnostic": {
+    "session": 1,
+    "tick_ms": 100182,
+    "enabled": true,
+    "ki": 0.03,
+    "limit_rpm": 0.3,
+    "peak_integral_rpm": 0.022,
+    "last_integral_rpm": 0.02,
+    "controller_samples": 1797,
+    "nonzero_integral_samples": 1650
+  },
+  "integral_metadata_valid": true,
+  "last": {
+    "tick_ms": 100222,
+    "elapsed_ms": 21971,
+    "distance_progress_milli_mm": 2100093,
+    "distance_fault_reason": 0,
+    "phase": 3,
+    "trip": 0,
+    "stop_mask": 15,
+    "vm_request": 0,
+    "pe2_active": 0,
+    "can_fault": 0,
+    "rtos_fault": 0,
+    "safety_fault": 0
+  },
+  "wheel_samples": {
+    "1": {
+      "samples": 41,
+      "mean_current_ma_unweighted": 150.0731707317073,
+      "peak_current_ma": 422,
+      "mean_shortfall_rpm_unweighted": -0.22926829268292714,
+      "sample_interval_ms_median": 511.5,
+      "sample_interval_ms_max": 517,
+      "samples_near_2700ma": 0
+    },
+    "2": {
+      "samples": 41,
+      "mean_current_ma_unweighted": 172.7560975609756,
+      "peak_current_ma": 455,
+      "mean_shortfall_rpm_unweighted": 0.04878048780487846,
+      "sample_interval_ms_median": 506.0,
+      "sample_interval_ms_max": 528,
+      "samples_near_2700ma": 0
+    },
+    "3": {
+      "samples": 40,
+      "mean_current_ma_unweighted": 67.675,
+      "peak_current_ma": 354,
+      "mean_shortfall_rpm_unweighted": -0.26250000000000007,
+      "sample_interval_ms_median": 517,
+      "sample_interval_ms_max": 528,
+      "samples_near_2700ma": 0
+    },
+    "4": {
+      "samples": 41,
+      "mean_current_ma_unweighted": 90.4390243902439,
+      "peak_current_ma": 276,
+      "mean_shortfall_rpm_unweighted": 0.01219512195121964,
+      "sample_interval_ms_median": 506.0,
+      "sample_interval_ms_max": 528,
+      "samples_near_2700ma": 0
+    }
+  },
+  "samples_have_driver_fault": 0,
+  "readback_summary_file": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\evidence\\p1-foundation\\2026-11-01\\x_load_diag\\run_integral_once\\20261101_222615_021500.summary.json",
+  "physical_measurement": {
+    "right_cm": 3.4,
+    "short_cm": 0.7,
+    "derived_forward_cm": 209.3,
+    "raw_user_text": "右偏 3.4cm欠0.7cm",
+    "previous_PD_right_cm": 2.5,
+    "right_increase_cm": 0.9,
+    "result": "No improvement in this combined integral-plus-diagnostic trial",
+    "causality_limit": "Single run; current-query scheme changed together with I. No same-diagnostic PD vehicle baseline yet."
+  },
+  "warning": "Unweighted sample statistics are not a full time-weighted load estimate. Sparse sampling cannot rule out short current-limit events.",
+  "tick_reversal_count": 0,
+  "physical_stop_and_oscillation": "not explicitly confirmed by user"
+}

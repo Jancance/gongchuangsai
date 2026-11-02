@@ -1,0 +1,14 @@
+{
+  "route_id": 50506,
+  "status": "not_started",
+  "count_as_trial": false,
+  "TX": [
+    "RQ1,2128,195370,50506,BEGIN,1,0158",
+    "RQ1,2128,195370,50506,ROW,0,4,21000,200,35000,6245",
+    "RQ1,2129,195470,50506,COMMIT,162706375,CD8E"
+  ],
+  "VM_always_off": true,
+  "telemetry_frames_checked": 818,
+  "reason": "Prior distance_mode/base_rpm remain after commit; host profile gate refuses start",
+  "resolution": "Preserved attempt; stopped waiting host; verified healthy A then restarted and used ID 50507"
+}

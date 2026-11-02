@@ -1,5 +1,8 @@
 # 组合动作测试：整组供电（2026-10-24）
 
+> 最新本地源码已改为动作表，组合遥测56字段、主机按sequence_count结束；尚未下载或实测，板上仍为54bb617的已验证四段版。当前入口及限制见[P1动作列表说明](P1_MOTION_ACTION_PLAN_2026-10-24.md)，下文55字段/固定四段描述对应此前实测基线。
+
+
 当前源码APP_TEST_MODE=3。入口App_CombinedTestStep由既有CAN任务调用，未新增RTOS任务；RC1的ARM/START/KEEP/STOP复用现有串口任务。固件上电默认闲置、VM关闭；主机显式run-once才启动，不能只改Watch绕过私有许可。
 
 ## 路线与供电

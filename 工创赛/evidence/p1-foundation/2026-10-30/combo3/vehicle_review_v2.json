@@ -1,0 +1,48 @@
+{
+  "result": "software_complete",
+  "starts": 1,
+  "completed_actions": 3,
+  "elapsed_ms": 42185,
+  "cw_turn_deg": 89.506,
+  "final_turn_error_deg": 0.494,
+  "terminal_checkpoint": {
+    "checkpoint": 3,
+    "captured": 1,
+    "tick_ms": 66466,
+    "x_mm": 793,
+    "y_mm": 805,
+    "heading_mdeg": 179269,
+    "valid": 1,
+    "reasons": 0,
+    "continuity_lost": 0,
+    "age_ms": 54,
+    "target_x_mm": 800,
+    "target_y_mm": 800,
+    "target_heading_mdeg": -180000
+  },
+  "estimated_endpoint_error_mm": [
+    -7,
+    5
+  ],
+  "final_heading_error_deg": -0.731,
+  "stop_mask": 15,
+  "vm_output": 0,
+  "trip": 0,
+  "backend_cause": 0,
+  "last_live_odometry": {
+    "tick_ms": 75601,
+    "sample_ms": 66412,
+    "updates": 1304,
+    "valid": 0,
+    "reasons": 10,
+    "continuity_lost": 1,
+    "local_origin": 0,
+    "x_mm": 793,
+    "y_mm": 805,
+    "heading_mdeg": 179269,
+    "age_ms": 9184
+  },
+  "scope": "Four valid saved checkpoints, live odometry became stale after VM off; odometry not absolute ground truth; physical measurement pending",
+  "physical_feedback": "pending",
+  "axf_sha256": "c46c1e35680eba51acb19b17912743ef630c49452f849b3aff5355e90763f82f"
+}

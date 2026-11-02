@@ -1,0 +1,55 @@
+{
+  "status": "software_complete",
+  "last": {
+    "elapsed_ms": 21971,
+    "phase": 3,
+    "trip": 0,
+    "backend_result": 1,
+    "backend_cause": 0,
+    "distance_progress_milli_mm": 2100129,
+    "stop_mask": 15,
+    "vm_request": 0,
+    "pe2_active": 0,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "can_fault": 0
+  },
+  "target_yaw_deg": -0.225,
+  "mean_relative_yaw_deg": -0.29534762364597617,
+  "heading_only_right_cm": 1.0825657441857457,
+  "max_observed_error_deg": 0.499,
+  "max_observed_correction_rpm": 0.7,
+  "final_error_deg": 0.038,
+  "baseline_mean_relative_yaw_deg": -0.3294680391998132,
+  "baseline_heading_only_right_cm": 1.2075614492088147,
+  "bins": [
+    {
+      "start_cm": 0,
+      "end_cm": 70,
+      "mean_relative_yaw_deg": -0.2591302292857143
+    },
+    {
+      "start_cm": 70,
+      "end_cm": 140,
+      "mean_relative_yaw_deg": -0.3923509464285714
+    },
+    {
+      "start_cm": 140,
+      "end_cm": 210,
+      "mean_relative_yaw_deg": -0.23460654071428563
+    }
+  ],
+  "physical_measurement": {
+    "right_cm": 3.75,
+    "short_of_target_cm": 0.25,
+    "forward_cm": 209.75,
+    "forward_derived_from_target_minus_shortfall": true
+  },
+  "physical_stop_confirmation": "pending; user supplied ruler measurements only",
+  "limits": "One run each, heading-only distance integration is estimate; no causal improvement claimed before ruler result",
+  "comparison_to_original_sequential": {
+    "right_increase_cm": 1.0,
+    "shortfall_decrease_cm": 0.25,
+    "decision": "No demonstrated lateral improvement; recommend retaining original0.3degree sequential baseline, candidate not adopted. Board still0.15degree candidate; no reflash or motion performed."
+  }
+}

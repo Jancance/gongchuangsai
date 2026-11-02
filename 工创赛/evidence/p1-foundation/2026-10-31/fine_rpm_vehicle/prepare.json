@@ -1,0 +1,191 @@
+{
+  "candidate": "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\fine_rpm_vehicle_20261031",
+  "changes": [
+    {
+      "file": "USER/app_config.h",
+      "old": "#define APP_FINE_RPM_OFFLINE_ONLY 1U",
+      "new": "#define APP_FINE_RPM_OFFLINE_ONLY 0U\r\n#define APP_FINE_RPM_VEHICLE 1U"
+    },
+    {
+      "file": "USER/main.c",
+      "old": "#include \"app_config.h\"",
+      "new": "#include \"app_config.h\"\r\n#include \"fine_rpm_telemetry.h\""
+    },
+    {
+      "file": "USER/main.c",
+      "old": "volatile int32_t g_heading_exec_rpm = 0;",
+      "new": "volatile float g_heading_exec_rpm = 0.0f;"
+    },
+    {
+      "file": "USER/main.c",
+      "old": "uint32_t correction_nonzero_samples, correction_peak_abs_rpm;",
+      "new": "uint32_t correction_nonzero_samples;\r\n    float correction_peak_abs_rpm;"
+    },
+    {
+      "file": "USER/main.c",
+      "old": "int32_t correction_last_nonzero_rpm;",
+      "new": "float correction_last_nonzero_rpm;"
+    },
+    {
+      "file": "USER/main.c",
+      "old": "uint32_t magnitude = (uint32_t)((correction < 0) ? -correction : correction);",
+      "new": "float magnitude = (correction < 0.0f) ? -correction : correction;"
+    },
+    {
+      "file": "USER/main.c",
+      "old": "values[12] = (int32_t)(g_forward_hold.correction_rpm);",
+      "new": "values[12] = FineRpm_Deci(g_forward_hold.correction_rpm);"
+    },
+    {
+      "file": "USER/main.c",
+      "old": "values[29] = (int32_t)(g_forward_hold.correction_peak_abs_rpm);",
+      "new": "values[29] = FineRpm_Deci(g_forward_hold.correction_peak_abs_rpm);"
+    },
+    {
+      "file": "USER/main.c",
+      "old": "values[30] = (int32_t)(g_forward_hold.correction_last_nonzero_rpm);",
+      "new": "values[30] = FineRpm_Deci(g_forward_hold.correction_last_nonzero_rpm);"
+    },
+    {
+      "file": "USER/main.c",
+      "old": "values[12] = s_combined_turn ? g_heading_exec_rpm : g_forward_hold.correction_rpm;",
+      "new": "values[12] = FineRpm_Deci(s_combined_turn ? g_heading_exec_rpm : g_forward_hold.correction_rpm);"
+    },
+    {
+      "file": "USER/main.c",
+      "old": "frame[0] = 'T'; frame[1] = 'M'; frame[2] = '1'; frame[3] = ',';",
+      "new": "frame[0] = 'T'; frame[1] = 'M'; frame[2] = '2'; frame[3] = ',';"
+    },
+    {
+      "file": "USER/main.c",
+      "old": "values[13] = (uint32_t)record.correction_rpm;",
+      "new": "values[13] = (uint32_t)FineRpm_Deci(record.correction_rpm);"
+    },
+    {
+      "file": "USER/main.c",
+      "old": "values[16] = (uint32_t)record.pending_rpm;",
+      "new": "values[16] = (uint32_t)FineRpm_Deci(record.pending_rpm);"
+    },
+    {
+      "file": "USER/main.c",
+      "old": "memcpy(frame, \"BT1,\", 4U);",
+      "new": "memcpy(frame, \"BT2,\", 4U);"
+    },
+    {
+      "file": "USER/chassis_auto_test.h",
+      "old": "int32_t pending_rpm;",
+      "new": "float pending_rpm;"
+    }
+  ],
+  "protected_sha256": {
+    "3.stm32f407\u5de5\u7a0b\\USER\\app_config.h": "0f42752bd95f7514ac659f2da3e230d0c4960c5cacf8f9f5e2275db2dc1284ef",
+    "3.stm32f407\u5de5\u7a0b\\USER\\app_entry.c": "bf1a495384ac9d33a5a8eae79829e4b18134eb167505368b8d9a55c47b06afdf",
+    "3.stm32f407\u5de5\u7a0b\\USER\\app_entry.h": "76e31eb4231028d2b93731973e2f5b343575fbc27e708cda00fcdfe6532d1f96",
+    "3.stm32f407\u5de5\u7a0b\\USER\\app_entry_config.h": "cdcbedc0e5f7f7a53aaf07092443fc93735a2de76bd34c33ff364a84b848edf7",
+    "3.stm32f407\u5de5\u7a0b\\USER\\chassis_auto_test.c": "8142458248d42ec9547a8c96435796bfd6d06bfe7eca6b8b679fb69dce5c35e7",
+    "3.stm32f407\u5de5\u7a0b\\USER\\chassis_auto_test.h": "456762fac800caa1dddb4d1dd7a636e5d56f7c6b74767a0d78d169a0ab91de74",
+    "3.stm32f407\u5de5\u7a0b\\USER\\chassis_kinematics.c": "dbd9b090db7011a894cdef839203ece182a05b873c0ff7b7e6494df544ff2403",
+    "3.stm32f407\u5de5\u7a0b\\USER\\chassis_kinematics.h": "60df9d31a9b25d1bee3457dfa72f7c8f2b472d4920f173074753d947544a890d",
+    "3.stm32f407\u5de5\u7a0b\\USER\\chassis_odometry.c": "dc5f8b4b436c582153956b9302be9cf5d2f20a6c893cad42426cadd16c334d24",
+    "3.stm32f407\u5de5\u7a0b\\USER\\chassis_odometry.h": "d5818bbc076f9bbe8edc7cdf25a400359fb1f3e49d397980cc11e4dcf38518ad",
+    "3.stm32f407\u5de5\u7a0b\\USER\\FreeRTOSConfig.h": "cd411da90890c370008d0251d716861e9906682ba63e6dd6a2f825398032d37b",
+    "3.stm32f407\u5de5\u7a0b\\USER\\freertos_hooks.c": "4cb955f878f669b3736ff3e04a4dfbb2e723131d41a95330b6fcba80353ccbd3",
+    "3.stm32f407\u5de5\u7a0b\\USER\\freertos_hooks.h": "99bd02e1e4819d86f4ced83e306cc54713cf2d13031410e251031dd70b1de4e4",
+    "3.stm32f407\u5de5\u7a0b\\USER\\heading_controller.c": "d3b5c2a6d902240fb54700227d22c5857e16cd3360971cf92ac3270da3855c40",
+    "3.stm32f407\u5de5\u7a0b\\USER\\heading_controller.h": "6f8d744828e30ac7a5b1c07d7f90570c96e74e983936a9661622b520a93316aa",
+    "3.stm32f407\u5de5\u7a0b\\USER\\heading_session.c": "269058bfb0df22484f77c082327381168e205daae9f3e4f2bac7bdc9e9b981e7",
+    "3.stm32f407\u5de5\u7a0b\\USER\\heading_session.h": "70968dea10624f01d33b49ace71a367a82ac5ab51ae3a5752a4f16df8ae07c1b",
+    "3.stm32f407\u5de5\u7a0b\\USER\\hwt101.c": "690b864c1144baf247a93cffb8be585675a0612002333edaf006026b5dbb3c90",
+    "3.stm32f407\u5de5\u7a0b\\USER\\hwt101.h": "eb01b7feb7e18c73495c472b09497514ab14de6941013683315b61f929b56429",
+    "3.stm32f407\u5de5\u7a0b\\USER\\hwt101_parser.c": "e9e3fe5161a2d6517047a74c74d15d153082ebb29a5b051275bc40987c8155e5",
+    "3.stm32f407\u5de5\u7a0b\\USER\\hwt101_parser.h": "3d59da04a96371693dfa77882e5408619373c86c6b731673157c8b43fb9ba65f",
+    "3.stm32f407\u5de5\u7a0b\\USER\\main.c": "41591a6927049bb62e476643de1eb0074d523e252a254f38cf70537158dddc2b",
+    "3.stm32f407\u5de5\u7a0b\\USER\\motion_action_plan.h": "48bcb752341fd649b0e880b5e754ae8efc67fe1c788227152dc34391c0f64594",
+    "3.stm32f407\u5de5\u7a0b\\USER\\motion_control.h": "dc9112442aa33bae0d7f256812e207f1e0c1c067668e9b405b80a96caa0d247b",
+    "3.stm32f407\u5de5\u7a0b\\USER\\motion_distance_limits.h": "7a34b7a1b33d3f80e9b924ca48feea7c15428f3c7ab192a37d5e49f2f47039f2",
+    "3.stm32f407\u5de5\u7a0b\\USER\\motion_profile.c": "5e3b205b42f9824fa76e334f7c23a65162fdfe69a18e454a64f46fc26777af59",
+    "3.stm32f407\u5de5\u7a0b\\USER\\motion_profile.h": "aa12b374960f6fd31fd25cf0e3652ce30d8cd6855763f7f345e4970972084296",
+    "3.stm32f407\u5de5\u7a0b\\USER\\motion_route_trial.h": "a376e3129125b90913cceb2f6f4ef795ba98216949643f246c845714e6d73d96",
+    "3.stm32f407\u5de5\u7a0b\\USER\\motion_trial20.h": "57e42c053689bf296a902e812a59a972b2e822ae9418a6800f953611df098daa",
+    "3.stm32f407\u5de5\u7a0b\\USER\\route_config.h": "64e281db72cf71b8c736b995ac3a0ca7da167fd2b193b21f19d808f68c408ff6",
+    "3.stm32f407\u5de5\u7a0b\\USER\\route_plan.h": "f26af1b63bb64b864ac4a3696620de56e2917cd064373134e72c0bb6c8f46519",
+    "3.stm32f407\u5de5\u7a0b\\USER\\stm32f4xx_conf.h": "8bb6976af199b1ce05dc5e8d5bf5266115c0ad737d6d07d8063a297dccea79bf",
+    "3.stm32f407\u5de5\u7a0b\\USER\\turn_brake.h": "4ce40b60bf817dc55baa6373c363030de80a7eb80ce0d65a6c502feab127a886",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\app_config.h": "ef3de32c71de32dc009c2c6ee4a2996f337633fc0ff61a302bc7d4c59f3dc253",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\app_entry.c": "bf1a495384ac9d33a5a8eae79829e4b18134eb167505368b8d9a55c47b06afdf",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\app_entry.h": "76e31eb4231028d2b93731973e2f5b343575fbc27e708cda00fcdfe6532d1f96",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\app_entry_config.h": "cdcbedc0e5f7f7a53aaf07092443fc93735a2de76bd34c33ff364a84b848edf7",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\chassis_auto_test.c": "a546288364f0a65c382152e47a3db4059f9fe8580db481275c0d591ced4193ec",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\chassis_auto_test.h": "988e274628edae48527533006cb6920463e536cc26cf11f3f444a3fca974587c",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\chassis_kinematics.c": "a70c7671fa50731477d8fdaac714cf04a063291935d870f56de15c7f26378ae6",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\chassis_kinematics.h": "18cd7b662d5ca41379cdaa21a48f4ddbd2506e12ffdfeb2d0192593e79aec7da",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\chassis_odometry.c": "dc5f8b4b436c582153956b9302be9cf5d2f20a6c893cad42426cadd16c334d24",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\chassis_odometry.h": "d5818bbc076f9bbe8edc7cdf25a400359fb1f3e49d397980cc11e4dcf38518ad",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\FreeRTOSConfig.h": "cd411da90890c370008d0251d716861e9906682ba63e6dd6a2f825398032d37b",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\freertos_hooks.c": "4cb955f878f669b3736ff3e04a4dfbb2e723131d41a95330b6fcba80353ccbd3",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\freertos_hooks.h": "99bd02e1e4819d86f4ced83e306cc54713cf2d13031410e251031dd70b1de4e4",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\heading_controller.c": "59199c59c0bc71640cb7ca8fe0a3725a9af98e2d8cc62038b307e0f57f826a18",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\heading_controller.h": "dfb1617263ba9c1b40d0f229d250c119c5863278ba1cc31e9ece9811d6f08c6b",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\heading_session.c": "3d20014a48a46f91effdbbcec0dad30103e100fb405d93e26ce93c5d6410dea1",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\heading_session.h": "c53610219d3d86a62d31cf180934a04004407e189fbda1d14cbb61dd6749d5ae",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\hwt101.c": "690b864c1144baf247a93cffb8be585675a0612002333edaf006026b5dbb3c90",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\hwt101.h": "eb01b7feb7e18c73495c472b09497514ab14de6941013683315b61f929b56429",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\hwt101_parser.c": "e9e3fe5161a2d6517047a74c74d15d153082ebb29a5b051275bc40987c8155e5",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\hwt101_parser.h": "3d59da04a96371693dfa77882e5408619373c86c6b731673157c8b43fb9ba65f",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\main.c": "6df7f44ce8af806788800c176c900a94a477a670bcd6135f2a01c76e45ad1c73",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\motion_action_plan.h": "e7d966a8e022a00ddd36a3889f0701ae5c86551583dbb5db96734f23d7a26eb9",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\motion_control.h": "1d03b0fd9b3fdeb9ec8d00f2d8a344b55ab67efc4e65ad256dcda1656f6c8f9f",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\motion_distance_limits.h": "7a34b7a1b33d3f80e9b924ca48feea7c15428f3c7ab192a37d5e49f2f47039f2",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\motion_profile.c": "5e3b205b42f9824fa76e334f7c23a65162fdfe69a18e454a64f46fc26777af59",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\motion_profile.h": "aa12b374960f6fd31fd25cf0e3652ce30d8cd6855763f7f345e4970972084296",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\motion_route_trial.h": "0c885ce801efd5d52a67e41b1cd5a0685a244e0ba413771113096e158f64cc0c",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\motion_trial20.h": "57e42c053689bf296a902e812a59a972b2e822ae9418a6800f953611df098daa",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\route_config.h": "ad4f673c6de44edf54849449d6e20e837bba6e8e5d7756654b88a82ba5ff9989",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\route_heading_reference.h": "d23c6a1075a283e271907c189c8210d86c97c9561eaae0af6249682264903e2d",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\route_plan.h": "97745a01d4298bc4a616ea3128700ee77c279ed2c7c5ce196194aefdec9e03c7",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\stm32f4xx_conf.h": "8bb6976af199b1ce05dc5e8d5bf5266115c0ad737d6d07d8063a297dccea79bf",
+    "\u5de5\u521b\u8d5b\\tmp\\fine_rpm_experiment_20261031\\USER\\turn_brake.h": "f80cb6fc4f94110ae03b2a299ed4d2084327398c866a09ed0580b8cc53ede3f8",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\app_config.h": "8bf17d75f58824f458c7b02711c31b2a127808bb436b02bf09052d696c44fdc8",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\app_entry.c": "bf1a495384ac9d33a5a8eae79829e4b18134eb167505368b8d9a55c47b06afdf",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\app_entry.h": "76e31eb4231028d2b93731973e2f5b343575fbc27e708cda00fcdfe6532d1f96",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\app_entry_config.h": "cdcbedc0e5f7f7a53aaf07092443fc93735a2de76bd34c33ff364a84b848edf7",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\chassis_auto_test.c": "8604dd983da1208e20f91c6d4d880b9852e09f31028c760df273996d80825217",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\chassis_auto_test.h": "95f156758a14f58cdcf09a8e93d22e9f1c7b2746b7409c298cb3fd6f4298ca1f",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\chassis_kinematics.c": "1236f23a024c0b3756dc3dc9a765a26e520fe631feacb416241ff6c45f41a9f4",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\chassis_kinematics.h": "60df9d31a9b25d1bee3457dfa72f7c8f2b472d4920f173074753d947544a890d",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\chassis_odometry.c": "dc5f8b4b436c582153956b9302be9cf5d2f20a6c893cad42426cadd16c334d24",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\chassis_odometry.h": "d5818bbc076f9bbe8edc7cdf25a400359fb1f3e49d397980cc11e4dcf38518ad",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\FreeRTOSConfig.h": "cd411da90890c370008d0251d716861e9906682ba63e6dd6a2f825398032d37b",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\freertos_hooks.c": "4cb955f878f669b3736ff3e04a4dfbb2e723131d41a95330b6fcba80353ccbd3",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\freertos_hooks.h": "99bd02e1e4819d86f4ced83e306cc54713cf2d13031410e251031dd70b1de4e4",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\heading_controller.c": "d3b5c2a6d902240fb54700227d22c5857e16cd3360971cf92ac3270da3855c40",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\heading_controller.h": "6f8d744828e30ac7a5b1c07d7f90570c96e74e983936a9661622b520a93316aa",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\heading_session.c": "387859a18c092460a55b1abbb2a0950ecbaa79ccc2a2cdbb22deefc10078fd3c",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\heading_session.h": "e865421b4315e56b5c423da7b731b71e93aef62e2d34c228b37b8fcf959b915d",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\hwt101.c": "690b864c1144baf247a93cffb8be585675a0612002333edaf006026b5dbb3c90",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\hwt101.h": "eb01b7feb7e18c73495c472b09497514ab14de6941013683315b61f929b56429",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\hwt101_parser.c": "e9e3fe5161a2d6517047a74c74d15d153082ebb29a5b051275bc40987c8155e5",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\hwt101_parser.h": "3d59da04a96371693dfa77882e5408619373c86c6b731673157c8b43fb9ba65f",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\main.c": "0a1a151825c10e3e4c3876d2c3301c1e7eb86749655bf0f5df48cfbc770ca4a8",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\motion_action_plan.h": "e7d966a8e022a00ddd36a3889f0701ae5c86551583dbb5db96734f23d7a26eb9",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\motion_control.h": "1d03b0fd9b3fdeb9ec8d00f2d8a344b55ab67efc4e65ad256dcda1656f6c8f9f",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\motion_distance_limits.h": "7a34b7a1b33d3f80e9b924ca48feea7c15428f3c7ab192a37d5e49f2f47039f2",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\motion_profile.c": "5e3b205b42f9824fa76e334f7c23a65162fdfe69a18e454a64f46fc26777af59",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\motion_profile.h": "aa12b374960f6fd31fd25cf0e3652ce30d8cd6855763f7f345e4970972084296",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\motion_route_trial.h": "0c885ce801efd5d52a67e41b1cd5a0685a244e0ba413771113096e158f64cc0c",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\motion_trial20.h": "57e42c053689bf296a902e812a59a972b2e822ae9418a6800f953611df098daa",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\route_config.h": "ad4f673c6de44edf54849449d6e20e837bba6e8e5d7756654b88a82ba5ff9989",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\route_heading_reference.h": "d23c6a1075a283e271907c189c8210d86c97c9561eaae0af6249682264903e2d",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\route_plan.h": "97745a01d4298bc4a616ea3128700ee77c279ed2c7c5ce196194aefdec9e03c7",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\stm32f4xx_conf.h": "8bb6976af199b1ce05dc5e8d5bf5266115c0ad737d6d07d8063a297dccea79bf",
+    "\u5de5\u521b\u8d5b\\tmp\\perimeter_heading_ref_candidate_20261031\\USER\\turn_brake.h": "53eada4ac6fc67650e2de89c94c0b716a2a9e8808d47f120ccf77434126c7743"
+  },
+  "protected_unchanged": true,
+  "motor_settings_source": "User confirmed all four S_Vel_IS Enable",
+  "command_unit": "0.1RPM raw",
+  "feedback_unit": "integer RPM",
+  "telemetry": "TM2/BT2",
+  "flashed": true,
+  "started": true,
+  "current_image_sha256": "3c70e48464f4a724afdf2d63492d24396fe6a8f67c0dd35a85db252f1d887428"
+}

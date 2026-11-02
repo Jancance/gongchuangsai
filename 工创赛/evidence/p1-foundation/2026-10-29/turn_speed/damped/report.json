@@ -1,0 +1,98 @@
+{
+  "hardware_accessed": false,
+  "live_source_unchanged": true,
+  "source_sha256": {
+    "heading_controller.c": "d3b5c2a6d902240fb54700227d22c5857e16cd3360971cf92ac3270da3855c40",
+    "heading_controller.h": "6f8d744828e30ac7a5b1c07d7f90570c96e74e983936a9661622b520a93316aa",
+    "motion_profile.c": "5e3b205b42f9824fa76e334f7c23a65162fdfe69a18e454a64f46fc26777af59",
+    "motion_profile.h": "aa12b374960f6fd31fd25cf0e3652ce30d8cd6855763f7f345e4970972084296",
+    "chassis_kinematics.h": "afa112b7151730ed56ccca0081bde5a6ba3e6dc1510243085f2820155531f03d",
+    "chassis_kinematics.c": "d22ee48f133b14408975c88aa73ea0f6b620a010912881746d59117c93b4a658",
+    "app_config.h": "460b0554593e648c5cd85f190d24dea6e0f17b1e1b4bb014fb4f8a108ef9343c",
+    "app_entry_config.h": "cdcbedc0e5f7f7a53aaf07092443fc93735a2de76bd34c33ff364a84b848edf7",
+    "route_config.h": "64e281db72cf71b8c736b995ac3a0ca7da167fd2b193b21f19d808f68c408ff6",
+    "motion_trial20.h": "57e42c053689bf296a902e812a59a972b2e822ae9418a6800f953611df098daa",
+    "motion_route_trial.h": "a376e3129125b90913cceb2f6f4ef795ba98216949643f246c845714e6d73d96"
+  },
+  "summaries": [
+    {
+      "name": "current_5rpm",
+      "cases": 54,
+      "completed": 54,
+      "median_done_s": 23.309999465942383,
+      "worst_overshoot_deg": 0.0,
+      "worst_final_error_deg": 0.8677215576171875,
+      "max_command_jump_rpm": 5.0,
+      "worst_accel_dps2": 49.24147415161133,
+      "max_reversals": 0.0
+    },
+    {
+      "name": "direct_27rpm",
+      "cases": 54,
+      "completed": 54,
+      "median_done_s": 10.729999542236328,
+      "worst_overshoot_deg": 0.0,
+      "worst_final_error_deg": 0.8716278076171875,
+      "max_command_jump_rpm": 27.0,
+      "worst_accel_dps2": 265.9039611816406,
+      "max_reversals": 0.0
+    },
+    {
+      "name": "profile30_prototype",
+      "cases": 54,
+      "completed": 54,
+      "median_done_s": 8.414999961853027,
+      "worst_overshoot_deg": 8.45050048828125,
+      "worst_final_error_deg": 1.656494140625,
+      "max_command_jump_rpm": 3.0,
+      "worst_accel_dps2": 51.894569396972656,
+      "max_reversals": 8.0
+    }
+  ],
+  "case_count": 162,
+  "trace_count": 9171,
+  "assumptions": {
+    "dt_ms": 10,
+    "extra_command_lag_ms": [
+      0,
+      80,
+      160
+    ],
+    "per_wheel_delivery_ms": [
+      0,
+      20,
+      40,
+      60
+    ],
+    "batch_period_ms": 70,
+    "motor_tau_ms": [
+      80,
+      200,
+      400
+    ],
+    "speed_gain": [
+      0.9,
+      1,
+      1.1
+    ],
+    "sensor_lag_ms": 20,
+    "sensor_noise": false,
+    "directions": [
+      "CCW",
+      "CW"
+    ],
+    "timeout_ms": 30000,
+    "prototype_limits": [
+      30,
+      40,
+      80
+    ]
+  },
+  "limits": [
+    "Controller C is live math; direct27 raises only an isolated validation ceiling.",
+    "Profile30 is a test-only tracking prototype, not implemented vehicle firmware.",
+    "No RTOS/CAN/VM/heading-session guards or load/slip/electrical limits are simulated.",
+    "Acceleration/jerk depend on the assumed first-order plant and10ms sampling.",
+    "Models do not prove physical safety, smoothness, actual angular speed or stop accuracy."
+  ]
+}

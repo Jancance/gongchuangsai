@@ -1,0 +1,32 @@
+--- before/main.c
++++ after/main.c
+@@ -4,7 +4,11 @@
+ #include "freertos_hooks.h"
+ #include "led.h"
+ #include "Buzzer.h"
+-#include "app_config.h"
++#include "app_config.h"+
++#include "radar_servo.h"+
++#include "radar_zone_switch.h"
+ #include "fine_rpm_telemetry.h"
+ #include "app_entry.h"
+ #include "usart.h"
+@@ -4331,6 +4335,8 @@
+ 
+     while (1)
+     {
++        RadarZoneSwitch_Service((uint32_t)(xTaskGetTickCount()*portTICK_PERIOD_MS));+
+ if (APP_UART_LINK_TEST != 0U)
+         { if (Key_GetEvent() != 0U) g_start_key_count++; }
+         else
+@@ -4462,7 +4468,11 @@
+     Screen_Init();
+     Key_Init();
+     /* 初始化PE2，默认关闭VM允许请求 */
+-    Power_Init();
++    Power_Init();+
++    RadarZoneSwitch_Init();+
++    (void)RadarServo_Init();
+     Safety_Init();
+     SAOMA_Init();
+     HWT101_Init();

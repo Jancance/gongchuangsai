@@ -1,0 +1,146 @@
+{
+  "hardware_accessed": false,
+  "downloaded": false,
+  "driven": false,
+  "github_pushed": false,
+  "live_unchanged": true,
+  "changed_existing_firmware_sources": [
+    "USER\\chassis_kinematics.c"
+  ],
+  "same_ff_math_as_reviewed_candidate": true,
+  "source_encoding": "GBK/CRLF",
+  "forward_ratio": 0.005,
+  "backward_enabled": false,
+  "baseline_available": true,
+  "sampling_changed": false,
+  "protections_changed": false,
+  "builds": [
+    {
+      "variant": "baseline",
+      "kind": "offline",
+      "project": "gongxun-f407-baseline_offline.uvprojx",
+      "defines": "APP_X_OFFLINE_ONLY=1,APP_FF_FORWARD_ENABLE=0,APP_FF_BACKWARD_ENABLE=0,APP_FF_FORWARD_PERMILLE=0,APP_FF_BACKWARD_PERMILLE=0,APP_FF_VEHICLE_OPT_IN=0",
+      "output_directory": "Objects_baseline_offline",
+      "build_only": true,
+      "image": "firmware\\Objects_baseline_offline\\gongxun-f407.axf",
+      "sha256": "1643ef38f778172cfbfe64cdfbff249994c7610299b60c63485a0f5385806128",
+      "build_log": "build_baseline_offline.log",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "variant": "baseline",
+      "kind": "vehicle",
+      "project": "gongxun-f407-baseline_vehicle.uvprojx",
+      "defines": "APP_X_OFFLINE_ONLY=0,APP_FF_FORWARD_ENABLE=0,APP_FF_BACKWARD_ENABLE=0,APP_FF_FORWARD_PERMILLE=0,APP_FF_BACKWARD_PERMILLE=0,APP_FF_VEHICLE_OPT_IN=0",
+      "output_directory": "Objects_baseline_vehicle",
+      "build_only": true,
+      "image": "firmware\\Objects_baseline_vehicle\\gongxun-f407.axf",
+      "sha256": "f8462206ca1fcdb22b5e18bd9980d3dc8dba11622fb3ae70b082fa816a0e3630",
+      "build_log": "build_baseline_vehicle.log",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "variant": "ff005",
+      "kind": "offline",
+      "project": "gongxun-f407-ff005_offline.uvprojx",
+      "defines": "APP_X_OFFLINE_ONLY=1,APP_FF_FORWARD_ENABLE=1,APP_FF_BACKWARD_ENABLE=0,APP_FF_FORWARD_PERMILLE=5,APP_FF_BACKWARD_PERMILLE=0,APP_FF_VEHICLE_OPT_IN=0",
+      "output_directory": "Objects_ff005_offline",
+      "build_only": true,
+      "image": "firmware\\Objects_ff005_offline\\gongxun-f407.axf",
+      "sha256": "f5205101e86918032238288abd6279356ea20b0bd45e8d9fbc4f37cb50f59bb3",
+      "build_log": "build_ff005_offline.log",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "variant": "ff005",
+      "kind": "vehicle",
+      "project": "gongxun-f407-ff005_vehicle.uvprojx",
+      "defines": "APP_X_OFFLINE_ONLY=0,APP_FF_FORWARD_ENABLE=1,APP_FF_BACKWARD_ENABLE=0,APP_FF_FORWARD_PERMILLE=5,APP_FF_BACKWARD_PERMILLE=0,APP_FF_VEHICLE_OPT_IN=1",
+      "output_directory": "Objects_ff005_vehicle",
+      "build_only": true,
+      "image": "firmware\\Objects_ff005_vehicle\\gongxun-f407.axf",
+      "sha256": "b36d68f26118381868ee9d56e99c2915dae13791f6691e58288b6bd8b5324304",
+      "build_log": "build_ff005_vehicle.log",
+      "errors": 0,
+      "warnings": 0
+    }
+  ],
+  "actual_c_models": 40,
+  "assertions": 1157215,
+  "compile_gates": 7,
+  "endpoint_test_wheels": [
+    4,
+    4,
+    4,
+    4
+  ],
+  "endpoint_injections": [
+    {
+      "scenario": 28,
+      "ack_target_rpm": 1.7000000476837158,
+      "injected_rpm": -0.30000001192092896,
+      "base_rpm": 2.0,
+      "progress_mm": 1797.6412353515625,
+      "remaining_mm": 2.3587646484375,
+      "ack_age_ms": 30.0,
+      "reference_mm": 1797.7061767578125,
+      "reference_acceleration": -23.873157501220703,
+      "micro_case": 1.0,
+      "injection_count": 1.0
+    },
+    {
+      "scenario": 29,
+      "ack_target_rpm": 1.7000000476837158,
+      "injected_rpm": -0.30000001192092896,
+      "base_rpm": 2.0,
+      "progress_mm": 1797.6412353515625,
+      "remaining_mm": 2.3587646484375,
+      "ack_age_ms": 30.0,
+      "reference_mm": 1797.7061767578125,
+      "reference_acceleration": -23.873157501220703,
+      "micro_case": 2.0,
+      "injection_count": 2.0
+    },
+    {
+      "scenario": 30,
+      "ack_target_rpm": 1.7000000476837158,
+      "injected_rpm": -0.6000000238418579,
+      "base_rpm": 2.0,
+      "progress_mm": 1797.6412353515625,
+      "remaining_mm": 2.3587646484375,
+      "ack_age_ms": 30.0,
+      "reference_mm": 1797.7061767578125,
+      "reference_acceleration": -23.873157501220703,
+      "micro_case": 3.0,
+      "injection_count": 1.0
+    },
+    {
+      "scenario": 31,
+      "ack_target_rpm": 10.699999809265137,
+      "injected_rpm": -0.30000001192092896,
+      "base_rpm": 10.0,
+      "progress_mm": 1752.9639892578125,
+      "remaining_mm": 47.0360107421875,
+      "ack_age_ms": 40.0,
+      "reference_mm": 1756.3253173828125,
+      "reference_acceleration": -23.873157501220703,
+      "micro_case": 4.0,
+      "injection_count": 1.0
+    }
+  ],
+  "actual_c_passed": true,
+  "route": [
+    [
+      4,
+      21000,
+      200,
+      35000
+    ]
+  ],
+  "ready_for_field_validation": true,
+  "vehicle_validated": false,
+  "notes": "Prepare only. No repeated MATLAB simulation, no flashing or hardware access. Field condition and baseline validation remain pending."
+}

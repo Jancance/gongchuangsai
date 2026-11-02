@@ -1,0 +1,22 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 1,
+    "output": "\"src/chassis_auto_test.c\", line 291: Warning:  #223-D: function \"ZdtX_RpmDeci\" declared implicitly\n              g_chassis_auto_fault_diagnostic.measured_decirpm=ZdtX_RpmDeci(g_chassis_auto_driver_rpm[address-1U]);\n                                                               ^\n\"src/chassis_auto_test.c\", line 664: Warning:  #223-D: function \"ZdtX_RpmDeci\" declared implicitly\n                      (uint32_t)s_speed_tick[i]*portTICK_PERIOD_MS,ZdtX_RpmDeci(raw),endpoint_window);\n                                                                   ^\n\"src/zdt_x_protocol.h\", line 39: Error:  #159: declaration is incompatible with previous \"ZdtX_RpmDeci\"  (declared at line 291 of \"src/chassis_auto_test.c\")\n  static __inline int32_t ZdtX_RpmDeci(float rpm)\n                          ^\n\"unit.c\", line 44: Warning:  #177-D: variable \"s_perimeter_targets\"  was declared but never referenced\n  static const float s_perimeter_targets[9][3]={\n                     ^\nunit.c: 3 warnings, 1 error\n"
+  }
+]

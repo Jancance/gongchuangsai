@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-25",
+  "baseline_commit": "54bb617",
+  "scope": "PLAN5 forward237cm15RPM debug-only single continuous measurement; no stop compensation",
+  "source_sha256": {
+    "main.c": "b479d172f2710f6f97c77959508f9971433c0ed492a8d8e3181581850db16ca0",
+    "chassis_auto_test.c": "2d0e884029278d475673e560616e0c3351ade16bd2afef43bc24135176871a31",
+    "app_entry.c": "d8289a2f882cdce06c9ce6d26cf6b3fa92223c09a21aa81e1e523e13c539c1b4",
+    "app_entry.h": "14665a5ed63afbb8748d69690007df3f3fbfad6c029f598d4941fdfe81eb388b",
+    "motion_distance_limits.h": "082c0c81a13c11678afe0f864b55c7d7d7b974dbad3802aeae408c29e6764817"
+  },
+  "host_sha256": "5b319a6819ae28d54fbb046bf5a3f6da84a3d4cfe13ad520de4f923daae15297",
+  "builds": {
+    "debug": "Code=60428 RO-data=868 RW-data=2028 ZI-data=34340",
+    "competition": "Code=53372 RO-data=652 RW-data=1944 ZI-data=29376"
+  },
+  "host_tests": 88,
+  "C_simulated_checks": {
+    "backend": 161,
+    "entry": 128,
+    "competition": 42
+  },
+  "limits": {
+    "ordinary_distance_mm": [
+      100,
+      1000
+    ],
+    "exception_mm": 2370,
+    "exception_direction": 0,
+    "exception_rpm": 15,
+    "ordinary_run_ms": 30000,
+    "exception_run_ms": 60000,
+    "exception_backend_run_fault_ms": 61000,
+    "exception_backend_total_ms": 75000,
+    "exception_front_stage_ms": 65000,
+    "group_ms": 120000,
+    "unchanged": "source/mailbox100ms,position400ms,stop deadlines,overshoot50mm,feedback limits,VM/watchdog protection"
+  },
+  "source_build_match": true,
+  "flashed": false,
+  "serial_opened": false,
+  "motion_started": false,
+  "pushed": false,
+  "simulation_limits": "Cortex-M3 soft-float Unicorn; RTOS/CAN/power stubs; no MCU scheduling proof"
+}

@@ -1,0 +1,40 @@
+START MATLAB_FF 9.1.0.441655 (R2016b)
+错误使用 jsondecode
+第 121 行、第 11 列存在 JSON 语法错误(字符 2879): 转义字符 '\e' 无效。
+
+出错 matlab_ff_trial (line 7)
+review=jsondecode(fileread('data_review.json'));
+START MATLAB_FF 9.1.0.441655 (R2016b)
+[> In matlab.internal.json.makeStructure (line 49)
+  In matlab_ff_trial (line 7)] 
+[> In matlab.internal.json.makeStructure (line 49)
+  In matlab_ff_trial (line 7)] 
+[> In matlab.internal.json.makeStructure (line 49)
+  In matlab_ff_trial (line 7)] 
+[> In matlab.internal.json.makeStructure (line 49)
+  In matlab_ff_trial (line 7)] 
+[> In matlab.internal.json.makeStructure (line 49)
+  In matlab_ff_trial (line 7)] 
+错误使用 cell2struct
+字段名称 "x____evidence_p1_foundation_2026_11_01_x_load_diag_run_pd_once_" 重复
+
+出错 matlab.internal.json.makeStructure (line 49)
+data = cell2struct(values, names, 1);
+
+出错 matlab_ff_trial (line 7)
+review=jsondecode(fileread('data_review.json'));
+START MATLAB_FF 9.1.0.441655 (R2016b)
+在不同结构体之间进行下标赋值。
+
+出错 matlab_ff_trial (line 42)
+  fits(end+1)=f;profile=[profile;scan]; %#ok<AGROW>
+START MATLAB_FF 9.1.0.441655 (R2016b)
+FIT train1 w1 K0.9969 b-0.573 tau0.02 delay0.10 testRMSE2.270
+FIT train1 w2 K0.9820 b0.783 tau0.02 delay0.14 testRMSE2.268
+FIT train1 w3 K0.9908 b0.333 tau0.02 delay0.04 testRMSE1.551
+FIT train1 w4 K1.0308 b-0.695 tau0.02 delay0.00 testRMSE2.524
+FIT train2 w1 K0.9662 b0.726 tau0.02 delay0.10 testRMSE2.223
+FIT train2 w2 K0.9888 b-0.234 tau0.02 delay0.00 testRMSE2.235
+FIT train2 w3 K0.9945 b0.378 tau0.02 delay0.04 testRMSE1.392
+FIT train2 w4 K1.0191 b-0.523 tau0.02 delay0.04 testRMSE2.751
+MATLAB_FF_FINISHED fits8 simulations144

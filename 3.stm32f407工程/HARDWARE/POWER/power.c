@@ -36,6 +36,9 @@ void Power_Init(void)
 /* 请求开启VM，实际供电仍受外部开关控制 */
 void Power_Enable(void)
 {
+#if APP_X_OFFLINE_ONLY
+    Power_Disable();return;
+#else
 #if APP_UART_LINK_TEST
     /* 串口测试不能通过手改请求或接收字符串开启VM。 */
     Power_Disable();
@@ -52,6 +55,7 @@ void Power_Enable(void)
     }
     else GPIO_SetBits(GPIOE, GPIO_Pin_2);
     taskEXIT_CRITICAL();
+#endif
 #endif
 }
 

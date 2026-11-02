@@ -1,0 +1,238 @@
+{
+  "selected_ki": 0.03,
+  "integral_limit_rpm": 0.3,
+  "P": 1,
+  "D": 0.25,
+  "total_limit_rpm": 2,
+  "default_enabled": false,
+  "adopted": false,
+  "hardware_accessed": false,
+  "results": {
+    "ki0": {
+      "passed": true,
+      "assertions": 95223,
+      "normal_lateral_abs_mm": [
+        6.210693359375,
+        1.73095703125,
+        5.61474609375
+      ],
+      "normal_completed": [
+        true,
+        true,
+        true
+      ],
+      "stress_results": [
+        {
+          "completed": 1.0,
+          "cause": 0.0
+        },
+        {
+          "completed": 0.0,
+          "cause": 3.0
+        },
+        {
+          "completed": 0.0,
+          "cause": 3.0
+        }
+      ]
+    },
+    "ki0p03": {
+      "passed": true,
+      "assertions": 95025,
+      "normal_lateral_abs_mm": [
+        1.09814453125,
+        1.765380859375,
+        1.279052734375
+      ],
+      "normal_completed": [
+        true,
+        true,
+        true
+      ],
+      "stress_results": [
+        {
+          "completed": 1.0,
+          "cause": 0.0
+        },
+        {
+          "completed": 0.0,
+          "cause": 3.0
+        },
+        {
+          "completed": 0.0,
+          "cause": 3.0
+        }
+      ]
+    },
+    "ki005": {
+      "passed": true,
+      "assertions": 95221,
+      "normal_lateral_abs_mm": [
+        0.1201171875,
+        3.247314453125,
+        0.677734375
+      ],
+      "normal_completed": [
+        true,
+        true,
+        true
+      ],
+      "stress_results": [
+        {
+          "completed": 1.0,
+          "cause": 0.0
+        },
+        {
+          "completed": 0.0,
+          "cause": 3.0
+        },
+        {
+          "completed": 0.0,
+          "cause": 3.0
+        }
+      ]
+    },
+    "ki0p1": {
+      "passed": true,
+      "assertions": 95149,
+      "normal_lateral_abs_mm": [
+        1.402587890625,
+        5.8037109375,
+        1.161865234375
+      ],
+      "normal_completed": [
+        true,
+        true,
+        true
+      ],
+      "stress_results": [
+        {
+          "completed": 1.0,
+          "cause": 0.0
+        },
+        {
+          "completed": 0.0,
+          "cause": 3.0
+        },
+        {
+          "completed": 0.0,
+          "cause": 3.0
+        }
+      ]
+    },
+    "ki0p15": {
+      "passed": true,
+      "assertions": 95155,
+      "normal_lateral_abs_mm": [
+        3.8388671875,
+        5.954833984375,
+        3.6826171875
+      ],
+      "normal_completed": [
+        true,
+        true,
+        true
+      ],
+      "stress_results": [
+        {
+          "completed": 1.0,
+          "cause": 0.0
+        },
+        {
+          "completed": 0.0,
+          "cause": 3.0
+        },
+        {
+          "completed": 0.0,
+          "cause": 3.0
+        }
+      ]
+    }
+  },
+  "unit_checks": {
+    "ki": 0.03,
+    "passed": true,
+    "assertions": 88022,
+    "failure_line": null,
+    "metrics": [
+      {
+        "case": 0,
+        "tail_mean_abs_error_deg": 0.1514405459165573,
+        "tail_rms_error_deg": 0.1737615019083023,
+        "peak_abs_error_deg": 0.3086320459842682,
+        "tail_peak_abs_error_deg": 0.3086317479610443,
+        "final_yaw_deg": -0.11220324039459229,
+        "final_integral_rpm": -0.04010981321334839,
+        "peak_integral_abs_rpm": 0.05221811309456825,
+        "peak_command_abs_rpm": 0.4000000059604645
+      },
+      {
+        "case": 1,
+        "tail_mean_abs_error_deg": 0.1514405459165573,
+        "tail_rms_error_deg": 0.1737615019083023,
+        "peak_abs_error_deg": 0.3086320459842682,
+        "tail_peak_abs_error_deg": 0.3086317479610443,
+        "final_yaw_deg": 0.11220324039459229,
+        "final_integral_rpm": 0.04010981321334839,
+        "peak_integral_abs_rpm": 0.05221811309456825,
+        "peak_command_abs_rpm": 0.4000000059604645
+      },
+      {
+        "case": 2,
+        "tail_mean_abs_error_deg": 0.12127852439880371,
+        "tail_rms_error_deg": 0.14478890597820282,
+        "peak_abs_error_deg": 0.3214329779148102,
+        "tail_peak_abs_error_deg": 0.32103586196899414,
+        "final_yaw_deg": -0.2640029489994049,
+        "final_integral_rpm": -0.06706134229898453,
+        "peak_integral_abs_rpm": 0.0719539001584053,
+        "peak_command_abs_rpm": 0.4000000059604645
+      },
+      {
+        "case": 3,
+        "tail_mean_abs_error_deg": 0.12127852439880371,
+        "tail_rms_error_deg": 0.14478890597820282,
+        "peak_abs_error_deg": 0.3214329779148102,
+        "tail_peak_abs_error_deg": 0.32103586196899414,
+        "final_yaw_deg": 0.2640029489994049,
+        "final_integral_rpm": 0.06706134229898453,
+        "peak_integral_abs_rpm": 0.0719539001584053,
+        "peak_command_abs_rpm": 0.4000000059604645
+      },
+      {
+        "case": 4,
+        "tail_mean_abs_error_deg": 0.10455268621444702,
+        "tail_rms_error_deg": 0.10657808929681778,
+        "peak_abs_error_deg": 0.3214329779148102,
+        "tail_peak_abs_error_deg": 0.27170199155807495,
+        "final_yaw_deg": -0.10000018030405045,
+        "final_integral_rpm": -0.033885642886161804,
+        "peak_integral_abs_rpm": 0.0719539001584053,
+        "peak_command_abs_rpm": 0.4000000059604645
+      },
+      {
+        "case": 5,
+        "tail_mean_abs_error_deg": 0.06399989128112793,
+        "tail_rms_error_deg": 0.06400024145841599,
+        "peak_abs_error_deg": 0.5,
+        "tail_peak_abs_error_deg": 0.0640001893043518,
+        "final_yaw_deg": 0.0640001893043518,
+        "final_integral_rpm": -0.06261519342660904,
+        "peak_integral_abs_rpm": 0.06261519342660904,
+        "peak_command_abs_rpm": 0.5
+      }
+    ],
+    "limits": "Actual controller C; synthetic angular plant, not hardware, includes4tick latency, disturbances and load removal."
+  },
+  "image_sha256": {
+    "Objects": "0ad152165c8726962eb5dec736f618e4016f79911fbd6b2f7eba2bb8ccc62a53",
+    "ObjectsIntegral": "78f47634164c2da44bb9d765c532c4836ff0e60bfbf165eabc161dfb50c40c1e"
+  },
+  "changed_source_sha256": {
+    "USER\\heading_controller.c": "447f126acba281103ed6a4ba281278c78b8dcd4d67da516d8f323fb67c78e43f",
+    "USER\\heading_controller.h": "7334b00ec5f5de874c7dc6af4065f016e4ea231091f0e4b8c6107a1b4028efdf",
+    "USER\\heading_integral_trial.h": "571078e95a81d8b13723aeff0b37f4700d3439c84bdea9c8747ba291eb51d3fc",
+    "USER\\main.c": "5e5e06376741e687598d437067d2aaef59863304dffef58e55cc29e72b7c673e"
+  },
+  "final_change_after_models": "Header comment correctedKp0.8->1.0 only; both final images rebuilt, executable logic unchanged."
+}

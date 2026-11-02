@@ -1,0 +1,39 @@
+{
+  "user_observation": "Right-side behavior under load: later slowing coincides with drift; exact wheel and timing not yet independently verified",
+  "groups": {
+    "middle": {
+      "frames": 35,
+      "mean_abs_rpm_by_motor": [
+        46.89,
+        47.63,
+        47.57,
+        48.23
+      ],
+      "mean_error_deg": 0.366,
+      "mean_correction_rpm": 0.34
+    },
+    "late_fast": {
+      "frames": 22,
+      "mean_abs_rpm_by_motor": [
+        38.23,
+        37.41,
+        37.5,
+        37.82
+      ],
+      "mean_error_deg": 0.313,
+      "mean_correction_rpm": 0.218
+    },
+    "late_slow": {
+      "frames": 22,
+      "mean_abs_rpm_by_motor": [
+        9.68,
+        9.32,
+        9.05,
+        9.36
+      ],
+      "mean_error_deg": 0.206,
+      "mean_correction_rpm": 0.027
+    }
+  },
+  "limits": "IntegerRPM asynchronously polled feedback; averages are screening only, not torque or synchronized wheel tracking proof. Need command vs fresh per-wheel feedback before deciding low-speed compensation."
+}

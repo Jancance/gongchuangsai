@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "error": 0,
+  "segment": 0,
+  "budget_ms": 38500,
+  "rows": [
+    {
+      "segment": 1,
+      "kind": "TURN",
+      "amount": -90.0,
+      "requested_speed": 30.0,
+      "rpm": 27,
+      "nominal_speed": 29.842103958129883,
+      "minimum_time_s": 3.015873291015625
+    }
+  ],
+  "message": "参数检查通过；不是实车或避障验收",
+  "turn_brake_trial_candidate": true,
+  "left_trim_candidate": false,
+  "candidate_preview": false,
+  "trial_switch": false,
+  "direction_caps_cm_s": {
+    "FORWARD": 20.0,
+    "LEFT": 20.0,
+    "RIGHT": 20.0
+  },
+  "custom_enabled": true,
+  "config_path": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\turn30_cw_vehicle_20261030\\USER\\route_config.h",
+  "config_sha256": "8a5f26cc06f3fd937b55f8080993cacd484ffb587db1975e80aa8148dd256936",
+  "hardware_accessed": false,
+  "limits": "候选预览估计S曲线参考峰值和时间，最终以固件检查为准；未证明实际地速/定位/避障。120秒总保护保留。"
+}

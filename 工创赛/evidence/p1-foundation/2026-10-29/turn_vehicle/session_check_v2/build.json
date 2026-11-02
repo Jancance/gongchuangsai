@@ -1,0 +1,134 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "-DAPP_TURN_BRAKE_TRIAL_ENABLE=1",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-DTURN_SIM_SPEED_DPS=15.0f",
+      "-DTURN_SIM_NOISE_DEG=0.15f",
+      "-DTURN_SIM_SENSOR_TICKS=4U",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": "\"unit.c\", line 58: Warning:  #550-D: variable \"observed\"  was set but never used\n              float observed;\n                    ^\nunit.c: 1 warning, 0 errors\n"
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "-DAPP_TURN_BRAKE_TRIAL_ENABLE=1",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-DTURN_SIM_SPEED_DPS=15.0f",
+      "-DTURN_SIM_NOISE_DEG=0.15f",
+      "-DTURN_SIM_SENSOR_TICKS=4U",
+      "-c",
+      "src/heading_controller.c",
+      "-o",
+      "heading.o"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "-DAPP_TURN_BRAKE_TRIAL_ENABLE=1",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-DTURN_SIM_SPEED_DPS=15.0f",
+      "-DTURN_SIM_NOISE_DEG=0.15f",
+      "-DTURN_SIM_SENSOR_TICKS=4U",
+      "-c",
+      "src/motion_profile.c",
+      "-o",
+      "profile.o"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "-DAPP_TURN_BRAKE_TRIAL_ENABLE=1",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-DTURN_SIM_SPEED_DPS=15.0f",
+      "-DTURN_SIM_NOISE_DEG=0.15f",
+      "-DTURN_SIM_SENSOR_TICKS=4U",
+      "-c",
+      "src/chassis_kinematics.c",
+      "-o",
+      "kinematics.o"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-DAPP_TURN_BRAKE_TRIAL_ENABLE=1",
+      "-c",
+      "src/heading_session.c",
+      "-o",
+      "session.o"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armlink.exe",
+      "--entry",
+      "test_entry",
+      "--scatter",
+      "unit.sct",
+      "unit.o",
+      "heading.o",
+      "profile.o",
+      "kinematics.o",
+      "--library_type=microlib",
+      "session.o",
+      "-o",
+      "unit.axf"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "source": "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\p1-foundation\\2026-10-31\\wheel_trace\\vehicle\\run_once\\20261031_223353_961100.jsonl",
+  "PM1_frames": 105,
+  "position_samples": {
+    "1": 103,
+    "2": 103,
+    "3": 104,
+    "4": 97
+  },
+  "common200ms_windows": 102,
+  "late_low_windows": 11,
+  "late_low_mean_rpm_by_wheel": {
+    "rpm_LR": 8.383295268629661,
+    "rpm_RR": 8.547163117120007,
+    "rpm_LF": 8.630258745040157,
+    "rpm_RF": 8.722753832879413
+  },
+  "late_low_right_minus_left_mean_rpm": 0.12818146816480078,
+  "late_low_right_minus_left_range_rpm": [
+    -0.40492064702846164,
+    0.5472132031369981
+  ],
+  "limits": [
+    "Only saved PM1 position data; complete new command/feedback RAM trace not read",
+    "200ms motor-rotation estimates from interpolated position samples; not0.1RPM feedback or ground velocity",
+    "Each interpolation gap<=400ms; nearest preceding TM within200ms used only to categorize segment",
+    "No actual per-wheel acknowledged target sequence; cannot infer torque deficiency or tracking error",
+    "Single physical run, no intermediate ground-truth path"
+  ]
+}

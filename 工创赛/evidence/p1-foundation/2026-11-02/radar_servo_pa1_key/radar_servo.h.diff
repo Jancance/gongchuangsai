@@ -1,0 +1,11 @@
+--- before/radar_servo.h
++++ HARDWARE/RADAR_SERVO/radar_servo.h
+@@ -18,4 +18,8 @@
+ /* 初始位置1号0度/2号180度；出发目标1号180度/2号0度。 */
+ extern volatile uint32_t g_radar_servo_departure_done,g_radar_servo_departure_id;
+ uint32_t RadarServo_OnDeparture(uint32_t zone);
++/* Temporary PC13/PA1 test: disabled after every reset, no chassis start. */
++extern volatile uint32_t g_radar_servo_key_test_enable;
++extern volatile uint32_t g_radar_servo_key_result,g_radar_servo_key_sequence,g_radar_servo_key_zone;
++uint32_t RadarServo_KeyTest(uint32_t zone,uint32_t safe_idle);
+ #endif

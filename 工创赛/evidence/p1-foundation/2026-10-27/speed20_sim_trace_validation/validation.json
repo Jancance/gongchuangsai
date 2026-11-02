@@ -1,0 +1,64 @@
+{
+  "started_utc": "2026-10-27T02:58:21.363905+00:00",
+  "hardware_accessed": false,
+  "checks": [
+    {
+      "name": "offline_tool_tests",
+      "status": "passed",
+      "detail": {
+        "ok": true,
+        "returncode": 0,
+        "log": "offline_tests.log"
+      }
+    },
+    {
+      "name": "existing_host_tests",
+      "status": "passed",
+      "detail": {
+        "ok": true,
+        "returncode": 0,
+        "log": "host_tests.log"
+      }
+    },
+    {
+      "name": "configuration_and_package",
+      "status": "passed",
+      "detail": {
+        "ok": true,
+        "count": 1221,
+        "failed": []
+      }
+    },
+    {
+      "name": "historical_log_reports",
+      "status": "passed",
+      "detail": {
+        "ok": true,
+        "runs": 5,
+        "limits": "Existing failures remain failures in the reports; analysis success is not motion success."
+      }
+    },
+    {
+      "name": "actual_C_four_wheel_simulation",
+      "status": "passed",
+      "detail": {
+        "ok": true,
+        "assertions": 50897,
+        "cases": 10,
+        "first_failure_line": null,
+        "trace_samples": 6648,
+        "trace_validation_ok": true,
+        "charts": "four_wheel/index.html"
+      }
+    },
+    {
+      "name": "protected_files_unchanged",
+      "status": "passed",
+      "file_count": 2334,
+      "changed": []
+    }
+  ],
+  "limits": "Software verification only; no physical speed, stopping distance, drift or smoothness acceptance.",
+  "elapsed_s": 6.782,
+  "status": "passed"
+}

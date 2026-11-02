@@ -1,0 +1,482 @@
+--- Emm/USER\app_config.h
++++ X/USER\app_config.h
+@@ -1,5 +1,6 @@
+ #ifndef APP_CONFIG_H
+ #define APP_CONFIG_H
++#include "zdt_x_config.h"
+ #include "app_entry_config.h"
+ #if !APP_IS_DEBUG || APP_DEBUG_MODE != 3U
+ #error Perimeter_candidate_requires_debug_mode3
+--- Emm/USER\chassis_auto_test.c
++++ X/USER\chassis_auto_test.c
+@@ -31,7 +31,7 @@
+ volatile uint32_t g_chassis_auto_last_address = 0U;
+ volatile uint32_t g_chassis_auto_start_mask[3] = {0U};
+ volatile uint32_t g_chassis_auto_stop_mask[3] = {0U};
+-volatile int32_t g_chassis_auto_driver_rpm[4] = {0};
++volatile float g_chassis_auto_driver_rpm[4] = {0};
+ 
+ #if APP_POSITION_DIAGNOSTIC
+ static ChassisPositionSnapshot s_position;
+@@ -617,7 +617,7 @@
+     {
+         for (i = 0U; i < 4U; i++)
+         {
+-            int32_t raw = g_chassis_auto_driver_rpm[i];
++            float raw = g_chassis_auto_driver_rpm[i];
+             uint32_t speed_limit = (s_forward_hold == 1U) ?
+                 ((s_translation_mode == 0U) ? APP_FORWARD_HOLD_FEEDBACK_LIMIT_RPM :
+                  APP_LATERAL_HOLD_FEEDBACK_LIMIT_RPM) : CHASSIS_AUTO_SPEED_LIMIT_RPM;
+@@ -630,8 +630,7 @@
+             TickType_t direction_age = ((s_heading_session == 1U) && (s_forward_hold == 0U)) ?
+                 (TickType_t)(now - s_heading_update_tick) : run_age;
+             /* 不把1RPM量化为0误判为停转；只拒绝明显超速和新采到的反向 */
+-            if ((raw < -(int32_t)speed_limit) ||
+-                (raw > (int32_t)speed_limit)) { Auto_CutLocked(8U); return; }
++            if (!(raw >= -(float)speed_limit && raw <= (float)speed_limit)) { Auto_CutLocked(8U); return; }
+             if ((s_commands[g_chassis_auto_segment][i].speed_raw != 0U) &&
+                 (direction_age >= pdMS_TO_TICKS(500U)) &&
+                 ((TickType_t)(now - s_speed_tick[i]) <= direction_age - pdMS_TO_TICKS(500U)) &&
+@@ -1067,7 +1066,7 @@
+ {
+     uint32_t cursor = s_monitor_cursor, i = cursor / 2U, result;
+     uint32_t is_speed = cursor & 1U;
+-    int32_t rpm = 0;
++    float rpm = 0;
+     CanRxMsg reply = {0};
+ #if APP_POSITION_DIAGNOSTIC
+     if (Auto_PositionMonitor(session)) return;
+@@ -1266,7 +1265,7 @@
+     else if (state == CHASSIS_AUTO_START)
+     {
+         ChassisMotorCommand command = s_commands[g_chassis_auto_segment][index];
+-        result = (s_mode == 1U) ? 1U : CAN1_SetEmmSpeedRaw(command.address,
++        result = (s_mode == 1U) ? 1U : CAN1_SetXSpeedRaw(command.address,
+             command.direction, command.speed_raw, 0U, &reply);
+     }
+     else if (state == CHASSIS_AUTO_STOP)
+--- Emm/USER\chassis_auto_test.h
++++ X/USER\chassis_auto_test.h
+@@ -51,7 +51,8 @@
+ extern volatile uint32_t g_chassis_auto_last_address;
+ extern volatile uint32_t g_chassis_auto_start_mask[3];
+ extern volatile uint32_t g_chassis_auto_stop_mask[3];
+-extern volatile int32_t g_chassis_auto_driver_rpm[4];
++/* X反馈统一为物理RPM，保留一位小数。 */
++extern volatile float g_chassis_auto_driver_rpm[4];
+ 
+ /* 后端首故障诊断；reason细分原因3，读取不改变故障或控制状态。 */
+ typedef struct
+--- Emm/USER\chassis_kinematics.c
++++ X/USER\chassis_kinematics.c
+@@ -138,7 +138,7 @@
+     return 1U;
+ }
+ 
+-uint32_t Chassis_EmmFeedbackToLogical(const int32_t driver_rpm[CHASSIS_WHEEL_COUNT],
++uint32_t Chassis_DriverFeedbackToLogical(const float driver_rpm[CHASSIS_WHEEL_COUNT],
+     uint32_t valid_mask, ChassisWheelSpeeds *logical)
+ {
+     uint32_t i;
+@@ -149,7 +149,7 @@
+     for (i = 0U; i < CHASSIS_WHEEL_COUNT; i++)
+     {
+         /* ReadSpeed来自16位幅值，不接受其他来源溢出值 */
+-        if ((driver_rpm[i] < -65535) || (driver_rpm[i] > 65535)) return 0U;
++        if (!(driver_rpm[i]>=-6553.5f && driver_rpm[i]<=6553.5f)) return 0U;
+         rpm[i] = (float)driver_rpm[i];
+         if (g_chassis_forward_direction[i] == 1U) rpm[i] = -rpm[i];
+     }
+--- Emm/USER\chassis_kinematics.h
++++ X/USER\chassis_kinematics.h
+@@ -61,7 +61,7 @@
+ 
+ /* 输入为CAN1_ReadSpeed已解析的带符号RPM；valid_mask须是四轮新鲜有效位 */
+ /* 调用者负责真实时间戳新鲜度，本函数不把旧反馈自动当成有效 */
+-uint32_t Chassis_EmmFeedbackToLogical(const int32_t driver_rpm[CHASSIS_WHEEL_COUNT],
++uint32_t Chassis_DriverFeedbackToLogical(const float driver_rpm[CHASSIS_WHEEL_COUNT],
+     uint32_t valid_mask, ChassisWheelSpeeds *logical);
+ 
+ /* 自动三段测试的纯指令准备：0前进、1左移、2逆时针，每轮绝对值1RPM */
+--- Emm/USER\fine_rpm_telemetry.h
++++ X/USER\fine_rpm_telemetry.h
+@@ -1,7 +1,7 @@
+ #ifndef FINE_RPM_TELEMETRY_H
+ #define FINE_RPM_TELEMETRY_H
+ #include <stdint.h>
+-/* TM2/BT2 command fields use signed 0.1RPM; Emm feedback stays integer RPM. */
++/* TM6/BT6 commands and speed feedback use signed 0.1RPM. */
+ static __inline int32_t FineRpm_Deci(float rpm)
+ {
+     if (!(rpm>=-300.0f && rpm<=300.0f)) return (-2147483647L-1L);
+--- Emm/USER\main.c
++++ X/USER\main.c
+@@ -140,7 +140,7 @@
+ volatile uint32_t g_can_speed_address = 1U;
+ volatile uint32_t g_can_speed_request = 0U;
+ volatile uint32_t g_can_speed_result = 0U;
+-volatile int32_t g_can_speed_rpm = 0;
++volatile float g_can_speed_rpm = 0;
+ volatile uint32_t g_can_speed_esr = 0U;
+ CanRxMsg g_can_speed_reply;
+ /* 版本读取仅由Watch手动触发一次 */
+@@ -205,7 +205,7 @@
+ /* 成功发布快照的次数，不是电机采样次数 */
+ volatile uint32_t g_motion_diag_report_count = 0U;
+ volatile uint32_t g_can_feedback_speed_result[4] = {0U};
+-volatile int32_t g_can_feedback_speed_rpm[4] = {0};
++volatile float g_can_feedback_speed_rpm[4] = {0};
+ volatile uint32_t g_can_feedback_position_result[4] = {0U};
+ volatile uint32_t g_can_feedback_position_sign[4] = {0U};
+ volatile uint32_t g_can_feedback_position_raw[4] = {0U};
+@@ -361,7 +361,7 @@
+ {
+     CanRxMsg reply;
+     uint32_t result;
+-    int32_t rpm = 0;
++    float rpm = 0;
+     uint8_t sign = 0U;
+     uint32_t raw = 0U;
+     uint32_t index;
+@@ -573,7 +573,7 @@
+     if ((index >= 4U) || (Safety_WheelTestStartAllowed(s_can_jog_session) != 1U))
+         return;
+     if (s_can_jog_dry_run == 1U) result = 1U; /* 演练模拟，不发F6 */
+-    else result = CAN1_SetEmmSpeedRaw((uint8_t)(index + 1U),
++    else result = CAN1_SetXSpeedRaw((uint8_t)(index + 1U),
+         g_chassis_forward_direction[index], 1U, 0U, &reply);
+     g_can_jog_start_results[index] = result;
+     g_can_jog_start_result = result;
+@@ -2308,6 +2308,9 @@
+ }
+ static uint32_t App_SerialIdleReady(uint32_t now)
+ {
++#if APP_X_OFFLINE_ONLY
++    (void)now;return 0U;
++#else
+     ChassisAutoStatus status;
+     PowerCommandStatus power;
+     (void)ChassisAuto_ReadStatus(&status);
+@@ -2323,6 +2326,7 @@
+         App_HeadingRuntimeSource(now) && App_HeadingRuntimeExclusive() &&
+         (g_can_ctrl_fault_latched == 0U) &&
+         (s_heading_source.rate_dps >= -3.0f && s_heading_source.rate_dps <= 3.0f)) ? 1U : 0U;
++#endif
+ }
+ /* 调用者持锁；只容忍成功终态的晚到KEEP，不续期、不重新发车。 */
+ static uint32_t App_SerialCompletedStopped(void)
+@@ -2772,7 +2776,7 @@
+     values[32] = statistics.max_call_ms;
+     values[33] = statistics.total_success;
+     values[34] = statistics.total_interrupted;
+-    memcpy(frame, "BT2,", 4U);
++    memcpy(frame, "BT6,", 4U);
+     for (i = 0U; i < 35U; i++)
+     {
+         if (i == 13U || i == 16U)
+@@ -2813,10 +2817,10 @@
+     values[10] = (int32_t)(App_HeadingFrameAge(&s_heading_source,now,1U)); /* angle_age_ms */
+     values[11] = (int32_t)(App_HeadingFrameAge(&s_heading_source,now,2U)); /* rate_age_ms */
+     values[12] = FineRpm_Deci(g_forward_hold.correction_rpm); /* correction_rpm */
+-    values[13] = (int32_t)(g_chassis_auto_driver_rpm[0]); /* rpm1 */
+-    values[14] = (int32_t)(g_chassis_auto_driver_rpm[1]); /* rpm2 */
+-    values[15] = (int32_t)(g_chassis_auto_driver_rpm[2]); /* rpm3 */
+-    values[16] = (int32_t)(g_chassis_auto_driver_rpm[3]); /* rpm4 */
++    values[13] = ZdtX_RpmDeci(g_chassis_auto_driver_rpm[0]); /* rpm1 */
++    values[14] = ZdtX_RpmDeci(g_chassis_auto_driver_rpm[1]); /* rpm2 */
++    values[15] = ZdtX_RpmDeci(g_chassis_auto_driver_rpm[2]); /* rpm3 */
++    values[16] = ZdtX_RpmDeci(g_chassis_auto_driver_rpm[3]); /* rpm4 */
+     values[17] = (int32_t)(g_vm_test_request); /* vm_request */
+     values[18] = (int32_t)(power.active); /* pe2_active */
+     values[19] = (int32_t)(status.state); /* backend_state */
+@@ -3347,7 +3351,7 @@
+             {
+                 /* 方向固定0、速度固定0、加速度参数固定10 */
+                 /* 10仅为本次静态测试参数，不代表整车运动限值 */
+-                g_can_zero_result = CAN1_SetEmmSpeedRaw(
++                g_can_zero_result = CAN1_SetXSpeedRaw(
+                     (uint8_t)address, 0U, 0U, 10U, &reply);
+             }
+ 
+@@ -3393,7 +3397,7 @@
+             (g_safety_ready == 1U) && (g_can_guard_ready == 1U))
+         {
+             uint32_t address = g_can_speed_address;
+-            int32_t rpm = 0;
++            float rpm = 0;
+             char log[48];
+             g_can_speed_request = 0U;
+             g_can_speed_result = 0U;
+@@ -3413,7 +3417,7 @@
+             sprintf(log, "SPEED:A%lu R%lu RPM%ld\r\n",
+                     (unsigned long)address,
+                     (unsigned long)g_can_speed_result,
+-                    (long)g_can_speed_rpm);
++                    (long)ZdtX_RpmDeci(g_can_speed_rpm));
+             (void)App_DebugSendString(log);
+         }
+         /* VM已请求开启后，读取指定电机版本 */
+--- Emm/SYSTEM\CAN\can.c
++++ X/SYSTEM\CAN\can.c
+@@ -389,57 +389,23 @@
+     }
+     return result;
+ }
+-/* Emm实时转速只读：CAN回帧35、符号、速度高低字节、6B */
+-uint32_t CAN1_ReadSpeed(uint8_t address, CanRxMsg *reply, int32_t *rpm)
+-{
+-    uint32_t result;
+-    uint32_t magnitude;
+-    if (rpm == NULL) return 7U;
+-    *rpm = 0;
+-    result = CAN1_ReadParameter(address, 0x35U, 5U, reply);
+-    if (result == 1U)
+-    {
+-        if (reply->Data[1] > 1U)
+-        {
+-            result = 6U;
+-        }
+-        else
+-        {
+-            magnitude = ((uint32_t)reply->Data[2] << 8) |
+-                        reply->Data[3];
+-            *rpm = (reply->Data[1] == 0U) ?
+-                   (int32_t)magnitude : -(int32_t)magnitude;
+-        }
+-    }
+-    if (result != 1U) CAN1_ResetSession();
+-    return result;
+-}
+-/* Emm当前位置只读；符号与32位幅值分开，避免int32溢出 */
+-uint32_t CAN1_ReadPosition(uint8_t address, CanRxMsg *reply,
+-                           uint8_t *sign, uint32_t *raw)
+-{
+-    uint32_t result;
+-    if (sign == NULL || raw == NULL) return 7U;
+-    *sign = 0U;
+-    *raw = 0U;
+-    result = CAN1_ReadParameter(address, 0x36U, 7U, reply);
+-    if (result == 1U)
+-    {
+-        if (reply->Data[1] > 1U)
+-        {
+-            result = 6U;
+-        }
+-        else
+-        {
+-            *sign = reply->Data[1];
+-            *raw = ((uint32_t)reply->Data[2] << 24) |
+-                   ((uint32_t)reply->Data[3] << 16) |
+-                   ((uint32_t)reply->Data[4] << 8) |
+-                   (uint32_t)reply->Data[5];
+-        }
+-    }
+-    if (result != 1U) CAN1_ResetSession();
+-    return result;
++/* X实时转速只读：CAN回帧35、符号、速度高低字节、6B */
++uint32_t CAN1_ReadSpeed(uint8_t address, CanRxMsg *reply, float *rpm)
++{
++ uint32_t result;
++ if(!rpm || !reply)return 7U;*rpm=0.0f;
++ result=CAN1_ReadParameter(address,0x35U,5U,reply);
++ if(result==1U && !ZdtX_DecodeSpeed(reply->Data,reply->DLC,rpm))result=6U;
++ if(result!=1U)CAN1_ResetSession();return result;
++}
++/* X当前位置只读；符号与32位幅值分开，避免int32溢出 */
++uint32_t CAN1_ReadPosition(uint8_t address,CanRxMsg *reply,uint8_t *sign,uint32_t *raw)
++{
++ uint32_t result;
++ if(!sign || !raw || !reply)return 7U;*sign=0U;*raw=0U;
++ result=CAN1_ReadParameter(address,0x36U,7U,reply);
++ if(result==1U && !ZdtX_DecodePosition(reply->Data,reply->DLC,sign,raw))result=6U;
++ if(result!=1U)CAN1_ResetSession();return result;
+ }
+ /* 控制应答统一处理：只接受02，其他应答保留并返回8 */
+ static uint32_t CAN1_ControlSingle(uint8_t address,
+@@ -458,6 +424,11 @@
+         return 7U;
+     }
+ 
++#if APP_X_OFFLINE_ONLY
++    /* 离线候选拒绝启用驱动和所有非零速度；STOP和读取不受影响。 */
++    if(request && ((request_length==5U && request[0]==0xF3U && request[2]) ||
++       (request_length==8U && request[0]==0xF6U && (request[4] || request[5]))))return 7U;
++#endif
+     trace = ((g_can_ctrl_fault_latched == 0U) && (request != NULL) &&
+         (request_length >= 2U) && (request_length <= 8U)) ? 1U : 0U;
+     if (trace)
+@@ -503,7 +474,7 @@
+     result = CAN1_ExchangeSingle(address, request,
+                                  request_length, 3U, reply);
+ 
+-    if ((result == 1U) && (reply->Data[1] != 0x02U))
++    if ((result == 1U) && !ZdtX_DecodeAck(request[0],reply->Data,reply->DLC))
+     {
+         /* 非02不能作为成功确认，原始回复仍保留 */
+         result = 8U;
+@@ -550,37 +521,18 @@
+     return CAN1_ControlSingle(address, request, 4U, reply);
+ }
+ 
+-/* Emm原始速度控制：方向0为CW，1为CCW */
++/* X原始速度控制：方向0为CW，1为CCW */
+ /* CW/CCW与整车前后方向的对应关系仍需实测 */
+-uint32_t CAN1_SetEmmSpeedRaw(uint8_t address, uint8_t direction,
+-                             uint16_t speed_raw, uint8_t acceleration,
+-                             CanRxMsg *reply)
+-{
+-    uint8_t request[7] = {
+-        0xF6U, 0U, 0U, 0U, 0U, 0U, 0x6BU
+-    };
+-
+-    /* 3000是协议输入上限，不是整车允许的安全速度 */
+-    if ((direction > 1U) || (speed_raw > 3000U))
+-    {
+-        return 7U;
+-    }
+-
+-    request[1] = direction;
+-    request[2] = (uint8_t)(speed_raw >> 8);
+-    request[3] = (uint8_t)speed_raw;
+-    request[4] = acceleration;
+-
+-    /* 加速度0有直接启动含义，实际运动参数后续单独确定 */
+-    return CAN1_ControlSingle(address, request, 7U, reply);
+-}
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
++static uint32_t CAN1_XSpeed(uint8_t address,uint8_t direction,uint16_t speed_raw,
++    uint16_t acceleration,uint8_t sync,CanRxMsg *reply)
++{
++ uint8_t request[8];
++ if(speed_raw>ZDT_X_APP_MAX_SPEED_RAW || !ZdtX_EncodeSpeed(direction,speed_raw,acceleration,sync,request))return 7U;
++ return CAN1_ControlSingle(address,request,8U,reply);
++}
++uint32_t CAN1_SetXSpeedRaw(uint8_t address,uint8_t direction,uint16_t speed_raw,
++    uint16_t acceleration,CanRxMsg *reply)
++{ return CAN1_XSpeed(address,direction,speed_raw,acceleration,0U,reply); }
++uint32_t CAN1_StageXSpeedRaw(uint8_t address,uint8_t direction,uint16_t speed_raw,
++    uint16_t acceleration,CanRxMsg *reply)
++{ return CAN1_XSpeed(address,direction,speed_raw,acceleration,1U,reply); }
+--- Emm/SYSTEM\CAN\can.h
++++ X/SYSTEM\CAN\can.h
+@@ -1,5 +1,6 @@
+ #ifndef CAN_H
+ #define CAN_H
++#include "zdt_x_protocol.h"
+ 
+ #include "stm32f4xx.h"
+ #include "stm32f4xx_can.h"
+@@ -10,7 +11,9 @@
+ uint32_t CAN1_ReadVersion(uint8_t address, CanRxMsg *reply);
+ uint32_t CAN1_ReadStatus(uint8_t address, CanRxMsg *reply);
+ void CAN1_ResetSession(void);
+-uint32_t CAN1_ReadSpeed(uint8_t address, CanRxMsg *reply, int32_t *rpm);
++/* 返回物理RPM的float，X原始反馈已经除10。 */
++uint32_t CAN1_ReadSpeed(uint8_t address, CanRxMsg *reply, float *rpm);
++/* 返回符号及归一化65536计数/圈，原始X角度不直接外泄。 */
+ uint32_t CAN1_ReadPosition(uint8_t address, CanRxMsg *reply,
+                            uint8_t *sign, uint32_t *raw);
+ 
+@@ -21,9 +24,10 @@
+ /* 立即停止；地址限定1～4 */
+ uint32_t CAN1_StopMotor(uint8_t address, CanRxMsg *reply);
+ 
+-/* Emm速度控制：speed_raw是原始命令值，暂不换算为RPM */
+-uint32_t CAN1_SetEmmSpeedRaw(uint8_t address, uint8_t direction,
+-                             uint16_t speed_raw, uint8_t acceleration,
++/* X速度控制：speed_raw是原始命令值，暂不换算为RPM */
++uint32_t CAN1_SetXSpeedRaw(uint8_t address, uint8_t direction,
++                             uint16_t speed_raw, uint16_t acceleration,
+                              CanRxMsg *reply);
+-                             
++uint32_t CAN1_StageXSpeedRaw(uint8_t address,uint8_t direction,uint16_t speed_raw,
++    uint16_t acceleration,CanRxMsg *reply);
+ #endif
+--- Emm/HARDWARE\POWER\power.c
++++ X/HARDWARE\POWER\power.c
+@@ -36,6 +36,9 @@
+ /* 请求开启VM，实际供电仍受外部开关控制 */
+ void Power_Enable(void)
+ {
++#if APP_X_OFFLINE_ONLY
++    Power_Disable();return;
++#else
+ #if APP_UART_LINK_TEST
+     /* 串口测试不能通过手改请求或接收字符串开启VM。 */
+     Power_Disable();
+@@ -52,6 +55,7 @@
+     }
+     else GPIO_SetBits(GPIOE, GPIO_Pin_2);
+     taskEXIT_CRITICAL();
++#endif
+ #endif
+ }
+ 
+--- /dev/null
++++ X/USER/zdt_x_config.h
+@@ -0,0 +1,9 @@
++#ifndef ZDT_X_CONFIG_H
++#define ZDT_X_CONFIG_H
++/* 离线候选默认禁止VM、驱动使能及非零速度，不是实车发布固件。 */
++#ifndef APP_X_OFFLINE_ONLY
++#define APP_X_OFFLINE_ONLY 1U
++#endif
++#define ZDT_X_APP_MAX_SPEED_RAW 3000U
++#define ZDT_X_POSITION_UNITS_PER_REV 3600U
++#endif
+--- /dev/null
++++ X/USER/zdt_x_protocol.h
+@@ -0,0 +1,44 @@
++#ifndef ZDT_X_PROTOCOL_H
++#define ZDT_X_PROTOCOL_H
++#include <stdint.h>
++#include <stddef.h>
++#include "zdt_x_config.h"
++/* CAN数据不含地址，8字节X速度指令恰好单帧；单位为0.1RPM和RPM/s。 */
++static __inline uint32_t ZdtX_EncodeSpeed(uint8_t dir,uint16_t speed,uint16_t accel,
++    uint8_t sync,uint8_t out[8])
++{
++ if(!out || dir>1U || speed>30000U || sync>1U)return 0U;
++ out[0]=0xF6U;out[1]=dir;out[2]=(uint8_t)(accel>>8);out[3]=(uint8_t)accel;
++ out[4]=(uint8_t)(speed>>8);out[5]=(uint8_t)speed;out[6]=sync;out[7]=0x6BU;
++ return 1U;
++}
++/* 同步广播编码仅供协议检查；逐轮候选不暴露运行时广播入口。 */
++static __inline uint32_t ZdtX_EncodeSyncTrigger(uint8_t out[3])
++{ if(!out)return 0U;out[0]=0xFFU;out[1]=0x66U;out[2]=0x6BU;return 1U; }
++static __inline uint32_t ZdtX_DecodeSpeed(const uint8_t *p,uint32_t n,float *rpm)
++{
++ uint32_t raw;
++ if(!rpm)return 0U;*rpm=0.0f;
++ if(!p || n!=5U || p[0]!=0x35U || p[1]>1U || p[4]!=0x6BU)return 0U;
++ raw=((uint32_t)p[2]<<8)|p[3];*rpm=(float)raw*0.1f;if(p[1])*rpm= -*rpm;return 1U;
++}
++/* X实时位置为0.1度；归一为原里程计65536计数/圈，不能直接当Emm计数。 */
++static __inline uint32_t ZdtX_DecodePosition(const uint8_t *p,uint32_t n,
++    uint8_t *sign,uint32_t *counts)
++{
++ uint32_t raw;uint64_t scaled;
++ if(!sign || !counts)return 0U;*sign=0U;*counts=0U;
++ if(!p || n!=7U || p[0]!=0x36U || p[1]>1U || p[6]!=0x6BU)return 0U;
++ raw=((uint32_t)p[2]<<24)|((uint32_t)p[3]<<16)|((uint32_t)p[4]<<8)|p[5];
++ scaled=((uint64_t)raw*65536U+1800U)/ZDT_X_POSITION_UNITS_PER_REV;
++ if(scaled>0xFFFFFFFFULL)return 0U;
++ *sign=p[1];*counts=(uint32_t)scaled;return 1U;
++}
++static __inline uint32_t ZdtX_DecodeAck(uint8_t function,const uint8_t *p,uint32_t n)
++{ return p && n==3U && p[0]==function && p[1]==0x02U && p[2]==0x6BU; }
++static __inline int32_t ZdtX_RpmDeci(float rpm)
++{
++ if(!(rpm>=-6553.5f && rpm<=6553.5f))return (-2147483647L-1L);
++ return (int32_t)(rpm<0?rpm*10.0f-0.5f:rpm*10.0f+0.5f);
++}
++#endif

@@ -1,0 +1,552 @@
+--- base/USER/app_config.h
++++ fine/USER/app_config.h
+@@ -172,3 +172,6 @@
+ #endif
+ 
+ #endif
++
++/* Offline experiment. Not a vehicle-ready firmware or persistent motor configuration. */
++#define APP_FINE_RPM_OFFLINE_ONLY 1U
+--- base/USER/chassis_auto_test.c
++++ fine/USER/chassis_auto_test.c
+@@ -150,8 +150,8 @@
+ static uint32_t s_distance_max_rpm;
+ static uint32_t s_distance_seen_ms[4], s_distance_seen_raw[4], s_distance_seen_sign[4];
+ #endif
+-static int32_t s_heading_initial_rpm = 0;
+-static int32_t s_heading_pending_rpm = 0, s_heading_applied_rpm = 0;
++static float s_heading_initial_rpm = 0;
++static float s_heading_pending_rpm = 0, s_heading_applied_rpm = 0;
+ static TickType_t s_heading_update_tick = 0U;
+ /* 最近一次合法轮速提交时间，与实际四轮更新起点分开。 */
+ static TickType_t s_heading_command_tick = 0U;
+@@ -703,7 +703,7 @@
+     {
+         if (!Chassis_BasicTestCommands(&g_chassis_geometry, i, commands[i])) return 0U;
+         for (j = 0U; j < CHASSIS_WHEEL_COUNT; j++)
+-            commands[i][j].speed_raw = (uint16_t)CHASSIS_AUTO_TARGET_RPM;
++            commands[i][j].speed_raw = (uint16_t)(10U*CHASSIS_AUTO_TARGET_RPM);
+ #if APP_HWT_TURN_TEST && APP_HWT_TURN_CLOCKWISE
+         if (i == 2U)
+             for (j = 0U; j < CHASSIS_WHEEL_COUNT; j++) commands[i][j].direction ^= 1U;
+@@ -935,7 +935,7 @@
+     moving = (g_chassis_auto_state == CHASSIS_AUTO_RUN) ||
+         g_chassis_auto_state==CHASSIS_AUTO_VERIFY_ON || g_chassis_auto_state==CHASSIS_AUTO_VERIFY_OFF ||
+         g_chassis_auto_state==CHASSIS_AUTO_SETTLE ||
+-        (s_distance_mode && s_run_started && g_chassis_auto_state == CHASSIS_AUTO_START);
++        ((s_distance_mode || s_heading_session) && s_run_started && g_chassis_auto_state == CHASSIS_AUTO_START);
+     /* 调速串行下发期间仍在运动：在原monitor槽优先补最旧的位置，
+      * 避免反复纠偏让某轮饿死；400ms时效不放宽。 */
+     oldest = 0U;
+@@ -961,7 +961,7 @@
+     taskENTER_CRITICAL();
+     if (session == g_chassis_auto_session && g_chassis_auto_active &&
+         ((g_chassis_auto_state == CHASSIS_AUTO_RUN) ||
+-         (s_distance_mode && s_run_started && g_chassis_auto_state == CHASSIS_AUTO_START) ||
++         ((s_distance_mode || s_heading_session) && s_run_started && g_chassis_auto_state == CHASSIS_AUTO_START) ||
+          g_chassis_auto_state==CHASSIS_AUTO_VERIFY_ON || g_chassis_auto_state==CHASSIS_AUTO_VERIFY_OFF ||
+          g_chassis_auto_state==CHASSIS_AUTO_SETTLE) && s_vm_requested)
+     {
+@@ -1109,7 +1109,7 @@
+ void ChassisAuto_CanStep(void)
+ {
+     uint32_t state, session, index, result, expected, i;
+-    int32_t effective_heading;
++    float effective_heading;
+     TickType_t now;
+     CanRxMsg reply = {0};
+     taskENTER_CRITICAL();
+@@ -1315,7 +1315,7 @@
+ /* 此处仅交接数据，不发CAN、不修改VM或原自动测试状态。 */
+ 
+ 
+-uint32_t ChassisAuto_HeadingPublish(int32_t command_rpm, uint32_t stop_required)
++uint32_t ChassisAuto_HeadingPublish(float command_rpm, uint32_t stop_required)
+ {
+     int32_t limit = s_turn_brake_trial ? (int32_t)APP_TURN_BRAKE_MAX_RPM : 5;
+     uint32_t valid = ((command_rpm >= -limit) && (command_rpm <= limit) &&
+@@ -1382,7 +1382,7 @@
+     return accepted;
+ }
+ /* 单次旋转入口：只选旋转段，沿用原四轮准备和停车保护。 */
+-uint32_t ChassisAuto_PrepareHeading(uint32_t dry_run,int32_t command_rpm,
++uint32_t ChassisAuto_PrepareHeading(uint32_t dry_run,float command_rpm,
+     int32_t trial_sign,ChassisAutoPreparedHeading *p)
+ {
+     uint32_t i;
+@@ -1402,12 +1402,12 @@
+     uint32_t expected_session)
+ {
+     uint32_t i,accepted=0U,magnitude;
+-    int32_t logical;
++    float logical;
+     if(!p || p->valid!=1U || p->dry_run>1U ||
+        (p->trial_sign ? (!APP_TURN_BRAKE_TRIAL_ACTIVE || p->command_rpm!=0 ||
+         (p->trial_sign!=1 && p->trial_sign!=-1)) :
+-        (p->command_rpm==0 || p->command_rpm < -5 || p->command_rpm >5)))return 0U;
+-    magnitude=(uint32_t)(p->command_rpm<0 ? -p->command_rpm : p->command_rpm);
++        (p->command_rpm==0 || !(p->command_rpm>=-5.0f && p->command_rpm<=5.0f))))return 0U;
++    magnitude=(uint32_t)((p->command_rpm<0 ? -p->command_rpm : p->command_rpm)*10.0f+0.5f);
+     /* Recheck the prepared rotation using integer comparisons only. */
+     for(i=0;i<CHASSIS_WHEEL_COUNT;i++) {
+         logical=(i==CHASSIS_LEFT_REAR || i==CHASSIS_LEFT_FRONT) ? -p->command_rpm : p->command_rpm;
+@@ -1428,19 +1428,19 @@
+     }
+     taskEXIT_CRITICAL();return accepted;
+ }
+-static uint32_t Auto_BeginHeading(uint32_t dry_run,int32_t command_rpm,int32_t trial_sign)
++static uint32_t Auto_BeginHeading(uint32_t dry_run,float command_rpm,int32_t trial_sign)
+ {
+     ChassisAutoPreparedHeading p;uint32_t session;
+     if(!ChassisAuto_PrepareHeading(dry_run,command_rpm,trial_sign,&p))return 0U;
+     taskENTER_CRITICAL();session=g_chassis_auto_session;taskEXIT_CRITICAL();
+     return ChassisAuto_BeginPreparedHeading(&p,session);
+ }
+-uint32_t ChassisAuto_BeginHeading(uint32_t dry_run, int32_t command_rpm)
++uint32_t ChassisAuto_BeginHeading(uint32_t dry_run, float command_rpm)
+ { return Auto_BeginHeading(dry_run,command_rpm,0); }
+ uint32_t ChassisAuto_BeginTurnBrake(int32_t direction)
+ { return Auto_BeginHeading(0U,0,direction); }
+ /* 仅提交下一组轮速；CAN任务在整组边界取用，不在这里发帧。 */
+-uint32_t ChassisAuto_UpdateHeading(int32_t command_rpm)
++uint32_t ChassisAuto_UpdateHeading(float command_rpm)
+ {
+     uint32_t accepted = 0U;
+     taskENTER_CRITICAL();
+@@ -1451,8 +1451,8 @@
+         (g_chassis_auto_state <= CHASSIS_AUTO_RUN))
+     {
+         /* 当前会话禁止反向：后续完成零速反向互锁后再扩展。 */
+-        if ((command_rpm < -(int32_t)(s_turn_brake_trial ? APP_TURN_BRAKE_MAX_RPM : 5U)) ||
+-            (command_rpm > (int32_t)(s_turn_brake_trial ? APP_TURN_BRAKE_MAX_RPM : 5U)) ||
++        if (!(command_rpm >= -(float)(s_turn_brake_trial ? APP_TURN_BRAKE_MAX_RPM : 5U) &&
++              command_rpm <= (float)(s_turn_brake_trial ? APP_TURN_BRAKE_MAX_RPM : 5U)) ||
+             ((s_forward_hold == 1U) && ((command_rpm < -2) || (command_rpm > 2))) ||
+             ((s_heading_initial_rpm > 0) && (command_rpm < 0)) ||
+             ((s_heading_initial_rpm < 0) && (command_rpm > 0)))
+@@ -1756,7 +1756,7 @@
+         (motion_mode == 0U) ? APP_FORWARD_HOLD_RUN_MS : APP_LATERAL_HOLD_RUN_MS);
+ }
+ 
+-uint32_t ChassisAuto_UpdateForwardHold(int32_t correction_rpm)
++uint32_t ChassisAuto_UpdateForwardHold(float correction_rpm)
+ {
+     uint32_t accepted = 0U;
+     taskENTER_CRITICAL();
+--- base/USER/chassis_auto_test.h
++++ fine/USER/chassis_auto_test.h
+@@ -71,7 +71,7 @@
+     uint32_t session, batch_id, segment, dry_run, generation_source;
+     uint32_t generated_ms, start_ms, end_ms, outcome, sent_mask, ack_mask;
+     uint32_t failed_address, io_result;
+-    int32_t correction_rpm;
++    float correction_rpm;
+     uint32_t base_rpm, pending_changes;
+     int32_t pending_rpm;
+     uint32_t send_ms[4], reply_ms[4], result[4];
+@@ -116,34 +116,35 @@
+ uint32_t ChassisAuto_BeginTranslationTimed(uint32_t dry_run, uint32_t motion_mode,
+     uint32_t base_rpm, uint32_t run_ms);
+ uint32_t ChassisAuto_BeginTranslationHold(uint32_t dry_run, uint32_t motion_mode);
+-uint32_t ChassisAuto_UpdateForwardHold(int32_t correction_rpm);
++uint32_t ChassisAuto_UpdateForwardHold(float correction_rpm);
+ /* 平移mode0前/1左/2右、100..1000mm、最大3..15RPM，30秒运行截止；必须开启位置诊断。 */
+ uint32_t ChassisAuto_BeginTranslationDistance(uint32_t motion_mode, uint32_t max_rpm, float target_mm);
+ uint32_t ChassisAuto_BeginForwardDistance(uint32_t max_rpm, float target_mm);
+ typedef struct {
+     uint32_t valid, dry_run;
+-    int32_t command_rpm, trial_sign;
++    float command_rpm;
++    int32_t trial_sign;
+     ChassisMotorCommand commands[3][CHASSIS_WHEEL_COUNT];
+ } ChassisAutoPreparedHeading;
+-uint32_t ChassisAuto_PrepareHeading(uint32_t dry_run,int32_t command_rpm,
++uint32_t ChassisAuto_PrepareHeading(uint32_t dry_run,float command_rpm,
+     int32_t trial_sign,ChassisAutoPreparedHeading *prepared);
+ uint32_t ChassisAuto_BeginPreparedHeading(const ChassisAutoPreparedHeading *prepared,
+     uint32_t expected_session);
+-uint32_t ChassisAuto_BeginHeading(uint32_t dry_run, int32_t command_rpm);
++uint32_t ChassisAuto_BeginHeading(uint32_t dry_run, float command_rpm);
+ /* 同一转向的下一组轮速更新；1接受排队，0拒绝，不表示已发完。 */
+-uint32_t ChassisAuto_UpdateHeading(int32_t command_rpm);
++uint32_t ChassisAuto_UpdateHeading(float command_rpm);
+ /* Safety任务独立调用，不发送/等待CAN */
+ void ChassisAuto_SafetyUpdate(uint32_t vm_request);
+ /* TaskA到CAN任务的纯数据交接；1有效，0无效/过期。 */
+ #define CHASSIS_HEADING_MAILBOX_MAX_AGE_MS 100U
+ typedef struct
+ {
+-    int32_t command_rpm;
++    float command_rpm;
+     uint32_t stop_required;
+     uint32_t sequence;
+ } ChassisHeadingRequest;
+ 
+-uint32_t ChassisAuto_HeadingPublish(int32_t command_rpm, uint32_t stop_required);
++uint32_t ChassisAuto_HeadingPublish(float command_rpm, uint32_t stop_required);
+ uint32_t ChassisAuto_HeadingRead(ChassisHeadingRequest *request);
+ /* 执行器同一时刻的状态，仅供任务读取；不是运动许可或物理停车证明。 */
+ typedef struct
+--- base/USER/chassis_kinematics.c
++++ fine/USER/chassis_kinematics.c
+@@ -124,9 +124,9 @@
+         magnitude = Chassis_Abs(logical->rpm[i]);
+         if (magnitude > (float)max_raw + CHASSIS_INTEGER_RPM_TOLERANCE) return 0U;
+         /* 已先限到协议范围，转换不会溢出；拒绝不能表示的小数速度 */
+-        raw = (uint16_t)(magnitude + 0.5f);
+-        if ((raw > max_raw) ||
+-            (Chassis_Abs(magnitude - (float)raw) > CHASSIS_INTEGER_RPM_TOLERANCE))
++        raw = (uint16_t)(magnitude*10.0f + 0.5f);
++        if ((raw > (uint32_t)max_raw*10U) || raw>3000U ||
++            (Chassis_Abs(magnitude - (float)raw*0.1f) > 0.0501f))
+             return 0U;
+         result[i].address = (uint8_t)(i + 1U);
+         result[i].speed_raw = raw;
+@@ -174,13 +174,13 @@
+ }
+ 
+ /* 纯指令转换：正值逆时针、负值顺时针，不发送CAN。 */
+-uint32_t Chassis_HeadingCommands(int32_t command_rpm,
++uint32_t Chassis_HeadingCommands(float command_rpm,
+     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+ {
+     ChassisWheelSpeeds logical = {{0.0f, 0.0f, 0.0f, 0.0f}};
+     if (commands == 0) return 0U;
+     /* 先检查有符号范围再取反，避免最小负整数溢出。 */
+-    if ((command_rpm < -5) || (command_rpm > 5))
++    if (!(command_rpm >= -5.0f && command_rpm <= 5.0f))
+     {
+         (void)Chassis_EncodeEmm(&logical, 5U, commands);
+         return 0U;
+@@ -193,14 +193,14 @@
+     return Chassis_EncodeEmm(&logical, 5U, commands);
+ }
+ 
+-uint32_t Chassis_TurnBrakeCommands(int32_t command_rpm,
++uint32_t Chassis_TurnBrakeCommands(float command_rpm,
+     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+ {
+     uint32_t cap=APP_TURN_BRAKE_TRIAL_ACTIVE ? APP_TURN_BRAKE_MAX_RPM : 13U;
+     ChassisWheelSpeeds logical = {{0.0f, 0.0f, 0.0f, 0.0f}};
+     if (commands == 0) return 0U;
+     /* 先检查有符号范围再取反，避免最小负整数溢出。 */
+-    if ((command_rpm < -(int32_t)cap) || (command_rpm > (int32_t)cap))
++    if (!(command_rpm >= -(float)cap && command_rpm <= (float)cap))
+     {
+         (void)Chassis_EncodeEmm(&logical, cap, commands);
+         return 0U;
+@@ -216,7 +216,7 @@
+ 
+ /* 同时给出前进和受限旋转分量；不反转任何车轮。 */
+ static uint32_t Chassis_TranslationCommandsAtSpeed(uint32_t mode, uint32_t base_rpm,
+-    int32_t correction_rpm, uint32_t minimum_base, uint32_t maximum_base,
++    float correction_rpm, uint32_t minimum_base, uint32_t maximum_base,
+     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+ {
+     ChassisWheelSpeeds logical = {{0.0f, 0.0f, 0.0f, 0.0f}};
+@@ -224,7 +224,7 @@
+     uint32_t limit;
+     Chassis_ClearMotorCommands(commands);
+     if ((commands == NULL) || (mode > 3U) || (base_rpm < minimum_base) || (base_rpm > maximum_base) ||
+-        (correction_rpm < -2) || (correction_rpm > 2)) return 0U;
++        !(correction_rpm >= -2.0f && correction_rpm <= 2.0f)) return 0U;
+     base = (float)base_rpm;
+     limit = base_rpm + 2U;
+     if (mode == 0U || mode == 3U)
+@@ -248,34 +248,34 @@
+ }
+ 
+ uint32_t Chassis_TranslationHoldCommandsAtSpeed(uint32_t mode, uint32_t base_rpm,
+-    int32_t correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
++    float correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+ { return Chassis_TranslationCommandsAtSpeed(mode,base_rpm,correction_rpm,3U,15U,commands); }
+ 
+-uint32_t Chassis_ProfileCorrectionRpm(uint32_t base_rpm, int32_t requested, int32_t *effective)
+-{
+-    int32_t limit;
++uint32_t Chassis_ProfileCorrectionRpm(uint32_t base_rpm, float requested, float *effective)
++{
++    float limit;
+     if (!effective) return 0U;
+     *effective = 0;
+-    if (base_rpm > MOTION_PROFILE_BASE_CEILING || requested < -2 || requested > 2) return 0U;
++    if (base_rpm > MOTION_PROFILE_BASE_CEILING || !(requested >= -2.0f && requested <= 2.0f)) return 0U;
+     limit = (base_rpm < 2U) ? (int32_t)base_rpm : 2;
+     *effective = (requested > limit) ? limit : ((requested < -limit) ? -limit : requested);
+     return 1U;
+ }
+ uint32_t Chassis_TranslationProfileCommands(uint32_t mode, uint32_t base_rpm,
+-    int32_t correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+-{
+-    int32_t effective;
++    float correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
++{
++    float effective;
+     Chassis_ClearMotorCommands(commands);
+     if (!Chassis_ProfileCorrectionRpm(base_rpm,correction_rpm,&effective)) return 0U;
+     return Chassis_TranslationCommandsAtSpeed(mode,base_rpm,effective,0U,MOTION_PROFILE_BASE_CEILING,commands);
+ }
+ 
+-uint32_t Chassis_LeftTrimCommands(uint32_t base_rpm, int32_t correction_rpm,
++uint32_t Chassis_LeftTrimCommands(uint32_t base_rpm, float correction_rpm,
+     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+ {
+     ChassisWheelSpeeds logical;
+     uint32_t trim, room, i;
+-    int32_t effective;
++    float effective;
+     Chassis_ClearMotorCommands(commands);
+     if (!APP_LEFT_TRIM_ACTIVE || !commands || base_rpm>52U ||
+         !(APP_LEFT_BACKWARD_RATIO>=0.0f && APP_LEFT_BACKWARD_RATIO<=0.02f) ||
+@@ -295,7 +295,7 @@
+     return Chassis_EncodeEmm(&logical,54U,commands);
+ }
+ 
+-uint32_t Chassis_TranslationHoldCommands(uint32_t mode, int32_t correction_rpm,
++uint32_t Chassis_TranslationHoldCommands(uint32_t mode, float correction_rpm,
+     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+ {
+     return Chassis_TranslationHoldCommandsAtSpeed(mode,
+@@ -303,7 +303,7 @@
+         correction_rpm, commands);
+ }
+ 
+-uint32_t Chassis_ForwardHoldCommands(int32_t correction_rpm,
++uint32_t Chassis_ForwardHoldCommands(float correction_rpm,
+     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+ {
+     return Chassis_TranslationHoldCommands(0U, correction_rpm, commands);
+--- base/USER/chassis_kinematics.h
++++ fine/USER/chassis_kinematics.h
+@@ -72,22 +72,22 @@
+ /* 前进基础速度见app_config，修正限2RPM，四轮始终逻辑前进。 */
+ /* 0前进、1向左、2向右；非法模式或修正清零命令，纯计算不发CAN。 */
+ uint32_t Chassis_TranslationHoldCommandsAtSpeed(uint32_t mode, uint32_t base_rpm,
+-    int32_t correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
++    float correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+ /* S曲线纯命令编码：通常0..15RPM，专用20cm/s构建0..52RPM；后端仍核单条许可。
+  * 修正限到min(基速,2)，零速不原地纠偏。
+  * 原Hold接口仍为3..15RPM；新函数不发帧、不授权运动。 */
+-uint32_t Chassis_ProfileCorrectionRpm(uint32_t base_rpm, int32_t requested, int32_t *effective);
++uint32_t Chassis_ProfileCorrectionRpm(uint32_t base_rpm, float requested, float *effective);
+ uint32_t Chassis_TranslationProfileCommands(uint32_t mode, uint32_t base_rpm,
+-    int32_t correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
++    float correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+ /* 候选专用：整数后向分量显式取整，并共享54RPM余量；不发送CAN。 */
+-uint32_t Chassis_LeftTrimCommands(uint32_t base_rpm, int32_t correction_rpm,
++uint32_t Chassis_LeftTrimCommands(uint32_t base_rpm, float correction_rpm,
+     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+-uint32_t Chassis_TranslationHoldCommands(uint32_t mode, int32_t correction_rpm,
++uint32_t Chassis_TranslationHoldCommands(uint32_t mode, float correction_rpm,
+     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+ uint32_t Chassis_TranslationHoldSelfTest(void);
+-uint32_t Chassis_ForwardHoldCommands(int32_t correction_rpm,
++uint32_t Chassis_ForwardHoldCommands(float correction_rpm,
+     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+-uint32_t Chassis_HeadingCommands(int32_t command_rpm,
++uint32_t Chassis_HeadingCommands(float command_rpm,
+     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+ /* 前进/横移距离试验：符号/32位幅值先以int64作差，再换算四轮逻辑行程。
+  * 输出均值与轮间最大差，不含打滑补偿或世界坐标。 */
+@@ -104,5 +104,5 @@
+ uint32_t Chassis_CalibrateDistanceMm(uint32_t mode, float encoder_mm, float *progress_mm);
+ uint32_t Chassis_DistanceRpm(float remaining_mm, uint32_t maximum_rpm);
+ uint32_t Chassis_DistanceSelfTest(void);
+-uint32_t Chassis_TurnBrakeCommands(int32_t command_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
++uint32_t Chassis_TurnBrakeCommands(float command_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+ #endif
+--- base/USER/heading_controller.c
++++ fine/USER/heading_controller.c
+@@ -220,7 +220,7 @@
+ /* 仅新鲜源帧调用；80ms角速度低通、10RPM/s限斜率、整数命令迟滞。 */
+ uint32_t HeadingController_HoldStep(HeadingHoldController *hold,
+     float target_deg, float yaw_deg, float rate_dps, uint32_t now_ms,
+-    int32_t *correction_rpm, float *error_deg)
++    float *correction_rpm, float *error_deg)
+ {
+     uint32_t elapsed;
+     float desired, filtered, step, difference;
+@@ -231,7 +231,7 @@
+     elapsed = (hold->initialized != 0U) ? now_ms - hold->tick : 20U;
+     if (elapsed >= 100U) return 0U;
+     if ((hold->initialized != 0U) && (elapsed == 0U))
+-    { *correction_rpm = hold->quantized_rpm; return 1U; }
++    { *correction_rpm = (float)hold->quantized_deci_rpm*0.1f; return 1U; }
+     filtered = (hold->initialized != 0U) ? hold->filtered_rate_dps +
+         ((float)elapsed / (80.0f + (float)elapsed)) *
+         (rate_dps - hold->filtered_rate_dps) : rate_dps;
+@@ -242,14 +242,22 @@
+     if (difference > step) difference = step;
+     if (difference < -step) difference = -step;
+     hold->command_rpm += difference;
+-    /* 0.65RPM越级，回落到0.35RPM才返回，减少量化边缘抖动。 */
+-    if ((hold->command_rpm - (float)hold->quantized_rpm) > 0.65f)
+-        hold->quantized_rpm++;
+-    else if ((hold->command_rpm - (float)hold->quantized_rpm) < -0.65f)
+-        hold->quantized_rpm--;
++    /* 0.1RPM resolution, proportional hysteresis; bounded updates preserve slew. */
++    {
++        uint32_t quantize_step;
++        for(quantize_step=0U;quantize_step<40U;quantize_step++) {
++            if(hold->command_rpm*10.0f-(float)hold->quantized_deci_rpm>0.65f)
++                hold->quantized_deci_rpm++;
++            else if(hold->command_rpm*10.0f-(float)hold->quantized_deci_rpm < -0.65f)
++                hold->quantized_deci_rpm--;
++            else break;
++        }
++        if(hold->quantized_deci_rpm>20)hold->quantized_deci_rpm=20;
++        if(hold->quantized_deci_rpm < -20)hold->quantized_deci_rpm=-20;
++    }
+     hold->filtered_rate_dps = filtered;
+     hold->tick = now_ms;
+     hold->initialized = 1U;
+-    *correction_rpm = hold->quantized_rpm;
+-    return 1U;
+-}
++    *correction_rpm = (float)hold->quantized_deci_rpm*0.1f;
++    return 1U;
++}
+--- base/USER/heading_controller.h
++++ fine/USER/heading_controller.h
+@@ -40,7 +40,7 @@
+     uint32_t settle_active;
+     float target_deg;
+     float error_deg;
+-    int32_t command_rpm; /* 正值为俯视逆时针，负值为顺时针。 */
++    float command_rpm; /* 正值为俯视逆时针，负值为顺时针。 */
+ } HeadingController;
+ 
+ typedef struct
+@@ -50,7 +50,7 @@
+     uint32_t stop_required;
+     float target_deg;
+     float error_deg;
+-    int32_t command_rpm;
++    float command_rpm;
+ } HeadingControllerOutput;
+ 
+ /* 5/3/1RPM、2度、连续稳定700ms均为待实车调参的工程候选值。 */
+@@ -63,13 +63,13 @@
+ {
+     uint32_t tick, initialized;
+     float command_rpm, filtered_rate_dps;
+-    int32_t quantized_rpm;
++    int32_t quantized_deci_rpm;
+ } HeadingHoldController;
+ uint32_t HeadingController_HoldCorrection(float target_deg, float yaw_deg,
+     float rate_dps, float *correction_rpm, float *error_deg);
+ uint32_t HeadingController_HoldStep(HeadingHoldController *hold,
+     float target_deg, float yaw_deg, float rate_dps, uint32_t now_ms,
+-    int32_t *correction_rpm, float *error_deg);
++    float *correction_rpm, float *error_deg);
+ 
+ uint32_t HeadingController_ConfigValid(const HeadingControllerConfig *config);
+ uint32_t HeadingController_Start(HeadingController *controller,
+--- base/USER/heading_session.c
++++ fine/USER/heading_session.c
+@@ -190,12 +190,14 @@
+     s->last_new_ms = in->now_ms;
+     if (s->turn_trial) {
+         uint32_t result;
+-        if (!in->backend_running) {
++        /* RUN is required once; later START means a wheel-command refresh, not warmup. */
++        if (!in->backend_running && !s->turn_running_seen) {
+             s->brake.tick=in->now_ms;
+             s->controller.command_rpm=0;
+             HS_Out(s,s->begin_accepted ? HS_ACTION_UPDATE : HS_ACTION_BEGIN,out);
+             return;
+         }
++        s->turn_running_seen=1U;
+         result = TurnBrake_Step(&s->brake, in->now_ms, in->yaw_deg,
+             in->rate_dps, &s->controller.command_rpm);
+         s->controller.error_deg=HeadingController_ErrorDeg(s->controller.target_deg,in->yaw_deg);
+--- base/USER/heading_session.h
++++ fine/USER/heading_session.h
+@@ -40,7 +40,7 @@
+ typedef struct
+ {
+     uint32_t state, cause, action;
+-    int32_t command_rpm;
++    float command_rpm;
+     float target_deg, error_deg;
+ } HeadingSessionOutput;
+ 
+@@ -52,6 +52,7 @@
+     uint32_t begin_accepted, stop_accepted;
+     int32_t initial_sign;
+     uint32_t turn_trial;
++    uint32_t turn_running_seen;
+     TurnBrake brake;
+ } HeadingSession;
+ 
+--- base/USER/main.c
++++ fine/USER/main.c
+@@ -1331,7 +1331,7 @@
+ {
+     uint32_t request, phase, trip, backend_session;
+     uint32_t run_started, stopping, elapsed_ms, final_valid;
+-    int32_t correction_rpm;
++    float correction_rpm;
+     float start_deg, target_deg, error_deg, final_deg;
+     float rate_dps, peak_error_deg, peak_rate_dps;
+     uint32_t sample_count, max_sample_gap_ms;
+@@ -1402,7 +1402,7 @@
+ {
+     uint32_t elapsed_ms;
+     float error_deg, rate_dps;
+-    int32_t correction_rpm;
++    float correction_rpm;
+ } ForwardHoldTraceSample;
+ volatile ForwardHoldTraceSample g_forward_hold_trace[96];
+ volatile uint32_t g_forward_hold_trace_count = 0U;
+@@ -1573,7 +1573,7 @@
+     uint32_t prepared_ok, expected_session, mode, base_rpm, run_ms;
+     float route_speed;
+     float distance_mm;
+-    int32_t correction = 0;
++    float correction = 0;
+     float error = 0.0f, desired = 0.0f;
+     App_HeadingSourceObserve();
+     taskENTER_CRITICAL();
+@@ -1858,6 +1858,9 @@
+ }
+ static uint32_t App_MotionAccept(void)
+ {
++#if APP_FINE_RPM_OFFLINE_ONLY
++    return 0U;
++#else
+     ChassisAutoStatus status;
+     PowerCommandStatus power;
+     uint32_t state = MotionGetState();
+@@ -1892,6 +1895,7 @@
+     s_combined_keep_vm = 1U;
+     s_combined_stage_ms = (uint32_t)xTaskGetTickCount();
+     return 1U;
++#endif
+ }
+ static uint32_t App_MoveSubmit(uint32_t direction, uint32_t rpm, uint32_t run_ms, float distance_mm,float route_speed)
+ {
+--- base/USER/turn_brake.h
++++ fine/USER/turn_brake.h
+@@ -21,7 +21,7 @@
+     s->speed_limit=speed;s->lookahead_s=0.7f;
+ }
+ /* Return0=running,1=stable,2=fault. Caller retains freshness/epoch/backend guards. */
+-static __inline uint32_t TurnBrake_Step(TurnBrake *s,uint32_t now,float yaw,float rate,int32_t *command)
++static __inline uint32_t TurnBrake_Step(TurnBrake *s,uint32_t now,float yaw,float rate,float *command)
+ {
+     uint32_t elapsed=now-s->tick;
+     float dt,observed,remaining,ahead,distance,envelope,want,desired,alpha,rpm;
+@@ -55,10 +55,10 @@
+     else s->stable_ms=0U;
+     if(s->stable_ms>=700U)return 1U;
+     rpm=s->speed/(6.0f*77.0f/418.0f);
+-    *command=(int32_t)(rpm+0.5f);
++    *command=floorf(rpm*10.0f+0.5f)*0.1f;
+     if(*command>(int32_t)APP_TURN_BRAKE_MAX_RPM)*command=(int32_t)APP_TURN_BRAKE_MAX_RPM;
+     if(*command) s->moved=1U;
+-    *command=(int32_t)(s->direction*(float)*command);
++    *command=s->direction*(*command);
+     return 0U;
+ }
+ #endif

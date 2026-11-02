@@ -1,0 +1,52 @@
+{
+  "firmware_sha256": "2794bff48b652849849749c72020e96c3b0eef3cd7b7c7cf345cc6fb3ac9de73",
+  "parameters": {
+    "P": 1.0,
+    "D": 0.25,
+    "deadband_deg": 0.3,
+    "I_enabled": false
+  },
+  "downloaded_this_trial": false,
+  "normal_reset_evidence": "pd_repeat/reset_and_idle.json",
+  "capture": "工创赛\\evidence\\p1-foundation\\2026-11-01\\x_load_diag\\run_pd_repeat_once\\20261101_225425_816300.summary.json",
+  "status": "software_complete",
+  "elapsed_ms": 22023,
+  "encoder_progress_mm": 2100.015,
+  "max_abs_error_deg": 0.714,
+  "load_diagnostic": {
+    "session": 1,
+    "expected_records": 2056,
+    "received_records": 2056,
+    "dropped": 0,
+    "complete": true
+  },
+  "physical_measurement": {
+    "right_cm": 2.75,
+    "short_cm": 1.75,
+    "derived_forward_cm": 208.25,
+    "user_report": "右偏  2.75欠1.75cm",
+    "forward_distance_is_derived": true
+  },
+  "physical_stop_and_oscillation_confirmation": null,
+  "previous_pd_ruler": {
+    "right_cm": 2.1,
+    "short_cm": 1.5
+  },
+  "next": "Keep PD and I off. Physical stop/VM lamp/oscillation confirmation still pending. Investigate repeatable longitudinal shortfall independently before any calibration; no additional motion.",
+  "pd_two_trial_summary": {
+    "right_cm": [
+      2.1,
+      2.75
+    ],
+    "short_cm": [
+      1.5,
+      1.75
+    ],
+    "mean_right_cm": 2.425,
+    "mean_short_cm": 1.625,
+    "right_range_cm": 0.65,
+    "short_range_cm": 0.25,
+    "trial_count": 2,
+    "interpretation": "Both PD trials drift right and stop short; two trials do not establish a calibration factor or causal I effect."
+  }
+}

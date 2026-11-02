@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-24",
+  "source_baseline": "54bb617 plus local motion API/action table changes",
+  "build_variant": "motion_api_smoke_20261024, isolated table two forward15RPM/2000ms",
+  "original_source_table_unchanged": true,
+  "flash": "Verify OK / Application running, motion_api_smoke_download.log",
+  "status": "software_complete",
+  "elapsed_ms": 8895,
+  "completed": 2,
+  "gap_frames": 10,
+  "gap_vm_held": true,
+  "final_vm": 0,
+  "final_pe2": 0,
+  "stop_mask": 15,
+  "faults": {
+    "can_fault": 0,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "backend_cause": 0
+  },
+  "max_telemetry_error_deg": 0.598,
+  "user_observation": "both forward, no obvious sway, VM stays lit between segments, stopped and lamp off at finish; user confirmed all",
+  "not_tested": [
+    "busy rejection",
+    "standalone caller outside action table",
+    "new TurnStart runtime",
+    "distance/XY control"
+  ],
+  "capture": "工创赛\\evidence\\p1-foundation\\2026-10-24\\api_smoke_run\\20261024_171020_736800.summary.json",
+  "notes": [
+    "DAP startup backlog and one invalid frame retained in raw; aggregate sequence gaps not classified as runtime loss",
+    "host report baseline field is legacy 5f132ad; actual source baseline is 54bb617 plus local changes"
+  ],
+  "pushed": false
+}

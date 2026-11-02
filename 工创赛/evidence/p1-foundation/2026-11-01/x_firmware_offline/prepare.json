@@ -1,0 +1,26 @@
+{
+  "candidate": "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\x_firmware_offline_20261101",
+  "baseline": "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\fine_rpm_sequential_p100_straight210_20261031",
+  "changes": [
+    "USER\\app_config.h",
+    "USER\\chassis_auto_test.c",
+    "USER\\chassis_auto_test.h",
+    "USER\\chassis_kinematics.c",
+    "USER\\chassis_kinematics.h",
+    "USER\\main.c",
+    "USER\\zdt_x_config.h",
+    "USER\\zdt_x_protocol.h",
+    "SYSTEM\\CAN\\can.c",
+    "SYSTEM\\CAN\\can.h",
+    "HARDWARE\\POWER\\power.c"
+  ],
+  "P": 1,
+  "D": 0.25,
+  "I": 0,
+  "offline_only": true,
+  "hardware_accessed": false,
+  "plant_assumptions_changed": false,
+  "position_input_unit": "0.1degree; normalized65536counts/rev",
+  "speed_feedback_unit": "floatphysicalRPM; wireTM6 uses0.1RPM",
+  "sync": "Codec only; sequential motion backend retained"
+}

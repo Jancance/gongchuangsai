@@ -1,0 +1,26 @@
+#ifndef ROUTE_CONFIG_H
+#define ROUTE_CONFIG_H
+/* 现场只改本文件；保存为GBK。修改后先运行电脑预览，再完整编译。
+ * 0：保留原默认四段测试；1：仅调试模式3的PLAN0使用下面的自定义表。
+ * 其他预设、比赛入口和20cm/s专用候选不变。开关不会自动启动小车。
+ * 每行：X(动作, 距离cm或转角deg, 平移上限cm/s或转向上限deg/s)
+ * FORWARD/LEFT/RIGHT相对每段开始时的车头；TURN正角逆时针、负角顺时针。
+ * 普通表速度向下量化；新候选单独传递参考速度并留2RPM跟随余量。均不保证真实地速。
+ * 普通表平移10..100cm、3..15RPM；新速度候选10..210cm，三方向分别限20cm/s。
+ * 新候选独立参考速度，自动S曲线、按实际规划时长计预算；转向仍±5..±90度。
+ * 最多8段，但原120秒保守超时预算可能更早限制段数；各段停稳再继续。
+ * 仅参数示例，未实车验收；不含障碍检测、地图定位或连续过弯。
+ */
+#define APP_ROUTE_USE_CUSTOM 1
+/* 新候选默认0。仅CUSTOM=1、调试mode3、S曲线启用时生效；尚未实车验收。
+ * 前进、左移、右移分别限速，单位cm/s；本阶段硬上限20，不能填更大。
+ * 参考速度与电机转速余量分开；短段自动降低峰值，各段仍停稳。
+ */
+#define APP_ROUTE_SPEED_TRIAL_ENABLE 1
+#define APP_ROUTE_FORWARD_MAX_CM_S 20.0f
+#define APP_ROUTE_LEFT_MAX_CM_S    20.0f
+#define APP_ROUTE_RIGHT_MAX_CM_S   20.0f
+#define APP_ROUTE_ROWS(X) \
+    X(FORWARD, 210.0f, 20.0f)
+
+#endif

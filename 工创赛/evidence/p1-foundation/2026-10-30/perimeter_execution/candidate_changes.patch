@@ -1,0 +1,620 @@
+--- live/USER/app_config.h
++++ perimeter/USER/app_config.h
+@@ -1,17 +1,22 @@
+ #ifndef APP_CONFIG_H
+ #define APP_CONFIG_H
+ #include "app_entry_config.h"
++#if !APP_IS_DEBUG || APP_DEBUG_MODE != 3U
++#error Perimeter_candidate_requires_debug_mode3
++#endif
++#define APP_PERIMETER_TRIAL_ACTIVE 1U
++#define APP_PERIMETER_GROUP_MS 330000U
+ #include "route_config.h"
+ /* Explicit single-turn debug candidate. Ordinary rotation remains capped at5RPM. */
+ #ifndef APP_TURN_BRAKE_TRIAL_ENABLE
+-#define APP_TURN_BRAKE_TRIAL_ENABLE 0U
++#define APP_TURN_BRAKE_TRIAL_ENABLE 1U
+ #endif
+ #if APP_TURN_BRAKE_TRIAL_ENABLE > 1U
+ #error Turn_brake_trial_enable_invalid
+ #endif
+ #define APP_TURN_BRAKE_TRIAL_ACTIVE (APP_TURN_BRAKE_TRIAL_ENABLE && APP_ROUTE_USE_CUSTOM && APP_IS_DEBUG && (APP_TEST_MODE == 3U))
+ #ifndef APP_TURN_BRAKE_TRIAL_DPS
+-#define APP_TURN_BRAKE_TRIAL_DPS 15U
++#define APP_TURN_BRAKE_TRIAL_DPS 30U
+ #endif
+ #if APP_TURN_BRAKE_TRIAL_DPS != 15U && APP_TURN_BRAKE_TRIAL_DPS != 30U
+ #error Turn_brake_trial_speed_invalid
+--- live/USER/chassis_auto_test.c
++++ perimeter/USER/chassis_auto_test.c
+@@ -109,7 +109,7 @@
+     {
+         ChassisPositionEndpoints endpoint = {0};
+         endpoint.session = session;
+-        endpoint.translation_mode = 3U; /* 3表示非平移/尚未指定。 */
++        endpoint.translation_mode = 4U; /* 3表示非平移/尚未指定。 */
+         s_endpoint_index = s_endpoint_count++;
+         s_endpoints[s_endpoint_index] = endpoint;
+     }
+@@ -457,10 +457,10 @@
+                     MotionDistanceJumpCountsPerMs(s_translation_mode,s_distance_max_rpm,s_distance_target_mm)) + 512)
+             { Auto_DistanceFaultLocked(4U); return; }
+             {
+-                static const int8_t projection[3][4]={{1,1,1,1},{1,-1,-1,1},{-1,1,1,-1}};
++                static const int8_t projection[4][4]={{1,1,1,1},{1,-1,-1,1},{-1,1,1,-1},{-1,-1,-1,-1}};
+                 int64_t start=(int64_t)base->start_raw[i];
+                 float mm;
+-                if (s_translation_mode>2U || base->start_sign[i]>1U || s_position.sign[i]>1U)
++                if (s_translation_mode>3U || base->start_sign[i]>1U || s_position.sign[i]>1U)
+                 { Auto_DistanceFaultLocked(5U); return; }
+                 if (base->start_sign[i]) start=-start;
+                 mm=(float)(current-start)*3.14159265358979323846f*g_chassis_geometry.wheel_diameter_mm/65536.0f;
+@@ -933,20 +933,22 @@
+     s_position_due = 0U;
+     now = xTaskGetTickCount();
+     moving = (g_chassis_auto_state == CHASSIS_AUTO_RUN) ||
++        g_chassis_auto_state==CHASSIS_AUTO_VERIFY_ON || g_chassis_auto_state==CHASSIS_AUTO_VERIFY_OFF ||
++        g_chassis_auto_state==CHASSIS_AUTO_SETTLE ||
+         (s_distance_mode && s_run_started && g_chassis_auto_state == CHASSIS_AUTO_START);
+     /* 调速串行下发期间仍在运动：在原monitor槽优先补最旧的位置，
+      * 避免反复纠偏让某轮饿死；400ms时效不放宽。 */
+     oldest = 0U;
+-    if (s_distance_mode && moving)
++    if (moving)
+         for (result = 0U; result < 4U; result++)
+         {
+             uint32_t age = (uint32_t)(TickType_t)(now - s_position_tick[result]);
+             if (!(s_position_valid & (1UL << result))) { i = result + 1U; break; }
+-            if (age >= pdMS_TO_TICKS(180U) && age > oldest)
++            if (age >= pdMS_TO_TICKS(100U) && age > oldest)
+             { oldest = age; i = result + 1U; }
+         }
+     if (!i || session != g_chassis_auto_session || !g_chassis_auto_active ||
+-        !moving || s_stop_due || s_finish_requested ||
++        !moving || (g_chassis_auto_state!=CHASSIS_AUTO_SETTLE && (s_stop_due || s_finish_requested)) ||
+         s_status_valid != 15U || s_speed_valid != 15U || !Auto_BaseHealthy())
+     { taskEXIT_CRITICAL(); return 0U; }
+     for (result = 0U; result < 4U; result++)
+@@ -959,7 +961,9 @@
+     taskENTER_CRITICAL();
+     if (session == g_chassis_auto_session && g_chassis_auto_active &&
+         ((g_chassis_auto_state == CHASSIS_AUTO_RUN) ||
+-         (s_distance_mode && s_run_started && g_chassis_auto_state == CHASSIS_AUTO_START)) && s_vm_requested)
++         (s_distance_mode && s_run_started && g_chassis_auto_state == CHASSIS_AUTO_START) ||
++         g_chassis_auto_state==CHASSIS_AUTO_VERIFY_ON || g_chassis_auto_state==CHASSIS_AUTO_VERIFY_OFF ||
++         g_chassis_auto_state==CHASSIS_AUTO_SETTLE) && s_vm_requested)
+     {
+         Auto_OdometrySample(i,result,sign,raw,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
+         s_position.result[i] = result;
+@@ -995,6 +999,32 @@
+ #else
+     { ChassisOdometrySamples empty={0}; *samples=empty; }
+ #endif
++    taskEXIT_CRITICAL();
++}
++
++/* Only inactive, powered, successful gaps/preparation; one bounded CAN transaction. */
++void ChassisAuto_OdometryPoll(void)
++{
++    uint32_t i=0U,j,oldest=0U,result,session,now;
++    uint8_t sign=0U;uint32_t raw=0U;CanRxMsg reply={0};PowerCommandStatus power;
++    taskENTER_CRITICAL();Power_ReadCommandStatus(&power);
++    if(g_chassis_auto_active || !s_vm_requested || !power.active || !Auto_BaseHealthy() ||
++       g_chassis_auto_cut_vm || (g_chassis_auto_result && g_chassis_auto_result!=1U))
++    {taskEXIT_CRITICAL();return;}
++    session=g_chassis_auto_session;now=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
++    for(j=0U;j<4U;j++) {
++        uint32_t age=now-s_odometry_samples.ms[j];
++        if(!(s_odometry_samples.mask&(1UL<<j))) {i=j;oldest=400U;break;}
++        if(age>oldest){oldest=age;i=j;}
++    }
++    if(oldest<40U){taskEXIT_CRITICAL();return;}
++    taskEXIT_CRITICAL();
++    result=CAN1_ReadPosition((uint8_t)(i+1U),&reply,&sign,&raw);
++    taskENTER_CRITICAL();Power_ReadCommandStatus(&power);
++    if(session==g_chassis_auto_session && !g_chassis_auto_active && s_vm_requested && power.active && Auto_BaseHealthy()) {
++        Auto_OdometrySample(i,result,sign,raw,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
++        if(result!=1U) {g_chassis_auto_cut_vm=1U;g_chassis_auto_cause=3U;}
++    }
+     taskEXIT_CRITICAL();
+ }
+ 
+@@ -1059,9 +1089,7 @@
+             g_chassis_auto_driver_rpm[i] = rpm;
+             s_speed_tick[i] = xTaskGetTickCount(); s_speed_valid |= 1UL << i;
+ #if APP_POSITION_DIAGNOSTIC
+-            if (g_chassis_auto_state == CHASSIS_AUTO_RUN ||
+-                (s_distance_mode && s_run_started && g_chassis_auto_state == CHASSIS_AUTO_START))
+-                s_position_due = i + 1U;
++            s_position_due = i + 1U;
+ #endif
+         }
+         else
+@@ -1497,7 +1525,7 @@
+     if (!prepared) return 0U;
+     prepared->valid = 0U;prepared->route_reference_mm_s=0.0f;
+     if(route_speed!=0.0f && !MotionRoute_ShapeAllowed(motion_mode,base_rpm,run_ms,distance_mm,route_speed)) return 0U;
+-    if (__get_BASEPRI() || __get_PRIMASK() || motion_mode > 2U ||
++    if (__get_BASEPRI() || __get_PRIMASK() || motion_mode > 3U ||
+         base_rpm < 3U || (base_rpm > 15U && route_speed==0.0f && !MotionTrial20Allowed(motion_mode,base_rpm,distance_mm))) return 0U;
+     if (distance_mm != 0.0f)
+     {
+@@ -1563,7 +1591,7 @@
+     if(prepared && prepared->route_reference_mm_s!=0.0f &&
+         !MotionRoute_ShapeAllowed(prepared->motion_mode,prepared->base_rpm,prepared->run_ms,
+             prepared->distance_mm,prepared->route_reference_mm_s)) return 0U;
+-    if (!prepared || prepared->valid != 1U || prepared->motion_mode > 2U ||
++    if (!prepared || prepared->valid != 1U || prepared->motion_mode > 3U ||
+         prepared->base_rpm < 3U || (prepared->base_rpm > 15U && prepared->route_reference_mm_s==0.0f &&
+             !MotionTrial20Allowed(prepared->motion_mode,prepared->base_rpm,prepared->distance_mm))) return 0U;
+     if (prepared->distance_mm != 0.0f)
+--- live/USER/chassis_auto_test.h
++++ perimeter/USER/chassis_auto_test.h
+@@ -177,10 +177,11 @@
+     uint32_t mask, sign[4], raw[4], ms[4];
+ } ChassisOdometrySamples;
+ void ChassisAuto_ReadOdometrySamples(ChassisOdometrySamples *samples);
++void ChassisAuto_OdometryPoll(void);
+ /* 历史完整起止记录，诊断开启时每次复位最多保存前8个动作。
+  * outcome：0未完成，1正常完成，2失败/取消；不是实时位置快照。
+  * 只在四轮起止均齐、正常DONE后才输出完整记录；断VM后仍可读取历史。 */
+-#define CHASSIS_POSITION_ENDPOINT_CAPACITY 8U
++#define CHASSIS_POSITION_ENDPOINT_CAPACITY 12U
+ typedef struct
+ {
+     uint32_t session, outcome, start_mask, end_mask;
+--- live/USER/chassis_kinematics.c
++++ perimeter/USER/chassis_kinematics.c
+@@ -223,12 +223,13 @@
+     float base, lateral;
+     uint32_t limit;
+     Chassis_ClearMotorCommands(commands);
+-    if ((commands == NULL) || (mode > 2U) || (base_rpm < minimum_base) || (base_rpm > maximum_base) ||
++    if ((commands == NULL) || (mode > 3U) || (base_rpm < minimum_base) || (base_rpm > maximum_base) ||
+         (correction_rpm < -2) || (correction_rpm > 2)) return 0U;
+     base = (float)base_rpm;
+     limit = base_rpm + 2U;
+-    if (mode == 0U)
+-    {
++    if (mode == 0U || mode == 3U)
++    {
++        if(mode==3U) base=-base;
+         logical.rpm[0] = base; logical.rpm[1] = base;
+         logical.rpm[2] = base; logical.rpm[3] = base;
+     }
+@@ -318,14 +319,14 @@
+     int32_t correction;
+     float k, per_rpm, base, scale;
+     if (!Chassis_GeometryFactors(&g_chassis_geometry, &k, &per_rpm)) return 0U;
+-    for (mode = 0U; mode < 3U; mode++)
++    for (mode = 0U; mode < 4U; mode++)
+     {
+         base = (float)((mode == 0U) ? APP_FORWARD_HOLD_BASE_RPM : APP_LATERAL_HOLD_BASE_RPM);
+         limit = (mode == 0U) ? APP_FORWARD_HOLD_MAX_RPM : APP_LATERAL_HOLD_MAX_RPM;
+         for (correction = -2; correction <= 2; correction++)
+         {
+-            body.vx_mm_s = (mode == 0U) ? base * per_rpm : 0.0f;
+-            body.vy_mm_s = (mode == 0U) ? 0.0f : ((mode == 1U) ? base : -base) * per_rpm;
++            body.vx_mm_s = (mode == 0U || mode == 3U) ? (mode==3U ? -base : base)*per_rpm : 0.0f;
++            body.vy_mm_s = (mode == 0U || mode == 3U) ? 0.0f : ((mode == 1U) ? base : -base) * per_rpm;
+             body.wz_rad_s = (float)correction * per_rpm / k;
+             if (!Chassis_Inverse(&g_chassis_geometry, &body, (float)limit, &wheels, &scale) ||
+                 !Chassis_EncodeEmm(&wheels, limit, expected) ||
+@@ -344,7 +345,7 @@
+             }
+         }
+     }
+-    if (Chassis_TranslationHoldCommands(3U, 0, actual) != 0U) return 0U;
++    if (Chassis_TranslationHoldCommands(4U, 0, actual) != 0U) return 0U;
+     for (i = 0U; i < 4U; i++) if (actual[i].speed_raw != 0U) return 0U;
+     if (Chassis_TranslationHoldCommands(1U, 3, actual) != 0U) return 0U;
+     for (i = 0U; i < 4U; i++) if (actual[i].speed_raw != 0U) return 0U;
+@@ -356,12 +357,12 @@
+     const uint32_t start_sign[4], const uint32_t start_raw[4],
+     const uint32_t sign[4], const uint32_t raw[4], float *mean_mm, float *spread_mm)
+ {
+-    static const int8_t projection[3][4] = {{1,1,1,1},{1,-1,-1,1},{-1,1,1,-1}};
++    static const int8_t projection[4][4] = {{1,1,1,1},{1,-1,-1,1},{-1,1,1,-1},{-1,-1,-1,-1}};
+     uint32_t i;
+     float sum = 0.0f, low = 0.0f, high = 0.0f;
+     if (!start_sign || !start_raw || !sign || !raw || !mean_mm || !spread_mm) return 0U;
+     *mean_mm = *spread_mm = 0.0f;
+-    if (mode > 2U) return 0U;
++    if (mode > 3U) return 0U;
+     for (i = 0U; i < 4U; i++)
+     {
+         int64_t first, current;
+@@ -388,9 +389,9 @@
+     float result;
+     if (progress_mm == NULL) return 0U;
+     *progress_mm = 0.0f;
+-    if (mode > 2U || !Chassis_Finite(encoder_mm)) return 0U;
++    if (mode > 3U || !Chassis_Finite(encoder_mm)) return 0U;
+     result = encoder_mm;
+-    if (mode == 0U) result *= CHASSIS_FORWARD_DISTANCE_SCALE;
++    if (mode == 0U || mode == 3U) result *= CHASSIS_FORWARD_DISTANCE_SCALE;
+     if (mode == 1U && APP_LEFT_TRIM_ACTIVE) result *= APP_LEFT_DISTANCE_SCALE;
+     if (!Chassis_Finite(result)) return 0U;
+     *progress_mm = result;
+@@ -419,13 +420,18 @@
+     sign[0]=1U; sign[1]=1U; sign[2]=0U; sign[3]=0U;
+     if (!Chassis_TranslationPositionMm(2U,zero,zero,sign,raw,&mean,&spread) ||
+         Chassis_Abs(mean - 241.90263f) > 0.01f || spread > 0.01f) return 0U;
+-    if (Chassis_TranslationPositionMm(3U,zero,zero,sign,raw,&mean,&spread)) return 0U;
++    if (Chassis_TranslationPositionMm(4U,zero,zero,sign,raw,&mean,&spread)) return 0U;
++    sign[0]=1U;sign[1]=0U;sign[2]=1U;sign[3]=0U;
++    if(!Chassis_TranslationPositionMm(3U,zero,zero,sign,raw,&mean,&spread) ||
++       Chassis_Abs(mean-241.90263f)>0.01f || spread>0.01f)return 0U;
+     sign[0]=0U; sign[1]=1U; sign[2]=0U; sign[3]=1U;
+     if (!Chassis_CalibrateDistanceMm(0U,300.0f,&mean) ||
+         Chassis_Abs(mean - 306.54762f) > 0.01f ||
+         !Chassis_CalibrateDistanceMm(1U,300.0f,&mean) || Chassis_Abs(mean - (APP_LEFT_TRIM_ACTIVE ? 300.0f*APP_LEFT_DISTANCE_SCALE : 300.0f)) > 0.01f ||
+         !Chassis_CalibrateDistanceMm(2U,300.0f,&mean) || mean != 300.0f ||
+-        Chassis_CalibrateDistanceMm(3U,300.0f,&mean) ||
++        !Chassis_CalibrateDistanceMm(3U,300.0f,&mean) ||
++        Chassis_Abs(mean-300.0f*CHASSIS_FORWARD_DISTANCE_SCALE)>0.01f ||
++        Chassis_CalibrateDistanceMm(4U,300.0f,&mean) ||
+         Chassis_CalibrateDistanceMm(0U,300.0f,NULL)) return 0U;
+     if (Chassis_DistanceRpm(121.0f,15U) != 15U || Chassis_DistanceRpm(120.0f,15U) != 8U ||
+         Chassis_DistanceRpm(40.0f,15U) != 3U || Chassis_DistanceRpm(0.0f,15U) != 0U ||
+--- live/USER/main.c
++++ perimeter/USER/main.c
+@@ -1346,6 +1346,26 @@
+ static uint32_t s_motion_action_count;
+ volatile uint32_t g_debug_plan_id = DEBUG_PLAN_DEFAULT;
+ #define MOTION_ACTION_COUNT (s_motion_action_count)
++
++typedef struct {uint32_t captured,tick_ms;ChassisOdometryStatus pose;} PerimeterRecord;
++volatile PerimeterRecord g_perimeter_records[13];
++static uint32_t s_perimeter_odom_started,s_perimeter_completed_seen;
++static const float s_perimeter_targets[13][3]={
++{2250.000f,2250.000f,-90.000f},
++{2250.000f,2100.000f,-90.000f},
++{2100.000f,2100.000f,-90.000f},
++{2100.000f,300.000f,-90.000f},
++{300.000f,300.000f,-90.000f},
++{300.000f,300.000f,-180.000f},
++{300.000f,300.000f,90.000f},
++{300.000f,2100.000f,90.000f},
++{300.000f,2100.000f,-180.000f},
++{300.000f,2100.000f,-90.000f},
++{2100.000f,2100.000f,-90.000f},
++{2100.000f,2250.000f,-90.000f},
++{2250.000f,2250.000f,-90.000f}
++};
++
+ /* 动态预设仍受1..8项及组总时限校验；不是运行中可改路线。 */
+ volatile uint32_t g_motion_plan_valid = 0U;
+ volatile CombinedTestDebug g_combined_test = {0};
+@@ -1391,7 +1411,7 @@
+ #if APP_SERIAL_MOTION_CONTROL
+ /* 成功段计时先留存，整组正常结束且VM关闭后再发送，不增加运行期串口流量。 */
+ #define MOTION_TIMING_RECORD_FIELDS (HWT_TIMING_FIELDS + 3U)
+-#define MOTION_TIMING_RECORD_CAPACITY 8U
++#define MOTION_TIMING_RECORD_CAPACITY 12U
+ static uint32_t s_motion_timing_records[MOTION_TIMING_RECORD_CAPACITY][MOTION_TIMING_RECORD_FIELDS];
+ static uint32_t s_motion_timing_count, s_motion_timing_cursor;
+ static void App_TimingRecordCompleted(uint32_t index, uint32_t session, uint32_t now)
+@@ -1751,7 +1771,7 @@
+         const MotionAction *action = &s_motion_actions[i];
+         if(action->reference_mm_s!=0.0f) {
+             if(g_debug_plan_id!=DEBUG_PLAN_DEFAULT || !APP_ROUTE_SPEED_TRIAL_ACTIVE ||
+-                action->kind<MOTION_FORWARD_DISTANCE || action->kind>MOTION_RIGHT_DISTANCE ||
++                action->kind<MOTION_FORWARD_DISTANCE || action->kind>MOTION_BACKWARD_DISTANCE ||
+                 action->relative_deg!=0.0f || !MotionRoute_ShapeAllowed(action->kind-MOTION_FORWARD_DISTANCE,
+                     action->base_rpm,action->run_ms,action->distance_mm,action->reference_mm_s)) return 0U;
+             budget+=action->run_ms+6000U;continue;
+@@ -1766,14 +1786,14 @@
+         else if (action->kind == MOTION_TURN)
+         {
+             if ((action->base_rpm > 5U && !(APP_TURN_BRAKE_TRIAL_ACTIVE &&
+-                MOTION_ACTION_COUNT==1U && g_debug_plan_id==DEBUG_PLAN_DEFAULT &&
++                (MOTION_ACTION_COUNT==1U || MOTION_ACTION_COUNT==12U) && g_debug_plan_id==DEBUG_PLAN_DEFAULT &&
+                 action->base_rpm==APP_TURN_BRAKE_MAX_RPM &&
+                 (action->relative_deg==90.0f || action->relative_deg==-90.0f))) || action->run_ms || action->distance_mm != 0.0f ||
+                 !(((action->relative_deg >= 5.0f) && (action->relative_deg <= 90.0f)) ||
+                   ((action->relative_deg <= -5.0f) && (action->relative_deg >= -90.0f)))) return 0U;
+             budget += APP_HEADING_RUN_MS + 3500U;
+         }
+-        else if (action->kind >= MOTION_FORWARD_DISTANCE && action->kind <= MOTION_RIGHT_DISTANCE)
++        else if (action->kind >= MOTION_FORWARD_DISTANCE && action->kind <= MOTION_BACKWARD_DISTANCE)
+         {
+             if (!APP_POSITION_DIAGNOSTIC || !Chassis_DistanceSelfTest() ||
+                 action->base_rpm < 3U || action->run_ms ||
+@@ -1786,7 +1806,7 @@
+         }
+         else return 0U;
+     }
+-    return (budget <= 120000U) ? 1U : 0U;
++    return (budget <= APP_PERIMETER_GROUP_MS) ? 1U : 0U;
+ }
+ #if APP_IS_DEBUG
+ static uint32_t App_DebugSelectPlan(uint32_t id)
+@@ -1947,6 +1967,60 @@
+     return accepted;
+ }
+ /* 动作表仅安排顺序，同样使用公共单动作入口。 */
++static uint32_t App_PerimeterTurnStart(uint32_t direction, float angle_deg, uint32_t max_rpm)+
++{+
++    uint32_t accepted = 0U;+
++    if (direction > TURN_CCW || !(angle_deg >= MOTION_TURN_MIN_DEG && angle_deg <= MOTION_TURN_MAX_DEG) ||+
++        max_rpm < 1U || (max_rpm > MOTION_TURN_MAX_RPM &&+
++            !(APP_TURN_BRAKE_TRIAL_ACTIVE && s_motion_list_submit &&+
++              MOTION_ACTION_COUNT==12U && g_debug_plan_id==DEBUG_PLAN_DEFAULT &&+
++              angle_deg==90.0f && max_rpm==APP_TURN_BRAKE_MAX_RPM))) return 0U;+
++    taskENTER_CRITICAL();+
++    if (!g_heading_exec_trip &&+
++        (g_heading_exec_phase == HR_IDLE || g_heading_exec_phase == HR_DONE) &&+
++        App_MotionAccept())+
++    {+
++        HWT101_DiagnosticArm();g_motion_fault_diag_valid=0U;+
++        s_combined_turn = 1U; s_motion_turn_max_rpm = max_rpm;+
++        /* 转向不能继承前一平移段的动态距离、速度与截止。 */+
++        s_combined_distance_mm=s_combined_reference_mm_s=0.0f;+
++        s_combined_base_rpm=s_combined_run_ms=0U;+
++        HeadingSession_Init(&s_heading_exec);+
++        memset((void *)&g_heading_stop_trace, 0, sizeof(g_heading_stop_trace));+
++        g_heading_exec_phase = HR_IDLE; g_heading_exec_state = HS_IDLE;+
++        g_heading_exec_relative_deg = (direction == TURN_CCW) ? angle_deg : -angle_deg;+
++        g_heading_exec_request = 1U; s_motion_has_action = 1U; accepted = 1U;+
++    }+
++    taskEXIT_CRITICAL();+
++    return accepted;+
++}
++
+ static uint32_t App_CombinedLoadAction(uint32_t index)
+ {
+     const MotionAction *action;
+@@ -1958,10 +2032,10 @@
+         accepted=App_MoveSubmit(action->kind-MOTION_FORWARD_DISTANCE,action->base_rpm,
+             action->run_ms,action->distance_mm,action->reference_mm_s);
+     else if (action->kind == MOTION_TURN)
+-        accepted = TurnStart((action->relative_deg > 0.0f) ? TURN_CCW : TURN_CW,
++        accepted = App_PerimeterTurnStart((action->relative_deg > 0.0f) ? TURN_CCW : TURN_CW,
+             (action->relative_deg > 0.0f) ? action->relative_deg : -action->relative_deg,
+             action->base_rpm ? action->base_rpm : 5U);
+-    else if (action->kind >= MOTION_FORWARD_DISTANCE && action->kind <= MOTION_RIGHT_DISTANCE)
++    else if (action->kind >= MOTION_FORWARD_DISTANCE && action->kind <= MOTION_BACKWARD_DISTANCE)
+         accepted = MoveDistanceStart(action->kind - MOTION_FORWARD_DISTANCE, action->base_rpm, action->distance_mm / 10.0f);
+     else accepted = MoveStart(action->kind, action->base_rpm, action->run_ms);
+     s_motion_list_submit = 0U;
+@@ -2001,7 +2075,7 @@
+     if ((g_combined_test.state == 1U) || (g_combined_test.state == 2U))
+     {
+         if (g_combined_test.request == 2U) App_CombinedTestStop(1U);
+-        else if ((uint32_t)(now - s_combined_begin_ms) >= 120000U)
++        else if ((uint32_t)(now - s_combined_begin_ms) >= APP_PERIMETER_GROUP_MS)
+             App_CombinedTestStop(2U);
+         else if (!App_HeadingRuntimeSource(now) || !App_HeadingRuntimeExclusive() ||
+                  g_can_ctrl_fault_latched) App_CombinedTestStop(3U);
+@@ -2410,7 +2484,7 @@
+     if (!ChassisAuto_ReadPositionEndpoints(index, &endpoint)) return;
+     if (endpoint.outcome == 2U) { index++; return; }
+     if (endpoint.outcome != 1U || endpoint.start_mask != 15U || endpoint.end_mask != 15U) return;
+-    count = snprintf(frame, sizeof(frame), "PE2,%lu,%lu,%lu,%lu,%lu,%lu,%lu,",
++    count = snprintf(frame, sizeof(frame), "PE3,%lu,%lu,%lu,%lu,%lu,%lu,%lu,",
+         (unsigned long)xTaskGetTickCount(), (unsigned long)endpoint.session,
+         (unsigned long)endpoint.outcome, (unsigned long)endpoint.start_mask,
+         (unsigned long)endpoint.end_mask, (unsigned long)endpoint.translation_mode,
+@@ -2435,6 +2509,26 @@
+ 
+ #if APP_HEADING_SESSION_TEST
+ /* OD1是只读诊断，1Hz尽力发送；忙则跳过，不参与启动/KEEP判定。 */
++static void App_PerimeterTelemetry(void)
++{
++    static uint32_t cursor,last;static char frame[256];
++    PerimeterRecord record;uint32_t now=(uint32_t)xTaskGetTickCount();int n;uint16_t crc;
++    if(g_combined_test.state<3U || cursor>12U || now-last<100U ||
++       !App_SerialDiagnosticWindow(now,80U)) return;
++    taskENTER_CRITICAL();record=g_perimeter_records[cursor];taskEXIT_CRITICAL();
++    n=snprintf(frame,sizeof(frame),"OP1,%lu,%lu,%lu,%ld,%ld,%ld,%lu,%lu,%lu,%lu,%ld,%ld,%ld,",
++       (unsigned long)cursor,(unsigned long)record.captured,(unsigned long)record.tick_ms,
++       (long)record.pose.x_mm,(long)record.pose.y_mm,(long)(record.pose.heading_deg*1000.0f),
++       (unsigned long)record.pose.valid,(unsigned long)record.pose.reasons,
++       (unsigned long)record.pose.continuity_lost,(unsigned long)record.pose.age_ms,
++       (long)s_perimeter_targets[cursor][0],(long)s_perimeter_targets[cursor][1],
++       (long)(s_perimeter_targets[cursor][2]*1000.0f));
++    if(n<0 || (uint32_t)n>=sizeof(frame)-7U) return;
++    crc=App_SerialCrc(frame,(uint32_t)n);
++    (void)snprintf(frame+n,sizeof(frame)-(uint32_t)n,"%04X\r\n",crc);
++    if(App_DebugSendString(frame)==1U){cursor++;last=now;}
++}
++
+ static void App_OdometryTelemetry(void)
+ {
+     static char frame[192];
+@@ -2741,7 +2835,8 @@
+         values[39]=(int32_t)APP_SPEED20_FEEDBACK_RPM;
+     if(APP_ROUTE_SPEED_TRIAL_ACTIVE && g_debug_plan_id==DEBUG_PLAN_DEFAULT)
+         values[39]=(int32_t)ROUTE_TRIAL_FEEDBACK_RPM;
+-    if(APP_TURN_BRAKE_TRIAL_ACTIVE && g_debug_plan_id==DEBUG_PLAN_DEFAULT) {
++    if(APP_TURN_BRAKE_TRIAL_ACTIVE && g_debug_plan_id==DEBUG_PLAN_DEFAULT &&
++       ((g_combined_test.state==0U && s_motion_actions[0].kind==MOTION_TURN) || s_combined_turn)) {
+         values[38]=(int32_t)APP_TURN_BRAKE_MAX_RPM;
+         values[39]=(int32_t)APP_TURN_BRAKE_FEEDBACK_RPM;
+     }
+@@ -2905,6 +3000,10 @@
+                 g_odometry_pose_result=1U;
+     }
+ #endif
++    if(!s_perimeter_odom_started && g_combined_test.state==1U && source.healthy) {
++        if(ChassisOdometry_SetPose(&s_odometry,2250.0f,2250.0f,-90.0f,source.yaw_deg))
++            s_perimeter_odom_started=1U;
++    }
+     ChassisAuto_ReadOdometrySamples(&samples);
+     if(source.healthy && App_HeadingFrameAge(&source,now,1U)<ODOM_YAW_MAX_AGE_MS)
+         ChassisOdometry_Yaw(&s_odometry,source.yaw_deg,source.angle_ms);
+@@ -2915,7 +3014,20 @@
+     if(samples.mask!=15U || g_safety_fault || g_rtos_fault || g_can_ctrl_fault_latched)
+         ChassisOdometry_Invalidate(&s_odometry);
+     ChassisOdometry_Update(&s_odometry,now);
+-    taskENTER_CRITICAL(); g_chassis_odometry=s_odometry.status; taskEXIT_CRITICAL();
++    taskENTER_CRITICAL();
++    g_chassis_odometry=s_odometry.status;
++    if(s_perimeter_odom_started && !g_perimeter_records[0].captured && s_odometry.status.valid &&
++       g_combined_test.completed==0U) {
++        g_perimeter_records[0].captured=1U;g_perimeter_records[0].tick_ms=now;
++        g_perimeter_records[0].pose=s_odometry.status;
++    }
++    if(g_combined_test.completed>s_perimeter_completed_seen && g_combined_test.completed<=12U) {
++        uint32_t slot=g_combined_test.completed;
++        g_perimeter_records[slot].captured=1U;g_perimeter_records[slot].tick_ms=now;
++        g_perimeter_records[slot].pose=s_odometry.status;
++        s_perimeter_completed_seen=slot;
++    }
++    taskEXIT_CRITICAL();
+ }
+ #endif
+ 
+@@ -2968,7 +3080,10 @@
+         /* 静态停止测试优先，每轮仍只执行一笔CAN交易 */
+         /* 自动停止优先，每轮只执行一笔CAN交易 */
+         #if APP_HEADING_SESSION_TEST
+-                if (g_chassis_auto_active == 0U) App_CanPollStep();
++                if (g_chassis_auto_active == 0U) {
++                    if(g_combined_test.state==1U || g_combined_test.state==2U) ChassisAuto_OdometryPoll();
++                    else App_CanPollStep();
++                }
+         #endif
+                 if (APP_HEADING_SESSION_TEST == 0U)
+                 {
+@@ -3646,6 +3761,7 @@
+         App_PositionTelemetry();
+ #if APP_HEADING_SESSION_TEST
+         App_OdometryTelemetry();
++        App_PerimeterTelemetry();
+ #endif
+ #endif
+ #endif
+--- live/USER/motion_action_plan.h
++++ perimeter/USER/motion_action_plan.h
+@@ -9,7 +9,8 @@
+ #define MOTION_FORWARD_DISTANCE 4U
+ #define MOTION_LEFT_DISTANCE    5U
+ #define MOTION_RIGHT_DISTANCE   6U
+-#define MOTION_ACTION_CAPACITY 8U
++#define MOTION_BACKWARD_DISTANCE 7U
++#define MOTION_ACTION_CAPACITY 12U
+ typedef struct
+ {
+     uint32_t kind;
+--- live/USER/motion_control.h
++++ perimeter/USER/motion_control.h
+@@ -8,6 +8,7 @@
+ #define MOVE_FORWARD 0U
+ #define MOVE_LEFT    1U
+ #define MOVE_RIGHT   2U
++#define MOVE_BACKWARD 3U /* candidate: route-distance only, not timed public Move */
+ #define TURN_CW      0U
+ #define TURN_CCW     1U
+ 
+--- live/USER/motion_route_trial.h
++++ perimeter/USER/motion_route_trial.h
+@@ -13,8 +13,8 @@
+ static __inline float MotionRoute_MaxSpeed(uint32_t direction)
+ {
+     float cm_s;
+-    if(direction>2U) return 0.0f;
+-    cm_s=direction==0U ? APP_ROUTE_FORWARD_MAX_CM_S :
++    if(direction>3U) return 0.0f;
++    cm_s=(direction==0U || direction==3U) ? APP_ROUTE_FORWARD_MAX_CM_S :
+         (direction==1U ? APP_ROUTE_LEFT_MAX_CM_S : APP_ROUTE_RIGHT_MAX_CM_S);
+     if(!(cm_s>0.0f && cm_s<=20.0f)) return 0.0f;
+     return cm_s*10.0f;
+@@ -24,7 +24,7 @@
+ {
+     float factor,value,whole;
+     uint32_t base;
+-    if(!APP_ROUTE_SPEED_TRIAL_ACTIVE || !limits || !rpm || direction>2U ||
++    if(!APP_ROUTE_SPEED_TRIAL_ACTIVE || !limits || !rpm || direction>3U ||
+         !(mm>=100.0f && mm<=2100.0f) ||
+         !(speed>=12.1f && speed<=MotionRoute_MaxSpeed(direction)) ||
+         !Chassis_CalibrateDistanceMm(direction,
+--- live/USER/route_config.h
++++ perimeter/USER/route_config.h
+@@ -11,17 +11,26 @@
+  * 最多8段，但原120秒保守超时预算可能更早限制段数；各段停稳再继续。
+  * 仅参数示例，未实车验收；不含障碍检测、地图定位或连续过弯。
+  */
+-#define APP_ROUTE_USE_CUSTOM 0
++#define APP_ROUTE_USE_CUSTOM 1
+ /* 新候选默认0。仅CUSTOM=1、调试mode3、S曲线启用时生效；尚未实车验收。
+  * 前进、左移、右移分别限速，单位cm/s；本阶段硬上限20，不能填更大。
+  * 参考速度与电机转速余量分开；短段自动降低峰值，各段仍停稳。
+  */
+-#define APP_ROUTE_SPEED_TRIAL_ENABLE 0
++#define APP_ROUTE_SPEED_TRIAL_ENABLE 1
+ #define APP_ROUTE_FORWARD_MAX_CM_S 20.0f
+ #define APP_ROUTE_LEFT_MAX_CM_S    20.0f
+ #define APP_ROUTE_RIGHT_MAX_CM_S   20.0f
+ #define APP_ROUTE_ROWS(X) \
+-    X(FORWARD, 30.0f, 5.0f) \
+-    X(LEFT,    20.0f, 3.0f) \
+-    X(TURN,    90.0f, 5.0f)
++    X(FORWARD, 15.0f, 5.0f) \
++    X(RIGHT, 15.0f, 5.0f) \
++    X(FORWARD, 180.0f, 20.0f) \
++    X(RIGHT, 180.0f, 20.0f) \
++    X(TURN, -90.0f, 30.0f) \
++    X(TURN, -90.0f, 30.0f) \
++    X(FORWARD, 180.0f, 20.0f) \
++    X(TURN, 90.0f, 30.0f) \
++    X(TURN, 90.0f, 30.0f) \
++    X(LEFT, 180.0f, 20.0f) \
++    X(BACKWARD, 15.0f, 5.0f) \
++    X(LEFT, 15.0f, 5.0f)
+ #endif
+--- live/USER/route_plan.h
++++ perimeter/USER/route_plan.h
+@@ -21,6 +21,7 @@
+ #define ROUTE_FORWARD MOTION_FORWARD_DISTANCE
+ #define ROUTE_LEFT MOTION_LEFT_DISTANCE
+ #define ROUTE_RIGHT MOTION_RIGHT_DISTANCE
++#define ROUTE_BACKWARD MOTION_BACKWARD_DISTANCE
+ #define ROUTE_TURN MOTION_TURN
+ #define ROUTE_ROW(kind, amount, speed) {ROUTE_##kind, amount, speed},
+ /* 纯参数转换，不发CAN、不申请VM。全部通过后才发布动作表。
+@@ -42,6 +43,13 @@
+         !(geometry->track_width_mm>0.0f && geometry->track_width_mm<1000.0f) ||
+         !(geometry->wheelbase_mm>0.0f && geometry->wheelbase_mm<1000.0f))
+     { check->error=ROUTE_GEOMETRY; return 0U; }
++    {
++        static const RouteRow expected[]={APP_ROUTE_ROWS(ROUTE_ROW)};
++        if(count!=12U) {check->error=ROUTE_COUNT;return 0U;}
++        for(i=0U;i<count;i++) if(rows[i].kind!=expected[i].kind ||
++            rows[i].amount!=expected[i].amount || rows[i].speed!=expected[i].speed)
++        {check->error=ROUTE_KIND;return 0U;}
++    }
+     for (i=0U;i<count;i++) {
+         const RouteRow *row=&rows[i];
+         MotionAction *action=&staged[i];
+@@ -55,9 +63,9 @@
+             action->relative_deg=row->amount;
+             factor=6.0f*geometry->wheel_diameter_mm/(geometry->track_width_mm+geometry->wheelbase_mm);
+             minimum=1.0f; maximum=5.0f;
+-            if(APP_TURN_BRAKE_TRIAL_ACTIVE && count==1U &&
++            if(APP_TURN_BRAKE_TRIAL_ACTIVE && (count==1U || count==12U) &&
+                (row->amount==90.0f || row->amount==-90.0f)) maximum=(APP_TURN_BRAKE_TRIAL_DPS==30U)?27.2f:13.6f;
+-        } else if (row->kind>=MOTION_FORWARD_DISTANCE && row->kind<=MOTION_RIGHT_DISTANCE) {
++        } else if (row->kind>=MOTION_FORWARD_DISTANCE && row->kind<=MOTION_BACKWARD_DISTANCE) {
+             #if APP_ROUTE_SPEED_TRIAL_ACTIVE
+             {
+                 uint32_t direction=row->kind-MOTION_FORWARD_DISTANCE;
+@@ -74,7 +82,7 @@
+         action->base_rpm=rpm;action->run_ms=route_ms;
+                 budget+=route_ms+6000U; /* 准备、停车、段间余量，不缩减实际阶段截止。 */
+                 check->budget_ms=budget;
+-                if(budget>120000U) { check->error=ROUTE_BUDGET;return 0U; }
++                if(budget>APP_PERIMETER_GROUP_MS) { check->error=ROUTE_BUDGET;return 0U; }
+                 continue;
+             }
+             #else
+@@ -101,7 +109,7 @@
+         { check->error=ROUTE_DURATION; return 0U; }
+         budget+=(uint32_t)duration+3500U;
+         check->budget_ms=budget;
+-        if (budget>120000U) { check->error=ROUTE_BUDGET; return 0U; }
++        if (budget>APP_PERIMETER_GROUP_MS) { check->error=ROUTE_BUDGET; return 0U; }
+     }
+     for(i=0U;i<count;i++) actions[i]=staged[i];
+     check->segment=0U; return 1U;

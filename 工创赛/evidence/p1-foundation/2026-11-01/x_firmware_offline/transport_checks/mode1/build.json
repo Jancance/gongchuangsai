@@ -1,0 +1,34 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-DAPP_X_OFFLINE_ONLY=1",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 0,
+    "output": "\"unit.c\", line 27: Warning:  #550-D: variable \"claim_session\"  was set but never used\n  static uint32_t claim_session,claim_generation;\n                  ^\n\"unit.c\", line 27: Warning:  #550-D: variable \"claim_generation\"  was set but never used\n  static uint32_t claim_session,claim_generation;\n                                ^\n\"unit.c\", line 63: Warning:  #177-D: function \"ChassisAuto_SyncTriggerClaim\"  was declared but never referenced\n  static uint32_t ChassisAuto_SyncTriggerClaim(uint32_t session,uint32_t generation){\n                  ^\n\"unit.c\", line 103: Warning:  #177-D: variable \"s_sync_trigger_session\"  was declared but never referenced\n  static uint32_t s_sync_trigger_session,s_sync_trigger_generation;\n                  ^\n\"unit.c\", line 103: Warning:  #177-D: variable \"s_sync_trigger_generation\"  was declared but never referenced\n  static uint32_t s_sync_trigger_session,s_sync_trigger_generation;\n                                         ^\nunit.c: 5 warnings, 0 errors\n"
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armlink.exe",
+      "--entry",
+      "test_entry",
+      "--scatter",
+      "unit.sct",
+      "unit.o",
+      "--library_type=microlib",
+      "-o",
+      "unit.axf"
+    ],
+    "returncode": 0,
+    "output": ""
+  }
+]

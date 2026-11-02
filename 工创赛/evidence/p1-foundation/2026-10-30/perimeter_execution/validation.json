@@ -1,0 +1,69 @@
+{
+  "hardware_accessed": false,
+  "downloaded": false,
+  "physical_start_sent": false,
+  "position_compensation": false,
+  "vehicle_ready": false,
+  "performance_matrix_all_completed": false,
+  "candidate_project": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\perimeter_record_candidate_20261030\\gongxun-f407.uvprojx",
+  "candidate_axf_sha256": "85de35780a43972dada3a03d69440bfdda4b2f179bc7055fdb28c503f4742a51",
+  "original_USER_files_unchanged": 33,
+  "saved_rotation_files_unchanged": 7,
+  "protected_rotation_functions_unchanged": 4,
+  "build": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "host_tests": {
+    "tests": 155,
+    "passed": true,
+    "suites": [
+      "test_p1_perimeter_client",
+      "test_p1_serial_motion",
+      "test_p1_turn_trial",
+      "test_p1_odometry_telemetry",
+      "test_p1_perimeter_preview",
+      "test_p1_route_preview"
+    ]
+  },
+  "actual_C_checks": 782759,
+  "actual_scheduler_checks": 114,
+  "reverse_models": {
+    "total": 24,
+    "completed": 23
+  },
+  "perimeter_models": {
+    "total": 6,
+    "completed": 3
+  },
+  "fault_and_cancel_models": 10,
+  "completed_loop_errors": [
+    {
+      "model": 24,
+      "position_mm": 49.26357415525376,
+      "heading_deg": 0.51953125,
+      "all_13_checkpoints_valid": true
+    },
+    {
+      "model": 25,
+      "position_mm": 22.071425246822876,
+      "heading_deg": 1.296539306640625,
+      "all_13_checkpoints_valid": true
+    },
+    {
+      "model": 26,
+      "position_mm": 90.14216421125398,
+      "heading_deg": 0.75048828125,
+      "all_13_checkpoints_valid": true
+    }
+  ],
+  "source_hashes": {
+    "工创赛/scripts/p1_prepare_perimeter_candidate.py": "865a254e72b9f15ea613bc8314ee4a71bdc39ba2023a38322aa90851a3c38eb7",
+    "工创赛/scripts/p1_perimeter_sim.py": "ec0111e1a0f4d4ca8b6e19a54465f63bc4ecb4fcd9eb2b190a8edcdb29d1b9b9",
+    "工创赛/scripts/p1_perimeter_scheduler_check.py": "85a9dd55f898505e1bcc733ab2be10384e5406f0fe98d59ee552fbbc2aa3cbbd",
+    "工创赛/scripts/p1_perimeter_serial.py": "5e1bc4054430a9dccb93006446d5cfd7ade6230e984f29c7024b413b344e5d18",
+    "工创赛/scripts/p1_perimeter_records.py": "86f15a6d0630dae99c584c9ac869eceff493d1a60ea2a815f95f5db508034924",
+    "工创赛/scripts/p1_serial_motion.py": "a780ee9143dd0bf9fe31df3fa3810b7c351adc5678d2eb29f115cb05cb7e03dd",
+    "工创赛/scripts/p1_offline_tests/perimeter.c": "58df67aecc1704783e3c856677b67893becc481648fd88f734eddab14a75c8a1"
+  }
+}

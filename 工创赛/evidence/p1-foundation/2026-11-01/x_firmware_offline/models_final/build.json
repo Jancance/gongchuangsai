@@ -1,0 +1,22 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 1,
+    "output": "\"stubs\\can.h\", line 8: Error:  #20: identifier \"ufloat\" is undefined\n  uint32_t CAN1_ReadPosition(uint8_t,CanRxMsg*,uint8_t*,ufloat*);\n                                                        ^\n\"unit.c\", line 44: Warning:  #177-D: variable \"s_perimeter_targets\"  was declared but never referenced\n  static const float s_perimeter_targets[9][3]={\n                     ^\nunit.c: 1 warning, 1 error\n"
+  }
+]

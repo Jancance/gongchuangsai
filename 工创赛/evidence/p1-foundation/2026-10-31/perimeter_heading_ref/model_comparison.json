@@ -1,0 +1,78 @@
+{
+  "hardware_accessed": false,
+  "limits": "Same deterministic plant, actual C backend/controller/odometry; not physical accuracy proof. Candidate also changes reference-only lookahead 0.7 to 0.85 seconds. No isolation of individual contributions.",
+  "models": [
+    {
+      "scenario": 24,
+      "tau_s": 0.07999999821186066,
+      "delay_ticks": 0.0,
+      "wheel_bias": 0.0,
+      "baseline_completed": 8,
+      "candidate_completed": 8,
+      "baseline_return_error_mm": 47.80907704436087,
+      "baseline_heading_error_deg": 0.51953125,
+      "candidate_return_error_mm": 29.47647150219243,
+      "candidate_heading_error_deg": 0.663330078125
+    },
+    {
+      "scenario": 25,
+      "tau_s": 0.07999999821186066,
+      "delay_ticks": 4.0,
+      "wheel_bias": 0.003000000026077032,
+      "baseline_completed": 8,
+      "candidate_completed": 8,
+      "baseline_return_error_mm": 26.447913940362437,
+      "baseline_heading_error_deg": 1.29656982421875,
+      "candidate_return_error_mm": 24.986265999597425,
+      "candidate_heading_error_deg": 0.710845947265625
+    },
+    {
+      "scenario": 26,
+      "tau_s": 0.20000000298023224,
+      "delay_ticks": 0.0,
+      "wheel_bias": 0.0,
+      "baseline_completed": 8,
+      "candidate_completed": 8,
+      "baseline_return_error_mm": 92.96758796446512,
+      "baseline_heading_error_deg": 0.750335693359375,
+      "candidate_return_error_mm": 25.81762906325864,
+      "candidate_heading_error_deg": 0.7225341796875
+    },
+    {
+      "scenario": 27,
+      "tau_s": 0.20000000298023224,
+      "delay_ticks": 4.0,
+      "wheel_bias": 0.003000000026077032,
+      "baseline_completed": 2,
+      "candidate_completed": 8,
+      "baseline_return_error_mm": null,
+      "baseline_heading_error_deg": null,
+      "candidate_return_error_mm": 24.269260662245998,
+      "candidate_heading_error_deg": 0.524261474609375
+    },
+    {
+      "scenario": 28,
+      "tau_s": 0.4000000059604645,
+      "delay_ticks": 0.0,
+      "wheel_bias": 0.0,
+      "baseline_completed": 2,
+      "candidate_completed": 2,
+      "baseline_return_error_mm": null,
+      "baseline_heading_error_deg": null,
+      "candidate_return_error_mm": null,
+      "candidate_heading_error_deg": null
+    },
+    {
+      "scenario": 29,
+      "tau_s": 0.4000000059604645,
+      "delay_ticks": 4.0,
+      "wheel_bias": 0.003000000026077032,
+      "baseline_completed": 0,
+      "candidate_completed": 0,
+      "baseline_return_error_mm": null,
+      "baseline_heading_error_deg": null,
+      "candidate_return_error_mm": null,
+      "candidate_heading_error_deg": null
+    }
+  ]
+}

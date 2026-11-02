@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-24",
+  "uploaded_baseline": "54bb617",
+  "builds": {
+    "combo": {
+      "result": "0 errors, 0 warnings",
+      "program_size": "Code=49992 RO-data=728 RW-data=1912 ZI-data=29376"
+    },
+    "single": {
+      "result": "0 errors, 0 warnings",
+      "program_size": "Code=42824 RO-data=664 RW-data=1844 ZI-data=29156"
+    },
+    "link": {
+      "result": "0 errors, 0 warnings",
+      "program_size": "Code=25858 RO-data=462 RW-data=1824 ZI-data=27392"
+    },
+    "manual": {
+      "result": "0 errors, 0 warnings",
+      "program_size": "Code=39432 RO-data=608 RW-data=1776 ZI-data=27424"
+    }
+  },
+  "host_tests": 29,
+  "source_sha256": {
+    "main.c": "4500a0b9b0d2cd38e27aa19f0514d6c5d5b39f9a3a3cc1f1c5aa5e59cd2f3731",
+    "motion_control.h": "2cacf390e7d4167e7c18b34bad51b9be831d59ab86604b458f71ab867a8a9ab6",
+    "motion_action_plan.h": "6f9d810db7c3f3c6e6006e31a644136f39b5c3d12f0bef3144c0a8c9f63fb9ac",
+    "heading_session.c": "58ed7b6af22bfe8e3576d50d17b92b37c0f5e77958adfd700539803dcc39bcc2",
+    "heading_session.h": "e4687e7ad20302bf6169410ba662a29be6e2c78e4380a9d996e4b85f79d0ae9c",
+    "chassis_auto_test.c": "a9ca1136a11c4537de5260ae20450c1ce649a2b6d040f2ad0048aec278ccb864",
+    "chassis_auto_test.h": "d989a33833eed876ba3034d5bd2591d943ba17f883625bf4a3808c5232bce19b",
+    "chassis_kinematics.c": "3a177668bcfdd80a4a10ad01a58964536e40715b8b3959f2b12ae122c58ea5d1",
+    "chassis_kinematics.h": "e36553ada2b249d0dde6e7d2dd698dcf972b6d054391ba81a5fec95289171cb7"
+  },
+  "encoding_and_crlf_checked": true,
+  "downloaded": false,
+  "serial_opened": false,
+  "hardware_tested": false,
+  "pushed": false,
+  "remaining": [
+    "MCU runtime regression of new API and action table",
+    "distance and XY control deferred",
+    "backward excluded by user"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-25",
+  "baseline_commit": "54bb617",
+  "scope": "successful terminal same-token KEEP no-op; append CAN stack watermark to TM1",
+  "source_sha256": {
+    "3.stm32f407工程\\USER\\main.c": "fd300c14f79232ee0c6c19f8d8d8e79fe7dc587dcd71f92c8681ca77fe46659b",
+    "工创赛\\scripts\\p1_serial_motion.py": "88de19e6677e3b41fb791c09c5d1e988f7c976230e6574bb19e7645596accb52",
+    "工创赛\\scripts\\test_p1_serial_motion.py": "1f9a93319fb5404c1d83e5f4f985683192b10c53911f0193577279eb719984ea"
+  },
+  "builds": {
+    "route_a": "Code=59248 RO-data=768 RW-data=2020 ZI-data=34180",
+    "single": "Code=51268 RO-data=708 RW-data=1948 ZI-data=33932"
+  },
+  "host_tests": 83,
+  "actual_main_c_simulated_assertions": {
+    "mode3": 57,
+    "mode2": 57
+  },
+  "c_test_limits": "extracted actual main.c CRC/parser/handler/terminal guard; backend,power,RTOS stubbed; Cortex-M3 soft-float Unicorn behavior only",
+  "encoding": "main GBK/CRLF preserved",
+  "source_build_match": true,
+  "flashed": false,
+  "serial_opened": false,
+  "motion_started": false,
+  "pushed": false,
+  "remaining": [
+    "No new hardware verification of terminal KEEP race",
+    "Actual CAN stack watermark still unmeasured until new firmware diagnostics or debugger read",
+    "New host required for new49/65 field counts; old captures remain readable"
+  ]
+}

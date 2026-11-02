@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1380" height="940" viewBox="0 0 1380 940">
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6" fill="#243e5b"/></marker></defs>
+<rect width="1380" height="940" fill="#f7f9fc"/>
+<g font-family="Microsoft YaHei,Arial,sans-serif">
+<text x="55" y="40" font-size="25" fill="#263746" >外围闭合验证：两段前进 + 长距离左右侧移</text>
+<text x="55" y="73" font-size="17" fill="#a04d17" >仅离线预览 · 内区本轮允许经过 · 外边界保留 · 未准备发车</text>
+<rect x="55.0" y="115.0" width="720.0" height="720.0" fill="#e3e6eb" stroke="#374b60" stroke-width="2"/>
+<rect x="220.0" y="535.0" width="135.0" height="135.0" fill="#fcf5c8" />
+<rect x="220.0" y="280.0" width="135.0" height="135.0" fill="#fcf5c8" />
+<rect x="475.0" y="535.0" width="135.0" height="135.0" fill="#fcf5c8" />
+<rect x="475.0" y="280.0" width="135.0" height="135.0" fill="#fcf5c8" />
+<rect x="55.0" y="388.0" width="45.0" height="174.0" fill="white" />
+<rect x="328.0" y="790.0" width="174.0" height="45.0" fill="white" />
+<rect x="685.0" y="115.0" width="90.0" height="90.0" fill="#9ac2f7" />
+<rect x="685.0" y="745.0" width="90.0" height="90.0" fill="#c6daf4" />
+<text x="709.0" y="133.0" font-size="13" fill="#263746" >启停1</text>
+<text x="709.0" y="787.0" font-size="13" fill="#263746" >启停2</text>
+<text x="65.5" y="463.0" font-size="13" fill="#263746" >暂存</text>
+<text x="367.0" y="812.5" font-size="13" fill="#263746" >粗加工</text>
+<text x="55" y="872" font-size="15" fill="#263746" >背景功能区为示意；本轮不据此做内区碰撞判定。坐标：左下角为原点，单位mm。</text>
+<line x1="730.0" y1="160.0" x2="730.0" y2="205.0" stroke="#1763c0" stroke-width="3" marker-end="url(#arrow)"/>
+<line x1="730.0" y1="205.0" x2="685.0" y2="205.0" stroke="#c97400" stroke-width="3" marker-end="url(#arrow)"/>
+<line x1="685.0" y1="205.0" x2="685.0" y2="745.0" stroke="#1763c0" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="693.0" y="467.0" font-size="15" fill="#1763c0" >3 · 180cm</text>
+<line x1="685.0" y1="745.0" x2="145.0" y2="745.0" stroke="#c97400" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="423.0" y="737.0" font-size="15" fill="#c97400" >4 · 180cm</text>
+<circle cx="145.0" cy="745.0" r="25" fill="none" stroke="#a44723" stroke-width="2" stroke-dasharray="5 4"/>
+<circle cx="145.0" cy="745.0" r="17" fill="none" stroke="#a44723" stroke-width="2" stroke-dasharray="5 4"/>
+<line x1="145.0" y1="745.0" x2="145.00000000000003" y2="205.0" stroke="#1763c0" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="153.0" y="467.0" font-size="15" fill="#1763c0" >7 · 180cm</text>
+<circle cx="145.00000000000003" cy="205.0" r="17" fill="none" stroke="#a44723" stroke-width="2" stroke-dasharray="5 4"/>
+<circle cx="145.00000000000003" cy="205.0" r="25" fill="none" stroke="#a44723" stroke-width="2" stroke-dasharray="5 4"/>
+<line x1="145.00000000000003" y1="205.0" x2="685.0" y2="205.0" stroke="#00866c" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="423.0" y="197.0" font-size="15" fill="#00866c" >10 · 180cm</text>
+<line x1="685.0" y1="205.0" x2="685.0" y2="160.0" stroke="#8b40af" stroke-width="3" marker-end="url(#arrow)"/>
+<line x1="685.0" y1="160.0" x2="730.0" y2="160.0" stroke="#00866c" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="520.0" y="143.0" font-size="14" fill="#263746" >起点 / 终点，车头向下</text>
+<text x="165.0" y="783.0" font-size="14" fill="#263746" >5、6：顺时针90°×2</text>
+<text x="165.00000000000003" y="181.0" font-size="14" fill="#263746" >8、9：逆时针90°×2</text>
+<polygon id="car-body" points="768.10,202.45 691.90,202.45 691.90,117.55 768.10,117.55" fill="#e8f4ff" fill-opacity="0.8" stroke="#152b45" stroke-width="2"/>
+<line id="car-heading" x1="730.0" y1="160.0" x2="730.0" y2="190.0" stroke="#152b45" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="825" y="123" font-size="20" fill="#263746" >12个动作，逐段停稳后继续</text>
+<text x="825" y="191" font-size="16" fill="#1763c0" >01  前进15cm出区</text>
+<text x="825" y="222" font-size="16" fill="#c97400" >02  右移15cm向场地内侧</text>
+<text x="825" y="253" font-size="16" fill="#1763c0" >03  右侧前进180cm，地图向下</text>
+<text x="825" y="284" font-size="16" fill="#c97400" >04  底部右移180cm，地图向左</text>
+<text x="825" y="315" font-size="16" fill="#a44723" >05  顺时针90°，车头朝左</text>
+<text x="825" y="346" font-size="16" fill="#a44723" >06  顺时针90°，车头朝上</text>
+<text x="825" y="377" font-size="16" fill="#1763c0" >07  左侧前进180cm，地图向上</text>
+<text x="825" y="408" font-size="16" fill="#a44723" >08  逆时针90°，车头朝左</text>
+<text x="825" y="439" font-size="16" fill="#a44723" >09  逆时针90°，车头恢复向下</text>
+<text x="825" y="470" font-size="16" fill="#00866c" >10  顶部左移180cm，地图向右</text>
+<text x="825" y="501" font-size="16" fill="#8b40af" >11  后退15cm回区</text>
+<text x="825" y="532" font-size="16" fill="#00866c" >12  左移15cm返回起始中心并停车</text>
+<text x="825" y="610" font-size="16" fill="#374b60" >总平移 7.8m；累计转角 360°</text>
+<text x="825" y="642" font-size="16" fill="#374b60" >几何闭合：位置及车头朝向相同</text>
+<text x="825" y="674" font-size="16" fill="#a04d17" >估算轮组包络：283×254mm</text>
+<text x="825" y="706" font-size="16" fill="#a04d17" >外边界最小理论余量：8.5mm</text>
+<text x="825" y="738" font-size="16" fill="#a04d17" >完整整车外廓未确认；余量不是定位误差预算</text>
+<text x="825" y="770" font-size="16" fill="#a04d17" >后退/组合高速/整圈调度尚未接入固件</text>
+</g></svg>

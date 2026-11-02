@@ -1,0 +1,35 @@
+--- before/USER/app_entry.c
++++ USER/app_entry.c
+@@ -1,6 +1,7 @@
+ #include "app_entry.h"
+ #include "motion_trial20.h"
+ #include "route_plan.h"
++#include "field_map.h"
+ volatile RouteCheck g_route_check = {0};
+ volatile CompetitionEntryStatus g_competition_entry = {0};
+ uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count)
+@@ -16,6 +17,16 @@
+     uint32_t i,n;
+     if (!APP_IS_DEBUG || !actions || !count || id > DEBUG_PLAN_MAX || id == DEBUG_PLAN_FORWARD237) return 0U;
+     if (id == DEBUG_PLAN_DEFAULT) {
++#if VEHICLE_STAGE1_ENABLE
++        FieldStage1Plan p;RouteRow rows[2];RouteCheck check;
++        if(!FieldMap_Stage1(&p)) return 0U;
++        rows[0].kind=MOTION_FORWARD_DISTANCE;rows[0].amount=p.forward_cm;rows[0].speed=p.entry_speed_cm_s;
++        rows[1].kind=MOTION_LEFT_DISTANCE;rows[1].amount=p.left_cm;rows[1].speed=p.speed_cm_s;
++        if(!RoutePlan_Convert(rows,2U,&g_chassis_geometry,actions,&check))
++        {g_route_check=check;return 0U;}
++        g_route_check=check;*count=2U;return 1U;
++#else
++
+ #if APP_ROUTE_USE_CUSTOM && (APP_TEST_MODE == 3U)
+         static const RouteRow configured[] = { APP_ROUTE_ROWS(ROUTE_ROW) };
+         RouteCheck check;
+@@ -27,6 +38,7 @@
+         n = sizeof(defaults)/sizeof(defaults[0]);
+         if (!n || n > MOTION_ACTION_CAPACITY) return 0U;
+         for (i=0U;i<n;i++) actions[i]=defaults[i];
++#endif
+ #endif
+     } else if (id == DEBUG_PLAN_ROUTE_A) {
+         n=3U; for(i=0U;i<n;i++) actions[i]=route[i];

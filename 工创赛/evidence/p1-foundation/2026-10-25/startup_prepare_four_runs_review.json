@@ -1,0 +1,308 @@
+{
+  "date": "2026-10-25",
+  "same_firmware": true,
+  "recompiled": false,
+  "pushed": false,
+  "runs": [
+    {
+      "round": "test",
+      "status": "software_complete",
+      "completed": 3,
+      "elapsed_ms": 32885,
+      "final_vm_off": true,
+      "final_wheels_zero": true,
+      "stop_mask": 15,
+      "fault_frames": 0,
+      "uart_rx_errors": 0,
+      "system_faults": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "timings_us": [
+        {
+          "sequence_index": 0,
+          "hold_critical_max_us": 32.13690476190476,
+          "backend_begin_max_us": 9.892857142857142,
+          "action_load_max_us": 37.63095238095238
+        },
+        {
+          "sequence_index": 1,
+          "hold_critical_max_us": 32.13690476190476,
+          "backend_begin_max_us": 9.892857142857142,
+          "action_load_max_us": 40.101190476190474
+        },
+        {
+          "sequence_index": 2,
+          "hold_critical_max_us": 32.13690476190476,
+          "backend_begin_max_us": 9.892857142857142,
+          "action_load_max_us": 40.101190476190474
+        }
+      ],
+      "endpoint_projection_mm": [
+        301.02548963225115,
+        301.3706113410756,
+        301.20635555452276
+      ],
+      "gap_vm": [
+        {
+          "count": 10,
+          "vm_held": true
+        },
+        {
+          "count": 10,
+          "vm_held": true
+        }
+      ],
+      "commands": {
+        "ARM": 1,
+        "START": 1,
+        "KEEP": 145
+      },
+      "rejection_events": [],
+      "remote_rejected": 0,
+      "telemetry_dropped": 1,
+      "invalid_frames": 1,
+      "valid_frames": 349,
+      "source_valid_all": true,
+      "max_source_age_ms": 5,
+      "physical_confirmation": "completed, stopped, lamp off",
+      "summary": "工创赛\\evidence\\p1-foundation\\2026-10-25\\startup_prepare_test_run\\20261025_151342_988100.summary.json"
+    },
+    {
+      "round": "repeat1",
+      "status": "software_complete",
+      "completed": 3,
+      "elapsed_ms": 32808,
+      "final_vm_off": true,
+      "final_wheels_zero": true,
+      "stop_mask": 15,
+      "fault_frames": 0,
+      "uart_rx_errors": 0,
+      "system_faults": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "timings_us": [
+        {
+          "sequence_index": 0,
+          "hold_critical_max_us": 32.13690476190476,
+          "backend_begin_max_us": 9.892857142857142,
+          "action_load_max_us": 37.63095238095238
+        },
+        {
+          "sequence_index": 1,
+          "hold_critical_max_us": 32.13690476190476,
+          "backend_begin_max_us": 9.892857142857142,
+          "action_load_max_us": 40.101190476190474
+        },
+        {
+          "sequence_index": 2,
+          "hold_critical_max_us": 32.13690476190476,
+          "backend_begin_max_us": 9.892857142857142,
+          "action_load_max_us": 40.101190476190474
+        }
+      ],
+      "endpoint_projection_mm": [
+        301.1602162886371,
+        301.04763647987625,
+        300.935979456433
+      ],
+      "gap_vm": [
+        {
+          "count": 10,
+          "vm_held": true
+        },
+        {
+          "count": 10,
+          "vm_held": true
+        }
+      ],
+      "commands": {
+        "ARM": 1,
+        "START": 1,
+        "KEEP": 143
+      },
+      "rejection_events": [],
+      "remote_rejected": 0,
+      "telemetry_dropped": 0,
+      "invalid_frames": 0,
+      "valid_frames": 350,
+      "source_valid_all": true,
+      "max_source_age_ms": 13,
+      "physical_confirmation": "completed, stopped, lamp off",
+      "summary": "工创赛\\evidence\\p1-foundation\\2026-10-25\\startup_prepare_repeat1_run\\20261025_151742_888000.summary.json"
+    },
+    {
+      "round": "repeat2",
+      "status": "software_complete",
+      "completed": 3,
+      "elapsed_ms": 32820,
+      "final_vm_off": true,
+      "final_wheels_zero": true,
+      "stop_mask": 15,
+      "fault_frames": 0,
+      "uart_rx_errors": 0,
+      "system_faults": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "timings_us": [
+        {
+          "sequence_index": 0,
+          "hold_critical_max_us": 32.13690476190476,
+          "backend_begin_max_us": 9.892857142857142,
+          "action_load_max_us": 37.63095238095238
+        },
+        {
+          "sequence_index": 1,
+          "hold_critical_max_us": 32.13690476190476,
+          "backend_begin_max_us": 9.892857142857142,
+          "action_load_max_us": 40.101190476190474
+        },
+        {
+          "sequence_index": 2,
+          "hold_critical_max_us": 32.13690476190476,
+          "backend_begin_max_us": 9.892857142857142,
+          "action_load_max_us": 40.101190476190474
+        }
+      ],
+      "endpoint_projection_mm": [
+        301.2192745489707,
+        301.09377574576183,
+        300.93874781238617
+      ],
+      "gap_vm": [
+        {
+          "count": 10,
+          "vm_held": true
+        },
+        {
+          "count": 10,
+          "vm_held": true
+        }
+      ],
+      "commands": {
+        "ARM": 1,
+        "START": 1,
+        "KEEP": 143
+      },
+      "rejection_events": [
+        {
+          "tick_ms": 49300,
+          "remote_rejected": 2,
+          "remote_result": 6,
+          "sequence_state": 3,
+          "sequence_completed": 3,
+          "vm_request": 0
+        }
+      ],
+      "remote_rejected": 2,
+      "telemetry_dropped": 7,
+      "invalid_frames": 1,
+      "valid_frames": 346,
+      "source_valid_all": true,
+      "max_source_age_ms": 17,
+      "physical_confirmation": "completed, stopped, lamp off",
+      "summary": "工创赛\\evidence\\p1-foundation\\2026-10-25\\startup_prepare_repeat2_run\\20261025_151942_797600.summary.json"
+    },
+    {
+      "round": "repeat3",
+      "status": "software_complete",
+      "completed": 3,
+      "elapsed_ms": 32852,
+      "final_vm_off": true,
+      "final_wheels_zero": true,
+      "stop_mask": 15,
+      "fault_frames": 0,
+      "uart_rx_errors": 0,
+      "system_faults": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "timings_us": [
+        {
+          "sequence_index": 0,
+          "hold_critical_max_us": 32.13690476190476,
+          "backend_begin_max_us": 9.892857142857142,
+          "action_load_max_us": 37.63095238095238
+        },
+        {
+          "sequence_index": 1,
+          "hold_critical_max_us": 32.13690476190476,
+          "backend_begin_max_us": 9.892857142857142,
+          "action_load_max_us": 40.101190476190474
+        },
+        {
+          "sequence_index": 2,
+          "hold_critical_max_us": 32.13690476190476,
+          "backend_begin_max_us": 9.892857142857142,
+          "action_load_max_us": 40.101190476190474
+        }
+      ],
+      "endpoint_projection_mm": [
+        301.04025419733455,
+        301.22850240214785,
+        301.4555075903051
+      ],
+      "gap_vm": [
+        {
+          "count": 10,
+          "vm_held": true
+        },
+        {
+          "count": 10,
+          "vm_held": true
+        }
+      ],
+      "commands": {
+        "ARM": 1,
+        "START": 1,
+        "KEEP": 144
+      },
+      "rejection_events": [
+        {
+          "tick_ms": 49900,
+          "remote_rejected": 1,
+          "remote_result": 6,
+          "sequence_state": 3,
+          "sequence_completed": 3,
+          "vm_request": 0
+        },
+        {
+          "tick_ms": 50000,
+          "remote_rejected": 2,
+          "remote_result": 6,
+          "sequence_state": 3,
+          "sequence_completed": 3,
+          "vm_request": 0
+        }
+      ],
+      "remote_rejected": 2,
+      "telemetry_dropped": 7,
+      "invalid_frames": 1,
+      "valid_frames": 347,
+      "source_valid_all": true,
+      "max_source_age_ms": 9,
+      "physical_confirmation": "completed, stopped, lamp off",
+      "summary": "工创赛\\evidence\\p1-foundation\\2026-10-25\\startup_prepare_repeat3_run\\20261025_152140_596600.summary.json"
+    }
+  ],
+  "limits": [
+    "Ground displacement unmeasured",
+    "CAN task stack margin unverified; rx stack telemetry is a different task",
+    "Completion boundary KEEP rejection remains open",
+    "Four successful runs do not establish unique ORE cause or full reliability"
+  ]
+}

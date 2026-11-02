@@ -1,0 +1,25 @@
+{
+  "hardware_accessed": false,
+  "firmware_modified": false,
+  "actual_publisher_c_tested": true,
+  "actual_parser_c_tested": true,
+  "invalid_age_wrap_reproduced": true,
+  "values": {
+    "valid_angle_ms": 22923,
+    "invalid_sample_ms": 22930,
+    "invalid_angle_ms": 22931,
+    "misleading_age_at_fault_ms": 7,
+    "healthy_with_invalid_age": 0,
+    "partial_angle_age_ms": 7,
+    "partial_rate_age_ms": 15,
+    "genuine_clock_wrap_passed": 1
+  },
+  "main_sha256": "af300d92afd29761be162b3af7c37f3ea1bcf6a568110a532bb969d69951eb28",
+  "conclusions": [
+    "Invalid age UINT32_MAX becomes a future reconstructed timestamp; health remains false.",
+    "7ms in the saved source-age diagnostic does not establish a valid angle frame.",
+    "Startup basic-command floating-point preparation is nested in heading runtime and backend critical sections.",
+    "No heading-runtime critical-duration measurement or armed HWT event was retained for this failure.",
+    "Interrupt masking is a candidate cause of ORE, not a measured physical root cause."
+  ]
+}

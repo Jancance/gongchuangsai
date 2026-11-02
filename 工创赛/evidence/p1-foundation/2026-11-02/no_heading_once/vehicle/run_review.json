@@ -1,0 +1,37 @@
+{
+  "summary": "工创赛\\evidence\\p1-foundation\\2026-11-02\\no_heading_once\\vehicle\\run_once\\20261102_153033_279200.summary.json",
+  "GO": [
+    "RQ1,343,34211,50509,GO,2917814676,C9EE"
+  ],
+  "software_checks_passed": true,
+  "heading_correction_zero_in_all_valid_TM_Q": true,
+  "valid_TM_Q_checked": 377,
+  "elapsed_ms": 22026,
+  "encoder_progress_mm": 2100.115,
+  "peak_heading_error_deg": 5.443,
+  "xd1": {
+    "session": 1,
+    "expected_records": 1140,
+    "received_records": 1140,
+    "dropped": 0,
+    "complete": true
+  },
+  "telemetry_dropped": 4,
+  "physical_measurement": {
+    "source": "user ruler report",
+    "lateral_direction": "right",
+    "lateral_cm": 15.0,
+    "longitudinal_result": null
+  },
+  "physical_stop_confirmation": null,
+  "physical_shaking_observation": null,
+  "installed_image": "N no forward heading correction, FF off",
+  "comparison_A_three_right_cm": [
+    2.6,
+    2.2,
+    3.0
+  ],
+  "A_three_mean_right_cm": 2.6,
+  "decision": "Use A with heading correction, FF disabled; do not retune before diagnosing residual drift",
+  "limit": "Single heading-off run; mechanical cause unproven; no longitudinal ruler value reported"
+}

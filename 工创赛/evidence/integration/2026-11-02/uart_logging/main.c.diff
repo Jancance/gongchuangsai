@@ -1,0 +1,57 @@
+--- before/main.c
++++ USER/main.c
+@@ -36,7 +36,9 @@
+ #include "motion_action_plan.h"
+ #include "motion_control.h"
+ #include "runtime_route.h"
+-#include "motion_distance_limits.h"
++#include "motion_distance_limits.h"+
++#include "vehicle_log_config.h"
+ 
+ /* 临时静态供电测试：0关闭，1请求开启 */
+ volatile uint32_t g_vm_test_request = 0U;
+@@ -2764,6 +2766,66 @@
+ }
+ #endif
+ /* PM1与TM1错开至少40ms，静态缓冲不叠加TaskA栈；忙时丢诊断帧。 */
++/* WF1：补齐系统辨识需要的应答目标/真实轮速/样本时刻；低优先级观察帧。 */+
++static void App_WheelLogTelemetry(void)+
++{+
++#if VEHICLE_WHEEL_LOG_ENABLE+
++    static char frame[512];static ChassisWheelLog sample;+
++    static uint32_t last,last_active,seen_active,sequence,dropped;+
++    uint32_t now=(uint32_t)xTaskGetTickCount(),i,used;int count;uint16_t crc;+
++    if (g_chassis_auto_active) {last_active=now;seen_active=1U;}+
++    if (!seen_active || (!g_chassis_auto_active && (uint32_t)(now-last_active)>1000U) ||+
++        (uint32_t)(now-last)<VEHICLE_WHEEL_LOG_PERIOD_MS ||+
++        !App_SerialDiagnosticWindow(now,40U)) return;+
++    last=now;(void)ChassisAuto_ReadWheelLog(&sample);+
++    count=snprintf(frame,sizeof(frame),"WF1,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,",+
++        (unsigned long)sequence++,(unsigned long)sample.tick_ms,(unsigned long)sample.session,+
++        (unsigned long)sample.active,(unsigned long)sample.state,(unsigned long)sample.dry_run,+
++        (unsigned long)sample.speed_valid_mask,(unsigned long)sample.ack_valid_mask,(unsigned long)dropped);+
++    if(count<0 || (uint32_t)count>=sizeof(frame)) {dropped++;return;}+
++    used=(uint32_t)count;+
++    for(i=0U;i<4U;i++) {+
++        count=snprintf(frame+used,sizeof(frame)-used,"%ld,%ld,%lu,%lu,%lu,",+
++            (long)sample.acknowledged_decirpm[i],(long)sample.measured_decirpm[i],+
++            (unsigned long)sample.ack_ms[i],(unsigned long)sample.sample_ms[i],(unsigned long)sample.age_ms[i]);+
++        if(count<0 || (uint32_t)count>=sizeof(frame)-used) {dropped++;return;}+
++        used+=(uint32_t)count;+
++    }+
++    crc=App_SerialCrc(frame,used);count=snprintf(frame+used,sizeof(frame)-used,"%04X\r\n",crc);+
++    if(count<0 || (uint32_t)count>=sizeof(frame)-used || !App_DebugSendString(frame)) dropped++;+
++#endif+
++}+
+++
+ static void App_PositionTelemetry(void)
+ {
+     static char frame[512];
+@@ -4016,6 +4078,8 @@
+         App_BatchDiagnosticTelemetry();
+         App_XLoadTelemetry();
+ #if APP_POSITION_DIAGNOSTIC
++        App_WheelLogTelemetry();+
+         App_PositionTelemetry();
+ #if APP_HEADING_SESSION_TEST
+         App_OdometryTelemetry();

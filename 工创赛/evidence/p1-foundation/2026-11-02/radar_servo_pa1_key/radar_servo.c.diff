@@ -1,0 +1,35 @@
+--- before/radar_servo.c
++++ HARDWARE/RADAR_SERVO/radar_servo.c
+@@ -101,3 +101,32 @@
+     if (!RadarServo_SetAngle(zone,target)) return 0U;
+     g_radar_servo_departure_id=zone;g_radar_servo_departure_done=1U;return 1U;
+ }
++
++/* Explicitly armed temporary test; not enabled by initialization. */
++volatile uint32_t g_radar_servo_key_test_enable=0U;
++volatile uint32_t g_radar_servo_key_result=0U,g_radar_servo_key_sequence=0U,g_radar_servo_key_zone=0U;
++uint32_t RadarServo_KeyTest(uint32_t zone,uint32_t safe_idle)
++{
++    uint32_t ok=0U;
++#if APP_IS_DEBUG && !APP_X_OFFLINE_ONLY
++    if (g_radar_servo_key_test_enable!=1U || safe_idle!=1U || g_radar_servo_state!=1U)
++        g_radar_servo_key_result=2U;
++    else if (zone<1U || zone>2U) g_radar_servo_key_result=3U;
++    else {
++        /* Park the other rig first, including when alternating the two tests. */
++        if (zone==1U) {
++            ok=RadarServo_SetAngle(2U,RADAR_SERVO2_INIT_DEG);
++            if (ok) ok=RadarServo_SetAngle(1U,RADAR_SERVO1_DEPLOY_DEG);
++        } else {
++            ok=RadarServo_SetAngle(1U,RADAR_SERVO1_INIT_DEG);
++            if (ok) ok=RadarServo_SetAngle(2U,RADAR_SERVO2_DEPLOY_DEG);
++        }
++        g_radar_servo_key_result=ok?1U:2U;
++        if (ok) g_radar_servo_key_zone=zone;
++    }
++#else
++    (void)zone;(void)safe_idle;g_radar_servo_key_result=2U;
++#endif
++    g_radar_servo_key_sequence++;
++    return ok;
++}

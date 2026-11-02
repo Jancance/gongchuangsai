@@ -11,6 +11,68 @@ static volatile uint16_t s_head = 0U, s_tail = 0U;
 static volatile uint32_t s_error_epoch = 0U;
 static uint32_t s_seen_error = 0U;
 static Hwt101Parser s_parser;
+static volatile HwtFaultDiagnostic s_diagnostic;
+static volatile uint32_t s_diag_armed;
+static volatile uint32_t s_uart_ore, s_uart_fe, s_uart_ne, s_uart_pe, s_last_uart_sr;
+typedef struct
+{
+    uint32_t count, last_cycles, max_cycles, max_start, max_end;
+    uint32_t max_tick, max_arm, last_end;
+} HwtScopeTiming;
+static volatile HwtScopeTiming s_timing[HWT_TIMING_SCOPES];
+static uint32_t s_timing_enabled;
+static void Hwt_TimingInit(void)
+{
+    uint32_t before;
+    if (DWT->CTRL & DWT_CTRL_NOCYCCNT_Msk) return;
+    /* 不复位共享CYCCNT，不改CPU时钟、IRQ优先级或中断屏蔽阈值。 */
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+    __DSB(); __ISB();
+    before = DWT->CYCCNT;
+    __NOP(); __NOP(); __NOP();
+    s_timing_enabled = (DWT->CYCCNT != before) ? 1U : 0U;
+}
+uint32_t HWT101_TimingBegin(void)
+{ return s_timing_enabled ? DWT->CYCCNT : 0U; }
+void HWT101_TimingEnd(uint32_t scope, uint32_t start_cycle)
+{
+    uint32_t end_cycle, cycles;
+    if (!s_timing_enabled || scope >= HWT_TIMING_SCOPES) return;
+    end_cycle = DWT->CYCCNT; cycles = end_cycle - start_cycle;
+    s_timing[scope].count++;
+    s_timing[scope].last_cycles = cycles; s_timing[scope].last_end = end_cycle;
+    if (cycles > s_timing[scope].max_cycles)
+    {
+        s_timing[scope].max_cycles = cycles;
+        s_timing[scope].max_start = start_cycle; s_timing[scope].max_end = end_cycle;
+        s_timing[scope].max_tick = (uint32_t)xTaskGetTickCount();
+        s_timing[scope].max_arm = s_diagnostic.arm_sequence;
+    }
+}
+void HWT101_ReadTiming(uint32_t snapshot[HWT_TIMING_FIELDS], uint32_t fault_tick)
+{
+    uint32_t i;
+    if (!snapshot) return;
+    taskENTER_CRITICAL();
+    snapshot[0] = fault_tick; snapshot[1] = SystemCoreClock;
+    snapshot[2] = s_timing_enabled; snapshot[3] = s_diagnostic.event_cycle;
+    for (i = 0U; i < HWT_TIMING_SCOPES; i++)
+    {
+        uint32_t offset = 4U + i * 8U;
+        snapshot[offset] = s_timing[i].count;
+        snapshot[offset+1U] = s_timing[i].last_cycles;
+        snapshot[offset+2U] = s_timing[i].max_cycles;
+        snapshot[offset+3U] = s_timing[i].max_start;
+        snapshot[offset+4U] = s_timing[i].max_end;
+        snapshot[offset+5U] = s_timing[i].max_tick;
+        snapshot[offset+6U] = s_timing[i].max_arm;
+        snapshot[offset+7U] = s_timing[i].last_end;
+    }
+    taskEXIT_CRITICAL();
+}
+
+
 volatile uint32_t g_hwt_baud = APP_HWT_BAUD;
 volatile uint32_t g_hwt_rx_bytes = 0U, g_hwt_uart_errors = 0U, g_hwt_overflows = 0U;
 volatile uint32_t g_hwt_angle_count = 0U, g_hwt_rate_count = 0U, g_hwt_checksum_errors = 0U;
@@ -543,6 +605,7 @@ void HWT101_Init(void)
     nvic.NVIC_IRQChannelPreemptionPriority = 6U;
     nvic.NVIC_IRQChannelSubPriority = 0U; nvic.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic);
+    Hwt_TimingInit();
     Hwt101Parser_Init(&s_parser);
     USART_Cmd(USART2, ENABLE);
 }
@@ -551,6 +614,43 @@ void HWT101_EnableReceive(void)
     (void)USART2->SR; (void)USART2->DR;
     s_version_start_tick = (uint32_t)xTaskGetTickCount();
     USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
+}
+/* reason：1串口错误、2环形溢出、4校验错误；仅锁存布防后首个事件。 */
+static void Hwt_DiagnosticEvent(uint32_t reason, uint32_t tick, uint32_t sr)
+{
+    if (!s_diag_armed || s_diagnostic.event_reason) return;
+    s_diagnostic.event_cycle = s_timing_enabled ? DWT->CYCCNT : 0U;
+    s_diagnostic.event_tick = tick; s_diagnostic.event_sr = sr;
+    s_diagnostic.event_uart_errors = g_hwt_uart_errors;
+    s_diagnostic.event_overflows = g_hwt_overflows;
+    s_diagnostic.event_checksum_errors = s_parser.checksum_errors;
+    s_diagnostic.event_seen = s_parser.seen;
+    s_diagnostic.event_reason = reason;
+}
+void HWT101_DiagnosticArm(void)
+{
+    HwtFaultDiagnostic empty = {0};
+    HwtScopeTiming empty_timing = {0};
+    uint32_t i;
+    taskENTER_CRITICAL();
+    empty.arm_sequence = s_diagnostic.arm_sequence + 1U;
+    empty.base_uart_errors = g_hwt_uart_errors;
+    empty.base_overflows = g_hwt_overflows;
+    empty.base_checksum_errors = s_parser.checksum_errors;
+    s_diagnostic = empty;
+    for (i = 0U; i < HWT_TIMING_SCOPES; i++) s_timing[i] = empty_timing;
+    s_diag_armed = 1U;
+    taskEXIT_CRITICAL();
+}
+void HWT101_ReadDiagnostic(HwtFaultDiagnostic *snapshot)
+{
+    if (!snapshot) return;
+    taskENTER_CRITICAL();
+    *snapshot = s_diagnostic;
+    snapshot->uart_ore = s_uart_ore; snapshot->uart_fe = s_uart_fe;
+    snapshot->uart_ne = s_uart_ne; snapshot->uart_pe = s_uart_pe;
+    snapshot->last_uart_sr = s_last_uart_sr;
+    taskEXIT_CRITICAL();
 }
 void USART2_IRQHandler(void)
 {
@@ -563,13 +663,23 @@ void USART2_IRQHandler(void)
         if (sr & (USART_SR_ORE | USART_SR_FE | USART_SR_NE | USART_SR_PE))
         {
             g_hwt_uart_errors++; s_error_epoch++;
+            s_last_uart_sr = sr;
+            if (sr & USART_SR_ORE) s_uart_ore++;
+            if (sr & USART_SR_FE) s_uart_fe++;
+            if (sr & USART_SR_NE) s_uart_ne++;
+            if (sr & USART_SR_PE) s_uart_pe++;
+            Hwt_DiagnosticEvent(1U, (uint32_t)xTaskGetTickCountFromISR(), sr);
             USART_ITConfig(USART2, USART_IT_TXE, DISABLE);
         }
         else
         {
             g_hwt_rx_bytes++; head = s_head;
             if ((uint16_t)(head - s_tail) >= 256U)
-            { g_hwt_overflows++; s_error_epoch++; USART_ITConfig(USART2, USART_IT_TXE, DISABLE); }
+            {
+                g_hwt_overflows++; s_error_epoch++;
+                Hwt_DiagnosticEvent(2U, (uint32_t)xTaskGetTickCountFromISR(), sr);
+                USART_ITConfig(USART2, USART_IT_TXE, DISABLE);
+            }
             else
             {
                 s_rx[head & 255U].data = byte;
@@ -597,7 +707,7 @@ void USART2_IRQHandler(void)
 /* 任务A每10ms调用；每轮最多128字节，ISR时间戳不以解析时间充新。 */
 void HWT101_Update(void)
 {
-    uint32_t n, i, now;
+    uint32_t n, i, now, checksum_before;
     HwtByte item;
     for (n = 0U; n < 128U; n++)
     {
@@ -610,7 +720,15 @@ void HWT101_Update(void)
         if (s_tail == s_head) { taskEXIT_CRITICAL(); break; }
         item = s_rx[s_tail & 255U]; s_tail = (uint16_t)(s_tail + 1U);
         taskEXIT_CRITICAL();
+        checksum_before = s_parser.checksum_errors;
         Hwt101Parser_Feed(&s_parser, item.data, item.tick);
+        if (checksum_before != s_parser.checksum_errors)
+        {
+            /* 仅保护诊断锁存，不把解析运算移入临界区。 */
+            taskENTER_CRITICAL();
+            Hwt_DiagnosticEvent(4U, item.tick, 0U);
+            taskEXIT_CRITICAL();
+        }
     }
     now = (uint32_t)xTaskGetTickCount();
     taskENTER_CRITICAL();

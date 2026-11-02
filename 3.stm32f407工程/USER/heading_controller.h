@@ -40,7 +40,7 @@ typedef struct
     uint32_t settle_active;
     float target_deg;
     float error_deg;
-    int32_t command_rpm; /* 正值为俯视逆时针，负值为顺时针。 */
+    float command_rpm; /* 正值为俯视逆时针，负值为顺时针。 */
 } HeadingController;
 
 typedef struct
@@ -50,7 +50,7 @@ typedef struct
     uint32_t stop_required;
     float target_deg;
     float error_deg;
-    int32_t command_rpm;
+    float command_rpm;
 } HeadingControllerOutput;
 
 /* 5/3/1RPM、2度、连续稳定700ms均为待实车调参的工程候选值。 */
@@ -63,13 +63,13 @@ typedef struct
 {
     uint32_t tick, initialized;
     float command_rpm, filtered_rate_dps;
-    int32_t quantized_rpm;
+    int32_t quantized_deci_rpm;
 } HeadingHoldController;
 uint32_t HeadingController_HoldCorrection(float target_deg, float yaw_deg,
     float rate_dps, float *correction_rpm, float *error_deg);
 uint32_t HeadingController_HoldStep(HeadingHoldController *hold,
     float target_deg, float yaw_deg, float rate_dps, uint32_t now_ms,
-    int32_t *correction_rpm, float *error_deg);
+    float *correction_rpm, float *error_deg);
 
 uint32_t HeadingController_ConfigValid(const HeadingControllerConfig *config);
 uint32_t HeadingController_Start(HeadingController *controller,

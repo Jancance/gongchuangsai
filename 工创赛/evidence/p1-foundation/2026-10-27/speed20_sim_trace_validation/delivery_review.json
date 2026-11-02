@@ -1,0 +1,84 @@
+{
+  "scope": "20cm/s offline simulation trace and plots",
+  "tool_files_sha256": {
+    "工创赛/scripts/p1_motion_offline.py": "b640f6a8d95220e8974ab5096dac900ce79f84eb89b4b55d760b02e930419928",
+    "工创赛/scripts/p1_four_wheel_sim.py": "070d6850d10068c3d7b339314349bfa88490992548087bd644ae0901b27b1238",
+    "工创赛/scripts/p1_simulation_report.py": "8e9f242be86ae4f1ee2f62946cf38f26cb4f55a8997a464b56dc7d4856aedf54",
+    "工创赛/scripts/p1_validate_offline.py": "d6c4c2caa23ad2ea62a39a30106650556573a2b3fc1bdd45359b595c165dc4c0",
+    "工创赛/scripts/p1_offline_tests/four_wheel.c": "4bfab601a68f25dd2e0a94c56b0ea63209d663deb304b3e45de8567e5e747c2d",
+    "工创赛/scripts/test_p1_motion_offline.py": "4b19c816d8e511eeb018ba574de5821ef538c57e1556557330fc4210d1a4205a",
+    "工创赛/docs/P1_SPEED20_SIMULATION_TRACES_2026-10-27.md": "26c38291dc041563ad32e782a2ae9110ca95ad276e930f9a31b8c0a60e1f0dd8",
+    "工创赛/docs/P1_OFFLINE_TOOLS_2026-10-27.md": "8d769b1e8c28232b0715ac93ca6aeaf4cc2cef635930112e8d082b9b7af44b91"
+  },
+  "protected_file_count": 2334,
+  "protected_files_changed": [],
+  "firmware_modified": false,
+  "hardware_accessed": false,
+  "github_pushed": false,
+  "validation": {
+    "started_utc": "2026-10-27T02:58:21.363905+00:00",
+    "hardware_accessed": false,
+    "checks": [
+      {
+        "name": "offline_tool_tests",
+        "status": "passed",
+        "detail": {
+          "ok": true,
+          "returncode": 0,
+          "log": "offline_tests.log"
+        }
+      },
+      {
+        "name": "existing_host_tests",
+        "status": "passed",
+        "detail": {
+          "ok": true,
+          "returncode": 0,
+          "log": "host_tests.log"
+        }
+      },
+      {
+        "name": "configuration_and_package",
+        "status": "passed",
+        "detail": {
+          "ok": true,
+          "count": 1221,
+          "failed": []
+        }
+      },
+      {
+        "name": "historical_log_reports",
+        "status": "passed",
+        "detail": {
+          "ok": true,
+          "runs": 5,
+          "limits": "Existing failures remain failures in the reports; analysis success is not motion success."
+        }
+      },
+      {
+        "name": "actual_C_four_wheel_simulation",
+        "status": "passed",
+        "detail": {
+          "ok": true,
+          "assertions": 50897,
+          "cases": 10,
+          "first_failure_line": null,
+          "trace_samples": 6648,
+          "trace_validation_ok": true,
+          "charts": "four_wheel/index.html"
+        }
+      },
+      {
+        "name": "protected_files_unchanged",
+        "status": "passed",
+        "file_count": 2334,
+        "changed": []
+      }
+    ],
+    "limits": "Software verification only; no physical speed, stopping distance, drift or smoothness acceptance.",
+    "elapsed_s": 6.782,
+    "status": "passed"
+  },
+  "chart_index": "four_wheel/index.html",
+  "browser_screenshot": "simulation_chart_qa.png"
+}

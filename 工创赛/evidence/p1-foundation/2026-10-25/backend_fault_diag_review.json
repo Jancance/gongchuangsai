@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-25",
+  "scope": "backend cause3 branch snapshot and HF2 diagnostic, no control-logic fix claimed",
+  "baseline_commit": "54bb617",
+  "host_tests": 70,
+  "builds": {
+    "default": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=57268 RO-data=788 RW-data=2004 ZI-data=32460"
+    },
+    "route_a": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=57264 RO-data=768 RW-data=2004 ZI-data=32460"
+    },
+    "route_b": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=57268 RO-data=748 RW-data=2004 ZI-data=32460"
+    },
+    "single": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=48732 RO-data=708 RW-data=1932 ZI-data=32220"
+    },
+    "manual": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=40972 RO-data=652 RW-data=1832 ZI-data=27680"
+    },
+    "link": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=26394 RO-data=462 RW-data=1880 ZI-data=27648"
+    },
+    "off": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=52072 RO-data=788 RW-data=1976 ZI-data=30312"
+    }
+  },
+  "source_sha256": {
+    "main.c": "a1e6ac6c95a7d96ba0a6209b41c56d293b0d45d76964463139b5fe982df7f167",
+    "chassis_auto_test.c": "fe8fdbf638ab8e42dd2354a861f62b2a19f0ecd72906efe718fb3f64facf04ea",
+    "chassis_auto_test.h": "acba0d309f7cc0d47e88c6291c7e00124b973bbc9d7f74aaa6225bcf9fda0cc5",
+    "hwt101.c": "9933ddb2af30d74d3c6d59ab8f37562e31e1f6ff15795dbfa5a2c6dfc241ea3f",
+    "hwt101.h": "a2acef14e1c63a6c274d08d244868936d8fc7bf461e97fadc1ffa1d35612088c"
+  },
+  "all_build_sources_match": true,
+  "encoding": "GBK/CRLF preserved",
+  "deadline_definitions_unchanged": true,
+  "default_action_plan_unchanged": true,
+  "flashed": false,
+  "serial_opened": false,
+  "hardware_tested": false,
+  "pushed": false,
+  "limits": [
+    "prior failure cannot be uniquely classified from HF1",
+    "HF2 and backend branch latch not yet exercised on MCU",
+    "backend state snapshot is captured before Auto_Cut changes state; result/address valid only for I/O-specific branches",
+    "stack/critical-section diagnostic overhead requires MCU observation",
+    "onboard program/state not checked this turn; last known routeA failed state from2026-10-24"
+  ]
+}

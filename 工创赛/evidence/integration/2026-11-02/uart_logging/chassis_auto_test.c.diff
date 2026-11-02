@@ -1,0 +1,30 @@
+--- before/chassis_auto_test.c
++++ USER/chassis_auto_test.c
+@@ -1837,3 +1837,27 @@
+ {
+     return ChassisAuto_BeginTranslationHold(dry_run, 0U);
+ }
++
++/* 纯复制观察快照，不查询CAN、不改状态/采样时间，也不清故障。 */
++uint32_t ChassisAuto_ReadWheelLog(ChassisWheelLog *snapshot)
++{
++    uint32_t i;TickType_t now;
++    if (!snapshot) return 0U;
++    taskENTER_CRITICAL();now=xTaskGetTickCount();
++    snapshot->tick_ms=(uint32_t)now*portTICK_PERIOD_MS;
++    snapshot->session=g_chassis_auto_session;snapshot->active=g_chassis_auto_active;
++    snapshot->state=g_chassis_auto_state;snapshot->dry_run=s_mode;
++    snapshot->speed_valid_mask=snapshot->ack_valid_mask=0U;
++    for(i=0U;i<4U;i++) {
++        snapshot->acknowledged_decirpm[i]=s_direction_guard[i].target_deci;
++        snapshot->measured_decirpm[i]=ZdtX_RpmDeci(g_chassis_auto_driver_rpm[i]);
++        snapshot->ack_ms[i]=s_direction_guard[i].ack_ms;
++        snapshot->sample_ms[i]=(uint32_t)s_speed_tick[i]*portTICK_PERIOD_MS;
++        snapshot->age_ms[i]=(uint32_t)(now-s_speed_tick[i])*portTICK_PERIOD_MS;
++        if (!s_mode && s_direction_guard[i].valid) snapshot->ack_valid_mask|=1UL<<i;
++        if (!s_mode && g_chassis_auto_active && (s_speed_valid&(1UL<<i)) &&
++            (TickType_t)(now-s_speed_tick[i])<pdMS_TO_TICKS(CHASSIS_AUTO_FRESH_MS))
++            snapshot->speed_valid_mask|=1UL<<i;
++    }
++    taskEXIT_CRITICAL();return 1U;
++}

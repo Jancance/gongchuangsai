@@ -1,0 +1,112 @@
+{
+  "runs": [
+    {
+      "run": 1,
+      "segments": [
+        {
+          "segment": 1,
+          "estimated_delta_mm": [
+            -17,
+            -1801
+          ],
+          "estimated_path_angle_error_deg": -0.5408102860161534,
+          "start_heading_deg": -90.0,
+          "end_heading_deg": -90.472
+        },
+        {
+          "segment": 2,
+          "estimated_delta_mm": [
+            -1801,
+            13
+          ],
+          "estimated_path_angle_error_deg": -0.41356590669363413,
+          "start_heading_deg": -90.472,
+          "end_heading_deg": -90.988
+        },
+        {
+          "segment": 5,
+          "estimated_delta_mm": [
+            50,
+            1800
+          ],
+          "estimated_path_angle_error_deg": -1.5911402711945755,
+          "start_heading_deg": 88.89,
+          "end_heading_deg": 88.406
+        },
+        {
+          "segment": 8,
+          "estimated_delta_mm": [
+            1799,
+            -61
+          ],
+          "estimated_path_angle_error_deg": -1.942025579338491,
+          "start_heading_deg": -91.9,
+          "end_heading_deg": -91.301
+        }
+      ],
+      "example_send_spacing_ms": [
+        22,
+        22,
+        22
+      ],
+      "example_batch_ms": 67
+    },
+    {
+      "run": 2,
+      "segments": [
+        {
+          "segment": 1,
+          "estimated_delta_mm": [
+            -16,
+            -1801
+          ],
+          "estimated_path_angle_error_deg": -0.5089996422886145,
+          "start_heading_deg": -90.0,
+          "end_heading_deg": -90.433
+        },
+        {
+          "segment": 2,
+          "estimated_delta_mm": [
+            -1800,
+            14
+          ],
+          "estimated_path_angle_error_deg": -0.44562485495123383,
+          "start_heading_deg": -90.433,
+          "end_heading_deg": -90.889
+        },
+        {
+          "segment": 5,
+          "estimated_delta_mm": [
+            39,
+            1800
+          ],
+          "estimated_path_angle_error_deg": -1.2412143533642848,
+          "start_heading_deg": 89.263,
+          "end_heading_deg": 88.862
+        },
+        {
+          "segment": 8,
+          "estimated_delta_mm": [
+            1799,
+            -71
+          ],
+          "estimated_path_angle_error_deg": -2.260083501365159,
+          "start_heading_deg": -92.169,
+          "end_heading_deg": -91.631
+        }
+      ],
+      "example_send_spacing_ms": [
+        22,
+        22,
+        22
+      ],
+      "example_batch_ms": 67
+    }
+  ],
+  "limits": "XY is derived from the same yaw and encoders; geometric consistency is not independent proof of yaw truth or physical per-segment drift. Only endpoints measured externally.",
+  "diagnosis": "Local heading reference is reset from measured yaw on each translation; no XY feedback correction. Integer RPM hold hysteresis permits residual yaw. Sequential wheel updates are a plausible contributor, not proven sole cause. Encoder count quantization is not established root cause.",
+  "nominal_reported_count_mm": 0.003691141270849824,
+  "one_degree_over_180cm_mm": 31.414331587110322,
+  "motion_commands_sent": false,
+  "firmware_changed": false
+}

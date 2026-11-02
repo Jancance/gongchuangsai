@@ -1,0 +1,21 @@
+{
+  "cause": "PLAN success increments accepted but does not clear remote_result. Host checked latched result4 before accepted ACK, causing false STOP. Real log shows remote_accepted0->1, remote_rejected stays2, result4 unchanged.",
+  "files": [
+    "工创赛/scripts/p1_fine_serial_motion.py",
+    "工创赛/scripts/p1_sync_serial_motion.py"
+  ],
+  "change": "Snapshot rejected count at PLAN/ARM; any new rejection still aborts even when result overwritten. Expiry7/8 remains unconditional; legacy unknown baselines conservative. No firmware change, no timeout relaxation.",
+  "regression_checks": {
+    "latched_result": 4,
+    "straight210": 3,
+    "fine_and_perimeter": 10,
+    "sync_discovery": 3,
+    "passed": true
+  },
+  "hardware_plan_only": "fixed_handshake_check.json: onePLAN0, noARM/START, VM0 four speed0",
+  "host_sha": {
+    "p1_fine_serial_motion.py": "da0aa35559346ae46d777d05dad7c6cb61052cf38e89806f7bf424ee4b17a361",
+    "p1_sync_serial_motion.py": "f89e8d0f9dab319d63d30d9111d5afadd31c3903fb493044bf8f407fdc00e9ab"
+  },
+  "power_issue": "User reports power normal. One subsequent full run no timeout/reset. Prior electrical root cause not confirmed; not solved by host patch alone."
+}

@@ -1,0 +1,84 @@
+{
+  "scope": "six offline tools only",
+  "new_files_sha256": {
+    "工创赛/scripts/p1_motion_offline.py": "95fbca76d5211fed6cbfd74260c44f1c2f98f449aa6987c2148d62c0ec3f29ee",
+    "工创赛/scripts/p1_four_wheel_sim.py": "9463d3cab9727a01c79516dd63a6832904e58ebfd18a673e236cc26e925a1a33",
+    "工创赛/scripts/p1_validate_offline.py": "95e8548a5a6bd9224c3186eabc9710e5cd1515362c6f413b6b569ffd10599dc5",
+    "工创赛/scripts/test_p1_motion_offline.py": "fbccd05e5cbc862cf1e911239d6f359b481baacce48916c82403c2b715906fec",
+    "工创赛/scripts/p1_offline_tests/four_wheel.c": "a1bf0d84d853b4df93db8fd45afaae3ed1b16028f03a25689d73d00f473659d7",
+    "工创赛/scripts/p1_offline_tests/stubs/can.h": "0829ee794f2d6c180c4365590652cc8e2d530a609cdfba764651e410e1afcba3",
+    "工创赛/scripts/p1_offline_tests/stubs/freertos_hooks.h": "7148290dc9e606d7d1a0a5d91653446483c067d7d9abdee75e44584b0730fd1d",
+    "工创赛/scripts/p1_offline_tests/stubs/power.h": "08f0e4654ac7250056e565e6b6e967696f825ea17ab89656bfe70f2b8aea93a0",
+    "工创赛/scripts/p1_offline_tests/stubs/safety.h": "441b4ff5b143ba52b244387cb22d1d4bc49b1bc89d312c44ae936298b780d40f",
+    "工创赛/scripts/p1_offline_tests/stubs/task.h": "547082ac5e62a0c9d9de48cae3b516d8b1502ab8f080dc291c9a8c9b3834ae63",
+    "工创赛/docs/P1_OFFLINE_TOOLS_2026-10-27.md": "71dc161cdffbe67bade831c401570ee04ed3cd2c9e16510c250dd63194f99cb6",
+    "工创赛/docs/P1_OFFLINE_COMPARISON_EXAMPLE_2026-10-27.json": "cd6bdd2ed34f250e09cc1ff61cbf38c7d4d786ae54005f0fa259a9db6ef962ed"
+  },
+  "firmware_modified": false,
+  "hardware_accessed": false,
+  "github_pushed": false,
+  "full_firmware_rebuild_this_task": false,
+  "validation": {
+    "started_utc": "2026-10-26T19:43:28.202730+00:00",
+    "hardware_accessed": false,
+    "checks": [
+      {
+        "name": "offline_tool_tests",
+        "status": "passed",
+        "detail": {
+          "ok": true,
+          "returncode": 0,
+          "log": "offline_tests.log"
+        }
+      },
+      {
+        "name": "existing_host_tests",
+        "status": "passed",
+        "detail": {
+          "ok": true,
+          "returncode": 0,
+          "log": "host_tests.log"
+        }
+      },
+      {
+        "name": "configuration_and_package",
+        "status": "passed",
+        "detail": {
+          "ok": true,
+          "count": 1221,
+          "failed": []
+        }
+      },
+      {
+        "name": "historical_log_reports",
+        "status": "passed",
+        "detail": {
+          "ok": true,
+          "runs": 5,
+          "limits": "Existing failures remain failures in the reports; analysis success is not motion success."
+        }
+      },
+      {
+        "name": "actual_C_four_wheel_simulation",
+        "status": "passed",
+        "detail": {
+          "ok": true,
+          "assertions": 17327,
+          "cases": 10,
+          "first_failure_line": null
+        }
+      },
+      {
+        "name": "protected_files_unchanged",
+        "status": "passed",
+        "file_count": 2334,
+        "changed": []
+      }
+    ],
+    "limits": "Software verification only; no physical speed, stopping distance, drift or smoothness acceptance.",
+    "elapsed_s": 5.25,
+    "status": "passed"
+  },
+  "browser_qa": "chart_browser_qa.png",
+  "candidate_axf_sha256": "7f2228dee9e38f9b943e4d4704e6cee44bf74e2f9d80abf3046c138032e63543"
+}

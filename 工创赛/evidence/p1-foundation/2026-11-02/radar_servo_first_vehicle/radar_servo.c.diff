@@ -1,0 +1,36 @@
+--- before/HARDWARE/RADAR_SERVO/radar_servo.c
++++ after/HARDWARE/RADAR_SERVO/radar_servo.c
+@@ -3,6 +3,7 @@
+ #include "stm32f4xx.h"
+ #include "stm32f4xx_tim.h"
+ #include "zdt_x_config.h"
++#include "app_entry_config.h"
+ volatile uint32_t g_radar_servo_state=0U;
+ volatile float g_radar_servo_angle_deg[2]={0.0f,0.0f};
+ volatile uint32_t g_radar_servo_pulse_us[2]={0U,0U};
+@@ -62,3 +63,25 @@
+     return 0U;
+ #endif
+ }
++
++volatile uint32_t g_radar_servo_test_request=0U,g_radar_servo_test_id=1U;
++volatile uint32_t g_radar_servo_test_result=0U,g_radar_servo_test_sequence=0U;
++volatile float g_radar_servo_test_angle_deg=0.0f;
++void RadarServo_DebugService(uint32_t safe_idle)
++{
++    uint32_t request=g_radar_servo_test_request,id;
++    float angle;
++    if (request==0U) return;
++    id=g_radar_servo_test_id;angle=g_radar_servo_test_angle_deg;
++    g_radar_servo_test_request=0U;
++#if APP_IS_DEBUG && !APP_X_OFFLINE_ONLY
++    if (safe_idle!=1U || g_radar_servo_state!=1U) g_radar_servo_test_result=2U;
++    else if (request!=1U || id<1U || id>2U || !(angle>=0.0f && angle<=15.0f))
++        g_radar_servo_test_result=3U;
++    else g_radar_servo_test_result=RadarServo_SetAngle(id,angle)?1U:2U;
++#else
++    (void)safe_idle;(void)id;(void)angle;
++    g_radar_servo_test_result=2U;
++#endif
++    g_radar_servo_test_sequence++;
++}

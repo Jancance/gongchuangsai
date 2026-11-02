@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-25",
+  "scope": "read-only source and existing capture diagnosis",
+  "code_changed": false,
+  "flashed": false,
+  "serial_opened": false,
+  "motion_started": false,
+  "pushed": false,
+  "completion_rejection": {
+    "firmware": "main.c:2130 rejects KEEP unless remote_state==2; App_SerialReject overwrites result with reason6; normal completion sets remote_state3",
+    "host": "KEEP every0.2s until valid completion telemetry; no further commands after status software_complete",
+    "finding": "consistent with terminal KEEP racing delayed completion notification; exact UART device receipt timestamps are not captured",
+    "evidence": [
+      {
+        "round": "repeat2",
+        "first_observed_reject": {
+          "host_utc": "2026-10-25T07:20:15.887802+00:00",
+          "tick_ms": 49300,
+          "remote_rejected": 2,
+          "sequence_completed": 3,
+          "sequence_state": 3,
+          "vm_request": 0
+        },
+        "last_two_host_commands": [
+          {
+            "host_utc": "2026-10-25T07:20:15.544016+00:00",
+            "direction": "TX",
+            "text": "RC1,159,16000,KEEP,436F"
+          },
+          {
+            "host_utc": "2026-10-25T07:20:15.769256+00:00",
+            "direction": "TX",
+            "text": "RC1,159,16000,KEEP,436F"
+          }
+        ],
+        "host_commands_after_observed_rejection": 0
+      },
+      {
+        "round": "repeat3",
+        "first_observed_reject": {
+          "host_utc": "2026-10-25T07:22:14.559795+00:00",
+          "tick_ms": 49900,
+          "remote_rejected": 1,
+          "sequence_completed": 3,
+          "sequence_state": 3,
+          "vm_request": 0
+        },
+        "last_two_host_commands": [
+          {
+            "host_utc": "2026-10-25T07:22:14.258699+00:00",
+            "direction": "TX",
+            "text": "RC1,165,16600,KEEP,9AB3"
+          },
+          {
+            "host_utc": "2026-10-25T07:22:14.494557+00:00",
+            "direction": "TX",
+            "text": "RC1,165,16600,KEEP,9AB3"
+          }
+        ],
+        "host_commands_after_observed_rejection": 0
+      }
+    ]
+  },
+  "can_stack": {
+    "allocation_words": 384,
+    "allocation_bytes": 1536,
+    "compiler_max_depth_bytes": 792,
+    "compiler_unknown_terms": true,
+    "runtime_watermark_variable": "g_can_task_stack_words",
+    "updated_at": "main.c:2987 uxTaskGetStackHighWaterMark(NULL)",
+    "telemetry_exposed": false,
+    "runtime_watermark_read": false,
+    "rx_stack_is_CAN": false,
+    "finding": "no measured CAN stack margin available; do not infer safe margin by subtracting compiler report from allocation"
+  }
+}

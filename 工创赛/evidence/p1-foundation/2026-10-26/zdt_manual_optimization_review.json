@@ -1,0 +1,135 @@
+{
+  "date": "2026-10-26",
+  "baseline": "54bb617",
+  "manual": "工创赛\\evidence\\p1-0\\motor-manuals\\ZDT_X42S第二代闭环步进电机用户手册V1.0.5_260527.pdf",
+  "manual_sha256": "0afae3f30e1a679c0cd425c790b495dee504c352d2afe234cfa474868319ee92",
+  "manually_rendered_and_viewed_pdf_pages": [
+    49,
+    50,
+    53,
+    66,
+    81,
+    89
+  ],
+  "extracted_pdf_pages": 110,
+  "source_sha256": {
+    "3.stm32f407工程\\SYSTEM\\CAN\\can.c": "54b173eb8767d8fb25e1779a6be3f21ca2c71757c4694cf04513ed2f3eaa5f60",
+    "3.stm32f407工程\\SYSTEM\\CAN\\can.h": "c6fb41ed2c6fd21ae5328abf62a176df7c5676afed11f6a8125c95980fca1a97",
+    "3.stm32f407工程\\USER\\chassis_auto_test.c": "d70f799cfaa3621943d3ffdf8ab43e6a0bbfb9cf72513685eaa32c4af3ea1354",
+    "3.stm32f407工程\\USER\\chassis_kinematics.c": "c33aa851a2e0af0e87af8250af81eecc9987e381b1b9cf791f292025aed38304",
+    "3.stm32f407工程\\USER\\main.c": "429e43d9b7fad45d268285dcd6cf37ccce08b45a29b79edb9d669694fc19d7d2",
+    "3.stm32f407工程\\USER\\motion_profile.c": "5e3b205b42f9824fa76e334f7c23a65162fdfe69a18e454a64f46fc26777af59",
+    "3.stm32f407工程\\USER\\motion_profile.h": "aa12b374960f6fd31fd25cf0e3652ce30d8cd6855763f7f345e4970972084296"
+  },
+  "firmware_changed": false,
+  "settings_changed": false,
+  "flashed": false,
+  "serial_opened": false,
+  "motion_started": false,
+  "current_hardware_evidence": "2026-10-11 four nodes 1F00CA23146B => FW2.0.2; FW_Emm and S_Vel_IS Disable from on-site handoff, not read live today",
+  "findings": [
+    {
+      "topic": "0.1RPM input",
+      "pages": [
+        19,
+        53,
+        71,
+        81
+      ],
+      "status": "manual supported; current configuration remains 1RPM/raw",
+      "benefit": "smaller command quantization for S-curve and heading",
+      "limit": "35 speed feedback remains integer RPM; acc timing with scaling requires verification"
+    },
+    {
+      "topic": "cached command sync FF66",
+      "pages": [
+        37,
+        53,
+        60
+      ],
+      "status": "existing sync0 API does not expose sync1 or broadcast",
+      "benefit": "reduce actuation skew",
+      "limit": "staged stale commands/cancel/failed trigger/recovery and reply semantics must be tested"
+    },
+    {
+      "topic": "multi-motor AA",
+      "pages": [
+        7,
+        46,
+        49,
+        50
+      ],
+      "status": "manual has explicit Emm CAN example; current single-frame API incompatible",
+      "benefit": "reduce sequential waits and improve command start alignment",
+      "limit": "4 Emm F6 commands:37 protocol bytes ->5 CAN frames, onlyID1 control receipt; no four-node ack proof"
+    },
+    {
+      "topic": "periodic feedback",
+      "pages": [
+        7,
+        37,
+        46,
+        66
+      ],
+      "status": "manual supports X42S/Y42; current FIFO flush/poll receive incompatible",
+      "benefit": "remove repeated request/response waits",
+      "limit": "persistent receiver + demux + queue/overflow/freshness + bounded TX needed; actual FW support and rates unverified"
+    },
+    {
+      "topic": "Emm acceleration",
+      "pages": [
+        53
+      ],
+      "status": "current caller acc0; formula is a step-rate, not S-curve jerk control",
+      "benefit": "possible motor-side interpolation",
+      "limit": "at present scaling acc1 implies78.43RPM/s, cannot assume any desired body acceleration is representable"
+    },
+    {
+      "topic": "driver heartbeat",
+      "pages": [
+        38,
+        89,
+        90
+      ],
+      "status": "manual supported, current value unknown",
+      "benefit": "additional communication loss stop",
+      "limit": "which commands refresh it and stop/recovery behavior unknown; queries may mask stale motion; never replaces host source watchdog"
+    },
+    {
+      "topic": "combined system status43",
+      "pages": [
+        42,
+        43,
+        97,
+        98
+      ],
+      "status": "31-byte Emm response requires multi-frame RX",
+      "benefit": "potential coherent status snapshot and fewer transactions",
+      "limit": "more CAN frames and FIFO pressure; measure throughput not assume faster"
+    }
+  ],
+  "facts": {
+    "cm_s_per_rpm": 0.40317105721069013,
+    "cm_s_per_0p1rpm": 0.04031710572106901,
+    "rpm_for20cm_s": 49.606735509162185,
+    "raw_tenths_near20": 496,
+    "lowest_nonzero_acc_rpm_s_at_current_units": 78.4313725490196,
+    "four_F6_multi_command_bytes": 37,
+    "four_F6_CAN_frames": 5
+  },
+  "rules": {
+    "R": [
+      "RUN-01",
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "LOC-05",
+      "RUN-06",
+      "MOT-02",
+      "MOT-04"
+    ],
+    "Q": "unchanged; vendor questions separate"
+  },
+  "web": "Search found reposts and third-party drivers, not an authenticated manufacturer release; no protocol facts adopted from them"
+}

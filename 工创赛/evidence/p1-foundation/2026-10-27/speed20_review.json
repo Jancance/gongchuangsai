@@ -1,0 +1,220 @@
+{
+  "date": "2026-10-27",
+  "baseline": "54bb617",
+  "source_sha256": {
+    "USER/app_config.h": "05d4b5c1f994abd766164f7ac7833283f31430e1a26f90816af82c7025dc3199",
+    "USER/app_entry.h": "76e31eb4231028d2b93731973e2f5b343575fbc27e708cda00fcdfe6532d1f96",
+    "USER/app_entry.c": "d0a4bbdededdf4e8bece0bd5622e3230d3a4e9bccf3f430774d16917ca1b83df",
+    "USER/motion_distance_limits.h": "7a34b7a1b33d3f80e9b924ca48feea7c15428f3c7ab192a37d5e49f2f47039f2",
+    "USER/chassis_auto_test.c": "82fdb6ef68f635bfe377fac34aed21e7b02393dc903a6bacefdbaeec77dca6c7",
+    "USER/chassis_kinematics.c": "5fe8457248e8d5c2ec9a4dd230e9c2aed581c3efcd832c02173331616434401e",
+    "USER/chassis_kinematics.h": "87d43ccb5b523f3657ae3cb50e52f53db1d564f6f06ce38551f0e6c907f75086",
+    "USER/main.c": "9da443600d0d254275de36d0ae8fe24841a50300e51fea42ac909c01ff99a252",
+    "USER/motion_trial20.h": "c95af4ca897c45fae9cde6607f82ce3a0b8039b79e10c88c2847fe1d8a1f6712",
+    "scripts/p1_serial_motion.py": "28d90f3402b218812c6f7ee35d89ec59b330e1912f5687e31cae4b0a68f5c1dc",
+    "scripts/test_p1_serial_motion.py": "7d671710cc53376738b814bf69078fa8f281f19ebded4b26f0173686a657b79b"
+  },
+  "unchanged": {
+    "3.stm32f407工程/SYSTEM/CAN/can.c": "54b173eb8767d8fb25e1779a6be3f21ca2c71757c4694cf04513ed2f3eaa5f60",
+    "3.stm32f407工程/SYSTEM/CAN/can.h": "c6fb41ed2c6fd21ae5328abf62a176df7c5676afed11f6a8125c95980fca1a97",
+    "3.stm32f407工程/USER/heading_controller.c": "d3b5c2a6d902240fb54700227d22c5857e16cd3360971cf92ac3270da3855c40",
+    "USER/motion_profile.c": "5e3b205b42f9824fa76e334f7c23a65162fdfe69a18e454a64f46fc26777af59",
+    "USER/motion_profile.h": "aa12b374960f6fd31fd25cf0e3652ce30d8cd6855763f7f345e4970972084296",
+    "SYSTEM/USART/usart.c": "f85a99853e07f8505a4e0b0bf88057a8c5656135be4b428fd50fc1a5a457b9b3"
+  },
+  "builds": {
+    "default": {
+      "full_rebuild": true,
+      "errors": 0,
+      "warnings": 0,
+      "code": 62840,
+      "ro": 888,
+      "rw": 2064,
+      "zi": 37064,
+      "project": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\speed20_default_20261026\\gongxun-f407.uvprojx",
+      "axf_sha256": "ab32252ad1f2e608ad11354e9a167682e1322cde03401238f0bac068371330af"
+    },
+    "candidate": {
+      "full_rebuild": true,
+      "errors": 0,
+      "warnings": 0,
+      "code": 72364,
+      "ro": 1300,
+      "rw": 2088,
+      "zi": 37496,
+      "project": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\speed20_candidate_20261026\\gongxun-f407.uvprojx",
+      "axf_sha256": "7f2228dee9e38f9b943e4d4704e6cee44bf74e2f9d80abf3046c138032e63543"
+    },
+    "competition": {
+      "full_rebuild": true,
+      "errors": 0,
+      "warnings": 0,
+      "code": 54068,
+      "ro": 652,
+      "rw": 1944,
+      "zi": 29376,
+      "project": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\speed20_competition_20261026\\gongxun-f407.uvprojx",
+      "axf_sha256": "176e9fdab315fba4b313bafc1f3979ac53fd176127ce2bfe16ca907350399e48"
+    }
+  },
+  "actual_c_checks": {
+    "default": {
+      "actual_c_assertions": 288,
+      "variant": "default",
+      "hardware_accessed": false,
+      "limits": "Actual chassis backend/kinematics/planner with stubbed RTOS/CAN; quantized delayed plant is an approximation, not vehicle/timing validation."
+    },
+    "baseline": {
+      "actual_c_assertions": 211086,
+      "variant": "baseline",
+      "hardware_accessed": false,
+      "limits": "Actual chassis backend/kinematics/planner with stubbed RTOS/CAN; quantized delayed plant is an approximation, not vehicle/timing validation."
+    },
+    "trial": {
+      "actual_c_assertions": 245927,
+      "variant": "trial",
+      "hardware_accessed": false,
+      "limits": "Actual chassis backend/kinematics/planner with stubbed RTOS/CAN; quantized delayed plant is an approximation, not vehicle/timing validation.",
+      "trial_duration_s": 19.77255630493164,
+      "trial_peak_mm_s": 200.0,
+      "trial_model_results": [
+        [
+          0,
+          0,
+          50,
+          2100031,
+          1,
+          1940,
+          0
+        ],
+        [
+          0,
+          1,
+          49,
+          2100018,
+          1,
+          1930,
+          0
+        ],
+        [
+          0,
+          2,
+          47,
+          2100007,
+          1,
+          1951,
+          0
+        ],
+        [
+          80,
+          0,
+          50,
+          2100030,
+          1,
+          1926,
+          0
+        ],
+        [
+          80,
+          1,
+          49,
+          2100020,
+          1,
+          1907,
+          0
+        ],
+        [
+          80,
+          2,
+          47,
+          2100007,
+          1,
+          1943,
+          0
+        ],
+        [
+          160,
+          0,
+          51,
+          2100027,
+          1,
+          1929,
+          0
+        ],
+        [
+          160,
+          1,
+          49,
+          2100062,
+          1,
+          1904,
+          0
+        ],
+        [
+          160,
+          2,
+          48,
+          2100006,
+          1,
+          1906,
+          0
+        ]
+      ]
+    }
+  },
+  "host_regression": {
+    "tests": 105,
+    "result": "OK",
+    "prior_tests": 96,
+    "new_tests": 9
+  },
+  "final_profile": {
+    "plan7": "forward210-20",
+    "direction": "forward only",
+    "distance_mm": 2100,
+    "reference_mm_s": 200,
+    "base_cap_rpm": 52,
+    "heading_wheel_cap_rpm": 54,
+    "feedback_trip_rpm": 80,
+    "raw_position_jump_counts_per_ms": 121,
+    "profile_run_ms": 25000,
+    "backend_total_ms": 45000,
+    "position_follow_rpm": 2,
+    "position_follow_kp": 1,
+    "filter_omega": 1,
+    "arrival_mm": 2,
+    "reference_end_ms": 2000
+  },
+  "user_constraints": [
+    "direct20, no10/15 tier tests",
+    "do not flash/reset/drive, vehicle unavailable"
+  ],
+  "defaults": "root S curve0, speed20 trial0; compile dedicated candidate with both1; PLAN7 rejected by ordinary/competition builds",
+  "preserved": [
+    "ordinary3..15RPM timed/lateral limits",
+    "ordinary30RPM feedback and66counts/ms position sanity",
+    "source100ms/position400ms/stop500ms",
+    "50mm tracking guard",
+    "VM/fault/watchdog",
+    "old low/long presets and retired237 rejection"
+  ],
+  "development_findings": [
+    "Initial1RPM high-speed tracking reserve timed out4.55mm short in -3percent no-delay plant; replaced only high-profile reserve with2RPM and Kp1, subtracted from nominal V/A/J budget",
+    "Model positive gain needs47RPM for200mm/s, so assertion uses modeled speed rather than raw>=48RPM; no firmware protection relaxed",
+    "Initial host fixture omitted start token; fixture fixed, session guard unchanged"
+  ],
+  "limits": [
+    "Software reference speed is not measured ground speed",
+    "Actual C with RTOS/CAN stubs; nine scalar delay/gain plants are not MCU scheduling or vehicle validation",
+    "Filter/quantization/floor/heading/physical jerk and stopping distance remain untested",
+    "Low-speed distance scale retained; high-speed ground accuracy unknown",
+    "New code not flashed; previous B2 fault candidate remains on board"
+  ],
+  "git": "fetch/pull ff-only latest54bb617, no divergence; existing changes retained, local only no commit/push",
+  "candidate_package": {
+    "path": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\releases\\p1_speed20_candidate_2026-10-27",
+    "files": 1167,
+    "axf_sha256": "7f2228dee9e38f9b943e4d4704e6cee44bf74e2f9d80abf3046c138032e63543",
+    "physical_status": "not flashed; current board state not read; latest download record remains prior B2"
+  }
+}

@@ -1,0 +1,158 @@
+
+========================================================================
+
+** ELF Header Information
+
+    File Name: unit.axf
+
+    Machine class: ELFCLASS32 (32-bit)
+    Data encoding: ELFDATA2LSB (Little endian)
+    Header version: EV_CURRENT (Current version)
+    Operating System ABI: none
+    ABI Version: 0
+    File Type: ET_EXEC (Executable) (2)
+    Machine: EM_ARM (ARM)
+
+    Image Entry point: 0x08000001
+    Flags: EF_ARM_HASENTRY + EF_ARM_ABI_FLOAT_SOFT (0x05000202)
+
+    ARM ELF revision: 5 (ABI version 2)
+
+    Conforms to Soft float procedure-call standard
+
+    Built with
+    Component: ARM Compiler 5.06 update 7 (build 960) Tool: armcc [4d365d]
+    Component: ARM Compiler 5.06 update 7 (build 960) Tool: armlink [4d3601]
+
+    Header size: 52 bytes (0x34)
+    Program header entry size: 32 bytes (0x20)
+    Section header entry size: 40 bytes (0x28)
+
+    Program header entries: 1
+    Section header entries: 10
+
+    Program header offset: 4328 (0x000010e8)
+    Section header offset: 4360 (0x00001108)
+
+    Section header string table index: 9
+
+========================================================================
+
+** Program header #0 (PT_LOAD) [PF_X + PF_W + PF_R + PF_ARM_ENTRY]
+    Size : 75168 bytes (1424 bytes in file)
+    Virtual address: 0x08000000 (Alignment 4)
+
+
+========================================================================
+
+** Section #1 'ER_ROM' (SHT_PROGBITS) [SHF_ALLOC + SHF_EXECINSTR]
+    Size   : 1384 bytes (alignment 4)
+    Address: 0x08000000
+
+
+** Section #2 'RW_RAM' (SHT_PROGBITS) [SHF_ALLOC + SHF_WRITE]
+    Size   : 40 bytes (alignment 4)
+    Address: 0x20000000
+
+
+** Section #3 'RW_RAM' (SHT_NOBITS) [SHF_ALLOC + SHF_WRITE]
+    Size   : 73744 bytes (alignment 4)
+    Address: 0x20000028
+
+
+** Section #4 '.debug_frame' (SHT_PROGBITS)
+    Size   : 380 bytes
+
+
+** Section #5 '.symtab' (SHT_SYMTAB)
+    Size   : 976 bytes (alignment 4)
+    String table #6 '.strtab'
+    Last local symbol no. 42
+
+    Symbol table .symtab (60 symbols, 42 local)
+
+      #  Symbol Name                Value      Bind  Sec  Type  Vis  Size
+    ========================================================================
+
+      1  $t                         0x08000000   Lc    1   --   De 
+      2  $d                         0x0800026a   Lc    1   --   De 
+      3  $t                         0x08000278   Lc    1   --   De 
+      4  $d                         0x080002ec   Lc    1   --   De 
+      5  $t                         0x080002f4   Lc    1   --   De 
+      6  $d                         0x08000324   Lc    1   --   De 
+      7  $t                         0x0800032c   Lc    1   --   De 
+      8  $d                         0x08000378   Lc    1   --   De 
+      9  $t                         0x08000380   Lc    1   --   De 
+     10  $d                         0x08000454   Lc    1   --   De 
+     11  $t                         0x0800045c   Lc    1   --   De 
+     12  $d                         0x08000530   Lc    1   --   De 
+     13  $t                         0x08000538   Lc    1   --   De 
+     14  $d                         0x08000562   Lc    1   --   De 
+     15  $d.realdata                0x20000000   Lc    2   --   De 
+     16  unit.c                     0x00000000   Lc  Abs  File  De 
+     17  i.XLoad_AppendLocked       0x080002c0   Lc    1  Sect  De 
+     18  XLoad_AppendLocked         0x080002c1   Lc    1  Code  De   0x2c
+     19  i.XLoad_OpenLocked         0x080002f4   Lc    1  Sect  De 
+     20  XLoad_OpenLocked           0x080002f5   Lc    1  Code  De   0x30
+     21  i.XLoad_Read               0x0800032c   Lc    1  Sect  De 
+     22  i.XLoad_RecordCommand      0x08000380   Lc    1  Sect  De 
+     23  i.XLoad_RecordSnapshot     0x0800045c   Lc    1  Sect  De 
+     24  i.XLoad_SpeedField         0x08000538   Lc    1  Sect  De 
+     25  XLoad_SpeedField           0x08000539   Lc    1  Code  De   0x2a
+     26  i.test_entry               0x08000000   Lc    1  Sect  De 
+     27  .bss                       0x20000028   Lc    3  Sect  De   0x12010
+     28  s_records                  0x20000028   Lc    3  Data  De   0x12000
+     29  s_ack_ms                   0x20012028   Lc    3  Data  De   0x10
+     30  .data                      0x20000000   Lc    2  Sect  De   0x28
+     31  depth                      0x2000000c   Lc    2  Data  De   0x4
+     32  s_session                  0x20000010   Lc    2  Data  De   0x4
+     33  s_count                    0x20000014   Lc    2  Data  De   0x4
+     34  s_dropped                  0x20000018   Lc    2  Data  De   0x4
+     35  s_target_valid             0x2000001c   Lc    2  Data  De   0x4
+     36  s_target                   0x20000020   Lc    2  Data  De   0x8
+     37  dc.s                       0x00000000   Lc  Abs  File  De 
+     38  ../clib/microlib/string/memcpy.c
+                                    0x00000000   Lc  Abs  File  De 
+     39  .text                      0x08000278   Lc    1  Sect  De 
+     40  ../clib/microlib/string/memset.c
+                                    0x00000000   Lc  Abs  File  De 
+     41  .text                      0x0800029c   Lc    1  Sect  De 
+     42  ../clib/microlib/string/memcpy.c
+                                    0x00000000   Lc  Abs  File  De 
+     43  BuildAttributes$$THM_ISAv4$P$D$K$B$S$PE$A:L22UL41UL21$X:L11$S22US41US21$IEEE1$IW$USESV6$~STKCKD$USESV7$~SHL$OSPACE$EBA8$MICROLIB$REQ8$PRES8$EABIv2
+                                    0x00000000   Gb  Abs   --   Hi 
+     44  test_entry                 0x08000001   Gb    1  Code  Hi   0x26a
+     45  __aeabi_memcpy             0x08000279   Gb    1  Code  Hi   0x24
+     46  __aeabi_memcpy4            0x08000279   Gb    1  Code  Hi 
+     47  __aeabi_memcpy8            0x08000279   Gb    1  Code  Hi 
+     48  __aeabi_memset             0x0800029d   Gb    1  Code  Hi   0xe
+     49  __aeabi_memset4            0x0800029d   Gb    1  Code  Hi 
+     50  __aeabi_memset8            0x0800029d   Gb    1  Code  Hi 
+     51  __aeabi_memclr             0x080002ab   Gb    1  Code  Hi   0x4
+     52  __aeabi_memclr4            0x080002ab   Gb    1  Code  Hi 
+     53  __aeabi_memclr8            0x080002ab   Gb    1  Code  Hi 
+     54  _memset$wrapper            0x080002af   Gb    1  Code  Hi   0x12
+     55  XLoad_Read                 0x0800032d   Gb    1  Code  Hi   0x4c
+     56  XLoad_RecordCommand        0x08000381   Gb    1  Code  Hi   0xd4
+     57  XLoad_RecordSnapshot       0x0800045d   Gb    1  Code  Hi   0xd4
+     58  g_chassis_auto_active      0x20000000   Gb    2  Data  Hi   0x4
+     59  g_chassis_auto_session     0x20000004   Gb    2  Data  Hi   0x4
+     60  g_chassis_auto_state       0x20000008   Gb    2  Data  Hi   0x4
+
+
+** Section #6 '.strtab' (SHT_STRTAB)
+    Size   : 808 bytes
+
+
+** Section #7 '.note' (SHT_NOTE)
+    Size   : 28 bytes (alignment 4)
+
+
+** Section #8 '.comment' (SHT_PROGBITS)
+    Size   : 588 bytes
+
+
+** Section #9 '.shstrtab' (SHT_STRTAB)
+    Size   : 72 bytes
+
+

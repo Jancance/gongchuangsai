@@ -1,0 +1,270 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "name": "APP_SPEED20_TRIAL_RPM",
+      "ok": true,
+      "observed": 52.0,
+      "expected": 52
+    },
+    {
+      "name": "APP_SPEED20_TRIAL_MM",
+      "ok": true,
+      "observed": 2100.0,
+      "expected": 2100
+    },
+    {
+      "name": "APP_SPEED20_TRIAL_MM_S",
+      "ok": true,
+      "observed": 200.0,
+      "expected": 200
+    },
+    {
+      "name": "APP_SPEED20_FEEDBACK_RPM",
+      "ok": true,
+      "observed": 80.0,
+      "expected": 80
+    },
+    {
+      "name": "APP_SPEED20_RUN_MS",
+      "ok": true,
+      "observed": 25000.0,
+      "expected": 25000
+    },
+    {
+      "name": "APP_DISTANCE_SCURVE_ARRIVAL_MM",
+      "ok": true,
+      "observed": 2.0,
+      "expected": 2
+    },
+    {
+      "name": "APP_DISTANCE_SCURVE_FINAL_WAIT_MS",
+      "ok": true,
+      "observed": 2000.0,
+      "expected": 2000
+    },
+    {
+      "name": "host high plan",
+      "ok": true,
+      "observed": 7,
+      "expected": 7
+    },
+    {
+      "name": "firmware high plan",
+      "ok": true,
+      "observed": 7.0,
+      "expected": 7
+    },
+    {
+      "name": "all host presets",
+      "ok": true,
+      "observed": {
+        "default": 0,
+        "left30": 1,
+        "forward30": 2,
+        "right30": 3,
+        "route-a": 4,
+        "forward210": 6,
+        "forward210-20": 7
+      },
+      "expected": {
+        "default": 0,
+        "left30": 1,
+        "forward30": 2,
+        "right30": 3,
+        "route-a": 4,
+        "forward210": 6,
+        "forward210-20": 7
+      }
+    },
+    {
+      "name": "preset default",
+      "ok": true,
+      "observed": 0.0,
+      "expected": 0
+    },
+    {
+      "name": "preset left30",
+      "ok": true,
+      "observed": 1.0,
+      "expected": 1
+    },
+    {
+      "name": "preset forward30",
+      "ok": true,
+      "observed": 2.0,
+      "expected": 2
+    },
+    {
+      "name": "preset right30",
+      "ok": true,
+      "observed": 3.0,
+      "expected": 3
+    },
+    {
+      "name": "preset route-a",
+      "ok": true,
+      "observed": 4.0,
+      "expected": 4
+    },
+    {
+      "name": "preset forward210",
+      "ok": true,
+      "observed": 6.0,
+      "expected": 6
+    },
+    {
+      "name": "schema high command",
+      "ok": true,
+      "observed": true,
+      "expected": true
+    },
+    {
+      "name": "host admission base_rpm",
+      "ok": true,
+      "observed": true,
+      "expected": true
+    },
+    {
+      "name": "host admission feedback_limit_rpm",
+      "ok": true,
+      "observed": true,
+      "expected": true
+    },
+    {
+      "name": "backend total deadline",
+      "ok": true,
+      "observed": 45000.0,
+      "expected": 45000
+    },
+    {
+      "name": "TM base fields",
+      "ok": true,
+      "observed": [
+        "seq",
+        "tick_ms",
+        "phase",
+        "trip",
+        "elapsed_ms",
+        "source_valid",
+        "yaw_mdeg",
+        "target_mdeg",
+        "error_mdeg",
+        "rate_mdps",
+        "angle_age_ms",
+        "rate_age_ms",
+        "correction_rpm",
+        "rpm1",
+        "rpm2",
+        "rpm3",
+        "rpm4",
+        "vm_request",
+        "pe2_active",
+        "backend_state",
+        "backend_active",
+        "backend_result",
+        "backend_cause",
+        "stop_mask",
+        "can_fault",
+        "rtos_fault",
+        "safety_fault",
+        "motion_mode",
+        "nonzero_samples",
+        "peak_abs_rpm",
+        "last_nonzero_rpm",
+        "remote_state",
+        "remote_result",
+        "token_seq",
+        "token_tick",
+        "telemetry_dropped",
+        "remote_rejected",
+        "selftest",
+        "base_rpm",
+        "feedback_limit_rpm",
+        "peak_error_mdeg",
+        "max_sample_gap_ms",
+        "uart_rx_errors",
+        "rx_stack_words",
+        "heap_min_bytes",
+        "link_lost",
+        "protocol_selftest",
+        "remote_accepted"
+      ],
+      "expected": [
+        "seq",
+        "tick_ms",
+        "phase",
+        "trip",
+        "elapsed_ms",
+        "source_valid",
+        "yaw_mdeg",
+        "target_mdeg",
+        "error_mdeg",
+        "rate_mdps",
+        "angle_age_ms",
+        "rate_age_ms",
+        "correction_rpm",
+        "rpm1",
+        "rpm2",
+        "rpm3",
+        "rpm4",
+        "vm_request",
+        "pe2_active",
+        "backend_state",
+        "backend_active",
+        "backend_result",
+        "backend_cause",
+        "stop_mask",
+        "can_fault",
+        "rtos_fault",
+        "safety_fault",
+        "motion_mode",
+        "nonzero_samples",
+        "peak_abs_rpm",
+        "last_nonzero_rpm",
+        "remote_state",
+        "remote_result",
+        "token_seq",
+        "token_tick",
+        "telemetry_dropped",
+        "remote_rejected",
+        "selftest",
+        "base_rpm",
+        "feedback_limit_rpm",
+        "peak_error_mdeg",
+        "max_sample_gap_ms",
+        "uart_rx_errors",
+        "rx_stack_words",
+        "heap_min_bytes",
+        "link_lost",
+        "protocol_selftest",
+        "remote_accepted"
+      ]
+    },
+    {
+      "name": "root default curve off",
+      "ok": true,
+      "observed": 0.0,
+      "expected": 0
+    },
+    {
+      "name": "root default high off",
+      "ok": true,
+      "observed": 0.0,
+      "expected": 0
+    },
+    {
+      "name": "root default custom route off",
+      "ok": true,
+      "observed": 0.0,
+      "expected": 0
+    },
+    {
+      "name": "root default route speed trial off",
+      "ok": true,
+      "observed": 0.0,
+      "expected": 0
+    }
+  ],
+  "limits": "Literal/config/hash consistency only; C behavior is checked separately. No hardware access."
+}

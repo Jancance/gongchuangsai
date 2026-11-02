@@ -1,0 +1,89 @@
+...EEE............E....................
+======================================================================
+ERROR: test_config_detects_host_limit_mismatch_without_import (test_p1_motion_offline.OfflineTests.test_config_detects_host_limit_mismatch_without_import)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\工创赛\工创赛\scripts\test_p1_motion_offline.py", line 184, in test_config_detects_host_limit_mismatch_without_import
+    self.assertFalse(m.check_config(root)["ok"])
+                     ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\Desktop\工创赛\工创赛\scripts\p1_motion_offline.py", line 331, in check_config
+    check("root default custom route off", macro(firmware / "route_config.h", "APP_ROUTE_USE_CUSTOM"), 0)
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\Desktop\工创赛\工创赛\scripts\p1_motion_offline.py", line 286, in macro
+    text = Path(path).read_text(encoding="gbk")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\Lib\pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\Lib\pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\lenovo\\AppData\\Local\\Temp\\tmpzph5p24y\\3.stm32f407工程\\USER\\route_config.h'
+
+======================================================================
+ERROR: test_config_detects_speed_mismatch (test_p1_motion_offline.OfflineTests.test_config_detects_speed_mismatch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\工创赛\工创赛\scripts\test_p1_motion_offline.py", line 177, in test_config_detects_speed_mismatch
+    failures = [c["name"] for c in m.check_config(root)["checks"] if not c["ok"]]
+                                   ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\Desktop\工创赛\工创赛\scripts\p1_motion_offline.py", line 331, in check_config
+    check("root default custom route off", macro(firmware / "route_config.h", "APP_ROUTE_USE_CUSTOM"), 0)
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\Desktop\工创赛\工创赛\scripts\p1_motion_offline.py", line 286, in macro
+    text = Path(path).read_text(encoding="gbk")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\Lib\pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\Lib\pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\lenovo\\AppData\\Local\\Temp\\tmp5f7x285u\\3.stm32f407工程\\USER\\route_config.h'
+
+======================================================================
+ERROR: test_configuration_consistent (test_p1_motion_offline.OfflineTests.test_configuration_consistent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\工创赛\工创赛\scripts\test_p1_motion_offline.py", line 171, in test_configuration_consistent
+    self.assertTrue(m.check_config(self.config_root())["ok"])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\Desktop\工创赛\工创赛\scripts\p1_motion_offline.py", line 331, in check_config
+    check("root default custom route off", macro(firmware / "route_config.h", "APP_ROUTE_USE_CUSTOM"), 0)
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\Desktop\工创赛\工创赛\scripts\p1_motion_offline.py", line 286, in macro
+    text = Path(path).read_text(encoding="gbk")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\Lib\pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\Lib\pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\lenovo\\AppData\\Local\\Temp\\tmph3su41ex\\3.stm32f407工程\\USER\\route_config.h'
+
+======================================================================
+ERROR: test_package_hash_tamper_detected (test_p1_motion_offline.OfflineTests.test_package_hash_tamper_detected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\工创赛\工创赛\scripts\test_p1_motion_offline.py", line 202, in test_package_hash_tamper_detected
+    self.assertTrue(m.check_config(root, package)["ok"])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\Desktop\工创赛\工创赛\scripts\p1_motion_offline.py", line 331, in check_config
+    check("root default custom route off", macro(firmware / "route_config.h", "APP_ROUTE_USE_CUSTOM"), 0)
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\Desktop\工创赛\工创赛\scripts\p1_motion_offline.py", line 286, in macro
+    text = Path(path).read_text(encoding="gbk")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\Lib\pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\Lib\pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\lenovo\\AppData\\Local\\Temp\\tmppleyuwxw\\3.stm32f407工程\\USER\\route_config.h'
+
+----------------------------------------------------------------------
+Ran 39 tests in 0.488s
+
+FAILED (errors=4)

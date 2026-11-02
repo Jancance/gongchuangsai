@@ -1,0 +1,545 @@
+{
+  "schema": "p1-perimeter-preview-v1",
+  "hardware_accessed": false,
+  "configuration": {
+    "schema": "p1-perimeter-preview-v1",
+    "purpose": "仅无障碍动作与回到起始位姿验证；不是正式比赛路线或可执行固件配置",
+    "field": {
+      "width_mm": 2400,
+      "height_mm": 2400,
+      "start_zone_id": 1,
+      "start_zone_mm": [
+        2100,
+        2100,
+        2400,
+        2400
+      ],
+      "inner_regions_allowed_for_trial": true,
+      "inner_regions_policy_source": "用户明确本轮压到白色功能区/启停区2没事，主要验证返回原位置；地图外边界仍保留",
+      "background_layout_confirmed": false
+    },
+    "footprint": {
+      "length_mm": 283,
+      "width_mm": 254,
+      "source": "轮心距206/212mm与轮径77mm、轮宽42mm估算轮组包络，非完整整车外廓实测",
+      "full_vehicle_confirmed": false,
+      "assumed_centre_matches_odometry": true
+    },
+    "start_pose": {
+      "x_mm": 2250,
+      "y_mm": 2250,
+      "heading_deg": -90
+    },
+    "coordinate_convention": "地图左下角(0,0)，X向右、Y向上；车头角逆时针为正；动作前/后/左/右均相对当前车头",
+    "required_boundary_margin_mm": 5,
+    "actions": [
+      {
+        "kind": "FORWARD",
+        "amount": 15,
+        "speed": 5,
+        "label": "前进15cm出区"
+      },
+      {
+        "kind": "RIGHT",
+        "amount": 15,
+        "speed": 5,
+        "label": "右移15cm向场地内侧"
+      },
+      {
+        "kind": "FORWARD",
+        "amount": 180,
+        "speed": 20,
+        "label": "右侧前进180cm，地图向下"
+      },
+      {
+        "kind": "RIGHT",
+        "amount": 180,
+        "speed": 20,
+        "label": "底部右移180cm，地图向左"
+      },
+      {
+        "kind": "TURN",
+        "amount": -90,
+        "speed": 30,
+        "label": "顺时针90°，车头朝左"
+      },
+      {
+        "kind": "TURN",
+        "amount": -90,
+        "speed": 30,
+        "label": "顺时针90°，车头朝上"
+      },
+      {
+        "kind": "FORWARD",
+        "amount": 180,
+        "speed": 20,
+        "label": "左侧前进180cm，地图向上"
+      },
+      {
+        "kind": "TURN",
+        "amount": 90,
+        "speed": 30,
+        "label": "逆时针90°，车头朝左"
+      },
+      {
+        "kind": "TURN",
+        "amount": 90,
+        "speed": 30,
+        "label": "逆时针90°，车头恢复向下"
+      },
+      {
+        "kind": "LEFT",
+        "amount": 180,
+        "speed": 20,
+        "label": "顶部左移180cm，地图向右"
+      },
+      {
+        "kind": "BACKWARD",
+        "amount": 15,
+        "speed": 5,
+        "label": "后退15cm回区"
+      },
+      {
+        "kind": "LEFT",
+        "amount": 15,
+        "speed": 5,
+        "label": "左移15cm返回起始中心并停车"
+      }
+    ]
+  },
+  "rows": [
+    {
+      "index": 1,
+      "kind": "FORWARD",
+      "amount": 15,
+      "speed": 5,
+      "label": "前进15cm出区",
+      "start_pose": [
+        2250.0,
+        2250.0,
+        -90.0
+      ],
+      "profile": {
+        "rpm": 15,
+        "reference_mm_s": 50.0,
+        "peak_cm_s": 5.0,
+        "plan_duration_s": 5.895326137542725,
+        "run_ms": 9896,
+        "reference_acceleration_mm_s2": 23.521183013916016,
+        "reference_jerk_mm_s3": 30.563549041748047
+      },
+      "backward_model_is_unvalidated": false,
+      "nominal_lower_time_s": 3.0,
+      "end_pose": [
+        2250.0,
+        2100.0,
+        -90.0
+      ],
+      "boundary_clearance_mm": {
+        "left_mm": 2123.0,
+        "right_mm": 23.0,
+        "bottom_mm": 1958.5,
+        "top_mm": 8.5
+      },
+      "minimum_boundary_clearance_mm": 8.5,
+      "boundary_pass": true
+    },
+    {
+      "index": 2,
+      "kind": "RIGHT",
+      "amount": 15,
+      "speed": 5,
+      "label": "右移15cm向场地内侧",
+      "start_pose": [
+        2250.0,
+        2100.0,
+        -90.0
+      ],
+      "profile": {
+        "rpm": 15,
+        "reference_mm_s": 50.0,
+        "peak_cm_s": 5.0,
+        "plan_duration_s": 5.849416732788086,
+        "run_ms": 9850,
+        "reference_acceleration_mm_s2": 23.873157501220703,
+        "reference_jerk_mm_s3": 31.61947250366211
+      },
+      "backward_model_is_unvalidated": false,
+      "nominal_lower_time_s": 3.0,
+      "end_pose": [
+        2100.0,
+        2100.0,
+        -90.0
+      ],
+      "boundary_clearance_mm": {
+        "left_mm": 1973.0,
+        "right_mm": 23.0,
+        "bottom_mm": 1958.5,
+        "top_mm": 158.5
+      },
+      "minimum_boundary_clearance_mm": 23.0,
+      "boundary_pass": true
+    },
+    {
+      "index": 3,
+      "kind": "FORWARD",
+      "amount": 180,
+      "speed": 20,
+      "label": "右侧前进180cm，地图向下",
+      "start_pose": [
+        2100.0,
+        2100.0,
+        -90.0
+      ],
+      "profile": {
+        "rpm": 51,
+        "reference_mm_s": 200.0,
+        "peak_cm_s": 19.69105224609375,
+        "plan_duration_s": 18.28241539001465,
+        "run_ms": 22283,
+        "reference_acceleration_mm_s2": 23.521183013916016,
+        "reference_jerk_mm_s3": 30.563549041748047
+      },
+      "backward_model_is_unvalidated": false,
+      "nominal_lower_time_s": 9.0,
+      "end_pose": [
+        2100.0,
+        300.0,
+        -90.0
+      ],
+      "boundary_clearance_mm": {
+        "left_mm": 1973.0,
+        "right_mm": 173.0,
+        "bottom_mm": 158.5,
+        "top_mm": 158.5
+      },
+      "minimum_boundary_clearance_mm": 158.5,
+      "boundary_pass": true
+    },
+    {
+      "index": 4,
+      "kind": "RIGHT",
+      "amount": 180,
+      "speed": 20,
+      "label": "底部右移180cm，地图向左",
+      "start_pose": [
+        2100.0,
+        300.0,
+        -90.0
+      ],
+      "profile": {
+        "rpm": 52,
+        "reference_mm_s": 200.0,
+        "peak_cm_s": 19.84796600341797,
+        "plan_duration_s": 18.137880325317383,
+        "run_ms": 22138,
+        "reference_acceleration_mm_s2": 23.873157501220703,
+        "reference_jerk_mm_s3": 31.61947250366211
+      },
+      "backward_model_is_unvalidated": false,
+      "nominal_lower_time_s": 9.0,
+      "end_pose": [
+        300.0,
+        299.9999999999999,
+        -90.0
+      ],
+      "boundary_clearance_mm": {
+        "left_mm": 173.0,
+        "right_mm": 173.0,
+        "bottom_mm": 158.4999999999999,
+        "top_mm": 1958.5
+      },
+      "minimum_boundary_clearance_mm": 158.4999999999999,
+      "boundary_pass": true
+    },
+    {
+      "index": 5,
+      "kind": "TURN",
+      "amount": -90,
+      "speed": 30,
+      "label": "顺时针90°，车头朝左",
+      "start_pose": [
+        300.0,
+        299.9999999999999,
+        -90.0
+      ],
+      "nominal_lower_time_s": 3.0,
+      "profile": null,
+      "end_pose": [
+        300.0,
+        299.9999999999999,
+        -180.0
+      ],
+      "boundary_clearance_mm": {
+        "left_mm": 109.8651794120814,
+        "right_mm": 1909.8651794120815,
+        "bottom_mm": 109.8651794120813,
+        "top_mm": 1909.8651794120815
+      },
+      "minimum_boundary_clearance_mm": 109.8651794120813,
+      "boundary_pass": true
+    },
+    {
+      "index": 6,
+      "kind": "TURN",
+      "amount": -90,
+      "speed": 30,
+      "label": "顺时针90°，车头朝上",
+      "start_pose": [
+        300.0,
+        299.9999999999999,
+        -180.0
+      ],
+      "nominal_lower_time_s": 3.0,
+      "profile": null,
+      "end_pose": [
+        300.0,
+        299.9999999999999,
+        90.0
+      ],
+      "boundary_clearance_mm": {
+        "left_mm": 109.86517941208137,
+        "right_mm": 1909.8651794120815,
+        "bottom_mm": 109.86517941208129,
+        "top_mm": 1909.8651794120815
+      },
+      "minimum_boundary_clearance_mm": 109.86517941208129,
+      "boundary_pass": true
+    },
+    {
+      "index": 7,
+      "kind": "FORWARD",
+      "amount": 180,
+      "speed": 20,
+      "label": "左侧前进180cm，地图向上",
+      "start_pose": [
+        300.0,
+        299.9999999999999,
+        90.0
+      ],
+      "profile": {
+        "rpm": 51,
+        "reference_mm_s": 200.0,
+        "peak_cm_s": 19.69105224609375,
+        "plan_duration_s": 18.28241539001465,
+        "run_ms": 22283,
+        "reference_acceleration_mm_s2": 23.521183013916016,
+        "reference_jerk_mm_s3": 30.563549041748047
+      },
+      "backward_model_is_unvalidated": false,
+      "nominal_lower_time_s": 9.0,
+      "end_pose": [
+        300.0000000000001,
+        2100.0,
+        90.0
+      ],
+      "boundary_clearance_mm": {
+        "left_mm": 173.0,
+        "right_mm": 1973.0,
+        "bottom_mm": 158.4999999999999,
+        "top_mm": 158.5
+      },
+      "minimum_boundary_clearance_mm": 158.4999999999999,
+      "boundary_pass": true
+    },
+    {
+      "index": 8,
+      "kind": "TURN",
+      "amount": 90,
+      "speed": 30,
+      "label": "逆时针90°，车头朝左",
+      "start_pose": [
+        300.0000000000001,
+        2100.0,
+        90.0
+      ],
+      "nominal_lower_time_s": 3.0,
+      "profile": null,
+      "end_pose": [
+        300.0000000000001,
+        2100.0,
+        -180.0
+      ],
+      "boundary_clearance_mm": {
+        "left_mm": 109.86517941208152,
+        "right_mm": 1909.8651794120813,
+        "bottom_mm": 1909.8651794120813,
+        "top_mm": 109.86517941208149
+      },
+      "minimum_boundary_clearance_mm": 109.86517941208149,
+      "boundary_pass": true
+    },
+    {
+      "index": 9,
+      "kind": "TURN",
+      "amount": 90,
+      "speed": 30,
+      "label": "逆时针90°，车头恢复向下",
+      "start_pose": [
+        300.0000000000001,
+        2100.0,
+        -180.0
+      ],
+      "nominal_lower_time_s": 3.0,
+      "profile": null,
+      "end_pose": [
+        300.0000000000001,
+        2100.0,
+        -90.0
+      ],
+      "boundary_clearance_mm": {
+        "left_mm": 109.86517941208152,
+        "right_mm": 1909.8651794120813,
+        "bottom_mm": 1909.8651794120813,
+        "top_mm": 109.86517941208149
+      },
+      "minimum_boundary_clearance_mm": 109.86517941208149,
+      "boundary_pass": true
+    },
+    {
+      "index": 10,
+      "kind": "LEFT",
+      "amount": 180,
+      "speed": 20,
+      "label": "顶部左移180cm，地图向右",
+      "start_pose": [
+        300.0000000000001,
+        2100.0,
+        -90.0
+      ],
+      "profile": {
+        "rpm": 52,
+        "reference_mm_s": 200.0,
+        "peak_cm_s": 19.84796600341797,
+        "plan_duration_s": 18.137880325317383,
+        "run_ms": 22138,
+        "reference_acceleration_mm_s2": 23.873157501220703,
+        "reference_jerk_mm_s3": 31.61947250366211
+      },
+      "backward_model_is_unvalidated": false,
+      "nominal_lower_time_s": 9.0,
+      "end_pose": [
+        2100.0,
+        2100.0,
+        -90.0
+      ],
+      "boundary_clearance_mm": {
+        "left_mm": 173.0000000000001,
+        "right_mm": 173.0,
+        "bottom_mm": 1958.5,
+        "top_mm": 158.5
+      },
+      "minimum_boundary_clearance_mm": 158.5,
+      "boundary_pass": true
+    },
+    {
+      "index": 11,
+      "kind": "BACKWARD",
+      "amount": 15,
+      "speed": 5,
+      "label": "后退15cm回区",
+      "start_pose": [
+        2100.0,
+        2100.0,
+        -90.0
+      ],
+      "profile": {
+        "rpm": 15,
+        "reference_mm_s": 50.0,
+        "peak_cm_s": 5.0,
+        "plan_duration_s": 5.895326137542725,
+        "run_ms": 9896,
+        "reference_acceleration_mm_s2": 23.521183013916016,
+        "reference_jerk_mm_s3": 30.563549041748047
+      },
+      "backward_model_is_unvalidated": true,
+      "nominal_lower_time_s": 3.0,
+      "end_pose": [
+        2100.0,
+        2250.0,
+        -90.0
+      ],
+      "boundary_clearance_mm": {
+        "left_mm": 1973.0,
+        "right_mm": 173.0,
+        "bottom_mm": 1958.5,
+        "top_mm": 8.5
+      },
+      "minimum_boundary_clearance_mm": 8.5,
+      "boundary_pass": true
+    },
+    {
+      "index": 12,
+      "kind": "LEFT",
+      "amount": 15,
+      "speed": 5,
+      "label": "左移15cm返回起始中心并停车",
+      "start_pose": [
+        2100.0,
+        2250.0,
+        -90.0
+      ],
+      "profile": {
+        "rpm": 15,
+        "reference_mm_s": 50.0,
+        "peak_cm_s": 5.0,
+        "plan_duration_s": 5.849416732788086,
+        "run_ms": 9850,
+        "reference_acceleration_mm_s2": 23.873157501220703,
+        "reference_jerk_mm_s3": 31.61947250366211
+      },
+      "backward_model_is_unvalidated": false,
+      "nominal_lower_time_s": 3.0,
+      "end_pose": [
+        2250.0,
+        2250.0,
+        -90.0
+      ],
+      "boundary_clearance_mm": {
+        "left_mm": 1973.0,
+        "right_mm": 23.0,
+        "bottom_mm": 2108.5,
+        "top_mm": 8.5
+      },
+      "minimum_boundary_clearance_mm": 8.5,
+      "boundary_pass": true
+    }
+  ],
+  "start_pose": [
+    2250.0,
+    2250.0,
+    -90.0
+  ],
+  "end_pose": [
+    2250.0,
+    2250.0,
+    -90.0
+  ],
+  "closure_error_mm_deg": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "closed": true,
+  "boundary_geometry_pass": true,
+  "returned_footprint_inside_start_zone": true,
+  "minimum_boundary_clearance_mm": 8.5,
+  "travel_cm": 780,
+  "turn_absolute_deg": 360,
+  "translation_profile_reference_s": 96.33007717132568,
+  "turn_time_lower_bound_s": 12.0,
+  "current_style_conservative_budget_ms": 315334,
+  "current_firmware_capacity": 8,
+  "firmware_executable": false,
+  "vehicle_approved": false,
+  "blockers": [
+    "本路线12动作，当前固件容量8",
+    "尚无后退距离执行接口",
+    "20cm/s平移与30度/s单段转向候选尚未统一为组合路线",
+    "现有120秒整组预算不支持该路线，需要分段调度与逐段截止设计",
+    "轮组估算不是整车最大外廓实测，初始与回区余量很小",
+    "30档转向及整场位置反馈覆盖尚未实车验证"
+  ],
+  "limits": "外边界几何只对配置中的矩形外廓成立；内区本轮允许经过，不代表正式比赛路线合规。时间为标量参考与下限，非实车预计完成时间。",
+  "configuration_sha256": "5fb3a77ca26f9d71fdbd9b1d022848573b32a8397377ea94e9c0da45c261240b"
+}

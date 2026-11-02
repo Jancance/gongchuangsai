@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-24",
+  "source_baseline": "54bb617 plus local motion and position endpoint changes",
+  "variant": "position_endpoint_single_run_20261024, one forward15RPM/5000ms",
+  "build": "0 errors, 0 warnings",
+  "download": "Verify OK / Application running, 17:46:34",
+  "status": "software_complete",
+  "elapsed_ms": 7643,
+  "endpoint_frames": 1,
+  "endpoint_session": 1,
+  "delta_counts": [
+    82961,
+    -83191,
+    82373,
+    -82613
+  ],
+  "wheel_theoretical_mm": [
+    306.22077097097224,
+    307.0697334632677,
+    304.05037990371255,
+    304.9362538087165
+  ],
+  "start_batch_span_ms": 33,
+  "end_batch_span_ms": 33,
+  "per_wheel_interval_ms": [
+    6170,
+    6170,
+    6170,
+    6170
+  ],
+  "stop_mask": 15,
+  "final_vm": 0,
+  "final_pe2": 0,
+  "faults": 0,
+  "max_telemetry_heading_error_deg": 0.686,
+  "host_drain_final_tick_ms": 32000,
+  "endpoint_emit_tick_ms": 31270,
+  "tm_frames": 94,
+  "pm_frames": 48,
+  "invalid_serial_lines": 1,
+  "rx_stack_words": 309,
+  "heap_min_bytes": 9792,
+  "user_observation": "pending",
+  "actual_displacement_cm": null,
+  "calibration_changed": false,
+  "limits": [
+    "wheel travel is theoretical from nominal77mm diameter, not independently measured chassis displacement",
+    "1 invalid line and startup backlog retained; sequence_gaps not a runtime packet loss count",
+    "summary baseline field5f132ad is legacy; actual source base54bb617 plus local changes"
+  ],
+  "capture": "工创赛\\evidence\\p1-foundation\\2026-10-24\\position_endpoint_run\\20261024_174657_673100.summary.json",
+  "pushed": false
+}

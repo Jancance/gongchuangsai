@@ -1,0 +1,128 @@
+{
+  "hardware_accessed": false,
+  "runs": [
+    {
+      "run": 1,
+      "source": "run_pd_once",
+      "history": {
+        "session": 1,
+        "expected_records": 2023,
+        "received_records": 2023,
+        "dropped": 0,
+        "complete": true
+      },
+      "wheels": [
+        {
+          "wheel": 1,
+          "samples": 48,
+          "median_gap_ms": 506,
+          "max_gap_ms": 528,
+          "ack_pairing_errors": 0
+        },
+        {
+          "wheel": 2,
+          "samples": 48,
+          "median_gap_ms": 506,
+          "max_gap_ms": 539,
+          "ack_pairing_errors": 0
+        },
+        {
+          "wheel": 3,
+          "samples": 48,
+          "median_gap_ms": 506,
+          "max_gap_ms": 528,
+          "ack_pairing_errors": 0
+        },
+        {
+          "wheel": 4,
+          "samples": 48,
+          "median_gap_ms": 506,
+          "max_gap_ms": 528,
+          "ack_pairing_errors": 0
+        }
+      ],
+      "tm_rows": 202,
+      "duration_s": 20.24,
+      "physical_measurement": {
+        "right_cm": 2.1,
+        "short_cm": 1.5,
+        "derived_forward_cm": 208.5,
+        "raw_user_text": "\u53f3\u504f 2.1cm\u6b201.5cm"
+      },
+      "physical_stop_confirmed": false,
+      "direction": "forward",
+      "control": {
+        "P": 1,
+        "D": 0.25,
+        "deadband_deg": 0.3,
+        "integral": false
+      }
+    },
+    {
+      "run": 2,
+      "source": "run_pd_repeat_once",
+      "history": {
+        "session": 1,
+        "expected_records": 2056,
+        "received_records": 2056,
+        "dropped": 0,
+        "complete": true
+      },
+      "wheels": [
+        {
+          "wheel": 1,
+          "samples": 46,
+          "median_gap_ms": 506,
+          "max_gap_ms": 528,
+          "ack_pairing_errors": 0
+        },
+        {
+          "wheel": 2,
+          "samples": 46,
+          "median_gap_ms": 506,
+          "max_gap_ms": 528,
+          "ack_pairing_errors": 0
+        },
+        {
+          "wheel": 3,
+          "samples": 46,
+          "median_gap_ms": 506,
+          "max_gap_ms": 528,
+          "ack_pairing_errors": 0
+        },
+        {
+          "wheel": 4,
+          "samples": 47,
+          "median_gap_ms": 517.0,
+          "max_gap_ms": 528,
+          "ack_pairing_errors": 0
+        }
+      ],
+      "tm_rows": 203,
+      "duration_s": 20.251,
+      "physical_measurement": {
+        "right_cm": 2.75,
+        "short_cm": 1.75,
+        "derived_forward_cm": 208.25,
+        "user_report": "\u53f3\u504f  2.75\u6b201.75cm",
+        "forward_distance_is_derived": true
+      },
+      "physical_stop_confirmed": false,
+      "direction": "forward",
+      "control": {
+        "P": 1,
+        "D": 0.25,
+        "deadband_deg": 0.3,
+        "integral": false
+      }
+    }
+  ],
+  "backward_measured": false,
+  "ground_trajectory_measured": false,
+  "limits": [
+    "Only two forward runs; backward parameters must remain unvalidated extrapolation.",
+    "Per-wheel ~0.5s sampling cannot resolve fast inner-loop dynamics or separate short delay from tau.",
+    "Two endpoint ruler measurements do not identify lateral slip dynamics or true ground trajectories."
+  ],
+  "source_hash_manifest": "data_review.json"
+}

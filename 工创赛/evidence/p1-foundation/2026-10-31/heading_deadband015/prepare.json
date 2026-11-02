@@ -1,0 +1,18 @@
+{
+  "baseline": "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\fine_rpm_sequential_straight210_20261031",
+  "candidate": "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\fine_rpm_sequential_deadband015_straight210_20261031",
+  "changes": [
+    "USER\\heading_controller.c"
+  ],
+  "old": "(Heading_Abs(error) <= 0.3f) && (Heading_Abs(rate_dps) <= 0.3f)",
+  "new": "(Heading_Abs(error) <= 0.15f) && (Heading_Abs(rate_dps) <= 0.3f)",
+  "encoding_utf8_bom": false,
+  "crlf_count": 263,
+  "lf_count": 263,
+  "source_sha_before": "59199c59c0bc71640cb7ca8fe0a3725a9af98e2d8cc62038b307e0f57f826a18",
+  "source_sha_after": "0b75de0b16c18606f8962ba0ba8c941487f758ffbc5db29061b99f5ad63269b9",
+  "flashed": true,
+  "started": true,
+  "image_sha256": "c14be27baced143449672fee339e5bb60764f6368a6ed543472895ab9d582a65",
+  "starts_authorized": 1
+}

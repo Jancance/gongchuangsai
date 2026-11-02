@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-24",
+  "request": "user explicitly requested retry after cause8 failure and confirmed stopped/returned to marked start",
+  "source_baseline": "54bb617 plus local distance/motion changes",
+  "variant": "unchanged distance_sched_87cm_20261024",
+  "source_verified": true,
+  "code_changed": false,
+  "rebuild_needed": false,
+  "download": "Verify OK/Application running18:41:09",
+  "status": "software_complete",
+  "target_mm": 870,
+  "trigger_estimate_mm": 870.312,
+  "settled_wheel_mm": [
+    866.5064867558087,
+    876.258481993394,
+    866.1964308890573,
+    876.1994237330604
+  ],
+  "settled_mean_mm": 871.2902058428301,
+  "user_forward_cm": 89.0,
+  "measurement_approximate": true,
+  "reference": "left rear wheel center; forward projection requested, no photo/precision independently verified",
+  "lateral_offset_cm": null,
+  "physical_stop_lamp_confirmation": "not separately answered; user replied89 only",
+  "actual_minus_estimate_mm": 18.70979415716988,
+  "candidate_forward_scale_not_applied": 1.0214736651826255,
+  "nominal_wheel_diameter_mm": 77,
+  "calibration_changed": false,
+  "yaw": {
+    "reference_yaw_deg": -178.154,
+    "initial_observed_yaw_deg": -178.154,
+    "peak_departure_deg": 0.7470000000000141,
+    "vm_off_yaw_deg": -178.703,
+    "post_stop_yaw_deg": -178.698,
+    "post_stop_vs_reference_deg": -0.5440000000000111,
+    "post_stop_vs_vm_off_deg": 0.0049999999999954525
+  },
+  "firmware_peak_heading_error_deg": 0.769,
+  "total_elapsed_ms": 20589,
+  "faults": 0,
+  "final_stop_mask": 15,
+  "final_rpm": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "vm_request": 0,
+  "pe2": 0,
+  "frames": {
+    "TM1": 228,
+    "PM1": 114,
+    "PE1": 1,
+    "invalid_lines": 0
+  },
+  "terminal_remote_rejected": 1,
+  "accepted": 92,
+  "commands_sent": 93,
+  "telemetry_dropped": 1,
+  "capture": "工创赛\\evidence\\p1-foundation\\2026-10-24\\distance_87cm_retry4_run\\20261024_184142_887300.summary.json",
+  "limitations": [
+    "current source has both successful runs and earlier HWT-source/cause8 failures; reliability not signed off",
+    "end-of-run remote_result6/rejected1 retained; terminal motion successful and fault-free, not described as zero rejections",
+    "startup sequence gaps not equated with runtime packet loss",
+    "no independent lateral position measurement or calibration applied"
+  ],
+  "pushed": false
+}

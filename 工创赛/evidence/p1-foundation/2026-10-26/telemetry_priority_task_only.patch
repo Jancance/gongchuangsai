@@ -1,0 +1,112 @@
+--- main.c.before
++++ main.c
+@@ -1309,6 +1309,7 @@
+ static uint32_t s_serial_token_seq, s_serial_token_tick, s_serial_arm_ms;
+ static uint32_t s_serial_keepalive_ms;
+ static uint32_t s_serial_tx_seq, s_serial_dropped, s_serial_tx_tick;
++static uint32_t s_serial_tx_valid; /* 至少一条当前状态已排入串口 */
+ static uint32_t s_serial_proto_ok;
+ static void App_SerialMotionSafety(void);
+ #endif
+@@ -2272,6 +2273,25 @@
+     }
+     taskEXIT_CRITICAL();
+ }
++/* 当前状态优先：忙时下一轮重试，只有排队成功才推进100ms周期。
++ * 历史诊断不得在状态已到期时抢占单缓冲；不改变主机超时或运动保护。 */
++#define APP_SERIAL_STATUS_PERIOD_MS 100U
++static uint32_t App_SerialStatusDue(uint32_t now)
++{
++    return !s_serial_tx_valid ||
++        (uint32_t)(now - s_serial_tx_tick) >= APP_SERIAL_STATUS_PERIOD_MS;
++}
++static uint32_t App_SerialDiagnosticWindow(uint32_t now, uint32_t earliest_ms)
++{
++    return s_serial_tx_valid && !App_SerialStatusDue(now) &&
++        (uint32_t)(now - s_serial_tx_tick) >= earliest_ms;
++}
++static void App_SerialStatusSend(const char *frame, uint32_t now)
++{
++    if (App_DebugSendString(frame) != 1U) { s_serial_dropped++; return; }
++    s_serial_tx_tick = now;
++    s_serial_tx_valid = 1U;
++}
+ #if APP_POSITION_DIAGNOSTIC
+ /* PE2是带方向的完整历史起止记录，按索引只排队成功发送一次；不当作实时有效位。 */
+ static void App_PositionEndpointTelemetry(void)
+@@ -2282,6 +2302,7 @@
+     uint32_t i, used, phase;
+     int count;
+     uint16_t crc;
++    if (!App_SerialDiagnosticWindow((uint32_t)xTaskGetTickCount(), 40U)) return;
+     if (!ChassisAuto_ReadPositionEndpoints(index, &endpoint)) return;
+     if (endpoint.outcome == 2U) { index++; return; }
+     if (endpoint.outcome != 1U || endpoint.start_mask != 15U || endpoint.end_mask != 15U) return;
+@@ -2318,7 +2339,7 @@
+     int count;
+     uint16_t crc;
+     if ((uint32_t)(now - last) < 200U ||
+-        (uint32_t)(now - s_serial_tx_tick) < 40U) return;
++        !App_SerialDiagnosticWindow(now, 40U)) return;
+     last = now;
+     (void)ChassisAuto_ReadPositions(&position);
+     count = snprintf(frame, sizeof(frame), "PM1,%lu,%lu,%lu,%lu,%lu,",
+@@ -2352,7 +2373,7 @@
+     int count;
+     uint16_t crc;
+     if (!g_motion_fault_diag_valid || (uint32_t)(now - last) < 1000U ||
+-        (uint32_t)(now - s_serial_tx_tick) < 60U) return;
++        !App_SerialDiagnosticWindow(now, 60U)) return;
+     taskENTER_CRITICAL();
+     for (i = 0U; i < MOTION_FAULT_DIAG_FIELDS; i++) values[i] = g_motion_fault_diag[i];
+     taskEXIT_CRITICAL();
+@@ -2379,7 +2400,7 @@
+     uint16_t crc;
+     PowerCommandStatus power;
+     ChassisAutoStatus status;
+-    if ((uint32_t)(now-s_serial_tx_tick) < 70U) return;
++    if (!App_SerialDiagnosticWindow(now, 70U)) return;
+     /* 运动中快速返回，避免为了诊断反复进入临界区复制后端状态。 */
+     if (!g_motion_fault_diag_valid)
+     {
+@@ -2456,7 +2477,7 @@
+     uint16_t crc;
+     PowerCommandStatus power;
+     if (g_vm_test_request || g_chassis_auto_active ||
+-        (uint32_t)(now - last) < 100U || (uint32_t)(now-s_serial_tx_tick) < 70U) return;
++        (uint32_t)(now - last) < 100U || !App_SerialDiagnosticWindow(now, 70U)) return;
+     Power_ReadCommandStatus(&power);
+     if (power.active) return;
+     if (!ChassisAuto_ReadBatchDiagnostic(cursor, &record, &statistics))
+@@ -2524,8 +2545,7 @@
+     uint16_t crc;
+     PowerCommandStatus power;
+     ChassisAutoStatus status;
+-    if ((uint32_t)(now - s_serial_tx_tick) < 100U) return;
+-    s_serial_tx_tick = now;
++    if (!App_SerialStatusDue(now)) return;
+     taskENTER_CRITICAL();
+     Power_ReadCommandStatus(&power); (void)ChassisAuto_ReadStatus(&status);
+     values[0] = (int32_t)(s_serial_tx_seq++); /* seq */
+@@ -2639,7 +2659,7 @@
+     crc = App_SerialCrc(frame, used);
+     count = snprintf(&frame[used], sizeof(frame) - used, "%04X\r\n", (unsigned int)crc);
+     if ((count < 0) || ((uint32_t)count >= sizeof(frame) - used)) { s_serial_dropped++; return; }
+-    if (App_DebugSendString(frame) != 1U) s_serial_dropped++;
++    App_SerialStatusSend(frame, now);
+ }
+ #endif
+ 
+@@ -3419,10 +3439,11 @@
+         }
+         App_StartGateUpdate();
+ #if APP_SERIAL_MOTION_CONTROL
++        /* 先尝试当前状态；诊断只用成功状态之后的空档。 */
++        App_SerialMotionTelemetry();
+ #if APP_POSITION_DIAGNOSTIC
+         App_PositionEndpointTelemetry();
+ #endif
+-        App_SerialMotionTelemetry();
+         App_MotionFaultTelemetry();
+         App_MotionTimingTelemetry();
+         App_BatchDiagnosticTelemetry();

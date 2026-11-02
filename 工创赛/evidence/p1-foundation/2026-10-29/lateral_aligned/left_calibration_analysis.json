@@ -1,0 +1,25 @@
+{
+  "runs": [
+    {
+      "run": "left210_run",
+      "start_yaw_deg": -92.147,
+      "nominal_encoder_forward_mm": 0.06090383096898222,
+      "ground_left_cm": 209.5,
+      "ground_forward_cm": 3.5,
+      "mean_yaw_error_deg": 0.05584541062801932
+    },
+    {
+      "run": "left210_repeat_run",
+      "start_yaw_deg": -94.608,
+      "nominal_encoder_forward_mm": 0.1254988032088704,
+      "ground_left_cm": 209.5,
+      "ground_forward_cm": 3.5,
+      "mean_yaw_error_deg": 0.0786376811594203
+    }
+  ],
+  "ground_distance_scale_for_progress": 0.9976190476190476,
+  "requested_distance_multiplier": 1.0023866348448687,
+  "candidate_backward_fraction": 0.016706443914081145,
+  "expected_backward_rpm_at_nominal20cm_s": 0.8287521445444757,
+  "implementation_constraint": "Current Emm adapter accepts integer RPM only; naive fractional mixing is rejected. Rounding or pulse distribution changes real compensation and wheel acceleration; requires explicit quantization and wheel-budget design before a vehicle candidate. No trim implemented or protection bypassed."
+}

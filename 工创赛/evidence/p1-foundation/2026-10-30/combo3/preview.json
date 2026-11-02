@@ -1,0 +1,53 @@
+{
+  "ok": false,
+  "error": 4,
+  "segment": 3,
+  "budget_ms": 52555,
+  "rows": [
+    {
+      "segment": 1,
+      "kind": "FORWARD",
+      "amount": 100.0,
+      "requested_speed": 20.0,
+      "nominal_speed": 20.0,
+      "minimum_time_s": 13.832956314086914,
+      "rpm": 51,
+      "reference_mm_s": 200.0,
+      "peak_cm_s": 14.458224487304687,
+      "plan_duration_s": 13.832956314086914,
+      "run_ms": 17833,
+      "reference_acceleration_mm_s2": 23.521183013916016,
+      "reference_jerk_mm_s3": 30.563549041748047
+    },
+    {
+      "segment": 2,
+      "kind": "RIGHT",
+      "amount": 100.0,
+      "requested_speed": 20.0,
+      "nominal_speed": 20.0,
+      "minimum_time_s": 13.721211433410645,
+      "rpm": 52,
+      "reference_mm_s": 200.0,
+      "peak_cm_s": 14.575973510742188,
+      "plan_duration_s": 13.721211433410645,
+      "run_ms": 17722,
+      "reference_acceleration_mm_s2": 23.873157501220703,
+      "reference_jerk_mm_s3": 31.61947250366211
+    }
+  ],
+  "message": "速度超限或不能表示为允许的整数RPM",
+  "turn_brake_trial_candidate": true,
+  "left_trim_candidate": false,
+  "candidate_preview": true,
+  "trial_switch": true,
+  "direction_caps_cm_s": {
+    "FORWARD": 20.0,
+    "LEFT": 20.0,
+    "RIGHT": 20.0
+  },
+  "custom_enabled": true,
+  "config_path": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\combo3_candidate_20261030\\USER\\route_config.h",
+  "config_sha256": "21845f06a8db5e2544c34e5883cf447aa5d397f8970276305cd38e144c0ef6fc",
+  "hardware_accessed": false,
+  "limits": "候选预览估计S曲线参考峰值和时间，最终以固件检查为准；未证明实际地速/定位/避障。120秒总保护保留。"
+}

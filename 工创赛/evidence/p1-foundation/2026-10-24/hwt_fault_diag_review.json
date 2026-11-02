@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-24",
+  "scope": "HWT first receive-error event and first translation-trip snapshot HF1, diagnostic-only",
+  "baseline_commit": "54bb617",
+  "host_tests": 64,
+  "builds": {
+    "default": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=56776 RO-data=788 RW-data=2000 ZI-data=32224  \r"
+    },
+    "left": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=56768 RO-data=728 RW-data=2000 ZI-data=32224  \r"
+    },
+    "single": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=48240 RO-data=708 RW-data=1928 ZI-data=31984  \r"
+    },
+    "manual": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=40516 RO-data=652 RW-data=1828 ZI-data=27604  \r"
+    },
+    "link": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=26142 RO-data=462 RW-data=1876 ZI-data=27572  \r"
+    },
+    "off": {
+      "result": "0 errors,0 warnings",
+      "size": "Code=51616 RO-data=788 RW-data=1972 ZI-data=30076  \r"
+    }
+  },
+  "source_sha256": {
+    "main.c": "af9be26f1b8cf0a2b4031eed46102111b1505446d8d09ca787fec36dbc29cf63",
+    "hwt101.c": "9933ddb2af30d74d3c6d59ab8f37562e31e1f6ff15795dbfa5a2c6dfc241ea3f",
+    "hwt101.h": "a2acef14e1c63a6c274d08d244868936d8fc7bf461e97fadc1ffa1d35612088c"
+  },
+  "encoding": "GBK/CRLF preserved",
+  "source_matches_isolated_builds": true,
+  "flashed": false,
+  "serial_opened": false,
+  "hardware_tested": false,
+  "pushed": false,
+  "limitations": [
+    "HF1 and MCU latch not executed on hardware this turn",
+    "candidate long startup critical section not measured or modified",
+    "diagnostic ISR/task overhead and stack headroom need MCU validation",
+    "first event is the first successfully latched software event after arm; not independent physical root-cause proof",
+    "source, deadline, position, VM, stop and watchdog protections retained"
+  ]
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 1,
+    "output": "\"unit.c\", line 50: Error:  #10: \"#\" not expected here\n  };#include \"src/route_heading_reference.h\"\n    ^\n\"unit.c\", line 50: Error:  #169: expected a declaration\n  };#include \"src/route_heading_reference.h\"\n    ^\n\"unit.c\", line 109: Error:  #20: identifier \"s_route_heading_reference\" is undefined\n          if(s_route_heading_reference.valid && ChassisOdometry_SetPose(&s_odometry,\n             ^\n\"unit.c\", line 190: Error:  #20: identifier \"s_route_heading_reference\" is undefined\n   s_route_heading_reference=(RouteHeadingReference){0};\n   ^\n\"unit.c\", line 190: Error:  #20: identifier \"RouteHeadingReference\" is undefined\n   s_route_heading_reference=(RouteHeadingReference){0};\n                              ^\n\"unit.c\", line 190: Error:  #65: expected a \";\"\n   s_route_heading_reference=(RouteHeadingReference){0};\n                                                    ^\n\"unit.c\", line 191: Warning:  #223-D: function \"RouteHeading_Init\" declared implicitly\n   CHECK(RouteHeading_Init(&s_route_heading_reference,observed_yaw));planned_heading_offset=0.0f;\n   ^\n\"unit.c\", line 201: Warning:  #223-D: function \"RouteHeading_Target\" declared implicitly\n   CHECK(RouteHeading_Target(&s_route_heading_reference,planned_heading_offset,&hold_target));\n   ^\n\"unit.c\", line 201: Error:  #20: identifier \"s_route_heading_reference\" is undefined\n   CHECK(RouteHeading_Target(&s_route_heading_reference,planned_heading_offset,&hold_target));\n   ^\n\"unit.c\", line 40: Warning:  #177-D: variable \"s_perimeter_targets\"  was declared but never referenced\n  static const float s_perimeter_targets[9][3]={\n                     ^\nunit.c: 3 warnings, 7 errors\n"
+  }
+]

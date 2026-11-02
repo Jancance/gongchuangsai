@@ -1,0 +1,87 @@
+{
+  "firmware_changed": false,
+  "hardware_accessed": false,
+  "original_root_user_33_unchanged": true,
+  "original_ccw_axf_sha256": "aa1b8190d88f8f090dc876a644831d6bb08dcc5f280fa0d29aa0ed58a34c5952",
+  "original_cw_axf_sha256": "eef3d6dafb25a1b9970c9fcd6914841bae52af632dfc3912f01457c4ccb86499",
+  "assumed_footprint_mm": [
+    283,
+    254
+  ],
+  "footprint_source": "User accepted approximation, not full-envelope measurement",
+  "fault_details": [
+    {
+      "scenario": 27,
+      "action_index": 4.0,
+      "tick_ms": 59650.0,
+      "heading_cause": 2.0,
+      "sample_age_ms": 40.0,
+      "healthy": 1.0,
+      "yaw_deg": 79.12825012207031,
+      "rate_dps": -3.6263301372528076,
+      "start_yaw": 170.30538940429688,
+      "direction": -1.0,
+      "progress_deg": 91.17713928222656,
+      "target_angle": 90.0,
+      "brake_dt_ms": 0.0,
+      "session_elapsed_ms": 6860.0,
+      "filtered_progress": 90.30039978027344,
+      "filtered_rate": 5.127699851989746,
+      "backend_running": 1.0
+    },
+    {
+      "scenario": 28,
+      "action_index": 4.0,
+      "tick_ms": 60290.0,
+      "heading_cause": 2.0,
+      "sample_age_ms": 0.0,
+      "healthy": 1.0,
+      "yaw_deg": 78.98902893066406,
+      "rate_dps": -5.510786533355713,
+      "start_yaw": 169.99151611328125,
+      "direction": -1.0,
+      "progress_deg": 91.00248718261719,
+      "target_angle": 90.0,
+      "brake_dt_ms": 0.0,
+      "session_elapsed_ms": 6800.0,
+      "filtered_progress": 89.99486541748047,
+      "filtered_rate": 6.746449947357178,
+      "backend_running": 1.0
+    }
+  ],
+  "completed_model_final_boundary": [
+    {
+      "scenario": 24,
+      "final_footprint_margin_mm": {
+        "left_mm": 2095.0630032167514,
+        "right_mm": 48.38136259175144,
+        "bottom_mm": 2065.9228599076896,
+        "top_mm": 48.7856528764396
+      },
+      "minimum_final_margin_mm": 48.38136259175144
+    },
+    {
+      "scenario": 25,
+      "final_footprint_margin_mm": {
+        "left_mm": 2136.2997957321268,
+        "right_mm": 3.3618074508767677,
+        "bottom_mm": 2090.9856027143855,
+        "top_mm": 20.33960662063555
+      },
+      "minimum_final_margin_mm": 3.3618074508767677
+    },
+    {
+      "scenario": 26,
+      "final_footprint_margin_mm": {
+        "left_mm": 2197.264200473511,
+        "right_mm": -54.94917843273879,
+        "bottom_mm": 2058.532271334446,
+        "top_mm": 55.165083834445795
+      },
+      "minimum_final_margin_mm": -54.94917843273879
+    }
+  ],
+  "model_assertions": 782759,
+  "vehicle_ready": false,
+  "next_step": "Independent segmented combined test, confirm starting geometry and physical endpoint; no whole-loop launch or relaxed protection"
+}

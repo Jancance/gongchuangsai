@@ -1,0 +1,561 @@
+--- app_config.h.before
++++ app_config.h
+@@ -17,12 +17,25 @@
+ #define APP_DISTANCE_SCURVE_ARRIVAL_MM 2.0f
+ #define APP_DISTANCE_SCURVE_FINAL_WAIT_MS 2000U
+ /* 位置跟随候选：P目标经过二阶临界阻尼平滑，单位RPM。
+- * 为修正预留1RPM及其加速度/jerk余量，仍不突破原15RPM/40/80上限。
++ * 低速预留1RPM及A/jerk余量；20cm/s专用余量见motion_trial20.h。
+  * 末端接近为整数1RPM，不能据此宣称实际轮速jerk连续。 */
+ #define APP_DISTANCE_SCURVE_FOLLOW_KP 0.5f
+ #define APP_DISTANCE_SCURVE_FOLLOW_RPM 1.0f
+ #define APP_DISTANCE_SCURVE_FOLLOW_OMEGA 1.0f
+ #define APP_DISTANCE_SCURVE_APPROACH_RPM 1U
++/* 20cm/s单条调试预设，默认关闭；不得用于定时/横移/比赛入口。 */
++#ifndef APP_SPEED20_TRIAL_ENABLE
++#define APP_SPEED20_TRIAL_ENABLE 0U
++#endif
++#if APP_SPEED20_TRIAL_ENABLE > 1U
++#error Speed20_trial_enable_invalid
++#endif
++#define APP_SPEED20_TRIAL_ACTIVE (APP_SPEED20_TRIAL_ENABLE && APP_DISTANCE_SCURVE_ACTIVE)
++#define APP_SPEED20_TRIAL_RPM 52U
++#define APP_SPEED20_TRIAL_MM 2100.0f
++#define APP_SPEED20_TRIAL_MM_S 200.0f
++#define APP_SPEED20_FEEDBACK_RPM 80U
++#define APP_SPEED20_RUN_MS 25000U
+ 
+ /* 初始化提示次数：0静音，1默认，可改为3 */
+ #define APP_INIT_BEEP_COUNT    2U
+--- app_entry.h.before
++++ app_entry.h
+@@ -10,7 +10,8 @@
+ #define DEBUG_PLAN_ROUTE_A 4U
+ #define DEBUG_PLAN_FORWARD237 5U /* 保留历史编号，当前禁用，不映射为其他距离。 */
+ #define DEBUG_PLAN_FORWARD210 6U
+-#define DEBUG_PLAN_MAX DEBUG_PLAN_FORWARD210
++#define DEBUG_PLAN_FORWARD210_20 7U /* 仅专用构建允许的20cm/s候选。 */
++#define DEBUG_PLAN_MAX DEBUG_PLAN_FORWARD210_20
+ /* 仅复制参数；许可、空闲和源新鲜度由调用适配层锁内检查。 */
+ uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count);
+ #define COMP_ENTRY_IDLE 0U
+--- app_entry.c.before
++++ app_entry.c
+@@ -1,4 +1,5 @@
+ #include "app_entry.h"
++#include "motion_trial20.h"
+ volatile CompetitionEntryStatus g_competition_entry = {0};
+ uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count)
+ {
+@@ -16,6 +17,10 @@
+         for (i=0U;i<n;i++) actions[i]=defaults[i];
+     } else if (id == DEBUG_PLAN_ROUTE_A) {
+         n=3U; for(i=0U;i<n;i++) actions[i]=route[i];
++    } else if (id == DEBUG_PLAN_FORWARD210_20) {
++        MotionAction trial={MOTION_FORWARD_DISTANCE,APP_SPEED20_TRIAL_RPM,0U,0.0f,APP_SPEED20_TRIAL_MM};
++        if (!MotionTrial20Allowed(0U,trial.base_rpm,trial.distance_mm)) return 0U;
++        n=1U; actions[0]=trial;
+     } else if (id == DEBUG_PLAN_FORWARD210) {
+         MotionAction long_forward={MOTION_FORWARD_DISTANCE,15U,0U,0.0f,2100.0f};
+         n=1U; actions[0]=long_forward;
+--- motion_distance_limits.h.before
++++ motion_distance_limits.h
+@@ -2,9 +2,11 @@
+ #define MOTION_DISTANCE_LIMITS_H
+ #include <stdint.h>
+ #include "app_config.h"
+-/* 普通单段仍为10..100cm；210cm仅允许调试入口直行15RPM。 */
++#include "motion_trial20.h"
++/* 普通10..100cm/3..15RPM及低速210cm保留；20cm/s精确例外见motion_trial20.h。 */
+ static __inline uint32_t MotionDistanceAllowed(uint32_t direction, uint32_t rpm, float mm)
+ {
++    if (MotionTrial20Allowed(direction,rpm,mm)) return 1U;
+     if (direction>2U || rpm<3U || rpm>15U) return 0U;
+     if (mm>=100.0f && mm<=1000.0f) return 1U;
+ #if APP_IS_DEBUG && (APP_TEST_MODE == 3U)
+@@ -21,4 +23,9 @@
+ #endif
+     return 0U;
+ }
++static __inline uint32_t MotionDistanceRunMsFor(uint32_t direction,uint32_t rpm,float mm)
++{
++    if (MotionTrial20Allowed(direction,rpm,mm)) return APP_SPEED20_RUN_MS;
++    return MotionDistanceRunMs(mm);
++}
+ #endif
+--- chassis_auto_test.c.before
++++ chassis_auto_test.c
+@@ -315,8 +315,8 @@
+  * prepare在原速度/加速度/jerk总预算中扣除这些余量；整数命令/到距停止另验。 */
+ static uint32_t Auto_ProfileFollowRpmLocked(float elapsed, float progress, TickType_t now, float *rpm)
+ {
+-    float c = APP_DISTANCE_SCURVE_FOLLOW_RPM, w = APP_DISTANCE_SCURVE_FOLLOW_OMEGA;
+-    float desired = APP_DISTANCE_SCURVE_FOLLOW_KP *
++    float c = MotionDistanceFollowRpm(s_distance_max_rpm), w = APP_DISTANCE_SCURVE_FOLLOW_OMEGA;
++    float desired = MotionDistanceFollowKp(s_distance_max_rpm) *
+         (s_distance_reference.position_mm-progress) / s_profile_mm_per_rpm_s;
+     TickType_t ticks = (TickType_t)(now-s_profile_follow_tick);
+     float value;
+@@ -389,7 +389,8 @@
+             if (s_position.sign[i]) current = -current;
+             change = current - old; if (change < 0) change = -change;
+             /* 60RPM等效上限加量化余量：仅跳变诊断，原30RPM保护不变。 */
+-            if (dt > 2000U || change > (int64_t)dt * 66 + 512)
++            if (dt > 2000U || change > (int64_t)dt * MotionDistanceJumpCountsPerMs(
++                    s_translation_mode,s_distance_max_rpm,s_distance_target_mm) + 512)
+             { Auto_DistanceFaultLocked(4U); return; }
+             s_distance_seen_ms[i] = ms; s_distance_seen_raw[i] = s_position.raw[i];
+             s_distance_seen_sign[i] = s_position.sign[i];
+@@ -461,7 +462,7 @@
+         ((TickType_t)(now - s_heading_command_tick) >=
+          pdMS_TO_TICKS(CHASSIS_HEADING_MAILBOX_MAX_AGE_MS)))
+     { Auto_CutDetailLocked(3U,1U,0U,0U); return; }
+-    if ((TickType_t)(now - s_total_tick) >= pdMS_TO_TICKS((s_distance_mode && MotionDistanceRunMs(s_distance_target_mm)>30000U) ? 75000U : CHASSIS_AUTO_TOTAL_MS))
++    if ((TickType_t)(now - s_total_tick) >= pdMS_TO_TICKS((s_distance_mode && s_translation_run_ms>30000U) ? 75000U : CHASSIS_AUTO_TOTAL_MS))
+     { Auto_CutLocked(6U); return; }
+     if (state <= CHASSIS_AUTO_VERIFY_ON)
+     {
+@@ -509,6 +510,10 @@
+             uint32_t speed_limit = (s_forward_hold == 1U) ?
+                 ((s_translation_mode == 0U) ? APP_FORWARD_HOLD_FEEDBACK_LIMIT_RPM :
+                  APP_LATERAL_HOLD_FEEDBACK_LIMIT_RPM) : CHASSIS_AUTO_SPEED_LIMIT_RPM;
++#if APP_POSITION_DIAGNOSTIC
++            if (s_forward_hold && s_distance_mode)
++                speed_limit=MotionDistanceFeedbackLimit(s_translation_mode,s_distance_max_rpm,s_distance_target_mm);
++#endif
+             TickType_t direction_age = ((s_heading_session == 1U) && (s_forward_hold == 0U)) ?
+                 (TickType_t)(now - s_heading_update_tick) : run_age;
+             /* 不把1RPM量化为0误判为停转；只拒绝明显超速和新采到的反向 */
+@@ -1316,19 +1321,24 @@
+     if (!prepared) return 0U;
+     prepared->valid = 0U;
+     if (__get_BASEPRI() || __get_PRIMASK() || motion_mode > 2U ||
+-        base_rpm < 3U || base_rpm > 15U) return 0U;
++        base_rpm < 3U || (base_rpm > 15U && !MotionTrial20Allowed(motion_mode,base_rpm,distance_mm))) return 0U;
+     if (distance_mm != 0.0f)
+     {
+ #if APP_POSITION_DIAGNOSTIC
+-        if (!MotionDistanceAllowed(motion_mode,base_rpm,distance_mm) || run_ms != MotionDistanceRunMs(distance_mm) ||
++        if (!MotionDistanceAllowed(motion_mode,base_rpm,distance_mm) || run_ms != MotionDistanceRunMsFor(motion_mode,base_rpm,distance_mm) ||
+             !Chassis_DistanceSelfTest()) return 0U;
+ #else
+         return 0U;
+ #endif
+     }
+     else if (!run_ms || run_ms > 10000U) return 0U;
+-    if (!Auto_PrepareBasicCommands(prepared->commands) ||
+-        !Chassis_TranslationHoldCommandsAtSpeed(motion_mode,base_rpm,0,prepared->commands[2])) return 0U;
++    if (!Auto_PrepareBasicCommands(prepared->commands)) return 0U;
++#if APP_DISTANCE_SCURVE_ACTIVE
++    if (distance_mm>0.0f)
++    { if (!Chassis_TranslationProfileCommands(motion_mode,0U,0,prepared->commands[2])) return 0U; }
++    else
++#endif
++    if (!Chassis_TranslationHoldCommandsAtSpeed(motion_mode,base_rpm,0,prepared->commands[2])) return 0U;
+ #if APP_DISTANCE_SCURVE_ACTIVE
+     prepared->profile.valid = 0U;
+     if (distance_mm > 0.0f)
+@@ -1337,11 +1347,11 @@
+         float factor;
+         if (!Chassis_CalibrateDistanceMm(motion_mode,
+                 3.14159265358979323846f*g_chassis_geometry.wheel_diameter_mm/60.0f,&factor)) return 0U;
+-        limits.speed = factor*((float)base_rpm-APP_DISTANCE_SCURVE_FOLLOW_RPM);
++        limits.speed = MotionDistanceReferenceSpeed(factor,base_rpm);
+         limits.acceleration = APP_DISTANCE_SCURVE_ACCEL_MM_S2 -
+-            factor*2.0f*APP_DISTANCE_SCURVE_FOLLOW_RPM*APP_DISTANCE_SCURVE_FOLLOW_OMEGA;
++            factor*2.0f*MotionDistanceFollowRpm(base_rpm)*APP_DISTANCE_SCURVE_FOLLOW_OMEGA;
+         limits.jerk = APP_DISTANCE_SCURVE_JERK_MM_S3 -
+-            factor*6.0f*APP_DISTANCE_SCURVE_FOLLOW_RPM*
++            factor*6.0f*MotionDistanceFollowRpm(base_rpm)*
+                 APP_DISTANCE_SCURVE_FOLLOW_OMEGA*APP_DISTANCE_SCURVE_FOLLOW_OMEGA;
+         if (!MotionProfile_Prepare(&prepared->profile,distance_mm,&limits) ||
+             prepared->profile.duration_s*1000.0f + APP_DISTANCE_SCURVE_FINAL_WAIT_MS >= (float)run_ms ||
+@@ -1358,12 +1368,13 @@
+ {
+     uint32_t accepted = 0U;
+     if (!prepared || prepared->valid != 1U || prepared->motion_mode > 2U ||
+-        prepared->base_rpm < 3U || prepared->base_rpm > 15U) return 0U;
++        prepared->base_rpm < 3U || (prepared->base_rpm > 15U &&
++            !MotionTrial20Allowed(prepared->motion_mode,prepared->base_rpm,prepared->distance_mm))) return 0U;
+     if (prepared->distance_mm != 0.0f)
+     {
+ #if APP_POSITION_DIAGNOSTIC
+         if (!MotionDistanceAllowed(prepared->motion_mode,prepared->base_rpm,prepared->distance_mm) ||
+-            prepared->run_ms != MotionDistanceRunMs(prepared->distance_mm)) return 0U;
++            prepared->run_ms != MotionDistanceRunMsFor(prepared->motion_mode,prepared->base_rpm,prepared->distance_mm)) return 0U;
+ #else
+         return 0U;
+ #endif
+@@ -1375,11 +1386,11 @@
+         float factor;
+         if (!Chassis_CalibrateDistanceMm(prepared->motion_mode,
+                 3.14159265358979323846f*g_chassis_geometry.wheel_diameter_mm/60.0f,&factor) ||
+-            prepared->profile.limits.speed != factor*((float)prepared->base_rpm-APP_DISTANCE_SCURVE_FOLLOW_RPM) ||
++            prepared->profile.limits.speed != MotionDistanceReferenceSpeed(factor,prepared->base_rpm) ||
+             prepared->profile.limits.acceleration != APP_DISTANCE_SCURVE_ACCEL_MM_S2 -
+-                factor*2.0f*APP_DISTANCE_SCURVE_FOLLOW_RPM*APP_DISTANCE_SCURVE_FOLLOW_OMEGA ||
++                factor*2.0f*MotionDistanceFollowRpm(prepared->base_rpm)*APP_DISTANCE_SCURVE_FOLLOW_OMEGA ||
+             prepared->profile.limits.jerk != APP_DISTANCE_SCURVE_JERK_MM_S3 -
+-                factor*6.0f*APP_DISTANCE_SCURVE_FOLLOW_RPM*
++                factor*6.0f*MotionDistanceFollowRpm(prepared->base_rpm)*
+                     APP_DISTANCE_SCURVE_FOLLOW_OMEGA*APP_DISTANCE_SCURVE_FOLLOW_OMEGA ||
+             prepared->profile.boundary_s[0] != 0.0f || prepared->profile.position[0] != 0.0f ||
+             prepared->profile.speed[0] != 0.0f || prepared->profile.acceleration[0] != 0.0f)
+@@ -1421,8 +1432,8 @@
+ #if APP_DISTANCE_SCURVE_ACTIVE
+                 s_distance_profile = prepared->profile;
+                 s_profile_active = 1U; s_profile_done = 0U;
+-                s_profile_mm_per_rpm_s = prepared->profile.limits.speed/
+-                    ((float)prepared->base_rpm-APP_DISTANCE_SCURVE_FOLLOW_RPM);
++                (void)Chassis_CalibrateDistanceMm(prepared->motion_mode,
++                    3.14159265358979323846f*g_chassis_geometry.wheel_diameter_mm/60.0f,&s_profile_mm_per_rpm_s);
+                 s_distance_reference = (MotionProfileSample){0};
+                 s_profile_follow_rpm = s_profile_follow_rate = 0.0f; s_profile_follow_tick = 0U;
+                 s_translation_base_rpm = s_translation_applied_base = 0U;
+@@ -1478,7 +1489,7 @@
+ #if APP_DISTANCE_SCURVE_ACTIVE
+     ChassisAutoPreparedTranslation prepared;
+     uint32_t session;
+-    if (!ChassisAuto_PrepareTranslation(motion_mode,max_rpm,MotionDistanceRunMs(target_mm),target_mm,&prepared)) return 0U;
++    if (!ChassisAuto_PrepareTranslation(motion_mode,max_rpm,MotionDistanceRunMsFor(motion_mode,max_rpm,target_mm),target_mm,&prepared)) return 0U;
+     taskENTER_CRITICAL(); session = g_chassis_auto_session; taskEXIT_CRITICAL();
+     return ChassisAuto_BeginPreparedTranslation(&prepared,session);
+ #else
+--- chassis_kinematics.c.before
++++ chassis_kinematics.c
+@@ -1,5 +1,6 @@
+ #include "chassis_kinematics.h"
+ #include "app_config.h"
++#include "motion_trial20.h"
+ #include <float.h>
+ #include <stddef.h>
+ 
+@@ -195,13 +196,14 @@
+ 
+ /* 同时给出前进和受限旋转分量；不反转任何车轮。 */
+ static uint32_t Chassis_TranslationCommandsAtSpeed(uint32_t mode, uint32_t base_rpm,
+-    int32_t correction_rpm, uint32_t minimum_base, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
++    int32_t correction_rpm, uint32_t minimum_base, uint32_t maximum_base,
++    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+ {
+     ChassisWheelSpeeds logical = {{0.0f, 0.0f, 0.0f, 0.0f}};
+     float base, lateral;
+     uint32_t limit;
+     Chassis_ClearMotorCommands(commands);
+-    if ((commands == NULL) || (mode > 2U) || (base_rpm < minimum_base) || (base_rpm > 15U) ||
++    if ((commands == NULL) || (mode > 2U) || (base_rpm < minimum_base) || (base_rpm > maximum_base) ||
+         (correction_rpm < -2) || (correction_rpm > 2)) return 0U;
+     base = (float)base_rpm;
+     limit = base_rpm + 2U;
+@@ -226,14 +228,14 @@
+ 
+ uint32_t Chassis_TranslationHoldCommandsAtSpeed(uint32_t mode, uint32_t base_rpm,
+     int32_t correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+-{ return Chassis_TranslationCommandsAtSpeed(mode,base_rpm,correction_rpm,3U,commands); }
++{ return Chassis_TranslationCommandsAtSpeed(mode,base_rpm,correction_rpm,3U,15U,commands); }
+ 
+ uint32_t Chassis_ProfileCorrectionRpm(uint32_t base_rpm, int32_t requested, int32_t *effective)
+ {
+     int32_t limit;
+     if (!effective) return 0U;
+     *effective = 0;
+-    if (base_rpm > 15U || requested < -2 || requested > 2) return 0U;
++    if (base_rpm > MOTION_PROFILE_BASE_CEILING || requested < -2 || requested > 2) return 0U;
+     limit = (base_rpm < 2U) ? (int32_t)base_rpm : 2;
+     *effective = (requested > limit) ? limit : ((requested < -limit) ? -limit : requested);
+     return 1U;
+@@ -244,7 +246,7 @@
+     int32_t effective;
+     Chassis_ClearMotorCommands(commands);
+     if (!Chassis_ProfileCorrectionRpm(base_rpm,correction_rpm,&effective)) return 0U;
+-    return Chassis_TranslationCommandsAtSpeed(mode,base_rpm,effective,0U,commands);
++    return Chassis_TranslationCommandsAtSpeed(mode,base_rpm,effective,0U,MOTION_PROFILE_BASE_CEILING,commands);
+ }
+ 
+ uint32_t Chassis_TranslationHoldCommands(uint32_t mode, int32_t correction_rpm,
+--- chassis_kinematics.h.before
++++ chassis_kinematics.h
+@@ -73,7 +73,8 @@
+ /* 0前进、1向左、2向右；非法模式或修正清零命令，纯计算不发CAN。 */
+ uint32_t Chassis_TranslationHoldCommandsAtSpeed(uint32_t mode, uint32_t base_rpm,
+     int32_t correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+-/* S曲线候选专用0..15RPM整数基速；修正限到min(基速,2)，零速不原地纠偏。
++/* S曲线纯命令编码：通常0..15RPM，专用20cm/s构建0..52RPM；后端仍核单条许可。
++ * 修正限到min(基速,2)，零速不原地纠偏。
+  * 原Hold接口仍为3..15RPM；新函数不发帧、不授权运动。 */
+ uint32_t Chassis_ProfileCorrectionRpm(uint32_t base_rpm, int32_t requested, int32_t *effective);
+ uint32_t Chassis_TranslationProfileCommands(uint32_t mode, uint32_t base_rpm,
+--- main.c.before
++++ main.c
+@@ -1693,10 +1693,13 @@
+         else if (action->kind >= MOTION_FORWARD_DISTANCE && action->kind <= MOTION_RIGHT_DISTANCE)
+         {
+             if (!APP_POSITION_DIAGNOSTIC || !Chassis_DistanceSelfTest() ||
+-                action->base_rpm < 3U || action->base_rpm > 15U || action->run_ms ||
++                action->base_rpm < 3U || action->run_ms ||
+                 action->relative_deg != 0.0f ||
+                 !MotionDistanceAllowed(action->kind-MOTION_FORWARD_DISTANCE,action->base_rpm,action->distance_mm)) return 0U;
+-            budget += MotionDistanceRunMs(action->distance_mm) + 3500U;
++            if (action->base_rpm>15U &&
++                (MOTION_ACTION_COUNT!=1U || g_debug_plan_id!=DEBUG_PLAN_FORWARD210_20)) return 0U;
++            budget += MotionDistanceRunMsFor(action->kind-MOTION_FORWARD_DISTANCE,
++                action->base_rpm,action->distance_mm) + 3500U;
+         }
+         else return 0U;
+     }
+@@ -1774,20 +1777,25 @@
+     s_combined_stage_ms = (uint32_t)xTaskGetTickCount();
+     return 1U;
+ }
+-uint32_t MoveStart(uint32_t direction, uint32_t rpm, uint32_t run_ms)
++static uint32_t App_MoveSubmit(uint32_t direction, uint32_t rpm, uint32_t run_ms, float distance_mm)
+ {
+     ForwardHoldDebug empty = {0};
+     uint32_t accepted = 0U;
+-    if (direction > MOVE_RIGHT || rpm < MOTION_MOVE_MIN_RPM ||
+-        rpm > MOTION_MOVE_MAX_RPM || !run_ms || run_ms > MOTION_MOVE_MAX_MS)
+-        return 0U;
++    if (distance_mm!=0.0f)
++    {
++        if (!APP_POSITION_DIAGNOSTIC || !MotionDistanceAllowed(direction,rpm,distance_mm) ||
++            run_ms!=MotionDistanceRunMsFor(direction,rpm,distance_mm) || !Chassis_DistanceSelfTest()) return 0U;
++        if (rpm>15U && (g_debug_plan_id!=DEBUG_PLAN_FORWARD210_20 || !s_motion_list_submit)) return 0U;
++    }
++    else if (direction > MOVE_RIGHT || rpm < MOTION_MOVE_MIN_RPM ||
++        rpm > MOTION_MOVE_MAX_RPM || !run_ms || run_ms > MOTION_MOVE_MAX_MS) return 0U;
+     taskENTER_CRITICAL();
+     if (!g_forward_hold.trip &&
+         (g_forward_hold.phase == HR_IDLE || g_forward_hold.phase == HR_DONE) &&
+         App_MotionAccept())
+     {
+         s_combined_turn = 0U; s_combined_mode = direction;
+-        s_combined_base_rpm = rpm; s_combined_run_ms = run_ms; s_combined_distance_mm = 0.0f;
++        s_combined_base_rpm = rpm; s_combined_run_ms = run_ms; s_combined_distance_mm = distance_mm;
+         empty.motion_mode = direction; g_forward_hold = empty;
+         HWT101_DiagnosticArm(); g_motion_fault_diag_valid = 0U;
+         g_forward_hold_trace_count = 0U; g_forward_hold.request = 1U;
+@@ -1796,16 +1804,12 @@
+     taskEXIT_CRITICAL();
+     return accepted;
+ }
++uint32_t MoveStart(uint32_t direction, uint32_t rpm, uint32_t run_ms)
++{ return App_MoveSubmit(direction,rpm,run_ms,0.0f); }
+ uint32_t MoveDistanceStart(uint32_t direction, uint32_t max_rpm, float distance_cm)
+ {
+-    uint32_t accepted;
+-    if (direction > MOVE_RIGHT || !APP_POSITION_DIAGNOSTIC || !MotionDistanceAllowed(direction,max_rpm,distance_cm*10.0f) ||
+-        !Chassis_DistanceSelfTest()) return 0U;
+-    taskENTER_CRITICAL();
+-    accepted = MoveStart(direction,max_rpm,8000U);
+-    if (accepted)
+-    { s_combined_distance_mm = distance_cm * 10.0f; s_combined_run_ms = MotionDistanceRunMs(s_combined_distance_mm); }
+-    taskEXIT_CRITICAL(); return accepted;
++    float mm=distance_cm*10.0f;
++    return App_MoveSubmit(direction,max_rpm,MotionDistanceRunMsFor(direction,max_rpm,mm),mm);
+ }
+ uint32_t MoveForwardDistanceStart(uint32_t max_rpm, float distance_cm)
+ { return MoveDistanceStart(MOVE_FORWARD,max_rpm,distance_cm); }
+@@ -2609,6 +2613,8 @@
+     values[38] = (int32_t)((g_combined_test.state == 0U) ?
+         ((s_motion_actions[0].kind == MOTION_TURN) ? 15U : s_motion_actions[0].base_rpm) :
+         (s_combined_turn ? 15U : s_combined_base_rpm));
++    if (APP_SPEED20_TRIAL_ACTIVE && g_debug_plan_id==DEBUG_PLAN_FORWARD210_20)
++        values[39]=(int32_t)APP_SPEED20_FEEDBACK_RPM;
+     values[48] = (int32_t)g_combined_test.state;
+     values[49] = (int32_t)g_combined_test.index;
+     values[50] = (int32_t)g_combined_test.completed;
+--- /dev/null
++++ motion_trial20.h
+@@ -0,0 +1,40 @@
++#ifndef MOTION_TRIAL20_H
++#define MOTION_TRIAL20_H
++#include <stdint.h>
++#include "app_config.h"
++/* 只放行一个完全匹配的S曲线距离任务；开关关闭时恒拒绝。 */
++static __inline uint32_t MotionTrial20Allowed(uint32_t direction, uint32_t rpm, float mm)
++{
++    return APP_SPEED20_TRIAL_ACTIVE && direction==0U && rpm==APP_SPEED20_TRIAL_RPM &&
++        mm==APP_SPEED20_TRIAL_MM;
++}
++#define MOTION_PROFILE_BASE_CEILING (APP_SPEED20_TRIAL_ACTIVE ? APP_SPEED20_TRIAL_RPM : 15U)
++static __inline uint32_t MotionDistanceFeedbackLimit(uint32_t direction,uint32_t rpm,float mm)
++{
++    if (MotionTrial20Allowed(direction,rpm,mm)) return APP_SPEED20_FEEDBACK_RPM;
++    return direction==0U ? APP_FORWARD_HOLD_FEEDBACK_LIMIT_RPM : APP_LATERAL_HOLD_FEEDBACK_LIMIT_RPM;
++}
++static __inline uint32_t MotionDistanceJumpCountsPerMs(uint32_t direction,uint32_t rpm,float mm)
++{
++    /* 原低速60RPM等效仍66counts/ms；高速按反馈上限+原30RPM余量换算。 */
++    if (MotionTrial20Allowed(direction,rpm,mm))
++        return ((APP_SPEED20_FEEDBACK_RPM+30U)*65536U+59999U)/60000U;
++    return 66U;
++}
++/* 20cm/s需要约49RPM持续速度，另留2RPM位置修正余量；普通候选仍1RPM。 */
++static __inline float MotionDistanceFollowRpm(uint32_t rpm)
++{
++    return APP_SPEED20_TRIAL_ACTIVE && rpm==APP_SPEED20_TRIAL_RPM ? 2.0f : APP_DISTANCE_SCURVE_FOLLOW_RPM;
++}
++static __inline float MotionDistanceFollowKp(uint32_t rpm)
++{
++    return APP_SPEED20_TRIAL_ACTIVE && rpm==APP_SPEED20_TRIAL_RPM ? 1.0f : APP_DISTANCE_SCURVE_FOLLOW_KP;
++}
++static __inline float MotionDistanceReferenceSpeed(float factor,uint32_t rpm)
++{
++    float speed=factor*((float)rpm-MotionDistanceFollowRpm(rpm));
++    if (APP_SPEED20_TRIAL_ACTIVE && rpm==APP_SPEED20_TRIAL_RPM && speed>APP_SPEED20_TRIAL_MM_S)
++        speed=APP_SPEED20_TRIAL_MM_S;
++    return speed;
++}
++#endif
+--- p1_serial_motion.py.before
++++ p1_serial_motion.py
+@@ -14,12 +14,12 @@
+ DISTANCE_FIELDS = ["distance_mode", "distance_target_milli_mm", "distance_progress_milli_mm", "distance_base_rpm", "distance_reached"]
+ ACTION_FIELDS = ["sequence_count"]
+ CAN_DIAG_FIELDS = ["can_guard_cause", "can_guard_bad_nodes", "power_wait_state", "post_settle_mask"]
+-DEBUG_PLAN_IDS = {"default": 0, "left30": 1, "forward30": 2, "right30": 3, "route-a": 4, "forward210": 6}
++DEBUG_PLAN_IDS = {"default": 0, "left30": 1, "forward30": 2, "right30": 3, "route-a": 4, "forward210": 6, "forward210-20": 7}
+ UINT_FIELDS = {"seq", "tick_ms", "token_seq", "token_tick"}
+ 
+ 
+ def command(verb, token=(0, 0)):
+-    if verb not in {"ARM", "START", "KEEP", "STOP", "PLAN0", "PLAN1", "PLAN2", "PLAN3", "PLAN4", "PLAN6"}:
++    if verb not in {"ARM", "START", "KEEP", "STOP", "PLAN0", "PLAN1", "PLAN2", "PLAN3", "PLAN4", "PLAN6", "PLAN7"}:
+         raise ValueError("unsupported command")
+     seq, tick = token
+     if not all(0 <= n <= 0xFFFFFFFF for n in token):
+@@ -309,15 +309,29 @@
+         self.start_sent = False
+         self.last_seq = None
+ 
++    def _speed_profile_healthy(self, r):
++        plan = r.get("debug_plan_id", 0)
++        if plan == 7:
++            # A high-speed idle echo never authorizes an unspecified/default run.
++            return (self.mode == 3 and self.plan is not None and
++                    (not self.plan_selected or self.plan == 7) and
++                    r["base_rpm"] == 52 and r["feedback_limit_rpm"] == 80 and
++                    r.get("sequence_count") == 1)
++        if self.plan_selected and self.plan == 7:
++            return False
++        if self.mode == 3 and plan not in DEBUG_PLAN_IDS.values():
++            return False
++        return (((3 <= r["base_rpm"] <= 15) if self.mode == 3 else r["base_rpm"] == 15)
++                and r["feedback_limit_rpm"] == 30)
++
+     def _healthy(self, r):
+         return (r["phase"] == 0 and r["trip"] == 0 and r["backend_active"] == 0 and
+                 r["backend_result"] == 0 and r["vm_request"] == 0 and r["pe2_active"] == 0 and
+                 r["source_valid"] == 1 and r["selftest"] == 1 and r["protocol_selftest"] == 1 and
+                 0 <= r["angle_age_ms"] < 100 and 0 <= r["rate_age_ms"] < 100 and
+                 abs(r["rate_mdps"]) <= 3000 and r["motion_mode"] == self.mode and
+-                ((3 <= r["base_rpm"] <= 15) if self.mode == 3 else r["base_rpm"] == 15) and
++                self._speed_profile_healthy(r) and
+                 (self.mode != 3 or 1 <= r.get("sequence_count",4) <= 8) and
+-                r["feedback_limit_rpm"] == 30 and
+                 not any(r[k] for k in ["rtos_fault", "safety_fault", "can_fault"]))
+ 
+     def abort(self, reason):
+@@ -351,6 +365,13 @@
+         if self.start_sent:
+             if r["phase"] in {4, 5}:
+                 return self.abort("motion_fault_or_cancelled")
++            if self.plan == 7 and (r.get("debug_plan_id") != 7 or
++                    r["feedback_limit_rpm"] != 80 or r.get("sequence_count") != 1 or
++                    not 0 <= r["base_rpm"] <= 52 or
++                    not 0 <= r.get("distance_base_rpm", 0) <= 52 or
++                    (r.get("distance_mode") and (r.get("action_kind") != 4 or
++                        r.get("distance_target_milli_mm") != 2100000))):
++                return self.abort("speed20_profile_changed")
+             if (r["phase"] == 3 and r["trip"] == 0 and r["backend_result"] == 1 and
+                     r["stop_mask"] == 15 and r["vm_request"] == 0 and r["pe2_active"] == 0 and
+                     (self.mode != 3 or (r.get("sequence_state") == 3 and
+--- test_p1_serial_motion.py.before
++++ test_p1_serial_motion.py
+@@ -912,4 +912,86 @@
+         self.assertIsNone(c.status)
+         self.assertEqual(c.tick(1.21),[command("KEEP",c.token)])
+ 
++
++class Speed20PresetTests(unittest.TestCase):
++    def low(self,n,**extra):
++        return record(seq=n,tick_ms=n*100,motion_mode=3,debug_plan_id=0,**extra)
++
++    def high(self,n,**extra):
++        r=record(seq=n,tick_ms=n*100,motion_mode=3,debug_plan_id=7,base_rpm=52,
++                 feedback_limit_rpm=80,sequence_count=1,remote_accepted=1,token_seq=7,token_tick=700)
++        r.update(extra);return r
++
++    def started(self):
++        c=Controller('run-once',3,7)
++        for n in range(1,4):out=c.consume(self.low(n),n*.1)
++        self.assertEqual(out,[command('PLAN7',(3,300))])
++        self.assertEqual(c.consume(self.high(4),.4),[])
++        for n in range(5,8):out=c.consume(self.high(n),n*.1)
++        self.assertEqual(out,[command('ARM',(7,700))])
++        out=c.consume(self.high(8,remote_state=1,token_seq=7,token_tick=700),.8)
++        self.assertEqual(out,[command('START',(7,700))])
++        return c
++
++    def test_plan7_explicit_selection_arm_and_single_start(self):
++        import p1_serial_motion as m
++        self.assertEqual(m.DEBUG_PLAN_IDS['forward210-20'],7)
++        c=self.started();self.assertTrue(c.start_sent)
++        self.assertEqual(c.consume(self.high(9,remote_state=1,token_seq=7,token_tick=700),.9),[])
++
++    def test_default_or_unspecified_run_cannot_arm_speed20(self):
++        for plan in [None,0]:
++            c=Controller('run-once',3,plan)
++            for n in range(1,6):
++                out=c.consume(self.high(n),n*.1)
++                self.assertFalse(any(b',ARM,' in msg or b',START,' in msg for msg in out))
++            self.assertFalse(c.start_sent)
++            self.assertNotEqual(c.stage,'arm_wait')
++
++    def test_wrong_speed_feedback_or_action_count_cannot_arm(self):
++        for bad in [dict(base_rpm=49),dict(feedback_limit_rpm=30),dict(feedback_limit_rpm=81),dict(sequence_count=2)]:
++            c=Controller('run-once',3,7);c.plan_selected=True
++            for n in range(1,6):self.assertEqual(c.consume(self.high(n,**bad),n*.1),[])
++            self.assertFalse(c.start_sent)
++
++    def test_speed20_legacy_echo_after_selection_cannot_arm(self):
++        c=Controller('run-once',3,7);c.plan_selected=True
++        for n in range(1,6):self.assertEqual(c.consume(self.low(n),n*.1),[])
++        self.assertFalse(c.start_sent)
++
++    def test_runtime_profile_mutation_stops_once(self):
++        for bad in [dict(debug_plan_id=6),dict(base_rpm=53),dict(feedback_limit_rpm=30),
++                    dict(sequence_count=3),dict(distance_base_rpm=53),
++                    dict(distance_mode=1,action_kind=5,distance_target_milli_mm=2100000),
++                    dict(distance_mode=1,action_kind=4,distance_target_milli_mm=300000)]:
++            c=self.started();r=self.high(9,phase=2,remote_state=2);r.update(bad)
++            self.assertEqual(c.consume(r,.9),[command('STOP',c.token)])
++            self.assertEqual(c.status,'speed20_profile_changed')
++            self.assertEqual(c.tick(1.5),[])
++
++    def test_zero_at_start_and_final_approach_are_live_not_done(self):
++        c=self.started()
++        for n,base in [(9,0),(10,1),(11,49),(12,1)]:
++            r=self.high(n,phase=2,remote_state=2,base_rpm=base,distance_mode=1,
++                        distance_base_rpm=base,action_kind=4,distance_target_milli_mm=2100000,
++                        sequence_state=1,sequence_completed=0,distance_reached=0)
++            self.assertEqual(c.consume(r,n*.1),[]);self.assertIsNone(c.status)
++        r=self.high(13,phase=3,remote_state=3,base_rpm=1,backend_result=1,stop_mask=15,
++                    sequence_state=3,sequence_completed=1,distance_mode=1,distance_reached=1,
++                    action_kind=4,distance_target_milli_mm=2100000)
++        self.assertEqual(c.consume(r,1.3),[]);self.assertEqual(c.status,'software_complete')
++
++    def test_speed20_still_stops_on_loss_after_600ms(self):
++        c=self.started();self.assertEqual(c.tick(1.41),[command('STOP',c.token)])
++        self.assertEqual(c.status,'telemetry_timeout')
++
++    def test_fault_not_reclassified_as_profile_change(self):
++        c=self.started();r=self.high(9,phase=4,feedback_limit_rpm=30)
++        c.consume(r,.9);self.assertEqual(c.status,'motion_fault_or_cancelled')
++
++    def test_monitor_high_speed_is_always_read_only(self):
++        c=Controller('monitor',3)
++        for n in range(1,5):self.assertEqual(c.consume(self.high(n),n*.1),[])
++        self.assertEqual(c.tick(10),[])
++
+ if __name__=="__main__":unittest.main()

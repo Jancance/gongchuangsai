@@ -1,0 +1,74 @@
+{
+  "base_sha256": "2794bff48b652849849749c72020e96c3b0eef3cd7b7c7cf345cc6fb3ac9de73",
+  "rows": [
+    [
+      "FORWARD",
+      181.44,
+      20
+    ],
+    [
+      "RIGHT",
+      180,
+      20
+    ],
+    [
+      "TURN",
+      -90,
+      30
+    ],
+    [
+      "TURN",
+      -90,
+      30
+    ],
+    [
+      "FORWARD",
+      181.44,
+      20
+    ],
+    [
+      "TURN",
+      90,
+      30
+    ],
+    [
+      "TURN",
+      90,
+      30
+    ],
+    [
+      "LEFT",
+      180,
+      20
+    ]
+  ],
+  "forward_extra_fraction": 0.008,
+  "PD": [
+    1,
+    0.25
+  ],
+  "deadband_deg": 0.3,
+  "I_enabled": false,
+  "schema": "TM9/BT9 + XD1",
+  "load_log_scope": "Final backend session only; do not diagnose whole-route loading.",
+  "downloaded": true,
+  "vehicle_tested": false,
+  "requirements_R": [
+    "FIELD-01",
+    "FIELD-02",
+    "FIELD-06",
+    "RUN-01",
+    "PWR-01"
+  ],
+  "requirements_E": [
+    "LOC-03",
+    "LOC-05",
+    "MOT-02",
+    "MOT-04",
+    "RUN-06"
+  ],
+  "formal_competition_acceptance": false,
+  "firmware_sha256": "6c8284e52e54bc6bda859a827a7b667ba491574fc889338edbae979f70353098",
+  "download_evidence": "vehicle/download_and_readback.json",
+  "vehicle_test_started": true
+}

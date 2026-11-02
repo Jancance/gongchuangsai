@@ -1,0 +1,95 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-DAPP_ENTRY=1",
+      "-DAPP_DEBUG_MODE=3",
+      "-DALTERED_CAPS=0",
+      "-DFULL20_TABLE=0",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": "\"unit.c\", line 13: Warning:  #177-D: variable \"model_delayed\"  was declared but never referenced\n  static uint32_t checks,first_failure,model_mode,model_step,model_fault,model_delayed,model_count;\n                                                                         ^\n\"unit.c\", line 14: Warning:  #177-D: variable \"model_gain\"  was declared but never referenced\n  static float model_gain,position[4],velocity[4],target[4],history[4][32];\n               ^\n\"unit.c\", line 14: Warning:  #550-D: variable \"target\"  was set but never used\n  static float model_gain,position[4],velocity[4],target[4],history[4][32];\n                                                  ^\n\"unit.c\", line 14: Warning:  #177-D: variable \"history\"  was declared but never referenced\n  static float model_gain,position[4],velocity[4],target[4],history[4][32];\n                                                            ^\n\"unit.c\", line 64: Warning:  #550-D: variable \"s_combined_turn\"  was set but never used\n  static uint32_t s_combined_turn,s_combined_mode,s_combined_base_rpm,s_combined_run_ms;\n                  ^\n\"unit.c\", line 64: Warning:  #550-D: variable \"s_combined_mode\"  was set but never used\n  static uint32_t s_combined_turn,s_combined_mode,s_combined_base_rpm,s_combined_run_ms;\n                                  ^\n\"unit.c\", line 64: Warning:  #550-D: variable \"s_combined_base_rpm\"  was set but never used\n  static uint32_t s_combined_turn,s_combined_mode,s_combined_base_rpm,s_combined_run_ms;\n                                                  ^\n\"unit.c\", line 64: Warning:  #550-D: variable \"s_combined_run_ms\"  was set but never used\n  static uint32_t s_combined_turn,s_combined_mode,s_combined_base_rpm,s_combined_run_ms;\n                                                                      ^\n\"unit.c\", line 65: Warning:  #550-D: variable \"s_combined_distance_mm\"  was set but never used\n  static float s_combined_distance_mm,s_combined_reference_mm_s;\n               ^\n\"unit.c\", line 65: Warning:  #550-D: variable \"s_combined_reference_mm_s\"  was set but never used\n  static float s_combined_distance_mm,s_combined_reference_mm_s;\n                                      ^\n\"unit.c\", line 66: Warning:  #550-D: variable \"g_forward_hold_trace_count\"  was set but never used\n  static uint32_t g_forward_hold_trace_count,g_motion_fault_diag_valid,s_motion_has_action;\n                  ^\n\"unit.c\", line 66: Warning:  #550-D: variable \"g_motion_fault_diag_valid\"  was set but never used\n  static uint32_t g_forward_hold_trace_count,g_motion_fault_diag_valid,s_motion_has_action;\n                                             ^\n\"unit.c\", line 66: Warning:  #550-D: variable \"s_motion_has_action\"  was set but never used\n  static uint32_t g_forward_hold_trace_count,g_motion_fault_diag_valid,s_motion_has_action;\n                                                                       ^\n\"unit.c\", line 78: Warning:  #177-D: function \"App_MotionPlanValid\"  was declared but never referenced\n  static uint32_t App_MotionPlanValid(void)\n                  ^\n\"unit.c\", line 154: Warning:  #177-D: function \"App_CombinedLoadAction\"  was declared but never referenced\n  static uint32_t App_CombinedLoadAction(uint32_t index)\n                  ^\n\"unit.c\", line 175: Warning:  #177-D: variable \"parity\"  was declared but never referenced\n  static const uint32_t parity[][7]={\n                        ^\nunit.c: 16 warnings, 0 errors\n"
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-DAPP_ENTRY=1",
+      "-DAPP_DEBUG_MODE=3",
+      "-DALTERED_CAPS=0",
+      "-DFULL20_TABLE=0",
+      "-c",
+      "src/chassis_kinematics.c",
+      "-o",
+      "kinematics.o"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-DAPP_ENTRY=1",
+      "-DAPP_DEBUG_MODE=3",
+      "-DALTERED_CAPS=0",
+      "-DFULL20_TABLE=0",
+      "-c",
+      "src/motion_profile.c",
+      "-o",
+      "profile.o"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armlink.exe",
+      "--entry",
+      "test_entry",
+      "--scatter",
+      "unit.sct",
+      "unit.o",
+      "kinematics.o",
+      "profile.o",
+      "--library_type=microlib",
+      "-o",
+      "unit.axf"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

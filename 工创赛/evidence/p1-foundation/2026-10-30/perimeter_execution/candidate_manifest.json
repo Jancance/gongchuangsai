@@ -1,0 +1,121 @@
+{
+  "purpose": "record-only perimeter debug candidate; not flashed",
+  "hardware_accessed": false,
+  "group_deadline_ms": 330000,
+  "actions": [
+    {
+      "kind": "FORWARD",
+      "amount": 15,
+      "speed": 5,
+      "label": "前进15cm出区"
+    },
+    {
+      "kind": "RIGHT",
+      "amount": 15,
+      "speed": 5,
+      "label": "右移15cm向场地内侧"
+    },
+    {
+      "kind": "FORWARD",
+      "amount": 180,
+      "speed": 20,
+      "label": "右侧前进180cm，地图向下"
+    },
+    {
+      "kind": "RIGHT",
+      "amount": 180,
+      "speed": 20,
+      "label": "底部右移180cm，地图向左"
+    },
+    {
+      "kind": "TURN",
+      "amount": -90,
+      "speed": 30,
+      "label": "顺时针90°，车头朝左"
+    },
+    {
+      "kind": "TURN",
+      "amount": -90,
+      "speed": 30,
+      "label": "顺时针90°，车头朝上"
+    },
+    {
+      "kind": "FORWARD",
+      "amount": 180,
+      "speed": 20,
+      "label": "左侧前进180cm，地图向上"
+    },
+    {
+      "kind": "TURN",
+      "amount": 90,
+      "speed": 30,
+      "label": "逆时针90°，车头朝左"
+    },
+    {
+      "kind": "TURN",
+      "amount": 90,
+      "speed": 30,
+      "label": "逆时针90°，车头恢复向下"
+    },
+    {
+      "kind": "LEFT",
+      "amount": 180,
+      "speed": 20,
+      "label": "顶部左移180cm，地图向右"
+    },
+    {
+      "kind": "BACKWARD",
+      "amount": 15,
+      "speed": 5,
+      "label": "后退15cm回区"
+    },
+    {
+      "kind": "LEFT",
+      "amount": 15,
+      "speed": 5,
+      "label": "左移15cm返回起始中心并停车"
+    }
+  ],
+  "configuration_sha256": "5fb3a77ca26f9d71fdbd9b1d022848573b32a8397377ea94e9c0da45c261240b",
+  "unchanged_rotation_functions": [
+    "TurnStart",
+    "App_HeadingRuntimeStep",
+    "App_HeadingRuntimeSafety",
+    "App_HeadingRuntimeTrip"
+  ],
+  "source_sha256": {
+    "app_config.h": "f448a98fa7e52b1149e1c992278f074a9f5dd378ea052a0b40ac06ee5423e986",
+    "app_entry.c": "bf1a495384ac9d33a5a8eae79829e4b18134eb167505368b8d9a55c47b06afdf",
+    "app_entry.h": "76e31eb4231028d2b93731973e2f5b343575fbc27e708cda00fcdfe6532d1f96",
+    "app_entry_config.h": "cdcbedc0e5f7f7a53aaf07092443fc93735a2de76bd34c33ff364a84b848edf7",
+    "chassis_auto_test.c": "8604dd983da1208e20f91c6d4d880b9852e09f31028c760df273996d80825217",
+    "chassis_auto_test.h": "70a3beb4bbd988326012921bb47c71d75310133a8f18cade2955ea6d33f175a4",
+    "chassis_kinematics.c": "1236f23a024c0b3756dc3dc9a765a26e520fe631feacb416241ff6c45f41a9f4",
+    "chassis_kinematics.h": "60df9d31a9b25d1bee3457dfa72f7c8f2b472d4920f173074753d947544a890d",
+    "chassis_odometry.c": "dc5f8b4b436c582153956b9302be9cf5d2f20a6c893cad42426cadd16c334d24",
+    "chassis_odometry.h": "d5818bbc076f9bbe8edc7cdf25a400359fb1f3e49d397980cc11e4dcf38518ad",
+    "FreeRTOSConfig.h": "cd411da90890c370008d0251d716861e9906682ba63e6dd6a2f825398032d37b",
+    "freertos_hooks.c": "4cb955f878f669b3736ff3e04a4dfbb2e723131d41a95330b6fcba80353ccbd3",
+    "freertos_hooks.h": "99bd02e1e4819d86f4ced83e306cc54713cf2d13031410e251031dd70b1de4e4",
+    "heading_controller.c": "d3b5c2a6d902240fb54700227d22c5857e16cd3360971cf92ac3270da3855c40",
+    "heading_controller.h": "6f8d744828e30ac7a5b1c07d7f90570c96e74e983936a9661622b520a93316aa",
+    "heading_session.c": "269058bfb0df22484f77c082327381168e205daae9f3e4f2bac7bdc9e9b981e7",
+    "heading_session.h": "70968dea10624f01d33b49ace71a367a82ac5ab51ae3a5752a4f16df8ae07c1b",
+    "hwt101.c": "690b864c1144baf247a93cffb8be585675a0612002333edaf006026b5dbb3c90",
+    "hwt101.h": "eb01b7feb7e18c73495c472b09497514ab14de6941013683315b61f929b56429",
+    "hwt101_parser.c": "e9e3fe5161a2d6517047a74c74d15d153082ebb29a5b051275bc40987c8155e5",
+    "hwt101_parser.h": "3d59da04a96371693dfa77882e5408619373c86c6b731673157c8b43fb9ba65f",
+    "main.c": "5fcade459bac3ec10f91073c4ddf8ceb76d53e708a951dfcd0d6aed6c3f5bd66",
+    "motion_action_plan.h": "bcc2fd7cba37db3d982acd01e5508ed56a56d3385d156545943879ff71ecd7e2",
+    "motion_control.h": "1d03b0fd9b3fdeb9ec8d00f2d8a344b55ab67efc4e65ad256dcda1656f6c8f9f",
+    "motion_distance_limits.h": "7a34b7a1b33d3f80e9b924ca48feea7c15428f3c7ab192a37d5e49f2f47039f2",
+    "motion_profile.c": "5e3b205b42f9824fa76e334f7c23a65162fdfe69a18e454a64f46fc26777af59",
+    "motion_profile.h": "aa12b374960f6fd31fd25cf0e3652ce30d8cd6855763f7f345e4970972084296",
+    "motion_route_trial.h": "0c885ce801efd5d52a67e41b1cd5a0685a244e0ba413771113096e158f64cc0c",
+    "motion_trial20.h": "57e42c053689bf296a902e812a59a972b2e822ae9418a6800f953611df098daa",
+    "route_config.h": "36c1cd009eb88310cf4db05588587941f1cd34fcdd7fd311309350c4bd937682",
+    "route_plan.h": "856d3bd901fcd8c0b665baa8f5c7d432ef8774414b2d51131322d9f4bcc7db79",
+    "stm32f4xx_conf.h": "8bb6976af199b1ce05dc5e8d5bf5266115c0ad737d6d07d8063a297dccea79bf",
+    "turn_brake.h": "4ce40b60bf817dc55baa6373c363030de80a7eb80ce0d65a6c502feab127a886"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "ki": 0.05,
+  "passed": true,
+  "assertions": 76020,
+  "failure_line": null,
+  "metrics": [
+    {
+      "case": 0,
+      "tail_mean_abs_error_deg": 0.1398463398218155,
+      "tail_rms_error_deg": 0.1659284085035324,
+      "peak_abs_error_deg": 0.30863213539123535,
+      "tail_peak_abs_error_deg": 0.3086318373680115,
+      "final_yaw_deg": 0.09200071543455124,
+      "final_integral_rpm": -0.04137205332517624,
+      "peak_integral_abs_rpm": 0.062438856810331345,
+      "peak_command_abs_rpm": 0.4000000059604645
+    },
+    {
+      "case": 1,
+      "tail_mean_abs_error_deg": 0.1398463398218155,
+      "tail_rms_error_deg": 0.1659284085035324,
+      "peak_abs_error_deg": 0.30863213539123535,
+      "tail_peak_abs_error_deg": 0.3086318373680115,
+      "final_yaw_deg": -0.09200071543455124,
+      "final_integral_rpm": 0.04137205332517624,
+      "peak_integral_abs_rpm": 0.062438856810331345,
+      "peak_command_abs_rpm": 0.4000000059604645
+    },
+    {
+      "case": 2,
+      "tail_mean_abs_error_deg": 0.12256530672311783,
+      "tail_rms_error_deg": 0.14629951119422913,
+      "peak_abs_error_deg": 0.321433961391449,
+      "tail_peak_abs_error_deg": 0.321433961391449,
+      "final_yaw_deg": -0.15603649616241455,
+      "final_integral_rpm": -0.07010990381240845,
+      "peak_integral_abs_rpm": 0.07552384585142136,
+      "peak_command_abs_rpm": 0.4000000059604645
+    },
+    {
+      "case": 3,
+      "tail_mean_abs_error_deg": 0.12256530672311783,
+      "tail_rms_error_deg": 0.14629951119422913,
+      "peak_abs_error_deg": 0.321433961391449,
+      "tail_peak_abs_error_deg": 0.321433961391449,
+      "final_yaw_deg": 0.15603649616241455,
+      "final_integral_rpm": 0.07010990381240845,
+      "peak_integral_abs_rpm": 0.07552384585142136,
+      "peak_command_abs_rpm": 0.4000000059604645
+    },
+    {
+      "case": 4,
+      "tail_mean_abs_error_deg": 0.09945885837078094,
+      "tail_rms_error_deg": 0.10432370752096176,
+      "peak_abs_error_deg": 0.321033239364624,
+      "tail_peak_abs_error_deg": 0.31781014800071716,
+      "final_yaw_deg": -0.09200025349855423,
+      "final_integral_rpm": -0.011380143463611603,
+      "peak_integral_abs_rpm": 0.07552384585142136,
+      "peak_command_abs_rpm": 0.4000000059604645
+    },
+    {
+      "case": 5,
+      "tail_mean_abs_error_deg": 0.1640012562274933,
+      "tail_rms_error_deg": 0.16399909555912018,
+      "peak_abs_error_deg": 0.5,
+      "tail_peak_abs_error_deg": 0.16400687396526337,
+      "final_yaw_deg": -0.16399984061717987,
+      "final_integral_rpm": 0.029893839731812477,
+      "peak_integral_abs_rpm": 0.06551182270050049,
+      "peak_command_abs_rpm": 0.5
+    }
+  ],
+  "limits": "Actual controller C; synthetic angular plant, not hardware, includes4tick latency, disturbances and load removal."
+}

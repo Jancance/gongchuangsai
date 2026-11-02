@@ -1,0 +1,86 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-DAPP_ENTRY=1",
+      "-DAPP_DEBUG_MODE=2",
+      "-DEXPECT_INVALID=0",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": "\"unit.c\", line 7: Warning:  #177-D: variable \"s_motion_actions\"  was declared but never referenced\n  static MotionAction s_motion_actions[MOTION_ACTION_CAPACITY];\n                      ^\n\"unit.c\", line 8: Warning:  #177-D: variable \"s_motion_action_count\"  was declared but never referenced\n  static uint32_t s_motion_action_count, s_motion_list_submit;\n                  ^\n\"unit.c\", line 8: Warning:  #177-D: variable \"s_motion_list_submit\"  was declared but never referenced\n  static uint32_t s_motion_action_count, s_motion_list_submit;\n                                         ^\n\"unit.c\", line 9: Warning:  #177-D: variable \"g_debug_plan_id\"  was declared but never referenced\n  static uint32_t g_debug_plan_id;\n                  ^\n\"unit.c\", line 11: Warning:  #550-D: variable \"dispatch_kind\"  was set but never used\n  static uint32_t dispatch_calls, dispatch_kind, dispatch_direction, dispatch_rpm;\n                                  ^\n\"unit.c\", line 11: Warning:  #550-D: variable \"dispatch_direction\"  was set but never used\n  static uint32_t dispatch_calls, dispatch_kind, dispatch_direction, dispatch_rpm;\n                                                 ^\n\"unit.c\", line 11: Warning:  #550-D: variable \"dispatch_rpm\"  was set but never used\n  static uint32_t dispatch_calls, dispatch_kind, dispatch_direction, dispatch_rpm;\n                                                                     ^\n\"unit.c\", line 13: Warning:  #550-D: variable \"dispatch_amount\"  was set but never used\n  static float dispatch_amount;\n               ^\n\"unit.c\", line 14: Warning:  #177-D: function \"App_MoveSubmit\"  was declared but never referenced\n  static uint32_t App_MoveSubmit(uint32_t direction,uint32_t rpm,uint32_t ms,float mm,float reference)\n                  ^\n\"unit.c\", line 16: Warning:  #177-D: function \"HWT101_TimingBegin\"  was declared but never referenced\n  static uint32_t HWT101_TimingBegin(void) { return 0U; }\n                  ^\n\"unit.c\", line 17: Warning:  #177-D: function \"HWT101_TimingEnd\"  was declared but never referenced\n  static void HWT101_TimingEnd(uint32_t a,uint32_t b) { (void)a;(void)b; }\n              ^\nunit.c: 11 warnings, 0 errors\n"
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-DAPP_ENTRY=1",
+      "-DAPP_DEBUG_MODE=2",
+      "-DEXPECT_INVALID=0",
+      "-c",
+      "src/chassis_kinematics.c",
+      "-o",
+      "kinematics.o"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-DAPP_ENTRY=1",
+      "-DAPP_DEBUG_MODE=2",
+      "-DEXPECT_INVALID=0",
+      "-c",
+      "src/motion_profile.c",
+      "-o",
+      "profile.o"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armlink.exe",
+      "--entry",
+      "test_entry",
+      "--scatter",
+      "unit.sct",
+      "unit.o",
+      "kinematics.o",
+      "profile.o",
+      "--library_type=microlib",
+      "-o",
+      "unit.axf"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

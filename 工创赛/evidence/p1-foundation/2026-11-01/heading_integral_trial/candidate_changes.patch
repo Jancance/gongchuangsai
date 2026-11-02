@@ -1,0 +1,183 @@
+--- baseline/USER/heading_controller.c
++++ candidate/USER/heading_controller.c
+@@ -218,25 +218,63 @@
+ }
+ 
+ /* 仅新鲜源帧调用；80ms角速度低通、10RPM/s限斜率、整数命令迟滞。 */
++/* 积分仅由运行层显式许可；准备、停机、失效和换段均不继承。 */
++void HeadingController_HoldReset(HeadingHoldController *hold)
++{
++    if (hold != NULL) *hold = (HeadingHoldController){0};
++}
++void HeadingController_HoldSetIntegralEnabled(HeadingHoldController *hold,uint32_t enabled)
++{
++    if (hold == NULL) return;
++    hold->integral_enabled = (HEADING_INTEGRAL_TRIAL_ENABLE && enabled==1U) ? 1U : 0U;
++    if (!hold->integral_enabled) hold->integral_rpm=0.0f;
++}
+ uint32_t HeadingController_HoldStep(HeadingHoldController *hold,
+     float target_deg, float yaw_deg, float rate_dps, uint32_t now_ms,
+     float *correction_rpm, float *error_deg)
+ {
+     uint32_t elapsed;
+-    float desired, filtered, step, difference;
+-    if ((hold == NULL) || (correction_rpm == NULL) || (error_deg == NULL)) return 0U;
+-    *correction_rpm = 0;
++    float desired, filtered, step, difference, raw_pd, next_i, delta_i;
++    if (correction_rpm != NULL) *correction_rpm=0.0f;
++    if (error_deg != NULL) *error_deg=0.0f;
++    if ((hold == NULL) || (correction_rpm == NULL) || (error_deg == NULL))
++    { HeadingController_HoldReset(hold); return 0U; }
+     if (HeadingController_HoldCorrection(target_deg, yaw_deg, rate_dps,
+-        &desired, error_deg) != 1U) return 0U;
++        &desired, error_deg) != 1U)
++    { HeadingController_HoldReset(hold); return 0U; }
++    if (!Heading_Finite(hold->integral_rpm) ||
++        Heading_Abs(hold->integral_rpm)>HEADING_INTEGRAL_LIMIT_RPM+0.0001f ||
++        (hold->initialized && Heading_Abs(HeadingController_ErrorDeg(target_deg,
++            hold->integral_target_deg))>0.001f))
++    { HeadingController_HoldReset(hold); return 0U; }
+     elapsed = (hold->initialized != 0U) ? now_ms - hold->tick : 20U;
+-    if (elapsed >= 100U) return 0U;
++    if (elapsed >= 100U) { HeadingController_HoldReset(hold); return 0U; }
+     if ((hold->initialized != 0U) && (elapsed == 0U))
+     { *correction_rpm = (float)hold->quantized_deci_rpm*0.1f; return 1U; }
+     filtered = (hold->initialized != 0U) ? hold->filtered_rate_dps +
+         ((float)elapsed / (80.0f + (float)elapsed)) *
+         (rate_dps - hold->filtered_rate_dps) : rate_dps;
+     if (HeadingController_HoldCorrection(target_deg, yaw_deg, filtered,
+-        &desired, error_deg) != 1U) return 0U;
++        &desired, error_deg) != 1U)
++    { HeadingController_HoldReset(hold); return 0U; }
++    /* 保留原PD死区，小积分只补偿平稳持续误差，不对大误差累积。 */
++    raw_pd = 1.0f * (*error_deg) - 0.25f * filtered;
++    if (Heading_Abs(*error_deg)<=0.3f && Heading_Abs(filtered)<=0.3f) raw_pd=0.0f;
++    if (!HEADING_INTEGRAL_TRIAL_ENABLE || !hold->integral_enabled) hold->integral_rpm=0.0f;
++    else if (Heading_Abs(*error_deg)>HEADING_INTEGRAL_MIN_ERROR_DEG &&
++             Heading_Abs(*error_deg)<=HEADING_INTEGRAL_MAX_ERROR_DEG &&
++             Heading_Abs(filtered)<=HEADING_INTEGRAL_MAX_RATE_DPS) {
++        delta_i=HEADING_INTEGRAL_TRIAL_KI*(*error_deg)*(float)elapsed*0.001f;
++        next_i=hold->integral_rpm+delta_i;
++        if(next_i>HEADING_INTEGRAL_LIMIT_RPM)next_i=HEADING_INTEGRAL_LIMIT_RPM;
++        if(next_i< -HEADING_INTEGRAL_LIMIT_RPM)next_i= -HEADING_INTEGRAL_LIMIT_RPM;
++        /* 总输出将饱和且积分仍向外推时冻结，反向误差可退出饱和。 */
++        if(!((raw_pd+next_i>2.0f && delta_i>0.0f) ||
++             (raw_pd+next_i< -2.0f && delta_i<0.0f))) hold->integral_rpm=next_i;
++    }
++    desired=raw_pd+hold->integral_rpm;
++    if(desired>2.0f)desired=2.0f;
++    if(desired< -2.0f)desired= -2.0f;
+     step = 0.01f * (float)elapsed;
+     difference = desired - hold->command_rpm;
+     if (difference > step) difference = step;
+@@ -256,6 +294,7 @@
+         if(hold->quantized_deci_rpm < -20)hold->quantized_deci_rpm=-20;
+     }
+     hold->filtered_rate_dps = filtered;
++    hold->integral_target_deg=target_deg;
+     hold->tick = now_ms;
+     hold->initialized = 1U;
+     *correction_rpm = (float)hold->quantized_deci_rpm*0.1f;
+--- baseline/USER/heading_controller.h
++++ candidate/USER/heading_controller.h
+@@ -2,6 +2,7 @@
+ #define HEADING_CONTROLLER_H
+ 
+ #include <stdint.h>
++#include "heading_integral_trial.h"
+ 
+ /* 航向闭环当前只输出带符号的逻辑转向轮速，不直接操作CAN或VM。 */
+ #define HEADING_CTRL_IDLE       0U
+@@ -58,13 +59,17 @@
+ 
+ float HeadingController_WrapDeg(float angle_deg);
+ float HeadingController_ErrorDeg(float target_deg, float current_deg);
+-/* 前进PD：Kp=0.8 RPM/deg，Kd=0.25 RPM/(deg/s)，修正限幅2RPM。 */
++/* 前进PD：Kp=1.0 RPM/deg，Kd=0.25 RPM/(deg/s)，修正限幅2RPM。 */
+ typedef struct
+ {
+     uint32_t tick, initialized;
+     float command_rpm, filtered_rate_dps;
+     int32_t quantized_deci_rpm;
++    float integral_rpm, integral_target_deg;
++    uint32_t integral_enabled;
+ } HeadingHoldController;
++void HeadingController_HoldReset(HeadingHoldController *hold);
++void HeadingController_HoldSetIntegralEnabled(HeadingHoldController *hold, uint32_t enabled);
+ uint32_t HeadingController_HoldCorrection(float target_deg, float yaw_deg,
+     float rate_dps, float *correction_rpm, float *error_deg);
+ uint32_t HeadingController_HoldStep(HeadingHoldController *hold,
+--- baseline/USER/main.c
++++ candidate/USER/main.c
+@@ -1494,7 +1494,7 @@
+         g_forward_hold.trip = cause;
+     }
+     g_forward_hold.phase = (g_forward_hold.trip == 1U) ? HR_CANCELLED : HR_FAULT;
+-    g_forward_hold.correction_rpm = 0;
++    g_forward_hold.correction_rpm = 0; HeadingController_HoldReset(&s_hold_controller);
+     g_forward_hold.final_deg = s_heading_source.yaw_deg;
+     g_forward_hold.final_valid = App_HeadingRuntimeSource((uint32_t)xTaskGetTickCount());
+     g_chassis_auto_request = 0U;
+@@ -1527,7 +1527,7 @@
+     if ((g_forward_hold.phase == HR_RUN) && App_ForwardHoldOwns(&status) &&
+         status.distance_mode && status.distance_reached && !g_forward_hold.stopping)
+     {
+-        g_forward_hold.stopping = 1U; g_forward_hold.correction_rpm = 0;
++        g_forward_hold.stopping = 1U; g_forward_hold.correction_rpm = 0; HeadingController_HoldReset(&s_hold_controller);
+         s_hold_stop_ms = now;
+     }
+     if (g_forward_hold.request == 2U) App_ForwardHoldTrip(1U);
+@@ -1686,7 +1686,7 @@
+             g_forward_hold.error_deg = error;
+             if (status.distance_mode && status.distance_reached && !g_forward_hold.stopping)
+             {
+-                g_forward_hold.stopping = 1U; g_forward_hold.correction_rpm = 0;
++                g_forward_hold.stopping = 1U; g_forward_hold.correction_rpm = 0; HeadingController_HoldReset(&s_hold_controller);
+                 s_hold_stop_ms = now;
+             }
+             if ((g_forward_hold.run_started == 0U) && (status.state == CHASSIS_AUTO_RUN) &&
+@@ -1705,7 +1705,7 @@
+                 else
+                 {
+                     g_forward_hold.stopping = 1U;
+-                    g_forward_hold.correction_rpm = 0;
++                    g_forward_hold.correction_rpm = 0; HeadingController_HoldReset(&s_hold_controller);
+                     s_hold_stop_ms = now;
+                 }
+             }
+@@ -1725,6 +1725,9 @@
+                     g_forward_hold.peak_rate_dps = ((s_heading_source.rate_dps < 0.0f) ? -s_heading_source.rate_dps : s_heading_source.rate_dps);
+                 if ((g_forward_hold.trip == 0U) && (g_forward_hold.stopping == 0U))
+                 {
++                    HeadingController_HoldSetIntegralEnabled(&s_hold_controller,
++                        (g_forward_hold.run_started && status.active &&
++                         !g_forward_hold.stopping && g_vm_test_request) ? 1U : 0U);
+                     if (HeadingController_HoldStep(&s_hold_controller, s_hold_target,
+                         s_heading_source.yaw_deg, s_heading_source.rate_dps, now,
+                         &correction, &error) != 1U) App_ForwardHoldTrip(2U);
+@@ -1762,7 +1765,7 @@
+             {
+                 g_forward_hold.final_deg = s_heading_source.yaw_deg;
+                 g_forward_hold.final_valid = App_HeadingRuntimeSource(now);
+-                g_forward_hold.correction_rpm = 0;
++                g_forward_hold.correction_rpm = 0; HeadingController_HoldReset(&s_hold_controller);
+                 g_forward_hold.phase = HR_DONE;
+                 g_vm_test_request = App_StageDoneVm();
+             }
+--- /dev/null
++++ candidate/USER/heading_integral_trial.h
+@@ -0,0 +1,14 @@
++#ifndef HEADING_INTEGRAL_TRIAL_H
++#define HEADING_INTEGRAL_TRIAL_H
++/* 独立离线候选，默认关闭；专用工程或离线构建才显式开启。 */
++#ifndef HEADING_INTEGRAL_TRIAL_ENABLE
++#define HEADING_INTEGRAL_TRIAL_ENABLE 0U
++#endif
++#ifndef HEADING_INTEGRAL_TRIAL_KI
++#define HEADING_INTEGRAL_TRIAL_KI 0.03f
++#endif
++#define HEADING_INTEGRAL_LIMIT_RPM 0.3f
++#define HEADING_INTEGRAL_MIN_ERROR_DEG 0.05f
++#define HEADING_INTEGRAL_MAX_ERROR_DEG 1.0f
++#define HEADING_INTEGRAL_MAX_RATE_DPS 1.0f
++#endif

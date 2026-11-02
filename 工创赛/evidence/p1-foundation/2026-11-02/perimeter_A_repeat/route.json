@@ -1,0 +1,15 @@
+{
+  "schema": "p1-runtime-route-v1",
+  "frame": "body-relative",
+  "purpose": "X firmware perimeter trial, forward +0.8%; not vehicle acceptance",
+  "actions": [
+    {"kind":"FORWARD","distance_cm":181.44,"speed_cm_s":20,"timeout_ms":35000},
+    {"kind":"RIGHT","distance_cm":180,"speed_cm_s":20,"timeout_ms":35000},
+    {"kind":"TURN","angle_deg":-90,"speed_deg_s":30,"timeout_ms":35000},
+    {"kind":"TURN","angle_deg":-90,"speed_deg_s":30,"timeout_ms":35000},
+    {"kind":"FORWARD","distance_cm":181.44,"speed_cm_s":20,"timeout_ms":35000},
+    {"kind":"TURN","angle_deg":90,"speed_deg_s":30,"timeout_ms":35000},
+    {"kind":"TURN","angle_deg":90,"speed_deg_s":30,"timeout_ms":35000},
+    {"kind":"LEFT","distance_cm":180,"speed_cm_s":20,"timeout_ms":35000}
+  ]
+}

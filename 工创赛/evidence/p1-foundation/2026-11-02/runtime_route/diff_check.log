@@ -1,0 +1,94 @@
+3.stm32f407宸ョ▼/USER/main.c:2000: trailing whitespace.
++static uint32_t App_PerimeterTurnStart(uint32_t direction, float angle_deg, uint32_t max_rpm)
+
+3.stm32f407宸ョ▼/USER/main.c:2001: trailing whitespace.
++{
+
+3.stm32f407宸ョ▼/USER/main.c:2002: trailing whitespace.
++    uint32_t accepted = 0U;
+
+3.stm32f407宸ョ▼/USER/main.c:2003: trailing whitespace.
++    if (direction > TURN_CCW || !(angle_deg >= MOTION_TURN_MIN_DEG && angle_deg <= MOTION_TURN_MAX_DEG) ||
+
+3.stm32f407宸ョ▼/USER/main.c:2004: trailing whitespace.
++        max_rpm < 1U || (max_rpm > MOTION_TURN_MAX_RPM &&
+
+3.stm32f407宸ョ▼/USER/main.c:2005: trailing whitespace.
++            !(APP_TURN_BRAKE_TRIAL_ACTIVE && s_motion_list_submit &&
+
+3.stm32f407宸ョ▼/USER/main.c:2006: trailing whitespace.
++              MOTION_ACTION_COUNT>=1U && MOTION_ACTION_COUNT<=MOTION_ACTION_CAPACITY && g_debug_plan_id==DEBUG_PLAN_DEFAULT &&
+
+3.stm32f407宸ョ▼/USER/main.c:2007: trailing whitespace.
++              angle_deg==90.0f && max_rpm==APP_TURN_BRAKE_MAX_RPM))) return 0U;
+
+3.stm32f407宸ョ▼/USER/main.c:2008: trailing whitespace.
++    taskENTER_CRITICAL();
+
+3.stm32f407宸ョ▼/USER/main.c:2009: trailing whitespace.
++    if (!g_heading_exec_trip &&
+
+3.stm32f407宸ョ▼/USER/main.c:2010: trailing whitespace.
++        (g_heading_exec_phase == HR_IDLE || g_heading_exec_phase == HR_DONE) &&
+
+3.stm32f407宸ョ▼/USER/main.c:2011: trailing whitespace.
++        App_MotionAccept())
+
+3.stm32f407宸ョ▼/USER/main.c:2012: trailing whitespace.
++    {
+
+3.stm32f407宸ョ▼/USER/main.c:2013: trailing whitespace.
++        HWT101_DiagnosticArm();g_motion_fault_diag_valid=0U;
+
+3.stm32f407宸ョ▼/USER/main.c:2014: trailing whitespace.
++        s_combined_turn = 1U; s_motion_turn_max_rpm = max_rpm;
+
+3.stm32f407宸ョ▼/USER/main.c:2015: trailing whitespace.
++        /* 转向不能继承前一平移段的动态距离、速度与截止。 */
+
+3.stm32f407宸ョ▼/USER/main.c:2016: trailing whitespace.
++        s_combined_distance_mm=s_combined_reference_mm_s=0.0f;
+
+3.stm32f407宸ョ▼/USER/main.c:2017: trailing whitespace.
++        s_combined_base_rpm=s_combined_run_ms=0U;
+
+3.stm32f407宸ョ▼/USER/main.c:2018: trailing whitespace.
++        HeadingSession_Init(&s_heading_exec);
+
+3.stm32f407宸ョ▼/USER/main.c:2019: trailing whitespace.
++        memset((void *)&g_heading_stop_trace, 0, sizeof(g_heading_stop_trace));
+
+3.stm32f407宸ョ▼/USER/main.c:2020: trailing whitespace.
++        g_heading_exec_phase = HR_IDLE; g_heading_exec_state = HS_IDLE;
+
+3.stm32f407宸ョ▼/USER/main.c:2021: trailing whitespace.
++        g_heading_exec_relative_deg = (direction == TURN_CCW) ? angle_deg : -angle_deg;
+
+3.stm32f407宸ョ▼/USER/main.c:2022: trailing whitespace.
++        g_heading_exec_request = 1U; s_motion_has_action = 1U; accepted = 1U;
+
+3.stm32f407宸ョ▼/USER/main.c:2023: trailing whitespace.
++    }
+
+3.stm32f407宸ョ▼/USER/main.c:2024: trailing whitespace.
++    taskEXIT_CRITICAL();
+
+3.stm32f407宸ョ▼/USER/main.c:2025: trailing whitespace.
++    return accepted;
+
+3.stm32f407宸ョ▼/USER/main.c:3288: trailing whitespace.
++            
+3.stm32f407宸ョ▼/USER/main.c:3928: trailing whitespace.
++        
+3.stm32f407宸ョ▼/USER/main.c:3987: trailing whitespace.
++        
+3.stm32f407宸ョ▼/USER/main.c:3988: trailing whitespace.
++        
+3.stm32f407宸ョ▼/USER/main.c:4445: trailing whitespace.
++    
+3.stm32f407宸ョ▼/USER/main.c:4470: trailing whitespace.
++    
+3.stm32f407宸ョ▼/USER/main.c:4471: trailing whitespace.
++    
+3.stm32f407宸ョ▼/USER/main.c:4472: trailing whitespace.
++    

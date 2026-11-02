@@ -1,0 +1,163 @@
+{
+  "hardware_accessed": false,
+  "adopted": false,
+  "comparison_scope": "Same initial-RUN latch and active-turn position polling fix in both arms; same gains, braking, stop tolerances, physical RPM limits, plant and integer Emm feedback. Translation base profile and left trim still quantize to whole RPM; turn and hold correction output resolution is isolated.",
+  "perimeter": [
+    {
+      "scenario": 24,
+      "tau_s": 0.07999999821186066,
+      "delay_ticks": 0.0,
+      "wheel_bias": 0.0,
+      "integer_completed": 8,
+      "integer_valid_mask": 511,
+      "integer_return_error_mm": 31.257369764110535,
+      "integer_heading_error_deg": 0.599761962890625,
+      "fine_completed": 8,
+      "fine_valid_mask": 511,
+      "fine_return_error_mm": 12.836552081077514,
+      "fine_heading_error_deg": 0.287506103515625
+    },
+    {
+      "scenario": 25,
+      "tau_s": 0.07999999821186066,
+      "delay_ticks": 4.0,
+      "wheel_bias": 0.003000000026077032,
+      "integer_completed": 8,
+      "integer_valid_mask": 511,
+      "integer_return_error_mm": 27.681189452962318,
+      "integer_heading_error_deg": 0.575439453125,
+      "fine_completed": 8,
+      "fine_valid_mask": 511,
+      "fine_return_error_mm": 10.869538525258337,
+      "fine_heading_error_deg": 0.322265625
+    },
+    {
+      "scenario": 26,
+      "tau_s": 0.20000000298023224,
+      "delay_ticks": 0.0,
+      "wheel_bias": 0.0,
+      "integer_completed": 8,
+      "integer_valid_mask": 511,
+      "integer_return_error_mm": 25.69274475800841,
+      "integer_heading_error_deg": 0.72271728515625,
+      "fine_completed": 8,
+      "fine_valid_mask": 511,
+      "fine_return_error_mm": 13.380886798920187,
+      "fine_heading_error_deg": 0.4122314453125
+    },
+    {
+      "scenario": 27,
+      "tau_s": 0.20000000298023224,
+      "delay_ticks": 4.0,
+      "wheel_bias": 0.003000000026077032,
+      "integer_completed": 8,
+      "integer_valid_mask": 511,
+      "integer_return_error_mm": 23.216506554409072,
+      "integer_heading_error_deg": 0.723358154296875,
+      "fine_completed": 8,
+      "fine_valid_mask": 511,
+      "fine_return_error_mm": 9.911819799543602,
+      "fine_heading_error_deg": 0.49200439453125
+    },
+    {
+      "scenario": 28,
+      "tau_s": 0.4000000059604645,
+      "delay_ticks": 0.0,
+      "wheel_bias": 0.0,
+      "integer_completed": 8,
+      "integer_valid_mask": 511,
+      "integer_return_error_mm": 20.30944369871345,
+      "integer_heading_error_deg": 0.57232666015625,
+      "fine_completed": 8,
+      "fine_valid_mask": 511,
+      "fine_return_error_mm": 13.740895623168027,
+      "fine_heading_error_deg": 0.540924072265625
+    },
+    {
+      "scenario": 29,
+      "tau_s": 0.4000000059604645,
+      "delay_ticks": 4.0,
+      "wheel_bias": 0.003000000026077032,
+      "integer_completed": 0,
+      "integer_valid_mask": 1,
+      "integer_return_error_mm": null,
+      "integer_heading_error_deg": null,
+      "fine_completed": 0,
+      "fine_valid_mask": 1,
+      "fine_return_error_mm": null,
+      "fine_heading_error_deg": null
+    }
+  ],
+  "single_turns": [
+    {
+      "scenario": 40,
+      "direction": "CW",
+      "actual_requested_angle": 87,
+      "integer_error_deg": 0.62432861328125,
+      "fine_error_deg": 0.514617919921875
+    },
+    {
+      "scenario": 41,
+      "direction": "CW",
+      "actual_requested_angle": 89,
+      "integer_error_deg": 0.62384033203125,
+      "fine_error_deg": 0.511688232421875
+    },
+    {
+      "scenario": 42,
+      "direction": "CW",
+      "actual_requested_angle": 90,
+      "integer_error_deg": 0.62890625,
+      "fine_error_deg": 0.51263427734375
+    },
+    {
+      "scenario": 43,
+      "direction": "CW",
+      "actual_requested_angle": 91,
+      "integer_error_deg": 0.63372802734375,
+      "fine_error_deg": 0.51361083984375
+    },
+    {
+      "scenario": 44,
+      "direction": "CW",
+      "actual_requested_angle": 93,
+      "integer_error_deg": 0.633148193359375,
+      "fine_error_deg": 0.511962890625
+    },
+    {
+      "scenario": 45,
+      "direction": "CCW",
+      "actual_requested_angle": 87,
+      "integer_error_deg": -0.6240234375,
+      "fine_error_deg": -0.5146484375
+    },
+    {
+      "scenario": 46,
+      "direction": "CCW",
+      "actual_requested_angle": 89,
+      "integer_error_deg": -0.623504638671875,
+      "fine_error_deg": -0.51190185546875
+    },
+    {
+      "scenario": 47,
+      "direction": "CCW",
+      "actual_requested_angle": 90,
+      "integer_error_deg": -0.628662109375,
+      "fine_error_deg": -0.51165771484375
+    },
+    {
+      "scenario": 48,
+      "direction": "CCW",
+      "actual_requested_angle": 91,
+      "integer_error_deg": -0.6339111328125,
+      "fine_error_deg": -0.513580322265625
+    },
+    {
+      "scenario": 49,
+      "direction": "CCW",
+      "actual_requested_angle": 93,
+      "integer_error_deg": -0.63336181640625,
+      "fine_error_deg": -0.511962890625
+    }
+  ]
+}

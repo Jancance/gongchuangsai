@@ -1,0 +1,92 @@
+{
+  "retry_count": 1,
+  "further_motion_blocked_until_diagnosed": true,
+  "first_attempt_user_confirmed_no_movement": true,
+  "second_physical_observation": "User confirmed no movement, stopped, VM lampoff",
+  "attempts": [
+    {
+      "path": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\evidence\\p1-foundation\\2026-10-31\\heading_p100\\vehicle\\run_once\\20261031_220041_213100.summary.json",
+      "status": "telemetry_timeout",
+      "last": {
+        "tick_ms": 27411,
+        "phase": 2,
+        "trip": 0,
+        "backend_active": 0,
+        "vm_request": 1,
+        "pe2_active": 1,
+        "distance_progress_milli_mm": 0,
+        "rpm1": 0,
+        "rpm2": 0,
+        "rpm3": 0,
+        "rpm4": 0,
+        "safety_fault": 0,
+        "rtos_fault": 0,
+        "can_fault": 0
+      },
+      "tx": [
+        "RC1,269,26811,PLAN0,BFD2",
+        "RC1,273,27211,ARM,01E4",
+        "RC1,273,27211,START,7974",
+        "RC1,273,27211,KEEP,F97E",
+        "RC1,273,27211,KEEP,F97E",
+        "RC1,273,27211,KEEP,F97E",
+        "RC1,273,27211,STOP,55DB"
+      ]
+    },
+    {
+      "path": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\evidence\\p1-foundation\\2026-10-31\\heading_p100\\vehicle\\retry_once\\20261031_220341_316000.summary.json",
+      "status": "telemetry_timeout",
+      "last": {
+        "tick_ms": 179711,
+        "phase": 2,
+        "trip": 0,
+        "backend_active": 0,
+        "vm_request": 1,
+        "pe2_active": 1,
+        "distance_progress_milli_mm": 0,
+        "rpm1": 0,
+        "rpm2": 0,
+        "rpm3": 0,
+        "rpm4": 0,
+        "safety_fault": 0,
+        "rtos_fault": 0,
+        "can_fault": 0
+      },
+      "tx": [
+        "RC1,1792,179111,PLAN0,590C",
+        "RC1,1796,179511,ARM,8601",
+        "RC1,1796,179511,START,56F0",
+        "RC1,1796,179511,KEEP,FD11",
+        "RC1,1796,179511,KEEP,FD11",
+        "RC1,1796,179511,KEEP,FD11",
+        "RC1,1796,179511,STOP,51B4"
+      ]
+    },
+    {
+      "path": "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\evidence\\p1-foundation\\2026-10-31\\heading_p100\\vehicle\\retry_postcheck\\20261031_220357_010100.summary.json",
+      "status": "monitor_received",
+      "last": {
+        "tick_ms": 20511,
+        "phase": 0,
+        "trip": 0,
+        "backend_active": 0,
+        "vm_request": 0,
+        "pe2_active": 0,
+        "distance_progress_milli_mm": 0,
+        "rpm1": 0,
+        "rpm2": 0,
+        "rpm3": 0,
+        "rpm4": 0,
+        "safety_fault": 0,
+        "rtos_fault": 0,
+        "can_fault": 0
+      },
+      "tx": []
+    }
+  ],
+  "reset_flags_hex": "0x0e000000",
+  "reset_flags_meaning": "BOR/PIN/POR, IWDG0; saved at startup, not definitive proof of electrical root cause",
+  "user_manual_reset_or_power_cycle": false,
+  "post_incident_flash_matches": true,
+  "process_check": "One unrelated Keil GUI, one old -r compile process; no observed -f download process. Left untouched."
+}

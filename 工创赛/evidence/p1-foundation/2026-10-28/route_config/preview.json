@@ -1,0 +1,41 @@
+{
+  "ok": true,
+  "error": 0,
+  "segment": 0,
+  "budget_ms": 105500,
+  "rows": [
+    {
+      "segment": 1,
+      "kind": "FORWARD",
+      "amount": 30.0,
+      "requested_speed": 5.0,
+      "rpm": 12,
+      "nominal_speed": 4.838052749633789,
+      "minimum_time_s": 6.200841796875
+    },
+    {
+      "segment": 2,
+      "kind": "LEFT",
+      "amount": 20.0,
+      "requested_speed": 3.0,
+      "rpm": 7,
+      "nominal_speed": 2.822197437286377,
+      "minimum_time_s": 7.0866767578125
+    },
+    {
+      "segment": 3,
+      "kind": "TURN",
+      "amount": 90.0,
+      "requested_speed": 5.0,
+      "rpm": 4,
+      "nominal_speed": 4.4210524559021,
+      "minimum_time_s": 20.357142578125
+    }
+  ],
+  "message": "参数检查通过；不是实车或避障验收",
+  "custom_enabled": false,
+  "config_path": "C:\\Users\\lenovo\\Desktop\\工创赛\\3.stm32f407工程\\USER\\route_config.h",
+  "config_sha256": "df252ed01ae5749b2e3f03d601c437d192cde10d8f8cb7d7126815d16464edc7",
+  "hardware_accessed": false,
+  "limits": "只检查参数。未模拟真实速度/加减速/地面位姿/障碍；120秒是保守预算，不是预计耗时。"
+}

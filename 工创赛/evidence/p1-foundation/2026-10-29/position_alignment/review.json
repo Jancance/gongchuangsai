@@ -1,0 +1,28 @@
+{
+  "source_sha256": "95529d58c84fbacb5dc4641fb79941eaf0d60077ab1801e1f50d828d49f34454",
+  "changed_firmware": [
+    "USER/chassis_auto_test.c"
+  ],
+  "candidate_c_checks": 383886,
+  "model_cases": 60,
+  "recorded_log_replay_assertions": 15,
+  "replay_passed": true,
+  "builds": [
+    "default",
+    "candidate",
+    "legacy20",
+    "competition"
+  ],
+  "all_builds_zero_errors_warnings": true,
+  "flashed": false,
+  "new_start_commands": 0,
+  "history_points_per_wheel": 16,
+  "history_bytes": 512,
+  "position_fresh_ms": 400,
+  "spread_limit_mm": 50,
+  "track_limit_mm": 50,
+  "arrival_mm": 2,
+  "final_wait_ms": 2000,
+  "physical_stop_and_ground_measurements": "pending user feedback from preceding failed run",
+  "limitations": "history interpolation is an estimate; real CAN/RTOS timing and stopping still need a new controlled test. C emulator instruction/time allowance increased only for host verification."
+}

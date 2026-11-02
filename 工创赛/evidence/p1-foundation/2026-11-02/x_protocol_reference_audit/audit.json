@@ -1,0 +1,45 @@
+{
+  "reference_url": "https://gitee.com/pinksakura/Logistics_Vehicle_F407_V2",
+  "reference_remote_HEAD_verified": "8191479ab06eab8e9ed03ccb837f7137d049a0f8",
+  "local_reference_matches_remote": true,
+  "projects": {
+    "root": {
+      "path": "3.stm32f407工程\\gongxun-f407.uvprojx",
+      "defines": [
+        "STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000"
+      ],
+      "file_entries": 47
+    },
+    "X_PD": {
+      "path": "工创赛\\tmp\\x_load_diag_offline_20261101\\gongxun-f407-load-pd-vehicle.uvprojx",
+      "defines": [
+        "STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000,APP_X_OFFLINE_ONLY=0"
+      ],
+      "file_entries": 48
+    },
+    "X_perimeter": {
+      "path": "工创赛\\tmp\\x_perimeter_comp008_20261101\\gongxun-f407-load-pd-vehicle.uvprojx",
+      "defines": [
+        "STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000,APP_X_OFFLINE_ONLY=0"
+      ],
+      "file_entries": 48
+    }
+  },
+  "root_protocol": "Emm F6 CAN7-byte, integer RPM feedback; not migrated",
+  "last_downloaded_protocol": "X F6 CAN8-byte, 0.1 RPM feedback; record from prior session, no live board connection this audit",
+  "reference_chassis_protocol": "Emm-style UART8-byte including address, 1-byte acceleration; not X UART9-byte",
+  "X_legacy_names": [
+    "Chassis_EncodeEmm",
+    "Chassis_EmmFeedbackToLogical"
+  ],
+  "legacy_names_mean_wire_Emm": false,
+  "X_position_normalization": "X native 3600 units/rev converted once to internal65536/rev; internal65536 is intentional, not proof of old protocol",
+  "controller_recommendation": [
+    "Unify verified X transport and build identity into main engineering entry before future downloads.",
+    "Diagnose low-speed direction guard with ACK-matched targets and native0.1RPM noise; preserve actual reverse/overspeed protections.",
+    "Keep P1 D0.25 deadband0.3 I0 pending isolated validation.",
+    "Adopt X/Y pose feedback plus heading and vision fine adjustment only with fresh reliable positioning."
+  ],
+  "firmware_changed": false,
+  "hardware_accessed": false
+}

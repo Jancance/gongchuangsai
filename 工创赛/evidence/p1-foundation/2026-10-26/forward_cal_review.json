@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-26",
+  "remote_baseline": "54bb617",
+  "target_multiplier": 0.978640776699029,
+  "forward_progress_scale": 1.0218254,
+  "formula": "calibrated_distance_task_progress_mm = nominal_encoder_projection_mm * forward_progress_scale for direction0; other directions unchanged",
+  "target_input_unchanged": true,
+  "raw_endpoint_projection_unchanged": true,
+  "wheel_geometry_and_speed_unchanged": true,
+  "factor_status": "initial low-speed empirical calibration based on three ground measurements; endpoint overshoot not separately subtracted; short/long physical verification pending",
+  "debug_full_build": "0 errors 0 warnings; Code60692 RO868 RW2028 ZI34340",
+  "competition_full_build": "0 errors 0 warnings; Code53632 RO652 RW1944 ZI29376",
+  "arm_checks": {
+    "actual_c_checks_passed": 241,
+    "hardware_connected": false,
+    "compiler_target": "ARM Cortex-M3 soft-float; behavior only",
+    "engine": "Unicorn2.1.4",
+    "limits": "RTOS/CAN stubbed, sequential state interleavings, no MCU timing or true concurrent scheduling proof"
+  },
+  "flashed": false,
+  "motion_started": false,
+  "requirements_checked": {
+    "R": [
+      "RUN-01",
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "LOC-05",
+      "LOC-07",
+      "MOT-02",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": "unchanged"
+  },
+  "source_sha256": {
+    "chassis_kinematics.c": "c33aa851a2e0af0e87af8250af81eecc9987e381b1b9cf791f292025aed38304",
+    "chassis_kinematics.h": "f0c9b9288e0d50773c3a709dea0b1a62f4168c737c06ef1c6889e87b06a93994",
+    "chassis_auto_test.c": "237f33e5f618c131fb1a9ebeafc08376793f5f94f5f2b7be9bea461ec744846a"
+  }
+}

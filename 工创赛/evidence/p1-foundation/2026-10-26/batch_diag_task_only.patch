@@ -1,0 +1,518 @@
+--- chassis_auto_test.c.before
++++ chassis_auto_test.c
+@@ -82,6 +82,9 @@
+ static TickType_t s_heading_update_tick = 0U;
+ /* 最近一次合法轮速提交时间，与实际四轮更新起点分开。 */
+ static TickType_t s_heading_command_tick = 0U;
++static ChassisHeadingRequest s_heading_request = {0, 1U, 0U};
++static TickType_t s_heading_request_tick = 0U;
++static uint32_t s_heading_request_valid = 0U;
+ #if APP_TEST_MODE == 3U
+ static uint32_t s_sequence_hold, s_sequence_continue;
+ #define AUTO_SEQUENCE_HOLD() (s_sequence_hold)
+@@ -92,6 +95,109 @@
+ /* 以下带Locked的函数只在短临界区内操作内存，不等待CAN */
+ /* detail：1命令过期，2状态/速度过期，3端点批次过期，4端点读失败，
+  * 5运行位置读失败，6状态/速度读失败，7缺起点，8距离保护；0其它原因。 */
++/* 批次诊断只读写有界内存，不发串口、不等待CAN，不改变控制判断。 */
++#if APP_IS_DEBUG
++static ChassisBatchDiagnostic s_batch_history[CHASSIS_BATCH_DIAGNOSTIC_CAPACITY];
++static ChassisBatchDiagnostic s_batch_current;
++static ChassisBatchStatistics s_batch_statistics;
++static uint32_t s_batch_count, s_batch_head, s_batch_id, s_batch_open;
++static TickType_t s_batch_generated_tick;
++static uint32_t s_batch_generation_source;
++static void Auto_BatchChangedLocked(TickType_t generated, uint32_t source)
++{
++    s_batch_generated_tick = generated;
++    s_batch_generation_source = source;
++    if (s_batch_open) s_batch_current.pending_changes++;
++}
++static void Auto_BatchEndLocked(uint32_t outcome, TickType_t now)
++{
++    uint32_t slot, elapsed;
++    if (!s_batch_open) return;
++    s_batch_current.end_ms = (uint32_t)now * portTICK_PERIOD_MS;
++    s_batch_current.outcome = outcome;
++    s_batch_current.pending_rpm = s_heading_pending_rpm;
++    elapsed = s_batch_current.end_ms - s_batch_current.start_ms;
++    if (elapsed > s_batch_statistics.max_batch_ms) s_batch_statistics.max_batch_ms = elapsed;
++    if (outcome == 1U) s_batch_statistics.total_success++;
++    else s_batch_statistics.total_interrupted++;
++    if (s_batch_count < CHASSIS_BATCH_DIAGNOSTIC_CAPACITY)
++    {
++        slot = (s_batch_head + s_batch_count++) % CHASSIS_BATCH_DIAGNOSTIC_CAPACITY;
++    }
++    else
++    {
++        slot = s_batch_head;
++        s_batch_head = (s_batch_head + 1U) % CHASSIS_BATCH_DIAGNOSTIC_CAPACITY;
++        s_batch_statistics.overwritten++;
++    }
++    s_batch_history[slot] = s_batch_current;
++    s_batch_open = 0U;
++}
++static void Auto_BatchSendLocked(uint32_t index, TickType_t now)
++{
++    uint32_t elapsed;
++    if (!s_batch_open)
++    {
++        ChassisBatchDiagnostic empty = {0};
++        s_batch_current = empty;
++        s_batch_current.session = g_chassis_auto_session;
++        s_batch_current.batch_id = ++s_batch_id;
++        s_batch_current.segment = g_chassis_auto_segment;
++        s_batch_current.dry_run = s_mode;
++        s_batch_current.generation_source = s_batch_generation_source;
++        s_batch_current.generated_ms = (uint32_t)s_batch_generated_tick * portTICK_PERIOD_MS;
++        s_batch_current.start_ms = (uint32_t)now * portTICK_PERIOD_MS;
++        s_batch_current.correction_rpm = s_heading_applied_rpm;
++        s_batch_current.base_rpm = s_forward_hold ? s_translation_applied_base : 0U;
++        elapsed = s_batch_current.start_ms - s_batch_current.generated_ms;
++        if (elapsed > s_batch_statistics.max_queue_ms) s_batch_statistics.max_queue_ms = elapsed;
++        s_batch_open = 1U;
++    }
++    s_batch_current.send_ms[index] = (uint32_t)now * portTICK_PERIOD_MS;
++    s_batch_current.sent_mask |= 1UL << index;
++}
++static void Auto_BatchReplyLocked(uint32_t session, uint32_t index, uint32_t result, TickType_t now)
++{
++    uint32_t elapsed;
++    if (!s_batch_open || s_batch_current.session != session) return;
++    s_batch_current.reply_ms[index] = (uint32_t)now * portTICK_PERIOD_MS;
++    s_batch_current.result[index] = result;
++    elapsed = s_batch_current.reply_ms[index] - s_batch_current.send_ms[index];
++    if (elapsed > s_batch_statistics.max_call_ms) s_batch_statistics.max_call_ms = elapsed;
++    if (result == 1U) s_batch_current.ack_mask |= 1UL << index;
++    else
++    {
++        s_batch_current.failed_address = index + 1U;
++        s_batch_current.io_result = result;
++    }
++    if (s_batch_current.ack_mask == 15U) Auto_BatchEndLocked(1U, now);
++}
++#else
++#define Auto_BatchChangedLocked(t,s) ((void)0)
++#define Auto_BatchEndLocked(o,t) ((void)0)
++#define Auto_BatchSendLocked(i,t) ((void)0)
++#define Auto_BatchReplyLocked(s,i,r,t) ((void)0)
++#endif
++uint32_t ChassisAuto_ReadBatchDiagnostic(uint32_t index, ChassisBatchDiagnostic *record,
++    ChassisBatchStatistics *statistics)
++{
++#if APP_IS_DEBUG
++    uint32_t found = 0U;
++    if (!record || !statistics) return 0U;
++    taskENTER_CRITICAL();
++    if (index < s_batch_count)
++    {
++        *record = s_batch_history[(s_batch_head + index) % CHASSIS_BATCH_DIAGNOSTIC_CAPACITY];
++        *statistics = s_batch_statistics;
++        found = 1U;
++    }
++    taskEXIT_CRITICAL();
++    return found;
++#else
++    (void)index; (void)record; (void)statistics; return 0U;
++#endif
++}
++
+ volatile ChassisAutoFaultDiagnostic g_chassis_auto_fault_diagnostic;
+ static uint32_t s_fault_diagnostic_valid;
+ static void Auto_CutDetailLocked(uint32_t cause, uint32_t detail, uint32_t io, uint32_t address)
+@@ -122,6 +228,7 @@
+     if (s_endpoint_index < s_endpoint_count)
+         s_endpoints[s_endpoint_index].outcome = 2U;
+ #endif
++    Auto_BatchEndLocked(2U, xTaskGetTickCount());
+     g_chassis_auto_active = 0U;
+     g_chassis_auto_cut_vm = 1U;
+     g_chassis_auto_state = CHASSIS_AUTO_FAULT;
+@@ -141,8 +248,12 @@
+ 
+ static void Auto_EnterLocked(uint32_t state, TickType_t now)
+ {
++    if (state == CHASSIS_AUTO_STOP) Auto_BatchEndLocked(3U, now);
+     g_chassis_auto_state = state;
+     s_phase_tick = now;
++    /* 普通首次批次没有前端发布时间，以选择START时刻为生成边界。 */
++    if (state == CHASSIS_AUTO_START && !s_heading_session)
++        Auto_BatchChangedLocked(now, 0U);
+     s_motor_index = 0U;
+     s_monitor_between = 0U;
+ }
+@@ -239,7 +350,11 @@
+         s_finish_requested = s_stop_due = 1U;
+         s_finish_tick = now;
+     }
+-    else s_translation_base_rpm = rpm;
++    else
++    {
++        if (rpm != s_translation_base_rpm) Auto_BatchChangedLocked(now, 3U);
++        s_translation_base_rpm = rpm;
++    }
+ }
+ #endif
+ 
+@@ -347,6 +462,14 @@
+     s_heading_initial_rpm = s_heading_pending_rpm = s_heading_applied_rpm = 0;
+     s_heading_update_tick = 0U;
+     s_heading_command_tick = 0U;
++#if APP_IS_DEBUG
++    {
++        ChassisBatchStatistics empty = {0};
++        s_batch_statistics = empty;
++        s_batch_count = s_batch_head = s_batch_id = s_batch_open = 0U;
++        s_batch_generated_tick = 0U; s_batch_generation_source = 0U;
++    }
++#endif
+     s_motor_index = s_monitor_cursor = s_monitor_between = 0U;
+     s_status_valid = s_speed_valid = s_run_started = s_stop_due = 0U;
+     s_total_tick = s_phase_tick = s_run_tick = 0U;
+@@ -385,6 +508,7 @@
+         g_chassis_auto_fault_diagnostic = empty_fault; s_fault_diagnostic_valid = 0U;
+         s_used = 1U; s_mode = dry_run; g_chassis_auto_mode = dry_run;
+         g_chassis_auto_session++;
++        Auto_BatchChangedLocked(xTaskGetTickCount(), 0U);
+ #if APP_POSITION_DIAGNOSTIC
+         Auto_PositionReset(g_chassis_auto_session);
+ #endif
+@@ -433,6 +557,7 @@
+     s_vm_requested = (vm_request == 1U) ? 1U : 0U;
+     if (!s_vm_requested)
+     {
++        Auto_BatchEndLocked(3U, xTaskGetTickCount());
+ #if APP_POSITION_DIAGNOSTIC
+         s_position_valid = s_position_due = 0U;
+ #endif
+@@ -842,6 +967,7 @@
+         s_run_started = 1U;
+         if (s_heading_session == 1U) s_heading_update_tick = now;
+     }
++    if (state == CHASSIS_AUTO_START) Auto_BatchSendLocked(index, xTaskGetTickCount());
+     taskEXIT_CRITICAL();
+ 
+     if (state == CHASSIS_AUTO_DISABLE)
+@@ -863,6 +989,8 @@
+         (g_chassis_auto_state == state))
+     {
+         g_chassis_auto_last_address = index + 1U; g_chassis_auto_io_result = result;
++        if (state == CHASSIS_AUTO_START)
++            Auto_BatchReplyLocked(session, index, result, xTaskGetTickCount());
+         if (result != 1U)
+             Auto_CutLocked((state == CHASSIS_AUTO_START) ? 4U :
+                            ((state == CHASSIS_AUTO_STOP) ? 5U : 1U));
+@@ -887,9 +1015,7 @@
+ }
+ 
+ /* 此处仅交接数据，不发CAN、不修改VM或原自动测试状态。 */
+-static ChassisHeadingRequest s_heading_request = {0, 1U, 0U};
+-static TickType_t s_heading_request_tick = 0U;
+-static uint32_t s_heading_request_valid = 0U;
++
+ 
+ uint32_t ChassisAuto_HeadingPublish(int32_t command_rpm, uint32_t stop_required)
+ {
+@@ -1008,6 +1134,18 @@
+             Auto_CutLocked(8U);
+         else
+         {
++            if (command_rpm != s_heading_pending_rpm)
++            {
++#if APP_IS_DEBUG
++                /* 邮箱同值时使用最近一次有效发布；直接API则记本次接受时刻。 */
++                uint32_t from_mailbox = s_heading_request_valid &&
++                    !s_heading_request.stop_required && s_heading_request.command_rpm == command_rpm &&
++                    (TickType_t)(xTaskGetTickCount() - s_heading_request_tick) <
++                        pdMS_TO_TICKS(CHASSIS_HEADING_MAILBOX_MAX_AGE_MS);
++                Auto_BatchChangedLocked(from_mailbox ? s_heading_request_tick : xTaskGetTickCount(),
++                    from_mailbox ? 1U : 2U);
++#endif
++            }
+             s_heading_pending_rpm = command_rpm;
+             s_heading_command_tick = xTaskGetTickCount();
+             accepted = 1U;
+--- chassis_auto_test.h.before
++++ chassis_auto_test.h
+@@ -60,6 +60,29 @@
+ } ChassisAutoFaultDiagnostic;
+ extern volatile ChassisAutoFaultDiagnostic g_chassis_auto_fault_diagnostic;
+ void ChassisAuto_ReadFaultDiagnostic(ChassisAutoFaultDiagnostic *snapshot);
++/* 调试批次历史，只观察速度指令通信，不证明机械响应；全部时间为uint32毫秒。
++ * outcome:1四轮确认、2故障中断、3停止/撤VM中断；dry_run=1无真实CAN。
++ * generation_source:0首次发送选择、1邮箱发布、2直接更新API、3距离减速。
++ * 仅保留最近16批，覆盖量与累计最大延迟另行返回；初始化后从头计数。 */
++#define CHASSIS_BATCH_DIAGNOSTIC_CAPACITY 16U
++typedef struct
++{
++    uint32_t session, batch_id, segment, dry_run, generation_source;
++    uint32_t generated_ms, start_ms, end_ms, outcome, sent_mask, ack_mask;
++    uint32_t failed_address, io_result;
++    int32_t correction_rpm;
++    uint32_t base_rpm, pending_changes;
++    int32_t pending_rpm;
++    uint32_t send_ms[4], reply_ms[4], result[4];
++} ChassisBatchDiagnostic;
++typedef struct
++{
++    uint32_t overwritten, max_queue_ms, max_batch_ms, max_call_ms;
++    uint32_t total_success, total_interrupted;
++} ChassisBatchStatistics;
++/* index按当前保留历史从旧到新读取；失败不修改运动状态，比赛入口返回0。 */
++uint32_t ChassisAuto_ReadBatchDiagnostic(uint32_t index, ChassisBatchDiagnostic *record,
++    ChassisBatchStatistics *statistics);
+ /* CAN任务两阶段平移启动：Prepare仅算局部命令；Begin在短锁内复核并提交。 */
+ typedef struct
+ {
+--- main.c.before
++++ main.c
+@@ -2436,6 +2436,78 @@
+         last = now;
+         if (normal) s_motion_timing_cursor++;
+     }
++}
++
++/* BT1仅在VM请求/输出关闭且后端不活动时逐条导出，不在运动中格式化。 */
++static void App_BatchDiagnosticTelemetry(void)
++{
++#if APP_IS_DEBUG
++    static char frame[448];
++    static ChassisBatchDiagnostic record;
++    static ChassisBatchStatistics statistics;
++    static uint32_t cursor, last, values[35];
++    uint32_t now = (uint32_t)xTaskGetTickCount(), i, used = 4U;
++    int count;
++    uint16_t crc;
++    PowerCommandStatus power;
++    if (g_vm_test_request || g_chassis_auto_active ||
++        (uint32_t)(now - last) < 100U || (uint32_t)(now-s_serial_tx_tick) < 70U) return;
++    Power_ReadCommandStatus(&power);
++    if (power.active) return;
++    if (!ChassisAuto_ReadBatchDiagnostic(cursor, &record, &statistics))
++    {
++        if ((uint32_t)(now-last) >= 1000U) cursor = 0U;
++        return;
++    }
++    values[0] = (uint32_t)record.session;
++    values[1] = (uint32_t)record.batch_id;
++    values[2] = (uint32_t)record.segment;
++    values[3] = (uint32_t)record.dry_run;
++    values[4] = (uint32_t)record.generation_source;
++    values[5] = (uint32_t)record.generated_ms;
++    values[6] = (uint32_t)record.start_ms;
++    values[7] = (uint32_t)record.end_ms;
++    values[8] = (uint32_t)record.outcome;
++    values[9] = (uint32_t)record.sent_mask;
++    values[10] = (uint32_t)record.ack_mask;
++    values[11] = (uint32_t)record.failed_address;
++    values[12] = (uint32_t)record.io_result;
++    values[13] = (uint32_t)record.correction_rpm;
++    values[14] = (uint32_t)record.base_rpm;
++    values[15] = (uint32_t)record.pending_changes;
++    values[16] = (uint32_t)record.pending_rpm;
++    values[17] = (uint32_t)record.send_ms[0];
++    values[18] = (uint32_t)record.send_ms[1];
++    values[19] = (uint32_t)record.send_ms[2];
++    values[20] = (uint32_t)record.send_ms[3];
++    values[21] = (uint32_t)record.reply_ms[0];
++    values[22] = (uint32_t)record.reply_ms[1];
++    values[23] = (uint32_t)record.reply_ms[2];
++    values[24] = (uint32_t)record.reply_ms[3];
++    values[25] = (uint32_t)record.result[0];
++    values[26] = (uint32_t)record.result[1];
++    values[27] = (uint32_t)record.result[2];
++    values[28] = (uint32_t)record.result[3];
++    values[29] = statistics.overwritten;
++    values[30] = statistics.max_queue_ms;
++    values[31] = statistics.max_batch_ms;
++    values[32] = statistics.max_call_ms;
++    values[33] = statistics.total_success;
++    values[34] = statistics.total_interrupted;
++    memcpy(frame, "BT1,", 4U);
++    for (i = 0U; i < 35U; i++)
++    {
++        if (i == 13U || i == 16U)
++            count = snprintf(frame+used, sizeof(frame)-used, "%ld,", (long)(int32_t)values[i]);
++        else count = snprintf(frame+used, sizeof(frame)-used, "%lu,", (unsigned long)values[i]);
++        if (count < 0 || (uint32_t)count >= sizeof(frame)-used) return;
++        used += (uint32_t)count;
++    }
++    crc = App_SerialCrc(frame, used);
++    count = snprintf(frame+used, sizeof(frame)-used, "%04X\r\n", crc);
++    if (count < 0 || (uint32_t)count >= sizeof(frame)-used) return;
++    if (App_DebugSendString(frame) == 1U) { cursor++; last = now; }
++#endif
+ }
+ 
+ static void App_SerialMotionTelemetry(void)
+@@ -3348,6 +3420,7 @@
+         App_SerialMotionTelemetry();
+         App_MotionFaultTelemetry();
+         App_MotionTimingTelemetry();
++        App_BatchDiagnosticTelemetry();
+ #if APP_POSITION_DIAGNOSTIC
+         App_PositionTelemetry();
+ #endif
+--- p1_serial_motion.py.before
++++ p1_serial_motion.py
+@@ -106,6 +106,55 @@
+ TIMING_FIELDS = ["fault_tick_ms", "cycle_hz", "timer_enabled", "event_cycle"] + [
+     f"{scope}_{field}" for scope in TIMING_SCOPES for field in
+     ("count", "last_cycles", "max_cycles", "max_start", "max_end", "max_tick_ms", "max_arm", "last_end")]
++
++
++BATCH_FIELDS = [
++    "session", "batch_id", "segment", "dry_run", "generation_source",
++    "generated_ms", "start_ms", "end_ms", "outcome", "sent_mask", "ack_mask",
++    "failed_address", "io_result", "correction_rpm", "base_rpm", "pending_changes", "pending_rpm"
++] + [f"{name}{wheel}" for name in ("send_ms", "reply_ms", "result") for wheel in range(1,5)] + [
++    "overwritten", "max_queue_ms", "max_batch_ms", "max_call_ms", "total_success", "total_interrupted"
++]
++
++def parse_batch_telemetry(line):
++    """BT1 is retained communication history, never a command or fresh health sample."""
++    line=line.rstrip(b"\r\n")
++    if not line.startswith(b"BT1,"): return None
++    if len(line)>=448: raise ValueError("batch frame too long")
++    prefix,sep,checksum=line.rpartition(b",")
++    if not sep or len(checksum)!=4 or binascii.crc_hqx(prefix+b",",0xFFFF)!=int(checksum,16):
++        raise ValueError("batch CRC mismatch")
++    values=[int(value) for value in prefix.split(b",")[1:]]
++    if len(values)!=len(BATCH_FIELDS): raise ValueError("batch field count")
++    for key,value in zip(BATCH_FIELDS,values):
++        if key in ("correction_rpm","pending_rpm"):
++            if not -5<=value<=5: raise ValueError("batch correction range")
++        elif not 0<=value<=0xFFFFFFFF: raise ValueError("batch uint32 range")
++    r=dict(zip(BATCH_FIELDS,values))
++    if (r["dry_run"]>1 or r["generation_source"]>3 or r["segment"]>2 or
++        r["outcome"] not in (1,2,3) or r["sent_mask"]>15 or r["ack_mask"]>15 or
++        r["ack_mask"] & ~r["sent_mask"] or r["failed_address"]>4 or
++        (r["outcome"]==1 and (r["sent_mask"]!=15 or r["ack_mask"]!=15 or r["failed_address"]))):
++        raise ValueError("batch flags inconsistent")
++    r["queue_ms"]=(r["start_ms"]-r["generated_ms"])&0xFFFFFFFF
++    r["batch_ms"]=(r["end_ms"]-r["start_ms"])&0xFFFFFFFF
++    if r["queue_ms"]>=0x80000000 or r["batch_ms"]>=0x80000000:
++        raise ValueError("batch time order")
++    r["call_ms"]=[]
++    for wheel in range(1,5):
++        bit=1<<(wheel-1)
++        returned=bool(r["ack_mask"]&bit or r["failed_address"]==wheel)
++        if returned:
++            if not r["sent_mask"]&bit: raise ValueError("reply without send")
++            if r["ack_mask"]&bit and r[f"result{wheel}"]!=1:
++                raise ValueError("ack without success result")
++            duration=(r[f"reply_ms{wheel}"]-r[f"send_ms{wheel}"])&0xFFFFFFFF
++            start_offset=(r[f"send_ms{wheel}"]-r["start_ms"])&0xFFFFFFFF
++            if start_offset+duration>r["batch_ms"]: raise ValueError("reply outside batch")
++            r["call_ms"].append(duration)
++        else: r["call_ms"].append(None)
++    r["mechanical_response_measured"]=False
++    return r
+ 
+ 
+ def parse_timing_telemetry(line):
+@@ -458,7 +507,7 @@
+     capture=datetime.now().strftime("%Y%m%d_%H%M%S")+f"_{time.time_ns()%1000000:06d}"
+     ctl=Controller(args.action,args.mode,plan_id)
+     report=dict(action=args.action,expected_mode=args.mode,port=args.port,opened=False,valid_frames=0,invalid_frames=0,
+-                sent_commands=0,timing_frames=0,timing_records=[],last_timing=None,fault_frames=0,last_fault=None,position_frames=0,last_position=None,endpoint_frames=0,endpoints=[],heading_observation=None,nonzero_frames=0,max_abs_rpm=[0,0,0,0],max_abs_error_deg=0,
++                sent_commands=0,batch_frames=0,batch_records=[],timing_frames=0,timing_records=[],last_timing=None,fault_frames=0,last_fault=None,position_frames=0,last_position=None,endpoint_frames=0,endpoints=[],heading_observation=None,nonzero_frames=0,max_abs_rpm=[0,0,0,0],max_abs_error_deg=0,
+                 sequence_gaps=0,last=None,error=None,baseline="5f132ad")
+     serial=None; pending=b""; previous=None; last_progress=0.0
+     with (args.output/(capture+".raw")).open("wb") as raw, (args.output/(capture+".jsonl")).open("w",encoding="utf8") as records:
+@@ -481,6 +530,14 @@
+                 while b"\n" in pending:
+                     line,pending=pending.split(b"\n",1)
+                     try:
++                        batch = parse_batch_telemetry(line)
++                        if batch is not None:
++                            report["batch_frames"] += 1
++                            if batch not in report["batch_records"]: report["batch_records"].append(batch)
++                            records.write(json.dumps(dict(host_utc=datetime.now(timezone.utc).isoformat(),
++                                direction="RX",frame_type="BT1",**batch))+"\n")
++                            records.flush()
++                            continue  # History cannot renew health, arm, start, or keep a motion alive.
+                         timing = parse_timing_telemetry(line)
+                         if timing is not None:
+                             report["timing_frames"] += 1; report["last_timing"] = timing
+@@ -567,9 +624,9 @@
+                     if ctl.status is None:
+                         transmit(ctl.consume(record,now))
+                         if ctl.status == "motion_fault_or_cancelled":
+-                            drain_until = time.monotonic() + 1.5  # Receive fault snapshot after STOP; never retry START.
++                            drain_until = time.monotonic() + 2.5  # Drain stopped batch history; never retry START.
+                         elif ctl.status == "software_complete":
+-                            drain_until = time.monotonic() + (1.2 if record.get("distance_mode") else 0.7)  # Receive final endpoints; no further commands.
++                            drain_until = time.monotonic() + 2.5  # Receive endpoints and up to16 batch records; no further commands.
+                 if ctl.status is None:
+                     transmit(ctl.tick(time.monotonic()))
+             if ctl.status is None and args.action!="monitor":
+--- test_p1_serial_motion.py.before
++++ test_p1_serial_motion.py
+@@ -834,4 +834,66 @@
+         with self.assertRaises(ValueError):command("PLAN5")
+         self.assertTrue(command("PLAN6").startswith(b"RC1,"))
+ 
++
++class BatchDiagnosticTests(unittest.TestCase):
++    def make_record(self, **updates):
++        from p1_serial_motion import BATCH_FIELDS
++        r=dict.fromkeys(BATCH_FIELDS,0)
++        r.update(session=1,batch_id=1,segment=2,generation_source=1,generated_ms=90,start_ms=100,end_ms=140,
++                 outcome=1,sent_mask=15,ack_mask=15,base_rpm=15,correction_rpm=-1,pending_rpm=1,total_success=1)
++        for wheel in range(1,5):
++            r[f"send_ms{wheel}"]=100+(wheel-1)*10
++            r[f"reply_ms{wheel}"]=105+(wheel-1)*10
++            r[f"result{wheel}"]=1
++        r.update(updates)
++        return r
++
++    def encode(self,r):
++        from p1_serial_motion import BATCH_FIELDS
++        prefix=("BT1,"+",".join(str(r[key]) for key in BATCH_FIELDS)+",").encode()
++        return prefix+f"{binascii.crc_hqx(prefix,0xFFFF):04X}\r\n".encode()
++
++    def test_completed_batch_and_signed_correction(self):
++        from p1_serial_motion import parse_batch_telemetry
++        r=parse_batch_telemetry(self.encode(self.make_record()))
++        self.assertEqual((r["queue_ms"],r["batch_ms"],r["call_ms"]),(10,40,[5]*4))
++        self.assertFalse(r["mechanical_response_measured"])
++        self.assertIsNone(parse_batch_telemetry(b"TM1,0"))
++
++    def test_zero_failure_and_unreturned_calls(self):
++        from p1_serial_motion import parse_batch_telemetry
++        r=parse_batch_telemetry(self.encode(self.make_record(outcome=2,sent_mask=3,ack_mask=1,
++                    failed_address=2,io_result=0,result2=0)))
++        self.assertEqual(r["call_ms"],[5,5,None,None])
++        r=parse_batch_telemetry(self.encode(self.make_record(outcome=3,sent_mask=1,ack_mask=0)))
++        self.assertEqual(r["call_ms"],[None]*4)
++
++    def test_tick_wraparound(self):
++        from p1_serial_motion import parse_batch_telemetry
++        r=self.make_record(generated_ms=0xfffffff0,start_ms=0xfffffff8,end_ms=20)
++        for wheel in range(1,5):
++            r[f"send_ms{wheel}"]=(0xfffffff8+(wheel-1)*6)&0xffffffff
++            r[f"reply_ms{wheel}"]=(r[f"send_ms{wheel}"]+2)&0xffffffff
++        r=parse_batch_telemetry(self.encode(r))
++        self.assertEqual((r["queue_ms"],r["batch_ms"],r["call_ms"]),(8,28,[2]*4))
++
++    def test_invalid_crc_fields_flags_and_intervals(self):
++        from p1_serial_motion import parse_batch_telemetry
++        for updates in [dict(ack_mask=16),dict(outcome=1,ack_mask=7),dict(dry_run=2),
++                        dict(generation_source=4),dict(correction_rpm=6),dict(reply_ms4=141),
++                        dict(result1=0),dict(start_ms=80),dict(outcome=0)]:
++            with self.subTest(updates=updates):
++                with self.assertRaises(ValueError):parse_batch_telemetry(self.encode(self.make_record(**updates)))
++        good=self.encode(self.make_record())
++        for bad in [good[:-5]+b"0000\n",good.replace(b"BT1,1,",b"BT1,2,"),b"BT1,0,0000"]:
++            with self.assertRaises(ValueError):parse_batch_telemetry(bad)
++
++    def test_history_cannot_be_control_telemetry(self):
++        from p1_serial_motion import parse_batch_telemetry
++        payload=self.encode(self.make_record())
++        self.assertIsNone(parse_telemetry(payload))
++        self.assertIsNotNone(parse_batch_telemetry(payload))
++        self.assertLess(len(self.encode(dict.fromkeys(__import__('p1_serial_motion').BATCH_FIELDS,0xffffffff))),448)
++
++
+ if __name__=="__main__":unittest.main()

@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-02",
+  "source": "GitHub connector search, repository contents; direct sparse Git read after connector transport errors",
+  "repositories": [
+    {
+      "repo": "Wuyanzu-wuhu/gc-stm32F4-",
+      "commit": "a3476a5a309e8676bf9935f51710491cf8c8b057",
+      "local": "工创赛/tmp/github_gc_f4_ref_20261102",
+      "priority": 1,
+      "verdict": "Closest architecture: STM32F407/SPL/HWT101/mecanum/vision; Emm-style UART, not X."
+    },
+    {
+      "repo": "Thirtynine3939/2025GongChuang_AGV",
+      "commit": "f1fbab3605f4941fdc14a13d9380aa48700a4b87",
+      "local": "工创赛/tmp/github_gongchuang_ref_20261102",
+      "priority": 2,
+      "verdict": "2025 competition architecture reference, timer-pulse wheel control, not CAN X."
+    },
+    {
+      "repo": "aystmjz/Stepping-Motor-Car",
+      "commit": "c3464f6641df56be37d2b35e98ec723bb7a4fafa",
+      "local": "工创赛/tmp/github_stepper_ref_20261102",
+      "priority": 3,
+      "verdict": "STM32F1/PWM two-wheel position-speed control and stepper arm; do not transplant motor loop gains."
+    },
+    {
+      "repo": "yu1745/zdt_x42s_can",
+      "commit": "064711671b6cdfd713fb46af05556496cff87089",
+      "local": "工创赛/tmp/github_x42can_ref_20261102",
+      "priority": 4,
+      "verdict": "ESP-IDF transport helper; example explicitly EMM, model name does not prove X-firmware compatibility."
+    }
+  ],
+  "external_code_executed": false,
+  "external_source_copied_into_firmware": false
+}

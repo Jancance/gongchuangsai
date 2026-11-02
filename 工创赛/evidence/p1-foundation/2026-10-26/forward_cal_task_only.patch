@@ -1,0 +1,61 @@
+--- chassis_kinematics.c.before
++++ chassis_kinematics.c
+@@ -313,6 +313,19 @@
+ uint32_t Chassis_ForwardPositionMm(const uint32_t start_sign[4], const uint32_t start_raw[4],
+     const uint32_t sign[4], const uint32_t raw[4], float *mean_mm, float *spread_mm)
+ { return Chassis_TranslationPositionMm(0U,start_sign,start_raw,sign,raw,mean_mm,spread_mm); }
++uint32_t Chassis_CalibrateDistanceMm(uint32_t mode, float encoder_mm, float *progress_mm)
++{
++    float result;
++    if (progress_mm == NULL) return 0U;
++    *progress_mm = 0.0f;
++    if (mode > 2U || !Chassis_Finite(encoder_mm)) return 0U;
++    result = encoder_mm;
++    if (mode == 0U) result *= CHASSIS_FORWARD_DISTANCE_SCALE;
++    if (!Chassis_Finite(result)) return 0U;
++    *progress_mm = result;
++    return 1U;
++}
++
+ uint32_t Chassis_DistanceRpm(float remaining_mm, uint32_t maximum_rpm)
+ {
+     uint32_t rpm;
+@@ -337,6 +350,12 @@
+         Chassis_Abs(mean - 241.90263f) > 0.01f || spread > 0.01f) return 0U;
+     if (Chassis_TranslationPositionMm(3U,zero,zero,sign,raw,&mean,&spread)) return 0U;
+     sign[0]=0U; sign[1]=1U; sign[2]=0U; sign[3]=1U;
++    if (!Chassis_CalibrateDistanceMm(0U,300.0f,&mean) ||
++        Chassis_Abs(mean - 306.54762f) > 0.01f ||
++        !Chassis_CalibrateDistanceMm(1U,300.0f,&mean) || mean != 300.0f ||
++        !Chassis_CalibrateDistanceMm(2U,300.0f,&mean) || mean != 300.0f ||
++        Chassis_CalibrateDistanceMm(3U,300.0f,&mean) ||
++        Chassis_CalibrateDistanceMm(0U,300.0f,NULL)) return 0U;
+     if (Chassis_DistanceRpm(121.0f,15U) != 15U || Chassis_DistanceRpm(120.0f,15U) != 8U ||
+         Chassis_DistanceRpm(40.0f,15U) != 3U || Chassis_DistanceRpm(0.0f,15U) != 0U ||
+         Chassis_DistanceRpm(120.0f,5U) != 5U) return 0U;
+--- chassis_kinematics.h.before
++++ chassis_kinematics.h
+@@ -88,6 +88,11 @@
+     const uint32_t sign[4], const uint32_t raw[4], float *mean_mm, float *spread_mm);
+ uint32_t Chassis_ForwardPositionMm(const uint32_t start_sign[4], const uint32_t start_raw[4],
+     const uint32_t sign[4], const uint32_t raw[4], float *mean_mm, float *spread_mm);
++/* 独立前进距离比例：210cm三次实测均值214.583333cm，2026-10-26。
++ * 校准进度=名义编码进度*该系数；目标仍是用户输入的mm。
++ * 仅用于距离任务，横移、轮速和原始编码/四轮差异不变；提速后须复核。 */
++#define CHASSIS_FORWARD_DISTANCE_SCALE 1.02182540f
++uint32_t Chassis_CalibrateDistanceMm(uint32_t mode, float encoder_mm, float *progress_mm);
+ uint32_t Chassis_DistanceRpm(float remaining_mm, uint32_t maximum_rpm);
+ uint32_t Chassis_DistanceSelfTest(void);
+ #endif
+--- chassis_auto_test.c.before
++++ chassis_auto_test.c
+@@ -225,7 +225,9 @@
+             s_distance_seen_sign[i] = s_position.sign[i];
+         }
+     }
++    /* 原始编码与四轮差异保持名义mm，只将距离任务进度换算为校准mm。 */
+     if (!Chassis_TranslationPositionMm(s_translation_mode,base->start_sign,base->start_raw,s_position.sign,s_position.raw,&mean,&spread) ||
++        !Chassis_CalibrateDistanceMm(s_translation_mode,mean,&mean) ||
+         mean < -5.0f || spread > 50.0f || mean < s_distance_progress_mm - 5.0f ||
+         mean > s_distance_target_mm + 50.0f)
+     { Auto_DistanceFaultLocked(5U); return; }

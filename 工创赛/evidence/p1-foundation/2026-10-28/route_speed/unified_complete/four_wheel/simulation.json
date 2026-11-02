@@ -1,0 +1,296 @@
+{
+  "ok": true,
+  "completed": true,
+  "assertions": 50897,
+  "first_failure_line": null,
+  "source_sha256": {
+    "chassis_auto_test.c": "03d27d3ad0e64cfc70b73cb9f991332accc7e662b975cd8be9c6993818db6145",
+    "chassis_auto_test.h": "d6a369b140aa55b63fd7fa79ed6145252f43dae1d3df6a738fd5f758e9bef9d3",
+    "chassis_kinematics.c": "5fe8457248e8d5c2ec9a4dd230e9c2aed581c3efcd832c02173331616434401e",
+    "chassis_kinematics.h": "87d43ccb5b523f3657ae3cb50e52f53db1d564f6f06ce38551f0e6c907f75086",
+    "motion_profile.c": "5e3b205b42f9824fa76e334f7c23a65162fdfe69a18e454a64f46fc26777af59",
+    "motion_profile.h": "aa12b374960f6fd31fd25cf0e3652ce30d8cd6855763f7f345e4970972084296",
+    "motion_distance_limits.h": "7a34b7a1b33d3f80e9b924ca48feea7c15428f3c7ab192a37d5e49f2f47039f2",
+    "motion_trial20.h": "57e42c053689bf296a902e812a59a972b2e822ae9418a6800f953611df098daa",
+    "app_config.h": "c78983ee7a3f24cc542904c1f2c6869fb0274e8c699b53e1775d875d7184d2db",
+    "app_entry_config.h": "cdcbedc0e5f7f7a53aaf07092443fc93735a2de76bd34c33ff364a84b848edf7",
+    "app_entry.c": "bf1a495384ac9d33a5a8eae79829e4b18134eb167505368b8d9a55c47b06afdf",
+    "app_entry.h": "76e31eb4231028d2b93731973e2f5b343575fbc27e708cda00fcdfe6532d1f96",
+    "motion_action_plan.h": "48bcb752341fd649b0e880b5e754ae8efc67fe1c788227152dc34391c0f64594",
+    "route_plan.h": "62aa31dbcca284a0f26a4d0a5c3229939dee41aafd67f4f09eec92971c33f107",
+    "route_config.h": "64e281db72cf71b8c736b995ac3a0ca7da167fd2b193b21f19d808f68c408ff6",
+    "motion_route_trial.h": "a80f5028f4f76b0b8c5279163a6161b6131a976df68743596bb0c6d614a1690c"
+  },
+  "cases": [
+    {
+      "case_id": 0,
+      "result": 1,
+      "cause": 0,
+      "detail": 0,
+      "address": 0,
+      "distance_reason": 0,
+      "reached": 1,
+      "stop_mask": 15,
+      "cut_vm_request": 0,
+      "elapsed_ms": 20110,
+      "name": "equal_response",
+      "wheel_encoder_mm": [
+        2056.134,
+        2056.093,
+        2056.134,
+        2056.053
+      ],
+      "peak_command_rpm": [
+        49,
+        49,
+        49,
+        49
+      ],
+      "cumulative_assertions": 15293
+    },
+    {
+      "case_id": 1,
+      "result": 1,
+      "cause": 0,
+      "detail": 0,
+      "address": 0,
+      "distance_reason": 0,
+      "reached": 1,
+      "stop_mask": 15,
+      "cut_vm_request": 0,
+      "elapsed_ms": 20030,
+      "name": "independent_delay_0_20_40_60ms",
+      "wheel_encoder_mm": [
+        2056.337,
+        2056.256,
+        2056.174,
+        2056.096
+      ],
+      "peak_command_rpm": [
+        49,
+        49,
+        49,
+        49
+      ],
+      "cumulative_assertions": 30517
+    },
+    {
+      "case_id": 2,
+      "result": 2,
+      "cause": 3,
+      "detail": 8,
+      "address": 0,
+      "distance_reason": 5,
+      "reached": 0,
+      "stop_mask": 0,
+      "cut_vm_request": 1,
+      "elapsed_ms": 4350,
+      "name": "wheel3_20percent_slow",
+      "wheel_encoder_mm": [
+        190.175,
+        185.342,
+        144.44,
+        175.867
+      ],
+      "peak_command_rpm": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "cumulative_assertions": 33897
+    },
+    {
+      "case_id": 3,
+      "result": 2,
+      "cause": 3,
+      "detail": 6,
+      "address": 3,
+      "distance_reason": 0,
+      "reached": 0,
+      "stop_mask": 0,
+      "cut_vm_request": 1,
+      "elapsed_ms": 3110,
+      "name": "wheel3_speed_reply_missing",
+      "wheel_encoder_mm": [
+        88.173,
+        84.949,
+        81.739,
+        78.582
+      ],
+      "peak_command_rpm": [
+        16,
+        16,
+        16,
+        16
+      ],
+      "cumulative_assertions": 36314
+    },
+    {
+      "case_id": 4,
+      "result": 2,
+      "cause": 3,
+      "detail": 5,
+      "address": 1,
+      "distance_reason": 0,
+      "reached": 0,
+      "stop_mask": 0,
+      "cut_vm_request": 1,
+      "elapsed_ms": 3060,
+      "name": "wheel1_position_reply_missing",
+      "wheel_encoder_mm": [
+        84.948,
+        81.729,
+        78.566,
+        75.521
+      ],
+      "peak_command_rpm": [
+        16,
+        16,
+        16,
+        16
+      ],
+      "cumulative_assertions": 38696
+    },
+    {
+      "case_id": 5,
+      "result": 2,
+      "cause": 5,
+      "detail": 0,
+      "address": 0,
+      "distance_reason": 0,
+      "reached": 0,
+      "stop_mask": 1,
+      "cut_vm_request": 1,
+      "elapsed_ms": 3010,
+      "name": "wheel2_stop_ack_missing",
+      "wheel_encoder_mm": [
+        81.401,
+        78.551,
+        75.516,
+        72.512
+      ],
+      "peak_command_rpm": [
+        16,
+        16,
+        15,
+        15
+      ],
+      "cumulative_assertions": 41040
+    },
+    {
+      "case_id": 6,
+      "result": 2,
+      "cause": 8,
+      "detail": 0,
+      "address": 0,
+      "distance_reason": 0,
+      "reached": 0,
+      "stop_mask": 0,
+      "cut_vm_request": 1,
+      "elapsed_ms": 3090,
+      "name": "wheel2_overspeed",
+      "wheel_encoder_mm": [
+        86.883,
+        83.66,
+        80.461,
+        77.34
+      ],
+      "peak_command_rpm": [
+        16,
+        16,
+        16,
+        16
+      ],
+      "cumulative_assertions": 43443
+    },
+    {
+      "case_id": 7,
+      "result": 2,
+      "cause": 8,
+      "detail": 0,
+      "address": 0,
+      "distance_reason": 0,
+      "reached": 0,
+      "stop_mask": 0,
+      "cut_vm_request": 1,
+      "elapsed_ms": 3030,
+      "name": "wheel4_reverse",
+      "wheel_encoder_mm": [
+        83.013,
+        79.811,
+        76.725,
+        73.713
+      ],
+      "peak_command_rpm": [
+        16,
+        16,
+        16,
+        16
+      ],
+      "cumulative_assertions": 45804
+    },
+    {
+      "case_id": 8,
+      "result": 2,
+      "cause": 3,
+      "detail": 1,
+      "address": 0,
+      "distance_reason": 0,
+      "reached": 0,
+      "stop_mask": 0,
+      "cut_vm_request": 1,
+      "elapsed_ms": 3090,
+      "name": "heading_command_stale",
+      "wheel_encoder_mm": [
+        86.883,
+        83.66,
+        80.461,
+        77.34
+      ],
+      "peak_command_rpm": [
+        16,
+        16,
+        16,
+        16
+      ],
+      "cumulative_assertions": 48207
+    },
+    {
+      "case_id": 9,
+      "result": 2,
+      "cause": 6,
+      "detail": 0,
+      "address": 0,
+      "distance_reason": 0,
+      "reached": 0,
+      "stop_mask": 0,
+      "cut_vm_request": 1,
+      "elapsed_ms": 3500,
+      "name": "CAN_stalled_during_stop",
+      "wheel_encoder_mm": [
+        113.331,
+        110.105,
+        105.147,
+        102.123
+      ],
+      "peak_command_rpm": [
+        16,
+        16,
+        15,
+        15
+      ],
+      "cumulative_assertions": 50892
+    }
+  ],
+  "hardware_accessed": false,
+  "trace_sample_count": 6648,
+  "trace_validation_ok": true,
+  "trace_index": "index.html",
+  "limits": [
+    "Actual chassis backend, kinematics and profile C; stubbed RTOS, CAN and VM.",
+    "10ms CAN task, instant stub transactions; independent wheel delay and first-order response are assumptions.",
+    "RUN entry is seeded; enable/VM preparation, frontend HWT PID, actual bus/RTOS timing are outside this harness.",
+    "No ground XY/yaw/slip model. Encoder estimates and cut-VM requests are not physical outcomes."
+  ]
+}

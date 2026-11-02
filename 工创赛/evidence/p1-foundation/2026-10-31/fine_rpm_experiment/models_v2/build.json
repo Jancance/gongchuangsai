@@ -1,0 +1,22 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 1,
+    "output": "\"unit.c\", line 79: Error:  #10: \"#\" not expected here\n   (void)r;transaction_count++;CHECK(!test_depth);#ifdef FINE_RPM_MODE\n                                                  ^\n\"unit.c\", line 79: Error:  #29: expected an expression\n   (void)r;transaction_count++;CHECK(!test_depth);#ifdef FINE_RPM_MODE\n                                                  ^\n\"unit.c\", line 81: Error:  #36: the #if for this directive is missing\n  #else\n   ^\n\"unit.c\", line 83: Error:  #36: the #if for this directive is missing\n  #endif\n   ^\n\"unit.c\", line 41: Warning:  #177-D: variable \"s_perimeter_targets\"  was declared but never referenced\n  static const float s_perimeter_targets[9][3]={\n                     ^\nunit.c: 1 warning, 4 errors\n"
+  }
+]

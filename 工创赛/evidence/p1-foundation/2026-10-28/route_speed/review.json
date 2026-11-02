@@ -1,0 +1,95 @@
+{
+  "local_only": true,
+  "hardware_accessed": false,
+  "root_custom_enable": 0,
+  "root_route_speed_trial_enable": 0,
+  "direction_candidate_caps_cm_s": {
+    "forward": 20,
+    "left": 20,
+    "right": 20
+  },
+  "distance_cm": [
+    10,
+    210
+  ],
+  "actual_c_variants": 7,
+  "actual_c_assertions": 373208,
+  "model_cases": 60,
+  "normal_models": 39,
+  "nonarrival_or_fault_models": 21,
+  "profile_parity_cases_per_variant": 105,
+  "legacy_route_assertions": 7334,
+  "legacy_four_wheel_assertions": 50897,
+  "python_tests": {
+    "route_preview": 14,
+    "offline_tools": 40,
+    "host": 114
+  },
+  "full_rebuilds": [
+    {
+      "name": "default_complete",
+      "ok": true,
+      "returncode": 0,
+      "command": [
+        "D:\\Keil_v5\\UV4\\UV4.exe",
+        "-r",
+        "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\route_speed_default_complete_20261028\\gongxun-f407.uvprojx",
+        "-t",
+        "Target 1",
+        "-o",
+        "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\evidence\\p1-foundation\\2026-10-28\\route_speed\\default_complete_build.log"
+      ]
+    },
+    {
+      "name": "candidate_complete",
+      "ok": true,
+      "returncode": 0,
+      "command": [
+        "D:\\Keil_v5\\UV4\\UV4.exe",
+        "-r",
+        "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\route_speed_candidate_complete_20261028\\gongxun-f407.uvprojx",
+        "-t",
+        "Target 1",
+        "-o",
+        "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\evidence\\p1-foundation\\2026-10-28\\route_speed\\candidate_complete_build.log"
+      ]
+    },
+    {
+      "name": "competition_complete",
+      "ok": true,
+      "returncode": 0,
+      "command": [
+        "D:\\Keil_v5\\UV4\\UV4.exe",
+        "-r",
+        "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\route_speed_competition_complete_20261028\\gongxun-f407.uvprojx",
+        "-t",
+        "Target 1",
+        "-o",
+        "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\evidence\\p1-foundation\\2026-10-28\\route_speed\\competition_complete_build.log"
+      ]
+    },
+    {
+      "name": "legacy20_complete",
+      "ok": true,
+      "returncode": 0,
+      "command": [
+        "D:\\Keil_v5\\UV4\\UV4.exe",
+        "-r",
+        "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\tmp\\route_speed_legacy20_complete_20261028\\gongxun-f407.uvprojx",
+        "-t",
+        "Target 1",
+        "-o",
+        "C:\\Users\\lenovo\\Desktop\\工创赛\\工创赛\\evidence\\p1-foundation\\2026-10-28\\route_speed\\legacy20_complete_build.log"
+      ]
+    }
+  ],
+  "unified_status": "passed_with_skips; historical charts intentionally not regenerated",
+  "frozen_package_unchanged": true,
+  "root_objects_unchanged": true,
+  "remaining": [
+    "vehicle speed/distance/side-slip/stop/load acceptance per direction",
+    "real RTOS/CAN timing and stack margin",
+    "on-device route version echo",
+    "competition autonomous task integration"
+  ]
+}

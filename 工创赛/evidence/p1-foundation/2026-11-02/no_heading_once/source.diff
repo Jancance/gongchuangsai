@@ -1,0 +1,20 @@
+--- A/USER/main.c
++++ N/USER/main.c
+@@ -5,6 +5,7 @@
+ #include "led.h"
+ #include "Buzzer.h"
+ #include "app_config.h"
++#include "no_heading_trial.h"
+ #include "fine_rpm_telemetry.h"
+ #include "app_entry.h"
+ #include "usart.h"
+@@ -1739,7 +1740,8 @@
+                     if (HeadingController_HoldStep(&s_hold_controller, s_hold_target,
+                         s_heading_source.yaw_deg, s_heading_source.rate_dps, now,
+                         &correction, &error) != 1U) App_ForwardHoldTrip(2U);
+-                    else if (ChassisAuto_UpdateForwardHold(correction) != 1U) App_ForwardHoldTrip(8U);
++                    else if (ChassisAuto_UpdateForwardHold(NoHeadingTrialCorrection(
++                        App_TestTranslationMode(), App_StageDistanceMm(), &correction)) != 1U) App_ForwardHoldTrip(8U);
+                     else
+                     {
+                         g_forward_hold.correction_rpm = correction;

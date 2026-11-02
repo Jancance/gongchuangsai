@@ -1,0 +1,22 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "src",
+      "-I",
+      "stubs",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 1,
+    "output": "\"src/chassis_auto_test.c\", line 1074: Error:  #167: argument of type \"float *\" is incompatible with parameter of type \"int32_t *\"\n      if (is_speed) result = CAN1_ReadSpeed((uint8_t)(i + 1U), &reply, &rpm);\n                                                                       ^\n\"unit.c\", line 65: Error:  #147-D: declaration is incompatible with \"uint32_t CAN1_ReadSpeed(uint8_t, CanRxMsg *, int32_t *)\"  (declared at line 7 of \"stubs\\can.h\")\n  uint32_t CAN1_ReadSpeed(uint8_t a,CanRxMsg *r,float *v){\n           ^\n\"unit.c\", line 84: Error:  #147-D: declaration is incompatible with \"uint32_t CAN1_SetXSpeedRaw(uint8_t, uint8_t, uint16_t, uint8_t, CanRxMsg *)\"  (declared at line 11 of \"stubs\\can.h\")\n  uint32_t CAN1_SetXSpeedRaw(uint8_t a,uint8_t dir,uint16_t rpm,uint16_t accel,CanRxMsg *r){\n           ^\n\"unit.c\", line 44: Warning:  #177-D: variable \"s_perimeter_targets\"  was declared but never referenced\n  static const float s_perimeter_targets[9][3]={\n                     ^\nunit.c: 1 warning, 3 errors\n"
+  }
+]

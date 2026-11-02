@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000</Define>
+              <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000,APP_X_OFFLINE_ONLY=0</Define>
               <Undefine></Undefine>
-              <IncludePath>.\CORE;.\USER;.\StdPeriph_Driver\inc;.\FreeRTOS\include;.\FreeRTOS\portable\RVDS\ARM_CM4F;.\HARDWARE\LED;.\HARDWARE\BUZZER;.\SYSTEM\USART;.\HARDWARE\KEY;.\HARDWARE\POWER;.\SYSTEM\CAN;.\SYSTEM\SAFETY;.\SYSTEM\WATCHDOG;.\HARDWARE\SCREEN;.\HARDWARE\SAOMA</IncludePath>
+              <IncludePath>.\CORE;.\USER;.\StdPeriph_Driver\inc;.\FreeRTOS\include;.\FreeRTOS\portable\RVDS\ARM_CM4F;.\HARDWARE\LED;.\HARDWARE\BUZZER;.\SYSTEM\USART;.\HARDWARE\KEY;.\HARDWARE\POWER;.\SYSTEM\CAN;.\SYSTEM\SAFETY;.\SYSTEM\WATCHDOG;.\HARDWARE\SCREEN;.\HARDWARE\SAOMA;.\HARDWARE\RADAR_SERVO</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -385,6 +385,31 @@
           <GroupName>USER</GroupName>
           <Files>
             <File>
+              <FileName>motion_route_trial.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\USER\motion_route_trial.h</FilePath>
+            </File>
+              <File>
+                <FileName>field_map.c</FileName>
+                <FileType>1</FileType>
+                <FilePath>.\USER\field_map.c</FilePath>
+              </File>
+            <File>
+              <FileName>route_config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\USER\route_config.h</FilePath>
+            </File>
+            <File>
+              <FileName>route_plan.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\USER\route_plan.h</FilePath>
+            </File>
+            <File>
+              <FileName>app_entry.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\app_entry.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\USER\main.c</FilePath>
@@ -405,6 +430,26 @@
               <FilePath>.\USER\freertos_hooks.h</FilePath>
             </File>
             <File>
+              <FileName>motion_profile.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\motion_profile.c</FilePath>
+            </File>
+            <File>
+              <FileName>motion_profile.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\USER\motion_profile.h</FilePath>
+            </File>
+            <File>
+              <FileName>chassis_odometry.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\chassis_odometry.c</FilePath>
+            </File>
+            <File>
+              <FileName>chassis_odometry.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\USER\chassis_odometry.h</FilePath>
+            </File>
+            <File>
               <FileName>chassis_kinematics.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\USER\chassis_kinematics.c</FilePath>
@@ -413,6 +458,41 @@
               <FileName>chassis_kinematics.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\USER\chassis_kinematics.h</FilePath>
+            </File>
+            <File>
+              <FileName>chassis_direction_guard.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\USER\chassis_direction_guard.h</FilePath>
+            </File>
+            <File>
+              <FileName>zdt_x_config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\USER\zdt_x_config.h</FilePath>
+            </File>
+            <File>
+              <FileName>zdt_x_protocol.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\USER\zdt_x_protocol.h</FilePath>
+            </File>
+            <File>
+              <FileName>x_load_diag.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\USER\x_load_diag.h</FilePath>
+            </File>
+            <File>
+              <FileName>runtime_route.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\runtime_route.c</FilePath>
+            </File>
+            <File>
+              <FileName>runtime_route.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\USER\runtime_route.h</FilePath>
+            </File>
+            <File>
+              <FileName>x_load_diag.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\x_load_diag.c</FilePath>
             </File>
             <File>
               <FileName>heading_controller.c</FileName>
@@ -606,6 +686,36 @@
             </File>
           </Files>
         </Group>
+          <Group>
+            <GroupName>RADAR_SERVO</GroupName>
+            <Files>
+              <File>
+                <FileName>radar_servo.c</FileName>
+                <FileType>1</FileType>
+                <FilePath>.\HARDWARE\RADAR_SERVO\radar_servo.c</FilePath>
+              </File>
+              <File>
+                <FileName>radar_lift.c</FileName>
+                <FileType>1</FileType>
+                <FilePath>.\HARDWARE\RADAR_SERVO\radar_lift.c</FilePath>
+              </File>
+              <File>
+                <FileName>radar_servo_logic.c</FileName>
+                <FileType>1</FileType>
+                <FilePath>.\HARDWARE\RADAR_SERVO\radar_servo_logic.c</FilePath>
+              </File>
+              <File>
+                <FileName>radar_zone_switch.c</FileName>
+                <FileType>1</FileType>
+                <FilePath>.\HARDWARE\RADAR_SERVO\radar_zone_switch.c</FilePath>
+              </File>
+                          <File>
+                <FileName>stm32f4xx_tim.c</FileName>
+                <FileType>1</FileType>
+                <FilePath>.\StdPeriph_Driver\src\stm32f4xx_tim.c</FilePath>
+              </File>
+            </Files>
+          </Group>
       </Groups>
     </Target>
   </Targets>

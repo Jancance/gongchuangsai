@@ -1,0 +1,77 @@
+{
+  "started_utc": "2026-10-28T04:06:58.173260+00:00",
+  "hardware_accessed": false,
+  "checks": [
+    {
+      "name": "offline_tool_tests",
+      "status": "passed",
+      "detail": {
+        "ok": true,
+        "returncode": 0,
+        "log": "offline_tests.log"
+      }
+    },
+    {
+      "name": "existing_host_tests",
+      "status": "passed",
+      "detail": {
+        "ok": true,
+        "returncode": 0,
+        "log": "host_tests.log"
+      }
+    },
+    {
+      "name": "configuration_and_package",
+      "status": "failed",
+      "detail": {
+        "ok": false,
+        "count": 1223,
+        "failed": [
+          {
+            "name": "candidate source matches live app_entry.c",
+            "ok": false,
+            "observed": "d0a4bbdededdf4e8bece0bd5622e3230d3a4e9bccf3f430774d16917ca1b83df",
+            "expected": "bf1a495384ac9d33a5a8eae79829e4b18134eb167505368b8d9a55c47b06afdf"
+          },
+          {
+            "name": "candidate source matches live main.c",
+            "ok": false,
+            "observed": "9da443600d0d254275de36d0ae8fe24841a50300e51fea42ac909c01ff99a252",
+            "expected": "249a88be10d0a926ff467a07985639737767debde5238649353b48b7c6259c94"
+          },
+          {
+            "name": "candidate source matches live route_config.h",
+            "ok": false,
+            "observed": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "expected": "df252ed01ae5749b2e3f03d601c437d192cde10d8f8cb7d7126815d16464edc7"
+          },
+          {
+            "name": "candidate source matches live route_plan.h",
+            "ok": false,
+            "observed": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "expected": "ce116b2d67dfc3d13af9c0c2a7904b7ec25bbcb9873b3fdbaf05fad5c83f0ffd"
+          }
+        ]
+      }
+    },
+    {
+      "name": "historical_log_reports",
+      "status": "skipped",
+      "reason": "No --manifest supplied"
+    },
+    {
+      "name": "actual_C_four_wheel_simulation",
+      "status": "skipped",
+      "reason": "Use --simulate with ARMCC5 and Unicorn; no implicit tool installation"
+    },
+    {
+      "name": "protected_files_unchanged",
+      "status": "passed",
+      "file_count": 2336,
+      "changed": []
+    }
+  ],
+  "limits": "Software verification only; no physical speed, stopping distance, drift or smoothness acceptance.",
+  "elapsed_s": 3.859,
+  "status": "failed"
+}

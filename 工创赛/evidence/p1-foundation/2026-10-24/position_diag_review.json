@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-24",
+  "scope": "RUN-only optional position0x36 sampling and independent read-only PM1 telemetry",
+  "host_tests": 37,
+  "builds": {
+    "combo": {
+      "result": "0 errors, 0 warnings",
+      "program_size": "Code=51112 RO-data=728 RW-data=1924 ZI-data=30004"
+    },
+    "single": {
+      "result": "0 errors, 0 warnings",
+      "program_size": "Code=43948 RO-data=664 RW-data=1856 ZI-data=29784"
+    },
+    "link": {
+      "result": "0 errors, 0 warnings",
+      "program_size": "Code=25858 RO-data=462 RW-data=1824 ZI-data=27392"
+    },
+    "manual": {
+      "result": "0 errors, 0 warnings",
+      "program_size": "Code=39432 RO-data=608 RW-data=1776 ZI-data=27424"
+    },
+    "off": {
+      "result": "0 errors, 0 warnings",
+      "program_size": "Code=49992 RO-data=728 RW-data=1912 ZI-data=29376"
+    }
+  },
+  "downloaded": false,
+  "serial_opened": false,
+  "hardware_tested": false,
+  "pushed": false,
+  "source_sha256": {
+    "main.c": "2cc6938048f7c85ce44e71395ee5926db3cbf90392e1275cad30ef7a94973cdf",
+    "chassis_auto_test.c": "7e9a02ced442b2fd6b875322a411ac88495cbc32399e9acb4759c95dfeb8454f",
+    "chassis_auto_test.h": "e6deeac971c0088351e31018e4178de5b8a68436d14f01e373e90a2e9177ccd7",
+    "app_config.h": "7412678396ecddcd2bcf23dca63707cba926b1a7dfea1106f7baa7d69d1a885a"
+  },
+  "timing_review": {
+    "query_timeout_ms": {
+      "tx": 20,
+      "reply": 30
+    },
+    "one_extra_transaction_per_successful_speed_read": "RUN only, at next monitor opportunity",
+    "skip_when_existing_feedback_age_ms_at_least": 500,
+    "existing_status_speed_fresh_ms": 1000,
+    "notes": [
+      "Nominal RUN monitor cycle grows from8 to12 transactions if all diagnostics admitted",
+      "Control updates and STOP are checked before monitor; existing protection deadlines unchanged",
+      "50ms is configured TX+reply wait budget, not measured latency or complete fault-path WCET",
+      "Actual bus, scheduler and UART latency require live verification"
+    ]
+  }
+}

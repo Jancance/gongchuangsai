@@ -1,0 +1,273 @@
+
+========================================================================
+
+** ELF Header Information
+
+    File Name: unit.axf
+
+    Machine class: ELFCLASS32 (32-bit)
+    Data encoding: ELFDATA2LSB (Little endian)
+    Header version: EV_CURRENT (Current version)
+    Operating System ABI: none
+    ABI Version: 0
+    File Type: ET_EXEC (Executable) (2)
+    Machine: EM_ARM (ARM)
+
+    Image Entry point: 0x08000001
+    Flags: EF_ARM_HASENTRY + EF_ARM_ABI_FLOAT_SOFT (0x05000202)
+
+    ARM ELF revision: 5 (ABI version 2)
+
+    Conforms to Soft float procedure-call standard
+
+    Built with
+    Component: ARM Compiler 5.06 update 7 (build 960) Tool: armcc [4d365d]
+    Component: ARM Compiler 5.06 update 7 (build 960) Tool: armlink [4d3601]
+
+    Header size: 52 bytes (0x34)
+    Program header entry size: 32 bytes (0x20)
+    Section header entry size: 40 bytes (0x28)
+
+    Program header entries: 1
+    Section header entries: 10
+
+    Program header offset: 7940 (0x00001f04)
+    Section header offset: 7972 (0x00001f24)
+
+    Section header string table index: 9
+
+========================================================================
+
+** Program header #0 (PT_LOAD) [PF_X + PF_W + PF_R + PF_ARM_ENTRY]
+    Size : 3836 bytes (2096 bytes in file)
+    Virtual address: 0x08000000 (Alignment 4)
+
+
+========================================================================
+
+** Section #1 'ER_ROM' (SHT_PROGBITS) [SHF_ALLOC + SHF_EXECINSTR]
+    Size   : 2048 bytes (alignment 4)
+    Address: 0x08000000
+
+
+** Section #2 'RW_RAM' (SHT_PROGBITS) [SHF_ALLOC + SHF_WRITE]
+    Size   : 48 bytes (alignment 4)
+    Address: 0x20000000
+
+
+** Section #3 'RW_RAM' (SHT_NOBITS) [SHF_ALLOC + SHF_WRITE]
+    Size   : 1740 bytes (alignment 4)
+    Address: 0x20000030
+
+
+** Section #4 '.debug_frame' (SHT_PROGBITS)
+    Size   : 632 bytes
+
+
+** Section #5 '.symtab' (SHT_SYMTAB)
+    Size   : 2480 bytes (alignment 4)
+    String table #6 '.strtab'
+    Last local symbol no. 94
+
+    Symbol table .symtab (154 symbols, 94 local)
+
+      #  Symbol Name                Value      Bind  Sec  Type  Vis  Size
+    ========================================================================
+
+      1  $t                         0x08000000   Lc    1   --   De 
+      2  $d                         0x0800007a   Lc    1   --   De 
+      3  $t                         0x0800008c   Lc    1   --   De 
+      4  $d                         0x08000206   Lc    1   --   De 
+      5  $t                         0x08000214   Lc    1   --   De 
+      6  $d                         0x0800024e   Lc    1   --   De 
+      7  $t                         0x08000254   Lc    1   --   De 
+      8  $d                         0x08000308   Lc    1   --   De 
+      9  $t                         0x08000348   Lc    1   --   De 
+     10  $d                         0x08000350   Lc    1   --   De 
+     11  $t                         0x08000354   Lc    1   --   De 
+     12  $d                         0x08000384   Lc    1   --   De 
+     13  $t                         0x08000388   Lc    1   --   De 
+     14  $d                         0x08000760   Lc    1   --   De 
+     15  $t                         0x0800078c   Lc    1   --   De 
+     16  $d                         0x080007fa   Lc    1   --   De 
+     17  $d.realdata                0x20000000   Lc    2   --   De 
+     18  unit.c                     0x00000000   Lc  Abs  File  De 
+     19  i.App_DebugSendString      0x080001e4   Lc    1  Sect  De 
+     20  App_DebugSendString        0x080001e5   Lc    1  Code  De   0x22
+     21  i.App_SerialCrc            0x08000214   Lc    1  Sect  De 
+     22  App_SerialCrc              0x08000215   Lc    1  Code  De   0x34
+     23  i.App_SerialDiagnosticWindow
+                                    0x08000248   Lc    1  Sect  De 
+     24  App_SerialDiagnosticWindow 0x08000249   Lc    1  Code  De   0x6
+     25  i.App_XIntegralTelemetry   0x08000254   Lc    1  Sect  De 
+     26  App_XIntegralTelemetry     0x08000255   Lc    1  Code  De   0xb4
+     27  i.Power_ReadCommandStatus  0x08000348   Lc    1  Sect  De 
+     28  Power_ReadCommandStatus    0x08000349   Lc    1  Code  De   0x8
+     29  i.test_entry               0x08000000   Lc    1  Sect  De 
+     30  i.xTaskGetTickCount        0x080007f4   Lc    1  Sect  De 
+     31  xTaskGetTickCount          0x080007f5   Lc    1  Code  De   0x6
+     32  .bss                       0x20000030   Lc    3  Sect  De   0x6cc
+     33  frame                      0x20000030   Lc    3  Data  De   0xc0
+     34  .data                      0x20000000   Lc    2  Sect  De   0x30
+     35  last                       0x20000000   Lc    2  Data  De   0x4
+     36  tick                       0x20000004   Lc    2  Data  De   0x4
+     37  window                     0x20000008   Lc    2  Data  De   0x4
+     38  attempts                   0x2000000c   Lc    2  Data  De   0x4
+     39  s_xload_i_session          0x20000018   Lc    2  Data  De   0x4
+     40  s_xload_i_samples          0x2000001c   Lc    2  Data  De   0x4
+     41  s_xload_i_nonzero          0x20000020   Lc    2  Data  De   0x4
+     42  s_xload_i_peak             0x20000024   Lc    2  Data  De   0x4
+     43  s_xload_i_last             0x20000028   Lc    2  Data  De   0x4
+     44  power                      0x2000002c   Lc    2  Data  De   0x4
+     45  dc.s                       0x00000000   Lc  Abs  File  De 
+     46  ../clib/microlib/string/strlen.c
+                                    0x00000000   Lc  Abs  File  De 
+     47  .text                      0x0800008c   Lc    1  Sect  De 
+     48  ../clib/microlib/string/strcpy.c
+                                    0x00000000   Lc  Abs  File  De 
+     49  .text                      0x0800009a   Lc    1  Sect  De 
+     50  ../clib/microlib/printf/printf.c
+                                    0x00000000   Lc  Abs  File  De 
+     51  ../clib/microlib/printf/printf.c
+                                    0x00000000   Lc  Abs  File  De 
+     52  ../clib/microlib/printf/printf.c
+                                    0x00000000   Lc  Abs  File  De 
+     53  ../clib/microlib/printf/printf.c
+                                    0x00000000   Lc  Abs  File  De 
+     54  ../clib/microlib/printf/printf.c
+                                    0x00000000   Lc  Abs  File  De 
+     55  ../clib/microlib/printf/printf.c
+                                    0x00000000   Lc  Abs  File  De 
+     56  ../clib/microlib/printf/printf.c
+                                    0x00000000   Lc  Abs  File  De 
+     57  ../clib/microlib/printf/printf.c
+                                    0x00000000   Lc  Abs  File  De 
+     58  ../clib/microlib/printf/printf.c
+                                    0x00000000   Lc  Abs  File  De 
+     59  ../clib/microlib/printf/printf.c
+                                    0x00000000   Lc  Abs  File  De 
+     60  i.__0snprintf$8            0x08000354   Lc    1  Sect  De 
+     61  i._printf_core             0x08000388   Lc    1  Sect  De 
+     62  _printf_core               0x08000389   Lc    1  Code  De   0x3d8
+     63  i._printf_post_padding     0x0800078c   Lc    1  Sect  De 
+     64  _printf_post_padding       0x0800078d   Lc    1  Code  De   0x24
+     65  i._printf_pre_padding      0x080007b0   Lc    1  Sect  De 
+     66  _printf_pre_padding        0x080007b1   Lc    1  Code  De   0x2e
+     67  i._snputc                  0x080007de   Lc    1  Sect  De 
+     68  _snputc                    0x080007df   Lc    1  Code  De   0x16
+     69  ../clib/microlib/printf/printf.c
+                                    0x00000000   Lc  Abs  File  De 
+     70  ../clib/microlib/printf/stubs.s
+                                    0x00000000   Lc  Abs  File  De 
+     71  ../fplib/microlib/fpmul.c  0x00000000   Lc  Abs  File  De 
+     72  .text                      0x080000ac   Lc    1  Sect  De 
+     73  ../fplib/microlib/fpfix.c  0x00000000   Lc  Abs  File  De 
+     74  .text                      0x08000110   Lc    1  Sect  De 
+     75  ../clib/microlib/stdio/fputc.c
+                                    0x00000000   Lc  Abs  File  De 
+     76  ../clib/microlib/stdio/streams.c
+                                    0x00000000   Lc  Abs  File  De 
+     77  ../clib/microlib/division.c
+                                    0x00000000   Lc  Abs  File  De 
+     78  ../clib/microlib/division.c
+                                    0x00000000   Lc  Abs  File  De 
+     79  .text                      0x08000142   Lc    1  Sect  De 
+     80  ../clib/microlib/stubs.s   0x00000000   Lc  Abs  File  De 
+     81  .text                      0x080001a4   Lc    1  Sect  De 
+     82  ../fplib/microlib/fpadd.c  0x00000000   Lc  Abs  File  De 
+     83  ../fplib/microlib/fpmul.c  0x00000000   Lc  Abs  File  De 
+     84  ../fplib/microlib/fpdiv.c  0x00000000   Lc  Abs  File  De 
+     85  ../fplib/microlib/fpfix.c  0x00000000   Lc  Abs  File  De 
+     86  cdrcmple.s                 0x00000000   Lc  Abs  File  De 
+     87  ../clib/microlib/stdio/semi.s
+                                    0x00000000   Lc  Abs  File  De 
+     88  ../clib/microlib/longlong.c
+                                    0x00000000   Lc  Abs  File  De 
+     89  .text                      0x080001a4   Lc    1  Sect  De 
+     90  ../clib/microlib/longlong.c
+                                    0x00000000   Lc  Abs  File  De 
+     91  .text                      0x080001c2   Lc    1  Sect  De 
+     92  ../clib/microlib/longlong.c
+                                    0x00000000   Lc  Abs  File  De 
+     93  ../clib/microlib/stubs.s   0x00000000   Lc  Abs  File  De 
+     94  ../fplib/microlib/fpepilogue.c
+                                    0x00000000   Lc  Abs  File  De 
+     95  BuildAttributes$$THM_ISAv4$P$D$K$B$S$PE$A:L22UL41UL21$X:L11$S22US41US21$IEEE1$IW$USESV6$~STKCKD$USESV7$~SHL$OSPACE$ROPI$EBA8$MICROLIB$REQ8$PRES8$EABIv2
+                                    0x00000000   Gb  Abs   --   Hi 
+     96  _printf_a                  0x00000000   Gb  Abs   --   Hi 
+     97  _printf_c                  0x00000000   Gb  Abs   --   Hi 
+     98  _printf_charcount          0x00000000   Gb  Abs   --   Hi 
+     99  _printf_d                  0x00000000   Gb  Abs   --   Hi 
+    100  _printf_e                  0x00000000   Gb  Abs   --   Hi 
+    101  _printf_f                  0x00000000   Gb  Abs   --   Hi 
+    102  _printf_flags              0x00000000   Gb  Abs   --   Hi 
+    103  _printf_fp_dec             0x00000000   Gb  Abs   --   Hi 
+    104  _printf_fp_hex             0x00000000   Gb  Abs   --   Hi 
+    105  _printf_g                  0x00000000   Gb  Abs   --   Hi 
+    106  _printf_i                  0x00000000   Gb  Abs   --   Hi 
+    107  _printf_int_dec            0x00000000   Gb  Abs   --   Hi 
+    108  _printf_l                  0x00000000   Gb  Abs   --   Hi 
+    109  _printf_lc                 0x00000000   Gb  Abs   --   Hi 
+    110  _printf_ll                 0x00000000   Gb  Abs   --   Hi 
+    111  _printf_lld                0x00000000   Gb  Abs   --   Hi 
+    112  _printf_lli                0x00000000   Gb  Abs   --   Hi 
+    113  _printf_llo                0x00000000   Gb  Abs   --   Hi 
+    114  _printf_llu                0x00000000   Gb  Abs   --   Hi 
+    115  _printf_llx                0x00000000   Gb  Abs   --   Hi 
+    116  _printf_longlong_dec       0x00000000   Gb  Abs   --   Hi 
+    117  _printf_longlong_hex       0x00000000   Gb  Abs   --   Hi 
+    118  _printf_longlong_oct       0x00000000   Gb  Abs   --   Hi 
+    119  _printf_ls                 0x00000000   Gb  Abs   --   Hi 
+    120  _printf_mbtowc             0x00000000   Gb  Abs   --   Hi 
+    121  _printf_n                  0x00000000   Gb  Abs   --   Hi 
+    122  _printf_o                  0x00000000   Gb  Abs   --   Hi 
+    123  _printf_p                  0x00000000   Gb  Abs   --   Hi 
+    124  _printf_percent            0x00000000   Gb  Abs   --   Hi 
+    125  _printf_pre_padding        0x00000000   Gb  Abs   --   Hi 
+    126  _printf_return_value       0x00000000   Gb  Abs   --   Hi 
+    127  _printf_s                  0x00000000   Gb  Abs   --   Hi 
+    128  _printf_sizespec           0x00000000   Gb  Abs   --   Hi 
+    129  _printf_str                0x00000000   Gb  Abs   --   Hi 
+    130  _printf_truncate_signed    0x00000000   Gb  Abs   --   Hi 
+    131  _printf_truncate_unsigned  0x00000000   Gb  Abs   --   Hi 
+    132  _printf_u                  0x00000000   Gb  Abs   --   Hi 
+    133  _printf_wc                 0x00000000   Gb  Abs   --   Hi 
+    134  _printf_wctomb             0x00000000   Gb  Abs   --   Hi 
+    135  _printf_widthprec          0x00000000   Gb  Abs   --   Hi 
+    136  _printf_x                  0x00000000   Gb  Abs   --   Hi 
+    137  test_entry                 0x08000001   Gb    1  Code  Hi   0x7a
+    138  strlen                     0x0800008d   Gb    1  Code  Hi   0xe
+    139  strcpy                     0x0800009b   Gb    1  Code  Hi   0x12
+    140  __aeabi_fmul               0x080000ad   Gb    1  Code  Hi   0x64
+    141  __aeabi_f2iz               0x08000111   Gb    1  Code  Hi   0x32
+    142  __aeabi_uldivmod           0x08000143   Gb    1  Code  Hi   0x62
+    143  __I$use$fp                 0x080001a5   Gb    1  Code  Hi 
+    144  __aeabi_llsl               0x080001a5   Gb    1  Code  Hi   0x1e
+    145  _ll_shift_l                0x080001a5   Gb    1  Code  Hi 
+    146  __aeabi_llsr               0x080001c3   Gb    1  Code  Hi   0x20
+    147  _ll_ushift_r               0x080001c3   Gb    1  Code  Hi 
+    148  __0snprintf$8              0x08000355   Gb    1  Code  Hi   0x30
+    149  __1snprintf$8              0x08000355   Gb    1  Code  Hi 
+    150  __2snprintf                0x08000355   Gb    1  Code  Hi 
+    151  g_chassis_auto_active      0x20000010   Gb    2  Data  Hi   0x4
+    152  g_vm_test_request          0x20000014   Gb    2  Data  Hi   0x4
+    153  exported_frames            0x200000f0   Gb    3  Data  Hi   0x600
+    154  exported_lengths           0x200006f0   Gb    3  Data  Hi   0xc
+
+
+** Section #6 '.strtab' (SHT_STRTAB)
+    Size   : 1992 bytes
+
+
+** Section #7 '.note' (SHT_NOTE)
+    Size   : 28 bytes (alignment 4)
+
+
+** Section #8 '.comment' (SHT_PROGBITS)
+    Size   : 588 bytes
+
+
+** Section #9 '.shstrtab' (SHT_STRTAB)
+    Size   : 72 bytes
+
+

@@ -1,0 +1,145 @@
+{
+  "runs": {
+    "A1": {
+      "summary": "工创赛\\evidence\\p1-foundation\\2026-11-02\\small_ff005_pair\\vehicle\\run_a_once\\20261102_145249_967000.summary.json",
+      "go_commands": [
+        "RQ1,987,98611,50501,GO,1714185452,B748"
+      ],
+      "software_checks_passed": true,
+      "elapsed_ms": 21895,
+      "encoder_progress_mm": 2100.217,
+      "peak_heading_error_deg": 0.714,
+      "max_heading_sample_gap_ms": 11,
+      "xd1": {
+        "session": 1,
+        "expected_records": 2037,
+        "received_records": 2037,
+        "dropped": 0,
+        "complete": true
+      },
+      "physical_measurement": {
+        "source": "user ruler report",
+        "lateral_direction": "right",
+        "lateral_cm": 2.3,
+        "longitudinal_result": "short",
+        "shortfall_cm": 0.5,
+        "inferred_forward_cm": 209.5,
+        "inferred_forward_is_direct_measurement": false,
+        "user_report": "右偏 2.3cm，欠走 0.5cm"
+      },
+      "physical_stop_confirmation": null,
+      "B_downloaded": false,
+      "physical_shaking_observation": null
+    },
+    "B1": {
+      "summary": "工创赛\\evidence\\p1-foundation\\2026-11-02\\small_ff005_pair\\vehicle\\run_b_once\\20261102_145933_097700.summary.json",
+      "go_commands": [
+        "RQ1,367,36611,50502,GO,2946858715,282D"
+      ],
+      "software_checks_passed": true,
+      "elapsed_ms": 22068,
+      "encoder_progress_mm": 2100.135,
+      "peak_heading_error_deg": 0.549,
+      "max_heading_sample_gap_ms": 11,
+      "xd1": {
+        "session": 1,
+        "expected_records": 2034,
+        "received_records": 2034,
+        "dropped": 0,
+        "complete": true
+      },
+      "telemetry_dropped": 95,
+      "invalid_frames": 1,
+      "physical_measurement": {
+        "source": "user ruler report",
+        "lateral_direction": "right",
+        "lateral_cm": 2.5,
+        "longitudinal_result": "short",
+        "shortfall_cm": 0.75,
+        "inferred_forward_cm": 209.25,
+        "inferred_forward_is_direct_measurement": false,
+        "user_report": "右偏2.5cm欠走0.75cm"
+      },
+      "physical_stop_confirmation": null,
+      "physical_shaking_observation": null,
+      "currently_installed_image": "B forward 0.5%, backward disabled"
+    },
+    "A2": {
+      "summary": "工创赛\\evidence\\p1-foundation\\2026-11-02\\small_ff005_pair\\vehicle\\run_a_repeat_once\\20261102_150508_875500.summary.json",
+      "go_commands": [
+        "RQ1,366,36511,50503,GO,727709882,77A2"
+      ],
+      "software_checks_passed": true,
+      "elapsed_ms": 21982,
+      "encoder_progress_mm": 2100.004,
+      "peak_heading_error_deg": 0.785,
+      "max_heading_sample_gap_ms": 12,
+      "xd1": {
+        "session": 1,
+        "expected_records": 2037,
+        "received_records": 2037,
+        "dropped": 0,
+        "complete": true
+      },
+      "telemetry_dropped": 11,
+      "invalid_frames": 1,
+      "physical_measurement": {
+        "source": "user ruler report",
+        "lateral_direction": "right",
+        "lateral_cm": 1.5,
+        "longitudinal_result": "short",
+        "shortfall_cm": 0.5,
+        "inferred_forward_cm": 209.5,
+        "inferred_forward_is_direct_measurement": false
+      },
+      "physical_stop_confirmation": null,
+      "physical_shaking_observation": null,
+      "currently_installed_image": "A feedforward disabled"
+    },
+    "B2": {
+      "summary": "工创赛\\evidence\\p1-foundation\\2026-11-02\\small_ff005_pair\\vehicle\\run_b_repeat_once\\20261102_150758_435400.summary.json",
+      "go_commands": [
+        "RQ1,299,29811,50504,GO,2399129641,73A6"
+      ],
+      "software_checks_passed": true,
+      "elapsed_ms": 21980,
+      "encoder_progress_mm": 2100.124,
+      "peak_heading_error_deg": 0.681,
+      "max_heading_sample_gap_ms": 11,
+      "xd1": {
+        "session": 1,
+        "expected_records": 2032,
+        "received_records": 2032,
+        "dropped": 0,
+        "complete": true
+      },
+      "telemetry_dropped": 96,
+      "invalid_frames": 0,
+      "physical_measurement": {
+        "source": "user ruler report",
+        "lateral_direction": "right",
+        "lateral_cm": 4.3,
+        "longitudinal_result": "short",
+        "shortfall_cm": 0.5,
+        "inferred_forward_cm": 209.5,
+        "inferred_forward_is_direct_measurement": false
+      },
+      "physical_stop_confirmation": null,
+      "physical_shaking_observation": null,
+      "currently_installed_image": "B forward 0.5%, backward disabled"
+    }
+  },
+  "A_mean_right_cm": 1.9,
+  "B_mean_right_cm": 3.4,
+  "B_minus_A_mean_right_cm": 1.5,
+  "paired_right_differences_cm": [
+    0.2,
+    2.8
+  ],
+  "A_mean_shortfall_cm": 0.5,
+  "B_mean_shortfall_cm": 0.625,
+  "decision": "Do not adopt or increase this 0.5% candidate based on current evidence; no further motion or rollback performed",
+  "limits": "Two trials each; fixed A/B order; manual positioning/ruler; no causal or statistical significance claim; no backward trials",
+  "installed_image": "B",
+  "final_physical_stop_and_shaking_confirmation": null
+}

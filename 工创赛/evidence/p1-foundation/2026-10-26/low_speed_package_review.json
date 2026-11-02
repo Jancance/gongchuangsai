@@ -1,0 +1,35 @@
+{
+  "package": "工创赛\\releases\\p1_low_speed_validation_2026-10-26",
+  "frozen_files": 2096,
+  "variants": [
+    {
+      "id": "01_distance_cal",
+      "title": "距离校准版",
+      "scurve_enabled": false,
+      "project": "01_distance_cal/firmware/gongxun-f407.uvprojx",
+      "image": "01_distance_cal/firmware/Objects/gongxun-f407.axf",
+      "image_sha256": "6cab5182f2f23316ca5b1f527cc10b094ae3c6d709571f07e0081ba2dc17bf9f",
+      "hardware_tested": false,
+      "base_rpm_limit": 15,
+      "input_raw_per_rpm": 1
+    },
+    {
+      "id": "02_scurve",
+      "title": "低速S曲线候选版",
+      "scurve_enabled": true,
+      "project": "02_scurve/firmware/gongxun-f407.uvprojx",
+      "image": "02_scurve/firmware/Objects/gongxun-f407.axf",
+      "image_sha256": "1ff88ed1adf554dc80c1b7b2f8508fc647c13848cd6baffd1ded37f4f7685cb7",
+      "hardware_tested": false,
+      "base_rpm_limit": 15,
+      "input_raw_per_rpm": 1
+    }
+  ],
+  "manifest_sha256": "8956c963353c870de1278ccc0cb4e38a2db03cf9fef6921562972e370531014c",
+  "source_files_present": true,
+  "images_identical_to_verified_builds": true,
+  "rebuilt": false,
+  "flashed": false,
+  "serial_opened": false,
+  "motion_started": false
+}

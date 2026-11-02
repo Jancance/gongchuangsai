@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-25",
+  "scope": "retain completed translation-stage timings and emit CT2 after normal completion/VM off, CT1 fault compatibility",
+  "baseline_commit": "54bb617",
+  "host_tests": 81,
+  "builds": {
+    "route_a": "Code=58572 RO-data=768 RW-data=2020 ZI-data=34172",
+    "single": "Code=50004 RO-data=708 RW-data=1948 ZI-data=33932",
+    "manual": "Code=41632 RO-data=652 RW-data=1836 ZI-data=27892"
+  },
+  "main_sha256": "fc8a76478b29d8823e2f683f254a833def4b3c92609d89742b4ae2e1473f04e1",
+  "source_build_match": true,
+  "encoding": "GBK/CRLF preserved",
+  "backend_hwt_timer_config_default_actions_unchanged": true,
+  "flashed": false,
+  "serial_opened": false,
+  "hardware_measured": false,
+  "cancelled_route_b_built_or_run_this_turn": false,
+  "pushed": false,
+  "limits": [
+    "normal timing retention/output and extra static RAM not yet MCU-verified",
+    "CT2 only saves successful translation segments, not a new turn test",
+    "DWT interval interpretation/overhead/wrap limitations remain as documented",
+    "old onboard timing build does not support normal CT2 until new firmware is flashed",
+    "prior ORE cause not proved or fixed by this diagnostic output change"
+  ]
+}

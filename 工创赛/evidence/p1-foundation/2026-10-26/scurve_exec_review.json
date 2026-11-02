@@ -1,0 +1,99 @@
+{
+  "date": "2026-10-26",
+  "baseline": "54bb617",
+  "source_sha256": {
+    "app_config.h": "87423ebd6b240c9902f01d29e1267089dbdbca138415109d82c839b592553c5e",
+    "chassis_auto_test.c": "be45ffe7c7b9dc5b367d16f6c3dc58762559d9dd713bc6427731e1bc4712f775",
+    "chassis_auto_test.h": "129eddcc29fb533a48ae1b8977b8149faece80649dd31148f3637adf9ac3e2b8",
+    "chassis_kinematics.c": "5dbf6870afcb52be383427fd732a29aa5b15105dbc6cf75240c03dfb9b8b87a4",
+    "chassis_kinematics.h": "5c0d95b5d4f6e47fdccd94c1ba3fbc477716314120a3ef631b049c85c57b8387",
+    "main.c": "5d10e4f231d2a0a78f7ec258ac3b55a55d71fabc091ae447b959c60c91a15e81",
+    "3.stm32f407工程/SYSTEM/CAN/can.c": "54b173eb8767d8fb25e1779a6be3f21ca2c71757c4694cf04513ed2f3eaa5f60",
+    "3.stm32f407工程/SYSTEM/CAN/can.h": "c6fb41ed2c6fd21ae5328abf62a176df7c5676afed11f6a8125c95980fca1a97",
+    "3.stm32f407工程/USER/heading_controller.c": "d3b5c2a6d902240fb54700227d22c5857e16cd3360971cf92ac3270da3855c40",
+    "test_p1_serial_motion.py": "97041074c5578d85643ed2dd4c25e23c09607300db11cf89554cf6da71b4e151"
+  },
+  "default_switch": 0,
+  "candidate_switch": "APP_DISTANCE_SCURVE_ENABLE=1; onlydebug/mode3",
+  "first_competition_cruise_goal_cm_s": 20,
+  "enabled_vehicle_speed_changed": false,
+  "flashed": false,
+  "serial_opened": false,
+  "motion_started": false,
+  "candidate_parameters": {
+    "acceleration_mm_s2": 40,
+    "jerk_mm_s3": 80,
+    "tracking_error_mm": 50,
+    "arrival_tolerance_mm": 2,
+    "zero_final_wait_ms": 2000,
+    "maximum_base_rpm": 15,
+    "maximum_correction_rpm": 2
+  },
+  "parameter_status": "software candidates only; need physical validation with full installed load",
+  "checks": {
+    "default_c": {
+      "actual_c_checks_passed": 286,
+      "hardware_connected": false,
+      "compiler_target": "ARM Cortex-M3 soft-float; behavior only",
+      "engine": "Unicorn2.1.4",
+      "limits": "RTOS/CAN stubbed, sequential state interleavings, no MCU timing or true concurrent scheduling proof"
+    },
+    "candidate_c": {
+      "actual_c_checks_passed": 13783,
+      "hardware_connected": false,
+      "compiler_target": "ARM Cortex-M3 soft-float; behavior only",
+      "engine": "Unicorn2.1.4",
+      "limits": "RTOS/CAN stubbed, sequential state interleavings, no MCU timing or true concurrent scheduling proof"
+    },
+    "host_tests": 96
+  },
+  "full_rebuilds": {
+    "default_debug": {
+      "errors": 0,
+      "warnings": 0,
+      "code": 62292,
+      "ro": 868,
+      "rw": 2060,
+      "zi": 37068
+    },
+    "candidate_debug": {
+      "errors": 0,
+      "warnings": 0,
+      "code": 70144,
+      "ro": 1232,
+      "rw": 2072,
+      "zi": 37496
+    },
+    "competition": {
+      "errors": 0,
+      "warnings": 0,
+      "code": 53716,
+      "ro": 652,
+      "rw": 1944,
+      "zi": 29376
+    }
+  },
+  "limits": [
+    "distance is calibrated wheel encoder estimate, not groundXY",
+    "integerRPM and original integer heading correction mean actual wheel reference is not mathematically continuous",
+    "no synchronized motor application or CAN receive optimization in this change",
+    "no continuous waypoints or motion-time retarget",
+    "ARM emulator uses mockedRTOS/CAN and simple command-delay plant; not hardware or scheduling proof",
+    "timed moves and legacy distance mode unchanged; feature disabled by default",
+    "runtime cost, CAN stack and new follow thresholds need hardware evidence"
+  ],
+  "requirements": {
+    "R": [
+      "RUN-01",
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "LOC-05",
+      "MOT-02",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": "unchanged"
+  }
+}

@@ -1,0 +1,76 @@
+--- base/USER/app_config.h
++++ integer/USER/app_config.h
+@@ -172,3 +172,5 @@
+ #endif
+ 
+ #endif
++
++#define APP_RPM_TIMING_OFFLINE_ONLY 1U
+--- base/USER/chassis_auto_test.c
++++ integer/USER/chassis_auto_test.c
+@@ -935,7 +935,7 @@
+     moving = (g_chassis_auto_state == CHASSIS_AUTO_RUN) ||
+         g_chassis_auto_state==CHASSIS_AUTO_VERIFY_ON || g_chassis_auto_state==CHASSIS_AUTO_VERIFY_OFF ||
+         g_chassis_auto_state==CHASSIS_AUTO_SETTLE ||
+-        (s_distance_mode && s_run_started && g_chassis_auto_state == CHASSIS_AUTO_START);
++        ((s_distance_mode || s_heading_session) && s_run_started && g_chassis_auto_state == CHASSIS_AUTO_START);
+     /* 调速串行下发期间仍在运动：在原monitor槽优先补最旧的位置，
+      * 避免反复纠偏让某轮饿死；400ms时效不放宽。 */
+     oldest = 0U;
+@@ -961,7 +961,7 @@
+     taskENTER_CRITICAL();
+     if (session == g_chassis_auto_session && g_chassis_auto_active &&
+         ((g_chassis_auto_state == CHASSIS_AUTO_RUN) ||
+-         (s_distance_mode && s_run_started && g_chassis_auto_state == CHASSIS_AUTO_START) ||
++         ((s_distance_mode || s_heading_session) && s_run_started && g_chassis_auto_state == CHASSIS_AUTO_START) ||
+          g_chassis_auto_state==CHASSIS_AUTO_VERIFY_ON || g_chassis_auto_state==CHASSIS_AUTO_VERIFY_OFF ||
+          g_chassis_auto_state==CHASSIS_AUTO_SETTLE) && s_vm_requested)
+     {
+--- base/USER/heading_session.c
++++ integer/USER/heading_session.c
+@@ -190,12 +190,14 @@
+     s->last_new_ms = in->now_ms;
+     if (s->turn_trial) {
+         uint32_t result;
+-        if (!in->backend_running) {
++        /* RUN is required once; later START means a wheel-command refresh, not warmup. */
++        if (!in->backend_running && !s->turn_running_seen) {
+             s->brake.tick=in->now_ms;
+             s->controller.command_rpm=0;
+             HS_Out(s,s->begin_accepted ? HS_ACTION_UPDATE : HS_ACTION_BEGIN,out);
+             return;
+         }
++        s->turn_running_seen=1U;
+         result = TurnBrake_Step(&s->brake, in->now_ms, in->yaw_deg,
+             in->rate_dps, &s->controller.command_rpm);
+         s->controller.error_deg=HeadingController_ErrorDeg(s->controller.target_deg,in->yaw_deg);
+--- base/USER/heading_session.h
++++ integer/USER/heading_session.h
+@@ -52,6 +52,7 @@
+     uint32_t begin_accepted, stop_accepted;
+     int32_t initial_sign;
+     uint32_t turn_trial;
++    uint32_t turn_running_seen;
+     TurnBrake brake;
+ } HeadingSession;
+ 
+--- base/USER/main.c
++++ integer/USER/main.c
+@@ -1858,6 +1858,9 @@
+ }
+ static uint32_t App_MotionAccept(void)
+ {
++#if APP_RPM_TIMING_OFFLINE_ONLY
++    return 0U;
++#else
+     ChassisAutoStatus status;
+     PowerCommandStatus power;
+     uint32_t state = MotionGetState();
+@@ -1892,6 +1895,7 @@
+     s_combined_keep_vm = 1U;
+     s_combined_stage_ms = (uint32_t)xTaskGetTickCount();
+     return 1U;
++#endif
+ }
+ static uint32_t App_MoveSubmit(uint32_t direction, uint32_t rpm, uint32_t run_ms, float distance_mm,float route_speed)
+ {

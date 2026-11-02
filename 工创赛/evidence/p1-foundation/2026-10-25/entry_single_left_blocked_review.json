@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-25",
+  "test": "single left30 via current debug entry",
+  "status": "download_blocked",
+  "error": "CMSIS-DAP - Cortex-M Error: No Debug Unit Device found",
+  "device_check": "No CMSIS-DAP or COM17 detected at check; regex Adapter matches were unrelated",
+  "download_log": "entry_single_left_download.log contains Load only, no Erase/Programming/Verify success",
+  "source_changed": false,
+  "recompiled": false,
+  "flash_success": false,
+  "motion_commands_sent": 0,
+  "physical_readiness": "User confirmed ready for left30",
+  "next": "Await USB/programmer connection restored; do not start current terminal session",
+  "pushed": false,
+  "reconnect_check": {
+    "user_report": "reconnected, may inspect and retry",
+    "present_programmer_or_USB_serial": false,
+    "present_ports": [
+      "Bluetooth COM3",
+      "Bluetooth COM6",
+      "Bluetooth COM12"
+    ],
+    "hardware_serial_registry": "no SERIALCOMM mapping returned",
+    "decision": "no redundant flash attempt or motion; ask for data cable/local direct USB connection"
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "date": "2026-10-26",
+  "baseline": "54bb617",
+  "source_sha256": {
+    "3.stm32f407工程\\USER\\chassis_auto_test.c": "d70f799cfaa3621943d3ffdf8ab43e6a0bbfb9cf72513685eaa32c4af3ea1354",
+    "3.stm32f407工程\\USER\\chassis_auto_test.h": "69488999bdf370792167b62452a63f333b0d0853695ea473bf4d2dfad02238b3",
+    "3.stm32f407工程\\USER\\main.c": "429e43d9b7fad45d268285dcd6cf37ccce08b45a29b79edb9d669694fc19d7d2",
+    "工创赛\\scripts\\p1_serial_motion.py": "f1f1bd5a809a4a36871da5446b55ab8ab02cd26a4c0e98d745ca0daca12c0fa8",
+    "工创赛\\scripts\\test_p1_serial_motion.py": "329a84254e07783a6c2053909cdd7db814aff7e08d208537e1c97b7586d7c619"
+  },
+  "debug_full_rebuild": {
+    "errors": 0,
+    "warnings": 0,
+    "code": 62244,
+    "ro": 868,
+    "rw": 2060,
+    "zi": 37068
+  },
+  "competition_full_rebuild": {
+    "errors": 0,
+    "warnings": 0,
+    "code": 53672,
+    "ro": 652,
+    "rw": 1944,
+    "zi": 29376
+  },
+  "host_tests_passed": 94,
+  "actual_c_checks": {
+    "actual_c_checks_passed": 286,
+    "hardware_connected": false,
+    "compiler_target": "ARM Cortex-M3 soft-float; behavior only",
+    "engine": "Unicorn2.1.4",
+    "limits": "RTOS/CAN stubbed, sequential state interleavings, no MCU timing or true concurrent scheduling proof"
+  },
+  "history_capacity": 16,
+  "frame_fields": [
+    "session",
+    "batch_id",
+    "segment",
+    "dry_run",
+    "generation_source",
+    "generated_ms",
+    "start_ms",
+    "end_ms",
+    "outcome",
+    "sent_mask",
+    "ack_mask",
+    "failed_address",
+    "io_result",
+    "correction_rpm",
+    "base_rpm",
+    "pending_changes",
+    "pending_rpm",
+    "send_ms1",
+    "send_ms2",
+    "send_ms3",
+    "send_ms4",
+    "reply_ms1",
+    "reply_ms2",
+    "reply_ms3",
+    "reply_ms4",
+    "result1",
+    "result2",
+    "result3",
+    "result4",
+    "overwritten",
+    "max_queue_ms",
+    "max_batch_ms",
+    "max_call_ms",
+    "total_success",
+    "total_interrupted"
+  ],
+  "flashed": false,
+  "serial_opened": false,
+  "motion_started": false,
+  "limits": [
+    "millisecond application-boundary timing, not wire-edge or mechanical response timing",
+    "CAN/RTOS mocked in ARM checks; true concurrency and runtime overhead need hardware validation",
+    "only recent16 batches retained; cumulative maxima include all recorded batches until reset",
+    "sends/replies invalidated by concurrent cancel/fault are not reattributed to a new session",
+    "generation_source distinguishes initial selection, latest matching mailbox publication, direct API and distance speed change"
+  ],
+  "requirements": {
+    "R": [
+      "RUN-01",
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-03",
+      "LOC-05",
+      "RUN-06",
+      "MOT-02",
+      "MOT-04"
+    ],
+    "Q": "unchanged"
+  }
+}
