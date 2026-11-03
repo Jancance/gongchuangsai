@@ -1,0 +1,39 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-DAPP_MOTOR_OFFLINE_ONLY=0",
+      "-DSTARTUP_EXTENSION_HOME_ENABLE=0",
+      "-I",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\integration\\2026-11-03\\early-scan-startup\\axis-stubs",
+      "-I",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\3.stm32f407\u5de5\u7a0b\\CHASSIS\\USER",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 0,
+    "output": "\"unit.c\", line 36: Warning:  #177-D: variable \"home_stale\"  was declared but never referenced\n  static uint32_t home_started,home_running,home_bad_param,home_no_start_ack,home_abort,home_stale,home_immediate;\n                                                                                        ^\nunit.c: 1 warning, 0 errors\n"
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armlink.exe",
+      "--entry",
+      "test_entry",
+      "--scatter",
+      "unit.sct",
+      "unit.o",
+      "--library_type=microlib",
+      "-o",
+      "unit.axf"
+    ],
+    "returncode": 0,
+    "output": ""
+  }
+]

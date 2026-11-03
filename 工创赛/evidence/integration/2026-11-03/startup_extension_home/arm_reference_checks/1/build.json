@@ -1,0 +1,42 @@
+[
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M3",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-DAPP_MOTOR_OFFLINE_ONLY=1",
+      "-I",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\integration\\2026-11-03\\early-scan-startup\\arm-stubs",
+      "-I",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\3.stm32f407\u5de5\u7a0b\\CHASSIS\\USER",
+      "-I",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\3.stm32f407\u5de5\u7a0b\\HARDWARE\\GRIPPER",
+      "-I",
+      "C:\\Users\\lenovo\\Desktop\\\u5de5\u521b\u8d5b\\3.stm32f407\u5de5\u7a0b\\HARDWARE\\CARRIER",
+      "-c",
+      "unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 0,
+    "output": "\"unit.c\", line 13: Warning:  #550-D: variable \"held_extension\"  was set but never used\n  static float position5,position6,held_extension,last_grip;\n                                   ^\n\"unit.c\", line 13: Warning:  #550-D: variable \"last_grip\"  was set but never used\n  static float position5,position6,held_extension,last_grip;\n                                                  ^\n\"unit.c\", line 14: Warning:  #550-D: variable \"pwm\"  was set but never used\n  static uint32_t pwm;\n                  ^\n\"unit.c\", line 36: Warning:  #177-D: function \"reset\"  was declared but never referenced\n  static void reset(void){tick=100;holding=1;moves=enable_calls=stop_calls=grips=pwm_calls=io_fail=0;flags=3;\n              ^\n\"unit.c\", line 39: Warning:  #177-D: function \"steps\"  was declared but never referenced\n  static void steps(uint32_t n){while(n--){tick+=10;VehicleArm_Service();}}\n              ^\nunit.c: 5 warnings, 0 errors\n"
+  },
+  {
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armlink.exe",
+      "--entry",
+      "test_entry",
+      "--scatter",
+      "unit.sct",
+      "unit.o",
+      "--library_type=microlib",
+      "-o",
+      "unit.axf"
+    ],
+    "returncode": 0,
+    "output": ""
+  }
+]

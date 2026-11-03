@@ -133,7 +133,7 @@ unit=unit.replace('__POWER_DECISION__',safety[lo:hi])
 reports=[]
 for offline in [0,1]:
     exe=O/f'axes-unit-{offline}.exe'
-    cmd=['C:/mingw/mingw64/bin/gcc.exe','-std=c99',f'-DAPP_MOTOR_OFFLINE_ONLY={offline}',
+    cmd=['C:/mingw/mingw64/bin/gcc.exe','-std=c99','-DSTARTUP_EXTENSION_HOME_ENABLE=0','-DSTARTUP_EXTENSION_HOME_TEST_ONLY=0',f'-DAPP_MOTOR_OFFLINE_ONLY={offline}',
         '-I'+str(STUB),'-I'+str(S/'CHASSIS/USER'),str(O/'axes-unit.c'),'-lm','-o',str(exe)]
     p=subprocess.run(cmd,capture_output=True,text=True,errors='replace');assert p.returncode==0,p.stderr[-5000:]
     p=subprocess.run([str(exe)],capture_output=True,text=True);print(offline,p.stdout,flush=True);assert p.returncode==0,p.stdout

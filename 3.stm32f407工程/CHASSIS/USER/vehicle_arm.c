@@ -107,7 +107,7 @@ void VehicleArm_Service(void)
         } else {
             s_address=6U;
             if(!(s_row.target>=0 && s_row.target<=50)){arm_fail(4U);return;}
-            s_goal=STARTUP_EXTENSION_ZERO_DEG+STARTUP_EXTENSION_EXTEND_SIGN*s_row.target*VEHICLE_EXTENSION_PULSES_PER_MM*360.0f/3200.0f;
+            s_goal=g_startup_extension_zero_deg+STARTUP_EXTENSION_EXTEND_SIGN*s_row.target*VEHICLE_EXTENSION_PULSES_PER_MM*360.0f/3200.0f;
         }
         if(!(s_row.speed>0 && s_row.speed<=(s_address==5U?VEHICLE_LIFT_RPM:VEHICLE_EXTENSION_RPM))){arm_fail(4U);return;}
         g_vehicle_arm_axis_owned=s_address;

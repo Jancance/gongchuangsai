@@ -55,6 +55,12 @@ uint32_t CAN1_EmmSettingsConfirmed(void)
 { return ZDT_EMM_SETTINGS_CONFIRMED && !APP_MOTOR_OFFLINE_ONLY; }
 
 /* 当前所有CAN调用都来自任务A，不允许其他任务并发使用 */
+static void StartupHome_Capture(const CanRxMsg *p)
+{
+    if(g_startup_extension_home_active && p->IDE==CAN_Id_Extended && p->RTR==CAN_RTR_Data &&
+       p->ExtId==0x600U && p->DLC==3U && p->Data[0]==0x9aU && p->Data[1]==0x9fU && p->Data[2]==0x6bU)
+        g_startup_extension_home_notice=1U;
+}
 static uint32_t s_can1_normal_ready = 0U;
 /* 标记下一次查询需重新初始化，不在这里发送或切换硬件模式 */
 void CAN1_ResetSession(void)
@@ -211,7 +217,7 @@ uint32_t CAN1_LoopbackTest(void)
         vTaskDelay(pdMS_TO_TICKS(1U));
     }
 
-    CAN_Receive(CAN1, CAN_FIFO0, &rx);
+    CAN_Receive(CAN1, CAN_FIFO0, &rx);StartupHome_Capture(&rx);
 
     if ((rx.IDE != CAN_Id_Extended) ||
         (rx.RTR != CAN_RTR_Data) ||
@@ -277,10 +283,12 @@ static uint32_t CAN1_ExchangeSingle(uint8_t address,
         {
             break;
         }
-        CAN_Receive(CAN1, CAN_FIFO0, &rx);
+        CAN_Receive(CAN1, CAN_FIFO0, &rx);StartupHome_Capture(&rx);
         if (s_can_ctrl_trace_active) g_can_ctrl_trace_flush_count++;
     }
 
+    if(address==6U && request_length==4U && request[0]==0x9aU)
+        g_startup_extension_home_notice=0U;
     memset(&tx, 0, sizeof(tx));
     tx.ExtId = (uint32_t)address << 8;
     tx.IDE = CAN_Id_Extended;
@@ -327,7 +335,7 @@ static uint32_t CAN1_ExchangeSingle(uint8_t address,
     {
         if (CAN_MessagePending(CAN1, CAN_FIFO0) != 0U)
         {
-            CAN_Receive(CAN1, CAN_FIFO0, &rx);
+            CAN_Receive(CAN1, CAN_FIFO0, &rx);StartupHome_Capture(&rx);
             if (s_can_ctrl_trace_active)
             {
                 g_can_ctrl_trace_rx_count++;
@@ -568,7 +576,7 @@ uint32_t CAN1_ReadEmmSystemSnapshot(uint8_t address,CanRxMsg *reply,float *rpm)
     if(address<1U || address>4U || !reply || !rpm)return 7U;
     *rpm=0.0f;memset(reply,0,sizeof(*reply));
     if(!s_can1_normal_ready){result=CAN1_InitMode(CAN_Mode_Normal);if(result!=1U)goto finished;s_can1_normal_ready=1U;}
-    for(i=0U;i<3U && CAN_MessagePending(CAN1,CAN_FIFO0);i++)CAN_Receive(CAN1,CAN_FIFO0,&rx);
+    for(i=0U;i<3U && CAN_MessagePending(CAN1,CAN_FIFO0);i++){CAN_Receive(CAN1,CAN_FIFO0,&rx);StartupHome_Capture(&rx);}
     memset(&tx,0,sizeof(tx));tx.ExtId=(uint32_t)address<<8;tx.IDE=CAN_Id_Extended;tx.RTR=CAN_RTR_Data;
     tx.DLC=3U;tx.Data[0]=0x43U;tx.Data[1]=0x7AU;tx.Data[2]=0x6BU;
     mailbox=CAN_Transmit(CAN1,&tx);if(mailbox==CAN_TxStatus_NoMailBox){result=4U;goto finished;}
@@ -581,7 +589,7 @@ uint32_t CAN1_ReadEmmSystemSnapshot(uint8_t address,CanRxMsg *reply,float *rpm)
     start=xTaskGetTickCount();result=5U;
     while((TickType_t)(xTaskGetTickCount()-start)<pdMS_TO_TICKS(CAN1_SINGLE_REPLY_WAIT_MS)){
         if(!CAN_MessagePending(CAN1,CAN_FIFO0))continue;
-        CAN_Receive(CAN1,CAN_FIFO0,&rx);
+        CAN_Receive(CAN1,CAN_FIFO0,&rx);StartupHome_Capture(&rx);
         if(rx.IDE!=CAN_Id_Extended || rx.RTR!=CAN_RTR_Data || (rx.ExtId>>8)!=address)continue;
         if(rx.DLC<2U || rx.DLC>8U || rx.Data[0]!=0x43U)continue;
         *reply=rx;
@@ -613,9 +621,11 @@ uint32_t VehicleArm_Exchange(uint8_t address,const uint8_t *q,uint8_t length,uin
     TickType_t start;uint32_t r;
 #endif
     if(!q || !out || (address!=5U && address!=6U))return 7U;
+    if(address==6U && length==3U && q[0]==0x9c && q[1]==0x48 && q[2]==0x6b)
+        return CAN1_ExchangeSingle(address,q,length,3U,reply);
     if(length==2U && q[1]==0x6b &&
        ((q[0]==0x1a && reply_length==4U) || (q[0]==0x36 && reply_length==7U) ||
-        (q[0]==0x3a && reply_length==3U) || (q[0]==0x35 && reply_length==5U)))
+        ((q[0]==0x3a || (address==6U && q[0]==0x3b)) && reply_length==3U) || (q[0]==0x35 && reply_length==5U)))
         return CAN1_ExchangeSingle(address,q,length,reply_length,reply);
     if(length==4U && q[0]==0xfe && q[1]==0x98 && q[2]==0 && q[3]==0x6b)
         return CAN1_ExchangeSingle(address,q,length,3U,reply);
@@ -624,6 +634,9 @@ uint32_t VehicleArm_Exchange(uint8_t address,const uint8_t *q,uint8_t length,uin
 #else
     if(!g_startup_axes_vm_request || g_startup_axes_state<2U || g_startup_axes_state>4U ||
        g_safety_fault || g_rtos_fault || g_can_ctrl_fault_latched)return 9U;
+    if(address==6U && g_startup_axes_state==2U && length==4U &&
+       q[0]==0x9a && q[1]==2U && q[2]==0U && q[3]==0x6b && reply_length==3U)
+        return CAN1_ExchangeSingle(address,q,length,reply_length,reply);
     if(length==5U && q[0]==0xf3 && q[1]==0xab && q[2]==1 && q[3]==0 && q[4]==0x6b)
         return CAN1_ExchangeSingle(address,q,length,3U,reply);
     if(length!=15U || q[0]!=0xfd || q[1]>1 || q[12]!=2 || q[13]!=0 || q[14]!=0x6b || reply_length!=3U)return 7U;
@@ -632,7 +645,7 @@ uint32_t VehicleArm_Exchange(uint8_t address,const uint8_t *q,uint8_t length,uin
         if(!speed || speed>(address==5U?18464U:1060U) || (!q[2] && !q[3]) || (!q[4] && !q[5]))return 7U;
     }
     if(!s_can1_normal_ready){r=CAN1_InitMode(CAN_Mode_Normal);if(r!=1U)return r;s_can1_normal_ready=1U;}
-    for(flush=0;flush<3 && CAN_MessagePending(CAN1,CAN_FIFO0);flush++)CAN_Receive(CAN1,CAN_FIFO0,&rx);
+    for(flush=0;flush<3 && CAN_MessagePending(CAN1,CAN_FIFO0);flush++){CAN_Receive(CAN1,CAN_FIFO0,&rx);StartupHome_Capture(&rx);}
     while(offset<length) {
         memset(&tx,0,sizeof(tx));chunk=length-offset;if(chunk>7)chunk=7;
         tx.ExtId=((uint32_t)address<<8)|packet;tx.IDE=CAN_Id_Extended;tx.RTR=CAN_RTR_Data;tx.DLC=chunk+1;tx.Data[0]=q[0];
@@ -646,7 +659,7 @@ uint32_t VehicleArm_Exchange(uint8_t address,const uint8_t *q,uint8_t length,uin
     start=xTaskGetTickCount();
     while(xTaskGetTickCount()-start<pdMS_TO_TICKS(30U)) {
         if(CAN_MessagePending(CAN1,CAN_FIFO0)) {
-            CAN_Receive(CAN1,CAN_FIFO0,&rx);
+            CAN_Receive(CAN1,CAN_FIFO0,&rx);StartupHome_Capture(&rx);
             if(rx.IDE==CAN_Id_Extended && rx.RTR==CAN_RTR_Data && rx.ExtId==((uint32_t)address<<8) && rx.Data[0]==0xfd)
             { *reply=rx;return rx.DLC==3 && rx.Data[2]==0x6b ? 1U:6U; }
         }
@@ -657,3 +670,73 @@ uint32_t VehicleArm_Exchange(uint8_t address,const uint8_t *q,uint8_t length,uin
 
 uint32_t StartupAxis_Exchange(const uint8_t *q,uint8_t n,uint8_t reply_n,void *out)
 {return VehicleArm_Exchange(6U,q,n,reply_n,out);}
+
+uint32_t StartupAxis_ReadHomeParameters(uint8_t out[17])
+{
+#if APP_MOTOR_OFFLINE_ONLY
+    (void)out;return 9U;
+#else
+    CanRxMsg replies[3];
+    CanTxMsg tx;
+    CanRxMsg rx;
+    TickType_t started;
+    uint32_t result;
+    uint8_t mailbox, status, flush, packet = 0U, offset = 1U, chunk;
+
+    if (out == NULL) return 7U;
+    memset(out, 0, 17U);
+    memset(replies, 0, 3U * sizeof(CanRxMsg));
+    if (s_can1_normal_ready == 0U)
+    {
+        result = CAN1_InitMode(CAN_Mode_Normal);
+        if (result != 1U) return result;
+        s_can1_normal_ready = 1U;
+    }
+    for (flush = 0U; flush < 3U && CAN_MessagePending(CAN1, CAN_FIFO0); flush++)
+    { CAN_Receive(CAN1, CAN_FIFO0, &rx);StartupHome_Capture(&rx); }
+    memset(&tx, 0, sizeof(tx));
+    tx.ExtId = 0x0600U;
+    tx.IDE = CAN_Id_Extended; tx.RTR = CAN_RTR_Data;
+    tx.DLC = 2U; tx.Data[0] = 0x22U; tx.Data[1] = 0x6BU;
+    mailbox = CAN_Transmit(CAN1, &tx);
+    if (mailbox == CAN_TxStatus_NoMailBox) return 4U;
+    started = xTaskGetTickCount();
+    for (;;)
+    {
+        status = CAN_TransmitStatus(CAN1, mailbox);
+        if (status == CAN_TxStatus_Ok) break;
+        if (status == CAN_TxStatus_Failed ||
+            (TickType_t)(xTaskGetTickCount() - started) >= pdMS_TO_TICKS(CAN1_SINGLE_TX_WAIT_MS))
+        {
+            CAN_CancelTransmit(CAN1, mailbox);
+            return 4U;
+        }
+        vTaskDelay(pdMS_TO_TICKS(1U));
+    }
+    started = xTaskGetTickCount();
+    out[0] = 0x22U;
+    while ((TickType_t)(xTaskGetTickCount() - started) < pdMS_TO_TICKS(CAN1_SINGLE_REPLY_WAIT_MS))
+    {
+        if (CAN_MessagePending(CAN1, CAN_FIFO0))
+        {
+            CAN_Receive(CAN1, CAN_FIFO0, &rx);StartupHome_Capture(&rx);
+            if (rx.IDE == CAN_Id_Extended && rx.RTR == CAN_RTR_Data &&
+                (rx.ExtId >> 8) == 6U && rx.DLC != 0U && rx.Data[0] == 0x22U)
+            {
+                replies[packet] = rx;
+                chunk = (uint8_t)(17U - offset);
+                if (chunk > 7U) chunk = 7U;
+                if (rx.ExtId != (0x0600U | packet) || rx.DLC != (uint8_t)(chunk + 1U))
+                    return 6U;
+                memcpy(&out[offset], &rx.Data[1], chunk);
+                offset = (uint8_t)(offset + chunk);
+                if (offset == 17U) return out[16] == 0x6BU ? 1U : 6U;
+                packet++;
+            }
+        }
+        vTaskDelay(pdMS_TO_TICKS(1U));
+    }
+    return 5U;
+
+#endif
+}

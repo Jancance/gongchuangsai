@@ -1,0 +1,53 @@
+{
+  "date": "2026-11-03",
+  "source_head": "5bf4995eccefad26982fa023a4548cee838f6da2",
+  "home_rpm": 30,
+  "home_test_only": true,
+  "hardware_downloaded": false,
+  "hardware_action": false,
+  "driver_parameters_written": false,
+  "speed_increased": false,
+  "user_confirmed": "缩回端可靠挡块、同样方式30RPM已成功回零；要求后续评估更快回零",
+  "checks": {
+    "startup_c": 85,
+    "actual_can_c": 8541,
+    "logger": 11
+  },
+  "builds": {
+    "Vehicle_Integrated": "0 errors 0 warnings",
+    "Vehicle_Offline": "0 errors 0 warnings"
+  },
+  "files": {
+    "USER/vehicle_parameters.h": {
+      "sha256": "3f39461bade02859ec65069c468bfdd7219c86bb04b72eafe4b8675af9e0f94a",
+      "encoding": "utf8",
+      "crlf": 189
+    },
+    "CHASSIS/USER/startup_axes.c": {
+      "sha256": "581a3a66a051cd2869105cc86004709f8d4add3b4ef92415695bd4b8d480d5e2",
+      "encoding": "utf8",
+      "crlf": 221
+    },
+    "CHASSIS/USER/startup_axes.h": {
+      "sha256": "4369bc71f42a9fd90b0192a07593764a3c9f42b00d5c3cecb7b420725822854f",
+      "encoding": "utf8",
+      "crlf": 19
+    },
+    "CHASSIS/USER/startup_extension_home.inc": {
+      "sha256": "f0b1f3e83d5ac11131b2ed13ee614d9e5e6dbf6638562682ead99fce7bd501eb",
+      "encoding": "utf8",
+      "crlf": 72
+    },
+    "CHASSIS/USER/vehicle_mission.inc": {
+      "sha256": "7d29d389da80cbf0c4fdb61e811288bd9fb3ac7c29130f4ca35946769e6590c8",
+      "encoding": "utf8",
+      "crlf": 236
+    },
+    "CHASSIS/SYSTEM/CAN/can.c": {
+      "sha256": "9c38238847571f08de1e6d0d8506d26d39db99f06ab939c517e671a54ad1179a",
+      "encoding": "gbk",
+      "crlf": 742
+    }
+  },
+  "image_sha256": "2663f5f06ab2b22cae5119790f8dbe0c9c4828e5d2d5b05fc8edac2485f04c2a"
+}

@@ -21,6 +21,7 @@ unit=r'''
 uint32_t g_dm_jog_request,g_dm_jog_state,g_dm_jog_result,g_dm_posvel_holding,g_dm_point_enable,g_dm_can2_read_cycle,g_dm_can2_feedback_tick;
 float g_dm_posvel_speed_deg_s,g_dm_pick_target_deg,g_dm_place_target_deg,g_dm_can2_logical_position_deg;
 volatile uint32_t g_dm_integrated_owner;
+volatile float g_startup_extension_zero_deg=0.0f;
 static uint32_t tick=100,holding=1,moves,enable_calls,stop_calls,grips,pwm_calls,io_fail;
 static uint8_t last_move[15],flags=3;
 static float position5,position6,held_extension,last_grip;

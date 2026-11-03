@@ -1,0 +1,81 @@
+{
+  "date": "2026-11-03",
+  "baseline": "5bf4995",
+  "current_image": "firmware_home_only_reference_fix.axf",
+  "image_sha256": "1ce6f4d04b323ca4dcf2d712c3873a83690b6d4ecdd39a9942105fbf0f933f55",
+  "home_rpm": 30,
+  "home_test_only": true,
+  "physical_return_confirmed": true,
+  "software_completion_confirmed": true,
+  "vm_off_confirmed": true,
+  "tests": {
+    "startup_c": 104,
+    "arm_reference_c": 43,
+    "can_c": 8541,
+    "logger": 11
+  },
+  "builds": "Integrated and Offline 0 errors 0 warnings",
+  "sources": {
+    "3.stm32f407工程/CHASSIS/SYSTEM/CAN/can.c": "9c38238847571f08de1e6d0d8506d26d39db99f06ab939c517e671a54ad1179a",
+    "3.stm32f407工程/CHASSIS/USER/startup_axes.c": "c8dbaed67dc3003736e662e442855779447093c08c58b604a2ce0eb6e5644fc6",
+    "3.stm32f407工程/CHASSIS/USER/startup_axes.h": "219c86879653967cae2aa498e5d459488892e7d03aa25eb50e9871dd9456beb1",
+    "3.stm32f407工程/CHASSIS/USER/vehicle_arm.c": "f745e3cf66704c9c7a4814465ed5d31f7ef7e15eca85237ec6f1c6519df4fe02",
+    "3.stm32f407工程/CHASSIS/USER/vehicle_mission.inc": "7d29d389da80cbf0c4fdb61e811288bd9fb3ac7c29130f4ca35946769e6590c8",
+    "3.stm32f407工程/USER/vehicle_parameters.h": "3f39461bade02859ec65069c468bfdd7219c86bb04b72eafe4b8675af9e0f94a",
+    "3.stm32f407工程/CHASSIS/USER/startup_extension_home.inc": "6041ca4bf00a1ef3175a4bbe7c62aded519e7b16e9d4bb3ab6895bfcbddbc264"
+  },
+  "excluded": "Original 512KiB flash backup, generated objects/unit binaries, temporary dependencies and local IDE state",
+  "captures": {
+    "home_once_capture": {
+      "reason": "finished",
+      "raw_bytes": 696040,
+      "records": 5571,
+      "invalid_records": 1,
+      "unknown_crc_valid_frames": 0,
+      "tm1_sequence_missing": 0,
+      "tm1_duplicates": 0,
+      "tm1_out_of_order": 0,
+      "tm1_clock_rewinds": 0,
+      "serial_commands_sent": 0,
+      "operator_stage_label": 1,
+      "firmware_stage_confirmed": true,
+      "firmware_stage_records": 597,
+      "stage_label_mismatches": 0,
+      "raw_sha256": "66964193695429d4c77788fff1eccf2bd4701853a598229a716657ba029f380d"
+    },
+    "home_mode_fix_capture": {
+      "reason": "finished",
+      "raw_bytes": 706192,
+      "records": 5634,
+      "invalid_records": 1,
+      "unknown_crc_valid_frames": 0,
+      "tm1_sequence_missing": 0,
+      "tm1_duplicates": 0,
+      "tm1_out_of_order": 0,
+      "tm1_clock_rewinds": 0,
+      "serial_commands_sent": 0,
+      "operator_stage_label": 1,
+      "firmware_stage_confirmed": true,
+      "firmware_stage_records": 601,
+      "stage_label_mismatches": 0,
+      "raw_sha256": "d7d13a5d65142e67c7e471a72154abdca77e2b63a53e0785be4be74c297762bb"
+    },
+    "home_reference_fix_capture": {
+      "reason": "finished",
+      "raw_bytes": 663879,
+      "records": 5092,
+      "invalid_records": 1,
+      "unknown_crc_valid_frames": 0,
+      "tm1_sequence_missing": 0,
+      "tm1_duplicates": 0,
+      "tm1_out_of_order": 0,
+      "tm1_clock_rewinds": 0,
+      "serial_commands_sent": 0,
+      "operator_stage_label": 1,
+      "firmware_stage_confirmed": true,
+      "firmware_stage_records": 598,
+      "stage_label_mismatches": 0,
+      "raw_sha256": "c34547df39ba7a4ad678ecfb97e60b0311ea5bc4fe8b7498cf634ec51bc6fdc5"
+    }
+  }
+}

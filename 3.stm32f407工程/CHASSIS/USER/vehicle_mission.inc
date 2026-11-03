@@ -147,6 +147,12 @@ static void VehicleMission_Service(void)
         s_vehicle_scan_baseline=g_saoma_accept_count;memset(s_vehicle_task_code,0,16);
         if(!StartupAxes_Holding() && !StartupAxes_Begin()){VehicleMission_Fail(3U);return;}g_vehicle_state=1U;
     }
+    /* HOME_TEST_ONLY_COMPLETE：独立回零完成，不计第1段或八段成功。 */
+#if STARTUP_EXTENSION_HOME_TEST_ONLY
+    if(g_vehicle_state==1U && g_startup_axes_state==8U && g_startup_extension_home_state==8U){
+        g_vehicle_state=0U;g_vehicle_cause=16U;return;
+    }
+#endif
     if(g_vehicle_state>=1U && g_vehicle_state<=3U) {
         if(g_rtos_fault || g_safety_fault || g_can_ctrl_fault_latched || g_startup_axes_state>=5U)
         {VehicleMission_Fail(4U);return;}

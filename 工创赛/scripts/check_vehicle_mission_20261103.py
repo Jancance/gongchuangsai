@@ -8,7 +8,7 @@ R=Path(__file__).resolve().parents[1];S=firmware_root()
 O=R/'evidence/integration/2026-11-03/early-scan-startup'
 base=(O/'early-scan-unit.c').read_text(encoding='utf-8')
 unit=base[:base.index('static void reset(void)')]
-unit='#define VEHICLE_PARAMETER_TABLES\n#include <math.h>\n'+unit
+unit='#define STARTUP_EXTENSION_HOME_TEST_ONLY 0\n#define VEHICLE_PARAMETER_TABLES\n#include <math.h>\n'+unit
 unit=unit.replace('#define MOTION_ACTION_COUNT 2U', 'static uint32_t s_motion_action_count;\n#define MOTION_ACTION_COUNT (s_motion_action_count)')
 unit=unit.replace('fixture_backend.result=0;return 1;', 'fixture_backend.result=0;fixture_backend.state=0;return 1;')
 unit+=r'''

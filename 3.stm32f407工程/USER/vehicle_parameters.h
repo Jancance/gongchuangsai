@@ -32,10 +32,21 @@
 #define STARTUP_CARRIER_ANGLE_DEG (-1.0f) /* 未定=-1不输出；填0~270后生效。 */
 #endif
 #define STARTUP_DM_SPEED_SCALE 0.5f /* 300×0.5=150deg/s，逆时针约180→360(显示0)。 */
-/* 伸缩：先在本次有效机械缩回参考处读取驱动角，填ZERO及VALID。
- * VALID=0时按键只读位置并退出，不发DM/伸缩运动；不自动设置电机零点。
- * 手推、失电或位置故障后，必须重新确认参考，不承诺掉电机械绝对位置。
+/* 伸缩：回零开启时，按键后先按既有30RPM参数回零，确认本次完成才建参考。
+ * 首次TEST_ONLY=1只测试回零，结束撤VM且不运行DM/底盘；无自动写回零参数。
+ * HOME_ENABLE=0才使用手工ZERO/VALID流程；手推/失电/故障会使参考失效。
  */
+/* 用户已确认缩回挡块及30RPM回零可用；先单次回零，再执行启动准备。
+ * 改速度需另核驱动菜单并验证；不自动写参数，不把普通106RPM当回零速度。 */
+#ifndef STARTUP_EXTENSION_HOME_ENABLE
+#define STARTUP_EXTENSION_HOME_ENABLE 1U
+#endif
+/* 首次仅测伸缩回零，不启动DM或底盘；实物确认后改0再联调。 */
+#ifndef STARTUP_EXTENSION_HOME_TEST_ONLY
+#define STARTUP_EXTENSION_HOME_TEST_ONLY 1U
+#endif
+#define STARTUP_EXTENSION_HOME_RPM 30U
+#define STARTUP_EXTENSION_HOME_TIMEOUT_MS 11000U
 #define STARTUP_EXTENSION_REFERENCE_VALID 0U
 #define STARTUP_EXTENSION_ZERO_DEG 0.0f
 #define STARTUP_EXTENSION_EXTEND_SIGN (-1)
