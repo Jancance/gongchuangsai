@@ -32,6 +32,35 @@ class CaptureChecks(unittest.TestCase):
     def records(self):
         return [json.loads(line) for line in (self.out / "frames.jsonl").read_text(encoding="utf8").splitlines()]
 
+    def test_integrated_stage_and_reference_reads_are_not_operator_guesses(self):
+        values = dict.fromkeys(capture.MISSION_FIELDS, 0)
+        values.update(seq=1, tick_ms=123, run_id=1, stage=3, startup_state=8,
+                      reference_feedback_mask=3, extension_motor_millideg=-12345,
+                      lift_motor_millideg=67890)
+        body = ("VM1," + ",".join(str(values[k]) for k in capture.MISSION_FIELDS) + ",").encode()
+        wire = body + f"{binascii.crc_hqx(body, 0xffff):04X}\r\n".encode()
+        self.log.feed(wire)
+        self.log.close("test")
+        record = self.records()[0]
+        self.assertTrue(record["firmware_stage_confirmed"])
+        self.assertEqual(record["firmware_stage_id"], 3)
+        parsed = capture.parse_mission(wire)
+        self.assertEqual(parsed["extension_motor_millideg"], -12345)
+        self.assertEqual(parsed["reference_feedback_mask"], 3)
+        with self.assertRaises(ValueError):
+            capture.parse_mission(wire.replace(b"VM1,1,", b"VM1,2,", 1))
+
+    def test_whole_run_label_uses_each_firmware_stage(self):
+        self.log.close("unused")
+        self.log = capture.Capture(Path(self.tmp.name) / "whole", 0)
+        for stage in (1, 2, 8):
+            values = dict.fromkeys(capture.MISSION_FIELDS, 0)
+            values.update(stage=stage)
+            body = ("VM1," + ",".join(str(values[k]) for k in capture.MISSION_FIELDS) + ",").encode()
+            self.log.feed(body + f"{binascii.crc_hqx(body, 0xffff):04X}\r\n".encode())
+        summary = self.log.close("test")
+        self.assertTrue(summary["firmware_stage_confirmed"])
+
     def test_fragmented_raw_is_exact_and_no_firmware_stage_invented(self):
         raw = frame() + b"F407 READY\r\n"
         for start in range(0, len(raw), 7):

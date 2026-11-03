@@ -1,0 +1,2 @@
+extern uint32_t g_dm_jog_request,g_dm_jog_state,g_dm_jog_result,g_dm_posvel_holding,g_dm_point_enable,g_dm_can2_read_cycle,g_dm_can2_feedback_tick;
+extern float g_dm_posvel_speed_deg_s,g_dm_pick_target_deg,g_dm_place_target_deg,g_dm_can2_logical_position_deg;

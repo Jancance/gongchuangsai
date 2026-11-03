@@ -13,6 +13,4 @@ extern volatile uint32_t g_saoma_last_result;
 void SAOMA_Init(void);
 void SAOMA_EnableReceive(void);
 void SAOMA_Update(void);
-/* 本次合法帧首/末字节的真实UART接收时刻，单位毫秒，不是解析/显示时刻。 */
-extern volatile uint32_t g_saoma_frame_start_ms,g_saoma_frame_end_ms;
 #endif

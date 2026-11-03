@@ -1,0 +1,49 @@
+{
+  "passed": true,
+  "tests": [
+    {
+      "script": "check_early_scan_startup_20261103.py",
+      "script_sha256": "06c0eabaa6e7fb2c86f15587a9140a799a3020d7c0c10735b86db8456c1ca0a9",
+      "returncode": 0,
+      "passed": true,
+      "log": "D:\\Codex\\\u5de5\u521b\u8d5b\\evidence\\integration\\2026-11-03\\early-scan-startup\\final-check_early_scan_startup_20261103.log"
+    },
+    {
+      "script": "check_startup_axes_20261103.py",
+      "script_sha256": "f322fc417dc168165d266f6ad327ce2db3f869fcf40165909fec6d39307fd45f",
+      "returncode": 0,
+      "passed": true,
+      "log": "D:\\Codex\\\u5de5\u521b\u8d5b\\evidence\\integration\\2026-11-03\\early-scan-startup\\final-check_startup_axes_20261103.log"
+    },
+    {
+      "script": "check_dm_startup_barrier_20261103.py",
+      "script_sha256": "20a71d2e2c1d5de366800e3c6b5ada51d954551a76fd00ad5af324727a994517",
+      "returncode": 0,
+      "passed": true,
+      "log": "D:\\Codex\\\u5de5\u521b\u8d5b\\evidence\\integration\\2026-11-03\\early-scan-startup\\final-check_dm_startup_barrier_20261103.log"
+    },
+    {
+      "script": "check_vehicle_arm_20261103.py",
+      "script_sha256": "41067898d75225db6016221e3572dbab98b77db1feb62d029be021f772fba8c5",
+      "returncode": 0,
+      "passed": true,
+      "log": "D:\\Codex\\\u5de5\u521b\u8d5b\\evidence\\integration\\2026-11-03\\early-scan-startup\\final-check_vehicle_arm_20261103.log"
+    },
+    {
+      "script": "check_vehicle_mission_20261103.py",
+      "script_sha256": "c18b12ef8d2c41e2a3e47b1cbfc37a4c11fb257b755137f4380bdc87706bf3bd",
+      "returncode": 0,
+      "passed": true,
+      "log": "D:\\Codex\\\u5de5\u521b\u8d5b\\evidence\\integration\\2026-11-03\\early-scan-startup\\final-check_vehicle_mission_20261103.log"
+    },
+    {
+      "script": "test_vehicle_uart_capture.py",
+      "script_sha256": "05edd66662d3c0dca8c1b39378705969d9bf3d9cfd4fbe32f911160b5fab341c",
+      "returncode": 0,
+      "passed": true,
+      "log": "D:\\Codex\\\u5de5\u521b\u8d5b\\evidence\\integration\\2026-11-03\\early-scan-startup\\final-test_vehicle_uart_capture.log"
+    }
+  ],
+  "hardware_accessed": false,
+  "scope": "Actual C modules/state machines; fake peripherals; logger tests. Not RTOS or vehicle acceptance."
+}

@@ -1,11 +1,12 @@
 #include "can.h"
+#include "extension_config.h"
+#include "lift_config.h"
+#include "app_config.h"
 #include "stm32f4xx_can.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include <string.h>
 #include "app_config.h"
-#include "power.h"
-#include "safety.h"
 
 /* ĞÂÄ¿±êº½ÏòÄ£Ê½²»ÔÊĞíµ¥´Î½»Ò×³¤ÓÚÖ¸ÁîÌá½»¼à¶½ÆÚÏŞ¡£ */
 #if APP_HEADING_SESSION_TEST
@@ -25,36 +26,27 @@ volatile uint32_t g_can_ctrl_trace_esr = 0U;
 volatile uint32_t g_can_ctrl_trace_rx_count = 0U, g_can_ctrl_trace_flush_count = 0U;
 volatile uint32_t g_can_ctrl_trace_tx_ms = 0U, g_can_ctrl_trace_total_ms = 0U;
 volatile CanRxMsg g_can_ctrl_trace_last_rx = {0};
-/* ÓëÔ­Ê×´ÎÊ§°ÜÕï¶Ï¹²ÓÃËø´æ£¬Ê§°Üºó²»¸²¸Ç¡£ */
-typedef struct
-{
-    uint32_t captured;
-    uint32_t command_tick;
-    uint32_t vm_command_active;
-    uint32_t vm_enable_seen;
-    uint32_t vm_enable_count;
-    uint32_t vm_enable_age_ms;
-    uint32_t guard_ready;
-    uint32_t poll_result[4];
-    uint32_t poll_flags[4];
-    uint32_t poll_count[4];
-    uint32_t poll_age_ms[4];
-} CanControlTraceContext;
-volatile CanControlTraceContext g_can_ctrl_trace_context = {0};
-extern volatile uint32_t g_can_poll_result[4];
-extern volatile uint32_t g_can_poll_flags[4];
-extern volatile uint32_t g_can_poll_count[4];
-extern volatile TickType_t g_can_poll_tick[4];
-
 static uint32_t s_can_ctrl_trace_active = 0U;
 static TickType_t s_can_ctrl_trace_tick = 0U;
 
-/* Ö»¶ÁÔ´ÂëÈ·ÈÏÏî£¬²»Ğ´Çı¶¯²ÎÊı£»Ç°¶Ë¾İ´ËÔÚÉêÇëVMÖ®Ç°¾Ü¾øÆô¶¯¡£ */
-uint32_t CAN1_EmmSettingsConfirmed(void)
-{ return ZDT_EMM_SETTINGS_CONFIRMED && !APP_MOTOR_OFFLINE_ONLY; }
-
 /* µ±Ç°ËùÓĞCANµ÷ÓÃ¶¼À´×ÔÈÎÎñA£¬²»ÔÊĞíÆäËûÈÎÎñ²¢·¢Ê¹ÓÃ */
 static uint32_t s_can1_normal_ready = 0U;
+volatile uint32_t g_can_lift_home_done_notice = 0U;
+static uint32_t s_lift_home_capture = 0U;
+volatile uint32_t g_can_extension_home_done_notice = 0U;
+static uint32_t s_extension_home_capture = 0U;
+static void CAN1_CaptureLiftHomeNotice(const CanRxMsg *rx)
+{
+    if (s_lift_home_capture && rx->IDE == CAN_Id_Extended && rx->RTR == CAN_RTR_Data &&
+        rx->ExtId == 0x0500U && rx->DLC == 3U && rx->Data[0] == 0x9AU &&
+        rx->Data[1] == 0x9FU && rx->Data[2] == 0x6BU)
+        g_can_lift_home_done_notice = 1U;
+    if (s_extension_home_capture && rx->IDE == CAN_Id_Extended && rx->RTR == CAN_RTR_Data &&
+        rx->ExtId == 0x0600U && rx->DLC == 3U && rx->Data[0] == 0x9AU &&
+        rx->Data[1] == 0x9FU && rx->Data[2] == 0x6BU)
+        g_can_extension_home_done_notice = 1U;
+}
+
 /* ±ê¼ÇÏÂÒ»´Î²éÑ¯ĞèÖØĞÂ³õÊ¼»¯£¬²»ÔÚÕâÀï·¢ËÍ»òÇĞ»»Ó²¼şÄ£Ê½ */
 void CAN1_ResetSession(void)
 {
@@ -277,9 +269,16 @@ static uint32_t CAN1_ExchangeSingle(uint8_t address,
             break;
         }
         CAN_Receive(CAN1, CAN_FIFO0, &rx);
+            CAN1_CaptureLiftHomeNotice(&rx);
         if (s_can_ctrl_trace_active) g_can_ctrl_trace_flush_count++;
     }
 
+    if (address == 5U && request[0] == 0x9AU)
+    {
+        /* Clear old completion only after draining pre-command packets. */
+        g_can_lift_home_done_notice = 0U;
+        s_lift_home_capture = 1U;
+    }
     memset(&tx, 0, sizeof(tx));
     tx.ExtId = (uint32_t)address << 8;
     tx.IDE = CAN_Id_Extended;
@@ -327,6 +326,7 @@ static uint32_t CAN1_ExchangeSingle(uint8_t address,
         if (CAN_MessagePending(CAN1, CAN_FIFO0) != 0U)
         {
             CAN_Receive(CAN1, CAN_FIFO0, &rx);
+            CAN1_CaptureLiftHomeNotice(&rx);
             if (s_can_ctrl_trace_active)
             {
                 g_can_ctrl_trace_rx_count++;
@@ -393,23 +393,57 @@ uint32_t CAN1_ReadStatus(uint8_t address, CanRxMsg *reply)
     }
     return result;
 }
-/* EmmÊµÊ±×ªËÙÎªÕûÊıRPM£¬ÊäÈëËõ·Å²»Ó°Ïì·´À¡µ¥Î»¡£ */
-uint32_t CAN1_ReadSpeed(uint8_t address, CanRxMsg *reply, float *rpm)
+/* EmmÊµÊ±×ªËÙÖ»¶Á£ºCAN»ØÖ¡35¡¢·ûºÅ¡¢ËÙ¶È¸ßµÍ×Ö½Ú¡¢6B */
+uint32_t CAN1_ReadSpeed(uint8_t address, CanRxMsg *reply, int32_t *rpm)
 {
- uint32_t result;
- if(!rpm || !reply)return 7U;*rpm=0.0f;
- result=CAN1_ReadParameter(address,0x35U,5U,reply);
- if(result==1U && !ZdtEmm_DecodeSpeed(reply->Data,reply->DLC,rpm))result=6U;
- if(result!=1U)CAN1_ResetSession();return result;
+    uint32_t result;
+    uint32_t magnitude;
+    if (rpm == NULL) return 7U;
+    *rpm = 0;
+    result = CAN1_ReadParameter(address, 0x35U, 5U, reply);
+    if (result == 1U)
+    {
+        if (reply->Data[1] > 1U)
+        {
+            result = 6U;
+        }
+        else
+        {
+            magnitude = ((uint32_t)reply->Data[2] << 8) |
+                        reply->Data[3];
+            *rpm = (reply->Data[1] == 0U) ?
+                   (int32_t)magnitude : -(int32_t)magnitude;
+        }
+    }
+    if (result != 1U) CAN1_ResetSession();
+    return result;
 }
-/* EmmÊµÊ±Î»ÖÃÎª65536¼ÆÊı/È¦£¬·ûºÅÓë·ùÖµ·Ö¿ª¡£ */
-uint32_t CAN1_ReadPosition(uint8_t address,CanRxMsg *reply,uint8_t *sign,uint32_t *raw)
+/* Emmµ±Ç°Î»ÖÃÖ»¶Á£»·ûºÅÓë32Î»·ùÖµ·Ö¿ª£¬±ÜÃâint32Òç³ö */
+uint32_t CAN1_ReadPosition(uint8_t address, CanRxMsg *reply,
+                           uint8_t *sign, uint32_t *raw)
 {
- uint32_t result;
- if(!sign || !raw || !reply)return 7U;*sign=0U;*raw=0U;
- result=CAN1_ReadParameter(address,0x36U,7U,reply);
- if(result==1U && !ZdtEmm_DecodePosition(reply->Data,reply->DLC,sign,raw))result=6U;
- if(result!=1U)CAN1_ResetSession();return result;
+    uint32_t result;
+    if (sign == NULL || raw == NULL) return 7U;
+    *sign = 0U;
+    *raw = 0U;
+    result = CAN1_ReadParameter(address, 0x36U, 7U, reply);
+    if (result == 1U)
+    {
+        if (reply->Data[1] > 1U)
+        {
+            result = 6U;
+        }
+        else
+        {
+            *sign = reply->Data[1];
+            *raw = ((uint32_t)reply->Data[2] << 24) |
+                   ((uint32_t)reply->Data[3] << 16) |
+                   ((uint32_t)reply->Data[4] << 8) |
+                   (uint32_t)reply->Data[5];
+        }
+    }
+    if (result != 1U) CAN1_ResetSession();
+    return result;
 }
 /* ¿ØÖÆÓ¦´ğÍ³Ò»´¦Àí£ºÖ»½ÓÊÜ02£¬ÆäËûÓ¦´ğ±£Áô²¢·µ»Ø8 */
 static uint32_t CAN1_ControlSingle(uint8_t address,
@@ -418,8 +452,6 @@ static uint32_t CAN1_ControlSingle(uint8_t address,
                                    CanRxMsg *reply)
 {
     uint32_t result, trace, i;
-    TickType_t context_tick;
-    PowerCommandStatus power_status;
     CanRxMsg empty = {0};
 
     /* Ö»ÔÊĞíËÄÂÖµØÖ·£¬²»ÔÊĞí¹ã²¥ */
@@ -428,11 +460,6 @@ static uint32_t CAN1_ControlSingle(uint8_t address,
         return 7U;
     }
 
-#if APP_MOTOR_OFFLINE_ONLY
-    /* ÀëÏßºòÑ¡¾Ü¾øÆôÓÃÇı¶¯ºÍËùÓĞ·ÇÁãËÙ¶È£»STOPºÍ¶ÁÈ¡²»ÊÜÓ°Ïì¡£ */
-    if(request && ((request_length==5U && request[0]==0xF3U && request[2]) ||
-       (request_length==7U && request[0]==0xF6U && (request[2] || request[3]))))return 7U;
-#endif
     trace = ((g_can_ctrl_fault_latched == 0U) && (request != NULL) &&
         (request_length >= 2U) && (request_length <= 8U)) ? 1U : 0U;
     if (trace)
@@ -446,39 +473,13 @@ static uint32_t CAN1_ControlSingle(uint8_t address,
         g_can_ctrl_trace_tx_ms = g_can_ctrl_trace_total_ms = 0U;
         g_can_ctrl_trace_last_rx = empty;
         g_can_ctrl_trace_pe2_start = (GPIOE->ODR & GPIO_Pin_2) ? 1U : 0U;
-        /* ÁÙ½çÇøÄÚÖ»¿½±´¿ìÕÕ£¬²»·¢CAN¡¢²»¸ÄµçÔ´¡£ */
-        taskENTER_CRITICAL();
-        g_can_ctrl_trace_context.captured = 0U;
-        Power_ReadCommandStatus(&power_status);
-        context_tick = xTaskGetTickCount();
-        g_can_ctrl_trace_context.command_tick = (uint32_t)context_tick;
-        g_can_ctrl_trace_context.vm_command_active = power_status.active;
-        g_can_ctrl_trace_context.vm_enable_seen = power_status.enable_seen;
-        g_can_ctrl_trace_context.vm_enable_count = power_status.enable_count;
-        g_can_ctrl_trace_context.vm_enable_age_ms =
-            ((power_status.active != 0U) && (power_status.enable_seen != 0U)) ?
-            (uint32_t)((TickType_t)(context_tick - (TickType_t)power_status.enable_tick) *
-                portTICK_PERIOD_MS) : 0xFFFFFFFFU;
-        g_can_ctrl_trace_context.guard_ready = g_can_guard_ready;
-        for (i = 0U; i < 4U; i++)
-        {
-            g_can_ctrl_trace_context.poll_result[i] = g_can_poll_result[i];
-            g_can_ctrl_trace_context.poll_flags[i] = g_can_poll_flags[i];
-            g_can_ctrl_trace_context.poll_count[i] = g_can_poll_count[i];
-            g_can_ctrl_trace_context.poll_age_ms[i] =
-                ((g_can_poll_result[i] == 1U) && (g_can_poll_count[i] != 0U)) ?
-                (uint32_t)((TickType_t)(context_tick - g_can_poll_tick[i]) *
-                    portTICK_PERIOD_MS) : 0xFFFFFFFFU;
-        }
-        g_can_ctrl_trace_context.captured = 1U;
-        s_can_ctrl_trace_tick = context_tick;
-        taskEXIT_CRITICAL();
+        s_can_ctrl_trace_tick = xTaskGetTickCount();
         s_can_ctrl_trace_active = 1U;
     }
     result = CAN1_ExchangeSingle(address, request,
                                  request_length, 3U, reply);
 
-    if ((result == 1U) && !ZdtEmm_DecodeAck(request[0],reply->Data,reply->DLC))
+    if ((result == 1U) && (reply->Data[1] != 0x02U))
     {
         /* ·Ç02²»ÄÜ×÷Îª³É¹¦È·ÈÏ£¬Ô­Ê¼»Ø¸´ÈÔ±£Áô */
         result = 8U;
@@ -512,16 +513,6 @@ uint32_t CAN1_SetMotorEnable(uint8_t address, uint8_t enabled,
         return 7U;
     }
 
-    if(enabled) {
-#if !ZDT_EMM_SETTINGS_CONFIRMED
-        return 9U;
-#else
-        CanRxMsg check_reply;float checked_rpm;uint32_t checked;
-        checked=CAN1_ReadEmmSystemSnapshot(address,&check_reply,&checked_rpm);
-        if(checked!=1U)return checked;
-#endif
-    }
-
     request[2] = enabled;
 
     return CAN1_ControlSingle(address, request, 5U, reply);
@@ -532,73 +523,397 @@ uint32_t CAN1_StopMotor(uint8_t address, CanRxMsg *reply)
 {
     uint8_t request[4] = {0xFEU, 0x98U, 0U, 0x6BU};
 
-    uint32_t result=CAN1_ControlSingle(address, request, 4U, reply);
-    ChassisLoad_RecordCommand(address,0,CHASSIS_LOAD_STOP_ACK,result,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
-    return result;
+    return CAN1_ControlSingle(address, request, 4U, reply);
 }
 
-/* EmmËÙ¶È¿ØÖÆ£º·½Ïò0ÎªCW¡¢1ÎªCCW£¬ÊäÈëËõĞ¡10±¶¡£ */
+/* EmmÔ­Ê¼ËÙ¶È¿ØÖÆ£º·½Ïò0ÎªCW£¬1ÎªCCW */
 /* CW/CCWÓëÕû³µÇ°ºó·½ÏòµÄ¶ÔÓ¦¹ØÏµÈÔĞèÊµ²â */
-static uint32_t CAN1_EmmSpeed(uint8_t address,uint8_t direction,uint16_t speed_raw,
-    uint16_t acceleration,uint8_t sync,CanRxMsg *reply)
+uint32_t CAN1_SetEmmSpeedRaw(uint8_t address, uint8_t direction,
+                             uint16_t speed_raw, uint8_t acceleration,
+                             CanRxMsg *reply)
 {
- uint8_t request[7];
- if(speed_raw && !ZDT_EMM_SETTINGS_CONFIRMED)return 9U;
- if(speed_raw>ZDT_EMM_APP_MAX_SPEED_RAW || !ZdtEmm_EncodeSpeed(direction,speed_raw,acceleration,sync,request))return 7U;
- { uint32_t result;int32_t target=direction?-(int32_t)speed_raw:(int32_t)speed_raw;
-   ChassisLoad_RecordCommand(address,target,CHASSIS_LOAD_TX,0U,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
-   result=CAN1_ControlSingle(address,request,7U,reply);
-   ChassisLoad_RecordCommand(address,target,sync?CHASSIS_LOAD_STAGED_ACK:CHASSIS_LOAD_ACK,result,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
-   return result; }
-}
-uint32_t CAN1_SetEmmSpeedRaw(uint8_t address,uint8_t direction,uint16_t speed_raw,
-    uint16_t acceleration,CanRxMsg *reply)
-{ return CAN1_EmmSpeed(address,direction,speed_raw,acceleration,0U,reply); }
-uint32_t CAN1_StageEmmSpeedRaw(uint8_t address,uint8_t direction,uint16_t speed_raw,
-    uint16_t acceleration,CanRxMsg *reply)
-{ return CAN1_EmmSpeed(address,direction,speed_raw,acceleration,1U,reply); }
+    uint8_t request[7] = {
+        0xF6U, 0U, 0U, 0U, 0U, 0U, 0x6BU
+    };
 
-/* ¸´ÓÃËÙ¶È²ÉÑùÊ±Ï¶£º½öÒ»Ìõ¶ÁÈ¡ÇëÇó£¬ÓĞ½ç½ÓÊÕÎå°üÏµÍ³×´Ì¬»Ø¸´¡£ */
-uint32_t CAN1_ReadEmmSystemSnapshot(uint8_t address,CanRxMsg *reply,float *rpm)
-{
-    CanTxMsg tx;CanRxMsg rx;ChassisSystemSnapshot sample={0};
-    TickType_t start;uint32_t result=5U;uint8_t packet=0U,length=0U,i,offset,mailbox,status;
-    uint8_t data[30]={0};ZdtEmmSystemData decoded;
-    if(address<1U || address>4U || !reply || !rpm)return 7U;
-    *rpm=0.0f;memset(reply,0,sizeof(*reply));
-    if(!s_can1_normal_ready){result=CAN1_InitMode(CAN_Mode_Normal);if(result!=1U)goto finished;s_can1_normal_ready=1U;}
-    for(i=0U;i<3U && CAN_MessagePending(CAN1,CAN_FIFO0);i++)CAN_Receive(CAN1,CAN_FIFO0,&rx);
-    memset(&tx,0,sizeof(tx));tx.ExtId=(uint32_t)address<<8;tx.IDE=CAN_Id_Extended;tx.RTR=CAN_RTR_Data;
-    tx.DLC=3U;tx.Data[0]=0x43U;tx.Data[1]=0x7AU;tx.Data[2]=0x6BU;
-    mailbox=CAN_Transmit(CAN1,&tx);if(mailbox==CAN_TxStatus_NoMailBox){result=4U;goto finished;}
-    start=xTaskGetTickCount();
-    do {
-        status=CAN_TransmitStatus(CAN1,mailbox);
-        if(status==CAN_TxStatus_Failed || (TickType_t)(xTaskGetTickCount()-start)>=pdMS_TO_TICKS(CAN1_SINGLE_TX_WAIT_MS)){
-            CAN_CancelTransmit(CAN1,mailbox);result=4U;goto finished;}
-    }while(status!=CAN_TxStatus_Ok);
-    start=xTaskGetTickCount();result=5U;
-    while((TickType_t)(xTaskGetTickCount()-start)<pdMS_TO_TICKS(CAN1_SINGLE_REPLY_WAIT_MS)){
-        if(!CAN_MessagePending(CAN1,CAN_FIFO0))continue;
-        CAN_Receive(CAN1,CAN_FIFO0,&rx);
-        if(rx.IDE!=CAN_Id_Extended || rx.RTR!=CAN_RTR_Data || (rx.ExtId>>8)!=address)continue;
-        if(rx.DLC<2U || rx.DLC>8U || rx.Data[0]!=0x43U)continue;
-        *reply=rx;
-        if((rx.ExtId&0xFFU)!=packet){result=6U;break;}
-        offset=packet?1U:0U;
-        if((uint32_t)length+rx.DLC-offset>30U){result=6U;break;}
-        for(i=offset;i<rx.DLC;i++)data[length++]=rx.Data[i];
-        packet++;
-        if(length==30U){
-            if(!ZdtEmm_DecodeSystem(data,length,&decoded)){result=6U;break;}
-            sample.speed_decirpm=decoded.speed_decirpm;
-            sample.position_deci_deg=decoded.position_deci_deg;sample.position_sign=decoded.position_sign;
-            sample.phase_ma=decoded.phase_ma;sample.bus_mv=decoded.bus_mv;
-            sample.home_flags=decoded.home_flags;sample.motor_flags=decoded.motor_flags;
-            *rpm=(float)sample.speed_decirpm*0.1f;result=1U;break;
-        }
+    /* 3000ÊÇĞ­ÒéÊäÈëÉÏÏŞ£¬²»ÊÇÕû³µÔÊĞíµÄ°²È«ËÙ¶È */
+    if ((direction > 1U) || (speed_raw > 3000U))
+    {
+        return 7U;
     }
-finished:
-    ChassisLoad_RecordSnapshot(address,result,&sample,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
-    if(result!=1U)CAN1_ResetSession();return result;
+
+    request[1] = direction;
+    request[2] = (uint8_t)(speed_raw >> 8);
+    request[3] = (uint8_t)speed_raw;
+    request[4] = acceleration;
+
+    /* ¼ÓËÙ¶È0ÓĞÖ±½ÓÆô¶¯º¬Òå£¬Êµ¼ÊÔË¶¯²ÎÊıºóĞøµ¥¶ÀÈ·¶¨ */
+    return CAN1_ControlSingle(address, request, 7U, reply);
+}
+
+
+
+
+
+
+
+
+
+
+
+/* ä¸“ä¾›éš”ç¦»å‡é™æ¨¡å¼ï¼Œå›ºå®šèŠ‚ç‚¹5ï¼›ä¸æ”¾å¼€åŸåº•ç›˜æ§åˆ¶æ¥å£çš„åœ°å€ä¿æŠ¤ã€‚ */
+static ArmXEncoding s_arm_x_encoding[2];
+uint32_t CAN1_ArmXConfigure(uint8_t address, uint8_t options, uint32_t legacy_mstep)
+{
+    if (address != 5U && address != 6U) return 0U;
+    return ArmX_Configure(options, legacy_mstep, &s_arm_x_encoding[address - 5U]);
+}
+uint32_t CAN1_ArmXBuildMove(uint8_t address, uint8_t direction, uint32_t pulses,
+                         uint16_t speed_deci_rpm, uint16_t acceleration,
+                         uint16_t deceleration, uint8_t out[15])
+{
+    uint32_t maximum;
+    if (address != 5U && address != 6U) return 0U;
+    maximum = address == 5U ? (direction ? LIFT_UP_MAX_PULSES : LIFT_DOWN_MAX_PULSES) : EXTENSION_JOG_PULSES;
+    return ArmX_BuildMove(&s_arm_x_encoding[address - 5U], direction, pulses, maximum,
+                         speed_deci_rpm, acceleration, deceleration, out);
+}
+static uint32_t CAN1_ArmXExchange(uint8_t address, const uint8_t *request, uint8_t length, CanRxMsg *reply)
+{
+    CanTxMsg tx;
+    CanRxMsg rx;
+    TickType_t started;
+    uint32_t result, angle, max_angle, speed_raw, maximum_pulses;
+    const ArmXEncoding *encoding;
+    uint8_t offset, packet, chunk, mailbox, status, flush;
+
+    if (APP_ARM_LIFT_TEST != 1U) return 9U;
+    if (address != 5U && address != 6U) return 7U;
+    if (request == NULL || reply == NULL) return 7U;
+    /* åªå…è®¸é”è½´ã€åœæ­¢ã€æœ‰é™ç›¸å¯¹ä½ç½®ï¼›ç¦æ­¢æ¾è½´ã€å›é›¶å’Œå‚æ•°ä¿®æ”¹ã€‚ */
+    if (length == 5U && request[0] == 0xF3U && request[1] == 0xABU &&
+        request[2] == 1U && request[3] == 0U && request[4] == 0x6BU)
+    {
+        result = CAN1_ExchangeSingle(address, request, length, 3U, reply);
+        return (result == 1U && reply->Data[1] != 0x02U) ? 8U : result;
+    }
+    if (length == 4U && request[0] == 0xFEU && request[1] == 0x98U &&
+        request[2] == 0U && request[3] == 0x6BU)
+    {
+        result = CAN1_ExchangeSingle(address, request, length, 3U, reply);
+        return (result == 1U && reply->Data[1] != 0x02U) ? 8U : result;
+    }
+    encoding = &s_arm_x_encoding[address - 5U];
+    if (length != 15U || request[0] != 0xFDU || request[1] > 1U ||
+        request[12] != 2U || request[13] != 0U || request[14] != 0x6BU || !encoding->valid) return 7U;
+    speed_raw = ((uint32_t)request[6] << 8) | request[7];
+    if (speed_raw == 0U || speed_raw > (address == 5U ? LIFT_X_SPEED_DECI_RPM : EXTENSION_X_SPEED_DECI_RPM) ||
+        (request[2] == 0U && request[3] == 0U) || (request[4] == 0U && request[5] == 0U)) return 7U;
+    angle = ((uint32_t)request[8] << 24) | ((uint32_t)request[9] << 16) |
+            ((uint32_t)request[10] << 8) | request[11];
+    maximum_pulses = address == 5U ? (request[1] ? LIFT_UP_MAX_PULSES : LIFT_DOWN_MAX_PULSES) : EXTENSION_JOG_PULSES;
+    if (!ArmX_AngleUnits(encoding, maximum_pulses, &max_angle) || !angle || angle > max_angle) return 7U;
+    memset(reply, 0, sizeof(*reply));
+    if (s_can1_normal_ready == 0U)
+    {
+        result = CAN1_InitMode(CAN_Mode_Normal);
+        if (result != 1U) return result;
+        s_can1_normal_ready = 1U;
+    }
+    for (flush = 0U; flush < 3U && CAN_MessagePending(CAN1, CAN_FIFO0); flush++)
+        CAN_Receive(CAN1, CAN_FIFO0, &rx);
+    offset = 1U; packet = 0U;
+    while (offset < length)
+    {
+        memset(&tx, 0, sizeof(tx));
+        chunk = (uint8_t)(length - offset);
+        if (chunk > 7U) chunk = 7U;
+        tx.ExtId = ((uint32_t)address << 8) | packet;
+        tx.IDE = CAN_Id_Extended; tx.RTR = CAN_RTR_Data;
+        tx.DLC = (uint8_t)(chunk + 1U); tx.Data[0] = request[0];
+        memcpy(&tx.Data[1], &request[offset], chunk);
+        mailbox = CAN_Transmit(CAN1, &tx);
+        if (mailbox == CAN_TxStatus_NoMailBox) return 4U;
+        started = xTaskGetTickCount();
+        for (;;)
+        {
+            status = CAN_TransmitStatus(CAN1, mailbox);
+            if (status == CAN_TxStatus_Ok) break;
+            if (status == CAN_TxStatus_Failed ||
+                (TickType_t)(xTaskGetTickCount() - started) >=
+                pdMS_TO_TICKS(CAN1_SINGLE_TX_WAIT_MS))
+            {
+                CAN_CancelTransmit(CAN1, mailbox);
+                return 4U;
+            }
+            vTaskDelay(pdMS_TO_TICKS(1U));
+        }
+        offset = (uint8_t)(offset + chunk); packet++;
+    }
+    started = xTaskGetTickCount();
+    while ((TickType_t)(xTaskGetTickCount() - started) <
+           pdMS_TO_TICKS(CAN1_SINGLE_REPLY_WAIT_MS))
+    {
+        if (CAN_MessagePending(CAN1, CAN_FIFO0))
+        {
+            CAN_Receive(CAN1, CAN_FIFO0, &rx);
+            if (rx.IDE == CAN_Id_Extended && rx.RTR == CAN_RTR_Data &&
+                rx.ExtId == ((uint32_t)address << 8) && rx.DLC != 0U && rx.Data[0] == 0xFDU)
+            {
+                *reply = rx;
+                if (rx.DLC != 3U || rx.Data[2] != 0x6BU) return 6U;
+                /* æ¥æ”¶ç¡®è®¤æˆ–åˆ°ä½é€šçŸ¥éƒ½ä¸èƒ½æ›¿ä»£åç»­çœŸå®ä½ç½®/é™æ­¢åé¦ˆã€‚ */
+                return (rx.Data[1] == 0x02U || rx.Data[1] == 0x9FU) ? 1U : 8U;
+            }
+        }
+        vTaskDelay(pdMS_TO_TICKS(1U));
+    }
+    return 5U;
+}
+
+uint32_t CAN1_LiftExchange(const uint8_t *request, uint8_t length, CanRxMsg *reply)
+{ return CAN1_ArmXExchange(5U, request, length, reply); }
+
+uint32_t CAN1_ReadMotorOptions(uint8_t address, CanRxMsg *reply)
+{
+    return CAN1_ReadParameter(address, 0x1AU, 4U, reply);
+}
+
+/* Ö»¶ÁÈ¡5ºÅ»ØÁã²ÎÊı22£»ÈıÖ¡ÑÏ¸ñ°´Ğò×é°ü£¬²»·¢ËÍÉèÖÃ»ò»ØÁãÃüÁî¡£ */
+uint32_t CAN1_ReadLiftHomeParameters(uint8_t out[17], CanRxMsg replies[3])
+{
+    CanTxMsg tx;
+    CanRxMsg rx;
+    TickType_t started;
+    uint32_t result;
+    uint8_t mailbox, status, flush, packet = 0U, offset = 1U, chunk;
+    if (APP_ARM_LIFT_TEST != 1U) return 9U;
+    if (out == NULL || replies == NULL) return 7U;
+    memset(out, 0, 17U);
+    memset(replies, 0, 3U * sizeof(CanRxMsg));
+    if (s_can1_normal_ready == 0U)
+    {
+        result = CAN1_InitMode(CAN_Mode_Normal);
+        if (result != 1U) return result;
+        s_can1_normal_ready = 1U;
+    }
+    for (flush = 0U; flush < 3U && CAN_MessagePending(CAN1, CAN_FIFO0); flush++)
+        CAN_Receive(CAN1, CAN_FIFO0, &rx);
+    memset(&tx, 0, sizeof(tx));
+    tx.ExtId = 0x0500U;
+    tx.IDE = CAN_Id_Extended; tx.RTR = CAN_RTR_Data;
+    tx.DLC = 2U; tx.Data[0] = 0x22U; tx.Data[1] = 0x6BU;
+    mailbox = CAN_Transmit(CAN1, &tx);
+    if (mailbox == CAN_TxStatus_NoMailBox) return 4U;
+    started = xTaskGetTickCount();
+    for (;;)
+    {
+        status = CAN_TransmitStatus(CAN1, mailbox);
+        if (status == CAN_TxStatus_Ok) break;
+        if (status == CAN_TxStatus_Failed ||
+            (TickType_t)(xTaskGetTickCount() - started) >= pdMS_TO_TICKS(CAN1_SINGLE_TX_WAIT_MS))
+        {
+            CAN_CancelTransmit(CAN1, mailbox);
+            return 4U;
+        }
+        vTaskDelay(pdMS_TO_TICKS(1U));
+    }
+    started = xTaskGetTickCount();
+    out[0] = 0x22U;
+    while ((TickType_t)(xTaskGetTickCount() - started) < pdMS_TO_TICKS(CAN1_SINGLE_REPLY_WAIT_MS))
+    {
+        if (CAN_MessagePending(CAN1, CAN_FIFO0))
+        {
+            CAN_Receive(CAN1, CAN_FIFO0, &rx);
+            if (rx.IDE == CAN_Id_Extended && rx.RTR == CAN_RTR_Data &&
+                (rx.ExtId >> 8) == 5U && rx.DLC != 0U && rx.Data[0] == 0x22U)
+            {
+                replies[packet] = rx;
+                chunk = (uint8_t)(17U - offset);
+                if (chunk > 7U) chunk = 7U;
+                if (rx.ExtId != (0x0500U | packet) || rx.DLC != (uint8_t)(chunk + 1U))
+                    return 6U;
+                memcpy(&out[offset], &rx.Data[1], chunk);
+                offset = (uint8_t)(offset + chunk);
+                if (offset == 17U) return out[16] == 0x6BU ? 1U : 6U;
+                packet++;
+            }
+        }
+        vTaskDelay(pdMS_TO_TICKS(1U));
+    }
+    return 5U;
+}
+
+/* ½ö5ºÅÊÖ¶¯Åö×²»ØÁã¡¢ÍË³ö»ØÁãºÍÖ»¶Á»ØÁã×´Ì¬£»²»¸Ä²ÎÊı£¬²»ËÉÖá¡£ */
+uint32_t CAN1_StartLiftHome(CanRxMsg *reply)
+{
+    const uint8_t q[4] = {0x9AU, 2U, 0U, 0x6BU};
+    uint32_t r;
+    if (APP_ARM_LIFT_TEST != 1U) return 9U;
+    r = CAN1_ExchangeSingle(5U, q, 4U, 3U, reply);
+    return (r == 1U && reply->Data[1] != 2U && reply->Data[1] != 0x9FU) ? 8U : r;
+}
+uint32_t CAN1_AbortLiftHome(CanRxMsg *reply)
+{
+    const uint8_t q[3] = {0x9CU, 0x48U, 0x6BU};
+    uint32_t r;
+    if (APP_ARM_LIFT_TEST != 1U) return 9U;
+    r = CAN1_ExchangeSingle(5U, q, 3U, 3U, reply);
+    s_lift_home_capture = 0U;
+    return (r == 1U && reply->Data[1] != 2U) ? 8U : r;
+}
+uint32_t CAN1_ReadLiftHomeStatus(CanRxMsg *reply)
+{
+    if (APP_ARM_LIFT_TEST != 1U) return 9U;
+    return CAN1_ReadParameter(5U, 0x3BU, 3U, reply);
+}
+
+/* èŠ‚ç‚¹6ç‹¬ç«‹å°æ­¥ä¼ è¾“ï¼›ä¸æ‰©å¤§åŸåº•ç›˜/å‡é™è¿åŠ¨æ¥å£çš„åœ°å€æˆ–é€Ÿåº¦èŒƒå›´ã€‚ */
+uint32_t CAN1_ExtensionExchange(const uint8_t *request, uint8_t length, CanRxMsg *reply)
+{ return CAN1_ArmXExchange(6U, request, length, reply); }
+
+uint32_t CAN1_ReadExtensionHomeParameters(uint8_t out[17], CanRxMsg replies[3])
+{
+    CanTxMsg tx;
+    CanRxMsg rx;
+    TickType_t started;
+    uint32_t result;
+    uint8_t mailbox, status, flush, packet = 0U, offset = 1U, chunk;
+    if (APP_ARM_LIFT_TEST != 1U) return 9U;
+    if (out == NULL || replies == NULL) return 7U;
+    memset(out, 0, 17U);
+    memset(replies, 0, 3U * sizeof(CanRxMsg));
+    if (s_can1_normal_ready == 0U)
+    {
+        result = CAN1_InitMode(CAN_Mode_Normal);
+        if (result != 1U) return result;
+        s_can1_normal_ready = 1U;
+    }
+    for (flush = 0U; flush < 3U && CAN_MessagePending(CAN1, CAN_FIFO0); flush++)
+        CAN_Receive(CAN1, CAN_FIFO0, &rx);
+    memset(&tx, 0, sizeof(tx));
+    tx.ExtId = 0x0600U;
+    tx.IDE = CAN_Id_Extended; tx.RTR = CAN_RTR_Data;
+    tx.DLC = 2U; tx.Data[0] = 0x22U; tx.Data[1] = 0x6BU;
+    mailbox = CAN_Transmit(CAN1, &tx);
+    if (mailbox == CAN_TxStatus_NoMailBox) return 4U;
+    started = xTaskGetTickCount();
+    for (;;)
+    {
+        status = CAN_TransmitStatus(CAN1, mailbox);
+        if (status == CAN_TxStatus_Ok) break;
+        if (status == CAN_TxStatus_Failed ||
+            (TickType_t)(xTaskGetTickCount() - started) >= pdMS_TO_TICKS(CAN1_SINGLE_TX_WAIT_MS))
+        {
+            CAN_CancelTransmit(CAN1, mailbox);
+            return 4U;
+        }
+        vTaskDelay(pdMS_TO_TICKS(1U));
+    }
+    started = xTaskGetTickCount();
+    out[0] = 0x22U;
+    while ((TickType_t)(xTaskGetTickCount() - started) < pdMS_TO_TICKS(CAN1_SINGLE_REPLY_WAIT_MS))
+    {
+        if (CAN_MessagePending(CAN1, CAN_FIFO0))
+        {
+            CAN_Receive(CAN1, CAN_FIFO0, &rx);
+            if (rx.IDE == CAN_Id_Extended && rx.RTR == CAN_RTR_Data &&
+                (rx.ExtId >> 8) == 6U && rx.DLC != 0U && rx.Data[0] == 0x22U)
+            {
+                replies[packet] = rx;
+                chunk = (uint8_t)(17U - offset);
+                if (chunk > 7U) chunk = 7U;
+                if (rx.ExtId != (0x0600U | packet) || rx.DLC != (uint8_t)(chunk + 1U))
+                    return 6U;
+                memcpy(&out[offset], &rx.Data[1], chunk);
+                offset = (uint8_t)(offset + chunk);
+                if (offset == 17U) return out[16] == 0x6BU ? 1U : 6U;
+                packet++;
+            }
+        }
+        vTaskDelay(pdMS_TO_TICKS(1U));
+    }
+    return 5U;
+}
+
+/* èŠ‚ç‚¹6å•æ¬¡02æ— é™ä½ç¢°æ’å›é›¶ï¼›ä¸æ›´æ”¹èœå•ã€é˜ˆå€¼æˆ–ä¸Šç”µè‡ªåŠ¨å›é›¶ã€‚ */
+uint32_t CAN1_StartExtensionHome(CanRxMsg *reply)
+{
+    CanTxMsg tx;
+    CanRxMsg rx;
+    TickType_t started;
+    uint32_t result;
+    uint8_t mailbox, status, flush;
+    if (APP_ARM_LIFT_TEST != 1U) return 9U;
+    if (reply == NULL) return 7U;
+    s_extension_home_capture = 0U;
+    g_can_extension_home_done_notice = 0U;
+    memset(reply, 0, sizeof(*reply));
+    if (s_can1_normal_ready == 0U)
+    {
+        result = CAN1_InitMode(CAN_Mode_Normal);
+        if (result != 1U) return result;
+        s_can1_normal_ready = 1U;
+    }
+    /* å¯åŠ¨å‰æ’ç©ºçš„æ—§é€šçŸ¥ä¸ç®—æœ¬æ¬¡å®Œæˆï¼›åŸ5å·é€šçŸ¥æ•è·ä»ä¿ç•™ã€‚ */
+    for (flush = 0U; flush < 3U && CAN_MessagePending(CAN1, CAN_FIFO0); flush++)
+    {
+        CAN_Receive(CAN1, CAN_FIFO0, &rx);
+        CAN1_CaptureLiftHomeNotice(&rx);
+    }
+    memset(&tx, 0, sizeof(tx));
+    tx.ExtId = 0x0600U; tx.IDE = CAN_Id_Extended; tx.RTR = CAN_RTR_Data;
+    tx.DLC = 4U; tx.Data[0] = 0x9AU; tx.Data[1] = 2U;
+    tx.Data[2] = 0U; tx.Data[3] = 0x6BU;
+    s_extension_home_capture = 1U;
+    mailbox = CAN_Transmit(CAN1, &tx);
+    if (mailbox == CAN_TxStatus_NoMailBox) return 4U;
+    started = xTaskGetTickCount();
+    for (;;)
+    {
+        status = CAN_TransmitStatus(CAN1, mailbox);
+        if (status == CAN_TxStatus_Ok) break;
+        if (status == CAN_TxStatus_Failed ||
+            (TickType_t)(xTaskGetTickCount() - started) >= pdMS_TO_TICKS(CAN1_SINGLE_TX_WAIT_MS))
+        { CAN_CancelTransmit(CAN1, mailbox); return 4U; }
+        vTaskDelay(pdMS_TO_TICKS(1U));
+    }
+    started = xTaskGetTickCount();
+    while ((TickType_t)(xTaskGetTickCount() - started) < pdMS_TO_TICKS(CAN1_SINGLE_REPLY_WAIT_MS))
+    {
+        if (CAN_MessagePending(CAN1, CAN_FIFO0))
+        {
+            CAN_Receive(CAN1, CAN_FIFO0, &rx);
+            CAN1_CaptureLiftHomeNotice(&rx);
+            if (rx.IDE == CAN_Id_Extended && rx.RTR == CAN_RTR_Data &&
+                rx.ExtId == 0x0600U && rx.DLC != 0U && rx.Data[0] == 0x9AU)
+            {
+                *reply = rx;
+                if (rx.DLC != 3U || rx.Data[2] != 0x6BU) return 6U;
+                return (rx.Data[1] == 2U || rx.Data[1] == 0x9FU) ? 1U : 8U;
+            }
+        }
+        vTaskDelay(pdMS_TO_TICKS(1U));
+    }
+    return 5U;
+}
+
+uint32_t CAN1_AbortExtensionHome(CanRxMsg *reply)
+{
+    const uint8_t q[3] = {0x9CU, 0x48U, 0x6BU};
+    uint32_t result;
+    if (APP_ARM_LIFT_TEST != 1U) return 9U;
+    result = CAN1_ExchangeSingle(6U, q, 3U, 3U, reply);
+    return (result == 1U && reply->Data[1] != 2U) ? 8U : result;
+}
+
+uint32_t CAN1_ReadExtensionHomeStatus(CanRxMsg *reply)
+{
+    if (APP_ARM_LIFT_TEST != 1U) return 9U;
+    return CAN1_ReadParameter(6U, 0x3BU, 3U, reply);
+}
+
+void CAN1_ExtensionHomeSessionEnd(void)
+{
+    s_extension_home_capture = 0U;
 }

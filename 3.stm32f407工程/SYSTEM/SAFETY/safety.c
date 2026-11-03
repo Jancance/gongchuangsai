@@ -1,4 +1,5 @@
 #include "safety.h"
+#include "arm_power_mode.h"
 #include "chassis_auto_test.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -207,7 +208,7 @@ static void Safety_CanGuardUpdate(uint32_t vm_request)
     uint32_t enabled;
     uint32_t valid;
     uint32_t protect;
-    uint32_t fresh = 0U, ready_fresh = 0U;
+    uint32_t fresh = 0U;
     uint32_t i;
 
     g_can_guard_ready = 0U;
@@ -249,13 +250,6 @@ static void Safety_CanGuardUpdate(uint32_t vm_request)
              pdMS_TO_TICKS(SAFETY_CAN_FRESH_MS)))
         {
             fresh |= 1UL << i;
-            /* 就绪只计本次上电稳定后采到的状态；原保护位仍按fresh检查。 */
-            if (((TickType_t)(now - s_can_power_tick) >=
-                 pdMS_TO_TICKS(APP_HEADING_POWER_SETTLE_MS)) &&
-                ((TickType_t)(now - ticks[i]) <=
-                 (TickType_t)(now - s_can_power_tick) -
-                 pdMS_TO_TICKS(APP_HEADING_POWER_SETTLE_MS)))
-                ready_fresh |= 1UL << i;
         }
     }
 
@@ -267,7 +261,7 @@ static void Safety_CanGuardUpdate(uint32_t vm_request)
         g_safety_fault |= SAFETY_FAULT_CAN_PROTECT;
         return;
     }
-    if ((enabled == 1U) && (ready_fresh == 0x0FU))
+    if ((enabled == 1U) && (fresh == 0x0FU))
     {
         s_can_was_ready = 1U;
         g_can_guard_ready = 1U;
@@ -279,7 +273,7 @@ static void Safety_CanGuardUpdate(uint32_t vm_request)
          pdMS_TO_TICKS(SAFETY_CAN_BOOT_MS)))
     {
         g_can_guard_bad_nodes =
-            (enabled == 1U) ? (0x0FU & ~ready_fresh) : 0x0FU;
+            (enabled == 1U) ? (0x0FU & ~fresh) : 0x0FU;
         g_can_guard_cause = (enabled == 1U) ? 2U : 1U;
         g_safety_fault |= SAFETY_FAULT_CAN_DATA;
     }
@@ -730,6 +724,7 @@ void Safety_Update(uint32_t vm_request, uint32_t can_test_result)
     uint32_t bad = 0U;
     uint32_t i;
 
+    vm_request = ArmPower_FilterRequest(vm_request);
     g_safety_count++;
     taskENTER_CRITICAL();
     now = xTaskGetTickCount();
@@ -782,7 +777,15 @@ void Safety_Update(uint32_t vm_request, uint32_t can_test_result)
     }
     /* 在最后决定VM允许之前，先纳入CAN故障判断 */
     /* 短时测试主动关电后不把随后的掉线记成原CAN故障 */
-    Safety_CanGuardUpdate(((g_wheel_test_cut_vm == 1U) || (g_chassis_auto_cut_vm == 1U)) ? 0U : vm_request);
+    if (ArmPower_IsIsolatedMode() != 0U)
+    {
+        /* Four chassis nodes are intentionally absent; motion stays forbidden. */
+        Safety_CanGuardUpdate(0U);
+    }
+    else
+    {
+        Safety_CanGuardUpdate(((g_wheel_test_cut_vm == 1U) || (g_chassis_auto_cut_vm == 1U)) ? 0U : vm_request);
+    }
     g_safety_ready = 0U;
     if ((g_safety_fault == 0U) && (bad == 0U) &&
         (can_test_result == 1U))
@@ -792,10 +795,18 @@ void Safety_Update(uint32_t vm_request, uint32_t can_test_result)
     }
 
     /* 更新诊断并发布停止请求，失败或超时追加关VM条件 */
+    if (ArmPower_IsIsolatedMode() != 0U)
+    {
+        g_motion_allowed = 0U;
+        g_motion_block_reason = MOTION_BLOCK_POLICY_PENDING | MOTION_BLOCK_CAN;
+    }
+    else
+    {
     Safety_WheelTestUpdate(vm_request);
     ChassisAuto_SafetyUpdate(vm_request);
     Safety_MotionPermissionUpdate(((g_wheel_test_cut_vm == 1U) || (g_chassis_auto_cut_vm == 1U)) ? 0U : vm_request);
     Safety_MotionStopUpdate(((g_wheel_test_cut_vm == 1U) || (g_chassis_auto_cut_vm == 1U)) ? 0U : vm_request);
+    }
 
     if ((g_safety_ready == 1U) && (vm_request == 1U) &&
         (g_motion_auto_stop_cut_vm == 0U) &&

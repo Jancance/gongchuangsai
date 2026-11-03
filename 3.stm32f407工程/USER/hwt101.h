@@ -4,25 +4,6 @@
 void HWT101_Init(void);
 void HWT101_EnableReceive(void);
 void HWT101_Update(void);
-/* 只读故障诊断：重新布防仅清诊断锁存，不清接收计数或有效性。 */
-typedef struct
-{
-    uint32_t arm_sequence, base_uart_errors, base_overflows, base_checksum_errors;
-    uint32_t uart_ore, uart_fe, uart_ne, uart_pe, last_uart_sr;
-    uint32_t event_tick, event_reason, event_sr;
-    uint32_t event_uart_errors, event_overflows, event_checksum_errors, event_seen;
-    uint32_t event_cycle;
-} HwtFaultDiagnostic;
-void HWT101_DiagnosticArm(void);
-void HWT101_ReadDiagnostic(HwtFaultDiagnostic *snapshot);
-/* DWT只读计时：0平移前端临界区、1后端启动、2组合动作装载；无控制副作用。 */
-#define HWT_TIMING_SCOPES 3U
-#define HWT_TIMING_FIELDS 28U
-uint32_t HWT101_TimingBegin(void);
-void HWT101_TimingEnd(uint32_t scope, uint32_t start_cycle);
-void HWT101_ReadTiming(uint32_t snapshot[HWT_TIMING_FIELDS], uint32_t fault_tick);
-
-
 extern volatile uint32_t g_hwt_baud;
 extern volatile uint32_t g_hwt_rx_bytes, g_hwt_uart_errors, g_hwt_overflows;
 extern volatile uint32_t g_hwt_angle_count, g_hwt_rate_count, g_hwt_checksum_errors;

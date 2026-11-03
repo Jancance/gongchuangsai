@@ -1,0 +1,117 @@
+{
+  "cases": [
+    {
+      "case": "single-bypass",
+      "passed": true,
+      "output": "VM1,0,1100,9,2,3,0,4,0,14,0,0,0,0,0,0,5A3E\n\nmission checks=204 failures=0\n",
+      "telemetry": {
+        "seq": 0,
+        "tick_ms": 1100,
+        "run_id": 9,
+        "stage": 2,
+        "state": 3,
+        "cause": 0,
+        "startup_state": 4,
+        "startup_cause": 0,
+        "arm_row": 14,
+        "item": 0,
+        "arm_state": 0,
+        "arm_cause": 0,
+        "reference_feedback_mask": 0,
+        "extension_motor_millideg": 0,
+        "lift_motor_millideg": 0
+      }
+    },
+    {
+      "case": "chain-bypass",
+      "passed": true,
+      "output": "VM1,0,1100,9,2,3,0,4,0,14,0,0,0,0,0,0,5A3E\n\nmission checks=203 failures=0\n",
+      "telemetry": {
+        "seq": 0,
+        "tick_ms": 1100,
+        "run_id": 9,
+        "stage": 2,
+        "state": 3,
+        "cause": 0,
+        "startup_state": 4,
+        "startup_cause": 0,
+        "arm_row": 14,
+        "item": 0,
+        "arm_state": 0,
+        "arm_cause": 0,
+        "reference_feedback_mask": 0,
+        "extension_motor_millideg": 0,
+        "lift_motor_millideg": 0
+      }
+    },
+    {
+      "case": "single-real",
+      "passed": true,
+      "output": "VM1,0,1100,9,2,3,0,4,0,14,0,0,0,0,0,0,5A3E\n\nmission checks=205 failures=0\n",
+      "telemetry": {
+        "seq": 0,
+        "tick_ms": 1100,
+        "run_id": 9,
+        "stage": 2,
+        "state": 3,
+        "cause": 0,
+        "startup_state": 4,
+        "startup_cause": 0,
+        "arm_row": 14,
+        "item": 0,
+        "arm_state": 0,
+        "arm_cause": 0,
+        "reference_feedback_mask": 0,
+        "extension_motor_millideg": 0,
+        "lift_motor_millideg": 0
+      }
+    },
+    {
+      "case": "chain-real",
+      "passed": true,
+      "output": "VM1,0,1200,1,1,6,10,6,0,0,0,0,0,0,0,0,130E\n\nmission checks=207 failures=0\n",
+      "telemetry": {
+        "seq": 0,
+        "tick_ms": 1200,
+        "run_id": 1,
+        "stage": 1,
+        "state": 6,
+        "cause": 10,
+        "startup_state": 6,
+        "startup_cause": 0,
+        "arm_row": 0,
+        "item": 0,
+        "arm_state": 0,
+        "arm_cause": 0,
+        "reference_feedback_mask": 0,
+        "extension_motor_millideg": 0,
+        "lift_motor_millideg": 0
+      }
+    },
+    {
+      "case": "offline",
+      "passed": true,
+      "output": "VM1,0,1100,0,1,0,1,0,0,0,0,0,0,0,0,0,3C70\n\nmission checks=126 failures=0\n",
+      "telemetry": {
+        "seq": 0,
+        "tick_ms": 1100,
+        "run_id": 0,
+        "stage": 1,
+        "state": 0,
+        "cause": 1,
+        "startup_state": 0,
+        "startup_cause": 0,
+        "arm_row": 0,
+        "item": 0,
+        "arm_state": 0,
+        "arm_cause": 0,
+        "reference_feedback_mask": 0,
+        "extension_motor_millideg": 0,
+        "lift_motor_millideg": 0
+      }
+    }
+  ],
+  "actual_c": true,
+  "peripherals_mocked": true,
+  "hardware_accessed": false
+}

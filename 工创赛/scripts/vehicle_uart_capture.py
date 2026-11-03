@@ -19,7 +19,8 @@ import time
 
 import p1_serial_motion as protocol
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
+ACTUAL_FIRMWARE = Path('D:/新建文件夹4/工创赛/代码/stm32/3.stm32f407工程')
 PARSERS = [getattr(protocol, name) for name in (
     "parse_telemetry", "parse_fault_telemetry", "parse_batch_telemetry",
     "parse_timing_telemetry", "parse_perimeter_checkpoint",
@@ -35,6 +36,32 @@ STAGE_FIELDS = ["seq", "tick_ms", "stage_id", "run_id", "stage_state", "zone",
                 "action_index", "actions_completed", "action_count", "start_x_mm", "start_y_mm",
                 "stop_x_mm", "stop_y_mm", "config_id", "scan_valid", "cause", "elapsed_ms",
                 "backend_session", "denied", "telemetry_dropped", "nominal_scan_gap_deci_mm"]
+MISSION_FIELDS = ["seq", "tick_ms", "run_id", "stage", "state", "cause", "startup_state",
+                  "startup_cause", "arm_row", "item", "arm_state", "arm_cause",
+                  "reference_feedback_mask", "extension_motor_millideg", "lift_motor_millideg"]
+
+
+def parse_mission(line: bytes):
+    if not line.startswith(b"VM1,"):
+        return None
+    body, separator, checksum = line.rstrip(b"\r\n").rpartition(b",")
+    if not separator or len(checksum) != 4 or binascii.crc_hqx(body + b",", 0xffff) != int(checksum, 16):
+        raise ValueError("VM1 CRC mismatch")
+    values = body.decode("ascii").split(",")[1:]
+    if len(values) != len(MISSION_FIELDS):
+        raise ValueError("VM1 field count")
+    result = dict(zip(MISSION_FIELDS, map(int, values)))
+    for field, value in result.items():
+        if field.endswith("millideg"):
+            if not -(2**31) <= value < 2**31:
+                raise ValueError("VM1 angle range")
+        elif not 0 <= value <= 0xffffffff:
+            raise ValueError("VM1 uint32 range")
+    if (not 1 <= result["stage"] <= 8 or result["state"] > 7 or
+            result["startup_state"] > 8 or result["arm_row"] >= 32 or result["item"] > 3 or
+            result["arm_state"] > 3 or result["reference_feedback_mask"] > 3):
+        raise ValueError("VM1 state range")
+    return result
 
 
 def parse_stage(line: bytes):
@@ -60,7 +87,7 @@ def parse_stage(line: bytes):
                 set(groups[1]) != set("123") or set(groups[3]) != set("123") or
                 set(groups[0]) != set(groups[2]) or not result["run_id"]):
             raise ValueError("invalid stage task code")
-    elif (result["stage_state"] > 5 or result["zone"] != 1 or result["scan_valid"] > 1 or
+    elif (result["stage_state"] > 7 or result["zone"] != 1 or result["scan_valid"] > 1 or
           result["action_count"] > 8 or result["actions_completed"] > result["action_count"] or
           any(result[name] >= 2400 for name in ("start_x_mm", "start_y_mm", "stop_x_mm", "stop_y_mm"))):
         raise ValueError("stage state/geometry")
@@ -96,7 +123,7 @@ def parse_wheel(line: bytes):
 
 def decode(line: bytes) -> tuple[str, dict]:
     """CRC正确与物理动作成功是不同概念；不推测缺失的反馈。"""
-    for parser in [parse_stage, parse_wheel, *PARSERS]:
+    for parser in [parse_mission, parse_stage, parse_wheel, *PARSERS]:
         result = parser(line)
         if result is not None:
             return line.split(b",", 1)[0].decode("ascii"), result
@@ -151,10 +178,11 @@ class Capture:
             "firmware_stage_confirmed": False,
             "tag": tag, "error": error,
         }
-        if not error and tag in ("ST1", "SC1"):
-            row["firmware_stage_id"] = data["stage_id"]
-            row["firmware_stage_confirmed"] = data["stage_id"] == self.stage
-            row["stage_label_mismatch"] = data["stage_id"] != self.stage
+        if not error and tag in ("ST1", "SC1", "VM1"):
+            firmware_stage = data["stage"] if tag == "VM1" else data["stage_id"]
+            row["firmware_stage_id"] = firmware_stage
+            row["firmware_stage_confirmed"] = self.stage in (0, firmware_stage)
+            row["stage_label_mismatch"] = self.stage not in (0, firmware_stage)
             self.stage_records += 1
             self.stage_mismatches += int(row["stage_label_mismatch"])
         # 只对TM1使用其明确规定的seq/tick；其它帧不能拿批次号当全局序号。
@@ -260,16 +288,16 @@ class Capture:
 
 def source_manifest():
     """记录本地构建来源；不把本地源码哈希冒充板上固件身份。"""
-    fw = ROOT / "3.stm32f407工程"
-    files = sorted(p for folder in ("USER", "HARDWARE", "SYSTEM")
+    fw = ACTUAL_FIRMWARE
+    files = sorted(p for folder in ("USER", "HARDWARE", "SYSTEM", "CHASSIS")
                    for p in (fw / folder).rglob("*") if p.suffix.lower() in (".c", ".h", ".inc"))
     files += sorted(fw.glob("*.uvprojx"))
-    hashes = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
+    hashes = {str(p.relative_to(fw)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
     try:
         commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     except (OSError, subprocess.CalledProcessError):
         commit = None
-    return {"git_head": commit, "local_files_sha256": hashes,
+    return {"workspace_git_head": commit, "firmware_source_directory": str(fw), "local_files_sha256": hashes,
             "source_set_sha256": hashlib.sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest(),
             "matches_running_firmware": "unverified"}
 
@@ -279,14 +307,15 @@ def main():
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--port", help="无线接收模块的COM口；只读，不发任何命令")
     source.add_argument("--replay", type=Path, help="离线重放已保存的uart1.raw")
-    parser.add_argument("--stage", type=int, choices=range(1, 9), required=True)
+    parser.add_argument("--stage", type=int, choices=range(0, 9), required=True,
+                        help="1~8为单段；0记录整场并采用固件VM1实际阶段标签")
     parser.add_argument("--baud", type=int, default=115200)
     parser.add_argument("--seconds", type=float, default=0, help="0表示一直记录，Ctrl+C结束")
     parser.add_argument("--out", type=Path)
     args = parser.parse_args()
     if args.seconds < 0 or args.baud <= 0:
         parser.error("seconds必须非负，baud必须为正")
-    out = args.out or ROOT / "工创赛/evidence/vehicle-stage" / datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+    out = args.out or ROOT / "evidence/vehicle-stage" / datetime.now().strftime("%Y%m%d_%H%M%S_%f")
     capture = Capture(out, args.stage)
     reason = "finished"
     try:
