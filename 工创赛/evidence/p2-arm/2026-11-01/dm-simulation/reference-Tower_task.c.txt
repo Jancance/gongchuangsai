@@ -1,0 +1,599 @@
+/**
+  ******************************************************************************
+  * @author  PINK SAKURA
+  * @version V1.0
+  * @date    2024-08-08
+  * @brief   塔吊主任务
+  ******************************************************************************
+  * @attention
+  * 邮箱：sakura.mail@qq.com
+  ******************************************************************************
+  */
+
+#include "Tower_task.h"
+#include "Chassis_task.h"
+
+#define h_comp 0 
+#define t_comp 0 
+//#define h_comp 150 
+//#define t_comp 100 
+
+uint8_t t_in_pos = 1;  //追踪就位指示
+
+int Motor28_target = 1500, 
+	  Motor35_target = 1850 + h_comp, 
+    MotorDM_target = -270;
+
+short d_radius = 0,
+      d_theta = 0; 
+
+int8_t sign(short num)  //取符号函数
+{
+    if(num < 0)  return -1;
+    else if(num == 0)  return 0;
+    else  return 1;
+}
+
+void travel_limit(short* value, short max, short min)  //short范围限幅
+{
+	if (*value < min)
+		*value = min;
+	if (*value > max)
+		*value = max;
+}
+
+void f_travel_limit(float* value, float max, float min)  //float范围限幅
+{
+	if (*value < min)
+		*value = min;
+	if (*value > max)
+		*value = max;
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		塔吊初始化
+//  @return     			/
+//  @param					  /
+//  @Sample usage:    /
+//-------------------------------------------------------------------------------------------------------------------
+void OS_Tower_Init(void)    //塔吊初始化
+{
+	osDelay(500);
+	Tower_init();
+	PWM1_INTI;     //打开夹爪PWM
+  LFD_01M_OP_C;    //夹爪复位
+	osDelay(500);
+	while(!flag.MOTOR35_flag)  //初始化完成复位
+	{
+		Motor28_AbsPosition(Motor28_target,2000);
+		osDelay(1);
+		Motor35_AbsPosition(Motor35_target,2800);
+		osDelay(1);
+		G6220_Position(MotorDM_target,250);
+		osDelay(50);
+	}
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		塔吊目标位置更新
+//  @return     			/
+//  @param					 radius    半径，28步进值
+//  @param					 height		 高度，35步进值
+//  @param					 theta     角度，达妙电机值+180到-180度
+//  @Sample usage:    /
+//-------------------------------------------------------------------------------------------------------------------
+void Tower_target_updata(int radius, int height, int theta)    //塔吊目标位置更新
+{
+	Motor28_target = radius;
+	Motor35_target = height;
+	MotorDM_target = theta;
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		塔吊目标位置逼近值清零（临时，退出后恢复上次绝对位置）
+//  @return     			/
+//  @param					  /
+//  @Sample usage:    /
+//-------------------------------------------------------------------------------------------------------------------
+void Tower_d_zero(void)    //塔吊目标位置逼近值清零
+{
+	d_radius = 0;
+	d_theta = 0;
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		塔吊主任务
+//  @return     			/
+//  @param					  /
+//  @Sample usage:    /
+//-------------------------------------------------------------------------------------------------------------------
+void Tower_task(void)    //塔吊任务
+{
+	OS_Tower_Init();
+	while(!ready) { osDelay(10);}
+  Tower_target_updata(2300, 1850 + h_comp, -250);
+	
+	while(1)
+	{
+		if(control_mode==0)
+		{
+				Motor28_AbsPosition(Motor28_target + d_radius,2000);
+				osDelay(1);
+				Motor35_AbsPosition(Motor35_target,2800);
+				osDelay(1);
+				G6220_Position(MotorDM_target + d_theta,300);	
+	  }
+		else if(control_mode==1)
+		{
+			  Motor28_AbsPosition((RC_RX.KNOB_L+100)*15,1500);
+			  osDelay(5);
+			  Motor35_AbsPosition((RC_RX.KNOB_R+100)*10,3000);
+			  osDelay(5);
+		}
+		osDelay(10);
+	}
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 复位姿态
+//  @return     		 /
+//  @param					 /
+//  @Sample usage:   
+//-------------------------------------------------------------------------------------------------------------------
+void reset_posture(void)     //复位姿态
+{
+  LFD_01M_OP_C;    //夹爪打开
+	Tower_target_updata(1500, 1850 + h_comp, -270);
+//	osDelay(200);
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 识别姿态
+//  @return     		 /
+//  @param					 radius 半径
+//  @param					 height 高度
+//  @Sample usage:   
+//-------------------------------------------------------------------------------------------------------------------
+void identify_posture(int radius, int height)     //识别姿态
+{
+  LFD_01M_OP_M;    //夹爪打开
+	Tower_target_updata(radius, height, -1800);
+//	osDelay(200);
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 物料台动态抓取
+//  @return     		 /
+//  @param					 culour      1/2/3 红绿蓝
+//  @Sample usage:   
+//-------------------------------------------------------------------------------------------------------------------
+void grab_turntable_B(uint8_t color, uint8_t num)     //物料台动态抓取
+{
+	vsiual_data_inti();    //清除接收数据
+	t_in_pos=0;
+	delay_visual=0;
+	uint8_t left_or_right = 0;
+//	if(color==3)  //特殊颜色地板
+//		Tower_target_updata(1350, 2000, -1800);
+//	else
+	  Tower_target_updata(2000, 2000, -1800);
+	LFD_01M_OP_T;    //夹爪打开
+	osDelay(300);
+	short target_data = 0;
+	
+	while(target_data == 0)  //建立通讯
+	{
+		identify_materials(color);
+		switch (color)
+		{
+			case 1:
+        target_data = VIS_RX.r_block_x + VIS_RX.r_block_y;
+				break;
+			case 2:
+        target_data = VIS_RX.g_block_x + VIS_RX.g_block_y;
+				break;
+			case 3:
+        target_data = VIS_RX.b_block_x + VIS_RX.b_block_y;
+				break;
+		}
+		osDelay(50);
+	}
+	buzzer_rings(50, 0, 1);
+	
+//	  while(1)
+  while(t_in_pos==0)
+	{
+	  track_materials(color);     //物料跟踪
+		osDelay(2);
+	}
+	
+//	if (color==3)  //特殊颜色地板
+//		Tower_target_updata(1350, claw_h_min + table_h, -1800);
+//  else
+	  Tower_target_updata(2000, claw_h_min + table_h, -1800);
+  for(uint8_t i=0;i<200;i++)
+	{
+	  track_materials(color);     //物料跟踪
+		osDelay(1);
+	}
+	LFD_01M_CL;    //夹爪关闭
+	osDelay(100);
+//	if (color==3)  //特殊颜色地板
+//		Tower_target_updata(1500, 1800, -1800);
+//  else
+	  Tower_target_updata(2200, 1800, -1800);
+	osDelay(300);
+	if (d_X<-30)
+		left_or_right=1;
+	Tower_d_zero();    //塔吊目标位置逼近值清零
+	osDelay(300);
+	if (left_or_right==0)
+	{Tower_target_updata(2200, 1900, -900);
+	  osDelay(200);}
+	else 
+	{Tower_target_updata(2400, 1900, -2700);
+	  osDelay(500);}
+	Chassis_d_zero();
+
+	visual_idle();    //空闲
+	buzzer_rings(25, 25, 2);
+	if (left_or_right==0)
+	  put_materials_car(num);
+	else
+		put_materials_car_right(num);
+}
+
+#define center_x 320  //追踪中心X
+#define center_y 230  //追踪中心Y
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 物料跟踪
+//  @return     		 /
+//  @param					 culour      1/2/3 红绿蓝
+//  @Sample usage:   
+//-------------------------------------------------------------------------------------------------------------------
+void track_materials(uint8_t color)     //物料跟踪
+{
+	short d_block_x = 0;
+	short d_block_y = 0;
+	switch (color)
+	{
+		case 1:
+			d_block_x = center_x - VIS_RX.r_block_x;
+	  	d_block_y = center_y - VIS_RX.r_block_y;
+			break;
+		case 2:
+			d_block_x = center_x - VIS_RX.g_block_x;
+		  d_block_y = center_y - VIS_RX.g_block_y;
+			break;
+		case 3:
+			d_block_x = center_x - VIS_RX.b_block_x;
+		  d_block_y = center_y - VIS_RX.b_block_y;
+			break;
+	}
+	  if(d_block_x + d_block_y == center_x + center_y)
+			return;
+	
+	  d_radius += d_block_y * 0.04;
+//		if (color==3)  //特殊颜色地板
+//			travel_limit(&d_radius, 100, claw_r_min-1350);  //范围限幅
+//		else
+      travel_limit(&d_radius, claw_r_max-2000, claw_r_min-2000);  //范围限幅
+		
+	  d_X += d_block_x*0.002;
+//		if (color==3)  //特殊颜色地板
+//			f_travel_limit(&d_X, 60, -60);  //范围限幅
+//	  else 
+      f_travel_limit(&d_X, 130, -130);  //范围限幅
+	
+	  d_Y -= d_block_y*0.003;
+//		if (color==3)  //特殊颜色地板
+//		  f_travel_limit(&d_Y, 60, -20);  //范围限幅
+//		else
+      f_travel_limit(&d_Y, 60, -30);  //范围限幅
+
+//		if(color==3)   //特殊颜色地板
+//		{
+//		  if((d_block_x<18&&d_block_x>-18)&&(d_block_y<22&&d_block_y>-13))
+//	      delay_visual++;
+//		  else
+//			  delay_visual=0;}
+//		else
+		{
+		if((d_block_x<22&&d_block_x>-22)&&(d_block_y<22&&d_block_y>-13))
+			delay_visual++;
+		else
+			delay_visual=0;
+	 }
+		
+		if (delay_visual>70)
+			t_in_pos = 1;
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 地面抓物料
+//  @return     		 /
+//  @param					 culour      1/2/3 红绿蓝
+//  @Sample usage:   
+//-------------------------------------------------------------------------------------------------------------------
+void grab_materials_ground(uint8_t color, uint8_t first)     //地面抓物料
+{
+	short theta = 0;
+	short radius = 1500;
+	short delay = 1100;
+  switch (color)
+	{
+	  case 1:
+			theta = -2258;
+		  radius = 2010;
+		  delay = 1050;
+		  break;
+		case 2:
+			theta = -1800;
+		  radius = 1350;
+		  delay = 800;
+		  break;
+		case 3:
+			theta = -1330;
+		  radius = 1989;
+		  delay = 750;
+		  break;
+	}
+	if (color==2) Tower_target_updata(radius, 1500 + t_comp, theta);  else Tower_target_updata(radius, 1200 + t_comp, theta);
+	LFD_01M_OP_G;    //夹爪打开
+	if (first==1) osDelay(1800-delay);  else osDelay(delay);
+	Tower_target_updata(radius, 530, theta);
+	if (color==2) osDelay(400);  else osDelay(300);
+  LFD_01M_CL;    //夹爪关闭
+	osDelay(100);
+	Tower_target_updata(radius, 1600, theta);
+	osDelay(600);
+	Tower_target_updata(1500, 1900 + h_comp, -900);
+	osDelay(100*(4-color) + t_comp); 
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 地面放物料
+//  @return     		 /
+//  @param					 culour      1/2/3 红绿蓝
+//  @Sample usage:   
+//-------------------------------------------------------------------------------------------------------------------
+void put_materials_ground(uint8_t color, uint16_t stack)     //地面放物料
+{
+	short theta = 0;
+	short radius = 1500;
+	stack = stack == 0 ? 0 : 700 + 500;
+	short delay = 1500;
+  switch (color)
+	{
+	  case 1:
+			theta = -2262;
+		  radius = 2005;
+		  delay = 500;
+		  break;
+		case 2:
+			theta = -1800;
+		  radius = 1350;
+		  delay = 650;
+		  break;
+		case 3:
+			theta = -1330;
+		  radius = 1980;
+		  delay = 800;
+		  break;
+	}
+	Tower_target_updata(1500, 2000, theta);
+	osDelay(delay);
+	Tower_target_updata(radius, 800+stack, theta);
+	stack = stack != 1200 ? 0 : 700;
+	osDelay(400);
+	Tower_target_updata(radius, 530+stack, theta);
+	osDelay(400);
+  LFD_01M_OP_G;    //夹爪打开
+	osDelay(50);
+	Tower_target_updata(1500, 1500 + h_comp, theta);
+	osDelay(400 + t_comp);
+	Tower_target_updata(1500, 1900 + h_comp, -2700);
+	osDelay(delay-500); 
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 车上放置物料
+//  @return     		 /
+//  @param					 order      1/2/3
+//  @Sample usage:   
+//-------------------------------------------------------------------------------------------------------------------
+void put_materials_car(uint8_t order)     //车上放置物料
+{
+	short theta = 0;
+	short delay = 1000;
+  switch (order)
+	{
+	  case 1:
+			theta = 265 + 20;
+		  delay = 1000;
+		  break;
+		case 2:
+			theta = 0 + 18;
+		  delay = 800;
+		  break;
+		case 3:
+			theta = -265 + 40;
+		  delay = 600;
+		  break;
+	}
+	Tower_target_updata(1840, 1900 + h_comp, theta);
+	osDelay(delay);
+	Tower_target_updata(1840, 1700, theta);
+	osDelay(150 + t_comp);
+	LFD_01M_OP_C;    //夹爪打开
+	osDelay(100);
+	Tower_target_updata(1840, 1900 + h_comp, theta);
+	osDelay(100 + t_comp);
+	Tower_target_updata(1500, 1900 + h_comp, -270);
+	osDelay(100*(3-order));
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 车上放置物料右边
+//  @return     		 /
+//  @param					 order      1/2/3
+//  @Sample usage:   
+//-------------------------------------------------------------------------------------------------------------------
+void put_materials_car_right(uint8_t order)     //车上放置物料右边
+{
+	short theta = 0;
+	short delay = 1000;
+  switch (order)
+	{
+	  case 1:
+			theta = -3335 - 6;
+		  delay = 900;
+		  break;
+		case 2:
+			theta = -3600 - 8;
+		  delay = 1000;
+		  break;
+		case 3:
+			theta = -3865 - 10;
+		  delay = 1100;
+		  break;
+	}
+	Tower_target_updata(2400, 1900, theta);
+	osDelay(delay);
+	Tower_target_updata(1840, 1900, theta);
+	osDelay(400);
+	Tower_target_updata(1840, 1700, theta);
+	osDelay(200);
+	LFD_01M_OP_C;    //夹爪打开
+	osDelay(100);
+	Tower_target_updata(1840, 1900, theta);
+	osDelay(300);
+	Tower_target_updata(1500, 1900, -270);
+	osDelay(500*order);
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 车上抓取物料
+//  @return     		 /
+//  @param					 order      1/2/3
+//  @Sample usage:   
+//-------------------------------------------------------------------------------------------------------------------
+void grab_materials_car(uint8_t order, uint8_t first)     //车上抓取物料
+{
+	short theta = 0;
+	short delay = 1500;
+  switch (order)
+	{
+	  case 1:
+			theta = -3335 - 20;
+		  delay = 600;
+		  break;
+		case 2:
+			theta = -3600 - 12;
+		  delay = 800;
+		  break;
+		case 3:
+			theta = -3865 - 4;
+		  delay = 1000;
+		  break;
+	}
+	LFD_01M_OP_C;    //夹爪打开
+	if (order==1 || first==1)
+	 {Tower_target_updata(1500, 1900 + h_comp, -2700);
+	  osDelay(200);}
+	Tower_target_updata(1840, 1900 + h_comp, theta);
+	osDelay(delay);
+	Tower_target_updata(1840, 1700, theta);
+	osDelay(100 + t_comp);
+	LFD_01M_CL;    //夹爪关闭
+	osDelay(100);
+	Tower_target_updata(1840, 1900 + h_comp, theta);
+	osDelay(200 + t_comp);
+	Tower_target_updata(1500, 1900 + h_comp, -2700);
+	osDelay(80*(order));
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 决赛物料台放置
+//  @return     		 /
+//  @param					 order       序号
+//  @param					 culour      1/2/3 红绿蓝
+//  @Sample usage:   
+//-------------------------------------------------------------------------------------------------------------------
+void put_block_turntable(uint8_t order, uint8_t color)     //决赛物料台放置
+{
+	vsiual_data_inti();    //清除接收数据
+	identify_posture(2000, 2000);     //识别姿态
+	LFD_01M_OP_M;
+	osDelay(300);
+	uint8_t target_data = 0;
+	uint8_t color_pos[3] = {0};  
+	
+	while(target_data == 0)
+	{
+		request_to_place_materials();    //决赛请求放置物料
+		target_data = VIS_RX.block_order;
+		osDelay(50);
+	}
+	buzzer_rings(50, 0, 1);
+
+	switch(VIS_RX.block_order)  //红绿蓝位置  1-2-3  [颜色]对应位置号
+	{
+		case 1:  color_pos[0] = 1; color_pos[1] = 2; color_pos[2] = 3; break;
+		case 2:  color_pos[0] = 1; color_pos[1] = 3; color_pos[2] = 2; break;
+		case 3:  color_pos[0] = 2; color_pos[1] = 1; color_pos[2] = 3; break;
+		case 4:  color_pos[0] = 3; color_pos[1] = 1; color_pos[2] = 2; break;
+		case 5:  color_pos[0] = 2; color_pos[1] = 3; color_pos[2] = 1; break;
+		case 6:  color_pos[0] = 3; color_pos[1] = 2; color_pos[2] = 1; break;
+	}
+	
+	visual_idle();    //空闲
+	
+	put_turntable_action(order, color_pos[color - 1]);
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 决赛物料台放置动作
+//  @return     		 /
+//  @param					 order       序号
+//  @param					 pos      1/2/3 位置（自左向右）
+//  @Sample usage:   
+//-------------------------------------------------------------------------------------------------------------------
+void put_turntable_action(uint8_t order, uint8_t pos)     //决赛物料台放置动作
+{
+  short theta = 0;
+	short radius = 1500;
+	short delay = 1000;
+  switch (pos)
+	{
+	  case 1:
+			theta = -1600;
+		  radius = 2800;
+		  delay = 800;
+		  break;
+		case 2:
+			theta = -1800;
+		  radius = 1210;
+		  delay = 650;
+		  break;
+		case 3:
+			theta = -1970;
+		  radius = 2900;
+		  delay = 500;
+		  break;
+	}
+	
+  grab_materials_car(order, 1);     //车上抓取物料
+	
+  Tower_target_updata(1800, 2000, theta);
+	osDelay(delay);
+	Tower_target_updata(radius, 2000, theta);
+	osDelay(400);
+	Tower_target_updata(radius, claw_h_min + table_h, theta);
+	osDelay(400);
+  LFD_01M_OP_G;    //夹爪打开
+	osDelay(50);
+	Tower_target_updata(radius, 2000, theta);
+	osDelay(400);
+	
+}

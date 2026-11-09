@@ -1,0 +1,43 @@
+{
+  "module_matches": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true
+  },
+  "config_matches": {
+    "material_color_thresholds.json": true,
+    "project_profile.json": true,
+    "camera_processing.json": true
+  },
+  "frames": 506,
+  "observed_duration_s": 57.76359164899986,
+  "state_counts": {
+    "FOLLOWING_PIXEL": 478,
+    "STALE_RESULT": 28
+  },
+  "target_counts": {
+    "1": 370,
+    "2": 108,
+    "0": 28
+  },
+  "nonstale_only_lightblue": 370,
+  "stale_with_both_detector_labels": 25,
+  "longest_blue_missing_s": 6.3468711099994835,
+  "motion_allowed": false,
+  "detector_call_ms": {
+    "median": 90.81507300015801,
+    "p95": 122.53834025023025,
+    "max": 143.3979299999919
+  },
+  "result_host_age_ms": {
+    "median": 113.23585499985711,
+    "p95": 152.16368424967186,
+    "max": 179.89942300027906
+  },
+  "diagnostic_io_ms": {
+    "median": 0.2659960000528372,
+    "p95": 0.5560540000715264,
+    "max": 9.278933000132383
+  }
+}

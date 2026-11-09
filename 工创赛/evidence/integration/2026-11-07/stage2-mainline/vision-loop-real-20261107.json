@@ -1,0 +1,40 @@
+﻿{
+  "title": "Real vision loop verified: camera -> vision app -> USART6 -> STM32",
+  "date": "2026-11-07",
+  "setup": {
+    "pi_app": "/home/orangepi/p2-source-observer-20261106/vision_app/code/main.py (Generic135 1920x1080, --display off, TurntableSerialLink)",
+    "serial": "/dev/ttyUSB0 115200 8N1",
+    "camera": "Generic USB CAMERA EP.20CC54K01 1920x1080 MJPG",
+    "board": "image sha256 98c8fbe38783e8d1a026c53f1cc799b61b1a82cbdec94403b0e10c5b5dc19376"
+  },
+  "board_to_pi_control": {
+    "commands": ["0x02 ENTER_MATERIAL_PICKUP", "0x05 ENTER_TURNTABLE", "0x15 REQUEST_ONCE"],
+    "app_log_proof": "Mode changed: MATERIAL_PICKUP -> back to Mode=TURNTABLE Report=ON_REQUEST",
+    "verdict": "PASS"
+  },
+  "pi_to_board_data": {
+    "app_log": "Report=ON_REQUEST TurntableSent=1 Last=(1038, 218)",
+    "board_before": {"center_cycle": 1, "center_x": 4660, "center_y": 22136, "rx_bytes": 21120},
+    "board_after": {"center_cycle": 2, "center_x": 1038, "center_y": 218, "rx_bytes": 21127},
+    "delta_bytes": 7,
+    "frame_size_expected": 7,
+    "rx_bad": 0,
+    "rx_errors_change": 0,
+    "verdict": "PASS - values match app log exactly"
+  },
+  "turntable_detection": {
+    "center_px": [1038.5, 217.9],
+    "radius_px": 608.1,
+    "confidence": 0.923,
+    "rms_px": 1.06,
+    "stable": true,
+    "fps": 30.1
+  },
+  "material_pickup_mode": {
+    "state": "WAITING_FOR_MOTION",
+    "count": 1,
+    "slots": [0, 0, 0],
+    "note": "material frames require observed turntable rotation; static scene is rejected by design (motion gate)"
+  },
+  "constraints": "no motor motion, no firmware change, no reset/flash this round"
+}

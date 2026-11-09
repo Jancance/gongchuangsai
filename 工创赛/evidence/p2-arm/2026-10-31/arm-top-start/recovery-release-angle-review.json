@@ -1,0 +1,19 @@
+{
+  "user_report": "为什么松开不了夹爪",
+  "watch": {
+    "g_jiazhua_debug_angle": 140,
+    "g_jiazhua_debug_request": 0,
+    "g_arm_sequence_state": 0,
+    "g_arm_sequence_result": 0,
+    "g_arm_sequence_enable": 0,
+    "g_lift_motion_state": 7,
+    "g_lift_motion_result": 1,
+    "g_lift_down_pulses": 32000,
+    "g_lift_home_state": 8,
+    "g_lift_home_reported": 1
+  },
+  "finding": "Visible manual angle remains closed140, not requested open180. Request0 alone does not identify angle executed. Gripper result and actual support not visible; no hardware fault or interlock cause established.",
+  "next_action": "only if material physically supported and axes stationary, commit float angle180.0 then trigger manual request1 once while program runs; inspect gripper_result if no opening",
+  "new_firmware_or_flash": false,
+  "assistant_hardware_commands": false
+}

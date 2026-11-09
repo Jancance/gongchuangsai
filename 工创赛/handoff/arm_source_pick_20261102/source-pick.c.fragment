@@ -1,0 +1,63 @@
+/* 模式4：仅执行本轮已示教的源下降及夹紧，不操作DM、回零或抬升。 */
+static const uint32_t s_source_down_segments[6]={5000U,40000U,30000U,10000U,10000U,10000U};
+static uint32_t s_source_index;
+volatile uint32_t g_arm_source_down_done_pulses=0U;
+static void SourcePickService(uint32_t ready,uint32_t other_busy,uint32_t now)
+{
+    uint32_t request=g_arm_sequence_request;
+    g_arm_sequence_request=0U;
+    if(request==2U)
+    {if(s_busy)Fail(2U,8U);else {g_arm_sequence_state=8U;g_arm_sequence_result=2U;}return;}
+    if(request==3U)
+    {
+        if(s_busy && g_arm_sequence_state!=8U && g_arm_sequence_state!=9U)return;
+        if(LiftBusy() || LiftHome_IsBusy() || g_lift_home_request!=0U || HomeStopUnknown() ||
+           (g_lift_motion_state==9U && g_lift_stop_result!=1U))return;
+        if(s_busy)Restore();
+        Gripper_CancelControlled();s_busy=0U;g_arm_sequence_enable=0U;g_arm_top_start_ready=0U;
+        g_arm_grip_confirm=0U;g_arm_place_confirm=0U;g_arm_grip_height_ready=0U;
+        g_arm_sequence_state=0U;g_arm_sequence_result=0U;g_arm_sequence_fault_state=0U;
+        g_arm_sequence_phase_elapsed_ms=0U;return;
+    }
+    if(request>3U){if(s_busy)Fail(4U,9U);else g_arm_sequence_result=4U;return;}
+    if(!s_busy)
+    {
+        if(request!=1U)return;
+        if(!ready || other_busy || LiftBusy() || LiftHome_IsBusy() ||
+           g_lift_motion_request!=0U || g_lift_home_request!=0U ||
+           g_lift_motion_state==9U || g_lift_home_state==9U ||
+           g_arm_sequence_enable!=1U || g_arm_top_start_ready!=1U)
+        {g_arm_sequence_result=3U;return;}
+        s_mode=4U;s_busy=1U;s_started=now;s_last=now;
+        s_old_up=g_lift_up_pulses;s_old_down=g_lift_down_pulses;
+        s_expected=0U;s_home_expected=0U;s_home_requested=0U;
+        s_stop_count=g_gripper_signal_stop_count;s_source_index=0U;
+        g_arm_source_down_done_pulses=0U;g_arm_top_start_ready=0U;
+        g_arm_grip_confirm=0U;g_arm_place_confirm=0U;
+        g_arm_sequence_result=0U;g_arm_sequence_fault_state=0U;g_arm_sequence_elapsed_ms=0U;
+        ReplayLift(1U,s_source_down_segments[0],30U,now);return;
+    }
+    if(g_arm_sequence_state==8U || g_arm_sequence_state==9U)return;
+    g_arm_sequence_elapsed_ms=now-s_started;g_arm_sequence_phase_elapsed_ms=now-s_phase;
+    if(!ready || other_busy || g_arm_sequence_enable!=1U || g_gripper_signal_stop_count!=s_stop_count)
+    {Fail(3U,9U);return;}
+    if(now-s_last>500U){Fail(8U,9U);return;}
+    s_last=now;
+    switch(g_arm_sequence_state)
+    {
+    case 30U:
+        if(ReplayLiftDone())
+        {
+            g_arm_source_down_done_pulses+=s_source_down_segments[s_source_index];
+            s_source_index++;
+            if(s_source_index<6U)ReplayLift(1U,s_source_down_segments[s_source_index],30U,now);
+            else {s_ticket=0U;Phase(31U,now);}
+        }
+        break;
+    case 31U:
+        if(ReplayGripperDone(140.0f,now))
+        {Restore();s_busy=0U;g_arm_sequence_enable=0U;g_arm_sequence_state=7U;g_arm_sequence_result=1U;}
+        break;
+    default:Fail(4U,9U);break;
+    }
+}

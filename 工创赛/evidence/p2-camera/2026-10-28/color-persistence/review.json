@@ -1,0 +1,20 @@
+{
+  "reviewed_on": "2026-10-28",
+  "checks": [
+    "actual_save_load_roundtrip",
+    "other_five_colors_and_auxiliary_config_preserved",
+    "ordinary_main_initialization_loads_saved_config_for_follow_and_material",
+    "running_detector_requires_restart_to_load_new_values",
+    "reinitialization_loads_second_saved_config",
+    "invalid_save_leaves_previous_config_intact"
+  ],
+  "passed": 6,
+  "source_config_sha256": "2c1e2839ed65515db4a7cbd69fa6022b31c67cc0868f96f6486a162af38ba797",
+  "source_unchanged": true,
+  "camera_opened": false,
+  "serial": "DISABLED",
+  "board_gui_verified": false,
+  "three_minute_rehearsal_passed": false,
+  "all_color_branches_configurable": false,
+  "remaining": "Fixed pale HSV evidence ranges remain in project_detector.py and project_pale_component.py; GUI tuning and full detector acceptance are separate."
+}

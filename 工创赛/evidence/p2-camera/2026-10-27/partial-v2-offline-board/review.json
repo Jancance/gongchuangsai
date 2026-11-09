@@ -1,0 +1,944 @@
+{
+  "opencv": "4.5.4",
+  "cases": [
+    {
+      "name": "pixel1-material-occlusion-run-20261027-205050-650002-first-frame-raw",
+      "passed": true,
+      "result": {
+        "accepted": true,
+        "centers_px": [
+          [
+            505.70947265625,
+            616.8731689453125
+          ],
+          [
+            971.2483215332031,
+            615.5378723144531
+          ],
+          [
+            1424.720947265625,
+            614.0946960449219
+          ]
+        ],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "partial_arc_template_v2",
+        "reason": "OBSERVED_PARTIAL_ARCS_CANDIDATE_ONLY",
+        "proposals": [
+          {
+            "center_px": [
+              1424.720947265625,
+              614.0946960449219
+            ],
+            "score": 0.7060185185185185,
+            "runner_score": 0.5439814814814815,
+            "center_margin": 0.16203703703703698,
+            "scale": 0.9650000000000001,
+            "band_coverage": [
+              0.6666666666666666,
+              0.6666666666666666,
+              0.7083333333333334,
+              0.7222222222222222,
+              0.7638888888888888,
+              0.75
+            ],
+            "coherent_angle_fraction": 0.6944444444444444,
+            "supported_bands": 6,
+            "heldout_coherent_angle_fraction": 0.6944444444444444,
+            "visible_edge_distance_p90_px": 2.0,
+            "search_center_offset_px": [
+              1.0,
+              1.0
+            ],
+            "search_radius_px": 12.0,
+            "weak_seed_center_px": [
+              1423.720947265625,
+              613.0946960449219
+            ],
+            "weak_seed_support": 4,
+            "weak_seed_bands": 3,
+            "anchor_centers_px": [
+              [
+                505.70947265625,
+                616.8731689453125
+              ],
+              [
+                971.2483215332031,
+                615.5378723144531
+              ]
+            ]
+          }
+        ],
+        "processing_ms": 121.58428099974117,
+        "stages_ms": {
+          "extraction": 34.50478699960513,
+          "primary_clustering": 4.628967999451561,
+          "raw_geometry": 0.01195799995912239,
+          "partial_search": 82.44061000004876
+        }
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 253.69143700118002
+    },
+    {
+      "name": "pixel1-material-occlusion-run-20261027-205050-650002-first-reappearance-raw",
+      "passed": true,
+      "result": {
+        "accepted": true,
+        "centers_px": [
+          [
+            505.7278289794922,
+            616.8627319335938
+          ],
+          [
+            971.2383117675781,
+            615.5347900390625
+          ],
+          [
+            1424.7484741210938,
+            613.3291015625
+          ]
+        ],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "partial_arc_template_v2",
+        "reason": "OBSERVED_PARTIAL_ARCS_CANDIDATE_ONLY",
+        "proposals": [
+          {
+            "center_px": [
+              1424.7484741210938,
+              613.3291015625
+            ],
+            "score": 0.712962962962963,
+            "runner_score": 0.5856481481481481,
+            "center_margin": 0.12731481481481488,
+            "scale": 0.9650000000000001,
+            "band_coverage": [
+              0.6666666666666666,
+              0.6388888888888888,
+              0.6944444444444444,
+              0.7222222222222222,
+              0.7638888888888888,
+              0.7638888888888888
+            ],
+            "coherent_angle_fraction": 0.7083333333333334,
+            "supported_bands": 6,
+            "heldout_coherent_angle_fraction": 0.6944444444444444,
+            "visible_edge_distance_p90_px": 2.0,
+            "search_center_offset_px": [
+              1.0,
+              0.0
+            ],
+            "search_radius_px": 12.0,
+            "weak_seed_center_px": [
+              1423.7484741210938,
+              613.3291015625
+            ],
+            "weak_seed_support": 6,
+            "weak_seed_bands": 4,
+            "anchor_centers_px": [
+              [
+                505.7278289794922,
+                616.8627319335938
+              ],
+              [
+                971.2383117675781,
+                615.5347900390625
+              ]
+            ]
+          }
+        ],
+        "processing_ms": 115.16713300079573,
+        "stages_ms": {
+          "extraction": 25.276308000684367,
+          "primary_clustering": 5.632868998873164,
+          "raw_geometry": 0.3852860008919379,
+          "partial_search": 83.87529500032542
+        }
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 260.45274599891854
+    },
+    {
+      "name": "pixel1-material-occlusion-run-20261027-205050-650002-first-unusable-raw",
+      "passed": true,
+      "result": {
+        "accepted": true,
+        "centers_px": [
+          [
+            505.7248840332031,
+            616.873779296875
+          ],
+          [
+            971.2444458007812,
+            615.5343627929688
+          ],
+          [
+            1424.7614135742188,
+            614.3825073242188
+          ]
+        ],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "partial_arc_template_v2",
+        "reason": "OBSERVED_PARTIAL_ARCS_CANDIDATE_ONLY",
+        "proposals": [
+          {
+            "center_px": [
+              1424.7614135742188,
+              614.3825073242188
+            ],
+            "score": 0.7152777777777778,
+            "runner_score": 0.5717592592592593,
+            "center_margin": 0.1435185185185185,
+            "scale": 0.9650000000000001,
+            "band_coverage": [
+              0.6666666666666666,
+              0.6388888888888888,
+              0.6944444444444444,
+              0.7222222222222222,
+              0.7222222222222222,
+              0.7777777777777778
+            ],
+            "coherent_angle_fraction": 0.7083333333333334,
+            "supported_bands": 6,
+            "heldout_coherent_angle_fraction": 0.6944444444444444,
+            "visible_edge_distance_p90_px": 2.0,
+            "search_center_offset_px": [
+              7.5,
+              3.5
+            ],
+            "search_radius_px": 12.0,
+            "weak_seed_center_px": [
+              1417.2614135742188,
+              610.8825073242188
+            ],
+            "weak_seed_support": 4,
+            "weak_seed_bands": 3,
+            "anchor_centers_px": [
+              [
+                505.7248840332031,
+                616.873779296875
+              ],
+              [
+                971.2444458007812,
+                615.5343627929688
+              ]
+            ]
+          }
+        ],
+        "processing_ms": 111.56364800081064,
+        "stages_ms": {
+          "extraction": 27.42673200009449,
+          "primary_clustering": 4.686425001636962,
+          "raw_geometry": 0.01049999991664663,
+          "partial_search": 79.44203199986077
+        }
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 254.83270999939123
+    },
+    {
+      "name": "ring-pixel-audit-run-20261027-185938-451099-first-frame-raw",
+      "passed": true,
+      "result": {
+        "accepted": true,
+        "centers_px": [
+          [
+            476.32945251464844,
+            629.7437133789062
+          ],
+          [
+            943.79638671875,
+            635.6123046875
+          ],
+          [
+            1403.0532836914062,
+            640.1943969726562
+          ]
+        ],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "original_quality_candidate",
+        "reason": "ORIGINAL_CANDIDATE_ONLY",
+        "confidence": 0.991641075960503,
+        "processing_ms": 33.11093299998902
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 35.78839100009645
+    },
+    {
+      "name": "ring-pixel-audit-run-20261027-190527-433108-first-frame-raw",
+      "passed": true,
+      "result": {
+        "accepted": true,
+        "centers_px": [
+          [
+            483.47052001953125,
+            522.1484069824219
+          ],
+          [
+            951.6242370605469,
+            544.8086853027344
+          ],
+          [
+            1410.4530639648438,
+            567.3171997070312
+          ]
+        ],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "original_quality_candidate",
+        "reason": "ORIGINAL_CANDIDATE_ONLY",
+        "confidence": 0.993617600033091,
+        "processing_ms": 33.58867600036319
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 34.356038999248995
+    },
+    {
+      "name": "ring-shadow-run-20261027-194314-063293-first-frame-raw",
+      "passed": true,
+      "result": {
+        "accepted": true,
+        "centers_px": [
+          [
+            496.7405090332031,
+            596.9379272460938
+          ],
+          [
+            963.5747680664062,
+            592.5111999511719
+          ],
+          [
+            1421.2575073242188,
+            587.8879699707031
+          ]
+        ],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "original_quality_candidate",
+        "reason": "ORIGINAL_CANDIDATE_ONLY",
+        "confidence": 0.9937421868989318,
+        "processing_ms": 34.75386600075581
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 43.166273999304394
+    },
+    {
+      "name": "ring-empty-run-20261027-194859-020849-first-frame-raw",
+      "passed": true,
+      "result": {
+        "accepted": false,
+        "centers_px": [],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "partial_arc_template_v2",
+        "reason": "NEED_TWO_COMPLETE_ANCHORS",
+        "processing_ms": 9.937799999534036,
+        "stages_ms": {
+          "extraction": 9.84126000003016,
+          "primary_clustering": 0.038500000300700776,
+          "raw_geometry": 0.018665999959921464,
+          "partial_search": 0.04199899922241457
+        }
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 20.776837998710107
+    },
+    {
+      "name": "synthetic-full",
+      "passed": true,
+      "result": {
+        "accepted": true,
+        "centers_px": [
+          [
+            499.99598693847656,
+            610.0
+          ],
+          [
+            949.9960021972656,
+            610.0
+          ],
+          [
+            1399.9959716796875,
+            610.0
+          ]
+        ],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "original_quality_candidate",
+        "reason": "ORIGINAL_CANDIDATE_ONLY",
+        "confidence": 0.9999999720255537,
+        "processing_ms": 37.71481799958565
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 36.65521000039007
+    },
+    {
+      "name": "synthetic-occluded",
+      "passed": true,
+      "result": {
+        "accepted": true,
+        "centers_px": [
+          [
+            499.99598693847656,
+            610.0
+          ],
+          [
+            949.9960021972656,
+            610.0
+          ],
+          [
+            1399.9571533203125,
+            609.9628295898438
+          ]
+        ],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "original_quality_candidate",
+        "reason": "ORIGINAL_CANDIDATE_ONLY",
+        "confidence": 0.9998626806946689,
+        "processing_ms": 30.692763000843115
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 32.95168600016041
+    },
+    {
+      "name": "synthetic-partial_arc",
+      "passed": true,
+      "result": {
+        "accepted": false,
+        "centers_px": [],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "partial_arc_template_v2",
+        "reason": "AMBIGUOUS_CENTER",
+        "processing_ms": 192.05916400096612,
+        "proposals": [
+          {
+            "center_px": [
+              1398.3771362304688,
+              609.4974670410156
+            ],
+            "score": 0.75,
+            "runner_score": 0.7152777777777778,
+            "center_margin": 0.03472222222222221,
+            "scale": 1.0,
+            "band_coverage": [
+              0.7361111111111112,
+              0.7361111111111112,
+              0.7361111111111112,
+              0.7361111111111112,
+              0.7361111111111112,
+              0.7361111111111112,
+              0.7361111111111112,
+              0.7361111111111112,
+              0.7361111111111112,
+              0.7361111111111112,
+              0.7361111111111112,
+              0.7361111111111112
+            ],
+            "coherent_angle_fraction": 0.7361111111111112,
+            "supported_bands": 12,
+            "heldout_coherent_angle_fraction": 0.7222222222222222,
+            "visible_edge_distance_p90_px": 1.399993896484375,
+            "search_center_offset_px": [
+              -1.5,
+              -0.5
+            ],
+            "search_radius_px": 12.0,
+            "weak_seed_center_px": [
+              1399.8771362304688,
+              609.9974670410156
+            ],
+            "weak_seed_support": 12,
+            "weak_seed_bands": 6,
+            "anchor_centers_px": [
+              [
+                499.99598693847656,
+                610.0
+              ],
+              [
+                949.9960021972656,
+                610.0
+              ]
+            ]
+          }
+        ]
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 280.65792600136774
+    },
+    {
+      "name": "synthetic-short_arc",
+      "passed": true,
+      "result": {
+        "accepted": false,
+        "centers_px": [],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "partial_arc_template_v2",
+        "reason": "NO_IN_FRAME_HYPOTHESIS",
+        "processing_ms": 39.22504500042123,
+        "stages_ms": {
+          "extraction": 19.834478000120725,
+          "primary_clustering": 9.114438000324299,
+          "raw_geometry": 0.01195900040329434,
+          "partial_search": 10.2653369995096
+        }
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 177.93630399864924
+    },
+    {
+      "name": "synthetic-single_ring",
+      "passed": true,
+      "result": {
+        "accepted": false,
+        "centers_px": [],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "partial_arc_template_v2",
+        "reason": "NO_IN_FRAME_HYPOTHESIS",
+        "processing_ms": 92.85586099940701,
+        "stages_ms": {
+          "extraction": 18.43333199940389,
+          "primary_clustering": 9.608805999960168,
+          "raw_geometry": 0.012833999790018424,
+          "partial_search": 64.80293100139534
+        }
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 223.77245299867354
+    },
+    {
+      "name": "synthetic-solid_disk",
+      "passed": true,
+      "result": {
+        "accepted": false,
+        "centers_px": [],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "partial_arc_template_v2",
+        "reason": "NO_IN_FRAME_HYPOTHESIS",
+        "processing_ms": 36.58141999949294,
+        "stages_ms": {
+          "extraction": 17.837466999480966,
+          "primary_clustering": 8.796819000053802,
+          "raw_geometry": 0.011083000572398305,
+          "partial_search": 9.937508999428246
+        }
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 181.79790999965917
+    },
+    {
+      "name": "synthetic-missing",
+      "passed": true,
+      "result": {
+        "accepted": false,
+        "centers_px": [],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "partial_arc_template_v2",
+        "reason": "NO_IN_FRAME_HYPOTHESIS",
+        "processing_ms": 39.06346400071925,
+        "stages_ms": {
+          "extraction": 21.215497001321637,
+          "primary_clustering": 8.411241999056074,
+          "raw_geometry": 0.013124999895808287,
+          "partial_search": 9.42593299987493
+        }
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 176.52611800076556
+    },
+    {
+      "name": "synthetic-clutter",
+      "passed": true,
+      "result": {
+        "accepted": false,
+        "centers_px": [],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "partial_arc_template_v2",
+        "reason": "NO_IN_FRAME_HYPOTHESIS",
+        "processing_ms": 54.15668299974641,
+        "stages_ms": {
+          "extraction": 28.261469000426587,
+          "primary_clustering": 12.344303999270778,
+          "raw_geometry": 0.011665999409160577,
+          "partial_search": 13.541577000069083
+        }
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 213.92856700003904
+    },
+    {
+      "name": "synthetic-extra_anchor",
+      "passed": true,
+      "result": {
+        "accepted": false,
+        "centers_px": [],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "partial_arc_template_v2",
+        "reason": "MULTIPLE_COMPLETE_ANCHOR_PAIRS",
+        "processing_ms": 41.813253999862354,
+        "stages_ms": {
+          "extraction": 24.172949999410775,
+          "primary_clustering": 17.541430001074332,
+          "raw_geometry": 0.06504100019810721,
+          "partial_search": 0.03529099922161549
+        }
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 78.13801100019191
+    },
+    {
+      "name": "real-derived-translation",
+      "passed": true,
+      "result": {
+        "accepted": true,
+        "centers_px": [
+          [
+            526.70947265625,
+            599.8731689453125
+          ],
+          [
+            992.2483215332031,
+            598.5378723144531
+          ],
+          [
+            1445.720947265625,
+            597.0946960449219
+          ]
+        ],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "partial_arc_template_v2",
+        "reason": "OBSERVED_PARTIAL_ARCS_CANDIDATE_ONLY",
+        "proposals": [
+          {
+            "center_px": [
+              1445.720947265625,
+              597.0946960449219
+            ],
+            "score": 0.7060185185185185,
+            "runner_score": 0.5439814814814815,
+            "center_margin": 0.16203703703703698,
+            "scale": 0.9650000000000001,
+            "band_coverage": [
+              0.6666666666666666,
+              0.6666666666666666,
+              0.7083333333333334,
+              0.7222222222222222,
+              0.7638888888888888,
+              0.75
+            ],
+            "coherent_angle_fraction": 0.6944444444444444,
+            "supported_bands": 6,
+            "heldout_coherent_angle_fraction": 0.6944444444444444,
+            "visible_edge_distance_p90_px": 2.0,
+            "search_center_offset_px": [
+              1.0,
+              1.0
+            ],
+            "search_radius_px": 12.0,
+            "weak_seed_center_px": [
+              1444.720947265625,
+              596.0946960449219
+            ],
+            "weak_seed_support": 4,
+            "weak_seed_bands": 3,
+            "anchor_centers_px": [
+              [
+                526.70947265625,
+                599.8731689453125
+              ],
+              [
+                992.2483215332031,
+                598.5378723144531
+              ]
+            ]
+          }
+        ],
+        "processing_ms": 119.82847500075877,
+        "stages_ms": {
+          "extraction": 34.31287199964572,
+          "primary_clustering": 4.584053000144195,
+          "raw_geometry": 0.012541000614874065,
+          "partial_search": 80.92105099967739
+        }
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 262.7839999986463,
+      "relative_transform_error_px": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "real-derived-mirror",
+      "passed": true,
+      "result": {
+        "accepted": true,
+        "centers_px": [
+          [
+            493.77630615234375,
+            614.5951843261719
+          ],
+          [
+            947.7375793457031,
+            615.5383605957031
+          ],
+          [
+            1413.2874145507812,
+            616.8720397949219
+          ]
+        ],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "partial_arc_template_v2",
+        "reason": "OBSERVED_PARTIAL_ARCS_CANDIDATE_ONLY",
+        "proposals": [
+          {
+            "center_px": [
+              493.77630615234375,
+              614.5951843261719
+            ],
+            "score": 0.712962962962963,
+            "runner_score": 0.5787037037037037,
+            "center_margin": 0.1342592592592593,
+            "scale": 0.9650000000000001,
+            "band_coverage": [
+              0.6666666666666666,
+              0.6805555555555556,
+              0.6805555555555556,
+              0.7222222222222222,
+              0.6944444444444444,
+              0.7638888888888888
+            ],
+            "coherent_angle_fraction": 0.7083333333333334,
+            "supported_bands": 6,
+            "heldout_coherent_angle_fraction": 0.6944444444444444,
+            "visible_edge_distance_p90_px": 1.8799987792968818,
+            "search_center_offset_px": [
+              -1.5,
+              1.5
+            ],
+            "search_radius_px": 12.0,
+            "weak_seed_center_px": [
+              495.27630615234375,
+              613.0951843261719
+            ],
+            "weak_seed_support": 4,
+            "weak_seed_bands": 3,
+            "anchor_centers_px": [
+              [
+                947.7375793457031,
+                615.5383605957031
+              ],
+              [
+                1413.2874145507812,
+                616.8720397949219
+              ]
+            ]
+          }
+        ],
+        "processing_ms": 111.25827800060506,
+        "stages_ms": {
+          "extraction": 25.490096000794438,
+          "primary_clustering": 4.6698009991814615,
+          "raw_geometry": 0.011375001122360118,
+          "partial_search": 81.08904799883021
+        }
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 245.34377700001642,
+      "relative_transform_error_px": [
+        0.7093959722275589,
+        0.014107573646638453,
+        0.003311262700383047
+      ]
+    },
+    {
+      "name": "real-derived-missing-right",
+      "passed": true,
+      "result": {
+        "accepted": false,
+        "centers_px": [],
+        "stable": false,
+        "metric_valid": false,
+        "motion_allowed": false,
+        "serial": "DISABLED",
+        "units": "px",
+        "method": "partial_arc_template_v2",
+        "reason": "NO_IN_FRAME_HYPOTHESIS",
+        "processing_ms": 31.230587999743875,
+        "stages_ms": {
+          "extraction": 23.222132000228157,
+          "primary_clustering": 3.6723169996548677,
+          "raw_geometry": 0.012541000614874065,
+          "partial_search": 4.325347999838414
+        }
+      },
+      "v1_v2_semantic_match": true,
+      "v1_single_processing_ms": 172.27864399865211
+    }
+  ],
+  "passed": 19,
+  "total": 19,
+  "camera_opened": false,
+  "serial": "DISABLED",
+  "motion_allowed": false,
+  "metric_valid": false,
+  "hardware_acceptance": false,
+  "source_manifest_sha256": "bf0c1ea36d93a09a53196b16fca7d9955e6f36fb92d4170a8e5a1da5136b0ba8",
+  "scope": "Archived-image replay only; timing is offline CPU processing, not live result age or exposure latency.",
+  "benchmark": [
+    {
+      "name": "pixel1-material-occlusion-run-20261027-205050-650002-first-frame-raw",
+      "times_ms": {
+        "v1": [
+          247.33670400019037,
+          258.33848799993575,
+          255.9521089988266,
+          258.7648980006634,
+          259.9125880005886
+        ],
+        "v2": [
+          110.90711699944222,
+          110.2252109994879,
+          114.92505299975164,
+          108.65519400067569,
+          113.43378499987011
+        ]
+      },
+      "v1_p50_p95_max_ms": [
+        258.33848799993575,
+        259.68305000060354,
+        259.9125880005886
+      ],
+      "v2_p50_p95_max_ms": [
+        110.90711699944222,
+        114.62679939977534,
+        114.92505299975164
+      ]
+    },
+    {
+      "name": "pixel1-material-occlusion-run-20261027-205050-650002-first-reappearance-raw",
+      "times_ms": {
+        "v1": [
+          252.61024499923224,
+          266.92968499992276,
+          259.25080699926184,
+          254.93741600075737,
+          266.96089299912273
+        ],
+        "v2": [
+          113.21562199918844,
+          111.45398299959197,
+          114.39451999831363,
+          112.13443099950382,
+          111.23786099960853
+        ]
+      },
+      "v1_p50_p95_max_ms": [
+        259.25080699926184,
+        266.95465139928274,
+        266.96089299912273
+      ],
+      "v2_p50_p95_max_ms": [
+        112.13443099950382,
+        114.15874039848859,
+        114.39451999831363
+      ]
+    },
+    {
+      "name": "pixel1-material-occlusion-run-20261027-205050-650002-first-unusable-raw",
+      "times_ms": {
+        "v1": [
+          252.69424399994023,
+          259.72213199929683,
+          259.3030150001141,
+          267.47538399831683,
+          261.84893200115766
+        ],
+        "v2": [
+          107.59500299900537,
+          107.93916399961745,
+          113.71786299969244,
+          107.5471700005437,
+          106.9203879997076
+        ]
+      },
+      "v1_p50_p95_max_ms": [
+        259.72213199929683,
+        266.350093598885,
+        267.47538399831683
+      ],
+      "v2_p50_p95_max_ms": [
+        107.59500299900537,
+        112.56212319967744,
+        113.71786299969244
+      ]
+    }
+  ]
+}

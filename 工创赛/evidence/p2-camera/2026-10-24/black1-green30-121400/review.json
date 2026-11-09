@@ -1,0 +1,135 @@
+{
+  "crc": "passed",
+  "archive_sha256": "f6d12e99e149271c11e52b27a7b6a045cabc721cc1d02b8dfcdbab259f95bbba",
+  "frames": 292,
+  "span_s": 29.953707919999943,
+  "contiguous_indices": true,
+  "strict_timestamps": true,
+  "states": {
+    "STALE_RESULT": 2,
+    "FOLLOWING_PIXEL": 290
+  },
+  "target_combinations": {
+    "": 2,
+    "green": 290
+  },
+  "ids": [
+    "T001"
+  ],
+  "detected_color_combinations": {
+    "green": 292
+  },
+  "stale_frames": [
+    {
+      "frame_index": 1,
+      "detector_call_ms": 153.579542999978,
+      "result_host_age_ms": 171.82390600009967
+    },
+    {
+      "frame_index": 2,
+      "detector_call_ms": 106.87854699972377,
+      "result_host_age_ms": 152.24839499933296
+    }
+  ],
+  "modules_match": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true
+  },
+  "configs_match": {
+    "camera_processing.json": {
+      "source_sha": true,
+      "json_content": true
+    },
+    "material_color_thresholds.json": {
+      "source_sha": true,
+      "json_content": true
+    },
+    "project_profile.json": {
+      "source_sha": true,
+      "json_content": true
+    }
+  },
+  "all": {
+    "detector_call_ms": {
+      "median": 90.29039000006378,
+      "p95": 101.03051075011535,
+      "max": 153.579542999978
+    },
+    "result_host_age_ms": {
+      "median": 106.54371900000115,
+      "p95": 133.25774114946395,
+      "max": 171.82390600009967
+    }
+  },
+  "after_initial_stale": {
+    "detector_call_ms": {
+      "median": 90.23161950017311,
+      "p95": 100.25637985031608,
+      "max": 113.74778200024593
+    },
+    "result_host_age_ms": {
+      "median": 106.32584749964735,
+      "p95": 131.70901329995104,
+      "max": 148.19691199954832
+    }
+  },
+  "exposure": {
+    "controls": {
+      "gain": 80,
+      "white_balance_temperature_auto": 0,
+      "white_balance_temperature": 4600,
+      "exposure_auto": 1,
+      "exposure_absolute": 83
+    },
+    "raw_readback": "gain: 80\nwhite_balance_temperature_auto: 0\nwhite_balance_temperature: 4600\nexposure_auto: 1 (Manual Mode)\nexposure_absolute: 83\n",
+    "verified_at_host_monotonic": 7205.136496905,
+    "note": "Current readback and one-second settling, not exposure-to-result latency proof."
+  },
+  "source_counts": {
+    "chromatic_component": 216,
+    "combined_silhouette": 74
+  },
+  "geometry_change_frames": [
+    4,
+    5,
+    30,
+    31,
+    41,
+    42,
+    150,
+    151,
+    160,
+    161,
+    177,
+    178,
+    201,
+    202,
+    218,
+    242,
+    243,
+    279,
+    282,
+    284,
+    285,
+    287,
+    288,
+    291
+  ],
+  "identity_unverified_frames": [],
+  "retired_ids_count": 0,
+  "actions_disabled_all": true,
+  "visual_checked": [
+    "first-frame-raw.png",
+    "sample-06-raw.png"
+  ],
+  "visual_scene": "Only green material on middle ring; left/right rings empty. Two images inspected.",
+  "console_present": true,
+  "scope": "No black false positives; all 292 frames detect green, first two results rejected as stale, remaining 290 output green/T001. Not whole-run zero-stale acceptance. Source switches are not calibrated grasp geometry.",
+  "next_step": "Offline diagnosis of startup cost and green proposal-source switches; no same-scene recapture requested. Board performance cause remains unproven.",
+  "console_sha256": "3136b1e83383938555febb5feb9219ab8c00304f0e783f506a845c999e78bcd3",
+  "console_run_path_matches": true,
+  "console_completed": true,
+  "console_warning_lines": []
+}

@@ -1,0 +1,113 @@
+{
+  "frame_index": 16,
+  "host_read_time": 14117.083732536,
+  "detector_finished": 14117.202261333,
+  "detector_result_age_ms": 118.52879699836194,
+  "display_submission_age_ms": 141.27755499976047,
+  "candidate": {
+    "accepted": true,
+    "centers_px": [
+      [
+        517.5838317871094,
+        557.1416015625
+      ],
+      [
+        982.2277221679688,
+        558.7311706542969
+      ],
+      [
+        1431.871337890625,
+        560.5086669921875
+      ]
+    ],
+    "stable": false,
+    "metric_valid": false,
+    "motion_allowed": false,
+    "serial": "DISABLED",
+    "units": "px",
+    "method": "partial_arc_template_v2",
+    "reason": "OBSERVED_PARTIAL_ARCS_CANDIDATE_ONLY",
+    "proposals": [
+      {
+        "center_px": [
+          1431.871337890625,
+          560.5086669921875
+        ],
+        "score": 0.6990740740740741,
+        "runner_score": 0.5532407407407407,
+        "center_margin": 0.14583333333333337,
+        "scale": 0.9600000000000001,
+        "band_coverage": [
+          0.6388888888888888,
+          0.6527777777777778,
+          0.6944444444444444,
+          0.7083333333333334,
+          0.7777777777777778,
+          0.75
+        ],
+        "coherent_angle_fraction": 0.6944444444444444,
+        "supported_bands": 6,
+        "heldout_coherent_angle_fraction": 0.6944444444444444,
+        "visible_edge_distance_p90_px": 2.0,
+        "search_center_offset_px": [
+          1.0,
+          0.0
+        ],
+        "search_radius_px": 12.0,
+        "weak_seed_center_px": [
+          1430.871337890625,
+          560.5086669921875
+        ],
+        "weak_seed_support": 5,
+        "weak_seed_bands": 4,
+        "anchor_centers_px": [
+          [
+            517.5838317871094,
+            557.1416015625
+          ],
+          [
+            982.2277221679688,
+            558.7311706542969
+          ]
+        ]
+      }
+    ],
+    "processing_ms": 110.79158800021105,
+    "stages_ms": {
+      "extraction": 25.04267900076229,
+      "primary_clustering": 5.519119999007671,
+      "raw_geometry": 0.2995369995915098,
+      "partial_search": 79.93200200144202
+    }
+  },
+  "status": {
+    "state": "CANDIDATE",
+    "reason": "WINDOW_OR_JITTER",
+    "host_read_time": 14117.083732536,
+    "result_host_age_ms": 141.27755499976047,
+    "candidate_centers_px": [
+      [
+        517.5838317871094,
+        557.1416015625
+      ],
+      [
+        982.2277221679688,
+        558.7311706542969
+      ],
+      [
+        1431.871337890625,
+        560.5086669921875
+      ]
+    ],
+    "stable_centers_px": [],
+    "pixel_ready": false,
+    "stationary_verified": false,
+    "metric_valid": false,
+    "motion_allowed": false,
+    "serial": "DISABLED",
+    "units": "px",
+    "method": "partial_arc_template_v2",
+    "window_frames": 1,
+    "jitter_px": 0.0
+  }
+}

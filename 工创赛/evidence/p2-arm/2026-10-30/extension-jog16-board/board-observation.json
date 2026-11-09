@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-30",
+  "classification": "E 16-pulse first trial software-feedback completion; physical direction tentative",
+  "user_text": "好像是缩回，步长太小了给我拉大点",
+  "pulses": 16,
+  "rpm": 5,
+  "motion_request": 0,
+  "motion_state": 7,
+  "motion_result": 1,
+  "move_result": 1,
+  "stop_result": 0,
+  "flags": 3,
+  "delta_raw_hex": "0xE6",
+  "delta_raw_decimal": 230,
+  "speed_rpm": 0,
+  "lift_state": 4,
+  "vm_test_request": 1,
+  "dm_point_enable": 0,
+  "legacy_read_state": 0,
+  "legacy_read_results": [
+    0,
+    0,
+    0
+  ],
+  "legacy_read_interpretation": "no separate read transaction in this boot; motion has own option and feedback reads; not a regression of accepted communication",
+  "software_feedback_complete": true,
+  "physical_direction": "tentative retract per user; not definitive",
+  "physical_self_stop_explicitly_confirmed": false,
+  "physical_mm_mapping_verified": false,
+  "origin_or_travel_verified": false,
+  "grasp_or_release_verified": false,
+  "next_step_candidate_pulses": 160,
+  "requested_speed_increase": false,
+  "images": [
+    {
+      "file": "small-step-initial-watch.png",
+      "sha256": "f9a88b362f04f2e1cc3b54a5c91c18ec951732d0c40cefd4be4651a9cbb8bc6c"
+    },
+    {
+      "file": "small-step-completed-watch.png",
+      "sha256": "c0d7df1649335ad7f116167348618d569392d8e1256e5612824a192f659eb8dd"
+    }
+  ],
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged_pending_official_clarification"
+}

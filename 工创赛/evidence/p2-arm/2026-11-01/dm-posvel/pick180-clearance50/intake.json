@@ -1,0 +1,49 @@
+{
+  "date": "2026-11-01",
+  "user_reports": [
+    "需要逆时针，需要伸出来，要保证我的小车距离圆盘要有一段至少5cm的距离不能碰到圆盘",
+    "直接转到180"
+  ],
+  "classification": "E: user-specified angular teach target and vehicle-to-source-tray clearance",
+  "target_logical_deg": 180,
+  "last_feedback_logical_deg": 177.811829,
+  "expected_ccw_correction_deg": 2.188171000000011,
+  "extension_needed": false,
+  "extension_distance_mm": 0,
+  "body_to_source_tray_min_clearance_mm": 50,
+  "clearance_definition": "Shortest horizontal edge-to-edge distance between vehicle body outline and source tray outline; arm outreach handled separately",
+  "current_clearance_measured_mm": null,
+  "physical_clearance_accepted": false,
+  "software_chassis_clearance_guard_implemented": false,
+  "angle180_executed_or_accepted": false,
+  "next_single_action": "Download Code64408 to apply correctly converted Emm speeds. Do not switch X only on assumed precision benefit. Preserve180 and no additional extension; determine actual73mm-to-pulse mapping during necessary source height approach, do not assume old rough mapping valid.",
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02",
+    "FIELD-06"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05",
+    "MECH-06"
+  ],
+  "official_Q": "待技术答疑确认; unchanged",
+  "new_firmware_or_build": false,
+  "assistant_motion": false,
+  "user_followup": "没有问题，在这个位置若圆盘物料转到这里刚好不用伸缩，直接下降即可",
+  "angle180_functional_user_accepted": true,
+  "source_pick_radial_alignment_user_accepted": true,
+  "source_pick_additional_extension_mm": 0,
+  "extension_distance_scope": "Additional extension from present physical pose is zero; not an independently measured absolute retract-relative coordinate.",
+  "material_present_at_pickpoint_now": null,
+  "source_tray_stopped_now": null,
+  "source_pick_descent_mm": 73,
+  "source_pick_descent_pulses": null,
+  "source_pick_descent_scope": "User approximate gripper descent distance, not tray surface height; pulse count not calibrated"
+}

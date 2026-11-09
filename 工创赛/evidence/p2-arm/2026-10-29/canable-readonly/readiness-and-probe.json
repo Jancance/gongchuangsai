@@ -1,0 +1,30 @@
+{
+  "user_adapter": "CANable 2.1, user authorized 2.0 SLCAN restoration",
+  "normal_usb": "USB串行设备COM16，用户截图确认",
+  "cangaroo": "CANable SLCAN COM16；本轮日志Starting measurement/Listening，RX列表为空",
+  "bitrate": "用户按1000000设置步骤进入监听，尚未作总线实测",
+  "motor_can_id": null,
+  "user_message_4": "用户明确为误输入，不是CAN ID",
+  "main_firmware_review": "实际工程目前CAN1=500k，未有CAN2业务初始化；本轮未改F407源码",
+  "proposed_single_read": {
+    "standard_id_hex": "7FF",
+    "dlc": 8,
+    "data_hex": "01 00 33 08 00 00 00 00",
+    "candidate_motor_id": 1,
+    "register": "ESC_ID (0x08)",
+    "sent_by_agent": false,
+    "note": "ID1仅为只读候选探测，不能当本机已确认ID；旧版电机是否支持该参数访问待实际回复核对"
+  },
+  "protocol_source": "https://github.com/dmBots/motor-sdk/blob/main/Python例程/u2can/DM_CAN.py",
+  "register_source": "DMTool上位机软件说明书第22页",
+  "no_enable_no_parameter_writes": true,
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03"
+  ],
+  "official_Q_unchanged": true
+}

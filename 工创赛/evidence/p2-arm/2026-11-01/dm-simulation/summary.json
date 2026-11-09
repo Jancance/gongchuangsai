@@ -1,0 +1,135 @@
+{
+  "summary": {
+    "MIT_VMAX30": {
+      "final_error_deg": {
+        "median": 0.6156464078451891,
+        "min": 0.16658496244931298,
+        "max": 1.1480162911045515
+      },
+      "tracking_rmse_deg": {
+        "median": 0.5596458098481547,
+        "min": 0.17852887849735505,
+        "max": 1.0144948913329532
+      },
+      "speed_ripple_5to80hz_rms_deg_s": {
+        "median": 0.04552689385084406,
+        "min": 0.018814938582403636,
+        "max": 0.07385809844090686
+      },
+      "velocity_tracking_rmse_deg_s": {
+        "median": 0.15925054329564703,
+        "min": 0.15743896241885943,
+        "max": 0.16362685604167762
+      },
+      "max_torque_nm": {
+        "median": 0.05045141720401587,
+        "min": 0.015188811635029364,
+        "max": 0.10013841439457538
+      },
+      "speed_guard_cases": 0
+    },
+    "MIT_VMAX1": {
+      "final_error_deg": {
+        "median": 0.5272626788805288,
+        "min": 0.12318652232928466,
+        "max": 1.0008008287860986
+      },
+      "tracking_rmse_deg": {
+        "median": 0.5096544916497374,
+        "min": 0.13927343550352603,
+        "max": 0.9538650720406509
+      },
+      "speed_ripple_5to80hz_rms_deg_s": {
+        "median": 0.012677559789889718,
+        "min": 0.0033810996512896856,
+        "max": 0.03861932443059305
+      },
+      "velocity_tracking_rmse_deg_s": {
+        "median": 0.017758533529887495,
+        "min": 0.007851360336170414,
+        "max": 0.04296570634473962
+      },
+      "max_torque_nm": {
+        "median": 0.050133012996869626,
+        "min": 0.011129039538021081,
+        "max": 0.10072791490676837
+      },
+      "speed_guard_cases": 0
+    },
+    "MIT_unquantized": {
+      "final_error_deg": {
+        "median": 0.47355423204663194,
+        "min": 0.07917419243110113,
+        "max": 0.9359431978514612
+      },
+      "tracking_rmse_deg": {
+        "median": 0.468268090905112,
+        "min": 0.09942028479973707,
+        "max": 0.910997661327539
+      },
+      "speed_ripple_5to80hz_rms_deg_s": {
+        "median": 0.00333552970172383,
+        "min": 0.0005457916911143022,
+        "max": 0.019296884713315893
+      },
+      "velocity_tracking_rmse_deg_s": {
+        "median": 0.007844743022037765,
+        "min": 0.0049228469652997054,
+        "max": 0.02275214409559216
+      },
+      "max_torque_nm": {
+        "median": 0.050080656233493406,
+        "min": 0.01046178871011297,
+        "max": 0.10012699875800855
+      },
+      "speed_guard_cases": 0
+    },
+    "Generic_cascade_PI": {
+      "final_error_deg": {
+        "median": 0.00867046857539775,
+        "min": 0.005365081239005185,
+        "max": 0.010531375911144312
+      },
+      "tracking_rmse_deg": {
+        "median": 0.02732068440949101,
+        "min": 0.006513712859935204,
+        "max": 0.05276074914550341
+      },
+      "speed_ripple_5to80hz_rms_deg_s": {
+        "median": 0.0013568763949640145,
+        "min": 0.0006535148453609077,
+        "max": 0.0027640952740952958
+      },
+      "velocity_tracking_rmse_deg_s": {
+        "median": 0.0034249912962902264,
+        "min": 0.002214036121776903,
+        "max": 0.005657635507001459
+      },
+      "max_torque_nm": {
+        "median": 0.050084783181411824,
+        "min": 0.010024680794803405,
+        "max": 0.1001924412486717
+      },
+      "speed_guard_cases": 0
+    }
+  },
+  "integration_convergence": {
+    "MIT_VMAX30": {
+      "terminal_angle_difference_deg": 3.2850082192016457e-06,
+      "max_speed_difference_rad_s": 4.764821703348576e-06
+    },
+    "MIT_VMAX1": {
+      "terminal_angle_difference_deg": 8.553742782061465e-06,
+      "max_speed_difference_rad_s": 2.0284351230914766e-06
+    },
+    "MIT_unquantized": {
+      "terminal_angle_difference_deg": 1.3579909352418071e-05,
+      "max_speed_difference_rad_s": 2.1504099019867273e-05
+    },
+    "Generic_cascade_PI": {
+      "terminal_angle_difference_deg": 2.631877854919619e-06,
+      "max_speed_difference_rad_s": 1.12906468096724e-05
+    }
+  },
+  "nominal_case": 18
+}

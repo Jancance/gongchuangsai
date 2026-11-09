@@ -1,0 +1,63 @@
+{
+  "actual": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程",
+  "stage": "D:\\Codex\\工创赛\\tmp\\extension_home_only_20261103",
+  "original": {
+    "USER/vehicle_parameters.h": "be9939239c3b7717d104e85a4be89503e88bfe5f29207431806695f88794b5ab",
+    "CHASSIS/USER/startup_axes.c": "9848884e37c31a3968d5002ca5c582097fbf4ec12ffdfb7047b8d63691aed81b",
+    "CHASSIS/USER/vehicle_mission.inc": "41c36c13f8f58dfb5865d93ff88f449eded6bbd4643c741b769d97202fc5358b",
+    "CHASSIS/USER/main.c": "4cf601922d54268a140be827174d3d3a96802713a8cab93d018c69967812f3bb",
+    "CHASSIS/SYSTEM/CAN/can.c": "1a93b9978d3592ee58b0c65fbde545cea41fbce2d16ec6a08430c470e54057ee"
+  },
+  "hardware_accessed": false,
+  "flashed": false,
+  "installed": true,
+  "changed": {
+    "USER/vehicle_parameters.h": "67673fa78bc48dc52ddd214df8343278e81e70b1c1331ac899419f9bab784fce",
+    "CHASSIS/USER/startup_axes.c": "ff82407296780b98d0a2ea5b5ba2fcca7268057fb84eabcd83ea712cf3fda9c8",
+    "CHASSIS/USER/vehicle_mission.inc": "aae7d15ca476c4c695e6e66229ca78a19ce1429b3ea1af7f2740bd4a0166f906",
+    "CHASSIS/USER/main.c": "2d65708492e74aef25c94a0e894ab4d5488be55afc3fa6149a5dacd6d3fed974",
+    "CHASSIS/SYSTEM/CAN/can.c": "c1bca9bfc75966b5228d317817a762289a2867b68bc6793f29f2b39212cb0220",
+    "CHASSIS/USER/extension_home_only.inc": "17a57ddb43bb87c6a0a77af8759434cb3524b9ee07c95d662a845ef44c8dc073"
+  },
+  "protected_source_files_verified": 1856,
+  "actual_builds": [
+    {
+      "target": "Vehicle_Integrated",
+      "passed": true,
+      "returncode": 0,
+      "log": "actual-Vehicle_Integrated.log",
+      "program_size": "Program Size: Code=83184 RO-data=6572 RW-data=2920 ZI-data=118632  "
+    },
+    {
+      "target": "Vehicle_Offline",
+      "passed": true,
+      "returncode": 0,
+      "log": "actual-Vehicle_Offline.log",
+      "program_size": "Program Size: Code=76664 RO-data=6564 RW-data=2800 ZI-data=118616  "
+    }
+  ],
+  "requirements_R": [
+    "RUN-01",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "待技术答疑确认；不修改FIELD-05/OBS-03/QR-04",
+  "software_host_checks": 91,
+  "git_commit_performed": false,
+  "git_push_performed": false,
+  "unclosed": [
+    "触挡细节/机械重复性与原点独立证据",
+    "失电后参考恢复",
+    "板端镜像和状态遥测独立核对",
+    "原八段现场实测与三分钟演练"
+  ],
+  "user_observation": "user-observation.json",
+  "user_reported_single_function_ok": true
+}

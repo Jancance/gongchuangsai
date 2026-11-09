@@ -1,0 +1,86 @@
+{
+  "frames": 576,
+  "session_frames": 576,
+  "session_error": null,
+  "camera_opened": true,
+  "serial": "DISABLED",
+  "timing_source": "host_read_completion_only",
+  "detected_count": 576,
+  "stable_count": 572,
+  "tracking_modes": {
+    "reacquired": 1,
+    "local": 575
+  },
+  "failure_details": {},
+  "metric_statuses": {
+    "UNCONFIGURED": 576
+  },
+  "image_sha256": {
+    "first-raw.png": "0eda44c165af61675e01e6b875031ba9f331f310ff686db3f5bfe410f47b3ff7",
+    "last-raw.png": "ac1117bcd4ae3863ac5e9ea13cbdfcb56d4f3a0359e83258c59a89da2842995f",
+    "last-overlay.png": "8c73284cc488e5d2479446bc49f3504845c6e91ac2f6115ff70855a6993b3eb6"
+  },
+  "center_x_px": {
+    "min": 951.0140787498335,
+    "max": 951.3913514585834,
+    "median": 951.1721328513569
+  },
+  "center_y_px": {
+    "min": 463.80315086570783,
+    "max": 464.1754681495248,
+    "median": 464.008499472102
+  },
+  "radius_px": {
+    "min": 604.4767255419493,
+    "max": 604.7930074387885,
+    "median": 604.6448077294783
+  },
+  "visible_arc_deg": {
+    "min": 145.0,
+    "max": 285.0,
+    "median": 280.0
+  },
+  "fit_rms_px": {
+    "min": 0.7996258917683714,
+    "max": 1.6102745246278476,
+    "median": 1.2644898546917214
+  },
+  "confidence": {
+    "min": 0.8911414463156414,
+    "max": 0.9485105291559645,
+    "median": 0.9272195013189416
+  },
+  "processing_ms": {
+    "min": 5.529552000098192,
+    "max": 93.6083440000175,
+    "median": 7.272793999959504
+  },
+  "first": {
+    "detected": true,
+    "stable": false,
+    "center_x_px": 951.0140787498335,
+    "center_y_px": 463.8744621869903,
+    "radius_px": 604.5264328892735,
+    "visible_arc_deg": 280.0,
+    "fit_rms_px": 1.2123768206542425,
+    "confidence": 0.938768847441705,
+    "processing_ms": 93.6083440000175,
+    "tracking_mode": "reacquired",
+    "detail": "累计稳定帧 1/5",
+    "material_centers_px": []
+  },
+  "last": {
+    "detected": true,
+    "stable": true,
+    "center_x_px": 951.1616308450941,
+    "center_y_px": 463.9180339184544,
+    "radius_px": 604.6213740248184,
+    "visible_arc_deg": 280.0,
+    "fit_rms_px": 1.3333093137367629,
+    "confidence": 0.9326611457708706,
+    "processing_ms": 8.82966699998633,
+    "tracking_mode": "local",
+    "detail": "连续圆盘观测稳定",
+    "material_centers_px": []
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "stage": "open_session",
+  "usb_transport_preference": "CMSIS-DAP v1",
+  "actuator_writes": 0,
+  "halt_requested": false,
+  "reset_requested": false,
+  "flash_requested": false,
+  "interface_class": "HidApiUSB",
+  "error_type": "RuntimeError",
+  "error_repr": "RuntimeError('already open')",
+  "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 22, in <module>\n  File \"D:\\Codex\\工创赛\\tmp\\gripper_debug_deps\\pyocd\\core\\session.py\", line 685, in open\n    self._probe.open()\n  File \"D:\\Codex\\工创赛\\tmp\\gripper_debug_deps\\pyocd\\probe\\cmsis_dap_probe.py\", line 278, in open\n    self._link.open()\n  File \"D:\\Codex\\工创赛\\tmp\\gripper_debug_deps\\pyocd\\utility\\concurrency.py\", line 29, in _locking\n    return func(self, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\Codex\\工创赛\\tmp\\gripper_debug_deps\\pyocd\\probe\\pydapaccess\\dap_access_cmsis_dap.py\", line 752, in open\n    self._interface.open()\n  File \"D:\\Codex\\工创赛\\tmp\\gripper_debug_deps\\pyocd\\probe\\pydapaccess\\interface\\hidapi_backend.py\", line 220, in open\n    self.device.open_path(self.device_info['path'])\n  File \"hid.pyx\", line 155, in hid.device.open_path\nRuntimeError: already open\n"
+}

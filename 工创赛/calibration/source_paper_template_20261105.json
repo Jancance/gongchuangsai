@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "calibration_id": null,
+  "width_mm": null,
+  "height_mm": null,
+  "context": {
+    "camera_id": null,
+    "image_size": [1920, 1080],
+    "mount_id": null,
+    "arm_pose_id": null,
+    "pixel_space": "raw",
+    "lens_profile_id": null,
+    "plane_id": "paper_on_source_surface",
+    "plane_z_mm": 85.5,
+    "plane_origin": "corner A; X along AB; Y along AD",
+    "axes": "x_along_ab_y_toward_ad_mm"
+  },
+  "limits": {"fit_max_mm": 3.0, "validation_max_mm": 3.0},
+  "markers": [
+    {"id": "A", "image_px": null},
+    {"id": "B", "image_px": null},
+    {"id": "C", "image_px": null},
+    {"id": "D", "image_px": null},
+    {"id": "M", "image_px": null},
+    {"id": "E", "image_px": null},
+    {"id": "F", "image_px": null}
+  ],
+  "note": "3mm limits are initial engineering diagnostics, not official rules or grasp acceptance; 85.5mm is measured support surface, paper thickness not measured"
+}

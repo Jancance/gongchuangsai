@@ -1,0 +1,91 @@
+{
+ "tag": "pick-geometry-corrected-stroke170",
+ "when": "2026-11-08T03:24:50",
+ "scope": "offline only - no debugger, no flash, no motion",
+ "correction": {
+  "wrong_claim": "extension stroke is 70mm",
+  "right_value": "170mm total (70mm prep + 100mm further)",
+  "why_wrong": "VEHICLE_SOURCE_PREP_EXTENSION_MM 70.0f is the amount used by the arrival-prep action, not the stroke limit",
+  "sources": [
+   "docs/competition_requirements_2027.md:37 (2026-11-05 -> total stroke candidate 170mm = 70 + 100)",
+   "docs/SOURCE_WORKFLOW_NEXT_2026-11-05.md:24",
+   "docs/SOURCE_PARALLEL_FINAL_FLOW_2026-11-06.md:15 (source branch supports 170mm extension)",
+   "CHASSIS/USER/integration10_complete.inc:315 (g_it_extension_mm <= 170)",
+   "CHASSIS/USER/source_parallel_flow.c:5 (extension_mm <= 170)"
+  ],
+  "L0_source": "docs/SOURCE_PAPER48_RESULT_2026-11-06.md:18 -> retracted radius candidate 161mm, 161+48=209 axis-to-TCP, total stroke 170mm (L0 is CANDIDATE, never measured)"
+ },
+ "inputs": {
+  "D_mm": 280.0,
+  "clearance_mm": 75.0,
+  "L0_mm": 161.0,
+  "stroke_mm": 170.0,
+  "R_orbit_mm": 100.0,
+  "angle_sep_deg": 120.0
+ },
+ "result_at_D280": {
+  "near_dist_mm": 180.0,
+  "near_extension_mm": 19.0,
+  "near_ok": true,
+  "side_dist_mm": 341.17,
+  "side_extension_mm": 180.17,
+  "side_ok": false,
+  "over_by_mm": 10.17,
+  "side_angle_offset_deg": 20.63,
+  "side_arm_deg": [
+   159.37,
+   200.63
+  ],
+  "arm_range_ok": true
+ },
+ "fixes": [
+  {
+   "option": "move closer 10.5mm",
+   "clearance": "75 -> 64.5mm",
+   "side_extension_mm": 170.0,
+   "margin_mm": 0.0
+  },
+  {
+   "option": "move closer 15mm (recommended)",
+   "clearance": "75 -> 60mm",
+   "side_extension_mm": 165.69,
+   "margin_mm": 4.31
+  },
+  {
+   "option": "measured L0 >= 171.2mm",
+   "note": "recorded L0 is a candidate, not measured"
+  },
+  {
+   "option": "actual stroke >= 181mm",
+   "note": "recorded value is 170mm"
+  }
+ ],
+ "operating_window": {
+  "clearance_55mm": {
+   "D": 255,
+   "near_extension_mm": -6.0,
+   "side_extension_mm": 156.06,
+   "note": "near extension goes negative -> gripper already past the piece"
+  },
+  "clearance_60mm": {
+   "D": 265,
+   "near_extension_mm": 4.0,
+   "side_extension_mm": 165.69,
+   "margin_mm": 4.31
+  },
+  "conclusion": "usable clearance window is 55..60mm (D 260..265); 60mm recommended"
+ },
+ "unknown_not_invented": [
+  "L0 is a candidate (161mm) from paper-plane mapping, never measured on the machine",
+  "time to extend 165-180mm: no measurement exists; only 70mm prep was simulated at 3.81s (30RPM, two 35mm segments)",
+  "turntable dwell/stop accuracy on site"
+ ],
+ "build": {
+  "target": "Vehicle_LiftRuler",
+  "errors": 0,
+  "warnings": 0,
+  "code": 116928,
+  "note": "header comment only - no code change"
+ },
+ "tool": "tmp/recalc_stroke170.py (recomputation script, inputs with sources)"
+}

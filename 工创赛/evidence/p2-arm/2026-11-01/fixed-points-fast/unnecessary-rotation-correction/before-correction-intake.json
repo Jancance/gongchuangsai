@@ -1,0 +1,147 @@
+{
+  "date": "2026-11-01",
+  "classification": "E: fast fixed-point intake and current-session reference establishment",
+  "user_orientation": "车载三槽盘一侧",
+  "user_question": "那伸缩机构的原点有了吗",
+  "current_carrier_slot_center_alignment_confirmed": true,
+  "current_lift_top_confirmed_in_this_followup": true,
+  "coarse_extension_pulses_per_mm": 32,
+  "current_mm_interface": "relative manual step, not an absolute-position command",
+  "current_session_extension_home_accepted": true,
+  "last_shown_home_state": 8,
+  "historical_home_scope": "Two physical retract-endstop functional observations from2026-10-30 remain accepted in their historical scope; do not reuse as current zero after reset/manual mechanical adjustment.",
+  "next_single_action": "First g_carrier_request=2 once and run until g_carrier_state=3; state2 still holds the carrier interlock. Keep current physical lift top, extension retract0 and empty/open gripper. Only with VM/lift ready, all other requests idle, no latched fault and the full counterclockwise sweep clear: set g_dm_place_target_deg=34.3210144, retain g_dm_pick_target_deg=177.833679, set g_dm_point_enable=1 then g_dm_jog_request=4 once. Run continuously about15-18s; abnormal motion uses g_dm_jog_request=3 while CPU keeps running. Return fresh jog state/result/stop_result and start/target/current/logical angles plus physical source alignment. Do not automatically return, extend, lower or grip.",
+  "purpose": "Establish one current-session mechanical reference for fixed-point teaching, not repeat a homing qualification or redo the accepted50mm movement.",
+  "existing_home_profile": {
+    "direction": 0,
+    "rpm": 30,
+    "driver_timeout_ms": 10000,
+    "detect_rpm": 300,
+    "detect_current_ma": 800,
+    "detect_time_ms": 60
+  },
+  "origin_not_claimed_until_feedback": false,
+  "metric_precision_or_full_travel_accepted": false,
+  "no_new_code_build_tests_or_assistant_motion": true,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "待技术答疑确认; unchanged",
+  "current_home_acceptance": {
+    "user_text": "触顶已经自己停稳，没有问题，下一步",
+    "context": "Reply to the explicit X28 retract-endstop home instruction; interpret contact as extension retract stop, not new Z-axis top evidence.",
+    "screenshot": "extension-home-current-accepted-watch.png",
+    "sha256": "fb49b6104949c90d16d738e0d7bcc55401cec7efc4c54584c6078cb22a6adc39",
+    "watch": {
+      "g_vm_test_request": 1,
+      "g_extension_use_mm": 1,
+      "g_extension_distance_mm": 10.0,
+      "g_extension_motion_request": 0,
+      "g_extension_home_request": 0,
+      "g_lift_state": 4,
+      "g_extension_home_state": 8,
+      "g_extension_home_result": 1,
+      "g_extension_home_reported": 1
+    },
+    "accepted_scope": "One current-session physical retract-endstop home/self-stop and software8/1/1. Defines retract-end mechanical0mm reference; not precision, full travel, retained power-off origin or absolute-position software acceptance.",
+    "reference_mm_by_definition": 0,
+    "independent_raw_driver_zero_readback": false,
+    "z_top_currently_confirmed": false
+  },
+  "current_carrier_alignment_report": {
+    "user_text": "我的载物盘没有对准，上电不会自动复位到0这个角度",
+    "aligned": false,
+    "restore_executed": false,
+    "startup_explanation": "Existing test_enable/request default0, no automatic0 command. No new automatic-startup source change requested/performed.",
+    "latest_user_alignment_confirmation": "No extension needed to align slot1 center; physical current alignment accepted, no fresh carrier command/state values fabricated.",
+    "historical_report_superseded_by_static_alignment_confirmation": true
+  },
+  "procedure": "docs/P2_CARRIER_ZERO_RESTORE_2026-11-01.md",
+  "current_static_pose_confirmation": {
+    "user_reports": [
+      "不需要伸出，即可对准1号槽中心",
+      "夹爪是还在升降的顶部"
+    ],
+    "carrier_slot1_center_user_confirmed": true,
+    "extension_offset_from_current_retract_mm": 0,
+    "lift_offset_from_physical_top": 0,
+    "lift_driver_raw_zero_or_fresh_home_telemetry_observed": false,
+    "carrier_current_angle_or_state_telemetry_observed": true,
+    "accepted_scope": "Current static carrier-handoff-above alignment: extension at accepted retract reference, gripper centered on slot1 and physically at lift top. Not a new grip-cycle or full transfer test.",
+    "carrier_telemetry_scope": "debug_angle0 is a command, state2 is window completion, not physical angular feedback"
+  },
+  "current_dm_capture": {
+    "date": "2026-11-01",
+    "classification": "E: supervised fixed-point teaching",
+    "user_request": "接着完成后续1的内容",
+    "screenshot": "carrier-handoff-above-dm-watch.png",
+    "sha256": "ab3667611c65728d4b11154f945214fc8b429db05ab52130ffee3ed558df86b5",
+    "watch": {
+      "g_carrier_state": 2,
+      "g_carrier_debug_angle": 0,
+      "g_carrier_test_enable": 1,
+      "g_carrier_request": 0,
+      "g_dm_point_enable": 0,
+      "g_dm_can2_read_request": 0,
+      "g_dm_can2_state": 4,
+      "g_dm_can2_result": 1,
+      "g_dm_can2_feedback_valid": 1,
+      "g_dm_can2_position_deg": 97.779699,
+      "g_dm_can2_logical_position_deg": 34.3210144
+    },
+    "accepted_scope": "Successful DM read in the previously user-confirmed slot1-aligned, physical-lift-top and retract0 static pose. Records a taught handoff-above angle only; screenshot alone does not prove the physical pose, repeatability or automatic return.",
+    "inherited_pose_evidence": "evidence/p2-arm/2026-11-01/fixed-points-fast/intake.json#current_static_pose_confirmation",
+    "logical_handoff_above_deg": 34.3210144,
+    "previous_coarse_logical_deg": 33.8401489,
+    "previous_coarse_retained_as_history": true,
+    "angle_difference_interpretation": "Different taught poses/times; not evidence of drift or accuracy.",
+    "motor_state_not_visible": true,
+    "new_lift_or_extension_telemetry_claimed": false,
+    "carrier_session_released": false,
+    "carrier_state2_meaning": "Output window finished; session interlock remains until request2. No position sensor feedback.",
+    "actual_project": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\gongxun-f407.uvprojx",
+    "owning_source_sha256": {
+      "HARDWARE/DM_CAN2/dm_can2_motion.c": "700bfe480942ba960e4fc2948c926cde83c26cc673ca69d56c8821a1302cbb13",
+      "HARDWARE/CARRIER/carrier.c": "5061644e0af667423c4430358a1f396a7105ac140bcbedce5e66eca31f10beb1",
+      "HARDWARE/CARRIER/carrier.h": "e5ba2fd497df2fac64b6766b9dc8497b797eb3207749b2e1d532b8ce4782e4ec",
+      "USER/main.c": "d0c0fa10640bd63f58b760357ae176787f01fe262e34ec5ad5cc42d7dd06ec83"
+    },
+    "firmware_modified": false,
+    "new_build_or_test": false,
+    "assistant_hardware_command_sent": false,
+    "next_single_action": "First g_carrier_request=2 once and run until g_carrier_state=3; state2 still holds the carrier interlock. Keep current physical lift top, extension retract0 and empty/open gripper. Only with VM/lift ready, all other requests idle, no latched fault and the full counterclockwise sweep clear: set g_dm_place_target_deg=34.3210144, retain g_dm_pick_target_deg=177.833679, set g_dm_point_enable=1 then g_dm_jog_request=4 once. Run continuously about15-18s; abnormal motion uses g_dm_jog_request=3 while CPU keeps running. Return fresh jog state/result/stop_result and start/target/current/logical angles plus physical source alignment. Do not automatically return, extend, lower or grip.",
+    "requirements_R": [
+      "RUN-01",
+      "RUN-02",
+      "RUN-03",
+      "RUN-04",
+      "PWR-01",
+      "MECH-01",
+      "MECH-02"
+    ],
+    "requirements_E": [
+      "RUN-06",
+      "LOC-03",
+      "CAL-05"
+    ],
+    "official_Q": "待技术答疑确认; unchanged",
+    "open_items": [
+      "Fresh source-pick alignment and extension/contact coordinates",
+      "Return-to-new-handoff angle physical result",
+      "Full transfer and swept clearance",
+      "Metric accuracy/full travel and power-off/multiturn recovery",
+      "Formal autonomous execution"
+    ]
+  }
+}

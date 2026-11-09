@@ -1,0 +1,118 @@
+{
+  "state": "STALE_RESULT",
+  "targets": [],
+  "unknown_candidates": 0,
+  "ready": false,
+  "motion_allowed": false,
+  "units": "pixels",
+  "timestamp_source": "host_read_completion",
+  "timestamp": 4414.171,
+  "retired_ids": [],
+  "detector_regions": [
+    {
+      "bbox_px": [
+        260,
+        498,
+        347,
+        264
+      ],
+      "area_px2": 63139.5,
+      "label": "blue",
+      "reason": "DOMINANT_COLOR_EVIDENCE",
+      "proposal_source": "combined_silhouette",
+      "usable_fraction": 0.9992485848347722,
+      "color_fractions": {
+        "red": 0.0,
+        "yellow": 0.0,
+        "blue": 0.5891848534474116,
+        "green": 0.0001002640286086695,
+        "black": 0.07561578824237158,
+        "lightblue": 0.010160088232345175
+      },
+      "dark_fraction": 0.07561578824237158,
+      "silhouette_center_px": [
+        450.69161935080257,
+        634.5582506460562
+      ]
+    },
+    {
+      "bbox_px": [
+        812,
+        505,
+        264,
+        262
+      ],
+      "area_px2": 53907.0,
+      "label": "UNKNOWN",
+      "reason": "AMBIGUOUS_COLOR",
+      "proposal_source": "combined_silhouette",
+      "usable_fraction": 0.9965989718731064,
+      "color_fractions": {
+        "red": 0.0035695373330456785,
+        "yellow": 0.0009610292819738365,
+        "blue": 0.0,
+        "green": 1.961284248926197e-05,
+        "black": 0.1598054406025065,
+        "lightblue": 0.0
+      },
+      "dark_fraction": 0.1598054406025065,
+      "silhouette_center_px": [
+        943.5313039122934,
+        635.4653075358177
+      ]
+    },
+    {
+      "bbox_px": [
+        1308,
+        561,
+        296,
+        179
+      ],
+      "area_px2": 36041.0,
+      "label": "UNKNOWN",
+      "reason": "SHAPE_UNCERTAIN",
+      "proposal_source": "combined_silhouette"
+    },
+    {
+      "bbox_px": [
+        1327,
+        563,
+        163,
+        163
+      ],
+      "area_px2": 20206.848073779984,
+      "label": "lightblue",
+      "reason": "CURRENT_PALE_COMPONENT_ARC",
+      "proposal_source": "current_pale_circle",
+      "silhouette_center_px": [
+        1408.0,
+        644.0
+      ],
+      "center_reference": "current_color_circle_not_calibrated_grasp_point",
+      "arc_fraction": 0.7777777777777778,
+      "usable_fraction": 1.0,
+      "color_fractions": {
+        "red": 0.0,
+        "yellow": 0.0,
+        "blue": 0.0,
+        "green": 0.0,
+        "black": 0.0,
+        "lightblue": 1.0
+      },
+      "radius_px": 80.19999694824219,
+      "circle_proposal": "hough",
+      "parent_fraction": 1.0,
+      "search_reference": "current_frame_component_bbox",
+      "face_color_candidate": "S189_CURRENT_FACE_ONLY"
+    }
+  ],
+  "circle_diagnostics": [
+    {
+      "color": "black",
+      "reason": "BLACK_EDGE_NO_UNIQUE_SUPPORT",
+      "supported_ellipse_count": 0,
+      "distinct_ellipse_count": 0,
+      "colour_rejection_count": 1
+    }
+  ]
+}

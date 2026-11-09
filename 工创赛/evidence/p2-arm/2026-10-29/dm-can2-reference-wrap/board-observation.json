@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-29",
+  "classification": "E 原位重烧录后的整圈反馈差及软件显示修正",
+  "user_pose_confirmation": "仍在左侧，对齐标记没变",
+  "user_latest_clarification": "机械臂没有动，就重新烧录就这样",
+  "actual_test_scope": "F407重新烧录、机械臂未动；电机电源循环未经确认，不能登记电机掉电恢复通过",
+  "state": 4,
+  "result": 1,
+  "feedback_valid": 1,
+  "motor_state": 0,
+  "before_position_deg": -296.544037,
+  "after_position_deg": 63.4615974,
+  "raw_delta_deg": 360.0056344,
+  "delta_modulo_turn_deg": 0.005634400000019468,
+  "old_logical_display_deg": 360.005646,
+  "new_expected_display_deg": 0.005634400000019468,
+  "same_pose_modulo_one_turn_observed": true,
+  "absolute_raw_coordinate_unchanged": false,
+  "raw_jump_root_cause_confirmed": false,
+  "motor_power_cycle_verified": false,
+  "multi_turn_recovery_verified": false,
+  "new_display_board_verified": false,
+  "display_branch_deg": [
+    -90,
+    270
+  ],
+  "display_branch_upper_endpoint_exclusive": true,
+  "display_is_motion_target_or_limit": false,
+  "screenshot": "same-pose-after-reflash-watch.png",
+  "screenshot_sha256": "53853edd4cf112ba9e4c694469aaf91bfb4eb4e7c5084faeec153f86e7cd3ebd",
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q_unchanged": true
+}

@@ -1,0 +1,158 @@
+orangepi@robot-opi5pro:~$ test ! -e /home/orangepi/p2-generic135-perf1-audit-20261026 && \
+python3 -m zipfile -e /home/orangepi/p2_generic135_follow_diagnostic_20261026.zip /home/orangepi/p2-generic135-perf1-audit-20261026 && \
+python3 /home/orangepi/p2-generic135-perf1-20261026/vision_app/run.py --check && \
+python3 -u /home/orangepi/p2-generic135-perf1-audit-20261026/p2_color_follow_audit.py \
+  --app /home/orangepi/p2-generic135-perf1-20261026/vision_app \
+  --watch-color blue \
+  --output-dir /home/orangepi/camera135-perf1-diagnostics \
+  --sample-every 5 --max-samples 4
+{"image_size": [1920, 1080], "undistort": false, "serial": "DISABLED", "features": ["turntable", "measurement", "material-stop-reference", "ring", "stack", "follow-pixel"], "metric_geometry_verified": false, "camera_profile": "generic_135_1920x1080_20261026_v1", "motion_allowed": false}
+Diagnostic folder: /home/orangepi/camera135-perf1-diagnostics/20261026-200323-759305
+Watch color: blue ; keep F mode; Q quits. No robot control.
+Camera: /dev/v4l/by-id/usb-Generic_USB_CAMERA_EP.20CC54K01-video-index0, 1920x1080, MJPG, requested 30.0 FPS; reconnect every 1.0s
+Undistortion: OFF (raw image)
+Serial: /dev/ttyS7, 115200 baud; RX control: AA 01/02/03/04/05/14/15 BB; task: AA 06 <15 ASCII bytes> BB
+Controls: F = moving follow, A = turntable, M = stop-reference material, R = ring station, S = stacked ring, D = measurement, I = idle, Q or Esc = quit
+Turntable tracking: Hough until stable, then local radial tracking
+Camera connected: /dev/v4l/by-id/usb-Generic_USB_CAMERA_EP.20CC54K01-video-index0, 1920x1080, 30.0 FPS
+Mode=FOLLOW FPS=0.0 Units=px targets=2 Ready=False Serial=DISABLED
+Captured: /home/orangepi/camera135-perf1-diagnostics/20261026-200323-759305/sample-01
+Captured: /home/orangepi/camera135-perf1-diagnostics/20261026-200323-759305/first-frame
+Captured: /home/orangepi/camera135-perf1-diagnostics/20261026-200323-759305/first-other-color-candidate
+Captured: /home/orangepi/camera135-perf1-diagnostics/20261026-200323-759305/first-blue-with-lightblue
+Captured: /home/orangepi/camera135-perf1-diagnostics/20261026-200323-759305/first-blue-visible
+Captured: /home/orangepi/camera135-perf1-diagnostics/20261026-200323-759305/first-blue-loss
+Captured: /home/orangepi/camera135-perf1-diagnostics/20261026-200323-759305/first-blue-reappearance
+Mode=FOLLOW FPS=7.5 Units=px targets=0 Ready=False Serial=DISABLED
+Captured: /home/orangepi/camera135-perf1-diagnostics/20261026-200323-759305/first-blue-id-change
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=0 Ready=False Serial=DISABLED
+Captured: /home/orangepi/camera135-perf1-diagnostics/20261026-200323-759305/sample-02
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Captured: /home/orangepi/camera135-perf1-diagnostics/20261026-200323-759305/sample-03
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.6 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Captured: /home/orangepi/camera135-perf1-diagnostics/20261026-200323-759305/sample-04
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=0 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=0 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=0 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=0 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=0 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.1 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.1 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=0 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=0 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.6 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.6 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.6 Units=px targets=2 Ready=False Serial=DISABLED
+Captured: /home/orangepi/camera135-perf1-diagnostics/20261026-200323-759305/longest-blue-loss
+Run saved: /home/orangepi/camera135-perf1-diagnostics/20261026-200323-759305
+Evidence ZIP: /home/orangepi/camera135-perf1-diagnostics/20261026-200323-759305.zip
+orangepi@robot-opi5pro:~$ 

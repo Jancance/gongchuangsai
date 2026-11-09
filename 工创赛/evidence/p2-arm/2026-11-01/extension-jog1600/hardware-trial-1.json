@@ -1,0 +1,68 @@
+{
+  "date": "2026-11-01",
+  "classification": "E: failed ordinary-motion observation in larger-step calibration context",
+  "user_text": "还是没有运动为什么",
+  "screenshot": "larger-step-stall-watch.png",
+  "screenshot_sha256": "fd51b95b5fe97f54966ec734c636302ada43f38c12d65559d44b878ab51d73ce",
+  "source_configuration_verified": {
+    "pulses": 1600,
+    "rpm": 5,
+    "timeout_ms": 10000
+  },
+  "board_firmware_binary_independently_read_back": false,
+  "context": "User supplied this new screenshot after being instructed to download the installed larger-step candidate and perform one ruler trial. Exact loaded binary is not independently verified by screenshot alone.",
+  "watch": {
+    "g_extension_home_request": 0,
+    "g_extension_home_state": 0,
+    "g_extension_home_result": 0,
+    "g_extension_home_reported": 0,
+    "g_extension_home_flags": 0,
+    "g_extension_home_start_result": 0,
+    "g_extension_home_elapsed_ms": 0,
+    "g_extension_motion_state": 9,
+    "g_extension_motion_result": 5,
+    "g_extension_motion_elapsed_ms": 515,
+    "g_extension_delta_raw": 309,
+    "g_extension_motion_request": 0,
+    "g_extension_flags": 5,
+    "g_extension_stop_result": 1
+  },
+  "elapsed_hex": "0x203",
+  "delta_raw_hex": "0x135",
+  "interpretation": "The same driver-reported stall recurred. Flags5 has enable and instantaneous-stall bits set, arrival and protection bits clear. Current source responds to that stall bit by attempting stop and latching9/5; the stop exchange returned1. The failure occurred at515ms, not the10-second limit or normal completion. This is not evidence that the pulse target was completed or that distance alone caused the stop. Mechanical/electrical/current-threshold/feedback/startup-transient root cause remains unresolved.",
+  "limits": [
+    "Raw309 is position-feedback change, not309 pulses or millimetres.",
+    "Commanded1600 cannot be divided by an interrupted physical distance for calibration.",
+    "Stop ACK is not independent physical-stop or safe-handling evidence.",
+    "A prior local manual-push result does not exclude powered-load resistance or electrical/feedback faults."
+  ],
+  "measurement": {
+    "start_mm": null,
+    "end_mm": null,
+    "usable_for_scale": false
+  },
+  "valid_metric_samples": 0,
+  "next_single_action": "Download the new Code63940 build; keep driver2200/2000/home800 unchanged. Then follow the same single1600-pulse ruler-trial gates and10mm early-stop line; return ordinary status and stall_events/max_ms plus X0/X1. No further wiring photo prerequisite or automatic retries.",
+  "assistant_firmware_changes_this_observation": false,
+  "additional_build_or_repeated_tests": false,
+  "assistant_hardware_commands_sent": false,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "CAL-05"
+  ],
+  "official_Q": "待技术答疑确认; unchanged",
+  "later_user_confirmation": {
+    "wiring": "接线没有问题",
+    "local_rack": "齿条没有卡死",
+    "Clog_Ms_ms": 2000,
+    "scope": "User-reported; no repeated photo/manual push required."
+  },
+  "later_code_review_and_fix": "See extension-stall-confirm/delivery-review.json: running instantaneous-stall duration handling corrected; new hardware result pending."
+}

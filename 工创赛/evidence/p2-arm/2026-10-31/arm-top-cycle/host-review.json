@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "cases": [
+    "default",
+    "invalid_return",
+    "invalid_mode",
+    "zero_return",
+    "complete",
+    "snapshot",
+    "legacy",
+    "fresh_confirm",
+    "stale_home",
+    "abort_pending",
+    "abort_active",
+    "external_stop",
+    "stop_unknown",
+    "home_fail",
+    "home_timeout",
+    "power_loss",
+    "return_fail",
+    "guard"
+  ],
+  "actual_main_guard_extracted": true,
+  "hardware_stubs": true,
+  "source_sha256": {
+    "USER/arm_sequence.c": "bfe8eaa2535b4331ec3ebc7e47873fe3253bea72ad33cdda0bac73364993098b",
+    "USER/arm_sequence.h": "f68bd4648d658888c9ce55606a71557bc871a87fb75d94a8d7cd495f72afc63c",
+    "USER/main.c": "fbf27c53fe4d90d3180f9bbd098c787006598cabbde0f2e6ea4b06f202f90a2e"
+  }
+}

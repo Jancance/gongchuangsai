@@ -1,0 +1,57 @@
+{
+  "passed_motion_feedback_run": true,
+  "run_id": 1,
+  "stage": 1,
+  "vm_state": 4,
+  "startup_state": 4,
+  "sequence_completed": 2,
+  "backend_result": 1,
+  "stop_mask": 15,
+  "final_wheel_rpm": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "final_vm_active": 1,
+  "body_sequence_elapsed_ms": 7800,
+  "faults": {
+    "can_fault": 0,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "distance_fault_reason": 0
+  },
+  "actions": {
+    "4": {
+      "frames": 31,
+      "target_reference_cm_s": [
+        20.0
+      ],
+      "max_abs_wheel_feedback_rpm": [
+        52.0,
+        51.0,
+        44.0,
+        47.0
+      ],
+      "encoder_max_progress_mm": 148.018
+    },
+    "5": {
+      "frames": 196,
+      "target_reference_cm_s": [
+        40.0
+      ],
+      "max_abs_wheel_feedback_rpm": [
+        104.0,
+        101.0,
+        102.0,
+        101.0
+      ],
+      "encoder_max_progress_mm": 1051.193
+    }
+  },
+  "operator_reported_start_from_zone": true,
+  "physical_stop_point_measured": false,
+  "ground_speed_measured": false,
+  "repeatability_verified": false,
+  "competition_acceptance": false
+}

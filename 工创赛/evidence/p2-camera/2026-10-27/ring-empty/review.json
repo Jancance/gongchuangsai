@@ -1,0 +1,77 @@
+{
+  "run_name": "20261027-194859-020849",
+  "label": "ring-empty",
+  "zip_sha256": "c501e297dd3d7099d74165a99e9e118e59db76401c8fc9e5e38a86226707af0e",
+  "crc_and_member_bytes_match": true,
+  "source_matches": {
+    "main.py": true,
+    "ring_station_detector.py": true,
+    "project_camera.py": true,
+    "diagnostic_entry": true
+  },
+  "config_matches": {
+    "ring_station_detector.json": true,
+    "camera_processing.json": true,
+    "project_profile.json": true
+  },
+  "frames": 297,
+  "fresh_candidate_frames": 0,
+  "pixel_ready_frames": 0,
+  "not_ready_frames": 297,
+  "states": {
+    "NO_THREE_CENTERS": 297
+  },
+  "all_fresh_candidate_statistics": [],
+  "all_ready_statistics": [],
+  "detail_counts": {
+    "没有找到满足几何约束的三个圆环": 297
+  },
+  "read_completion_span_s": 10.058809013000428,
+  "segments": [
+    {
+      "key": [
+        "NO_THREE_CENTERS",
+        false
+      ],
+      "first_frame": 1,
+      "last_frame": 297,
+      "start_s": 0.0,
+      "end_s": 10.058809013000428,
+      "count": 297
+    }
+  ],
+  "first_5s_ready_count": 0,
+  "first_5s_ready_statistics": [],
+  "last_10s_ready_count": 0,
+  "last_10s_ready_statistics": [],
+  "last_10s_total_count": 296,
+  "tail_minus_initial_median_xy_px": null,
+  "initial_image_line_angle_deg": null,
+  "tail_image_line_angle_deg": null,
+  "image_line_angle_change_deg": null,
+  "not_ready_always_empty_stable_centers": true,
+  "read_interval_p50_p95_max_ms": [
+    33.147518500300066,
+    46.18260225015547,
+    190.80748299984407
+  ],
+  "host_result_age_p50_p95_max_ms": [
+    15.006606000497413,
+    24.54670319948491,
+    77.52965800045786
+  ],
+  "detector_processing_p50_p95_max_ms": [
+    10.136138000234496,
+    15.740894399459648,
+    26.54184799939685
+  ],
+  "limits": [
+    "PixelReady is original short-window stability plus freshness/quality, not an independent stationary detector.",
+    "If paper pose changes, global statistics cannot measure stationary jitter; inspect phases separately.",
+    "No measured hand-motion or settle timestamps; no settle-to-recovery latency.",
+    "First stable reappearance image may precede the final settled pose; inspect its matching JSON.",
+    "Host timestamps are not camera exposure timestamps; no metric or physical motion acceptance."
+  ],
+  "metric_valid": false,
+  "motion_allowed": false
+}

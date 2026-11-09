@@ -1,0 +1,24 @@
+{
+  "reference": "D:\\新建文件夹4\\工创赛\\资料\\工创赛大佬\\2025智能物流搬运_电控_XAUT_20250811\\Logistics_Vehicle_F407_V2.7.4_OpenSource",
+  "sources": {
+    "USER_Code/chassis_control.c": "694b4f9073ea3f23b94849d9723ee55a93d7fe7c7d505087c755a6cce4013c88",
+    "RTOS_APP/Chassis_task.c": "94ec43d8856e78b1da7bad9ad24fbdb6b4c95a40e37b6b83c0355b28396d25e6"
+  },
+  "source_facts": {
+    "XYVmax": 1600,
+    "scale": 0.238,
+    "ramp_increment": 20,
+    "position_gain_xy": 2.3
+  },
+  "reference_menu_speed_scaling": "not stated in supplied source",
+  "user_wheel_diameter_mm": 77,
+  "reference_implied_diameter_mm": "80.25 only if scale means RPM per mm/s; inference, not measured",
+  "candidate_speeds_cm_s": [
+    20,
+    40
+  ],
+  "candidate_acceleration_mm_s2": 1000,
+  "candidate_jerk_mm_s3": 2000,
+  "engineering_choice_not_reference_exact_profile": true,
+  "hardware_accessed": false
+}

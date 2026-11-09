@@ -1,0 +1,106 @@
+{
+  "crc": "passed",
+  "archive_sha256": "ee81cab2f4ba0c9053b1b6f26f1ed625c240055cfbe2f0235658e881d78257fa",
+  "frames": 395,
+  "span_s": 29.930796460999773,
+  "contiguous_indices": true,
+  "timestamps_strictly_increasing": true,
+  "states": {
+    "SEARCHING": 395
+  },
+  "empty_targets_all": true,
+  "all_actions_disabled": true,
+  "region_reasons": {
+    "TOUCHES_BORDER": 395,
+    "SHAPE_UNCERTAIN": 773,
+    "INSUFFICIENT_NONCLIPPED_PIXELS": 1
+  },
+  "detector_labels": {
+    "UNKNOWN": 1169
+  },
+  "module_matches_black1": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true
+  },
+  "configs": {
+    "camera_processing.json": {
+      "source_sha_matches_package": true,
+      "saved_json_matches_package": true
+    },
+    "material_color_thresholds.json": {
+      "source_sha_matches_package": true,
+      "saved_json_matches_package": true
+    },
+    "project_profile.json": {
+      "source_sha_matches_package": true,
+      "saved_json_matches_package": true
+    }
+  },
+  "detector_call_ms": {
+    "median": 56.87330599994311,
+    "p95": 63.284251100594695,
+    "max": 118.91953800022748
+  },
+  "result_host_age_ms": {
+    "median": 73.39452700034599,
+    "p95": 92.56803829985071,
+    "max": 136.27724700018007
+  },
+  "exposure_readbacks": [
+    {
+      "controls": {
+        "gain": 80,
+        "white_balance_temperature_auto": 0,
+        "white_balance_temperature": 4600,
+        "exposure_auto": 1,
+        "exposure_absolute": 83
+      },
+      "raw_readback": "gain: 80\nwhite_balance_temperature_auto: 0\nwhite_balance_temperature: 4600\nexposure_auto: 1 (Manual Mode)\nexposure_absolute: 83\n",
+      "verified_at_host_monotonic": 6677.652404674,
+      "note": "Current readback and one-second settling, not exposure-to-result latency proof."
+    }
+  ],
+  "console_warning_lines": [],
+  "console_completed": true,
+  "run_summary": {
+    "frames": 395,
+    "states": {
+      "SEARCHING": 395
+    },
+    "transition_counts": {
+      "sample-01": 1,
+      "first-frame": 1,
+      "sample-02": 1,
+      "sample-03": 1,
+      "sample-04": 1,
+      "sample-05": 1,
+      "sample-06": 1
+    },
+    "saved_events": [
+      "first-frame",
+      "sample-01",
+      "sample-02",
+      "sample-03",
+      "sample-04",
+      "sample-05",
+      "sample-06"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "green",
+    "longest_watched_loss_s": 0.0,
+    "periodic_samples": {
+      "interval_s": 5.0,
+      "limit": 12,
+      "saved": 6
+    }
+  },
+  "visual_scope": "First frame and sample06 show all three printed rings empty, no green or black material; wire at lower image edge. Not all-frame visual inspection.",
+  "conclusion": "Current empty-scene negative sample: no material false positives in 395 processed frames; not a green-only test. Printed-ring rejection branch not observed in region reasons. longest_watched_loss_s=0 does not prove green retention when green never acquired.",
+  "next_gate": "Place only green material on middle ring; camera/paper/light/settings unchanged, 30s black1 test."
+}

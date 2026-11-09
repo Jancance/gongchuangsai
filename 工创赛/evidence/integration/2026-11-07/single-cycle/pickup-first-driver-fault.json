@@ -1,0 +1,20 @@
+{
+  "reset": false,
+  "halt": false,
+  "writes": [
+    "lift_controller.vm_request=0",
+    "startup_axes.vm_request=0",
+    "one-shot lift permit=0"
+  ],
+  "published": {
+    "g_lift_ruler_state": 5,
+    "g_lift_ruler_cause": 9,
+    "g_lift_ruler_stop_pending": 1,
+    "g_lift_ruler_stop_unconfirmed": 1,
+    "g_it_lift_permit": 1,
+    "g_startup_axes_vm_request": 1,
+    "g_vm_test_request": 1,
+    "g_dm_can2_ctrl_mode": 2
+  },
+  "VM_off_confirmed": true
+}

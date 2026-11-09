@@ -1,0 +1,74 @@
+{
+  "date": "2026-11-01",
+  "classification": "E: one completed ordinary retract with user approximate travel; coarse scale only",
+  "user_reports": [
+    "现在机械问题解决好了重新来怎么做",
+    "照现在的1600脉冲，我让伸缩机构g_extension_motion_request = 1，运动了50mm左右，现在距离挡块还有50mm左右",
+    "自行停稳"
+  ],
+  "mechanical_repair_user_confirmed": true,
+  "repair_details_independently_observed": false,
+  "command_context": {
+    "request": "g_extension_motion_request=1",
+    "configured_pulses": 1600,
+    "configured_rpm": 5
+  },
+  "physical_observation_accepted": "One completed ordinary retract at the1600-pulse configured target, with user approximately50mm physical movement and self-stop, plus new7/1/flags3 screenshot. No stall observation this run. Not precise scale/repeatability/full travel or origin acceptance.",
+  "reported_displacement_mm_approx": 50,
+  "reported_current_retract_endstop_clearance_mm_approx": 50,
+  "previous_clearance_report_mm": 30,
+  "clearance_source_precedence": "Latest post-repair user report50mm replaces30mm as current clearance input. Preserve30mm as historical pre-repair input; do not infer either report is total travel.",
+  "manual_stop_user_reported": false,
+  "fresh_motion_watch_received": true,
+  "motion_state": 7,
+  "motion_result": 1,
+  "end_flags": 3,
+  "stall_events": 0,
+  "stall_max_ms": 0,
+  "precise_ruler_start_mm": null,
+  "precise_ruler_end_mm": null,
+  "coarse_estimate": {
+    "pulses_per_mm": 32.0,
+    "mm_per_pulse": 0.03125,
+    "basis": "1600 / user-reported approximately50mm; software completion now confirmed. Precision remains limited by approximate ruler input."
+  },
+  "usable_for_commissioned_scale": false,
+  "metric_motion_allowed": false,
+  "home_valid": false,
+  "total_travel_mm": null,
+  "source_review": "Three current extension files match the Code63940 installed manifest; all five carrier sources match its preserved-source hashes. Board binary was not independently read back.",
+  "next_single_action": "Superseded by explicit user fast-development decision: no mandatory reverse50mm qualification. Coarse32 now compiled in manual mm entry, installed/built Code64196, not assistant flashed; advance necessary fixed-point teaching. Precision/backlash/full travel/home deferred, not claimed complete.",
+  "carrier_startup_question_answer": "Current Carrier_Init only initializes PWM; test_enable/request default0, PWM pin output is kept inactive. The debug target default0 does not send a0-degree move. Explicit request is required; user has not requested an automatic startup code change.",
+  "assistant_firmware_changes_this_observation": false,
+  "assistant_hardware_commands_sent": false,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "CAL-05"
+  ],
+  "official_Q": "待技术答疑确认; unchanged",
+  "stop_result": 0,
+  "motion_elapsed_ms": 6195,
+  "single_retract_function_accepted": true,
+  "watch_evidence": {
+    "screenshot": "trial2-completed-watch.png",
+    "sha256": "4d132408bf712a03b2da44d1991dcf98d1fd37061bed618588c2851b093451a5",
+    "motion_request": 0,
+    "state": 7,
+    "result": 1,
+    "elapsed_hex": "0x1833",
+    "elapsed_ms": 6195,
+    "flags": 3,
+    "stop_result": 0,
+    "stall_events": 0,
+    "stall_max_ms": 0
+  },
+  "fast_development_delivery": "evidence/p2-arm/2026-11-01/extension-mm-entry/delivery-review.json"
+}

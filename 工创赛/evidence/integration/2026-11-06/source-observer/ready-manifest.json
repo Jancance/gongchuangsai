@@ -1,0 +1,92 @@
+{
+  "offline_preparation_complete": true,
+  "MATLAB_checks": 15,
+  "python_geometry_and_protocol_checks": 32,
+  "C_stream_result": "REQUEST:MR1,1,2,2,1,2,14,1000,10,20,30,40,50,200,900,100000,10000,2060000,1200000,458C\n\nSOURCE_STREAM checks=16 failures=0",
+  "geometry_to_C_result": "REQUEST:MR1,1,2,2,1,2,14,1000,10,20,30,40,50,200,900,100000,10000,2060000,1200000,458C\n\nSOURCE_STREAM checks=16 failures=0",
+  "node5_scale_result": "NODE5_SCALE checks=32 failures=0",
+  "delivery_checks": 19,
+  "final_delivery_checks": {
+    "passed": true,
+    "final_bridge_import_without_hardware": true,
+    "bad_replay_saved_failure_and_no_camera": true,
+    "final_install_preserved_configs": true,
+    "final_check_serial_disabled": true,
+    "overlays_sha256": {
+      "code/source_observe.py": "2840d695037f86d58f2613fbd58d3a006fb782aa83d02b9a32ca58c000ef0d01",
+      "code/source_metric_preview.py": "1709da333f97efffb4226403ed1c8e349ce5196b40f16590899ba91192753f83",
+      "code/source_metric_bridge.py": "9ece86a6926fcd1f2b4939d74c8c0469a2feda771b6126364935e874ed327c26",
+      "code/metric_alignment_protocol.py": "0720d21c3b36f9e4f19e1dbbf2a1d50f0d5c1fd2fccd35cd1e2bc0e6ed963d70"
+    }
+  },
+  "firmware_builds": {
+    "online": {
+      "target": "Vehicle_SourceObserver",
+      "errors": 0,
+      "warnings": 0,
+      "sha256": "80bfceaeb78c200c77fd5c421bae976643301c0892f8afda91102bb1978b5bae",
+      "axf": "evidence\\integration\\2026-11-06\\source-observer\\firmware-online.axf"
+    },
+    "offline": {
+      "target": "Vehicle_SourceObserver_Offline",
+      "errors": 0,
+      "warnings": 0,
+      "sha256": "587acb6e3012bed4a7bec159788862607ab90415c6ff52febbcb25a72e643b78",
+      "axf": "evidence\\integration\\2026-11-06\\source-observer\\firmware-offline.axf"
+    }
+  },
+  "actual_owning_source_before_hashes_unchanged": {
+    "CHASSIS/USER/vehicle_arm.c": true,
+    "USER/vehicle_parameters.h": true,
+    "CHASSIS/USER/source_prepare.inc": true,
+    "CHASSIS/USER/source_observer.c": true,
+    "CHASSIS/USER/source_observer.h": true,
+    "CHASSIS/USER/metric_alignment.h": true,
+    "CHASSIS/USER/metric_alignment_bridge.h": true,
+    "CHASSIS/USER/main.c": true,
+    "gongxun-f407.uvprojx": true,
+    "CHASSIS/USER/source_observer_config.h": true
+  },
+  "firmware_candidate_source_sha256": {
+    "CHASSIS/USER/vehicle_arm.c": "51931036e13f2db167ebc973ae7e0c4b4023226ab2ece57bff8cc7cb8a934e9f",
+    "USER/vehicle_parameters.h": "a908271349c5a8a5c43c1cee865b154d21005ad10bf406155d306be3dbdbdec7",
+    "CHASSIS/USER/source_prepare.inc": "ca0eb0ed44ead2bf72040da5ecafc0b49707bcec8356ea635aa340e26b2bece2",
+    "CHASSIS/USER/source_observer.c": "522b62fa126a8decb585715af844da26a365bb7b0a9074817af5661aa12e5cde",
+    "CHASSIS/USER/source_observer.h": "bac77c480c95ad5af45bca00d2c9fbf4cf8784ae60c02f212ece3b33da184457",
+    "CHASSIS/USER/metric_alignment.h": "286cc84c4c1fc25c892f0db90db76f9221af2bf7723a04341d90673643a1ca37",
+    "CHASSIS/USER/metric_alignment_bridge.h": "4875cc35f299082038c0d6bdcd59edd3515d26f24fffe71e357c6eb53b6174f8",
+    "CHASSIS/USER/main.c": "86ab58e8a6f62697230fe2e0526a32d609d3603c0dc46898b6b5797f4e7aadb0",
+    "gongxun-f407.uvprojx": "f4d8c3e8fbd21126ecc1d8554e4d0a19f2943d248b9a4a8b90d928b453aace54",
+    "CHASSIS/USER/source_observer_config.h": "4374e94940b2ebf44cab2b571ae1ac2c7a0b427de60133445845e15284aadfa2"
+  },
+  "delivery": {
+    "archive": "D:\\Codex\\工创赛\\output\\source-observer-delivery\\p2_source_observer_20261106.zip",
+    "bytes": 286872,
+    "sha256": "0724c7e2a14bbd5e7ff7f121fbd8ae135f4d8b7031e4feee07a57cc698d1b950",
+    "CRC_passed": true,
+    "payload_sha256_verified": true,
+    "preserves_existing_A_M_and_tools": true,
+    "inherits_actual_saved_config_on_install": true,
+    "no_automatic_app_launch": true,
+    "serial_disabled": true,
+    "motion_allowed": false,
+    "deployed": false
+  },
+  "hardware_connected_or_operated": false,
+  "SBC_deployed": false,
+  "firmware_installed_or_flashed": false,
+  "field_profile_calibrated": false,
+  "position_executor_enabled": false,
+  "full_vehicle_source_and_grasp_mission_ready_for_field_flash": false,
+  "unclosed_field_items": [
+    "actual current A scene and saved board config",
+    "pose/plane-to-body transform and goal center",
+    "capture age and UART binding",
+    "source prep three-mechanism trajectory/current gap46.5mm",
+    "new carrier release height and physical loaded transaction",
+    "three items and stage3 admission"
+  ],
+  "user_reported_battery_empty": true,
+  "recharge_required_before_field_work": true,
+  "github_uploaded": false
+}

@@ -1,0 +1,93 @@
+{
+  "software_ready": true,
+  "stage": "D:\\Codex\\工创赛\\tmp\\lift_trim_up_20261106\\project",
+  "candidate_checks": {
+    "passed": true,
+    "stage": "D:\\Codex\\工创赛\\tmp\\lift_trim_up_20261106\\project",
+    "changed_files": {
+      "CHASSIS/USER/lift_ruler_calibration.c": {
+        "before": "38aaf18ab0929ac6bc8baa2b00eb34c0666ae7c5949d4402f3f4f78485b1325f",
+        "after": "beb27d41bb597b2779dc24bcaad808db81a23e7213adc3c19240e9b57485dc0b"
+      },
+      "CHASSIS/USER/vehicle_mission.inc": {
+        "before": "c3bce99ee243cc72e79d3bd1fc74e612ba946053ecc04c2edfe3d6487e2d5a86",
+        "after": "589b0175765ffbbf9035df727c5d606eb12ddba7474570bf1abd4e78cf9cc5ae"
+      },
+      "USER/vehicle_parameters.h": {
+        "before": "b8859acfb532eb11a474c6d86c6abcbf05a0e7dc54092efa271b84adb3791586",
+        "after": "798be9f5817d6f03265df709768f66150fa650e94de367cc6835dbd5f186b81c"
+      },
+      "CHASSIS/USER/source_prepare.inc": {
+        "before": "73344afa1e5c9428f3e1e1ed89f57a3755ced0fad18270028913b3d569cf30ae",
+        "after": "ca0eb0ed44ead2bf72040da5ecafc0b49707bcec8356ea635aa340e26b2bece2"
+      }
+    },
+    "host_result": "LIFT_RULER cases=28 checks=339 failures=0",
+    "step_direction": "up",
+    "step_virtual_pulses": 2400,
+    "rpm": 30,
+    "acceleration_rpm_s": 60,
+    "maximum_steps": 1,
+    "nominal_start_height_mm": 48.5,
+    "nominal_end_height_mm": 50,
+    "VM_held_during_move_stop_retry_and_DONE": true,
+    "automatic_repeat": false,
+    "home_or_full_return_command_in_trim": false,
+    "firmware_downloaded": false,
+    "requires_additional_VM_deployment_exception": true,
+    "hardware_operated": false
+  },
+  "matlab_checks": 7,
+  "matlab_failures": 0,
+  "dispatch_checks": {
+    "passed": true,
+    "results": [
+      {
+        "offline": 0,
+        "passed": true,
+        "output": "DISPATCH offline=0 scenarios=6 checks=52 failures=0"
+      },
+      {
+        "offline": 1,
+        "passed": true,
+        "output": "DISPATCH offline=1 scenarios=6 checks=18 failures=0"
+      }
+    ],
+    "matlab_checks": 7,
+    "scope": "actual adapter and CAN exchange, extracted mode dispatch, simulated bus/ticks/power; not RTOS or physical timing",
+    "sha256": {
+      "CHASSIS/USER/main.c": "3918d3a3420b344e52d93f3febd65ec124f049fefaf70c8da5622e6bce106d54",
+      "CHASSIS/USER/vehicle_mission.inc": "589b0175765ffbbf9035df727c5d606eb12ddba7474570bf1abd4e78cf9cc5ae",
+      "CHASSIS/SYSTEM/CAN/can.c": "c6278fb5998ee02ed5d6b4cc66f0a7b34000990c7c8b7c06cca16d44f261280b",
+      "CHASSIS/USER/lift_ruler_adapter.c": "25c759ea5d70da09a149da5bef3280db0361b774c10e3789949a7bcad4e2633b",
+      "CHASSIS/USER/lift_ruler_calibration.c": "beb27d41bb597b2779dc24bcaad808db81a23e7213adc3c19240e9b57485dc0b"
+    },
+    "firmware_downloaded": false,
+    "hardware_operated": false
+  },
+  "builds": {
+    "online": {
+      "target": "Vehicle_LiftRuler",
+      "sha256": "582518553ea0383e7ed148ad897be06df1eac2a204df38edfe8052838597381f",
+      "errors": 0,
+      "warnings": 0
+    },
+    "offline": {
+      "target": "Vehicle_LiftRuler_Offline",
+      "sha256": "573ce1ac937024f68eb76b504b0b787aa8edcdcd1ec0fad306d138d45d2af47c",
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "current_board_image_sha256": "6d4989ca68b815f52ff9c4e32c40ac6b4d28a722d691f44d7da18ab92d3546ea",
+  "current_user_height_mm": 48.5,
+  "current_board_next_PC13_is_full_return_not_trim": true,
+  "new_firmware_downloaded": false,
+  "hardware_moved": false,
+  "VM_interrupted_this_trim_task": false,
+  "one_time_old_deployment_exception_already_used": true,
+  "additional_VM_interruption_authorized": false,
+  "current_working_top_reference_invalid_after_download": true,
+  "candidate_creates_fake_top_reference": false,
+  "github_uploaded": false
+}

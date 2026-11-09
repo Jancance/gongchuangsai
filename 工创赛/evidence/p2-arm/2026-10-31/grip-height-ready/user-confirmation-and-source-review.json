@@ -1,0 +1,66 @@
+{
+  "date": "2026-10-31",
+  "user_report": "已下降并停稳，夹指已到可夹取高度",
+  "accepted_scope": "本次下降/停稳/人工相对夹持高度就绪；不推定实际脉冲数、毫米、绝对坐标或抓牢",
+  "descent_pulses_actual": null,
+  "descent_mm_measured": null,
+  "board_firmware_version_verified": false,
+  "physical_grip_or_cycle_accepted": false,
+  "assistant_hardware_commands": false,
+  "firmware_source_changed": false,
+  "new_build_or_repeated_tests": false,
+  "source_checks": [
+    {
+      "file": "USER/gripper_task.c",
+      "expected": "3c78bcf0786337d738e65f080682486c019444ca6b321f7ad5f21dd6a20257e7",
+      "actual": "3c78bcf0786337d738e65f080682486c019444ca6b321f7ad5f21dd6a20257e7",
+      "byte_match": true
+    },
+    {
+      "file": "USER/gripper_task.h",
+      "expected": "c091694d2f9dd063b91be59f236ae7e99b69715d45d22e616f6cccd88f145607",
+      "actual": "c091694d2f9dd063b91be59f236ae7e99b69715d45d22e616f6cccd88f145607",
+      "byte_match": true
+    },
+    {
+      "file": "USER/arm_sequence.c",
+      "expected": "7f014a1642b7b8912a3d0a04b6f71670afe5519a484581dd4df0c24341b456f2",
+      "actual": "7f014a1642b7b8912a3d0a04b6f71670afe5519a484581dd4df0c24341b456f2",
+      "byte_match": true
+    },
+    {
+      "file": "USER/arm_sequence.h",
+      "expected": "d6fd8a156bb37f4fb429060d5fa905460912977234d8c08027407c4fc130be41",
+      "actual": "d6fd8a156bb37f4fb429060d5fa905460912977234d8c08027407c4fc130be41",
+      "byte_match": true
+    },
+    {
+      "file": "USER/main.c",
+      "expected": "7ed86fe2956626bc61bcb8ef505b67d4358e704e49e607067625992f3d9b139b",
+      "actual": "7ed86fe2956626bc61bcb8ef505b67d4358e704e49e607067625992f3d9b139b",
+      "byte_match": true
+    },
+    {
+      "file": "gongxun-f407.uvprojx",
+      "expected": "3a559aabcc43c1735f4ff5fa2ec165d1a6f83d5fb34c6945276deeae676aa2c0",
+      "actual": "365da347e57402647760c1560dffb06137b17bd0d98ae8421bfff14e7abb1108",
+      "byte_match": false
+    }
+  ],
+  "project_xml_semantically_equal_to_staged": true,
+  "project_drift": "Only formatting of arm_sequence file references differs from staged project; historical hashes retained",
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "待技术答疑确认；无新官方答复"
+}

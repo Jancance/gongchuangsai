@@ -1,0 +1,260 @@
+{
+  "run_name": "20261027-193422-279783",
+  "label": "ring-rotation",
+  "zip_sha256": "7fc9b22993802fc2ffc427956668e3e916b1e14cd81fe8908438cbe67eb67a30",
+  "crc_and_member_bytes_match": true,
+  "source_matches": {
+    "main.py": true,
+    "ring_station_detector.py": true,
+    "project_camera.py": true,
+    "diagnostic_entry": true
+  },
+  "config_matches": {
+    "ring_station_detector.json": true,
+    "camera_processing.json": true,
+    "project_profile.json": true
+  },
+  "frames": 704,
+  "fresh_candidate_frames": 704,
+  "pixel_ready_frames": 680,
+  "not_ready_frames": 24,
+  "states": {
+    "THREE_CENTERS": 704
+  },
+  "detail_counts": {
+    "等待稳定观测（1/3）": 1,
+    "等待稳定观测（2/3）": 1,
+    "工位偏差超出验收精度": 680,
+    "等待稳定观测（3/3）": 22
+  },
+  "read_completion_span_s": 30.02580700099952,
+  "segments": [
+    {
+      "key": [
+        "THREE_CENTERS",
+        false
+      ],
+      "first_frame": 1,
+      "last_frame": 2,
+      "start_s": 0.0,
+      "end_s": 0.4130752239998401,
+      "count": 2
+    },
+    {
+      "key": [
+        "THREE_CENTERS",
+        true
+      ],
+      "first_frame": 3,
+      "last_frame": 308,
+      "start_s": 0.43242556099994545,
+      "end_s": 12.087535501000275,
+      "count": 306
+    },
+    {
+      "key": [
+        "THREE_CENTERS",
+        false
+      ],
+      "first_frame": 309,
+      "last_frame": 309,
+      "start_s": 12.121057127000313,
+      "end_s": 12.121057127000313,
+      "count": 1
+    },
+    {
+      "key": [
+        "THREE_CENTERS",
+        true
+      ],
+      "first_frame": 310,
+      "last_frame": 310,
+      "start_s": 12.16016029399998,
+      "end_s": 12.16016029399998,
+      "count": 1
+    },
+    {
+      "key": [
+        "THREE_CENTERS",
+        false
+      ],
+      "first_frame": 311,
+      "last_frame": 312,
+      "start_s": 12.354335361000267,
+      "end_s": 12.425274637999792,
+      "count": 2
+    },
+    {
+      "key": [
+        "THREE_CENTERS",
+        true
+      ],
+      "first_frame": 313,
+      "last_frame": 316,
+      "start_s": 12.488392115000352,
+      "end_s": 12.584300020000228,
+      "count": 4
+    },
+    {
+      "key": [
+        "THREE_CENTERS",
+        false
+      ],
+      "first_frame": 317,
+      "last_frame": 335,
+      "start_s": 12.65264641900012,
+      "end_s": 13.485493432999647,
+      "count": 19
+    },
+    {
+      "key": [
+        "THREE_CENTERS",
+        true
+      ],
+      "first_frame": 336,
+      "last_frame": 704,
+      "start_s": 13.518541982999523,
+      "end_s": 30.02580700099952,
+      "count": 369
+    }
+  ],
+  "first_5s_ready_count": 124,
+  "first_5s_ready_statistics": [
+    {
+      "index": 1,
+      "median_xy_px": [
+        524.850154876709,
+        568.9925308227539
+      ],
+      "range_xy_px": [
+        0.02342987060546875,
+        0.02422332763671875
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.008518218994140625,
+        0.009075927734374998
+      ]
+    },
+    {
+      "index": 2,
+      "median_xy_px": [
+        991.2189331054688,
+        571.0559997558594
+      ],
+      "range_xy_px": [
+        0.014404296875,
+        0.02043914794921875
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.006407165527343749,
+        0.00787086486816406
+      ]
+    },
+    {
+      "index": 3,
+      "median_xy_px": [
+        1446.7097778320312,
+        573.0033721923828
+      ],
+      "range_xy_px": [
+        0.02099609375,
+        0.03177642822265625
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.009799194335937499,
+        0.014379119873046868
+      ]
+    }
+  ],
+  "last_10s_ready_count": 225,
+  "last_10s_ready_statistics": [
+    {
+      "index": 1,
+      "median_xy_px": [
+        441.9327163696289,
+        575.4487915039062
+      ],
+      "range_xy_px": [
+        0.03148651123046875,
+        0.036712646484375
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.01204681396484375,
+        0.014932250976562478
+      ]
+    },
+    {
+      "index": 2,
+      "median_xy_px": [
+        904.4496765136719,
+        533.6227264404297
+      ],
+      "range_xy_px": [
+        0.04071044921875,
+        0.03143310546875
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.015960693359375,
+        0.012030029296874996
+      ]
+    },
+    {
+      "index": 3,
+      "median_xy_px": [
+        1362.640380859375,
+        493.01812744140625
+      ],
+      "range_xy_px": [
+        0.0499267578125,
+        0.04311370849609375
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.022692871093749997,
+        0.014990234374999993
+      ]
+    }
+  ],
+  "last_10s_total_count": 225,
+  "tail_minus_initial_median_xy_px": [
+    [
+      -82.91743850708008,
+      6.456260681152344
+    ],
+    [
+      -86.76925659179688,
+      -37.43327331542969
+    ],
+    [
+      -84.06939697265625,
+      -79.98524475097656
+    ]
+  ],
+  "initial_image_line_angle_deg": 0.24928180716035586,
+  "tail_image_line_angle_deg": -5.116032697908842,
+  "image_line_angle_change_deg": -5.365314505069199,
+  "not_ready_always_empty_stable_centers": true,
+  "read_interval_p50_p95_max_ms": [
+    36.774244000298495,
+    68.34179069992388,
+    413.0752239998401
+  ],
+  "host_result_age_p50_p95_max_ms": [
+    46.37751800009937,
+    64.0727584992419,
+    79.90614400023333
+  ],
+  "detector_processing_p50_p95_max_ms": [
+    24.102390999814816,
+    26.270375999501994,
+    47.46104300011211
+  ],
+  "limits": [
+    "PixelReady is original short-window stability plus freshness/quality, not an independent stationary detector.",
+    "Global statistics combine changing paper poses and cannot measure stationary jitter.",
+    "No measured hand-motion or settle timestamps; no settle-to-recovery latency.",
+    "First stable reappearance image may precede the final settled pose; inspect its matching JSON.",
+    "Host timestamps are not camera exposure timestamps; no metric or physical motion acceptance."
+  ],
+  "metric_valid": false,
+  "motion_allowed": false
+}

@@ -1,0 +1,12 @@
+Preview: off (every 1 frame(s))
+Camera: /dev/video99, 1280x960, MJPG, requested 30.0 FPS; reconnect every 1.0s
+Undistortion: OFF (raw image)
+Serial: /dev/ttyS7, 115200 baud; RX control: AA 01/02/03/04/05/14/15 BB; task: AA 06 <15 ASCII bytes> BB
+Controls: F = moving follow, A = turntable, M = stop-reference material, R = ring station, S = stacked ring, D = measurement, I = idle, Q or Esc = quit
+Turntable tracking: Hough until stable, then local radial tracking
+Camera unavailable (/dev/video99): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/video99): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0
+Camera unavailable (/dev/video99): RuntimeError: Camera could not open; close previews first; waiting for reconnect
+Mode=FOLLOW Camera=WAITING Detail=RuntimeError: Camera could not open; close previews first Serial=DISABLED_P2_INTEGRATION_PENDING Report=INACTIVE Pending=False Task=-- TaskRx=0 TaskInvalid=0

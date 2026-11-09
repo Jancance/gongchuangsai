@@ -1,0 +1,3259 @@
+{
+  "conflicts": [
+    {
+      "code": "MULTIPLE_PROJECT_CONSTANT_VALUES",
+      "occurrences": [
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 44,
+          "value": "420"
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 48,
+          "value": "360"
+        }
+      ],
+      "review": "Check whether these are intentional profiles, stale values, or conflicting assumptions.",
+      "symbol": "PANEL_WIDTH",
+      "values": [
+        "360",
+        "420"
+      ]
+    },
+    {
+      "code": "DUPLICATE_PROJECT_TEXT",
+      "groups": [
+        [
+          "code/config/realtek_rgb_camera.yaml",
+          "reference_config/realtek_rgb_camera.yaml"
+        ]
+      ]
+    }
+  ],
+  "covered": [
+    {
+      "category": "linux-sbc",
+      "id": "camera.v4l2",
+      "occurrences": [
+        {
+          "alias": "v4l2",
+          "file": "UPSTREAM_README.md",
+          "line": 7
+        },
+        {
+          "alias": "v4l2",
+          "file": "code/camera120_startup_check.py",
+          "line": 38
+        },
+        {
+          "alias": "v4l2",
+          "file": "code/main.py",
+          "line": 413
+        },
+        {
+          "alias": "v4l2",
+          "file": "code/project_camera.py",
+          "line": 28
+        },
+        {
+          "alias": "v4l2",
+          "file": "code/project_capture.py",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "category": "linux-sbc",
+      "id": "deployment.systemd",
+      "occurrences": [
+        {
+          "alias": "watchdog",
+          "file": "code/project_capture.py",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.Canny",
+      "occurrences": [
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 233
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 352
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 753
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 828
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 555
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.HoughCircles",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 146
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 337
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 558
+        },
+        {
+          "file": "code/turntable_material_seed.py",
+          "line": 331
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.Sobel",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 291
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 291
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.VideoCapture",
+      "occurrences": [
+        {
+          "file": "code/camera120_startup_check.py",
+          "line": 89
+        },
+        {
+          "file": "code/project_camera.py",
+          "line": 39
+        },
+        {
+          "file": "code/project_capture.py",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.arcLength",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 43
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 385
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 462
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.circle",
+      "occurrences": [
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1304
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 1117
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 445
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 508
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 519
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 527
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 576
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 586
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 729
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.convexHull",
+      "occurrences": [
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 434
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 45
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 387
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 464
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.ellipse",
+      "occurrences": [
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 615
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 976
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1302
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.erode",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 49
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 251
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 400
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 470
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.error",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 585
+        },
+        {
+          "file": "code/main.py",
+          "line": 609
+        },
+        {
+          "file": "code/main.py",
+          "line": 616
+        },
+        {
+          "file": "code/main.py",
+          "line": 1326
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1126
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 686
+        },
+        {
+          "file": "code/turntable_material_seed.py",
+          "line": 347
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 147
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 153
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 183
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 219
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 271
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 177
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 777
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 831
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.fitLine",
+      "occurrences": [
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 440
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.inRange",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 78
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 232
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 255
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 291
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.line",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 762
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 978
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 980
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1299
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 443
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 669
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.moments",
+      "occurrences": [
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 444
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 57
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 371
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 411
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 504
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.rectangle",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 702
+        },
+        {
+          "file": "code/main.py",
+          "line": 735
+        },
+        {
+          "file": "code/main.py",
+          "line": 782
+        },
+        {
+          "file": "code/main.py",
+          "line": 840
+        },
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 704
+        },
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 713
+        },
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 728
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 531
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 545
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 550
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 555
+        },
+        {
+          "file": "code/project_follow.py",
+          "line": 60
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 624
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 975
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1297
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1321
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 1164
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 108
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 197
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 206
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 214
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 596
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 649
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 655
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 711
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 722
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.resize",
+      "occurrences": [
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 380
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 144
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 577
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 549
+        },
+        {
+          "file": "code/turntable_material_seed.py",
+          "line": 318
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 548
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 558
+        }
+      ]
+    },
+    {
+      "category": "opencv-api",
+      "id": "cv2.split",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 435
+        }
+      ]
+    },
+    {
+      "category": "performance",
+      "id": "opencv.opencl",
+      "occurrences": [
+        {
+          "alias": "opencl",
+          "file": "README.md",
+          "line": 54
+        },
+        {
+          "alias": "opencl",
+          "file": "code/camera120_startup_check.py",
+          "line": 88
+        },
+        {
+          "alias": "opencl",
+          "file": "code/main.py",
+          "line": 1066
+        },
+        {
+          "alias": "opencl",
+          "file": "code/project_camera.py",
+          "line": 17
+        },
+        {
+          "alias": "opencl",
+          "file": "code/叠放位直线标定.py",
+          "line": 116
+        }
+      ]
+    },
+    {
+      "category": "video-events",
+      "id": "task.tracking",
+      "occurrences": [
+        {
+          "alias": "tracker",
+          "file": "code/project_follow.py",
+          "line": 6
+        },
+        {
+          "alias": "tracker",
+          "file": "code/project_tracker.py",
+          "line": 21
+        }
+      ]
+    },
+    {
+      "category": "wireless",
+      "id": "robot.serial-frame",
+      "occurrences": [
+        {
+          "alias": "sequence",
+          "file": "code/metric_alignment_protocol.py",
+          "line": 22
+        },
+        {
+          "alias": "sequence",
+          "file": "code/project_camera.py",
+          "line": 73
+        },
+        {
+          "alias": "sequence",
+          "file": "code/project_capture.py",
+          "line": 31
+        },
+        {
+          "alias": "帧头",
+          "file": "code/turntable_serial.py",
+          "line": 213
+        },
+        {
+          "alias": "帧头",
+          "file": "code/串口通信协议.md",
+          "line": 121
+        }
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.BORDER_CONSTANT",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 251
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 470
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 623
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.CAP_PROP_BUFFERSIZE",
+      "occurrences": [
+        {
+          "file": "code/project_camera.py",
+          "line": 22
+        },
+        {
+          "file": "code/project_capture.py",
+          "line": 66
+        },
+        {
+          "file": "code/project_capture.py",
+          "line": 87
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.CAP_PROP_FOURCC",
+      "occurrences": [
+        {
+          "file": "code/camera120_startup_check.py",
+          "line": 59
+        },
+        {
+          "file": "code/project_camera.py",
+          "line": 20
+        },
+        {
+          "file": "code/project_capture.py",
+          "line": 63
+        },
+        {
+          "file": "code/project_capture.py",
+          "line": 81
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.CAP_PROP_FPS",
+      "occurrences": [
+        {
+          "file": "code/camera120_startup_check.py",
+          "line": 62
+        },
+        {
+          "file": "code/camera120_startup_check.py",
+          "line": 100
+        },
+        {
+          "file": "code/project_camera.py",
+          "line": 22
+        },
+        {
+          "file": "code/project_capture.py",
+          "line": 65
+        },
+        {
+          "file": "code/project_capture.py",
+          "line": 85
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.CAP_PROP_FRAME_HEIGHT",
+      "occurrences": [
+        {
+          "file": "code/camera120_startup_check.py",
+          "line": 61
+        },
+        {
+          "file": "code/project_camera.py",
+          "line": 21
+        },
+        {
+          "file": "code/project_capture.py",
+          "line": 64
+        },
+        {
+          "file": "code/project_capture.py",
+          "line": 85
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.CAP_PROP_FRAME_WIDTH",
+      "occurrences": [
+        {
+          "file": "code/camera120_startup_check.py",
+          "line": 60
+        },
+        {
+          "file": "code/project_camera.py",
+          "line": 21
+        },
+        {
+          "file": "code/project_capture.py",
+          "line": 64
+        },
+        {
+          "file": "code/project_capture.py",
+          "line": 84
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.CAP_V4L2",
+      "occurrences": [
+        {
+          "file": "code/camera120_startup_check.py",
+          "line": 89
+        },
+        {
+          "file": "code/project_camera.py",
+          "line": 39
+        },
+        {
+          "file": "code/project_capture.py",
+          "line": 61
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.CHAIN_APPROX_NONE",
+      "occurrences": [
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 235
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.CHAIN_APPROX_SIMPLE",
+      "occurrences": [
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 410
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 36
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 363
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 382
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 450
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.COLOR_BGR2GRAY",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 289
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 231
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 752
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 828
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1062
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 556
+        },
+        {
+          "file": "code/turntable_material_seed.py",
+          "line": 323
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 552
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.COLOR_BGR2HSV",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 76
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 248
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 357
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 434
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 304
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 318
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 584
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 637
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.COLOR_GRAY2BGR",
+      "occurrences": [
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 572
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.COLOR_RGB2BGR",
+      "occurrences": [
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 415
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.CV_16SC2",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 1098
+        },
+        {
+          "file": "code/project_camera.py",
+          "line": 61
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 131
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.CV_32F",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 291
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 291
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.DIST_HUBER",
+      "occurrences": [
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 441
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.EVENT_LBUTTONDOWN",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 855
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 68
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 130
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 307
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 544
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 561
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.EVENT_LBUTTONUP",
+      "occurrences": [
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 137
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 299
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 551
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 553
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 567
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.EVENT_MOUSEMOVE",
+      "occurrences": [
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 135
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 316
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 551
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 565
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.FILE_STORAGE_MEMORY",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 551
+        },
+        {
+          "file": "code/project_camera.py",
+          "line": 46
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.FILE_STORAGE_READ",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 551
+        },
+        {
+          "file": "code/project_camera.py",
+          "line": 46
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 651
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 66
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 458
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 445
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.FONT_HERSHEY_SIMPLEX",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 641
+        },
+        {
+          "file": "code/main.py",
+          "line": 646
+        },
+        {
+          "file": "code/main.py",
+          "line": 653
+        },
+        {
+          "file": "code/main.py",
+          "line": 670
+        },
+        {
+          "file": "code/main.py",
+          "line": 701
+        },
+        {
+          "file": "code/main.py",
+          "line": 709
+        },
+        {
+          "file": "code/main.py",
+          "line": 728
+        },
+        {
+          "file": "code/main.py",
+          "line": 757
+        },
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 707
+        },
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 719
+        },
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 730
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 534
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 546
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 556
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 578
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 580
+        },
+        {
+          "file": "code/project_follow.py",
+          "line": 61
+        },
+        {
+          "file": "code/project_follow.py",
+          "line": 66
+        },
+        {
+          "file": "code/project_geometry.py",
+          "line": 18
+        },
+        {
+          "file": "code/project_geometry.py",
+          "line": 20
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 606
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 621
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 630
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 638
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1286
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1291
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1316
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1327
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1338
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 1139
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 1171
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 110
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 200
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 218
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 223
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 429
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 437
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 522
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 604
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 688
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 705
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 747
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.FileStorage",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 551
+        },
+        {
+          "file": "code/project_camera.py",
+          "line": 46
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 651
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 57
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 66
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 449
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 458
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 445
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.GaussianBlur",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 145
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 290
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 232
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 336
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 557
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 625
+        },
+        {
+          "file": "code/turntable_material_seed.py",
+          "line": 324
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 553
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.HOUGH_GRADIENT",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 146
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 339
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 560
+        },
+        {
+          "file": "code/turntable_material_seed.py",
+          "line": 333
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.HoughLines",
+      "occurrences": [
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 510
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.IMREAD_COLOR",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 1265
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 567
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.INTER_AREA",
+      "occurrences": [
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 382
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 554
+        },
+        {
+          "file": "code/turntable_material_seed.py",
+          "line": 319
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 550
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.INTER_LINEAR",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 1216
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 622
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 169
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 248
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 667
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 790
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.INTER_NEAREST",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 144
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 560
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.LINE_8",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 766
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 1123
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 1127
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 1135
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 510
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 520
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.LINE_AA",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 647
+        },
+        {
+          "file": "code/main.py",
+          "line": 654
+        },
+        {
+          "file": "code/main.py",
+          "line": 686
+        },
+        {
+          "file": "code/main.py",
+          "line": 713
+        },
+        {
+          "file": "code/main.py",
+          "line": 745
+        },
+        {
+          "file": "code/main.py",
+          "line": 762
+        },
+        {
+          "file": "code/main.py",
+          "line": 788
+        },
+        {
+          "file": "code/main.py",
+          "line": 847
+        },
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 708
+        },
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 720
+        },
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 731
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 607
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 615
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 621
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 632
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 639
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 976
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 978
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 980
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1287
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1292
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1299
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1302
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1306
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1316
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1329
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1339
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 1140
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 1175
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 111
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 201
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 219
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 224
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 430
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 438
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 523
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 582
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 592
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 605
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 692
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 709
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 731
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 751
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.MARKER_CROSS",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 766
+        },
+        {
+          "file": "code/project_follow.py",
+          "line": 65
+        },
+        {
+          "file": "code/project_geometry.py",
+          "line": 17
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 618
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1313
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 1126
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.MARKER_TILTED_CROSS",
+      "occurrences": [
+        {
+          "file": "code/turntable_detector.py",
+          "line": 1134
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.MORPH_CLOSE",
+      "occurrences": [
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 407
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 35
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 381
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 449
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.MORPH_ELLIPSE",
+      "occurrences": [
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 394
+        },
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 397
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.MORPH_OPEN",
+      "occurrences": [
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 404
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.RETR_EXTERNAL",
+      "occurrences": [
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 410
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 36
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 363
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 382
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 450
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.RETR_LIST",
+      "occurrences": [
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 235
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.VideoWriter_fourcc",
+      "occurrences": [
+        {
+          "file": "code/camera120_startup_check.py",
+          "line": 59
+        },
+        {
+          "file": "code/project_camera.py",
+          "line": 20
+        },
+        {
+          "file": "code/project_capture.py",
+          "line": 63
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.WINDOW_AUTOSIZE",
+      "occurrences": [
+        {
+          "file": "code/颜色标定.py",
+          "line": 485
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.WINDOW_NORMAL",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 1144
+        },
+        {
+          "file": "code/main.py",
+          "line": 1146
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 139
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 238
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 618
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 643
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.WND_PROP_TOPMOST",
+      "occurrences": [
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 621
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.WND_PROP_VISIBLE",
+      "occurrences": [
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 205
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.bitwise_and",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 79
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 83
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 234
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.bitwise_not",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 79
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 234
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.bitwise_or",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 443
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 539
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 540
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 291
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.boundingRect",
+      "occurrences": [
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 420
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 19
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 42
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 74
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 230
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 247
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 274
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 367
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 388
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 457
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.contourArea",
+      "occurrences": [
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 413
+        },
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 434
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 30
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 40
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 45
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 276
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 365
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 383
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 384
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 387
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 453
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 454
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 464
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.countNonZero",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 83
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 233
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.cvtColor",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 76
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 248
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 289
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 357
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 434
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 231
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 752
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 828
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1062
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 556
+        },
+        {
+          "file": "code/turntable_material_seed.py",
+          "line": 323
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 415
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 552
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 572
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 304
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 318
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 584
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 637
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.destroyAllWindows",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 1260
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 212
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 264
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 770
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 821
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.destroyWindow",
+      "occurrences": [
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 743
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.drawContours",
+      "occurrences": [
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 711
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 21
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 48
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 86
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 171
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 250
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 318
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 399
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 469
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 533
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.drawMarker",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 765
+        },
+        {
+          "file": "code/project_follow.py",
+          "line": 65
+        },
+        {
+          "file": "code/project_geometry.py",
+          "line": 17
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 618
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1313
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 1125
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 1133
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.findContours",
+      "occurrences": [
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 409
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 36
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 363
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 382
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 450
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 234
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.fitEllipse",
+      "occurrences": [
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 241
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 737
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.getStructuringElement",
+      "occurrences": [
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 393
+        },
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 396
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.getTextSize",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 640
+        },
+        {
+          "file": "code/main.py",
+          "line": 673
+        },
+        {
+          "file": "code/main.py",
+          "line": 679
+        },
+        {
+          "file": "code/main.py",
+          "line": 701
+        },
+        {
+          "file": "code/main.py",
+          "line": 732
+        },
+        {
+          "file": "code/main.py",
+          "line": 769
+        },
+        {
+          "file": "code/main.py",
+          "line": 818
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.getWindowProperty",
+      "occurrences": [
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 205
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.imdecode",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 1265
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 567
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.imencode",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 1292
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 571
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 586
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.imshow",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 1149
+        },
+        {
+          "file": "code/main.py",
+          "line": 1185
+        },
+        {
+          "file": "code/main.py",
+          "line": 1201
+        },
+        {
+          "file": "code/main.py",
+          "line": 1249
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 191
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 251
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 707
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 723
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 798
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.imwrite",
+      "occurrences": [
+        {
+          "file": "code/camera120_startup_check.py",
+          "line": 94
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.initUndistortRectifyMap",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 1092
+        },
+        {
+          "file": "code/project_camera.py",
+          "line": 61
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 131
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.morphologyEx",
+      "occurrences": [
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 403
+        },
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 406
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 35
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 381
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 449
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.moveWindow",
+      "occurrences": [
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 620
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 645
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.namedWindow",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 1144
+        },
+        {
+          "file": "code/main.py",
+          "line": 1146
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 139
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 238
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 618
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 643
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 485
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.ocl",
+      "occurrences": [
+        {
+          "file": "code/camera120_startup_check.py",
+          "line": 88
+        },
+        {
+          "file": "code/main.py",
+          "line": 1066
+        },
+        {
+          "file": "code/project_camera.py",
+          "line": 17
+        },
+        {
+          "file": "code/project_camera.py",
+          "line": 42
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 116
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.pointPolygonTest",
+      "occurrences": [
+        {
+          "file": "code/project_detector.py",
+          "line": 298
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 373
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 375
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.polylines",
+      "occurrences": [
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 623
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1318
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.putText",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 645
+        },
+        {
+          "file": "code/main.py",
+          "line": 651
+        },
+        {
+          "file": "code/main.py",
+          "line": 684
+        },
+        {
+          "file": "code/main.py",
+          "line": 705
+        },
+        {
+          "file": "code/main.py",
+          "line": 741
+        },
+        {
+          "file": "code/main.py",
+          "line": 787
+        },
+        {
+          "file": "code/main.py",
+          "line": 845
+        },
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 705
+        },
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 717
+        },
+        {
+          "file": "code/material_pickup_detector.py",
+          "line": 729
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 534
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 546
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 556
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 578
+        },
+        {
+          "file": "code/project_detector.py",
+          "line": 580
+        },
+        {
+          "file": "code/project_follow.py",
+          "line": 61
+        },
+        {
+          "file": "code/project_follow.py",
+          "line": 66
+        },
+        {
+          "file": "code/project_geometry.py",
+          "line": 18
+        },
+        {
+          "file": "code/project_geometry.py",
+          "line": 19
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 604
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 619
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 625
+        },
+        {
+          "file": "code/ring_station_detector.py",
+          "line": 634
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1284
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1289
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1314
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1322
+        },
+        {
+          "file": "code/stacked_ring_detector.py",
+          "line": 1331
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 1137
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 1167
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 110
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 198
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 215
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 221
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 428
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 435
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 521
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 597
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 684
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 701
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 743
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.remap",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 1216
+        },
+        {
+          "file": "code/turntable_detector.py",
+          "line": 618
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 169
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 248
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 667
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 790
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.resizeWindow",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 1145
+        },
+        {
+          "file": "code/main.py",
+          "line": 1147
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 140
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 239
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 619
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 644
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.setMouseCallback",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 1150
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 141
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 240
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 646
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 486
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.setWindowProperty",
+      "occurrences": [
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 621
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    },
+    {
+      "category": "opencv-api",
+      "closest_reference": "references/opencv-playbook.md",
+      "id": "cv2.waitKey",
+      "occurrences": [
+        {
+          "file": "code/main.py",
+          "line": 1205
+        },
+        {
+          "file": "code/main.py",
+          "line": 1255
+        },
+        {
+          "file": "code/叠放位直线标定.py",
+          "line": 192
+        },
+        {
+          "file": "code/物料抓取区域标定.py",
+          "line": 252
+        },
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 725
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 799
+        }
+      ],
+      "suggested_scope": "generic",
+      "suggested_test": "Add a minimal success case, an invalid-input case, and a platform availability check."
+    }
+  ],
+  "input": {
+    "files_scanned": 47,
+    "files_skipped": [],
+    "path": "D:\\Codex\\工创赛\\vision_app"
+  },
+  "maintenance_note": "Do not auto-write these candidates. Classify evidence, remove sensitive data, deduplicate, add regression tests, then promote only reusable knowledge.",
+  "project_id": "vision_app",
+  "project_specific": [
+    {
+      "occurrences": [
+        {
+          "file": "code/project_camera.py",
+          "line": 12,
+          "value": "960"
+        }
+      ],
+      "symbol": "DEFAULT_HEIGHT",
+      "values": [
+        "960"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "code/turntable_serial.py",
+          "line": 35,
+          "value": "115200"
+        }
+      ],
+      "symbol": "DEFAULT_SERIAL_BAUD",
+      "values": [
+        "115200"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "code/project_camera.py",
+          "line": 11,
+          "value": "1280"
+        }
+      ],
+      "symbol": "DEFAULT_WIDTH",
+      "values": [
+        "1280"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 43,
+          "value": "960"
+        }
+      ],
+      "symbol": "FRAME_HEIGHT",
+      "values": [
+        "960"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 42,
+          "value": "1280"
+        }
+      ],
+      "symbol": "FRAME_WIDTH",
+      "values": [
+        "1280"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "code/颜色标定.py",
+          "line": 47,
+          "value": "960"
+        }
+      ],
+      "symbol": "IMAGE_HEIGHT",
+      "values": [
+        "960"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "code/颜色标定.py",
+          "line": 46,
+          "value": "1280"
+        }
+      ],
+      "symbol": "IMAGE_WIDTH",
+      "values": [
+        "1280"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 44,
+          "value": "420"
+        },
+        {
+          "file": "code/颜色标定.py",
+          "line": 48,
+          "value": "360"
+        }
+      ],
+      "symbol": "PANEL_WIDTH",
+      "values": [
+        "360",
+        "420"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "code/转盘参数设置.py",
+          "line": 218,
+          "value": "40"
+        }
+      ],
+      "symbol": "ROW_HEIGHT",
+      "values": [
+        "40"
+      ]
+    }
+  ],
+  "sensitive_candidates": [],
+  "skill": {
+    "knowledge_files": [
+      "SKILL.md",
+      "knowledge-index.md",
+      "opencv-playbook.md",
+      "platform-deployment.md",
+      "puzzle-robot-project.md",
+      "reusable-patterns-and-learning.md"
+    ],
+    "root": "D:\\Codex\\home\\skills\\opencv-pzq"
+  },
+  "status": "review",
+  "suggested_tests": [
+    "Add a minimal success case, an invalid-input case, and a platform availability check."
+  ],
+  "tool": "audit_knowledge",
+  "version": "1.0.0"
+}

@@ -1,0 +1,59 @@
+{
+  "user_report": "效果比起之前好了一点点；要求先查电机相关资料，必要时参考CSDN/网络",
+  "physical_smoothness_accepted": false,
+  "physical_precision_accepted": false,
+  "last_approach_arrival_telemetry_received": false,
+  "manuals": [
+    {
+      "file": "工具安装包\\达妙_DM4310_20261028\\DM-J4310-2EC_V1.1_DC24V_使用说明书V1.0.pdf",
+      "sha256": "aad2c3ae95932393c87b4d149a4009c8e93af727df8d787472de807e2703d68e"
+    },
+    {
+      "file": "工具安装包\\达妙_DM4310_20261028\\DMTool上位机软件说明书.pdf",
+      "sha256": "81cb24d834201662ab27daf769491924a951763235388b1545cfb6d484a6fd48"
+    }
+  ],
+  "actual_source_sha256": {
+    "HARDWARE/DM_CAN2/dm_can2_protocol.c": "779fb138c62b20a82be1ec0e93786c9eec2ffa7666e09c6bbcaf94f6b6b2d991",
+    "HARDWARE/DM_CAN2/dm_can2_motion.c": "18a1050764ab7024e100d5eed640f68342fad070553dff7342f303fa322afa60",
+    "HARDWARE/DM_CAN2/dm_can2.h": "bed4470b045a40186a85c0c9b00069ea562188f9d8fb2f05cf615da077e3c679",
+    "USER/main.c": "3196b736a07b01d123f039dbdbcfe58ce1b6218c1fa23ec62c80b6d6bf2e47a3"
+  },
+  "web_sources": [
+    {
+      "url": "https://damiao.enactic.ai/assets/files/dm-j4310-2ec-v1.1-zh-5d089e0b013d8e2fc203c5b670008a66.pdf",
+      "role": "Manufacturer-authored V1.1 manual, archived matching local PDF",
+      "pages": [
+        5,
+        6,
+        7,
+        9
+      ]
+    },
+    {
+      "url": "https://gitee.com/kit-miao/damiao/blob/master/README_en.md",
+      "role": "Official material index inspected; linked SDK directory returned404, no SDK contents claimed"
+    },
+    {
+      "url": "https://modelers.csdn.net/69a52e697bbde9200b9b2072.html",
+      "role": "CSDN personal experiment search hit; full text fetch failed, not used as technical proof"
+    }
+  ],
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "待技术答疑确认; unchanged",
+  "new_firmware_or_parameter_write": false,
+  "assistant_motion": false
+}

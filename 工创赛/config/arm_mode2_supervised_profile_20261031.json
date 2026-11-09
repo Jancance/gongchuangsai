@@ -1,0 +1,20 @@
+{
+  "schema": "arm-mode2-supervised-profile-v1",
+  "date": "2026-10-31",
+  "mode": 2,
+  "pick_down_pulses": 32000,
+  "top_approach_up_pulses": 27000,
+  "return_down_pulses": 32000,
+  "gripper_close_deg": 140,
+  "gripper_open_deg": 180,
+  "debug_confirm_timeout_ms_source": 120000,
+  "requires_actual_top_before_start": true,
+  "requires_fresh_human_grip_confirmation": true,
+  "requires_fresh_human_support_confirmation": true,
+  "single_supervised_cycle_accepted": true,
+  "loaded_by_firmware": false,
+  "formal_motion_allowed": false,
+  "metric_calibration_accepted": false,
+  "current_pose_after_completion": "support/release height, not top",
+  "evidence": "evidence/p2-arm/2026-10-31/arm-confirm-wait/mode2-first-complete-acceptance.json"
+}

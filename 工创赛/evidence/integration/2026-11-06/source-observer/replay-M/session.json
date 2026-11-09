@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "serial": "DISABLED",
+  "motion_allowed": false,
+  "camera_opened": false,
+  "timing_source": "host_read_completion_only",
+  "sensor_exposure_age_verified": false,
+  "configs": {
+    "camera_processing_config": {
+      "path": "D:\\Codex\\工创赛\\output\\source-observer-20261106\\vision_app\\code\\config\\camera_processing.json",
+      "sha256": "34ea46956e8efc7d44dd880c3bea5a7b009d79dae986f4c947f870bd5ed92b52"
+    },
+    "turntable_config": {
+      "path": "D:\\Codex\\工创赛\\output\\source-observer-20261106\\vision_app\\code\\config\\turntable_detector.json",
+      "sha256": "8ccf0f264d5ff46af4bf6541467a96fe99fec071b5da6c2749861ed574b2757b"
+    },
+    "turntable_material_seed_config": {
+      "path": "D:\\Codex\\工创赛\\output\\source-observer-20261106\\vision_app\\code\\config\\turntable_material_seed.json",
+      "sha256": "88032d99dae755df5259ed05776b9a14b893832205c47f7b446bec9a45829c87"
+    },
+    "material_pickup_config": {
+      "path": "D:\\Codex\\工创赛\\output\\source-observer-20261106\\vision_app\\code\\config\\material_pickup_detector.json",
+      "sha256": "35f67a37a2d36080921e3698386c98dd5dae84c456481ead5974bf5383118781"
+    },
+    "material_color_config": {
+      "path": "D:\\Codex\\工创赛\\output\\source-observer-20261106\\vision_app\\code\\config\\material_color_thresholds.json",
+      "sha256": "c110ed3c67bd9beaefd5e9875f07d132b955ad5a481283d188fd14c549bcd4a2"
+    }
+  },
+  "mode": "M",
+  "frames": 1,
+  "error": null,
+  "last": {
+    "mode": "M",
+    "detection": {
+      "detected": false,
+      "ready": false,
+      "calibrated": false,
+      "state": "UNCALIBRATED",
+      "material_count": 0,
+      "slot_colors": [
+        0,
+        0,
+        0
+      ],
+      "max_speed_px_s": 0.0,
+      "motion_confirmed": false,
+      "moving_frames": 0,
+      "required_moving_frames": 2,
+      "low_speed_frames": 0,
+      "required_low_speed_frames": 3,
+      "processing_ms": 0.014999999621068127,
+      "detail": "请先运行 物料抓取区域标定.py 完成高位四区域标定",
+      "regions": []
+    },
+    "motion_allowed": false,
+    "note": "observation only; no grasp, inventory, task remainder inference or success generated",
+    "frame_sequence": 1,
+    "host_read_completed_monotonic_s": 8084.593,
+    "processed_after_host_read_ms": 16.000000000531145,
+    "sensor_exposure_age_verified": false,
+    "replay": true
+  }
+}

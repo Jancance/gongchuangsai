@@ -1,0 +1,100 @@
+{
+  "scope": "offline pure logic only; synthetic examples",
+  "test_command": "PYTHONPATH=src python -X utf8 -m unittest discover -s tests -p 'test_task*.py' -v",
+  "tests_passed": 20,
+  "files_sha256": {
+    "src/smart_carrier/task_materials.py": "d66fff6319b5eef1fb9c23d40568f716ec67800362995eb63913665fad43a912",
+    "config/task_materials_preliminary_2027.json": "3ca48b36be89ddc2e20698be16ca2ce44898ef2b18664de20c57024185f4e1a4",
+    "tests/test_task_materials.py": "5ed1ad9ff3531b68ae1c58593d1fe044180932b44d205d19ef48eddb2fe45a22",
+    "src/smart_carrier/task_code.py": "6687c655fe5e5541e1110aad9730eee22af810bd779b35a105ee99bc394daccc",
+    "tests/test_task_code.py": "76094e705365ee7eddfa0672a6a3fd75b6968ee278b79309d45b47717355857a"
+  },
+  "example_task": {
+    "raw_code": "156+123+516+231",
+    "profile_id": "2027_preliminary_attachment2_1",
+    "batch_1": [
+      {
+        "order": 1,
+        "color_code": 1,
+        "color_name": "red",
+        "rough_ring": 1,
+        "temporary_ring": 1,
+        "stack_on_first_batch": false
+      },
+      {
+        "order": 2,
+        "color_code": 5,
+        "color_name": "black",
+        "rough_ring": 2,
+        "temporary_ring": 2,
+        "stack_on_first_batch": false
+      },
+      {
+        "order": 3,
+        "color_code": 6,
+        "color_name": "lightblue",
+        "rough_ring": 3,
+        "temporary_ring": 3,
+        "stack_on_first_batch": false
+      }
+    ],
+    "batch_2": [
+      {
+        "order": 1,
+        "color_code": 5,
+        "color_name": "black",
+        "rough_ring": 2,
+        "temporary_ring": 2,
+        "stack_on_first_batch": true
+      },
+      {
+        "order": 2,
+        "color_code": 1,
+        "color_name": "red",
+        "rough_ring": 3,
+        "temporary_ring": 1,
+        "stack_on_first_batch": true
+      },
+      {
+        "order": 3,
+        "color_code": 6,
+        "color_name": "lightblue",
+        "rough_ring": 1,
+        "temporary_ring": 3,
+        "stack_on_first_batch": true
+      }
+    ],
+    "motion_allowed": false
+  },
+  "example_inference": [
+    {
+      "object_id": "a",
+      "color_code": 1,
+      "source": "VISION_CONFIRMED",
+      "position_confirmed": true
+    },
+    {
+      "object_id": "b",
+      "color_code": 5,
+      "source": "VISION_CONFIRMED",
+      "position_confirmed": true
+    },
+    {
+      "object_id": "c",
+      "color_code": 6,
+      "source": "TASK_REMAINDER_INFERRED",
+      "position_confirmed": true
+    }
+  ],
+  "example_preindex": {
+    "step": "INDEX_TARGET_SLOT",
+    "reason": "将目标槽预定位到固定取料位",
+    "target_slot": 3,
+    "material_id": "yellowA",
+    "motion_allowed": false
+  },
+  "live_integration": false,
+  "motion_allowed": false,
+  "hardware_commands_sent": false,
+  "legacy_stacking_semantics_corrected": true
+}

@@ -1,0 +1,111 @@
+{
+ "tag": "pick-geometry-three-plans-offline",
+ "when": "2026-11-08T03:10:20",
+ "scope": "offline only - no debugger, no flash, no motion",
+ "why": "user asked whether three pieces can use ONE fixed action; geometry check before writing code",
+ "corrections_to_previous_reports": [
+  {
+   "item": "single piece cycle time",
+   "wrong": "7.6s per piece (I added the 1.7s return on top of an already-complete measurement)",
+   "right": "5.87-5.96s per piece, INCLUDING release + return to 180 (SINGLE_CYCLE_STREAM fin-01/02/03)",
+   "source": "docs/SINGLE_CYCLE_STREAM_2026-11-07.md lines 84-90"
+  },
+  {
+   "item": "left/right extension requirement",
+   "wrong": "73.2mm using 173.205mm adjacent spacing as if it were axis distance",
+   "right": "~160mm; 173.205mm is the spacing BETWEEN materials, not the distance to the arm axis",
+   "source": "recomputed with cosine rule: sqrt(D^2+100^2+100D)"
+  }
+ ],
+ "plans": {
+  "A_single_station_extension_only": {
+   "verdict": "infeasible",
+   "side_extension_mm_at_D250_300_350": [
+    132.25,
+    180.56,
+    229.27
+   ],
+   "stroke_mm": 70,
+   "reason": "R=100mm / 120deg geometry forces side pieces ~160mm further than the near piece"
+  },
+  "B_change_station_same_pose": {
+   "verdict": "infeasible at current clearance",
+   "move_mm": [
+    86.6,
+    115.0
+   ],
+   "side_clearance_mm_at_base_50mm": -28.65,
+   "needed_base_clearance_mm": 145.28,
+   "reason": "MECH-06 needs >=50mm body-to-disc clearance; vehicle would hit the disc"
+  },
+  "C_wait_for_turntable": {
+   "verdict": "feasible - recommended",
+   "grounding": "R: disc rotates 6-10s/rev (36-60 deg/s), dwells ~3s, 3 pieces at 120deg -> one piece lands in the down region at every stop",
+   "turn_120deg_s": [
+    2.0,
+    3.33
+   ],
+   "dwell_s": 3.0,
+   "single_action": {
+    "arm_deg": 180.0,
+    "extension_mm": 0.0,
+    "depth_pulses": 118800,
+    "grip_open_deg": 210,
+    "grip_pre_deg": 160,
+    "grip_close_deg": 140
+   },
+   "timing_budget": {
+    "descent_ms": 2000,
+    "grip_ms": 400,
+    "lift_off_ms": 600,
+    "dwell_budget_ms": 3000
+   },
+   "expected_cycle": "18-19s for three pieces (action 5.9s overlaps turntable turn+dwell 5-6.3s)"
+  }
+ },
+ "delivered": [
+  {
+   "file": "scripts/pick_three_plans_20261108.py",
+   "role": "judges all three plans, --check self test"
+  },
+  {
+   "file": "scripts/pick_station_planner_20261108.py",
+   "role": "station-offset planning (plan B detail)"
+  },
+  {
+   "file": "scripts/pick_table_calibrator_20261108.py",
+   "role": "D/L0 -> three-row table (older approach, kept for record)"
+  },
+  {
+   "file": "CHASSIS/USER/source_pick_single_action.h",
+   "role": "single action table + compile-time 3s dwell guard"
+  }
+ ],
+ "build": {
+  "online": {
+   "target": "Vehicle_LiftRuler",
+   "errors": 0,
+   "warnings": 0,
+   "code": 116928
+  },
+  "offline": {
+   "target": "Vehicle_LiftRuler_Offline",
+   "errors": 0,
+   "warnings": 0,
+   "code": 91056
+  },
+  "negative_test": {
+   "what": "set SRC_DWELL_BUDGET_MS 3000->2000",
+   "result": "build failed with 1 error",
+   "conclusion": "the dwell guard is a live compile-time check, not a dead assert"
+  },
+  "note": "header-only change, Code size identical to previous build -> zero behaviour change"
+ },
+ "still_open": [
+  "L0 (axis-to-gripper at zero extension) never measured",
+  "actual turntable dwell and stop accuracy at the competition site",
+  "whether all three 120deg stops really put a piece inside the down ROI",
+  "real vision frame legality / instance tracking (still simulated)",
+  "four-wheel CAN not verified -> chassis correction still blocked"
+ ]
+}

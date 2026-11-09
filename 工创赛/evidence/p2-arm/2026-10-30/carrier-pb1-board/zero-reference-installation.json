@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-30",
+  "classification": "E nominal zero software window and user-confirmed tray installation",
+  "user_report": "这是上一条转到0°的位置，我已经安装好了，进入下一步",
+  "watch": {
+    "g_vm_test_request": 1,
+    "g_lift_state": 4,
+    "g_extension_motion_request": 0,
+    "g_extension_motion_state": 0,
+    "g_extension_motion_result": 0,
+    "g_carrier_debug_angle": 0,
+    "g_carrier_test_enable": 1,
+    "g_carrier_request": 0,
+    "g_carrier_latched_angle": 0,
+    "g_carrier_state": 2,
+    "g_carrier_result": 1,
+    "g_carrier_pulse_us": 500,
+    "g_carrier_signal_active": 0
+  },
+  "software_zero_window_completed": true,
+  "tray_installation_at_selected_zero_reference_user_confirmed": true,
+  "installation_alignment_evidence": "user report under the selected slot1 installation workflow, no independent position measurement",
+  "precise_mechanical_zero_verified": false,
+  "slot2_or_slot3_alignment_verified": false,
+  "screenshot": "zero-reference-installed-watch.png",
+  "screenshot_sha256": "2d6adec5c1e08f4faac92e98e704c62748b0926f04196f44a055c4d2b38852e0",
+  "next_single_step": {
+    "target_slot": 2,
+    "nominal_command_deg": 120,
+    "nominal_pulse_us": 1389,
+    "preconditions": "empty tray; arm/gripper and cables outside rotation sweep; supply ready and other axes idle",
+    "sequence": [
+      "request2 and run until state3",
+      "debug_angle120.0",
+      "test_enable1",
+      "request1 once"
+    ],
+    "observations": "actual next slot alignment to same fixed handoff and final stop; fresh latched_angle/state/result/pulse/signal",
+    "executed_or_accepted": false
+  },
+  "assistant_firmware_changes": false,
+  "assistant_flash_performed": false,
+  "assistant_hardware_commands": false,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged; pending official clarification"
+}

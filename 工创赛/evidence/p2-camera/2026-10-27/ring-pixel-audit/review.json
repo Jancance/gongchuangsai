@@ -1,0 +1,105 @@
+{
+  "source_zip": "20261027-185938-451099.zip",
+  "zip_sha256": "cc1b561163dc1e8b8edeb123e83967be2df929c11331e8752603d794b12b2042",
+  "crc_and_members_match": true,
+  "source_matches": {
+    "main.py": true,
+    "ring_station_detector.py": true,
+    "project_camera.py": true,
+    "diagnostic_entry": true
+  },
+  "config_matches": {
+    "ring_station_detector.json": {
+      "release_hash": true,
+      "effective_equal": true
+    },
+    "camera_processing.json": {
+      "release_hash": true,
+      "effective_equal": true
+    },
+    "project_profile.json": {
+      "release_hash": true,
+      "effective_equal": true
+    }
+  },
+  "frames": 262,
+  "usable_frames": 262,
+  "usable_fraction": 1.0,
+  "read_completion_span_s": 10.062723738999921,
+  "read_completion_interval_p50_p95_max_ms": [
+    34.84404599930713,
+    63.94408999949519,
+    397.22888999949646
+  ],
+  "result_host_age_p50_p95_max_ms": [
+    44.05139400023472,
+    61.652906050539954,
+    99.54470899992884
+  ],
+  "detector_processing_p50_p95_max_ms": [
+    24.503588500010665,
+    26.816458599842008,
+    68.53894100004254
+  ],
+  "output_statistics": [
+    {
+      "index": 1,
+      "median_xy_px": [
+        476.3344306945801,
+        629.7429962158203
+      ],
+      "range_xy_px": [
+        0.02945709228515625,
+        0.03090667724609375
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.008780670166015615,
+        0.010335922241210936
+      ]
+    },
+    {
+      "index": 2,
+      "median_xy_px": [
+        943.8006896972656,
+        635.628589630127
+      ],
+      "range_xy_px": [
+        0.032196044921875,
+        0.03481292724609375
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.0091552734375,
+        0.01321754455566405
+      ]
+    },
+    {
+      "index": 3,
+      "median_xy_px": [
+        1403.0509643554688,
+        640.1845474243164
+      ],
+      "range_xy_px": [
+        0.02923583984375,
+        0.03704833984375
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.0118408203125,
+        0.01293182373046875
+      ]
+    }
+  ],
+  "coordinate_reference": "Three ring centers, ordered by config. Raw 1920x1080 image origin upper left, X right/Y down.",
+  "manual_paper_label_mapping": {
+    "left_output_1": "printed 3",
+    "middle_output_2": "printed 2",
+    "right_output_3": "printed 1"
+  },
+  "mapping_source": "Visual review of first-three-centers-overlay.png, not OCR or general digit acceptance.",
+  "temporal_filter": "Original algorithm uses three-frame coordinate median when quality gates pass; these are output statistics, not independent raw localization accuracy.",
+  "maximum_output_axis_range_px": 0.03704833984375,
+  "maximum_output_axis_p95_abs_deviation_px": 0.01321754455566405,
+  "metric_valid": false,
+  "motion_allowed": false,
+  "scope": "One stationary scene and position, 262 host-read timestamps; no independent exposure, residual distortion, motion, metric or physical placement acceptance.",
+  "timing_limit": "Maximum processing-record gap is reported. Snapshot encoding may disturb timing; causality not established."
+}

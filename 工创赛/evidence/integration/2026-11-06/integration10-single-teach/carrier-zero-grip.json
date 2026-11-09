@@ -1,0 +1,44 @@
+{
+  "carrier_command_deg": 0,
+  "carrier_pulse_us": 500,
+  "gripper_command_deg": 140,
+  "gripper_pulse_us": 1537,
+  "reset": false,
+  "halt": false,
+  "physical_alignment_verified": false,
+  "physical_grasp_verified": false,
+  "writes": [
+    [
+      "0x40000440",
+      500
+    ],
+    [
+      "0x40000414",
+      1
+    ],
+    [
+      "0x40000400",
+      129
+    ],
+    [
+      "0x40020400",
+      41609
+    ],
+    [
+      "0x40000034",
+      1537
+    ]
+  ],
+  "carrier_readback": {
+    "CCR4": 500,
+    "CR1": 129,
+    "PB1_mode": 2
+  },
+  "gripper_readback_us": 1537,
+  "fault_after": {
+    "g_lift_ruler_cause": 0,
+    "g_safety_fault": 0,
+    "g_rtos_fault": 0,
+    "g_can_ctrl_fault_latched": 0
+  }
+}

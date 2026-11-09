@@ -1,0 +1,423 @@
+{
+  "scope": "Saved-image detector replay only; not capture/GUI timing, host-frame age, exposure-to-result latency or physical acceptance.",
+  "camera_opened": false,
+  "serial_opened": false,
+  "motion_allowed": false,
+  "python": "3.10.12 (main, Jun 22 2026, 18:55:27) [GCC 11.4.0]",
+  "opencv": "4.5.4",
+  "opencv_threads": 8,
+  "main_import_ms": 521.1203580001893,
+  "color_module_loaded_before_analysis": true,
+  "diagnostic_sha256": "6fb98e804264de46daf09a655e048784e4a6bfceeb553dc922a8eb5b13648ee5",
+  "app_main_module": "/home/orangepi/p2-generic120-black1-20261024/vision_app/code/main.py",
+  "module_matches": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true
+  },
+  "config_matches": {
+    "material_color_thresholds.json": true,
+    "project_profile.json": true,
+    "camera_processing.json": true
+  },
+  "rows": [
+    {
+      "image": "first-frame-raw.png",
+      "case": "no_history",
+      "prior_count": 0,
+      "call_ms": [
+        124.4856310004252,
+        96.1255379997965,
+        84.79445000011765,
+        90.14499899967632,
+        105.07491000043956,
+        107.20725400005904,
+        106.3544329999786,
+        107.5193329998001
+      ],
+      "median_ms": 105.71467150020908,
+      "max_ms": 124.4856310004252,
+      "classified_outputs": [
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "image": "first-frame-raw.png",
+      "case": "saved_previous_tracks",
+      "prior_count": 0,
+      "call_ms": [
+        91.63889400042535,
+        115.74683999970148,
+        101.25817200059828,
+        87.10325099946203,
+        85.79631100019469,
+        86.04364100028761,
+        85.833934999755,
+        85.36027499940246
+      ],
+      "median_ms": 86.57344599987482,
+      "max_ms": 115.74683999970148,
+      "classified_outputs": [
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "image": "sample-06-raw.png",
+      "case": "no_history",
+      "prior_count": 0,
+      "call_ms": [
+        84.62703599980159,
+        70.80310899982578,
+        60.087429999839514,
+        60.81921099939791,
+        66.6349610000907,
+        77.32614100041246,
+        61.421493999660015,
+        61.62857500021346
+      ],
+      "median_ms": 64.13176800015208,
+      "max_ms": 84.62703599980159,
+      "classified_outputs": [
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "image": "sample-06-raw.png",
+      "case": "saved_previous_tracks",
+      "prior_count": 1,
+      "call_ms": [
+        73.68035899980896,
+        60.57771399991907,
+        62.86464000004344,
+        67.89231800030393,
+        67.07449700024881,
+        60.00663899976644,
+        62.80543299999408,
+        75.54787499975646
+      ],
+      "median_ms": 64.96956850014612,
+      "max_ms": 75.54787499975646,
+      "classified_outputs": [
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ]
+      ]
+    }
+  ],
+  "profile": "         10612 function calls (10606 primitive calls) in 0.338 seconds\n\n   Ordered by: cumulative time\n   List reduced from 119 to 40 due to restriction <40>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        4    0.033    0.008    0.338    0.084 /home/orangepi/p2-generic120-black1-20261024/vision_app/code/project_detector.py:566(analyze)\n        4    0.000    0.000    0.105    0.026 /home/orangepi/p2-generic120-black1-20261024/vision_app/code/project_detector.py:574(<dictcomp>)\n       24    0.000    0.000    0.105    0.004 /home/orangepi/p2-generic120-black1-20261024/vision_app/code/颜色标定.py:286(_mask_from_hsv)\n       28    0.101    0.004    0.101    0.004 {inRange}\n        4    0.002    0.001    0.054    0.013 /home/orangepi/p2-generic120-black1-20261024/vision_app/code/project_detector.py:357(chromatic_fallback)\n       26    0.041    0.002    0.041    0.002 {findContours}\n        4    0.018    0.004    0.037    0.009 /home/orangepi/p2-generic120-black1-20261024/vision_app/code/project_detector.py:266(black_edge_recovery)\n       12    0.034    0.003    0.034    0.003 {cvtColor}\n       32    0.025    0.001    0.025    0.001 {bitwise_or}\n        4    0.002    0.001    0.016    0.004 /home/orangepi/p2-generic120-black1-20261024/vision_app/code/project_detector.py:468(black_face_supported_hull)\n        4    0.013    0.003    0.013    0.003 {split}\n        6    0.012    0.002    0.012    0.002 {morphologyEx}\n      398    0.012    0.000    0.012    0.000 {method 'reduce' of 'numpy.ufunc' objects}\n        2    0.011    0.006    0.011    0.006 {HoughCircles}\n      126    0.000    0.000    0.009    0.000 {method 'sum' of 'numpy.ndarray' objects}\n      126    0.000    0.000    0.009    0.000 /usr/lib/python3/dist-packages/numpy/core/_methods.py:46(_sum)\n      114    0.006    0.000    0.006    0.000 {method 'astype' of 'numpy.ndarray' objects}\n       54    0.004    0.000    0.004    0.000 {drawContours}\n      162    0.001    0.000    0.004    0.000 /usr/lib/python3/dist-packages/numpy/core/_methods.py:162(_mean)\n     4444    0.004    0.000    0.004    0.000 {contourArea}\n      108    0.000    0.000    0.003    0.000 {method 'mean' of 'numpy.ndarray' objects}\n       16    0.002    0.000    0.002    0.000 {built-in method builtins.sorted}\n        2    0.001    0.001    0.002    0.001 /home/orangepi/p2-generic120-black1-20261024/vision_app/code/project_detector.py:623(<dictcomp>)\n  128/122    0.001    0.000    0.002    0.000 {built-in method numpy.core._multiarray_umath.implement_array_function}\n        4    0.002    0.000    0.002    0.000 {method 'copy' of 'numpy.ndarray' objects}\n        8    0.002    0.000    0.002    0.000 {Sobel}\n        2    0.001    0.000    0.002    0.001 /home/orangepi/p2-generic120-black1-20261024/vision_app/code/project_detector.py:409(<dictcomp>)\n        4    0.001    0.000    0.001    0.000 /home/orangepi/p2-generic120-black1-20261024/vision_app/code/颜色标定.py:178(validate_color_config)\n       26    0.001    0.000    0.001    0.000 /usr/lib/python3/dist-packages/numpy/lib/index_tricks.py:148(__getitem__)\n        4    0.001    0.000    0.001    0.000 {GaussianBlur}\n       54    0.000    0.000    0.001    0.000 <__array_function__ internals>:2(mean)\n       54    0.000    0.000    0.001    0.000 /usr/lib/python3/dist-packages/numpy/core/fromnumeric.py:3322(mean)\n      162    0.001    0.000    0.001    0.000 /usr/lib/python3/dist-packages/numpy/core/_methods.py:66(_count_reduce_items)\n       56    0.001    0.000    0.001    0.000 {built-in method numpy.asarray}\n       14    0.001    0.000    0.001    0.000 {convexHull}\n       12    0.000    0.000    0.001    0.000 /usr/lib/python3/dist-packages/numpy/core/numeric.py:149(ones)\n       54    0.000    0.000    0.000    0.000 {method 'max' of 'numpy.ndarray' objects}\n        6    0.000    0.000    0.000    0.000 {erode}\n        2    0.000    0.000    0.000    0.000 <__array_function__ internals>:2(linspace)\n       54    0.000    0.000    0.000    0.000 /usr/lib/python3/dist-packages/numpy/core/_methods.py:38(_amax)\n\n\n"
+}

@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-30",
+  "classification": "E hardware user confirmation and candidate profile",
+  "user_wiring_confirmation": "接在PB1上，5V供电",
+  "user_same_servo_confirmation": "是，同一款",
+  "same_servo_question_reference": "1.270°舵机旋转工程所用的270°位置舵机；20ms周期、500～2500us",
+  "signal_pin": "PB1",
+  "reported_supply_v": 5,
+  "source_profile": {
+    "angle_range_deg": [
+      0,
+      270
+    ],
+    "period_us": 20000,
+    "pulse_us": [
+      500,
+      2500
+    ]
+  },
+  "profile_is_independent_mechanical_calibration": false,
+  "source_main_automatic_0_270_cycle_copied": false,
+  "initial_test": {
+    "angle_deg": 135,
+    "pulse_us": 1500,
+    "window_ms": 1500,
+    "allowed_command_angle_deg": [
+      120,
+      150
+    ],
+    "enable_default": 0,
+    "request_default": 0,
+    "slot_angles": null,
+    "requires_mechanically_detached_from_tray": true,
+    "executed": false
+  },
+  "signal_withdrawal_is_physical_stop_confirmation": false,
+  "three_slot_geometry_or_motion_accepted": false,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged; pending official clarification",
+  "assistant_flash_performed": false,
+  "assistant_hardware_commands": false
+}

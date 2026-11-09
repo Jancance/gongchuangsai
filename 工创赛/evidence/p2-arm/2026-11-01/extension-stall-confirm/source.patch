@@ -1,0 +1,111 @@
+--- before/HARDWARE/EXTENSION/extension.c
++++ after/HARDWARE/EXTENSION/extension.c
+@@ -72,12 +72,18 @@
+ volatile int32_t g_extension_speed_rpm = 0;
+ volatile int64_t g_extension_delta_raw = 0;
+ volatile uint32_t g_extension_motion_elapsed_ms = 0U;
++volatile uint32_t g_extension_stall_pending = 0U;
++volatile uint32_t g_extension_stall_elapsed_ms = 0U;
++volatile uint32_t g_extension_stall_max_ms = 0U;
++volatile uint32_t g_extension_stall_events = 0U;
+ volatile uint32_t g_extension_motion_direction = 0U;
+ CanRxMsg g_extension_motion_reply;
+ CanRxMsg g_extension_control_reply;
+ static TickType_t s_extension_started, s_extension_poll, s_extension_last_service;
+ static uint32_t s_extension_phase = 0U;
+ static int64_t s_extension_before_position = 0;
++static TickType_t s_extension_stall_since;
++static uint32_t s_extension_stall_active = 0U;
+ 
+ uint32_t Extension_MotionIsBusy(void)
+ {
+@@ -88,6 +94,7 @@
+ {
+     const uint8_t command[4] = {0xFEU, 0x98U, 0U, 0x6BU};
+     g_extension_stop_result = CAN1_ExtensionExchange(command, 4U, &g_extension_control_reply);
++    s_extension_stall_active = 0U; g_extension_stall_pending = 0U;
+     return g_extension_stop_result;
+ }
+ 
+@@ -158,10 +165,19 @@
+         g_extension_stop_result = 0U; g_extension_motion_options_result = 0U;
+         g_extension_delta_raw = 0; g_extension_speed_rpm = 0;
+         g_extension_motion_elapsed_ms = 0U;
++        s_extension_stall_active = 0U; g_extension_stall_pending = 0U;
++        g_extension_stall_elapsed_ms = 0U; g_extension_stall_max_ms = 0U;
++        g_extension_stall_events = 0U;
+         s_extension_started = now; s_extension_last_service = now;
+         s_extension_phase = 0U;
+     }
+     if (!Extension_MotionIsBusy()) return;
++    if (s_extension_stall_active)
++    {
++        g_extension_stall_elapsed_ms = (uint32_t)((now - s_extension_stall_since) * portTICK_PERIOD_MS);
++        if (g_extension_stall_elapsed_ms > g_extension_stall_max_ms)
++            g_extension_stall_max_ms = g_extension_stall_elapsed_ms;
++    }
+     /* 忙时新启动请求已消费，不排队、不延长超时；方向用内部锁存值。 */
+     g_extension_motion_direction = s_direction;
+     g_extension_motion_elapsed_ms = (uint32_t)((now - s_extension_started) * portTICK_PERIOD_MS);
+@@ -227,8 +243,26 @@
+             result = CAN1_ReadStatus(EXTENSION_CAN_ADDRESS, &g_extension_motion_reply);
+             if (result != 1U) { Extension_MotionFault(4U); break; }
+             g_extension_flags = g_extension_motion_reply.Data[1];
+-            if ((g_extension_flags & 0x0CU) != 0U || !(g_extension_flags & 1U))
++            /* 保护位/失能立即停；0x04单次低速大电流标志不冒充已持续保护。 */
++            if ((g_extension_flags & 0x08U) != 0U || !(g_extension_flags & 1U))
+             { Extension_MotionFault(5U); break; }
++            if (g_extension_flags & 0x04U)
++            {
++                if (!s_extension_stall_active)
++                {
++                    s_extension_stall_active = 1U; s_extension_stall_since = now;
++                    g_extension_stall_pending = 1U; g_extension_stall_elapsed_ms = 0U;
++                    g_extension_stall_events++;
++                }
++                /* 每次新鲜状态复核；持续到界仍停，整体10秒和服务超时不延长。 */
++                if ((TickType_t)(now - s_extension_stall_since) >= pdMS_TO_TICKS(EXTENSION_STALL_CONFIRM_MS))
++                { Extension_MotionFault(5U); break; }
++            }
++            else
++            {
++                s_extension_stall_active = 0U; g_extension_stall_pending = 0U;
++                g_extension_stall_elapsed_ms = 0U;
++            }
+             s_extension_phase = 1U;
+         }
+         else if (s_extension_phase == 1U)
+@@ -244,7 +278,8 @@
+             if (result != 1U) { Extension_MotionFault(4U); break; }
+             g_extension_speed_rpm = speed;
+             delta = g_extension_delta_raw;
+-            if ((g_extension_flags & 2U) && speed == 0 && (delta >= 2 || delta <= -2))
++            if ((g_extension_flags & 2U) && !(g_extension_flags & 0x0CU) &&
++                speed == 0 && (delta >= 2 || delta <= -2))
+             {
+                 /* 确认包不足以完成；还需位置变化、到位及静止反馈。保持锁轴。 */
+                 g_extension_motion_result = 1U; g_extension_motion_state = 7U;
+--- before/HARDWARE/EXTENSION/extension.h
++++ after/HARDWARE/EXTENSION/extension.h
+@@ -31,6 +31,11 @@
+ extern volatile int32_t g_extension_speed_rpm;
+ extern volatile int64_t g_extension_delta_raw;
+ extern volatile uint32_t g_extension_motion_elapsed_ms;
++/* 普通运行瞬时堵转观察；保护位或失能仍立即停，以下值仅用于诊断。 */
++extern volatile uint32_t g_extension_stall_pending;
++extern volatile uint32_t g_extension_stall_elapsed_ms;
++extern volatile uint32_t g_extension_stall_max_ms;
++extern volatile uint32_t g_extension_stall_events;
+ extern volatile uint32_t g_extension_motion_direction;
+ extern CanRxMsg g_extension_motion_reply;
+ extern CanRxMsg g_extension_control_reply;
+--- before/HARDWARE/EXTENSION/extension_config.h
++++ after/HARDWARE/EXTENSION/extension_config.h
+@@ -9,5 +9,7 @@
+ #define EXTENSION_MOVE_TIMEOUT_MS   10000U
+ #define EXTENSION_POLL_MS           100U
+ #define EXTENSION_SERVICE_GAP_MS    500U
++/* 本机Clog_Ms口述2000ms；只约束普通运行的瞬时堵转，不写驱动参数。 */
++#define EXTENSION_STALL_CONFIRM_MS  2000U
+ 
+ #endif

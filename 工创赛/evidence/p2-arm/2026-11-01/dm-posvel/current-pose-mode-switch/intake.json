@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-01",
+  "scope": "new-session fresh DM read accepted, first actual mode2 switch/hold pending",
+  "screenshot": "before-mode-switch-watch.png",
+  "sha256": "c6cba7fe0b02790bc0a7ac7bffa860b86ef68a7114f30a60a69b635613534773",
+  "watch": {
+    "g_vm_test_request": 1,
+    "g_lift_state": 4,
+    "g_carrier_state": 4,
+    "g_dm_point_enable": 0,
+    "g_dm_can2_read_request": 0,
+    "g_dm_can2_state": 4,
+    "g_dm_can2_result": 1,
+    "g_dm_can2_feedback_valid": 1,
+    "g_dm_can2_ctrl_mode": 1,
+    "g_dm_can2_logical_position_deg": 77.1824951,
+    "g_dm_can2_motor_state": 0,
+    "g_dm_posvel_speed_deg_s": 300,
+    "g_dm_mode_change_state": 0,
+    "g_dm_posvel_holding": 0,
+    "g_dm_jog_request": 0,
+    "g_dm_jog_state": 0,
+    "g_dm_jog_result": 0,
+    "g_dm_jog_stop_result": 0,
+    "g_dm_pick_target_deg": 177.833679,
+    "g_dm_place_target_deg": 33.8401489
+  },
+  "mode2_hardware_accepted": false,
+  "new_hold_accepted": false,
+  "source_alignment_accepted": false,
+  "temporary_current_pose_target_deg": 77.1825,
+  "next_single_action": "First real mode2 activation at current pose only: keep axes/physical pose stationary, set g_dm_pick_target_deg77.1825 (temporary current-pose target, not measured source), then g_dm_point_enable1, g_dm_jog_request4 once last; continue CPU running. Expect ctrl_mode2/mode_change3, jog7/result1, holding1/motor1, stop_result0 after software arrival. No new large rotation, lowering, extension or grip. Abnormal physical motion uses jog_request3 while CPU runs, then return Watch. Do not persist77.1825 as final pickup point without physical alignment evidence.",
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "待技术答疑确认; unchanged",
+  "source_build_changed": false,
+  "assistant_motion": false
+}

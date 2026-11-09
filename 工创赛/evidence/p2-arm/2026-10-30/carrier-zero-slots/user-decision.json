@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-30",
+  "classification": "E explicit user override of assembly scheme",
+  "user_decision": "不用这么麻烦，直接让舵机旋转到0°，我来安装好让它对准机械臂固定取放位置，然后每转120°就刚好是下一个号码槽",
+  "supersedes": "assistant135-degree center reference and slot2 assembly proposal",
+  "prior_evidence_preserved": true,
+  "slot_numbering_direction": "increasing nominal servo command",
+  "nominal_slot_targets_deg": {
+    "1": 0,
+    "2": 120,
+    "3": 240
+  },
+  "nominal_pulses_us": {
+    "1": 500,
+    "2": 1389,
+    "3": 2278
+  },
+  "first_action": "explicit detached/not-fixed-to-tray zero command, no automatic sweep",
+  "mounting_by_user": "align slot1 to fixed handoff at nominal0, preserve shaft pose",
+  "finite_travel_return": "slot3 240 to slot1 0 returns in decreasing command direction; no360 target or positive wrap",
+  "hardware_zero_or_slot_alignment_verified": false,
+  "physical_installation_verified": false,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged; pending official clarification",
+  "assistant_flash_performed": false,
+  "assistant_hardware_commands": false
+}

@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "cases": [
+    "disabled",
+    "zero_source",
+    "large_source",
+    "nan_angle",
+    "complete",
+    "snapshot",
+    "stale_dm",
+    "lift_failure",
+    "gripper_failure",
+    "rotation_failure",
+    "abort_down",
+    "abort_rotate",
+    "external_stop",
+    "lost_ready",
+    "hold_loss",
+    "gap",
+    "legacy"
+  ],
+  "hardware_stubs": true,
+  "actual_main_guard_extracted": true,
+  "source_sha256": {
+    "USER/arm_sequence.c": "733b8fbf7cfe5686a8440184e12ab3edbb595af94394dcc88bef6e6308107ccc",
+    "USER/arm_sequence.h": "8a9025ad3c4d59aea8a499226e76d7004c81f490ea3e0060cd2ab1246c3f8a48",
+    "USER/main.c": "b3150282713e7648e906a2d3e9bffe7f8b2e216739091b3c928ff688b874d77a"
+  }
+}

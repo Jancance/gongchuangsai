@@ -1,0 +1,58 @@
+{
+ "when": "2026-11-08T16:21:48",
+ "result": "FULL CHAIN PASS - fault=0, total 9.4s",
+ "steps": [
+  {
+   "step": "IT1 top reference",
+   "t_s": 1.98,
+   "after_raw": 27029,
+   "top_valid": 1
+  },
+  {
+   "step": "IT2 extension home / hold",
+   "t_s": 1.75,
+   "hold": 1,
+   "ref_deg": 0.0
+  },
+  {
+   "step": "IT3 arm -> left",
+   "t_s": 0.46,
+   "logical": 134.1579,
+   "real_deg": 166.0553,
+   "target_deg": 166.03
+  },
+  {
+   "step": "IT3 extend 156mm",
+   "t_s": 0.94,
+   "ext_deg": -561.9,
+   "ext_mm": 156.1,
+   "target_mm": 156
+  },
+  {
+   "step": "IT1 descend to pick height",
+   "t_s": 2.06,
+   "after_raw": 1336503,
+   "target_raw": 1336500,
+   "error_counts": 3
+  },
+  {
+   "step": "gripper close 140deg",
+   "t_s": 0.68
+  }
+ ],
+ "note_sign": "extension angle is negative on purpose: STARTUP_EXTENSION_EXTEND_SIGN=-1 means extend=angle decreases; g_it_extension_mm input stays +156",
+ "bugs_fixed_this_session": [
+  "extension_home_only.inc:73 StartupAxes_Holding was a return-0 stub -> DM service never ran, CAN2 never initialised",
+  "safety.c: wheel CAN guard armed while mechanism owns VM -> latched 0x20 and cascaded into axes FAULT",
+  "lift_ruler_adapter.c + main.c: mechanism health no longer depends on wheel guard",
+  "main.c: removed !VEHICLE_EXTENSION_HOME_ONLY gating on DM/Arm/CombinedTest services",
+  "can.c: 0x22 home params arrive in 3 frames, frame3 at ~89ms > 60ms window -> dedicated 250ms window",
+  "integration10_complete.inc: IT3 extension depth guard is place-only, was rejecting every pick extend",
+  "integration10_complete.inc: stepper_accel 45055 -> 600 (illegal accel caused 670deg runaway)",
+  "vehicle_source_parallel.inc: node6 options byte 0x84 taken as 100 counts/deg (actually 10)",
+  "vehicle_source_parallel.inc: vsp_group.state=4 after one fault blocked every later IT3",
+  "vehicle_parameters.h: VEHICLE_LIFT_REFERENCE_VALID 0 -> 1 (top reference verified on hardware)",
+  "source_parallel_flow.h: SPF_STEPPER_ACCEL 45055 -> 600 to match the commanded value",
+  "vehicle_source_parallel.inc: overshoot/arrival tolerances widened to 30deg/25deg (drive stops with inertia)"
+ ]
+}

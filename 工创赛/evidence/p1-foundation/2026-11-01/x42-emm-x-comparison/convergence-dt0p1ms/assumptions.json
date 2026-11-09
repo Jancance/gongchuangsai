@@ -1,0 +1,798 @@
+{
+  "scope": "Offline interface/planner comparison plus equal-controller plant sensitivity only. Manufacturer firmware internals are NOT reproduced.",
+  "actual_hardware_record": "X42S_V2.0; FW_Emm; four chassis nodes1..4, CAN500k, S_Vel_IS Disable user report2026-10-17. Not new hardware readback.",
+  "actual_microsteps": "not read back;16/64/256 are alternatives, not asserted current values",
+  "plants": [
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.0002,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.002,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.0,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.0,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.03,
+      "load": 0.0,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 0.7,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 8.0,
+      "encoder_bits": 16
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 14
+    },
+    {
+      "inertia": 0.008,
+      "static_friction": 0.03,
+      "load": 0.02,
+      "zeta": 1.2,
+      "bandwidth_hz": 16.0,
+      "encoder_bits": 16
+    }
+  ],
+  "models": [
+    "Emm16",
+    "Emm64",
+    "Emm256",
+    "X_default",
+    "X_0p01"
+  ],
+  "model_count": 480,
+  "time_step_s": 0.0001,
+  "motion_deg": 90.037,
+  "speed_cap_rpm": 100,
+  "matched_acceleration_rpm_s": 1000,
+  "emm_acc236_matches_x1000": true,
+  "proxy_control": "Identical second-order error feedback torque across all labels; bandwidth8/16Hz, damping0.7/1.2, current lag1ms and torque cap0.8Nm ASSUMED. No actual motor PID readback.",
+  "encoder_assumptions": "14 and16 bits swept; V2.0 preference for16bit is not proof of physical installed encoder bits. Do not use0.1deg X CAN feedback as internal encoder quantization.",
+  "limitations": [
+    "No internal manufacturerFOC reproduction or unbiased empirical ranking of firmware controllers",
+    "No wheel slip, Mecanum kinematics, HWT/odometry/chassis path or vehicle accuracy acceptance",
+    "Torque/friction/inertia are unmeasured; no actual load or current calibration",
+    "No actual protocol switch, flash, motion, auto-calibration or motor configuration writes",
+    "Existing P1 prepare-control F3 E2 remains unresolved; simulation does not fix or clear it"
+  ],
+  "decision": "No actual-precision superiority established. Retain Emm; X is eligible for later actual same-condition comparison, not automatically switched on surrogate results."
+}

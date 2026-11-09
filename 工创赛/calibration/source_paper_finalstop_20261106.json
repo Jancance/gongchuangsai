@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "calibration_id": "source-finalstop-a378ccbf77e0-diagnostic",
+  "width_mm": 100,
+  "height_mm": 100,
+  "image_sha256": "a378ccbf77e0c8514ed82b75d29eec5df6254815a3a8370322134530260579e6",
+  "context": {
+    "camera_id": "Generic_USB_CAMERA_EP.20CC54K01-user135",
+    "image_size": [
+      1920,
+      1080
+    ],
+    "mount_id": "current-field-mount-20261105",
+    "arm_pose_id": "image-bound-a378ccbf77e0-extension48-top-driver-reference-unverified",
+    "pixel_space": "raw",
+    "lens_profile_id": null,
+    "plane_id": "current-source-surface-finalstop",
+    "plane_z_mm": 85.5,
+    "plane_origin": "current paper cornerA; X alongAB; Y alongAD",
+    "axes": "x_along_ab_y_toward_ad_mm"
+  },
+  "plane_height_basis": "retained prior measured85.5mm, not newly measured in this scene",
+  "homography_image_to_plane": [
+    [
+      0.2491585821667332,
+      -0.014330904553454956,
+      -115.74396633280345
+    ],
+    [
+      0.017239070070901082,
+      0.247264084641604,
+      -64.78159824851753
+    ],
+    [
+      2.7973807521766795e-05,
+      1.0567788500862851e-05,
+      1
+    ]
+  ],
+  "new_finalstop_result": "evidence/integration/2026-11-06/source-vision-new-pose/finalstop-geometry/matlab-result.json",
+  "paper_local_check_passed": true,
+  "heldout_MEF_max_mm": 1.4679040881223524,
+  "plane_to_chassis_candidate": [
+    [
+      0.06284506610824696,
+      -0.9980232951518968,
+      284.3951672904902
+    ],
+    [
+      -0.9980232951518968,
+      -0.06284506610824696,
+      117.03027179666185
+    ],
+    [
+      0,
+      0,
+      1
+    ]
+  ],
+  "plane_to_chassis": null,
+  "plane_to_chassis_verified": false,
+  "field_calibration_accepted": false,
+  "full_plane_metric_accuracy_accepted": false,
+  "pose_binding_verified": false,
+  "material_top_mapping_verified": false,
+  "extrapolation_verified": false,
+  "motion_allowed": false,
+  "plain_image_sha256": "be8570b082fb53f3488b1ad8414a98665bffb6f0b978da5ec340df112a4f61d1",
+  "paper_plain_view_consistent": true,
+  "same_view_evidence": "evidence/integration/2026-11-06/source-vision-new-pose/finalstop-A-review/matlab-result.json"
+}

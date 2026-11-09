@@ -1,0 +1,85 @@
+{
+  "date": "2026-10-30",
+  "classification": "E first physical retract-stop homing functional acceptance",
+  "user_message": "是**缩回、真正触挡后自行停止**",
+  "physical_observation_source": "user report; no independent video or force measurement",
+  "watch": {
+    "g_extension_home_state": 8,
+    "g_extension_home_result": 1,
+    "g_extension_home_flags": 3,
+    "g_extension_home_start_result": 1,
+    "g_extension_home_reported": 1,
+    "g_extension_home_abort_result": 0,
+    "g_extension_home_stop_result": 0,
+    "g_vm_test_request": 1,
+    "g_extension_home_request": 0
+  },
+  "watch_transcription_note": "start_result, abort_result and stop_result labels are truncated in image; expanded using actual extension_home.h/c declarations",
+  "software_completion_definition": "state8/result1/reported1 follows this-session running or completion notice, no home-failure flags and speed==0 read in actual source",
+  "speed_directly_visible_in_screenshot": false,
+  "abort_stop_zero_interpretation": "abort and forced-stop commands not invoked; zero is not a failed stop",
+  "first_retract_true_contact_self_stop_function_accepted": true,
+  "software_home_completion_accepted": true,
+  "precise_repeatability_verified": false,
+  "repeat_home_function_verified": false,
+  "mechanical_stop_load_or_long_term_hold_verified": false,
+  "metric_mapping_or_full_travel_verified": false,
+  "power_loss_recovery_verified": false,
+  "loaded_or_fixed_grasp_verified": false,
+  "screenshot": "first-home-completed-watch.png",
+  "screenshot_sha256": "51c894655d95305395f2699390b9d914152fd6c66789d406d13499a645b1bb30",
+  "actual_source_checks": [
+    {
+      "file": "HARDWARE/EXTENSION/extension_home.c",
+      "sha256": "180a5b99837c947c901e9a00442c9d94aed5303ac35b6cda8cfa4a18073fdaa7",
+      "matches_installed": true
+    },
+    {
+      "file": "HARDWARE/EXTENSION/extension_home.h",
+      "sha256": "2c6366d5dc4a93f2d455df3de825d8a66a92681e916a78d398eb68c3ae59602d",
+      "matches_installed": true
+    },
+    {
+      "file": "HARDWARE/EXTENSION/extension.c",
+      "sha256": "50f6f5c6357b27a4100d4281c197103e74a4eecf3b6e589091ec8dc0f6977fb7",
+      "matches_installed": true
+    },
+    {
+      "file": "HARDWARE/EXTENSION/extension_config.h",
+      "sha256": "bfc70097b5b9fdfe22c05afc80b659ff001b0ba0e7070ff186b79eeb28325c5f",
+      "matches_installed": true
+    },
+    {
+      "file": "USER/main.c",
+      "sha256": "03e73b1c7ae021778a5889432e140c4a9999422299e5d1fd6c9260cdd5c10535",
+      "matches_installed": true
+    }
+  ],
+  "assistant_firmware_changes": false,
+  "assistant_flash_performed": false,
+  "assistant_hardware_commands": false,
+  "next_single_step": {
+    "purpose": "extend away from retract stop to create an observed gap before a second home",
+    "preconditions": "current firmware; program running; VM ready/lift_state4; other axes motion requests0; dm_point_enable0; extend path clear",
+    "request": "g_extension_motion_request=2 once",
+    "pulses": 160,
+    "rpm": 5,
+    "timeout_ms": 3000,
+    "stop_request": "g_extension_motion_request=3; continue program execution; use existing external stop if needed",
+    "evidence_needed": "physical extension, separation from stop, final stationary state, motion_state/result/move_result/flags/delta_raw/speed_rpm/stop_result",
+    "do_not_automatically_issue_second_home": true,
+    "executed": false
+  },
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged; pending official clarification"
+}

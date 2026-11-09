@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-30",
+  "classification": "E user-reported vertical gap and bounded approach candidate",
+  "user_request": "需下降约30毫米，然后进入下一步",
+  "required_drop_estimate_mm": 30,
+  "watch": {
+    "g_carrier_pulse_us": 500,
+    "g_carrier_signal_active": 0,
+    "g_jiazhua_debug_angle": 140,
+    "g_jiazhua_debug_request": 0,
+    "g_jiazhua_debug_result": 1
+  },
+  "physical_grip_verified": false,
+  "gripper_result1_is_PWM_only": true,
+  "coarse_ratio_source": "docs/P2_ARM_RESUME_2026-10-28.md explicit prior user decision:5000 pulses approximately3mm, no leadscrew parameter",
+  "precise_metric_calibration_available": false,
+  "candidate_first_approach": {
+    "down_pulses": 40000,
+    "hex": "0x00009C40",
+    "target_rpm": 300,
+    "coarse_estimate_mm": 24,
+    "coarse_remaining_mm": 6,
+    "remaining_clearance_guaranteed": false,
+    "executed_or_accepted": false
+  },
+  "before_motion": "open gripper180;carrier session ended;other axes and homing requests0;VM/lift identity ready",
+  "close_after_descent_automatically": false,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged; pending official clarification",
+  "screenshot": "gripper140-before-descent.png",
+  "screenshot_sha256": "aeb57e4e1492e60c26ec437c16020dfc3cf24da06d59b3a425bc7f68e2c64bc6",
+  "flash_performed": false,
+  "assistant_hardware_commands": false
+}

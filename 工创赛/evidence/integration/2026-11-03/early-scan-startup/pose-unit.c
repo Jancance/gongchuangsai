@@ -13,7 +13,7 @@ int main(void){StartupPose_Init();
 #if APP_MOTOR_OFFLINE_ONLY
  if(init_gripper || init_carrier || writes)return 1;
 #else
- if(init_gripper!=1 || init_carrier!=1 || gripper_angle!=140.0f || g_startup_gripper_result!=1)return 2;
+ if(init_gripper!=1 || init_carrier!=1 || gripper_angle!=145.0f || g_startup_gripper_result!=1)return 2;
 #if POSE_EXPECT_INVALID
  if(writes || g_startup_carrier_result!=3)return 3;
 #elif POSE_EXPECT_PULSE

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "observation_id": "source-plane-markers-current221545-a3467c481720",
+  "image_sha256": "a3467c48172011ae452f6c6b1f40970191f44c6ce009b7074b433b407826da78",
+  "paper_image_sha256": "a5702160ff7f4f2a7b079d8690d426e537be8b73cfa7c8eba860b6dce10c93bc",
+  "calibration_id": "source-paper-current220715-a5702160ff7f-diagnostic",
+  "data_kind": "static physical drawn circles on source plane, not live material color/instance observations",
+  "coordinate_frame": "paper_local_A_AB_AD",
+  "image_alignment_check_passed": true,
+  "image_alignment_method": "7 accepted fixed surface patches, integer shift0; subpixel/physical pose error not verified",
+  "targets": [
+    {
+      "id": "upper-left",
+      "kind": "feature_on_calibrated_plane",
+      "image_px": [
+        621.8881574703207,
+        431.1517309799411
+      ],
+      "plane_mm": [
+        -76.31034741407241,
+        -52.763599389690484
+      ],
+      "plane_boundary_rms_mm": 0.7694566312325882,
+      "visible_arc_diagnostic_passed": true
+    },
+    {
+      "id": "upper-right",
+      "kind": "feature_on_calibrated_plane",
+      "image_px": [
+        1339.7105871691883,
+        424.05727374170414
+      ],
+      "plane_mm": [
+        79.19117006412843,
+        21.681567516652226
+      ],
+      "plane_boundary_rms_mm": 0.6916690268373286,
+      "visible_arc_diagnostic_passed": true
+    },
+    {
+      "id": "near",
+      "kind": "feature_on_calibrated_plane",
+      "image_px": [
+        986.4254260215712,
+        1033.158884508716
+      ],
+      "plane_mm": [
+        -62.404124480794295,
+        118.63663511585361
+      ],
+      "plane_boundary_rms_mm": 0.6776287949718103,
+      "visible_arc_diagnostic_passed": true
+    }
+  ],
+  "ruler_outermost_gap_mm": 46.5,
+  "historical70mm_gap_reference_valid": false,
+  "meets_user50mm_engineering_gap": false,
+  "current_joint_reference_restored": false,
+  "field_calibration_accepted": false,
+  "operational_extrapolation_enabled": false,
+  "motion_allowed": false
+}

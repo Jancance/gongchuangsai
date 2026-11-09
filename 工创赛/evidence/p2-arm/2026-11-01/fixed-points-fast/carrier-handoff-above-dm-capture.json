@@ -1,0 +1,79 @@
+{
+  "date": "2026-11-01",
+  "classification": "E: supervised fixed-point teaching",
+  "user_request": "接着完成后续1的内容",
+  "screenshot": "carrier-handoff-above-dm-watch.png",
+  "sha256": "ab3667611c65728d4b11154f945214fc8b429db05ab52130ffee3ed558df86b5",
+  "watch": {
+    "g_carrier_state": 2,
+    "g_carrier_debug_angle": 0,
+    "g_carrier_test_enable": 1,
+    "g_carrier_request": 0,
+    "g_dm_point_enable": 0,
+    "g_dm_can2_read_request": 0,
+    "g_dm_can2_state": 4,
+    "g_dm_can2_result": 1,
+    "g_dm_can2_feedback_valid": 1,
+    "g_dm_can2_position_deg": 97.779699,
+    "g_dm_can2_logical_position_deg": 34.3210144
+  },
+  "accepted_scope": "Successful DM read in the previously user-confirmed slot1-aligned, physical-lift-top and retract0 static pose. Records a taught handoff-above angle only; screenshot alone does not prove the physical pose, repeatability or automatic return.",
+  "inherited_pose_evidence": "evidence/p2-arm/2026-11-01/fixed-points-fast/intake.json#current_static_pose_confirmation",
+  "logical_handoff_above_deg": 34.3210144,
+  "previous_coarse_logical_deg": 33.8401489,
+  "previous_coarse_retained_as_history": true,
+  "angle_difference_interpretation": "Different taught poses/times; not evidence of drift or accuracy.",
+  "motor_state_not_visible": true,
+  "new_lift_or_extension_telemetry_claimed": false,
+  "carrier_session_released": false,
+  "carrier_state2_meaning": "Output window finished; session interlock remains until request2. No position sensor feedback.",
+  "actual_project": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\gongxun-f407.uvprojx",
+  "owning_source_sha256": {
+    "HARDWARE/DM_CAN2/dm_can2_motion.c": "700bfe480942ba960e4fc2948c926cde83c26cc673ca69d56c8821a1302cbb13",
+    "HARDWARE/CARRIER/carrier.c": "5061644e0af667423c4430358a1f396a7105ac140bcbedce5e66eca31f10beb1",
+    "HARDWARE/CARRIER/carrier.h": "e5ba2fd497df2fac64b6766b9dc8497b797eb3207749b2e1d532b8ce4782e4ec",
+    "USER/main.c": "d0c0fa10640bd63f58b760357ae176787f01fe262e34ec5ad5cc42d7dd06ec83"
+  },
+  "firmware_modified": false,
+  "new_build_or_test": false,
+  "assistant_hardware_command_sent": false,
+  "next_single_action": "Return accepted once7/1/stop1, current logical35.9384766. Disable point_enable, download installed smooth revision Code64552 without sending new motion, restore existing VM/lift readiness; continue necessary point teaching from actual physical alignment. Smoothness not yet physically verified.",
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "待技术答疑确认; unchanged",
+  "open_items": [
+    "Fresh source-pick alignment and extension/contact coordinates",
+    "Return-to-new-handoff angle physical result",
+    "Full transfer and swept clearance",
+    "Metric accuracy/full travel and power-off/multiturn recovery",
+    "Formal autonomous execution"
+  ],
+  "previous_next_single_action_withdrawn": "First g_carrier_request=2 once and run until g_carrier_state=3; state2 still holds the carrier interlock. Keep current physical lift top, extension retract0 and empty/open gripper. Only with VM/lift ready, all other requests idle, no latched fault and the full counterclockwise sweep clear: set g_dm_place_target_deg=34.3210144, retain g_dm_pick_target_deg=177.833679, set g_dm_point_enable=1 then g_dm_jog_request=4 once. Run continuously about15-18s; abnormal motion uses g_dm_jog_request=3 while CPU keeps running. Return fresh jog state/result/stop_result and start/target/current/logical angles plus physical source alignment. Do not automatically return, extend, lower or grip.",
+  "superseded_by_correction": "evidence/p2-arm/2026-11-01/fixed-points-fast/unnecessary-rotation-correction/review.json",
+  "rotation_instruction_withdrawn": true,
+  "stop_confirmed": true,
+  "stop_evidence": "evidence/p2-arm/2026-11-01/fixed-points-fast/unnecessary-rotation-correction/review.json",
+  "current_physical_pose_user_report": "已经转离物料上方",
+  "post_stop_physical_conditions_confirmed": true,
+  "reported_blockage": true,
+  "fresh_current_position_read_pending": false,
+  "latest_fresh_dm_position": {
+    "raw_deg": 153.927536,
+    "logical_deg": 90.4715576,
+    "motor_state": 0
+  },
+  "obstruction_removed_and_reverse_path_clear_user_confirmed": true,
+  "superseded_by_latest_delivery": "evidence/p2-arm/2026-11-01/dm-smooth/manifest.json"
+}

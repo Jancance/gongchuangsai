@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "source": {
+    "path": "D:\\新建文件夹4\\工创赛\\竞赛命题与运行.pdf",
+    "sha256": "1ac7fa340193591874e3ec84f9427567864c16ab39fb500db814a4d2cfc000e4",
+    "page": 4,
+    "table": "Table 2",
+    "figure": "Figure 2",
+    "dimension_drawing_visually_checked": true
+  },
+  "R_nominal": {
+    "turntable_diameter_mm": 300,
+    "turntable_height_range_mm": [
+      80,
+      100
+    ],
+    "material_orbit_diameter_mm": 200,
+    "angular_spacing_deg": 120
+  },
+  "E_derived": {
+    "turntable_radius_mm": 150,
+    "material_orbit_radius_mm": 100,
+    "adjacent_material_center_distance_mm": 173.20508075688772,
+    "reference_triangle_mm": [
+      [
+        100.0,
+        0.0
+      ],
+      [
+        -49.99999999999998,
+        86.60254037844388
+      ],
+      [
+        -50.00000000000004,
+        -86.60254037844385
+      ]
+    ],
+    "reference_triangle_frame": "arbitrary turntable-local Cartesian axes; phase zero is illustrative only"
+  },
+  "E_user_decision": {
+    "pick_strategy": "arm_reaches_each_of_three_source_positions",
+    "chassis_holds_during_pick": true,
+    "one_item_then_onboard_carrier_before_next": true
+  },
+  "calibration": {
+    "actual_phase_deg": null,
+    "turntable_to_chassis": null,
+    "camera_to_chassis": null,
+    "gripper_tcp": null,
+    "calibrated": false,
+    "motion_enabled": false
+  },
+  "Q": "Official unresolved questions remain pending technical clarification; no new rule inferred"
+}

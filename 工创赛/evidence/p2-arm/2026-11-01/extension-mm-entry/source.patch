@@ -1,0 +1,98 @@
+--- before/HARDWARE/EXTENSION/extension.c
++++ after/HARDWARE/EXTENSION/extension.c
+@@ -62,6 +62,10 @@
+ 
+ /* 单次低速相对小步，仅由原唯一CAN任务调用；上电不自动动作。 */
+ volatile uint32_t g_extension_motion_request = 0U;
++volatile uint32_t g_extension_use_mm = EXTENSION_DEFAULT_USE_MM;
++volatile float g_extension_distance_mm = EXTENSION_DEFAULT_MM;
++volatile uint32_t g_extension_target_pulses = 0U;
++volatile float g_extension_target_mm = 0.0f;
+ volatile uint32_t g_extension_motion_state = 0U;
+ volatile uint32_t g_extension_motion_result = 0U;
+ volatile uint32_t g_extension_enable_result = 0U;
+@@ -84,6 +88,7 @@
+ static int64_t s_extension_before_position = 0;
+ static TickType_t s_extension_stall_since;
+ static uint32_t s_extension_stall_active = 0U;
++static uint32_t s_extension_target_pulses = EXTENSION_JOG_PULSES;
+ 
+ uint32_t Extension_MotionIsBusy(void)
+ {
+@@ -111,9 +116,31 @@
+     return sign ? -(int64_t)raw : (int64_t)raw;
+ }
+ 
++/* 接单时换算并锁存；先检查浮点范围再转整数，拒绝NaN/无穷/越界。 */
++static uint32_t Extension_LatchDistance(void)
++{
++    uint32_t units = g_extension_use_mm, pulses = EXTENSION_JOG_PULSES;
++    float distance = g_extension_distance_mm, requested;
++    if (!(EXTENSION_PULSES_PER_MM > 0.0f)) return 0U;
++    if (units == 1U)
++    {
++        if (!(distance > 0.0f &&
++              distance <= (float)EXTENSION_JOG_PULSES / EXTENSION_PULSES_PER_MM)) return 0U;
++        requested = distance * EXTENSION_PULSES_PER_MM;
++        if (!(requested >= 0.5f && requested <= (float)EXTENSION_JOG_PULSES)) return 0U;
++        pulses = (uint32_t)(requested + 0.5f);
++    }
++    else if (units != 0U) return 0U;
++    if (pulses == 0U || pulses > EXTENSION_JOG_PULSES) return 0U;
++    s_extension_target_pulses = pulses;
++    g_extension_target_pulses = pulses;
++    g_extension_target_mm = (float)pulses / EXTENSION_PULSES_PER_MM;
++    return 1U;
++}
++
+ static void Extension_BuildMove(uint8_t out[12])
+ {
+-    const uint32_t pulses = EXTENSION_JOG_PULSES;
++    const uint32_t pulses = s_extension_target_pulses;
+     out[0] = 0xFDU; out[1] = (uint8_t)g_extension_motion_direction;
+     out[2] = (uint8_t)(EXTENSION_JOG_RPM >> 8);
+     out[3] = (uint8_t)EXTENSION_JOG_RPM;
+@@ -157,6 +184,12 @@
+     if (g_extension_motion_state == 9U) return;
+     if (!Extension_MotionIsBusy() && (request == 1U || request == 2U))
+     {
++        if (Extension_LatchDistance() != 1U)
++        {
++            g_extension_target_pulses = 0U; g_extension_target_mm = 0.0f;
++            g_extension_motion_result = 8U; g_extension_motion_state = 9U;
++            return; /* 未发运动命令，不自动修正非法距离。 */
++        }
+         s_direction = (request == 1U) ? 0U : 1U;
+         g_extension_motion_direction = s_direction;
+         g_extension_motion_state = 1U;
+--- before/HARDWARE/EXTENSION/extension.h
++++ after/HARDWARE/EXTENSION/extension.h
+@@ -19,9 +19,15 @@
+ void Extension_Service(uint32_t ready, uint32_t lift_busy);
+ /* 请求默认0；1方向0小步，2方向1小步，3停止；已确认1缩回、2伸出。 */
+ extern volatile uint32_t g_extension_motion_request;
++/* use_mm=1按distance_mm换算；0保留原1600脉冲方式；请求1缩回/2伸出/3停止。 */
++extern volatile uint32_t g_extension_use_mm;
++extern volatile float g_extension_distance_mm;
++/* 本次接单的命令回显，不是实测位置；忙时编辑输入不改变已锁存目标。 */
++extern volatile uint32_t g_extension_target_pulses;
++extern volatile float g_extension_target_mm;
+ /* 0空闲，1至6准备/运行，7反馈完成，8人工停止，9失败锁存。 */
+ extern volatile uint32_t g_extension_motion_state;
+-/* 1完成，2人工停止，3超时，4通信/选项，5驱动状态，6互锁，7服务间隔超限。 */
++/* 1完成，2人工停止，3超时，4通信/选项，5驱动状态，6互锁，7服务超间隔，8距离/单位非法。 */
+ extern volatile uint32_t g_extension_motion_result;
+ extern volatile uint32_t g_extension_enable_result;
+ extern volatile uint32_t g_extension_move_result;
+--- before/HARDWARE/EXTENSION/extension_config.h
++++ after/HARDWARE/EXTENSION/extension_config.h
+@@ -11,5 +11,9 @@
+ #define EXTENSION_SERVICE_GAP_MS    500U
+ /* 本机Clog_Ms口述2000ms；只约束普通运行的瞬时堵转，不写驱动参数。 */
+ #define EXTENSION_STALL_CONFIRM_MS  2000U
++/* 1600脉冲约50mm粗标：仅看护调试，不代表精密标定或绝对行程。 */
++#define EXTENSION_PULSES_PER_MM     32.0f
++#define EXTENSION_DEFAULT_MM        10.0f
++#define EXTENSION_DEFAULT_USE_MM    1U
+ 
+ #endif

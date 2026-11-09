@@ -1,0 +1,33 @@
+﻿{
+  "title": "USART6 OrangePi<->STM32 link verified over CH340 after brltty removal",
+  "ts": "2026-11-07T20:52",
+  "pi_port": "/dev/ttyUSB0 (by-id: usb-1a86_USB_Serial-if00-port0)",
+  "brltty": "removed (systemctl mask brltty-udev.service brltty.service; apt remove brltty brltty-x11)",
+  "pi_to_board": {
+    "frame_sent_by_pi": "cc02010203dd",
+    "board_rx_bytes": [21114, 21120],
+    "delta_bytes": 6,
+    "g_vis_mat_cycle": [1, 2],
+    "g_vis_material_valid": 1,
+    "g_vis_mat_left_right_down": [1, 2, 3],
+    "g_vis_rx_bad": 0,
+    "g_uart6_rx_errors": "unchanged 27682",
+    "verdict": "PASS"
+  },
+  "board_to_pi": {
+    "trigger": "write g_vis_command_request=1",
+    "pi_heard_hex": "aa01bb",
+    "g_vis_command_sent": [4, 5],
+    "verdict": "PASS"
+  },
+  "idle_check_before_test": {
+    "note": "with brltty removed and Pi vision program not running, line is silent: rx_bytes +0, errors +0, PC6/PC7 edges 0 over 5s",
+    "evidence": "uart6-recheck-04-brltty-removed.json"
+  },
+  "notes": [
+    "constraint: no reset, no flash, no motor command during this test",
+    "board image sha256 98c8fbe38783e8d1a026c53f1cc799b61b1a82cbdec94403b0e10c5b5dc19376 matches probe AXF",
+    "deploy note: Windows vision_app/code/main.py is a DECXIN 1280x960 branch, but the live camera on the Pi is Generic135 1920x1080 (p2-source-observer-20261106). Do not overwrite directly."
+  ]
+}
+

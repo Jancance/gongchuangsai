@@ -1,0 +1,68 @@
+{
+ "when": "2026-11-08T14:17:48",
+ "kind": "manual-can-probe",
+ "note": "raw CAN1 mailbox frames, own wait budget, firmware polling must be idle",
+ "tests": [
+  {
+   "addr": 1,
+   "reply": {
+    "ms": 7.7,
+    "ide": 1,
+    "exid": 256,
+    "dlc": 3,
+    "data": [
+     58,
+     3,
+     107
+    ]
+   }
+  },
+  {
+   "addr": 4,
+   "reply": null,
+   "wait_ms": 500
+  },
+  {
+   "addr": 4,
+   "attempt": 2,
+   "reply": null,
+   "wait_ms": 500
+  },
+  {
+   "addr": 5,
+   "reply": {
+    "ms": 10.9,
+    "ide": 1,
+    "exid": 1280,
+    "dlc": 3,
+    "data": [
+     58,
+     3,
+     107
+    ]
+   }
+  },
+  {
+   "addr": 6,
+   "reply": {
+    "ms": 7.7,
+    "ide": 1,
+    "exid": 1536,
+    "dlc": 3,
+    "data": [
+     58,
+     3,
+     107
+    ]
+   }
+  },
+  {
+   "addr": 7,
+   "reply": null
+  },
+  {
+   "addr": 8,
+   "reply": null
+  }
+ ]
+}

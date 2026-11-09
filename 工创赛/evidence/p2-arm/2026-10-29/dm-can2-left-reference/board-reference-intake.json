@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-29",
+  "classification": "E 左侧人工姿态反馈取样，软件基准候选",
+  "source": "用户按左侧摆位/只读步骤回传Watch，截图本身不测量车身朝向或机械角",
+  "vm_request": 1,
+  "read_request_consumed": true,
+  "state": 4,
+  "result": 1,
+  "feedback_valid": 1,
+  "motor_state": 0,
+  "raw_position_deg": -296.544037,
+  "previous_jog_current_deg": -129.447708,
+  "previous_jog_value_is_historical": true,
+  "zero_reference_raw_deg": -296.544037,
+  "logical_formula": "raw_position_deg - (-296.544037)",
+  "old_right_snapshot_logical_deg": 167.096329,
+  "old_right_snapshot_is_final_pick_target": false,
+  "power_cycle_recovery_verified": false,
+  "full_range_verified": false,
+  "precise_mechanical_zero_verified": false,
+  "startup_envelope_verified": false,
+  "screenshot": "left-reference-read-watch.png",
+  "screenshot_sha256": "7db757f89d938cc073f87248b3dccd792982e2dc2370fbfc0c93521fbb260c24",
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q_unchanged": true
+}

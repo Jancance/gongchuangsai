@@ -1,0 +1,51 @@
+{
+  "hardware_acceptance": false,
+  "motion_allowed": false,
+  "check": {
+    "image_size": [
+      1920,
+      1080
+    ],
+    "undistort": false,
+    "serial": "DISABLED",
+    "features": [
+      "turntable",
+      "measurement",
+      "material-stop-reference",
+      "ring",
+      "stack",
+      "follow-pixel"
+    ],
+    "metric_geometry_verified": false
+  },
+  "four_tool_help": "passed",
+  "six_modes": "passed smoke only",
+  "compileall": "passed",
+  "archive": {
+    "file": "C:\\Users\\Tenderness\\Documents\\ChatGPT\\工创赛\\output\\p2_vision_generic120_perf2_20261024.zip",
+    "files": 74,
+    "bytes": 230625,
+    "sha256": "79bf686157137525e9937292d2e9922f8f149552bab3807ccd18de7b3edc0d02",
+    "crc_and_member_hashes": "passed"
+  },
+  "extracted_check": {
+    "image_size": [
+      1920,
+      1080
+    ],
+    "undistort": false,
+    "serial": "DISABLED",
+    "features": [
+      "turntable",
+      "measurement",
+      "material-stop-reference",
+      "ring",
+      "stack",
+      "follow-pixel"
+    ],
+    "metric_geometry_verified": false
+  },
+  "regression": "5 passed (4 main tests plus separate historical six-color/black-reflection test); see evidence/perf2-regression.log",
+  "regression_log": "evidence/perf2-regression.log",
+  "candidate_changes": "Only project_detector.py; pass same-frame HSV to chromatic_fallback. All configuration/camera/tracker/follower source bytes unchanged."
+}

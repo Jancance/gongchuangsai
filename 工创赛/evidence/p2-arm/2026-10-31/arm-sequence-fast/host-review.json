@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "new_sequence_scenarios": 19,
+  "new_gripper_scenarios": 5,
+  "cases": [
+    "disabled",
+    "height_missing",
+    "bad_config",
+    "complete",
+    "snapshot",
+    "deferred_open",
+    "fresh_confirm",
+    "confirm_timeout",
+    "gripper_fail",
+    "guard",
+    "abort_before_dispatch",
+    "external_stop_preempts",
+    "reset_active_rejected",
+    "lift_fail",
+    "stop_unknown",
+    "ready_loss",
+    "height_revoked",
+    "gap",
+    "manual_gripper_stop",
+    "manual_busy",
+    "manual_ready",
+    "owned",
+    "cancel",
+    "stop"
+  ],
+  "source_sha256": {
+    "USER/gripper_task.c": "3c78bcf0786337d738e65f080682486c019444ca6b321f7ad5f21dd6a20257e7",
+    "USER/gripper_task.h": "c091694d2f9dd063b91be59f236ae7e99b69715d45d22e616f6cccd88f145607",
+    "USER/arm_sequence.c": "7f014a1642b7b8912a3d0a04b6f71670afe5519a484581dd4df0c24341b456f2",
+    "USER/arm_sequence.h": "d6fd8a156bb37f4fb429060d5fa905460912977234d8c08027407c4fc130be41",
+    "USER/main.c": "7ed86fe2956626bc61bcb8ef505b67d4358e704e49e607067625992f3d9b139b",
+    "gongxun-f407.uvprojx": "3a559aabcc43c1735f4ff5fa2ec165d1a6f83d5fb34c6945276deeae676aa2c0"
+  },
+  "protected_files": 814,
+  "old_suites_repeated": false,
+  "physical_grasp_or_automatic_competition_accepted": false
+}

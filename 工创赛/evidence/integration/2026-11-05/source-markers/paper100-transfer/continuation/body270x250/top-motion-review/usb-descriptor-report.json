@@ -1,0 +1,127 @@
+{
+  "user_confirmed_main_power_on_and_probe_connected": true,
+  "usb_reset_called": false,
+  "target_access_attempted": false,
+  "actuator_writes": 0,
+  "usb": [
+    {
+      "vid": "0xfaed",
+      "pid": "0x4873",
+      "manufacturer": "Horco",
+      "product": "Horco CMSIS-DAP",
+      "serial": "6afaae24",
+      "interfaces": [
+        {
+          "configuration": 1,
+          "number": 0,
+          "alternate": 0,
+          "class": 255,
+          "name": "Horco CMSIS-DAP v2",
+          "endpoints": [
+            {
+              "address": "0x1",
+              "max_packet_size": 64,
+              "type": 2
+            },
+            {
+              "address": "0x81",
+              "max_packet_size": 64,
+              "type": 2
+            }
+          ]
+        },
+        {
+          "configuration": 1,
+          "number": 1,
+          "alternate": 0,
+          "class": 3,
+          "name": "Horco CMSIS-DAP v1",
+          "endpoints": [
+            {
+              "address": "0x2",
+              "max_packet_size": 64,
+              "type": 3
+            },
+            {
+              "address": "0x82",
+              "max_packet_size": 64,
+              "type": 3
+            }
+          ]
+        },
+        {
+          "configuration": 1,
+          "number": 2,
+          "alternate": 0,
+          "class": 2,
+          "name": "Horco CDC",
+          "endpoints": [
+            {
+              "address": "0x84",
+              "max_packet_size": 8,
+              "type": 3
+            }
+          ]
+        },
+        {
+          "configuration": 1,
+          "number": 3,
+          "alternate": 0,
+          "class": 10,
+          "name": null,
+          "endpoints": [
+            {
+              "address": "0x3",
+              "max_packet_size": 64,
+              "type": 2
+            },
+            {
+              "address": "0x83",
+              "max_packet_size": 64,
+              "type": 2
+            }
+          ]
+        },
+        {
+          "configuration": 1,
+          "number": 4,
+          "alternate": 0,
+          "class": 8,
+          "name": "Horco MSC",
+          "endpoints": [
+            {
+              "address": "0x85",
+              "max_packet_size": 64,
+              "type": 2
+            },
+            {
+              "address": "0x5",
+              "max_packet_size": 64,
+              "type": 2
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "hid": [
+    {
+      "path": "\\\\?\\HID#VID_FAED&PID_4873&MI_01#9&20c4c98e&0&0000#{4d1e55b2-f16f-11cf-88cb-001111000030}",
+      "vendor_id": 64237,
+      "product_id": 18547,
+      "serial_number": "6afaae24",
+      "release_number": 256,
+      "manufacturer_string": "Horco",
+      "product_string": "Horco CMSIS-DAP v1",
+      "usage_page": 65280,
+      "usage": 1,
+      "interface_number": 1,
+      "bus_type": 1
+    }
+  ],
+  "descriptor_errors": [
+    "ValueError('The device has no langid (permission issue, no string descriptors supported or device error)')",
+    "NotImplementedError('Operation not supported or unimplemented on this platform')",
+    "NotImplementedError('Operation not supported or unimplemented on this platform')"
+  ]
+}

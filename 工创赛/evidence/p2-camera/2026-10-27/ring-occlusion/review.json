@@ -1,0 +1,187 @@
+{
+  "archive": "20261027-192637-095054.zip",
+  "sha256": "20c5f59553313e96ff3f71024a4c65c6877c1b5669f0450c2ec7708b7133bbb7",
+  "crc_and_member_bytes_match": true,
+  "source_matches": {
+    "main.py": true,
+    "ring_station_detector.py": true,
+    "project_camera.py": true,
+    "diagnostic_entry": true
+  },
+  "config_matches": {
+    "ring_station_detector.json": {
+      "release_hash_matches": true,
+      "effective_matches": true
+    },
+    "camera_processing.json": {
+      "release_hash_matches": true,
+      "effective_matches": true
+    },
+    "project_profile.json": {
+      "release_hash_matches": true,
+      "effective_matches": true
+    }
+  },
+  "frames": 735,
+  "states": {
+    "THREE_CENTERS": 554,
+    "NO_THREE_CENTERS": 181
+  },
+  "host_read_span_s": 30.068701487,
+  "segments": [
+    {
+      "state": "THREE_CENTERS",
+      "first_frame": 1,
+      "last_frame": 301,
+      "start_s": 0.0,
+      "end_s": 11.476489515999674,
+      "count": 301
+    },
+    {
+      "state": "NO_THREE_CENTERS",
+      "first_frame": 302,
+      "last_frame": 482,
+      "start_s": 11.503864649999741,
+      "end_s": 20.604791959000067,
+      "count": 181
+    },
+    {
+      "state": "THREE_CENTERS",
+      "first_frame": 483,
+      "last_frame": 735,
+      "start_s": 20.638199545000134,
+      "end_s": 30.068701487,
+      "count": 253
+    }
+  ],
+  "detail_counts": {
+    "等待稳定观测（1/3）": 2,
+    "等待稳定观测（2/3）": 2,
+    "工位偏差超出验收精度": 544,
+    "三圆环识别置信度不足": 6,
+    "没有找到满足几何约束的三个圆环": 181
+  },
+  "original_fresh_candidate_frames": 554,
+  "minimum_confidence": 0.9,
+  "low_confidence_candidate_frames": [
+    297,
+    298,
+    299,
+    300,
+    301,
+    483
+  ],
+  "right_ring_max_low_confidence_offset_from_pre_median_px": 13.223136951182132,
+  "stable_frames_inferred_from_audited_source_detail": 544,
+  "stable_not_recorded_directly": true,
+  "before_inferred_stable": {
+    "count": 294,
+    "first_frame": 3,
+    "last_frame": 296,
+    "median_xy_px": [
+      [
+        524.8524932861328,
+        568.9849700927734
+      ],
+      [
+        991.2197723388672,
+        571.0485649108887
+      ],
+      [
+        1446.6882629394531,
+        572.9947242736816
+      ]
+    ],
+    "range_xy_px": [
+      [
+        0.25063323974609375,
+        0.03505706787109375
+      ],
+      [
+        0.020416259765625,
+        0.02556610107421875
+      ],
+      [
+        0.39312744140625,
+        0.05217742919921875
+      ]
+    ]
+  },
+  "after_inferred_stable": {
+    "count": 250,
+    "first_frame": 486,
+    "last_frame": 735,
+    "median_xy_px": [
+      [
+        524.8411865234375,
+        568.9724617004395
+      ],
+      [
+        991.2169494628906,
+        571.0389785766602
+      ],
+      [
+        1446.6964111328125,
+        572.9800109863281
+      ]
+    ],
+    "range_xy_px": [
+      [
+        0.07509613037109375,
+        0.0430450439453125
+      ],
+      [
+        0.0303955078125,
+        0.0417938232421875
+      ],
+      [
+        0.068359375,
+        0.0413970947265625
+      ]
+    ]
+  },
+  "post_minus_pre_median_xy_px": [
+    [
+      -0.0113067626953125,
+      -0.012508392333984375
+    ],
+    [
+      -0.0028228759765625,
+      -0.009586334228515625
+    ],
+    [
+      0.008148193359375,
+      -0.014713287353515625
+    ]
+  ],
+  "no_three_centers_have_empty_usable_coordinates": true,
+  "read_gap_p50_p95_max_ms": [
+    35.87548649966266,
+    66.65943854986836,
+    405.94495499954064
+  ],
+  "result_host_age_p50_p95_max_ms": [
+    45.63261200019042,
+    70.30254909977884,
+    98.19074600000022
+  ],
+  "detector_processing_p50_p95_max_ms": [
+    24.342720999811718,
+    52.18474800021795,
+    65.6858550000834
+  ],
+  "visual_review": {
+    "first-three-centers-overlay.png": "All three complete rings; green crosses near centers; printed left/middle/right 3/2/1.",
+    "first-unusable-overlay.png": "Right ring substantially covered by held printed sheet; no three-center crosses.",
+    "first-reappearance-overlay.png": "Right ring still substantially covered; cross is a low-confidence candidate, not stable recovery."
+  },
+  "conclusion": "This scene loses three-center output and later regains a sustained high-quality output segment. Invalid records clear usable coordinates. Partial-occlusion robustness is not accepted: six low-confidence candidates enter the old pixel-statistics stream.",
+  "limits": [
+    "Manual cover/removal timestamps are absent; the 9.1s loss interval is not removal-to-recovery latency.",
+    "Only initial/loss/first-candidate-return raw frames were saved; no raw frame of the later stable return.",
+    "Original recorder marks fresh finite triplets usable regardless of detector stable/quality. Preserve these as candidate statistics.",
+    "Stable detail is inferred from matching source; metric wording reflects placeholder geometry, not real millimeter verification."
+  ],
+  "metric_valid": false,
+  "motion_allowed": false
+}

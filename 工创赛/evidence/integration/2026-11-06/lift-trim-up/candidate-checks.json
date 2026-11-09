@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "stage": "D:\\Codex\\\u5de5\u521b\u8d5b\\tmp\\lift_trim_up_20261106\\project",
+  "changed_files": {
+    "CHASSIS/USER/lift_ruler_calibration.c": {
+      "before": "38aaf18ab0929ac6bc8baa2b00eb34c0666ae7c5949d4402f3f4f78485b1325f",
+      "after": "beb27d41bb597b2779dc24bcaad808db81a23e7213adc3c19240e9b57485dc0b"
+    },
+    "CHASSIS/USER/vehicle_mission.inc": {
+      "before": "c3bce99ee243cc72e79d3bd1fc74e612ba946053ecc04c2edfe3d6487e2d5a86",
+      "after": "589b0175765ffbbf9035df727c5d606eb12ddba7474570bf1abd4e78cf9cc5ae"
+    },
+    "USER/vehicle_parameters.h": {
+      "before": "b8859acfb532eb11a474c6d86c6abcbf05a0e7dc54092efa271b84adb3791586",
+      "after": "798be9f5817d6f03265df709768f66150fa650e94de367cc6835dbd5f186b81c"
+    },
+    "CHASSIS/USER/source_prepare.inc": {
+      "before": "73344afa1e5c9428f3e1e1ed89f57a3755ced0fad18270028913b3d569cf30ae",
+      "after": "ca0eb0ed44ead2bf72040da5ecafc0b49707bcec8356ea635aa340e26b2bece2"
+    }
+  },
+  "host_result": "LIFT_RULER cases=28 checks=339 failures=0",
+  "step_direction": "up",
+  "step_virtual_pulses": 2400,
+  "rpm": 30,
+  "acceleration_rpm_s": 60,
+  "maximum_steps": 1,
+  "nominal_start_height_mm": 48.5,
+  "nominal_end_height_mm": 50,
+  "VM_held_during_move_stop_retry_and_DONE": true,
+  "automatic_repeat": false,
+  "home_or_full_return_command_in_trim": false,
+  "firmware_downloaded": false,
+  "requires_additional_VM_deployment_exception": true,
+  "hardware_operated": false
+}

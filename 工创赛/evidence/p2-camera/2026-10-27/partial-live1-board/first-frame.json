@@ -1,0 +1,97 @@
+{
+  "frame_index": 1,
+  "host_read_time": 14115.316146419,
+  "detector_finished": 14115.476977575,
+  "detector_result_age_ms": 160.83115599940356,
+  "display_submission_age_ms": 173.24603899942304,
+  "candidate": {
+    "accepted": true,
+    "centers_px": [
+      [
+        517.584716796875,
+        557.1325378417969
+      ],
+      [
+        982.2287902832031,
+        558.7293701171875
+      ],
+      [
+        1431.0379028320312,
+        558.8560180664062
+      ]
+    ],
+    "stable": false,
+    "metric_valid": false,
+    "motion_allowed": false,
+    "serial": "DISABLED",
+    "units": "px",
+    "method": "partial_arc_template_v2",
+    "reason": "OBSERVED_PARTIAL_ARCS_CANDIDATE_ONLY",
+    "proposals": [
+      {
+        "center_px": [
+          1431.0379028320312,
+          558.8560180664062
+        ],
+        "score": 0.6805555555555556,
+        "runner_score": 0.5648148148148149,
+        "center_margin": 0.1157407407407407,
+        "scale": 0.9500000000000001,
+        "band_coverage": [
+          0.5972222222222222,
+          0.625,
+          0.6666666666666666,
+          0.6944444444444444,
+          0.6111111111111112,
+          0.7777777777777778
+        ],
+        "coherent_angle_fraction": 0.6805555555555556,
+        "supported_bands": 6,
+        "heldout_coherent_angle_fraction": 0.6666666666666666,
+        "visible_edge_distance_p90_px": 2.0,
+        "search_center_offset_px": [
+          0.0,
+          -1.5
+        ],
+        "search_radius_px": 12.0,
+        "weak_seed_center_px": [
+          1431.0379028320312,
+          560.3560180664062
+        ],
+        "weak_seed_support": 4,
+        "weak_seed_bands": 3,
+        "anchor_centers_px": [
+          [
+            517.584716796875,
+            557.1325378417969
+          ],
+          [
+            982.2287902832031,
+            558.7293701171875
+          ]
+        ]
+      }
+    ],
+    "processing_ms": 148.3599819985102,
+    "stages_ms": {
+      "extraction": 51.863037999282824,
+      "primary_clustering": 4.79958899995836,
+      "raw_geometry": 0.007874999937484972,
+      "partial_search": 91.69064600064303
+    }
+  },
+  "status": {
+    "state": "STALE",
+    "reason": "DISPLAY_OR_RESULT_AGE",
+    "host_read_time": 14115.316146419,
+    "result_host_age_ms": 173.24603899942304,
+    "candidate_centers_px": [],
+    "stable_centers_px": [],
+    "pixel_ready": false,
+    "stationary_verified": false,
+    "metric_valid": false,
+    "motion_allowed": false,
+    "serial": "DISABLED",
+    "units": "px"
+  }
+}

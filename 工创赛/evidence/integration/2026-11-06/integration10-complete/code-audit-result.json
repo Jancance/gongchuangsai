@@ -1,0 +1,23 @@
+{
+  "checks": [
+    {
+      "file": "HARDWARE/DM_CAN2/dm_can2.c",
+      "same_as_external_actual_source": true,
+      "sha256": "41328fe6f17826d58a67fb4d0d3980842144da122c5d13bfbfb3826c809fa879"
+    },
+    {
+      "file": "HARDWARE/DM_CAN2/dm_can2_protocol.c",
+      "same_as_external_actual_source": true,
+      "sha256": "718c39e1edab4099d5900d2bd98a8ab4397663a896b985f27091660aa3a13ba5"
+    }
+  ],
+  "loopback_internal_TX_OK": true,
+  "external_query_still_no_ACK": true,
+  "manual_page6_fixed_bitrate": 1000000,
+  "CAN1_unchanged_during_reader_init": true,
+  "no_motion_commands_sent": true,
+  "root_cause_proven": false,
+  "code_changed_to_hide_error": false,
+  "next_required_evidence": "independent USB-CAN read or physical CAN transceiver measurements",
+  "active_COM14_USB_ID": "VID_FAED&PID_4873&MI_02; CMSIS-DAP probe function, not identified as CANable"
+}

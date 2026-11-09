@@ -120,6 +120,11 @@ map1 = None
 map2 = None
 window_name = "Undistorted Camera"
 task_window_name = "Task Code"
+# 预览开关：window = 本机窗口（VNC 里能看到画面）；off = 不建窗口、不绘制、不传图。
+# 两种模式走同一套检测流程，只差显示通路，关掉只提帧率、不改识别结果。
+display_mode = "window"
+display_every = 1
+display_counter = 0
 
 
 # ---------- 2. 模式切换、串口命令和测量 ----------
@@ -486,6 +491,18 @@ def parse_args():
         type=float,
         default=DEFAULT_SERIAL_RECONNECT_INTERVAL,
         help="串口故障后的重连间隔（秒）",
+    )
+    parser.add_argument(
+        "--display",
+        choices=("window", "off"),
+        default="window",
+        help="window=窗口预览（VNC 可见）；off=无窗口无绘制（比赛/无人值守用）",
+    )
+    parser.add_argument(
+        "--display-every",
+        type=int,
+        default=1,
+        help="窗口每 N 帧刷新一次；>1 可大幅降低 VNC 带宽占用，只影响显示",
     )
     parser.add_argument("--check", action="store_true", help="只加载配置和功能，不打开相机/串口/窗口")
     parser.add_argument("--image", type=Path, help="离线图像检查，不打开相机")
@@ -1062,6 +1079,7 @@ def initialize(args):
     global turntable_detector, ring_station_detector
     global material_pickup_detector, stacked_ring_detector, material_follower
     global current_mode, camera_next_retry, camera_last_error, window_name
+    global display_mode, display_every
 
     cv2.ocl.setUseOpenCL(False)
     if (args.width,args.height)!=(1280,960):
@@ -1135,19 +1153,44 @@ def initialize(args):
     reset_detection_history()
     clear_reporting()
     window_name = "Undistorted Camera" if undistort_enabled else "Raw Camera"
+    display_mode = getattr(args, "display", "window")
+    display_every = max(1, int(getattr(args, "display_every", 1) or 1))
+    print("Preview: %s (every %d frame(s))" % (display_mode, display_every))
+
+
+def show_image(name, image, force=False):
+    """按开关决定是否真的 imshow；off 模式下完全不碰 GUI。"""
+    global display_counter
+    if display_mode != "window":
+        return
+    if not force:
+        display_counter += 1
+        if display_every > 1 and (display_counter % display_every):
+            return
+    cv2.imshow(name, image)
+
+
+def pump_ui(delay_ms):
+    """窗口模式用 waitKey 抽事件；off 模式退化成 sleep，保持同样的循环节拍。"""
+    if display_mode == "window":
+        return cv2.waitKey(delay_ms) & 0xFF
+    if delay_ms > 0:
+        time.sleep(delay_ms / 1000.0)
+    return 0xFF
 
 
 def run(args):
     """主流程：命令 → 相机 → 图像处理 → 模式分派 → 显示 → 按键。"""
     initialize(args)
     try:
-        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
-        cv2.resizeWindow(window_name, args.width, args.height)
-        cv2.namedWindow(task_window_name, cv2.WINDOW_NORMAL)
-        cv2.resizeWindow(task_window_name, 760, 320)
         displayed_task_code = serial_link.last_task_code
-        cv2.imshow(task_window_name, draw_task_code_window(displayed_task_code))
-        cv2.setMouseCallback(window_name, handle_mouse)
+        if display_mode == "window":
+            cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+            cv2.resizeWindow(window_name, args.width, args.height)
+            cv2.namedWindow(task_window_name, cv2.WINDOW_NORMAL)
+            cv2.resizeWindow(task_window_name, 760, 320)
+            cv2.imshow(task_window_name, draw_task_code_window(displayed_task_code))
+            cv2.setMouseCallback(window_name, handle_mouse)
 
         frame_times = deque(maxlen=90)
         frame_count = 0
@@ -1182,7 +1225,7 @@ def run(args):
                 handle_serial_command(command)
             if serial_link.last_task_code != displayed_task_code:
                 displayed_task_code = serial_link.last_task_code
-                cv2.imshow(task_window_name, draw_task_code_window(displayed_task_code))
+                show_image(task_window_name, draw_task_code_window(displayed_task_code), force=True)
 
             # 2. 获取新帧。断线只清检测历史，保留模式和待发送请求。
             raw = read_camera()
@@ -1193,16 +1236,17 @@ def run(args):
                     frame_times.clear()
                     measured_fps = 0.0
                 camera_was_connected = False
-                waiting = np.zeros((args.height, args.width, 3), dtype=np.uint8)
-                draw_status(waiting, current_mode, measured_fps, frame_count)
-                draw_camera_waiting(waiting, f"Device: {args.device} | retry every {args.camera_reconnect_interval:.1f}s")
-                if current_mode == Mode.MEASUREMENT:
-                    draw_measurement(waiting)
-                cv2.imshow(window_name, waiting)
+                if display_mode == "window":
+                    waiting = np.zeros((args.height, args.width, 3), dtype=np.uint8)
+                    draw_status(waiting, current_mode, measured_fps, frame_count)
+                    draw_camera_waiting(waiting, f"Device: {args.device} | retry every {args.camera_reconnect_interval:.1f}s")
+                    if current_mode == Mode.MEASUREMENT:
+                        draw_measurement(waiting)
+                    cv2.imshow(window_name, waiting)
                 if now - last_terminal_output >= 1.0:
                     print_waiting_status()
                     last_terminal_output = now
-                if not handle_key(cv2.waitKey(50) & 0xFF):
+                if not handle_key(pump_ui(50)):
                     break
                 continue
 
@@ -1243,21 +1287,23 @@ def run(args):
                 elapsed = frame_times[-1] - frame_times[0]
                 if elapsed > 0.0:
                     measured_fps = (len(frame_times) - 1) / elapsed
-            draw_status(frame, current_mode, measured_fps, frame_count)
-            if current_mode == Mode.MEASUREMENT:
-                draw_measurement(frame)
-            cv2.imshow(window_name, frame)
+            if display_mode == "window":
+                draw_status(frame, current_mode, measured_fps, frame_count)
+                if current_mode == Mode.MEASUREMENT:
+                    draw_measurement(frame)
+                cv2.imshow(window_name, frame)
             if now - last_terminal_output >= 1.0:
                 print_runtime_status(result, measured_fps, frame_count)
                 last_terminal_output = now
 
             # 6. waitKey同时处理鼠标事件；冻结仅影响显示，不阻塞循环。
-            if not handle_key(cv2.waitKey(1) & 0xFF):
+            if not handle_key(pump_ui(1)):
                 break
     finally:
         serial_link.close()
         close_camera()
-        cv2.destroyAllWindows()
+        if display_mode == "window":
+            cv2.destroyAllWindows()
 
 
 def run_offline(args):

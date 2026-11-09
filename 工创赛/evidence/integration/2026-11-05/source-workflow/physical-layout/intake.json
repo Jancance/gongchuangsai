@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-05",
+  "evidence": [
+    "side-view.jpg",
+    "overall-view.jpg"
+  ],
+  "observations": [
+    "Camera and gripper have visibly distinct mounting positions",
+    "Gripper is raised above material height in these photos",
+    "Robot and source turntable are alongside one another"
+  ],
+  "not_measured": [
+    "Turntable diameter",
+    "Material orbit radius",
+    "Gripper TCP projected point and capture height",
+    "Body-to-turntable closest clearance",
+    "Camera intrinsics/extrinsics and pixel-to-body mapping"
+  ],
+  "grasp_strategy": "Asked user: fixed near-side pickup versus individually reaching three sites",
+  "motion_executed": false,
+  "rules_checked": [
+    "RUN-01",
+    "VIS-01"
+  ],
+  "engineering_requirements_checked": [
+    "VIS-05",
+    "CAL-02",
+    "CAL-03",
+    "CAL-05",
+    "MECH-06"
+  ],
+  "official_questions": "Pending official clarification; unchanged"
+}

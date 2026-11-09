@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "regression_reproduced": true,
+  "reports": {
+    "before": {
+      "returncode": 1,
+      "output": "FAIL 12\nFAIL 12\nFAIL 12\nFAIL 12\nFAIL 12\nFAIL 15\nHEADING checks=30 failures=6\n"
+    },
+    "after": {
+      "returncode": 0,
+      "output": "HEADING checks=40 failures=0\n"
+    }
+  },
+  "source_sha256": {
+    "CHASSIS/USER/heading_controller.c": "747e2563b301f57f9898f1773027fcbbb56bfe3b955c0e66edde3b8b9ae2c056",
+    "CHASSIS/USER/heading_controller.h": "000ad6c0a47d578127a48033d19fa01693d1389f9a18662cc4f2e49dca54f00f",
+    "CHASSIS/USER/heading_session.h": "16dec51839da2b010bad88f800a0e4e9aa08f97125b4aa81dc40c2e19e55bd70"
+  }
+}

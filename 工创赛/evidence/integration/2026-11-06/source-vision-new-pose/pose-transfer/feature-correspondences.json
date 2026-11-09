@@ -1,0 +1,49 @@
+{
+  "purpose": "read-only cross-pose feature recovery attempt; no homography accepted",
+  "old_image_sha256": "a3467c48172011ae452f6c6b1f40970191f44c6ce009b7074b433b407826da78",
+  "new_image_sha256": "ac1117bcd4ae3863ac5e9ea13cbdfcb56d4f3a0359e83258c59a89da2842995f",
+  "old_keypoints": 832,
+  "new_keypoints": 750,
+  "mutual_matches": 4,
+  "new_points_px": [
+    [
+      991.6143188476562,
+      794.9832153320312
+    ],
+    [
+      995.5571899414062,
+      491.5450744628906
+    ],
+    [
+      1001.3046264648438,
+      492.7709045410156
+    ],
+    [
+      1004.7923583984375,
+      796.7943115234375
+    ]
+  ],
+  "old_points_px": [
+    [
+      926.532958984375,
+      955.388916015625
+    ],
+    [
+      1028.466064453125,
+      650.8435668945312
+    ],
+    [
+      1034.172119140625,
+      651.1260375976562
+    ],
+    [
+      986.590576171875,
+      929.6932983398438
+    ]
+  ],
+  "minimum_correspondences_for_fit_and_independent_check": 8,
+  "image_pose_registration_accepted": false,
+  "old_H_restored": false,
+  "reason": "insufficient reliable matches to fit and independently validate the changed pose",
+  "motion_allowed": false
+}

@@ -1,0 +1,1525 @@
+{
+  "CHASSIS/USER/vehicle_mission.inc": {
+    "sha256": "8078c48d2773b2710c9e66d70fa2585eea127208b7394992c3dae7dede0da4a0",
+    "checks": [
+      {
+        "line": 111,
+        "text": "static void VehicleMission_Fail(uint32_t cause)"
+      },
+      {
+        "line": 274,
+        "text": "if(VEHICLE_CHAIN_STAGE12 && g_vehicle_stage==1U){if(!VehicleMission_Load(2U))VehicleMission_Fail(7U);return;}"
+      },
+      {
+        "line": 278,
+        "text": "if(!VehicleMission_Load(g_vehicle_stage+1U))VehicleMission_Fail(7U);"
+      },
+      {
+        "line": 314,
+        "text": "VehicleMission_Fail(2U);g_vehicle_state=7U;return;"
+      },
+      {
+        "line": 334,
+        "text": "if(!StartupAxes_Holding() && !StartupAxes_Begin()){VehicleMission_Fail(3U);return;}g_vehicle_state=1U;"
+      },
+      {
+        "line": 338,
+        "text": "{VehicleMission_Fail(4U);return;}"
+      },
+      {
+        "line": 341,
+        "text": "{VehicleMission_Fail(5U);return;}"
+      },
+      {
+        "line": 345,
+        "text": "if(g_vehicle_queue_wait_ms>=VEHICLE_QUEUE_ADMISSION_TIMEOUT_MS){g_vehicle_queue_state=3U;VehicleMission_Fail(7U);return;}"
+      },
+      {
+        "line": 347,
+        "text": "if(g_vehicle_queue_last_mask&~(32U|256U)){g_vehicle_queue_state=3U;VehicleMission_Fail(7U);return;}"
+      },
+      {
+        "line": 359,
+        "text": "if(!VehicleMission_Load(VEHICLE_RUN_ALL?1U:VEHICLE_TEST_STAGE)){VehicleMission_Fail(7U);return;}"
+      },
+      {
+        "line": 363,
+        "text": "g_vehicle_scan_search_state<=2U && now-s_vehicle_search_begin>=VEHICLE_SCAN_SEARCH_TOTAL_MS){VehicleMission_Fail(18U);return;}"
+      },
+      {
+        "line": 365,
+        "text": "if(g_combined_test.state>=4U){VehicleMission_Fail(8U);return;}"
+      },
+      {
+        "line": 367,
+        "text": "if(g_vehicle_stage==1U && !VehicleMission_CaptureHandoff()){VehicleMission_Fail(10U);return;}"
+      },
+      {
+        "line": 370,
+        "text": "if(!g_vehicle_scan_search_state){s_vehicle_search_begin=now;if(!VehicleMission_Search(1U))VehicleMission_Fail(17U);}"
+      },
+      {
+        "line": 371,
+        "text": "else if(g_vehicle_scan_search_state==1U){if(!VehicleMission_Search(2U))VehicleMission_Fail(17U);}"
+      },
+      {
+        "line": 372,
+        "text": "else {g_vehicle_scan_search_state=3U;VehicleMission_Fail(16U);}"
+      },
+      {
+        "line": 377,
+        "text": "if(g_scan_display_result!=SCREEN_OK){VehicleMission_Fail(9U);return;}"
+      },
+      {
+        "line": 382,
+        "text": "{VehicleMission_Fail(10U);return;}"
+      },
+      {
+        "line": 386,
+        "text": "if(!VehicleMission_CaptureHandoff()){VehicleMission_Fail(10U);return;}"
+      },
+      {
+        "line": 390,
+        "text": "{VehicleMission_Fail(20U);return;}"
+      },
+      {
+        "line": 394,
+        "text": "if(!queued){VehicleMission_Fail(7U);return;}"
+      },
+      {
+        "line": 401,
+        "text": "if(!VehicleArm_BeginSourcePreparation()){VehicleMission_Fail(13U);return;}"
+      },
+      {
+        "line": 411,
+        "text": "if(!VehicleMission_ArmProfileReady(g_vehicle_stage)){VehicleMission_Fail(15U);return;}"
+      },
+      {
+        "line": 417,
+        "text": "if(g_vehicle_arm_state==3U || g_source_prepare_state==4U){VehicleMission_Fail(12U);return;}"
+      },
+      {
+        "line": 422,
+        "text": "if(g_vehicle_arm_row>=32U || g_vehicle_item>=3U){VehicleMission_Fail(11U);return;}"
+      },
+      {
+        "line": 433,
+        "text": "if(g_vehicle_arm_state==3U){VehicleMission_Fail(12U);return;}"
+      },
+      {
+        "line": 438,
+        "text": "if(!VehicleArm_Begin(&resolved,g_vehicle_item))VehicleMission_Fail(13U);"
+      }
+    ]
+  },
+  "CHASSIS/USER/main.c": {
+    "sha256": "b1dc2d7f12636d2c0f7c103ef75a9db99e11a4c9ba3ed96c6d67cf2a155e803d",
+    "checks": [
+      {
+        "line": 762,
+        "text": "#define HEADING_SOURCE_FRESH_MS 100U"
+      },
+      {
+        "line": 857,
+        "text": "#define App_StageBaseRpm() ((APP_TRANSLATION_HOLD_MODE == 0U) ? APP_FORWARD_HOLD_BASE_RPM : APP_LATERAL_HOLD_BASE_RPM)"
+      },
+      {
+        "line": 858,
+        "text": "#define App_StageRunMs() ((APP_TRANSLATION_HOLD_MODE == 0U) ? APP_FORWARD_HOLD_RUN_MS : APP_LATERAL_HOLD_RUN_MS)"
+      },
+      {
+        "line": 931,
+        "text": "static void App_HeadingRuntimeTrip(uint32_t cause)"
+      },
+      {
+        "line": 1101,
+        "text": "if (status.active != 0U) App_HeadingRuntimeTrip(5U);"
+      },
+      {
+        "line": 1105,
+        "text": "App_HeadingRuntimeTrip(g_heading_exec_trip);"
+      },
+      {
+        "line": 1106,
+        "text": "else if (g_heading_exec_request == 2U) App_HeadingRuntimeTrip(1U);"
+      },
+      {
+        "line": 1107,
+        "text": "else if (!App_HeadingRuntimeSource(now)) App_HeadingRuntimeTrip(2U);"
+      },
+      {
+        "line": 1109,
+        "text": "App_HeadingRuntimeTrip(3U);"
+      },
+      {
+        "line": 1113,
+        "text": "App_HeadingRuntimeTrip(4U);"
+      },
+      {
+        "line": 1115,
+        "text": "App_HeadingRuntimeTrip(5U);"
+      },
+      {
+        "line": 1122,
+        "text": "if (!App_HeadingRuntimeOwns(&status)) App_HeadingRuntimeTrip(5U);"
+      },
+      {
+        "line": 1124,
+        "text": "(HS_RUN_MS + HS_STOP_MS)) App_HeadingRuntimeTrip(7U);"
+      },
+      {
+        "line": 1127,
+        "text": "(g_can_guard_ready != 1U))) App_HeadingRuntimeTrip(3U);"
+      },
+      {
+        "line": 1160,
+        "text": "App_HeadingRuntimeTrip(1U);"
+      },
+      {
+        "line": 1175,
+        "text": "App_HeadingRuntimeTrip(3U);"
+      },
+      {
+        "line": 1188,
+        "text": "if (!App_HeadingRuntimeSource(now)) App_HeadingRuntimeTrip(2U);"
+      },
+      {
+        "line": 1190,
+        "text": "App_HeadingRuntimeTrip(3U);"
+      },
+      {
+        "line": 1192,
+        "text": "App_HeadingRuntimeTrip(4U);"
+      },
+      {
+        "line": 1229,
+        "text": "if(g_heading_exec_request==2U)App_HeadingRuntimeTrip(1U);"
+      },
+      {
+        "line": 1233,
+        "text": "checksum_base!=g_hwt_checksum_errors)App_HeadingRuntimeTrip(2U);"
+      },
+      {
+        "line": 1236,
+        "text": "App_HeadingRuntimeTrip(3U);"
+      },
+      {
+        "line": 1237,
+        "text": "else if(now-s_heading_exec_wait_ms>=5000U)App_HeadingRuntimeTrip(4U);"
+      },
+      {
+        "line": 1239,
+        "text": "App_HeadingRuntimeTrip(5U);"
+      },
+      {
+        "line": 1240,
+        "text": "else if(!prepared_ok)App_HeadingRuntimeTrip(6U);"
+      },
+      {
+        "line": 1248,
+        "text": "if (accepted != 1U) App_HeadingRuntimeTrip(6U);"
+      },
+      {
+        "line": 1265,
+        "text": "if (!App_HeadingRuntimeOwns(&status)) App_HeadingRuntimeTrip(5U);"
+      },
+      {
+        "line": 1303,
+        "text": "if (output.action == HS_ACTION_ABORT) App_HeadingRuntimeTrip(6U);"
+      },
+      {
+        "line": 1405,
+        "text": "#define App_TestTranslationMode() (APP_TRANSLATION_HOLD_MODE)"
+      },
+      {
+        "line": 1516,
+        "text": "static void App_ForwardHoldTrip(uint32_t cause)"
+      },
+      {
+        "line": 1561,
+        "text": "if (g_forward_hold.request == 2U) App_ForwardHoldTrip(1U);"
+      },
+      {
+        "line": 1564,
+        "text": "App_ForwardHoldTrip(2U);"
+      },
+      {
+        "line": 1567,
+        "text": "App_ForwardHoldTrip(3U);"
+      },
+      {
+        "line": 1570,
+        "text": "if ((uint32_t)(now - s_hold_wait_ms) >= 5000U) App_ForwardHoldTrip(4U);"
+      },
+      {
+        "line": 1571,
+        "text": "else if (status.active != 0U || status.result != 0U) App_ForwardHoldTrip(5U);"
+      },
+      {
+        "line": 1578,
+        "text": "if (!App_ForwardHoldOwns(&status)) App_ForwardHoldTrip(5U);"
+      },
+      {
+        "line": 1581,
+        "text": "App_ForwardHoldTrip(7U);"
+      },
+      {
+        "line": 1583,
+        "text": "((uint32_t)(now - s_hold_stop_ms) >= HS_STOP_MS)) App_ForwardHoldTrip(7U);"
+      },
+      {
+        "line": 1585,
+        "text": "(g_safety_ready != 1U) || (g_can_guard_ready != 1U))) App_ForwardHoldTrip(5U);"
+      },
+      {
+        "line": 1587,
+        "text": "s_heading_source.rate_dps, &correction, &error) != 1U) App_ForwardHoldTrip(6U);"
+      },
+      {
+        "line": 1618,
+        "text": "if ((request == 2U) && (g_forward_hold.phase != HR_IDLE)) App_ForwardHoldTrip(1U);"
+      },
+      {
+        "line": 1623,
+        "text": "{ App_ForwardHoldTrip(3U); HWT101_TimingEnd(0U, critical_cycle); taskEXIT_CRITICAL(); return; }"
+      },
+      {
+        "line": 1631,
+        "text": "App_ForwardHoldTrip(3U);"
+      },
+      {
+        "line": 1677,
+        "text": "App_ForwardHoldTrip(5U);"
+      },
+      {
+        "line": 1688,
+        "text": "App_ForwardHoldTrip(6U);"
+      },
+      {
+        "line": 1695,
+        "text": "if (accepted != 1U) App_ForwardHoldTrip(5U);"
+      },
+      {
+        "line": 1712,
+        "text": "if (!App_ForwardHoldOwns(&status)) App_ForwardHoldTrip(5U);"
+      },
+      {
+        "line": 1714,
+        "text": "s_heading_source.rate_dps, &desired, &error) != 1U) App_ForwardHoldTrip(6U);"
+      },
+      {
+        "line": 1723,
+        "text": "if (ChassisAuto_RequestStop()!=1U) App_ForwardHoldTrip(8U);"
+      },
+      {
+        "line": 1742,
+        "text": "if (App_StageDistanceMm() > 0.0f) App_ForwardHoldTrip(2U);"
+      },
+      {
+        "line": 1743,
+        "text": "else if (ChassisAuto_RequestStop() != 1U) App_ForwardHoldTrip(8U);"
+      },
+      {
+        "line": 1752,
+        "text": "if (delta > 0x7FFFFFFFU) App_ForwardHoldTrip(2U);"
+      },
+      {
+        "line": 1769,
+        "text": "&correction, &error) != 1U) App_ForwardHoldTrip(2U);"
+      },
+      {
+        "line": 1770,
+        "text": "else if (ChassisAuto_UpdateForwardHold(correction) != 1U) App_ForwardHoldTrip(8U);"
+      },
+      {
+        "line": 2094,
+        "text": "{ g_vm_test_request = 0U; Power_Disable(); return; }"
+      },
+      {
+        "line": 2101,
+        "text": "if (s_combined_turn) App_HeadingRuntimeTrip(1U);"
+      },
+      {
+        "line": 2102,
+        "text": "else App_ForwardHoldTrip(1U);"
+      },
+      {
+        "line": 2105,
+        "text": "Power_Disable();"
+      },
+      {
+        "line": 2669,
+        "text": "App_ForwardHoldTrip(1U);"
+      },
+      {
+        "line": 2676,
+        "text": "App_ForwardHoldTrip(1U);"
+      },
+      {
+        "line": 3201,
+        "text": "void MotionStop(void) { g_vm_test_request = 0U; Power_Disable(); }"
+      },
+      {
+        "line": 3350,
+        "text": "Power_Disable();"
+      },
+      {
+        "line": 4548,
+        "text": "{ g_vm_test_request = 0U; Power_Disable(); }"
+      }
+    ]
+  },
+  "USER/vehicle_parameters.h": {
+    "sha256": "b9c3cd4f32e19adb6ea5ae521ef208db29c7effea89f00a66826f36a4c8eac73",
+    "checks": [
+      {
+        "line": 36,
+        "text": "#define VEHICLE_SCAN_SEARCH_TOTAL_MS 15000U"
+      },
+      {
+        "line": 51,
+        "text": "#define VEHICLE_HANDOFF_ALIGN_TOL_MM 10.0f"
+      },
+      {
+        "line": 52,
+        "text": "#define VEHICLE_HANDOFF_MAX_ALIGN_MM 200.0f"
+      },
+      {
+        "line": 53,
+        "text": "#define VEHICLE_HANDOFF_ENDPOINT_MAX_AGE_MS 1000U"
+      },
+      {
+        "line": 54,
+        "text": "#define VEHICLE_QUEUE_ADMISSION_TIMEOUT_MS 1000U /* 已停车后等待原准入条件，禁止无限等待。 */"
+      },
+      {
+        "line": 55,
+        "text": "#define VEHICLE_STAGE2_ROUTE_ONLY 1U"
+      },
+      {
+        "line": 68,
+        "text": "#define VEHICLE_SOURCE_PREP_TIMEOUT_MS 12000U"
+      },
+      {
+        "line": 133,
+        "text": "#define VEHICLE_EXTENSION_HOLD_CONFIRM_SAMPLES 3U"
+      },
+      {
+        "line": 134,
+        "text": "#define VEHICLE_EXTENSION_HOLD_TIMEOUT_MS 2000U"
+      },
+      {
+        "line": 135,
+        "text": "#define VEHICLE_EXTENSION_HOLD_POSITION_TOL_DEG 2.0f"
+      },
+      {
+        "line": 138,
+        "text": "#define VEHICLE_EXTENSION_HOME_DRIVER_TIMEOUT_MS 10000U"
+      },
+      {
+        "line": 142,
+        "text": "#define VEHICLE_STAGE_TIMEOUT_MS 120000U"
+      },
+      {
+        "line": 194,
+        "text": "#define VEHICLE_MIN_ROUTE_CM 1.0f"
+      },
+      {
+        "line": 195,
+        "text": "#define VEHICLE_MAX_ROUTE_CM 210.0f"
+      },
+      {
+        "line": 201,
+        "text": "#define VEHICLE_ROUTE_MAX_BASE_RPM 115U"
+      },
+      {
+        "line": 202,
+        "text": "#define VEHICLE_ROUTE_FEEDBACK_RPM 130U /* 常规单轴反馈保护保持；斜移使用单独合成限值。 */"
+      },
+      {
+        "line": 203,
+        "text": "#define VEHICLE_ROUTE_ACCEL_MM_S2 1000.0f"
+      },
+      {
+        "line": 204,
+        "text": "#define VEHICLE_ROUTE_JERK_MM_S3 2000.0f"
+      },
+      {
+        "line": 212,
+        "text": "#define VEHICLE_AXIS_TIMEOUT_MS 0U /* 0保留动作总等待无限；通信/服务间隔及整段截止仍保留。 */"
+      }
+    ]
+  },
+  "CHASSIS/USER/chassis_auto_test.c": {
+    "sha256": "3ac2b2e4c493223d7be306b2ee3ec68a781297c93f2a05af8958d5889fc82d92",
+    "checks": [
+      {
+        "line": 286,
+        "text": "static void Auto_CutDetailLocked(uint32_t cause, uint32_t detail, uint32_t io, uint32_t address)"
+      },
+      {
+        "line": 330,
+        "text": "static void Auto_CutLocked(uint32_t cause)"
+      },
+      {
+        "line": 331,
+        "text": "{ Auto_CutDetailLocked(cause, 0U, 0U, 0U); }"
+      },
+      {
+        "line": 436,
+        "text": "static void Auto_DistanceFaultLocked(uint32_t reason)"
+      },
+      {
+        "line": 437,
+        "text": "{ s_distance_fault_reason = reason; Auto_CutDetailLocked(3U,8U,0U,0U); }"
+      },
+      {
+        "line": 450,
+        "text": "if (s_endpoint_index >= s_endpoint_count) { Auto_DistanceFaultLocked(1U); return; }"
+      },
+      {
+        "line": 452,
+        "text": "if (base->start_mask != 15U) { Auto_DistanceFaultLocked(1U); return; }"
+      },
+      {
+        "line": 455,
+        "text": "if ((TickType_t)(now - s_run_tick) >= pdMS_TO_TICKS(500U)) Auto_DistanceFaultLocked(2U);"
+      },
+      {
+        "line": 462,
+        "text": "{ Auto_DistanceFaultLocked(3U); return; }"
+      },
+      {
+        "line": 476,
+        "text": "{ Auto_DistanceFaultLocked(4U); return; }"
+      },
+      {
+        "line": 482,
+        "text": "{ Auto_DistanceFaultLocked(5U); return; }"
+      },
+      {
+        "line": 510,
+        "text": "if (since>=400U) Auto_DistanceFaultLocked(3U);"
+      },
+      {
+        "line": 520,
+        "text": "if(!Chassis_CalibrateDistanceMm(0U,forward_raw,&forward_mm)){Auto_DistanceFaultLocked(5U);return;}"
+      },
+      {
+        "line": 526,
+        "text": "{ Auto_DistanceFaultLocked(5U); return; }"
+      },
+      {
+        "line": 536,
+        "text": "if(result>=2U){Auto_DistanceFaultLocked(result==3U?9U:7U);return;}"
+      },
+      {
+        "line": 552,
+        "text": "if (!result) { Auto_DistanceFaultLocked(8U); return; }"
+      },
+      {
+        "line": 566,
+        "text": "{ Auto_DistanceFaultLocked(8U); return; }"
+      },
+      {
+        "line": 569,
+        "text": "{ Auto_DistanceFaultLocked(7U); return; }"
+      },
+      {
+        "line": 574,
+        "text": "{ Auto_DistanceFaultLocked(8U); return; }"
+      },
+      {
+        "line": 578,
+        "text": "{ Auto_DistanceFaultLocked(9U); return; }"
+      },
+      {
+        "line": 580,
+        "text": "{ Auto_DistanceFaultLocked(8U); return; }"
+      },
+      {
+        "line": 623,
+        "text": "{ Auto_CutDetailLocked(8U,9U,0U,i+1U); return; }"
+      },
+      {
+        "line": 630,
+        "text": "if(reason) { Auto_CutDetailLocked(8U,reason,0U,i+1U); return; }"
+      },
+      {
+        "line": 639,
+        "text": "if (!Auto_BaseHealthy()) { Auto_CutLocked(2U); return; }"
+      },
+      {
+        "line": 645,
+        "text": "{ Auto_CutDetailLocked(3U,1U,0U,0U); return; }"
+      },
+      {
+        "line": 647,
+        "text": "{ Auto_CutLocked(6U); return; }"
+      },
+      {
+        "line": 651,
+        "text": "Auto_CutLocked(6U);"
+      },
+      {
+        "line": 660,
+        "text": "{ Auto_CutDetailLocked(3U,2U,0U,i+1U); return; }"
+      },
+      {
+        "line": 661,
+        "text": "if ((s_status[i] & 0x0DU) != 1U) { Auto_CutLocked(2U); return; }"
+      },
+      {
+        "line": 665,
+        "text": "{ Auto_CutLocked(7U); return; }"
+      },
+      {
+        "line": 671,
+        "text": "{ Auto_CutLocked(6U); return; }"
+      },
+      {
+        "line": 679,
+        "text": "if (s_distance_mode) { s_distance_fault_reason = 6U; Auto_CutLocked(6U); return; }"
+      },
+      {
+        "line": 684,
+        "text": "{ Auto_CutLocked(6U); return; }"
+      },
+      {
+        "line": 929,
+        "text": "if (g_chassis_auto_active) Auto_CutLocked(9U);"
+      },
+      {
+        "line": 956,
+        "text": "{ Auto_CutDetailLocked(3U,3U,0U,0U); taskEXIT_CRITICAL(); return 1U; }"
+      },
+      {
+        "line": 968,
+        "text": "if (result != 1U) Auto_CutDetailLocked(3U,4U,result,i+1U);"
+      },
+      {
+        "line": 1067,
+        "text": "Auto_CutDetailLocked(3U,5U,result,i+1U); /* 新增查询失败也停止，不掩盖通信异常。 */"
+      },
+      {
+        "line": 1167,
+        "text": "Auto_CutDetailLocked(3U,6U,result,i+1U);"
+      },
+      {
+        "line": 1187,
+        "text": "if ((reply.Data[1] & 0x0CU) != 0U) Auto_CutLocked(2U);"
+      },
+      {
+        "line": 1209,
+        "text": "{ Auto_CutLocked(8U); taskEXIT_CRITICAL(); return; }"
+      },
+      {
+        "line": 1236,
+        "text": "Auto_CutLocked(8U);"
+      },
+      {
+        "line": 1264,
+        "text": "if (i != 4U) Auto_CutLocked(1U);"
+      },
+      {
+        "line": 1266,
+        "text": "Auto_CutLocked(7U);"
+      },
+      {
+        "line": 1283,
+        "text": "{ Auto_CutDetailLocked(3U,7U,0U,0U); taskEXIT_CRITICAL(); return; }"
+      },
+      {
+        "line": 1338,
+        "text": "if (index >= 4U) { Auto_CutLocked(6U); taskEXIT_CRITICAL(); return; }"
+      },
+      {
+        "line": 1373,
+        "text": "Auto_CutLocked((state == CHASSIS_AUTO_START) ? 4U :"
+      },
+      {
+        "line": 1554,
+        "text": "Auto_CutLocked(8U);"
+      }
+    ]
+  },
+  "CHASSIS/USER/chassis_auto_test.h": {
+    "sha256": "3972427ec6fd9f048034daa893c31746542380e41067e95426626049f01ae2e8",
+    "checks": [
+      {
+        "line": 13,
+        "text": "#define CHASSIS_AUTO_PREP_MS 10000U"
+      },
+      {
+        "line": 14,
+        "text": "#define CHASSIS_AUTO_RUN_MS 10000U"
+      },
+      {
+        "line": 16,
+        "text": "#define CHASSIS_HEADING_RUN_MS (APP_HEADING_RUN_MS + 1000U)"
+      },
+      {
+        "line": 18,
+        "text": "#define CHASSIS_FORWARD_HOLD_RUN_MS (APP_FORWARD_HOLD_RUN_MS + 1000U)"
+      },
+      {
+        "line": 19,
+        "text": "#define CHASSIS_LATERAL_HOLD_RUN_MS (APP_LATERAL_HOLD_RUN_MS + 1000U)"
+      },
+      {
+        "line": 20,
+        "text": "#define CHASSIS_AUTO_STOP_MS 500U"
+      },
+      {
+        "line": 23,
+        "text": "#define CHASSIS_AUTO_FRESH_MS 1000U"
+      },
+      {
+        "line": 24,
+        "text": "#define CHASSIS_AUTO_TOTAL_MS 45000U"
+      }
+    ]
+  },
+  "CHASSIS/USER/chassis_direction_guard.h": {
+    "sha256": "fdbbbe465e48f0e2df023945d47013450f663aa9cb9a11782fb93b909d1db437",
+    "checks": []
+  },
+  "CHASSIS/USER/heading_controller.c": {
+    "sha256": "f608cd38f6ebf252a7b6edb2a3febd7cb65f501fc5e73c1949b915999e1743a0",
+    "checks": []
+  },
+  "CHASSIS/USER/heading_session.c": {
+    "sha256": "b21f74c0eff670ece3333980a196bedd9fee4b983eb1fa9b3752152c88d0198f",
+    "checks": [
+      {
+        "line": 15,
+        "text": "static void HS_Fail(HeadingSession *s, uint32_t cause, HeadingSessionOutput *out)"
+      },
+      {
+        "line": 71,
+        "text": "HS_Fail(s, HS_CAUSE_INPUT, out);"
+      },
+      {
+        "line": 91,
+        "text": "if (!s->turn_trial) { HS_Fail(s,HS_CAUSE_INPUT,out); return 0U; }"
+      },
+      {
+        "line": 108,
+        "text": "if (accepted != 1U) HS_Fail(s, HS_CAUSE_EXECUTOR, out);"
+      },
+      {
+        "line": 118,
+        "text": "HS_Fail(s, HS_CAUSE_EXECUTOR, out);"
+      },
+      {
+        "line": 127,
+        "text": "if (accepted != 1U) HS_Fail(s, HS_CAUSE_EXECUTOR, out);"
+      },
+      {
+        "line": 165,
+        "text": "{ HS_Fail(s, HS_CAUSE_STOP_TIMEOUT, out); return; }"
+      },
+      {
+        "line": 168,
+        "text": "{ HS_Fail(s, HS_CAUSE_EXECUTOR, out); return; }"
+      },
+      {
+        "line": 175,
+        "text": "{ HS_Fail(s, HS_CAUSE_INPUT, out); return; }"
+      },
+      {
+        "line": 177,
+        "text": "{ HS_Fail(s, HS_CAUSE_EXECUTOR, out); return; }"
+      },
+      {
+        "line": 179,
+        "text": "{ HS_Fail(s, HS_CAUSE_TIMEOUT, out); return; }"
+      },
+      {
+        "line": 188,
+        "text": "{ HS_Fail(s, HS_CAUSE_INPUT, out); return; }"
+      },
+      {
+        "line": 210,
+        "text": "{ HS_Fail(s, HS_CAUSE_INPUT, out); return; }"
+      },
+      {
+        "line": 213,
+        "text": "{ HS_Fail(s, HS_CAUSE_REVERSE, out); return; }"
+      }
+    ]
+  },
+  "CHASSIS/USER/heading_session.h": {
+    "sha256": "01b92cc3ff47a338ca0bc2f33ba935af72f2817a5dfdf9c0926155c5a6690408",
+    "checks": [
+      {
+        "line": 21,
+        "text": "#define HS_CAUSE_TIMEOUT 3U"
+      },
+      {
+        "line": 24,
+        "text": "#define HS_CAUSE_STOP_TIMEOUT 6U"
+      },
+      {
+        "line": 26,
+        "text": "#define HS_SOURCE_MS 100U"
+      },
+      {
+        "line": 27,
+        "text": "#define HS_RUN_MS APP_HEADING_RUN_MS"
+      },
+      {
+        "line": 28,
+        "text": "#define HS_STOP_MS 2500U"
+      }
+    ]
+  },
+  "CHASSIS/USER/startup_group.inc": {
+    "sha256": "ad87b0cfd62b5cea4e8615d8e5e35a71c28a651378568c8fde6ba541fc9537f7",
+    "checks": [
+      {
+        "line": 35,
+        "text": "static void StartupGroup_Fail(uint32_t cause)"
+      },
+      {
+        "line": 58,
+        "text": "StartupGroup_Fail(1U);return 0U;"
+      },
+      {
+        "line": 62,
+        "text": "if(!GroupExtension_Begin()){StartupGroup_Fail(11U);return 0U;}"
+      },
+      {
+        "line": 76,
+        "text": "if(!healthy || (uint32_t)(now-sg_last)>150U)StartupGroup_Fail(2U);"
+      },
+      {
+        "line": 77,
+        "text": "else if(g_group_extension_state>=5U)StartupGroup_Fail(11U);"
+      },
+      {
+        "line": 78,
+        "text": "else if(g_dm_jog_first_fault)StartupGroup_Fail(7U);"
+      },
+      {
+        "line": 79,
+        "text": "else if(g_startup_axes_state!=4U && (uint32_t)(now-sg_begin)>=15000U)StartupGroup_Fail(3U);"
+      },
+      {
+        "line": 93,
+        "text": "if(!platform_ready){StartupGroup_Fail(2U);return;}"
+      },
+      {
+        "line": 96,
+        "text": "if(g_startup_group_go)StartupGroup_Fail(2U);"
+      },
+      {
+        "line": 106,
+        "text": "if(g_dm_jog_first_fault || (g_dm_jog_state==8U && !DM_CAN2_SourceTransitionPending())){StartupGroup_Fail(7U);return;}"
+      },
+      {
+        "line": 108,
+        "text": "if(g_group_extension_state>=5U){StartupGroup_Fail(11U);return;}"
+      },
+      {
+        "line": 110,
+        "text": "if(g_dm_jog_first_fault || (g_dm_jog_state==8U && !DM_CAN2_SourceTransitionPending())){StartupGroup_Fail(7U);return;}"
+      },
+      {
+        "line": 124,
+        "text": "if(g_startup_group_pwm_result!=1U){StartupGroup_Fail(12U);return;}"
+      },
+      {
+        "line": 127,
+        "text": "if(g_group_extension_state>=5U){StartupGroup_Fail(11U);return;}"
+      },
+      {
+        "line": 133,
+        "text": "if(g_group_extension_state>=5U){StartupGroup_Fail(11U);return;}"
+      }
+    ]
+  },
+  "CHASSIS/USER/extension_home_only.inc": {
+    "sha256": "a6d92ccdde35468bad36245571f455c62cca0f9095dfbb7fd0f6d4076ae91ccc",
+    "checks": [
+      {
+        "line": 45,
+        "text": "static void eh_fail(uint32_t reason)"
+      },
+      {
+        "line": 76,
+        "text": "VEHICLE_EXTENSION_HOME_DETECT_TIME_MS!=60U){eh_fail(7U);return 0U;}"
+      },
+      {
+        "line": 80,
+        "text": "{eh_fail(7U);return 0U;}"
+      },
+      {
+        "line": 101,
+        "text": "if(!healthy)eh_fail(6U);"
+      },
+      {
+        "line": 102,
+        "text": "else if((uint32_t)(now-eh_last)>150U)eh_fail(8U);"
+      },
+      {
+        "line": 121,
+        "text": "if(!platform_ready){eh_fail(6U);return;}"
+      },
+      {
+        "line": 124,
+        "text": "{eh_fail(3U);return;}"
+      },
+      {
+        "line": 131,
+        "text": "if(!eh_query(0x1a,4U) || (eh_reply.Data[2]&3U)){eh_fail(4U);return;}break;"
+      },
+      {
+        "line": 133,
+        "text": "if(StartupAxis_ReadHomeParameters(p)!=1U){eh_fail(4U);return;}"
+      },
+      {
+        "line": 138,
+        "text": "eh_u16(p+13)!=VEHICLE_EXTENSION_HOME_DETECT_TIME_MS || p[15]!=0U){eh_fail(7U);return;}break;"
+      },
+      {
+        "line": 140,
+        "text": "if(!eh_query(0x3a,3U) || (eh_reply.Data[1]&0x0cU)){eh_fail(5U);return;}"
+      },
+      {
+        "line": 141,
+        "text": "if(!(eh_reply.Data[1]&1U) && !eh_control(enable,5U)){eh_fail(4U);return;}break;"
+      },
+      {
+        "line": 143,
+        "text": "if(!eh_query(0x3b,3U)){eh_fail(4U);return;}"
+      },
+      {
+        "line": 145,
+        "text": "if((g_extension_home_flags&3U)!=3U || (g_extension_home_flags&0x3cU)){eh_fail(5U);return;}break;"
+      },
+      {
+        "line": 147,
+        "text": "if(!eh_query(0x35,5U)){eh_fail(4U);return;}"
+      },
+      {
+        "line": 148,
+        "text": "if(eh_reply.Data[2] || eh_reply.Data[3]){eh_fail(5U);return;}break;"
+      },
+      {
+        "line": 155,
+        "text": "if(!eh_control(home,4U)){eh_fail(4U);return;}"
+      },
+      {
+        "line": 161,
+        "text": "{eh_fail(3U);return;}"
+      },
+      {
+        "line": 167,
+        "text": "if(!eh_query(0x3a,3U)){eh_fail(4U);return;}"
+      },
+      {
+        "line": 168,
+        "text": "if(eh_reply.Data[1]&0x0cU){eh_fail(5U);return;}eh_phase=4U;return;"
+      },
+      {
+        "line": 170,
+        "text": "if(!eh_query(0x35,5U)){eh_fail(4U);return;}"
+      },
+      {
+        "line": 174,
+        "text": "if(!eh_control(stop,4U)){eh_fail(4U);return;}eh_phase=6U;return;"
+      },
+      {
+        "line": 177,
+        "text": "if(!eh_control(enable,5U)){eh_fail(4U);return;}eh_phase=7U;return;"
+      },
+      {
+        "line": 179,
+        "text": "if(!eh_query(0x3a,3U)){eh_fail(4U);return;}"
+      },
+      {
+        "line": 180,
+        "text": "if(eh_reply.Data[1]&0x0cU){eh_fail(5U);return;}"
+      },
+      {
+        "line": 184,
+        "text": "if(!eh_query(0x35,5U)){eh_fail(4U);return;}"
+      },
+      {
+        "line": 188,
+        "text": "if(!eh_query(0x36,7U) || eh_reply.Data[1]>1U){eh_fail(4U);return;}"
+      },
+      {
+        "line": 193,
+        "text": "if(!(delta<=VEHICLE_EXTENSION_HOLD_POSITION_TOL_DEG)){eh_fail(5U);return;}}"
+      },
+      {
+        "line": 204,
+        "text": "if(!eh_query(0x3a,3U) || !(eh_reply.Data[1]&1U) || (eh_reply.Data[1]&0x0cU))eh_fail(5U);"
+      },
+      {
+        "line": 208,
+        "text": "if(!eh_query(0x3b,3U)){eh_fail(4U);return;}g_extension_home_flags=eh_reply.Data[1];"
+      },
+      {
+        "line": 209,
+        "text": "if((g_extension_home_flags&3U)!=3U || (g_extension_home_flags&0x38U)){eh_fail(5U);return;}"
+      },
+      {
+        "line": 213,
+        "text": "if(!eh_query(0x35,5U)){eh_fail(4U);return;}"
+      },
+      {
+        "line": 216,
+        "text": "if(!eh_query(0x36,7U) || eh_reply.Data[1]>1U){eh_fail(4U);return;}"
+      }
+    ]
+  },
+  "CHASSIS/USER/vehicle_arm.c": {
+    "sha256": "df792904b40c7142e569b8152f4c24b2aaeb0586c7cee40c1dfb4579cfd9381b",
+    "checks": [
+      {
+        "line": 29,
+        "text": "static void arm_fail(uint32_t why)"
+      },
+      {
+        "line": 33,
+        "text": "{arm_fail(2U);}"
+      },
+      {
+        "line": 71,
+        "text": "if(!StartupAxes_Holding() || (VEHICLE_AXIS_TIMEOUT_MS && now-s_begin>=VEHICLE_AXIS_TIMEOUT_MS)){arm_fail(3U);return;}"
+      },
+      {
+        "line": 74,
+        "text": "if(!(s_row.target>=0 && s_row.target<=180 && s_row.speed>0 && s_row.speed<=300)){arm_fail(4U);return;}"
+      },
+      {
+        "line": 81,
+        "text": "if(g_dm_jog_state==8U && g_dm_jog_result!=2U){arm_fail(5U);return;}"
+      },
+      {
+        "line": 90,
+        "text": "if(s_row.op==4U && !jiazhua(s_row.target)){arm_fail(4U);return;}"
+      },
+      {
+        "line": 94,
+        "text": "if(!(target>=0 && target<=270)){arm_fail(4U);return;}"
+      },
+      {
+        "line": 96,
+        "text": "if(!CarrierPwm_Write(pulse)){arm_fail(4U);return;}"
+      },
+      {
+        "line": 103,
+        "text": "if(s_row.op!=1U && s_row.op!=3U){arm_fail(4U);return;}"
+      },
+      {
+        "line": 108,
+        "text": "{g_vehicle_arm_axis_owned=5U;(void)position();arm_fail(6U);return;}"
+      },
+      {
+        "line": 112,
+        "text": "if(!(s_row.target>=0 && s_row.target<=50)){arm_fail(4U);return;}"
+      },
+      {
+        "line": 115,
+        "text": "if(!(s_row.speed>0 && s_row.speed<=(s_address==5U?VEHICLE_LIFT_RPM:VEHICLE_EXTENSION_RPM))){arm_fail(4U);return;}"
+      },
+      {
+        "line": 117,
+        "text": "if(!query(0x1a,4U) || (s_rx.Data[2]&3U)){arm_fail(7U);return;}"
+      },
+      {
+        "line": 121,
+        "text": "if(!position()){arm_fail(7U);return;}s_before=s_current;"
+      },
+      {
+        "line": 123,
+        "text": "if(!(fabsf(delta)<=(s_address==5U?VEHICLE_LIFT_MAX_TARGET_PULSES*360.0f/3200.0f:180.0f))){arm_fail(8U);return;}"
+      },
+      {
+        "line": 134,
+        "text": "if(!query(0x35,5U) || s_rx.Data[2] || s_rx.Data[3]){arm_fail(7U);return;}"
+      },
+      {
+        "line": 138,
+        "text": "if(VehicleArm_Exchange(s_address,q,5U,3U,&s_rx)!=1U || s_rx.Data[1]!=2U){arm_fail(7U);return;}"
+      },
+      {
+        "line": 144,
+        "text": "{arm_fail(7U);return;}s_phase=5U;return;"
+      },
+      {
+        "line": 147,
+        "text": "if(!query(0x3a,3U) || !(s_rx.Data[1]&1U) || (s_rx.Data[1]&0x08U)){arm_fail(9U);return;}"
+      },
+      {
+        "line": 149,
+        "text": "if(s_flags&4U){if(s_address==5U){arm_fail(9U);return;}if(!s_stall_active){s_stall_active=1;s_stall_ms=now;}else if(now-s_stall_ms>=2000U){arm_fail(9U);return;}}"
+      },
+      {
+        "line": 154,
+        "text": "if(!position()){arm_fail(7U);return;}"
+      },
+      {
+        "line": 155,
+        "text": "if(s_current<fminf(s_before,s_goal)-2.0f || s_current>fmaxf(s_before,s_goal)+2.0f){arm_fail(8U);return;}"
+      },
+      {
+        "line": 158,
+        "text": "if(!query(0x35,5U)){arm_fail(7U);return;}"
+      }
+    ]
+  },
+  "CHASSIS/USER/source_prepare.inc": {
+    "sha256": "dc146bd9a9f1ee3ebe83445771a23143d7ce267d73189cd85a7381af19b585ca",
+    "checks": [
+      {
+        "line": 23,
+        "text": "static void SourcePrep_Fail(uint32_t why)"
+      },
+      {
+        "line": 24,
+        "text": "{g_source_prepare_cause=why;g_source_prepare_state=4;g_dm_source_go=0;arm_fail(why);}"
+      },
+      {
+        "line": 29,
+        "text": "if(!StartupAxes_Holding() || now-sp_begin>=VEHICLE_SOURCE_PREP_TIMEOUT_MS){SourcePrep_Fail(20);return;}"
+      },
+      {
+        "line": 30,
+        "text": "if(g_dm_jog_first_fault || (g_dm_jog_state==8 && g_dm_jog_result!=2)){SourcePrep_Fail(21);return;}"
+      },
+      {
+        "line": 41,
+        "text": "if(!query(0x1a,4) || (s_rx.Data[2]&3)){SourcePrep_Fail(22);return;}"
+      },
+      {
+        "line": 44,
+        "text": "if(!position() || fabsf(s_current-sp_origin)>2){SourcePrep_Fail(23);return;}"
+      },
+      {
+        "line": 48,
+        "text": "if(VehicleArm_Exchange(6,enable,5,3,&s_rx)!=1 || s_rx.Data[1]!=2){SourcePrep_Fail(22);return;}"
+      },
+      {
+        "line": 51,
+        "text": "if(!query(0x3a,3) || !(s_rx.Data[1]&1) || (s_rx.Data[1]&0x0c)){SourcePrep_Fail(24);return;}"
+      },
+      {
+        "line": 54,
+        "text": "if(!query(0x35,5) || s_rx.Data[2] || s_rx.Data[3]){SourcePrep_Fail(24);return;}"
+      },
+      {
+        "line": 58,
+        "text": "if(!position() || fabsf(s_current-sp_origin)>2){SourcePrep_Fail(23);return;}"
+      },
+      {
+        "line": 61,
+        "text": "if(!jiazhua(STARTUP_GROUP_GRIPPER_ANGLE_DEG) || !SourcePrep_Move()){SourcePrep_Fail(22);return;}"
+      },
+      {
+        "line": 67,
+        "text": "if(now-sp_grip_tick>=20){if(!jiazhua(angle)){SourcePrep_Fail(25);return;}g_source_prepare_grip_deg=angle;sp_grip_tick=now;}"
+      },
+      {
+        "line": 75,
+        "text": "if(!query(0x3a,3) || !(s_rx.Data[1]&1) || (s_rx.Data[1]&0x0c)){SourcePrep_Fail(24);return;}"
+      },
+      {
+        "line": 79,
+        "text": "if(!position() || s_current<fminf(sp_before,sp_goal)-2 || s_current>fmaxf(sp_before,sp_goal)+2){SourcePrep_Fail(23);return;}"
+      },
+      {
+        "line": 83,
+        "text": "if(!query(0x35,5)){SourcePrep_Fail(22);return;}"
+      },
+      {
+        "line": 88,
+        "text": "if(!SourcePrep_Move()){SourcePrep_Fail(22);return;}g_source_prepare_segment=2;"
+      }
+    ]
+  },
+  "HARDWARE/DM_CAN2/dm_can2_motion.c": {
+    "sha256": "e43b9066883c22da2d397fe84941b55f4ee302a1da6a98c1ead7bc337305f444",
+    "checks": [
+      {
+        "line": 87,
+        "text": "static void JogStop(uint32_t reason, TickType_t now)"
+      },
+      {
+        "line": 163,
+        "text": "if (!DM_CAN2_BuildPosVel(reference, s_speed, &tx) || !JogSend(&tx, now)) JogStop(5U, now);"
+      },
+      {
+        "line": 170,
+        "text": "if (!ready) { JogStop(3U, now); return; }"
+      },
+      {
+        "line": 171,
+        "text": "if ((TickType_t)(now - s_last_service) > pdMS_TO_TICKS((s_point_mode==6U || g_dm_integrated_owner)?100U:50U)) { JogStop(12U, now); return; }"
+      },
+      {
+        "line": 172,
+        "text": "if (CAN2->ESR & CAN_ESR_BOFF) { JogStop(5U, now); return; }"
+      },
+      {
+        "line": 175,
+        "text": "if (reply >= 5U) { JogStop(reply, now); return; }"
+      },
+      {
+        "line": 177,
+        "text": "if (s_feedback.motor_state != 1U) { JogStop(7U, now); return; }"
+      },
+      {
+        "line": 179,
+        "text": "if (reason) { JogStop(reason, now); return; }"
+      },
+      {
+        "line": 194,
+        "text": "{ s_clean_done = 0U; JogStop(2U, now); return; }"
+      },
+      {
+        "line": 201,
+        "text": "s_queued_request = request; JogStop(2U, now); return;"
+      },
+      {
+        "line": 247,
+        "text": "{ JogStop(3U, now); return; }"
+      },
+      {
+        "line": 251,
+        "text": "{ JogStop(12U, now); return; }"
+      },
+      {
+        "line": 253,
+        "text": "{ JogStop(5U, now); return; }"
+      },
+      {
+        "line": 264,
+        "text": "{ s_mode_pending = 0U; JogStop(5U, now); return; }"
+      },
+      {
+        "line": 280,
+        "text": "(TickType_t)(now - s_started) > pdMS_TO_TICKS(2500U)) JogStop(4U, now);"
+      },
+      {
+        "line": 292,
+        "text": "{ JogStop(11U, now); return; }"
+      },
+      {
+        "line": 295,
+        "text": "if (s_mode_attempted) { g_dm_mode_change_state = 4U; JogStop(15U, now); return; }"
+      },
+      {
+        "line": 299,
+        "text": "if (!DM_CAN2_BuildMode2(&tx) || !JogSend(&tx, now)) { JogStop(5U, now); return; }"
+      },
+      {
+        "line": 316,
+        "text": "{JogStop(14U,now);return;}"
+      },
+      {
+        "line": 325,
+        "text": "{ JogStop(14U, now); return; }"
+      },
+      {
+        "line": 331,
+        "text": "{ JogStop(11U, now); return; }"
+      },
+      {
+        "line": 335,
+        "text": "if(!(s_source_duration>0)){JogStop(13U,now);return;}"
+      },
+      {
+        "line": 346,
+        "text": "!JogSend(&tx, now)) JogStop(5U, now);"
+      },
+      {
+        "line": 369,
+        "text": "if (reply >= 5U) { JogStop(reply, now); return; }"
+      },
+      {
+        "line": 372,
+        "text": "s_feedback.motor_state != 1U) { JogStop(7U, now); return; }"
+      },
+      {
+        "line": 374,
+        "text": "if (reason) { JogStop(reason, now); return; }"
+      },
+      {
+        "line": 377,
+        "text": "if (s_feedback.motor_state != 0U) { JogStop(7U, now); return; }"
+      },
+      {
+        "line": 379,
+        "text": "if (!DM_CAN2_BuildSwitch(0xFCU, &tx) || !JogSend(&tx, now)) JogStop(5U, now);"
+      },
+      {
+        "line": 384,
+        "text": "if (s_feedback.motor_state != 1U) { JogStop(7U, now); return; }"
+      }
+    ]
+  },
+  "CHASSIS/SYSTEM/SAFETY/safety.c": {
+    "sha256": "a254c68d6f322c2636a0a853a5d23d7cedcee87e0374a0b78c994627313b3b50",
+    "checks": [
+      {
+        "line": 11,
+        "text": "#define SAFETY_STARTUP_MS 1000U"
+      },
+      {
+        "line": 12,
+        "text": "#define SAFETY_APP_MS     1000U"
+      },
+      {
+        "line": 13,
+        "text": "#define SAFETY_RX_MS       300U"
+      },
+      {
+        "line": 14,
+        "text": "#define SAFETY_KEY_MS      100U"
+      },
+      {
+        "line": 16,
+        "text": "#define SAFETY_CAN_BOOT_MS  3000U"
+      },
+      {
+        "line": 17,
+        "text": "#define SAFETY_CAN_FRESH_MS 1000U"
+      },
+      {
+        "line": 18,
+        "text": "#define SAFETY_FAULT_CAN_DATA    0x20U"
+      },
+      {
+        "line": 19,
+        "text": "#define SAFETY_FAULT_CAN_PROTECT 0x40U"
+      },
+      {
+        "line": 149,
+        "text": "Power_Disable();"
+      },
+      {
+        "line": 810,
+        "text": "Power_Disable();"
+      },
+      {
+        "line": 815,
+        "text": "Watchdog_Feed();"
+      }
+    ]
+  },
+  "CHASSIS/SYSTEM/SAFETY/safety.h": {
+    "sha256": "a082cb6de95f0c0abd2bb962edfedc7895142c83da5c6fcca6ab885699284ff3",
+    "checks": [
+      {
+        "line": 2,
+        "text": "#define SAFETY_H"
+      },
+      {
+        "line": 8,
+        "text": "#define SAFETY_TASK_APP 0U"
+      },
+      {
+        "line": 9,
+        "text": "#define SAFETY_TASK_RX  1U"
+      },
+      {
+        "line": 10,
+        "text": "#define SAFETY_TASK_KEY 2U"
+      },
+      {
+        "line": 32,
+        "text": "#define SAFETY_MOTION_DIAG_FRESH_MS 1000U"
+      },
+      {
+        "line": 78,
+        "text": "#define WHEEL_TEST_RUN_MS 10000U"
+      },
+      {
+        "line": 80,
+        "text": "#define WHEEL_TEST_PREP_MS 5000U"
+      }
+    ]
+  },
+  "CHASSIS/SYSTEM/WATCHDOG/watchdog.c": {
+    "sha256": "ecf49bb5d52fa43a39b711024ea95b81b23f299f8c7a02087c7475717e29b7c3",
+    "checks": [
+      {
+        "line": 70,
+        "text": "void Watchdog_Feed(void)"
+      }
+    ]
+  },
+  "CHASSIS/HARDWARE/POWER/power.c": {
+    "sha256": "704840f2a318b38fbdfdf1dfd14746db2161a45dc106d0405fec3aa1d3672ff5",
+    "checks": [
+      {
+        "line": 40,
+        "text": "Power_Disable();return;"
+      },
+      {
+        "line": 44,
+        "text": "Power_Disable();"
+      },
+      {
+        "line": 63,
+        "text": "void Power_Disable(void)"
+      }
+    ]
+  },
+  "CHASSIS/USER/freertos_hooks.c": {
+    "sha256": "56b36d06473baa366ac0f93c9781f474ff558f0e7c5ad30d9fefae4a24bb8b8b",
+    "checks": [
+      {
+        "line": 15,
+        "text": "Power_Disable();"
+      }
+    ]
+  },
+  "CHASSIS/SYSTEM/CAN/can.c": {
+    "sha256": "99897d26be4b7212e11eb9f2e9ab2ee9a2cd2fab24899a3d22697c789e0e1e1e",
+    "checks": []
+  },
+  "CHASSIS/HARDWARE/SCREEN/screen.c": {
+    "sha256": "5b8dc402aead210a30cb2c998c358bdfed1ecc64d9adde88fd114c2903c3d37a",
+    "checks": [
+      {
+        "line": 9,
+        "text": "#define SCREEN_TX_TIMEOUT_MS 150U"
+      }
+    ]
+  },
+  "CHASSIS/USER/field_map.c": {
+    "sha256": "23953a44211fbc1a9ffcb2bca6e32b408146f66ea98cb5c2b12acf2770fb6fb6",
+    "checks": []
+  },
+  "CHASSIS/USER/app_config.h": {
+    "sha256": "74658d544da23d193487b3ab2fcaa23bb37528199e7d597c15e99e0484ecabb6",
+    "checks": [
+      {
+        "line": 19,
+        "text": "#define APP_TURN_BRAKE_TRIAL_ACTIVE (APP_TURN_BRAKE_TRIAL_ENABLE && APP_ROUTE_USE_CUSTOM && APP_IS_DEBUG && (APP_TEST_MODE == 3U))"
+      },
+      {
+        "line": 32,
+        "text": "#define APP_DISTANCE_SCURVE_ENABLE 0U"
+      },
+      {
+        "line": 37,
+        "text": "#define APP_DISTANCE_SCURVE_ACTIVE ((APP_DISTANCE_SCURVE_ENABLE || (APP_ROUTE_USE_CUSTOM && APP_ROUTE_SPEED_TRIAL_ENABLE)) && APP_IS_DEBUG && (APP_TEST_MODE == 3U))"
+      },
+      {
+        "line": 41,
+        "text": "#define APP_ROUTE_SPEED_TRIAL_ACTIVE (APP_ROUTE_SPEED_TRIAL_ENABLE && APP_ROUTE_USE_CUSTOM && APP_DISTANCE_SCURVE_ACTIVE)"
+      },
+      {
+        "line": 49,
+        "text": "#define APP_LEFT_TRIM_ACTIVE (APP_LEFT_TRIM_ENABLE && APP_ROUTE_SPEED_TRIAL_ACTIVE)"
+      },
+      {
+        "line": 54,
+        "text": "#define APP_DISTANCE_SCURVE_ACCEL_MM_S2 VEHICLE_ROUTE_ACCEL_MM_S2"
+      },
+      {
+        "line": 55,
+        "text": "#define APP_DISTANCE_SCURVE_JERK_MM_S3 VEHICLE_ROUTE_JERK_MM_S3"
+      },
+      {
+        "line": 57,
+        "text": "#define APP_DISTANCE_SCURVE_ACCEL_MM_S2 40.0f"
+      },
+      {
+        "line": 58,
+        "text": "#define APP_DISTANCE_SCURVE_JERK_MM_S3 80.0f"
+      },
+      {
+        "line": 60,
+        "text": "#define APP_DISTANCE_SCURVE_TRACK_MM 50.0f"
+      },
+      {
+        "line": 61,
+        "text": "#define APP_DISTANCE_SCURVE_ARRIVAL_MM 2.0f"
+      },
+      {
+        "line": 62,
+        "text": "#define APP_DISTANCE_SCURVE_FINAL_WAIT_MS 2000U"
+      },
+      {
+        "line": 66,
+        "text": "#define APP_DISTANCE_SCURVE_FOLLOW_KP 0.5f"
+      },
+      {
+        "line": 67,
+        "text": "#define APP_DISTANCE_SCURVE_FOLLOW_RPM 1.0f"
+      },
+      {
+        "line": 68,
+        "text": "#define APP_DISTANCE_SCURVE_FOLLOW_OMEGA 1.0f"
+      },
+      {
+        "line": 69,
+        "text": "#define APP_DISTANCE_SCURVE_APPROACH_RPM 1U"
+      },
+      {
+        "line": 77,
+        "text": "#define APP_SPEED20_TRIAL_ACTIVE (APP_SPEED20_TRIAL_ENABLE && APP_DISTANCE_SCURVE_ACTIVE)"
+      },
+      {
+        "line": 82,
+        "text": "#define APP_SPEED20_RUN_MS 25000U"
+      },
+      {
+        "line": 118,
+        "text": "#define APP_FORWARD_HOLD_TEST 1U"
+      },
+      {
+        "line": 123,
+        "text": "#define APP_TRANSLATION_HOLD_MODE 2U"
+      },
+      {
+        "line": 124,
+        "text": "#define APP_LATERAL_HOLD_BASE_RPM 15U"
+      },
+      {
+        "line": 125,
+        "text": "#define APP_LATERAL_HOLD_MAX_RPM (APP_LATERAL_HOLD_BASE_RPM + 2U)"
+      },
+      {
+        "line": 126,
+        "text": "#define APP_LATERAL_HOLD_FEEDBACK_LIMIT_RPM 30U"
+      },
+      {
+        "line": 127,
+        "text": "#define APP_LATERAL_HOLD_RUN_MS 8000U"
+      },
+      {
+        "line": 140,
+        "text": "#define APP_TRANSLATION_HOLD_RUN_MS ((APP_TRANSLATION_HOLD_MODE == 0U) ? APP_FORWARD_HOLD_RUN_MS : APP_LATERAL_HOLD_RUN_MS)"
+      },
+      {
+        "line": 142,
+        "text": "#define APP_FORWARD_HOLD_BASE_RPM 15U"
+      },
+      {
+        "line": 143,
+        "text": "#define APP_FORWARD_HOLD_MAX_RPM (APP_FORWARD_HOLD_BASE_RPM + 2U)"
+      },
+      {
+        "line": 145,
+        "text": "#define APP_FORWARD_HOLD_FEEDBACK_LIMIT_RPM 30U"
+      },
+      {
+        "line": 152,
+        "text": "#define APP_FORWARD_HOLD_RUN_MS 8000U"
+      },
+      {
+        "line": 162,
+        "text": "#define APP_HEADING_RUN_MS ((APP_TEST_MODE == 3U) ? 30000U : 20000U)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "user_report": "按下了但是电机没有运动断电了",
+  "source_capture": "stage1-whole-flow/no-motion-after-key-uart",
+  "uart_records": 191,
+  "invalid_records": 0,
+  "serial_commands_sent": 0,
+  "mission": {
+    "run_id": 1,
+    "stage": 1,
+    "state": 6,
+    "cause": 4,
+    "startup_state": 5,
+    "startup_cause": 11
+  },
+  "first_body_fault": {
+    "tick_ms": 94700,
+    "elapsed_ms": 53,
+    "phase": 2,
+    "backend_state": 1,
+    "backend_cause": 0,
+    "backend_session": 1,
+    "hwt_source_valid": true
+  },
+  "last_body": {
+    "backend_state": 10,
+    "backend_result": 2,
+    "backend_cause": 9,
+    "vm_request": 0,
+    "pe2_active": 0,
+    "can_fault": 0,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "nonzero_samples": 0
+  },
+  "conclusion": "MCU continued running; software VM request/output withdrawn after startup extension monitor failed. Exact extension subreason absent in old telemetry.",
+  "not_proven": [
+    "extension query timeout",
+    "driver stall/fault bits",
+    "service interval failure",
+    "pre-cut motor supply voltage stability"
+  ]
+}

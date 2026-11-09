@@ -1,0 +1,59 @@
+{
+  "archive_sha256": "fb08b6f4990a8c56a34fee11698944f5edd7b6f7a5819b99a848b7bf406ba928",
+  "source_manifest_match": true,
+  "frames": 87,
+  "states": {
+    "STALE": 84,
+    "CANDIDATE": 3
+  },
+  "quality_accepted": 87,
+  "fresh_at_detection": 67,
+  "fresh_at_display_submission": 3,
+  "stage_min_p50_p95_max_ms": {
+    "processing": [
+      105.01843100064434,
+      113.3188389994757,
+      127.92976120108506,
+      166.81868500018027
+    ],
+    "before_detector_estimated": [
+      3.341280000313418,
+      24.571645000833087,
+      44.2761531989163,
+      50.79438900065725
+    ],
+    "detector_result_age": [
+      111.086457998681,
+      137.74115400156006,
+      166.5180682000937,
+      201.16975500059198
+    ],
+    "after_detector_to_display_submission": [
+      12.414883000019472,
+      38.15609299999778,
+      58.4152533003362,
+      72.84811600038665
+    ],
+    "display_submission_age": [
+      141.27755499976047,
+      174.41035400042892,
+      207.85164320113836,
+      231.5970979998383
+    ]
+  },
+  "processing_stage_medians_ms": {
+    "extraction": 25.041220998900826,
+    "primary_clustering": 5.023876999985077,
+    "raw_geometry": 0.008167000487446785,
+    "partial_search": 81.61605800160032
+  },
+  "limits": [
+    "Before-detector duration is estimated from detector result age minus candidate timer; no explicit start stamp in live1.",
+    "After-detector duration combines result-queue scheduling, gate, rendering and imshow; live1 cannot uniquely attribute it to imshow.",
+    "Candidate quality acceptance is not independently measured circle-center truth.",
+    "Host timestamps and imshow submission do not measure exposure or monitor presentation."
+  ],
+  "metric_valid": false,
+  "motion_allowed": false,
+  "hardware_acceptance": false
+}

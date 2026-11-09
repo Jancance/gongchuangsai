@@ -1,0 +1,68 @@
+{
+  "hardware_acceptance": false,
+  "motion_allowed": false,
+  "checks": {
+    "regression": "8 passed; see regression.log",
+    "check": {
+      "image_size": [
+        1920,
+        1080
+      ],
+      "undistort": false,
+      "serial": "DISABLED",
+      "features": [
+        "turntable",
+        "measurement",
+        "material-stop-reference",
+        "ring",
+        "stack",
+        "follow-pixel"
+      ],
+      "metric_geometry_verified": false
+    },
+    "compileall": "passed",
+    "four_tool_help": "passed",
+    "six_offline_modes": "passed; smoke only",
+    "hsv_camera_follow_tracker_and_other_configs_unchanged": "passed",
+    "extracted_check": {
+      "image_size": [
+        1920,
+        1080
+      ],
+      "undistort": false,
+      "serial": "DISABLED",
+      "features": [
+        "turntable",
+        "measurement",
+        "material-stop-reference",
+        "ring",
+        "stack",
+        "follow-pixel"
+      ],
+      "metric_geometry_verified": false
+    },
+    "exposure83_wrapper_check": {
+      "image_size": [
+        1920,
+        1080
+      ],
+      "undistort": false,
+      "serial": "DISABLED",
+      "features": [
+        "turntable",
+        "measurement",
+        "material-stop-reference",
+        "ring",
+        "stack",
+        "follow-pixel"
+      ],
+      "metric_geometry_verified": false
+    }
+  },
+  "package": {
+    "file": "output\\p2_vision_generic120_ring1_20261024.zip",
+    "files": 71,
+    "sha256": "de7be3762214f2be69ec006bd45eceb01ab0ca6880960caa28cf08c656005238",
+    "crc_and_member_hashes": "passed"
+  }
+}

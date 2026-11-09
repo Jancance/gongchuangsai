@@ -1,0 +1,31 @@
+{
+  "rebuild_pass": true,
+  "compiler_returncode": 0,
+  "project_sha256_after": "116f34ba5ad60dd72e8a6c8b4696b02249468d1a9369a4ee6c50969422e6450f",
+  "project_matches_prior_validated": true,
+  "source_files_preserved": 817,
+  "source_bytes_unchanged": true,
+  "carrier_modules_compiled": [
+    "carrier.c",
+    "carrier_pwm.c"
+  ],
+  "reran_motion_state_tests": false,
+  "reason": "No C or H behavior changes; existing 44-case evidence retained.",
+  "flash_performed": false,
+  "hardware_commands_sent": false,
+  "physical_trial_accepted": false,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged; pending official clarification"
+}

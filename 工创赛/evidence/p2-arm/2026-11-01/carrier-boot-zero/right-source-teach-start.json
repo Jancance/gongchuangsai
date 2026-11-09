@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-01",
+  "classification": "E: right-source teach-in start",
+  "user_message": "上电自动向载物盘发送0°目标并持续保持，然后进入下一步",
+  "interpretation": "User proceeds with automatic0 behavior; do not infer new binary readback or physical zero alignment from repeated behavior description. Do not ask for another download as prerequisite.",
+  "source_direction": "right side, no interference per prior user report",
+  "next_single_action": "With same-session empty/open gripper at top, extension unchanged, VM/lift ready, carrier boot window finished and other axes idle, and previously user-confirmed clear right-source path: set g_dm_pick_target_deg=78.8183 (current33.8182983 plus45deg, intermediate approach only), then point_enable1, jog_request4 once. Run15-18s, expected positive/top-view counterclockwise approach by45deg under historical right-source branch. Stop with request3 if obstruction, unexpected direction or reaching desired alignment early; keep CPU running. Return jog state/result/stop_result, current logical angle, physical direction/remaining target alignment and smoothness. Do not lower/extend/grip or send historical177.833679.",
+  "physical_boot_zero_accepted": false,
+  "fresh_dm_start_angle_received": true,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "待技术答疑确认; unchanged",
+  "new_source_or_build": false,
+  "assistant_motion": false,
+  "screenshot": "right-source-start-dm-watch.png",
+  "sha256": "18bc84d70e544803f2a98aa3e6872481baa487edf027b2e333b430006557d0db",
+  "watch": {
+    "g_dm_point_enable": 0,
+    "g_dm_can2_read_request": 0,
+    "g_dm_can2_state": 4,
+    "g_dm_can2_result": 1,
+    "g_dm_can2_feedback_valid": 1,
+    "g_dm_can2_position_deg": 97.2742691,
+    "g_dm_can2_logical_position_deg": 33.8182983,
+    "g_dm_jog_state": 0,
+    "g_dm_jog_result": 0,
+    "g_dm_jog_stop_result": 0,
+    "g_dm_can2_motor_state": 0,
+    "g_dm_place_target_deg": 33.8401489,
+    "g_dm_pick_target_deg": 177.833679,
+    "g_carrier_test_enable": 0,
+    "g_carrier_request": 0
+  },
+  "carrier_state_not_visible": true,
+  "intermediate_approach_target_deg": 78.8183,
+  "intermediate_target_is_measured_source_angle": false,
+  "approach_executed": false
+}

@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-30",
+  "classification": "E user-requested fresh test restart instruction",
+  "user_request": "重新开始怎么测",
+  "visible_project": "gongxun-f407-carrier.uvprojx",
+  "execution_view": "halted in startup assembly near SystemInit before __main initialization",
+  "watch_values_are_fresh_session_readiness_evidence": false,
+  "old_invalid_input_at_failure_recovered": false,
+  "next_steps": [
+    "confirm mechanically detached servo and other axes idle",
+    "F5 and wait for startup initialization before editing inputs",
+    "VM request1 and wait lift_state4/init_result1/carrier_state0",
+    "debug_angle140.0 then test_enable1 then request1 once",
+    "run continuously for2seconds and capture fresh state/result/latched/pulse/signal"
+  ],
+  "expected_nominal_pulse_us": 1537,
+  "restart_test_executed_or_passed": false,
+  "screenshot": "restart-at-startup.png",
+  "screenshot_sha256": "1075da9b6e36a0062a15ed677c7777fa8f8c64e8f9d23f81848de248c845f8a4",
+  "assistant_firmware_changes": false,
+  "assistant_hardware_commands": false,
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged; pending official clarification"
+}

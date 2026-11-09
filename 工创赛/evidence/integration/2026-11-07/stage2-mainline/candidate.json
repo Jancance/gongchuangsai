@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "mainline": "stage2 real vision USART6 and task/evidence interface",
+  "project": "tmp\\integration12_stage2_vision_20261107\\project",
+  "online_image": "tmp\\integration12_stage2_vision_20261107\\project\\Objects\\Vehicle_LiftRuler\\Vehicle_LiftRuler.axf",
+  "online_sha256": "98c8fbe38783e8d1a026c53f1cc799b61b1a82cbdec94403b0e10c5b5dc19376",
+  "offline_image": "tmp\\integration12_stage2_vision_20261107\\project\\Objects\\Vehicle_LiftRuler_Offline\\Vehicle_LiftRuler_Offline.axf",
+  "offline_sha256": "0928e222046672f76cbee92d6c03413f5ffff22529352e1045e7fc84b8083870",
+  "source_sha256": {
+    "gongxun-f407.uvprojx": "f02716a87f75b9d985d8a87236faa49ed132303e78137e23bdc999f87392a8a0",
+    "CHASSIS\\SYSTEM\\USART\\usart.c": "5733001602d837ee19ecf4056eccdc4652f8d9cf76f834348c25e5a08416be4a",
+    "CHASSIS\\SYSTEM\\USART\\usart.h": "a91223df5b21f9a3ed05d571cabd23ec705694e48f7e3bd1746a185f46cb9c9a",
+    "CHASSIS\\USER\\integration10_complete.inc": "ddd32bbf99e63eda9fcf4764308d9f16865e1db98c1d72ae9419fbab0f8671c0",
+    "CHASSIS\\USER\\main.c": "1427d71d05b078117a74600d3864f5b8227d4d21116b881c1e1785030ba606b6",
+    "CHASSIS\\USER\\source_parallel_flow.c": "a5348e826fad8533a35e2e9e061955089f279f59f9ffc16a69a3b48f174bd063",
+    "CHASSIS\\USER\\source_parallel_flow.h": "4ddd81edba2424475f257241b2dc346d4d74f21115f1a28db9c841c84cb8ccc8",
+    "CHASSIS\\USER\\source_stage2_backend.h": "dfb3cd727baad4853f63dc48a4f8d7e9c0ebb7a3ccdced38fbaec2e730ca73bd",
+    "CHASSIS\\USER\\source_stage2_backend.inc": "688782624aca66e487a38bdfc4bff987f5eedc251a3d5045e8406d129cc6a1c5",
+    "CHASSIS\\USER\\source_stage2_owner.c": "039246e9d0a1959642677f19be53316bcc85925fbd0cab42eae179d8ef049153",
+    "CHASSIS\\USER\\source_stage2_owner.h": "f7ab2812954450e58d28d107946b5c242e641017316a269f972e957aac95f876",
+    "CHASSIS\\USER\\source_stage2_runtime.c": "ccf6e6ee15756da0a549002816bc43138db876ee636d80aa865a72de3a5bd8d6",
+    "CHASSIS\\USER\\source_stage2_runtime.h": "4f817efd80615b55bdf5c9579226c43adb63df7d23f84fdc19af3fe51ed2827f",
+    "CHASSIS\\USER\\source_stage2_vision_bridge.c": "974c37872c90880580c2cc518bfb8a8dc5074e45f9156678af0bd51325b9de55",
+    "CHASSIS\\USER\\source_stage2_vision_bridge.h": "c9a9f253fec268f59a7677b50cccb9498bc4a85830d7e3af3ec293d70a1ba520",
+    "CHASSIS\\USER\\source_vision_runtime.h": "574795b8d35165cd94c6df42dde24cf480b7c18779c24eba89757be41a1bca62",
+    "CHASSIS\\USER\\vehicle_arm.c": "714e4f4384725b864637f8c4487bafd2d641608bb9314cf38cf71c1582a0ddff",
+    "CHASSIS\\USER\\vehicle_mission.h": "989bcda6b92fca578a641b98da430a69847921288dd6727dbe32627077869bed",
+    "CHASSIS\\USER\\vehicle_mission.inc": "c282c5ec1ccd5a919f2f8508798f955ce7068453af75262d7f76a136c372bbcb",
+    "CHASSIS\\USER\\vehicle_source_parallel.inc": "5528d09c01d0fda825e1889c0e4d9dd569d30a702eae93225115ee08d237de60",
+    "HARDWARE\\DM_CAN2\\dm_can2_motion.c": "397350cf1e973a93b5fc29ea0610d96cf6c0d8bf4aa84d41492db407311adf50",
+    "CHASSIS\\USER\\lift_ruler_calibration.c": "ba0280245e56a2be9232ce4b09bf534705c1d6018736a34581dcd0bdd9c73555",
+    "CHASSIS\\USER\\lift_ruler_calibration.h": "a9a54cb3597898160695457d87403da4d3c50bcd65fbea5428424ce8e382feff",
+    "CHASSIS\\USER\\lift_ruler_adapter.c": "5d091ce09efd7b5ba083f8c1228f01ab393456c68d603269ee8855966b25a382",
+    "USER\\vehicle_parameters.h": "0c901e29aa83d56f5ef74490066638b47cbc73106ba7e7d189eefc874ba5756c"
+  },
+  "actual_port_user_confirmed": "USART6 PC6/PC7 115200 8N1",
+  "built": true,
+  "flashed_this_work": true,
+  "hardware_access_this_work": false,
+  "calibration_verified": false,
+  "all_stage2_complete": false,
+  "motor_parameters_unchanged": [
+    "HARDWARE/DM_CAN2/dm_can2_motion.c",
+    "CHASSIS/USER/lift_ruler_calibration.c",
+    "CHASSIS/USER/lift_ruler_calibration.h",
+    "CHASSIS/USER/lift_ruler_adapter.c",
+    "USER/vehicle_parameters.h"
+  ],
+  "checks": {
+    "passed": true,
+    "actual_C_result": "stage2 parser/txn checks=501 failures=0",
+    "physical_port": "USART6 PC6/PC7",
+    "baud": 115200,
+    "USART1_debug_preserved": true,
+    "one_vision_queue_consumer": true,
+    "source_is_actual_candidate_C": true,
+    "UART_clock_queue_hardware": "mocked",
+    "actual_OrangePi_encoder_vectors": 424,
+    "source_task_provider_result": "source QR provider checks=8 failures=0",
+    "source_loaded_handoff_result": "source loaded handoff checks=5 failures=0",
+    "real_wire_or_OrangePi_verified": false,
+    "motor_commands": 0
+  },
+  "R_checked": [
+    "QR-01",
+    "QR-05",
+    "QR-06",
+    "SRC-01",
+    "SRC-02",
+    "RUN-02",
+    "PWR-01"
+  ],
+  "E_checked": [
+    "SRC-04",
+    "VIS-05",
+    "VIS-09",
+    "VIS-12",
+    "VIS-14",
+    "VIS-15",
+    "CAL-02",
+    "CAL-03",
+    "CAL-05",
+    "RUN-06"
+  ],
+  "Q": "official questions remain pending technical clarification",
+  "revision": "USART6-task-autonomous-mechanism-binding-offline",
+  "autonomous_checks": {
+    "passed": true,
+    "actual_C_result": "stage2 autonomous scenarios=15 checks=258 failures=0",
+    "scope": "actual coordinator and SPF; synthetic backend/evidence, no motor calls",
+    "hardware_access": false,
+    "live_backend_bound": false,
+    "existing_CAN_owner_hook": true,
+    "owner_result": "stage2 owner checks=10 failures=0"
+  },
+  "live_actuator_backend_bound": false,
+  "autonomous_owner_service_hooked": true,
+  "mechanism_driver_adapter_implemented": true,
+  "live_alignment_or_route_callbacks_configured": false,
+  "target_capture_metadata_provider_configured": false,
+  "real_backend_checks": {
+    "passed": true,
+    "actual_C_adapter": true,
+    "result": "stage2 real-backend checks=43 failures=0",
+    "hardware_and_route_hooks": "mocked",
+    "hardware_access": false,
+    "live_alignment_or_route_configured": false
+  },
+  "bound_replay_checks": {
+    "passed": true,
+    "results": [
+      "stage2 bound replay negative=0 checks=56 failures=0 arm_groups=13 tray=3 route_publications=1",
+      "stage2 bound replay negative=1 checks=20 failures=0 arm_groups=4 tray=1 route_publications=0"
+    ],
+    "actual_C_chain": [
+      "parser/task selection",
+      "autonomous owner",
+      "SPF coordinator",
+      "real motor/servo adapter",
+      "physical evidence ledger",
+      "route/stow publication"
+    ],
+    "mocked": [
+      "devices",
+      "calibration/profile",
+      "physical evidence",
+      "metric/route task hooks"
+    ],
+    "hardware_access": false,
+    "real_vision_or_loaded_test": false
+  },
+  "flash_log": "tmp/integration12_stage2_vision_20261107/flash_live4.log (Verify OK 18:14:25)",
+  "record_refreshed": {
+    "at": "2026-11-07T18:15:23",
+    "why": "板端在 18:06/18:08 重建（body-port / metric-shared 增量）后 candidate.json 未同步，现场对齐：源码哈希按当前工程重算，AXF 哈希按已烧录镜像记录；其余结论不变。",
+    "previous_online_sha256": "f67e9d53722d918971bf1f340f88993bf711888d212889721ca4fde5637fedd1"
+  }
+}

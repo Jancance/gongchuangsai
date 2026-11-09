@@ -1,0 +1,10 @@
+} radar_client_persisted_state_t;
+
+typedef struct {
+    uint16_t request_sequence; /* 必须与本次PLAN_PATH命令序号匹配。 */
+    uint8_t status;            /* 0表示成功，其他值为路径业务状态。 */
+    uint8_t start;             /* 请求中的起点方格0～24。 */
+    uint8_t goal;              /* 请求中的终点方格0～24。 */
+    uint8_t waypoint_count;    /* 返回的拐点和终点数量，不含起点。 */
+    uint8_t waypoints[RADAR_CLIENT_MAX_WAYPOINTS];
+} radar_client_path_result_t;

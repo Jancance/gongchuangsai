@@ -1,0 +1,31 @@
+12 display regression vectors: observed +360 delta, +/- turns, signed zero neighborhood,
+180 endpoint preserved, [-90,270) display branch; invalid feedback display; no startup TX.
+PASS motion scenario: positive; tx=618; no startup/repeat queue, bounded relative targets.
+
+PASS motion scenario: negative; tx=618; no startup/repeat queue, bounded relative targets.
+
+PASS motion scenario: stale; tx=0; no startup/repeat queue, bounded relative targets.
+
+PASS motion scenario: txfail; tx=3; no startup/repeat queue, bounded relative targets.
+
+PASS motion scenario: noreply; tx=4; no startup/repeat queue, bounded relative targets.
+
+PASS motion scenario: fault; tx=4; no startup/repeat queue, bounded relative targets.
+
+PASS motion scenario: disabled; tx=4; no startup/repeat queue, bounded relative targets.
+
+PASS motion scenario: tracking; tx=4; no startup/repeat queue, bounded relative targets.
+
+PASS motion scenario: limit; tx=4; no startup/repeat queue, bounded relative targets.
+
+PASS motion scenario: busy; tx=0; no startup/repeat queue, bounded relative targets.
+
+PASS motion scenario: abort; tx=81; no startup/repeat queue, bounded relative targets.
+
+PASS motion scenario: repeat; tx=618; no startup/repeat queue, bounded relative targets.
+
+PASS motion scenario: gap; tx=81; no startup/repeat queue, bounded relative targets.
+
+PASS motion scenario: badprofile; tx=0; no startup/repeat queue, bounded relative targets.
+
+PASS motion scenario: stoplost; tx=619; no startup/repeat queue, bounded relative targets.

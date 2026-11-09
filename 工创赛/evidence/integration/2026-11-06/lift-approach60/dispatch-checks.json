@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "offline": 0,
+      "passed": true,
+      "output": "DISPATCH offline=0 scenarios=6 checks=52 failures=0"
+    },
+    {
+      "offline": 1,
+      "passed": true,
+      "output": "DISPATCH offline=1 scenarios=6 checks=18 failures=0"
+    }
+  ],
+  "matlab_checks": 92,
+  "scope": "actual adapter and CAN exchange, extracted mode dispatch, simulated bus/ticks/power; not RTOS or physical timing",
+  "sha256": {
+    "CHASSIS/USER/main.c": "3918d3a3420b344e52d93f3febd65ec124f049fefaf70c8da5622e6bce106d54",
+    "CHASSIS/USER/vehicle_mission.inc": "04e74304d97f4cac7eb786417dcd177b437355d6ac0377bd0be7febe8520451d",
+    "CHASSIS/SYSTEM/CAN/can.c": "c6278fb5998ee02ed5d6b4cc66f0a7b34000990c7c8b7c06cca16d44f261280b",
+    "CHASSIS/USER/lift_ruler_adapter.c": "25c759ea5d70da09a149da5bef3280db0361b774c10e3789949a7bcad4e2633b",
+    "CHASSIS/USER/lift_ruler_calibration.c": "a478a0dd1c7c8c1e1460bc76482b2954d85f45a529ac96bf8a7f08afb83e45d7"
+  },
+  "firmware_downloaded": false,
+  "hardware_operated": false
+}

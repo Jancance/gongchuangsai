@@ -1,0 +1,287 @@
+{
+  "run_name": "20261027-194314-063293",
+  "label": "ring-shadow",
+  "zip_sha256": "fcc5d1c168bfcfb804952d09100c369a1f6f7219f42d9ebf58325b9450c3872c",
+  "crc_and_member_bytes_match": true,
+  "source_matches": {
+    "main.py": true,
+    "ring_station_detector.py": true,
+    "project_camera.py": true,
+    "diagnostic_entry": true
+  },
+  "config_matches": {
+    "ring_station_detector.json": true,
+    "camera_processing.json": true,
+    "project_profile.json": true
+  },
+  "frames": 516,
+  "fresh_candidate_frames": 516,
+  "pixel_ready_frames": 514,
+  "not_ready_frames": 2,
+  "states": {
+    "THREE_CENTERS": 516
+  },
+  "all_fresh_candidate_statistics": [
+    {
+      "index": 1,
+      "median_xy_px": [
+        496.7311553955078,
+        596.9388008117676
+      ],
+      "range_xy_px": [
+        0.25434112548828125,
+        0.118377685546875
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.012311935424804688,
+        0.027862548828125
+      ]
+    },
+    {
+      "index": 2,
+      "median_xy_px": [
+        963.5348815917969,
+        592.5831680297852
+      ],
+      "range_xy_px": [
+        0.089569091796875,
+        0.0838775634765625
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.03641510009765625,
+        0.00939178466796875
+      ]
+    },
+    {
+      "index": 3,
+      "median_xy_px": [
+        1421.2680969238281,
+        587.8794403076172
+      ],
+      "range_xy_px": [
+        0.0380859375,
+        0.03963470458984375
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.0134735107421875,
+        0.014997482299804688
+      ]
+    }
+  ],
+  "all_ready_statistics": [
+    {
+      "index": 1,
+      "median_xy_px": [
+        496.7311325073242,
+        596.9388008117676
+      ],
+      "range_xy_px": [
+        0.25434112548828125,
+        0.118377685546875
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.012307357788085935,
+        0.027885437011718743
+      ]
+    },
+    {
+      "index": 2,
+      "median_xy_px": [
+        963.5348815917969,
+        592.5831871032715
+      ],
+      "range_xy_px": [
+        0.073883056640625,
+        0.0279998779296875
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.03610687255859374,
+        0.009326934814453125
+      ]
+    },
+    {
+      "index": 3,
+      "median_xy_px": [
+        1421.2681274414062,
+        587.8794403076172
+      ],
+      "range_xy_px": [
+        0.0380859375,
+        0.03963470458984375
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.01348876953125,
+        0.01500587463378906
+      ]
+    }
+  ],
+  "detail_counts": {
+    "等待稳定观测（1/3）": 1,
+    "等待稳定观测（2/3）": 1,
+    "工位偏差超出验收精度": 514
+  },
+  "read_completion_span_s": 20.068180816000677,
+  "segments": [
+    {
+      "key": [
+        "THREE_CENTERS",
+        false
+      ],
+      "first_frame": 1,
+      "last_frame": 2,
+      "start_s": 0.0,
+      "end_s": 0.5021403460004876,
+      "count": 2
+    },
+    {
+      "key": [
+        "THREE_CENTERS",
+        true
+      ],
+      "first_frame": 3,
+      "last_frame": 516,
+      "start_s": 0.5618325240002378,
+      "end_s": 20.068180816000677,
+      "count": 514
+    }
+  ],
+  "first_5s_ready_count": 117,
+  "first_5s_ready_statistics": [
+    {
+      "index": 1,
+      "median_xy_px": [
+        496.7311706542969,
+        596.9434814453125
+      ],
+      "range_xy_px": [
+        0.0312652587890625,
+        0.11797332763671875
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.0136566162109375,
+        0.016864013671874987
+      ]
+    },
+    {
+      "index": 2,
+      "median_xy_px": [
+        963.5041198730469,
+        592.5814743041992
+      ],
+      "range_xy_px": [
+        0.060882568359375,
+        0.0279998779296875
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.039794921875,
+        0.009968566894531234
+      ]
+    },
+    {
+      "index": 3,
+      "median_xy_px": [
+        1421.26220703125,
+        587.8837814331055
+      ],
+      "range_xy_px": [
+        0.03106689453125,
+        0.02433013916015625
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.01275634765625,
+        0.009577941894531233
+      ]
+    }
+  ],
+  "last_10s_ready_count": 263,
+  "last_10s_ready_statistics": [
+    {
+      "index": 1,
+      "median_xy_px": [
+        496.7311248779297,
+        596.9294204711914
+      ],
+      "range_xy_px": [
+        0.25434112548828125,
+        0.11629486083984375
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.013477325439453122,
+        0.02219467163085937
+      ]
+    },
+    {
+      "index": 2,
+      "median_xy_px": [
+        963.5420532226562,
+        592.5846710205078
+      ],
+      "range_xy_px": [
+        0.03778076171875,
+        0.0252838134765625
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.0115325927734375,
+        0.00839385986328124
+      ]
+    },
+    {
+      "index": 3,
+      "median_xy_px": [
+        1421.272216796875,
+        587.8744201660156
+      ],
+      "range_xy_px": [
+        0.0343017578125,
+        0.03447723388671875
+      ],
+      "p95_abs_deviation_from_median_xy_px": [
+        0.013836669921874996,
+        0.0146026611328125
+      ]
+    }
+  ],
+  "last_10s_total_count": 263,
+  "tail_minus_initial_median_xy_px": [
+    [
+      -4.57763671875e-05,
+      -0.01406097412109375
+    ],
+    [
+      0.037933349609375,
+      0.00319671630859375
+    ],
+    [
+      0.010009765625,
+      -0.00936126708984375
+    ]
+  ],
+  "initial_image_line_angle_deg": -0.5614370312161129,
+  "tail_image_line_angle_deg": -0.5611397023770075,
+  "image_line_angle_change_deg": 0.0002973288391053819,
+  "not_ready_always_empty_stable_centers": true,
+  "read_interval_p50_p95_max_ms": [
+    35.009970000828616,
+    63.80869950044142,
+    502.1403460004876
+  ],
+  "host_result_age_p50_p95_max_ms": [
+    44.93173499986369,
+    61.918946499645244,
+    98.92629200021474
+  ],
+  "detector_processing_p50_p95_max_ms": [
+    25.179056500292063,
+    27.28318000026775,
+    59.231060999991314
+  ],
+  "limits": [
+    "PixelReady is original short-window stability plus freshness/quality, not an independent stationary detector.",
+    "If paper pose changes, global statistics cannot measure stationary jitter; inspect phases separately.",
+    "No measured hand-motion or settle timestamps; no settle-to-recovery latency.",
+    "First stable reappearance image may precede the final settled pose; inspect its matching JSON.",
+    "Host timestamps are not camera exposure timestamps; no metric or physical motion acceptance."
+  ],
+  "metric_valid": false,
+  "motion_allowed": false
+}

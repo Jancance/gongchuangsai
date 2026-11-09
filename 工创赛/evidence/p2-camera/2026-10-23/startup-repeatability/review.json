@@ -1,0 +1,81 @@
+{
+  "scope": "two independent opens in current static ambient scene only",
+  "visual_review": "both images lack the previous pronounced overall green cast",
+  "decision": "limited two-start initialization check accepted; color accuracy and long-term stability unverified",
+  "measured_fps": null,
+  "motion_allowed": false,
+  "files": {
+    "startup1": {
+      "image_sha256": "40d9698d1c15c0d0da998a262d035d59a0cedc9bbd861e72f8bcdb4a56bb1eb4",
+      "decoded_size": [
+        1920,
+        1080
+      ],
+      "controls": "gain: 80\nwhite_balance_temperature_auto: 0\nwhite_balance_temperature: 4600\nexposure_auto: 1 (Manual Mode)\nexposure_absolute: 166\n",
+      "region_mean_rgb": [
+        [
+          132.269,
+          136.885,
+          140.015
+        ],
+        [
+          127.81,
+          129.323,
+          133.097
+        ],
+        [
+          109.088,
+          113.799,
+          116.37
+        ]
+      ]
+    },
+    "startup2": {
+      "image_sha256": "aaf04561d3227ecf63e3dd200327952a4d5cc05e8998e0351a3d6f64ce10e769",
+      "decoded_size": [
+        1920,
+        1080
+      ],
+      "controls": "gain: 80\nwhite_balance_temperature_auto: 0\nwhite_balance_temperature: 4600\nexposure_auto: 1 (Manual Mode)\nexposure_absolute: 166\n",
+      "region_mean_rgb": [
+        [
+          132.497,
+          137.765,
+          140.659
+        ],
+        [
+          127.545,
+          129.97,
+          133.159
+        ],
+        [
+          110.926,
+          117.054,
+          118.506
+        ]
+      ]
+    }
+  },
+  "neutral_regions_xyxy": [
+    [
+      560,
+      350,
+      680,
+      650
+    ],
+    [
+      1120,
+      350,
+      1240,
+      650
+    ],
+    [
+      600,
+      820,
+      1200,
+      920
+    ]
+  ],
+  "mean_absolute_pixel_difference_rgb_levels": 2.5,
+  "measurement_note": "Image differences and RGB averages are descriptive only; no calibrated neutral target or predefined acceptance threshold."
+}

@@ -1,0 +1,746 @@
+{
+  "date": "2026-10-29",
+  "authorization": {
+    "chat_title": "摄像头1.7",
+    "chat_id": "01a181c9-bc4d-7ee0-9781-704a9e4d3dc6",
+    "message_time_utc": "2026-10-28T14:34:27.482Z",
+    "message_time_Asia_Shanghai": "2026-10-28 22:34:27",
+    "text": "给我改为雷达接f407，之前有例程代码给过你",
+    "followup": "用户随后要求继续，并在当前chat要求接着摄像头1.7往下做"
+  },
+  "classification": "E，架构/后续实施计划；未实现或验收",
+  "archive": {
+    "path": "D:\\新建文件夹4\\工创赛\\模块资料\\雷达资料\\radar_stm32例程.zip",
+    "sha256": "a4489effc4e9a7e17549125efb9b7cc3b454a099051e162c583754a44ad50087"
+  },
+  "reference_files": [
+    {
+      "member": "F407VET6/README.md",
+      "sha256": "a551270fa5d7a5720f7e21f8a07c0b07473d30bb4760398ee0eb1fa4f937a770",
+      "bytes": 8436,
+      "excerpts": [
+        {
+          "line": 22,
+          "text": "- 雷达模块链路：USART1，115200 baud，8N1"
+        },
+        {
+          "line": 24,
+          "text": "- USART1 RX为DMA2 Stream2 Channel4循环接收，TX为DMA2 Stream7 Channel4普通发送"
+        },
+        {
+          "line": 29,
+          "text": "USART1 RX发生校验、帧、噪声、溢出或DMA错误后，中断只登记错误，主循环中的`RadarClient_Poll()`按100 ms间隔恢复。恢复会同时核对HAL状态、USART DMAR位和DMA Stream使能位，必要时重新初始化RX DMA，清除UART/DMA错误标志、丢弃残留协议半帧并重新HELLO；恢复过程不在中断中阻塞。"
+        },
+        {
+          "line": 39,
+          "text": "│  ├─ radar_uart_port.c/.h  USART1与HAL适配"
+        },
+        {
+          "line": 64,
+          "text": "| PA9 / USART1_TX | 雷达下位机PA10 / RX |"
+        },
+        {
+          "line": 65,
+          "text": "| PA10 / USART1_RX | 雷达下位机PA9 / TX |"
+        },
+        {
+          "line": 77,
+          "text": "#define RADAR_DEMO RADAR_DEMO_CONNECT"
+        },
+        {
+          "line": 79,
+          "text": "#define RADAR_DEMO_ZONE 0U"
+        },
+        {
+          "line": 80,
+          "text": "#define RADAR_DEMO_PATH_START 0U"
+        },
+        {
+          "line": 81,
+          "text": "#define RADAR_DEMO_PATH_GOAL 24U"
+        },
+        {
+          "line": 90,
+          "text": "| `RADAR_DEMO_SCAN_ONCE` | 14圈完整障碍扫描，打印坐标、方格和置信度 |"
+        },
+        {
+          "line": 91,
+          "text": "| `RADAR_DEMO_GRID_SCAN` | 14圈方格扫描，只打印障碍方格 |"
+        },
+        {
+          "line": 133,
+          "text": "`RADAR_DEMO_GRID_SCAN`会让雷达保存最新方格结果。它只能由明确业务条件触发，不能放入周期定时器或每次持续障碍回调中反复执行。"
+        },
+        {
+          "line": 135,
+          "text": "`RADAR_DEMO_PATH`不会自动扫描。连接和选区后，它检查雷达Flash返回的`grid_result_valid`：有有效记录就直接规划；没有有效记录就打印拒绝提示并结束。有效的空扫描同样允许规划。"
+        },
+        {
+          "line": 162,
+          "text": "句柄集中在`radar_example/port/radar_uart_port.h`："
+        }
+      ]
+    },
+    {
+      "member": "F407VET6/radar_example/demo_select.h",
+      "sha256": "dcfd177c24dff83c3a61558668f051eeda5cded3a21ae3c86a33fbff5d8d195e",
+      "bytes": 2629,
+      "excerpts": [
+        {
+          "line": 4,
+          "text": "#include \"radar_client.h\""
+        },
+        {
+          "line": 7,
+          "text": "#define RADAR_DEMO_SCAN_ONCE  1\t//14圈扫描，返回障碍坐标"
+        },
+        {
+          "line": 8,
+          "text": "#define RADAR_DEMO_GRID_SCAN  2\t//14圈扫描，只返回方格编号"
+        },
+        {
+          "line": 18,
+          "text": "#define RADAR_DEMO RADAR_DEMO_PATH //在这里修改demo演示流程"
+        },
+        {
+          "line": 32,
+          "text": "#define RADAR_DEMO_ZONE 1U"
+        },
+        {
+          "line": 37,
+          "text": "#define RADAR_DEMO_PATH_START 4U"
+        },
+        {
+          "line": 41,
+          "text": "#define RADAR_DEMO_PATH_GOAL 11U"
+        },
+        {
+          "line": 60,
+          "text": "#if RADAR_DEMO != RADAR_DEMO_CONNECT &&     RADAR_DEMO_ZONE != 1U && RADAR_DEMO_ZONE != 2U"
+        },
+        {
+          "line": 61,
+          "text": "#error \"Set RADAR_DEMO_ZONE to 1 or 2 before compiling this operational demo\""
+        },
+        {
+          "line": 64,
+          "text": "#if RADAR_DEMO_PATH_START > 24U || RADAR_DEMO_PATH_GOAL > 24U"
+        }
+      ]
+    },
+    {
+      "member": "F407VET6/radar_example/protocol/link_protocol.c",
+      "sha256": "41861590c1ac132e18bc85fd064d5278b77718e56b62ebe516689ad46a46ec97",
+      "bytes": 6045,
+      "excerpts": []
+    },
+    {
+      "member": "F407VET6/radar_example/protocol/link_protocol.h",
+      "sha256": "a7e78be17b3d3762d2635bfefa42f99758a0b499ad635221ca32153c297517c7",
+      "bytes": 2590,
+      "excerpts": []
+    },
+    {
+      "member": "F407VET6/radar_example/protocol/radar_client.c",
+      "sha256": "594cb7bfa251f4e183d0f8cc8892fb939acf719ae387a55d57a335a984cd6b2c",
+      "bytes": 49436,
+      "excerpts": [
+        {
+          "line": 1,
+          "text": "#include \"radar_client.h\""
+        },
+        {
+          "line": 4,
+          "text": "#include \"radar_uart_port.h\""
+        },
+        {
+          "line": 222,
+          "text": "    next_hello_ms = RadarUartPort_GetTick();"
+        },
+        {
+          "line": 223,
+          "text": "    last_valid_message_ms = RadarUartPort_GetTick();"
+        },
+        {
+          "line": 318,
+          "text": "    now_ms = RadarUartPort_GetTick();"
+        },
+        {
+          "line": 366,
+          "text": "    next_zone_retry_ms = RadarUartPort_GetTick() + CLIENT_ZONE_RETRY_MS;"
+        },
+        {
+          "line": 483,
+          "text": "                next_zone_retry_ms = RadarUartPort_GetTick();"
+        },
+        {
+          "line": 522,
+          "text": "            next_zone_retry_ms = RadarUartPort_GetTick() +"
+        },
+        {
+          "line": 535,
+          "text": "    transaction.deadline_ms = RadarUartPort_GetTick() +"
+        },
+        {
+          "line": 554,
+          "text": "    case RADAR_CLIENT_OPERATION_GRID_SCAN:"
+        },
+        {
+          "line": 603,
+          "text": "        else if (transaction.operation == RADAR_CLIENT_OPERATION_GRID_SCAN &&"
+        },
+        {
+          "line": 629,
+          "text": "            transaction.operation == RADAR_CLIENT_OPERATION_GRID_SCAN &&"
+        },
+        {
+          "line": 634,
+          "text": "    /* GRID_SCAN直接回调；SCAN_ONCE还会等待同序号RESULT进行组合。 */"
+        },
+        {
+          "line": 639,
+          "text": "        transaction.operation == RADAR_CLIENT_OPERATION_GRID_SCAN) {"
+        },
+        {
+          "line": 933,
+          "text": "        next_zone_retry_ms = RadarUartPort_GetTick() + CLIENT_ZONE_RETRY_MS;"
+        },
+        {
+          "line": 959,
+          "text": "    last_valid_message_ms = RadarUartPort_GetTick();"
+        },
+        {
+          "line": 1081,
+          "text": "    uint32_t now_ms = RadarUartPort_GetTick();"
+        },
+        {
+          "line": 1125,
+          "text": "    uint32_t now_ms = RadarUartPort_GetTick();"
+        },
+        {
+          "line": 1137,
+          "text": "    key = RadarUartPort_EnterCritical();"
+        },
+        {
+          "line": 1207,
+          "text": "radar_client_request_result_t RadarClient_RequestGridScan(void)"
+        },
+        {
+          "line": 1211,
+          "text": "                                 RADAR_CLIENT_OPERATION_GRID_SCAN);"
+        },
+        {
+          "line": 1232,
+          "text": "    transaction.deadline_ms = RadarUartPort_GetTick() + CLIENT_ACK_TIMEOUT_MS;"
+        },
+        {
+          "line": 1302,
+          "text": "radar_client_request_result_t RadarClient_RequestPlanPath(uint8_t start,"
+        }
+      ]
+    },
+    {
+      "member": "F407VET6/radar_example/protocol/radar_client.h",
+      "sha256": "14b0abb69f2bf5e4529b21eba916b169aeed253fb7677a483448ce2561e89a44",
+      "bytes": 15445,
+      "excerpts": [
+        {
+          "line": 60,
+          "text": "    RADAR_CLIENT_OPERATION_GRID_SCAN,"
+        },
+        {
+          "line": 125,
+          "text": "    uint8_t frame_hits;        /* 14圈窗口中命中的圈数。 */"
+        },
+        {
+          "line": 133,
+          "text": "    bool locked;            /* true表示一次14圈锁定结果。 */"
+        },
+        {
+          "line": 259,
+          "text": " * 14圈完整扫描：必须同时收到匹配序号的GRID、RESULT和完成状态后结束，"
+        },
+        {
+          "line": 264,
+          "text": " * 14圈方格扫描：通过grid回调只返回障碍方格编号。雷达会把去重后的"
+        },
+        {
+          "line": 267,
+          "text": "radar_client_request_result_t RadarClient_RequestGridScan(void);"
+        },
+        {
+          "line": 284,
+          "text": "radar_client_request_result_t RadarClient_RequestPlanPath(uint8_t start, uint8_t goal);"
+        }
+      ]
+    },
+    {
+      "member": "F407VET6/radar_example/port/radar_uart_port.c",
+      "sha256": "a9d2a161ee2a9ca5e5b4e9bc759fbc9377cf8f4d2f025e001df939f82d598ba4",
+      "bytes": 4111,
+      "excerpts": [
+        {
+          "line": 1,
+          "text": "#include \"radar_uart_port.h\""
+        },
+        {
+          "line": 108,
+          "text": "uint32_t RadarUartPort_GetTick(void)"
+        },
+        {
+          "line": 110,
+          "text": "    return HAL_GetTick();"
+        },
+        {
+          "line": 113,
+          "text": "uint32_t RadarUartPort_EnterCritical(void)"
+        }
+      ]
+    },
+    {
+      "member": "F407VET6/radar_example/port/radar_uart_port.h",
+      "sha256": "f74b3963ecc70aa962eec36b9bd6f4a198976665955b94b234f0b550ad262fed",
+      "bytes": 771,
+      "excerpts": [
+        {
+          "line": 9,
+          "text": "/* USART1 is the radar module link. USART2 is the optional demo console."
+        },
+        {
+          "line": 10,
+          "text": " * Keep USART1 at 115200 8N1, RX DMA circular, TX DMA normal. */"
+        },
+        {
+          "line": 19,
+          "text": "uint32_t RadarUartPort_GetTick(void);"
+        },
+        {
+          "line": 20,
+          "text": "uint32_t RadarUartPort_EnterCritical(void);"
+        }
+      ]
+    },
+    {
+      "member": "F407VET6/radar_example/demos/demo_connect.c",
+      "sha256": "a3061ffd9ce53e6aa67b3528746b1b33b138a9fa0f443a9c6be32f8b0f12f8ed",
+      "bytes": 1158,
+      "excerpts": []
+    },
+    {
+      "member": "F407VET6/radar_example/demos/demo_grid_scan.c",
+      "sha256": "d509a97db570538baad89f40a1e6b61ba3e1b300926126e2207aff5745508fcc",
+      "bytes": 2019,
+      "excerpts": [
+        {
+          "line": 3,
+          "text": "#if RADAR_DEMO == RADAR_DEMO_GRID_SCAN"
+        },
+        {
+          "line": 9,
+          "text": " * 方格扫描流程：只提交一次14圈SINGLE_MEASURE。"
+        },
+        {
+          "line": 68,
+          "text": "    result = RadarClient_RequestGridScan();"
+        }
+      ]
+    },
+    {
+      "member": "F407VET6/radar_example/demos/demo_path.c",
+      "sha256": "344177a56507d5d1fa1eaf52c21fcb98d7f21fa7085361e910c8d1cc262ec759",
+      "bytes": 3517,
+      "excerpts": [
+        {
+          "line": 104,
+          "text": "        result = RadarClient_RequestPlanPath(RADAR_DEMO_PATH_START,"
+        }
+      ]
+    },
+    {
+      "member": "F407VET6/Core/Src/usart.c",
+      "sha256": "83bf640de0e806691efd27ecc50dbd12b05fe43b6ff9bb3aa3d413906061000b",
+      "bytes": 7874,
+      "excerpts": [
+        {
+          "line": 33,
+          "text": "/* USART1 init function */"
+        },
+        {
+          "line": 35,
+          "text": "void MX_USART1_UART_Init(void)"
+        },
+        {
+          "line": 38,
+          "text": "  /* USER CODE BEGIN USART1_Init 0 */"
+        },
+        {
+          "line": 40,
+          "text": "  /* USER CODE END USART1_Init 0 */"
+        },
+        {
+          "line": 42,
+          "text": "  /* USER CODE BEGIN USART1_Init 1 */"
+        },
+        {
+          "line": 44,
+          "text": "  /* USER CODE END USART1_Init 1 */"
+        },
+        {
+          "line": 45,
+          "text": "  huart1.Instance = USART1;"
+        },
+        {
+          "line": 57,
+          "text": "  /* USER CODE BEGIN USART1_Init 2 */"
+        },
+        {
+          "line": 59,
+          "text": "  /* USER CODE END USART1_Init 2 */"
+        },
+        {
+          "line": 96,
+          "text": "  if(uartHandle->Instance==USART1)"
+        },
+        {
+          "line": 98,
+          "text": "  /* USER CODE BEGIN USART1_MspInit 0 */"
+        },
+        {
+          "line": 100,
+          "text": "  /* USER CODE END USART1_MspInit 0 */"
+        },
+        {
+          "line": 101,
+          "text": "    /* USART1 clock enable */"
+        },
+        {
+          "line": 102,
+          "text": "    __HAL_RCC_USART1_CLK_ENABLE();"
+        },
+        {
+          "line": 105,
+          "text": "    /**USART1 GPIO Configuration"
+        },
+        {
+          "line": 106,
+          "text": "    PA9     ------> USART1_TX"
+        },
+        {
+          "line": 107,
+          "text": "    PA10     ------> USART1_RX"
+        },
+        {
+          "line": 113,
+          "text": "    GPIO_InitStruct.Alternate = GPIO_AF7_USART1;"
+        },
+        {
+          "line": 116,
+          "text": "    /* USART1 DMA Init */"
+        },
+        {
+          "line": 117,
+          "text": "    /* USART1_RX Init */"
+        },
+        {
+          "line": 135,
+          "text": "    /* USART1_TX Init */"
+        },
+        {
+          "line": 153,
+          "text": "    /* USART1 interrupt Init */"
+        },
+        {
+          "line": 154,
+          "text": "    HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);"
+        },
+        {
+          "line": 155,
+          "text": "    HAL_NVIC_EnableIRQ(USART1_IRQn);"
+        },
+        {
+          "line": 156,
+          "text": "  /* USER CODE BEGIN USART1_MspInit 1 */"
+        },
+        {
+          "line": 158,
+          "text": "  /* USER CODE END USART1_MspInit 1 */"
+        },
+        {
+          "line": 211,
+          "text": "  if(uartHandle->Instance==USART1)"
+        },
+        {
+          "line": 213,
+          "text": "  /* USER CODE BEGIN USART1_MspDeInit 0 */"
+        },
+        {
+          "line": 215,
+          "text": "  /* USER CODE END USART1_MspDeInit 0 */"
+        },
+        {
+          "line": 217,
+          "text": "    __HAL_RCC_USART1_CLK_DISABLE();"
+        },
+        {
+          "line": 219,
+          "text": "    /**USART1 GPIO Configuration"
+        },
+        {
+          "line": 220,
+          "text": "    PA9     ------> USART1_TX"
+        },
+        {
+          "line": 221,
+          "text": "    PA10     ------> USART1_RX"
+        },
+        {
+          "line": 225,
+          "text": "    /* USART1 DMA DeInit */"
+        },
+        {
+          "line": 229,
+          "text": "    /* USART1 interrupt Deinit */"
+        },
+        {
+          "line": 230,
+          "text": "    HAL_NVIC_DisableIRQ(USART1_IRQn);"
+        },
+        {
+          "line": 231,
+          "text": "  /* USER CODE BEGIN USART1_MspDeInit 1 */"
+        },
+        {
+          "line": 233,
+          "text": "  /* USER CODE END USART1_MspDeInit 1 */"
+        }
+      ]
+    }
+  ],
+  "source_conflict": "F407 README默认CONNECT；实际demo_select.h为PATH/zone1/start4/goal11。首次适配显式CONNECT，不自动选区。",
+  "firmware_root": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程",
+  "firmware_snapshot": [
+    {
+      "path": "HARDWARE/BUZZER/buzzer.c",
+      "sha256": "62f93a87abd72996e65db0b9b651f51fdedbffbd72003c2854c78a25ab72c4e7"
+    },
+    {
+      "path": "HARDWARE/BUZZER/buzzer.h",
+      "sha256": "e0be5c71320fa8ffaa59f9fa7bb89ce18fb318a144df63b63eddadca29d2e8c7"
+    },
+    {
+      "path": "HARDWARE/EXTENSION/extension.c",
+      "sha256": "96b3ca727567183a54a9fbd407e15ab310b2c3c96a3dc4428057ab84bf8db907"
+    },
+    {
+      "path": "HARDWARE/EXTENSION/extension.h",
+      "sha256": "6a8e8f56cdaff0551370e526b5833abda6cec4d356eb00cb9663c713ab58d453"
+    },
+    {
+      "path": "HARDWARE/GRIPPER/gripper.c",
+      "sha256": "499a8b81b2265da38870e5a398d1365aead75503f086b9f8d22e2fdf73959163"
+    },
+    {
+      "path": "HARDWARE/GRIPPER/gripper.h",
+      "sha256": "dacb7c97968696c230c24c17f66b9389ae5a246878cbda4b03698ae2782411a8"
+    },
+    {
+      "path": "HARDWARE/GRIPPER/gripper_config.h",
+      "sha256": "3c13357f9921adda435558c11bc350bd75b8aef96033a195aadbe63bd2295bf3"
+    },
+    {
+      "path": "HARDWARE/KEY/key.c",
+      "sha256": "f32561d5563ff2cd330a6f2e4b178236b8300359a6487f8264d79f73fea71ac6"
+    },
+    {
+      "path": "HARDWARE/KEY/key.h",
+      "sha256": "d2baa17a627930dbada11b79375988fb014a18fe9565ed72519b55883dc47a67"
+    },
+    {
+      "path": "HARDWARE/LED/led.c",
+      "sha256": "16584491405717de75f2ae37bc0ee3f3cae267b9ff61a00a93fe50e8e5f69864"
+    },
+    {
+      "path": "HARDWARE/LED/led.h",
+      "sha256": "5fee2c8217668d8cec688c799f79bd38d7288ddb9ade19dab7d41e48b086c528"
+    },
+    {
+      "path": "HARDWARE/LIFT/lift.c",
+      "sha256": "96956ce2c72d544ddde36e99b6496bcb248dfbe9ee9b7a5d22e21b3a38af3699"
+    },
+    {
+      "path": "HARDWARE/LIFT/lift.h",
+      "sha256": "a3559eb76bde8dd8c184f68a26b3bfab5b49ea58607aa448e35b88e28648731b"
+    },
+    {
+      "path": "HARDWARE/LIFT/lift_config.h",
+      "sha256": "ab6256acf06aca5f498fac7dafb920d31c927bd495e0e63743c39888b170ba16"
+    },
+    {
+      "path": "HARDWARE/LIFT/lift_home.c",
+      "sha256": "f04eb85763f683d1b24b02701b736e9fbdcb9807857ca35ef666f33454bb1503"
+    },
+    {
+      "path": "HARDWARE/LIFT/lift_home.h",
+      "sha256": "f0907edca9861e418c40ad5c7a7a6de97d84b52a0254139dcd0ae17444b263f1"
+    },
+    {
+      "path": "HARDWARE/LIFT/lift_protocol.c",
+      "sha256": "75514454d4c5b6cb5597a42f0fc9796b586c370eeea8820cc328f2c059ff32c7"
+    },
+    {
+      "path": "HARDWARE/LIFT/lift_protocol.h",
+      "sha256": "0ffc14edd4d4d3df537fdd8a4576cb5411058b373d9728bcc9bb51d28ce05b62"
+    },
+    {
+      "path": "HARDWARE/POWER/power.c",
+      "sha256": "9cc25b4a7a21c0f934bfbf6d98502d9376ca511ef583d24f2010d585d32c1d9a"
+    },
+    {
+      "path": "HARDWARE/POWER/power.h",
+      "sha256": "a67acbb20536a96067c2e9da102fa11b8b4a25317e41685af84f1a1590f882e9"
+    },
+    {
+      "path": "HARDWARE/SAOMA/saoma.c",
+      "sha256": "bb5a256f57abefc928f3e906e0998a5ce1d7312f9b0753cef619077fd39ec75f"
+    },
+    {
+      "path": "HARDWARE/SAOMA/saoma.h",
+      "sha256": "34af899609f78126cbbee9aeb7b525690346b82a9428920d9a39120240ccc1e7"
+    },
+    {
+      "path": "HARDWARE/SCREEN/screen.c",
+      "sha256": "5b8dc402aead210a30cb2c998c358bdfed1ecc64d9adde88fd114c2903c3d37a"
+    },
+    {
+      "path": "HARDWARE/SCREEN/screen.h",
+      "sha256": "52d0682f37a2127d6fa3435705bc48ff6046bd88f9460ecf765affccb9c82f61"
+    },
+    {
+      "path": "USER/app_config.h",
+      "sha256": "381c7a1d809a61f03f7874a4097ca0f18983b5890459ad9fa10fc5b8587bcacd"
+    },
+    {
+      "path": "USER/arm_power_mode.c",
+      "sha256": "35d5834218c8072f96434fcc9761f538280cc52c34967d48edc064a686ad5622"
+    },
+    {
+      "path": "USER/arm_power_mode.h",
+      "sha256": "ce4c5d032dc919eb023839bfddd763cb3a4853e3265b8297cae81e779c1c839b"
+    },
+    {
+      "path": "USER/chassis_auto_test.c",
+      "sha256": "61b4a7981be2d2abe217fd3db1e2dd3259a449f09054feb17909c9c30da9fe95"
+    },
+    {
+      "path": "USER/chassis_auto_test.h",
+      "sha256": "2fc94c75c11c47365e3804779e489b3a7cf2892338c52e29856b6cbc57c27a27"
+    },
+    {
+      "path": "USER/chassis_kinematics.c",
+      "sha256": "1cd2f0021173bd1c2555b835a2c8712d04b7cd76fe9a65220f053aa7f7cab603"
+    },
+    {
+      "path": "USER/chassis_kinematics.h",
+      "sha256": "32cf17dfa0ad3c89366f3705b8302ba2e42a4b8d6c699872befff28c25777d38"
+    },
+    {
+      "path": "USER/freertos_hooks.c",
+      "sha256": "56b36d06473baa366ac0f93c9781f474ff558f0e7c5ad30d9fefae4a24bb8b8b"
+    },
+    {
+      "path": "USER/freertos_hooks.h",
+      "sha256": "ac20efaecb4a356aa3820a64f08bc408d52cc6659e52e47826a6d8c5f1c4b50b"
+    },
+    {
+      "path": "USER/FreeRTOSConfig.h",
+      "sha256": "5c5bac333a4004faecd5dff01489826c4634c0e274e2c8d490f60a96047d85eb"
+    },
+    {
+      "path": "USER/gripper_task.c",
+      "sha256": "ccaea895327efc722d28ab968b73eca017f58040dcf6ba6f6b0d081051ac748e"
+    },
+    {
+      "path": "USER/gripper_task.h",
+      "sha256": "91802c3bef688b7203338329644d41f80bfcd4d50040db274b554894dc7e50db"
+    },
+    {
+      "path": "USER/heading_controller.c",
+      "sha256": "c7495ac1bcf3b1f99ad0852db7576e6198a7a065dbdc667c22fb040fd76e336c"
+    },
+    {
+      "path": "USER/heading_controller.h",
+      "sha256": "a2f4749a7b9df5ac279f755171608cd621034fa46883473527a5f3fce0aa47d7"
+    },
+    {
+      "path": "USER/heading_session.c",
+      "sha256": "0a7630a1131cfdeedba3a8e6ef9d1d28676ce4bce533b94aa0a36e7bd9c2855a"
+    },
+    {
+      "path": "USER/heading_session.h",
+      "sha256": "5b1d4a309f9b1fdc5afae94b1a2ab29d93faca1d7717b1b818f4ca50f2a20615"
+    },
+    {
+      "path": "USER/hwt101.c",
+      "sha256": "4659e7a8d42941f2e7b742ac0eb23e3f11cf233fb558156c59d69517a604e139"
+    },
+    {
+      "path": "USER/hwt101.h",
+      "sha256": "756deae0e0adecf9db665f5526616da898d76df35119c1fbd92249883c70d332"
+    },
+    {
+      "path": "USER/hwt101_parser.c",
+      "sha256": "277ce2c45bbd12f8aadaf3cf5f52f5034e549cb3dbc83e7dba5096b11021812c"
+    },
+    {
+      "path": "USER/hwt101_parser.h",
+      "sha256": "cdd59cf7f80c8fe3bf2a675b0b81eb7525cb9bac6229b8bbcae4d73eddd1873a"
+    },
+    {
+      "path": "USER/main.c",
+      "sha256": "1c458a744912d0f9844507779b56df630f49b549465add34ab8229492cd28f6b"
+    },
+    {
+      "path": "USER/stm32f4xx_conf.h",
+      "sha256": "842de66d411a90d66c54fbec0f32311f6a89667ba6941474413a35c9ef83d9b2"
+    },
+    {
+      "path": "SYSTEM/CAN/can.c",
+      "sha256": "4effe26af88573bebf953bfd35280ae0acbc28a19810cdedff6464208d134cd9"
+    },
+    {
+      "path": "SYSTEM/CAN/can.h",
+      "sha256": "4fabfaa7772931540167fe14d1e347db52251ac49caf20f30dce38c284eb2c98"
+    },
+    {
+      "path": "SYSTEM/SAFETY/safety.c",
+      "sha256": "ee6377247afd85ab6992785d6139b1d94fea93a1d47e765f3036931d740e57bc"
+    },
+    {
+      "path": "SYSTEM/SAFETY/safety.h",
+      "sha256": "a082cb6de95f0c0abd2bb962edfedc7895142c83da5c6fcca6ab885699284ff3"
+    },
+    {
+      "path": "SYSTEM/USART/usart.c",
+      "sha256": "1e12ecd57b6f2f3889731d7761d8ae038282b0b5cd88e8da5b123cf418de590d"
+    },
+    {
+      "path": "SYSTEM/USART/usart.h",
+      "sha256": "510682d7e1fa7c6b9c51e61ed80d465c64e47e3133d98d93b310263cc3c0e781"
+    },
+    {
+      "path": "SYSTEM/WATCHDOG/watchdog.c",
+      "sha256": "ecf49bb5d52fa43a39b711024ea95b81b23f299f8c7a02087c7475717e29b7c3"
+    },
+    {
+      "path": "SYSTEM/WATCHDOG/watchdog.h",
+      "sha256": "bfd10214d78e44d6e5fecf25e82c6629cc431ca6ac7d061004e5d3be7163c8fc"
+    },
+    {
+      "path": "gongxun-f407.uvprojx",
+      "sha256": "c8ef3368fad630dec24dafbc43089a5f36c8e0c12cae01633363c06acadc3fad"
+    }
+  ],
+  "resource_search_scope": "HARDWARE/USER/SYSTEM的.c/.h，不含库文件；修改前仍须重核全工程/DMA/IRQ",
+  "resource_matches": [],
+  "physical_acceptance": false
+}

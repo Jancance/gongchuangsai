@@ -1,0 +1,39 @@
+{
+  "motor_step_assumption_deg": 1.8,
+  "emm_examples": [
+    {
+      "microsteps": 16,
+      "command_deg_per_pulse": 0.1125
+    },
+    {
+      "microsteps": 32,
+      "command_deg_per_pulse": 0.05625
+    },
+    {
+      "microsteps": 64,
+      "command_deg_per_pulse": 0.028125
+    },
+    {
+      "microsteps": 128,
+      "command_deg_per_pulse": 0.0140625
+    },
+    {
+      "microsteps": 256,
+      "command_deg_per_pulse": 0.00703125
+    }
+  ],
+  "emm_position_feedback_deg_per_count": 0.0054931640625,
+  "x_default_command_deg": 0.1,
+  "x_optional_command_deg": 0.01,
+  "x_position_feedback_default_deg_per_count": 0.1,
+  "x_error_feedback_deg_per_count": 0.01,
+  "actual_microstep_readback_received": false,
+  "reference35_uint16_speed_raw": 18464,
+  "reference35_x_speed_rpm": 1846.4,
+  "reference28_uint16_speed_raw": 1060,
+  "reference28_x_speed_rpm": 106.0,
+  "reference_x_acceleration_rpm_per_s": 45055,
+  "emm255_acceleration_rpm_per_s": 20000.0,
+  "source_descent_user_mm": 73,
+  "source_descent_pulses": null
+}

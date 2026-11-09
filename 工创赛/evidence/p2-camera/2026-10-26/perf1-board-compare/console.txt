@@ -1,0 +1,10 @@
+Source: user-pasted Orange Pi terminal, 2026-10-26. Full JSON report pending retrieval.
+orangepi@robot-opi5pro:~$ test ! -e /home/orangepi/p2-generic135-perf1-20261026 && \
+python3 -m zipfile -e /home/orangepi/p2_vision_generic135_perf1_20261026.zip /home/orangepi/p2-generic135-perf1-20261026
+
+python3 /home/orangepi/p2-generic135-perf1-20261026/p2_generic135_perf1_saved_compare.py
+first-frame-raw.png no_history blue1_median=143.359 perf1_median=136.191 exact=True
+first-frame-raw.png saved_previous_tracks blue1_median=142.606 perf1_median=136.231 exact=True
+sample-04-raw.png no_history blue1_median=148.227 perf1_median=141.194 exact=True
+sample-04-raw.png saved_previous_tracks blue1_median=147.871 perf1_median=143.155 exact=True
+Saved: /home/orangepi/camera135-perf1-compare-194155.json

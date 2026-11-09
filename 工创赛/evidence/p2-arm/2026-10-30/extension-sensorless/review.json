@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-30",
+  "classification": "E manually triggered node6 sensorless home firmware candidate",
+  "current_reported_clearance_mm": 35,
+  "clearance_is_user_input": true,
+  "actual_node6_read_evidence": "../extension-home-read-board/board-acceptance.json",
+  "profile": {
+    "direction": 0,
+    "rpm": 30,
+    "driver_timeout_ms": 10000,
+    "detect_rpm": 300,
+    "detect_current_ma": 800,
+    "detect_time_ms": 60,
+    "auto_home": 0
+  },
+  "explicit_start_mode": 2,
+  "default_home_request": 0,
+  "host_case_count": 192,
+  "case_groups": {
+    "motion_regression": 64,
+    "parameter_reader": 41,
+    "home_state_transport_dispatch": 87
+  },
+  "initial_changed_files": [
+    "HARDWARE/EXTENSION/extension.c",
+    "HARDWARE/EXTENSION/extension.h",
+    "HARDWARE/EXTENSION/extension_home.c",
+    "HARDWARE/EXTENSION/extension_home.h",
+    "SYSTEM/CAN/can.c",
+    "SYSTEM/CAN/can.h",
+    "USER/main.c",
+    "gongxun-f407.uvprojx"
+  ],
+  "final_latch_revision_files": [
+    "HARDWARE/EXTENSION/extension_home.c"
+  ],
+  "initial_unmodified_source_count": 805,
+  "final_revision_unmodified_source_count": 812,
+  "stage_build_pass": true,
+  "actual_build_pass": true,
+  "final_code_size": 58264,
+  "source_hashes_match": true,
+  "final_stop_latch_fix_verified": true,
+  "flash_performed_by_assistant": false,
+  "hardware_commands_sent_by_assistant": false,
+  "physical_contact_and_self_stop_verified": false,
+  "mechanical_origin_repeatability_verified": false,
+  "metric_travel_or_loaded_grasp_verified": false,
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged_pending_official_clarification"
+}

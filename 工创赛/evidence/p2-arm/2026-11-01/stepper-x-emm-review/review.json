@@ -1,0 +1,43 @@
+{
+  "date": "2026-11-01",
+  "user_request": "他们使用的X协议和我们的Emm本质上区别多大对于电机，精度有提高吗他们的，如果有也改为他们的那种来做",
+  "manual": "evidence\\p1-0\\motor-manuals\\ZDT_X42S第二代闭环步进电机用户手册V1.0.5_260527.pdf",
+  "manual_sha256": "0afae3f30e1a679c0cd425c790b495dee504c352d2afe234cfa474868319ee92",
+  "reviewed_pages": [
+    8,
+    17,
+    55,
+    56,
+    57,
+    71,
+    72,
+    73,
+    76,
+    77,
+    78,
+    80,
+    81
+  ],
+  "online_primary_document_copy": "https://www.scribd.com/document/1077494978/Zdt-x42s%E7%AC%AC%E4%BA%8C%E4%BB%A3%E9%97%AD%E7%8E%AF%E6%AD%A5%E8%BF%9B%E7%94%B5%E6%9C%BA%E7%94%A8%E6%88%B7%E6%89%8B%E5%86%8Cv1-0-5-260527",
+  "conclusion": "X/Emm are different closed-loop firmware/control algorithms, not only packet layouts. X supports fullFOC cascade/trapezoid/optional0.01deg commands; no evidence it improves this machine actual positioning accuracy. Emm microstep value not read, so cannot assert command-resolution advantage on this unit. User conditional protocol switch not triggered; retain Emm and implement already-authorized reference-speed conversion.",
+  "switch_performed": false,
+  "motor_config_write_performed": false,
+  "physical_precision_accepted": false,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02",
+    "FIELD-06"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05",
+    "MECH-06"
+  ],
+  "official_Q": "待技术答疑确认; unchanged"
+}

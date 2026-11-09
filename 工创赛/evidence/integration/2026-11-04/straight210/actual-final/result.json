@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "cases": 10,
+  "actual_mission_and_CAN_backend": true,
+  "devices_sensors_and_partial_scheduler_are_models": true,
+  "hardware_accessed": false,
+  "source_sha256": {
+    "USER/vehicle_parameters.h": "18575a72e0ea2e0984b07f19217c0c81b792e40c7fa9365ed6403bda087edb0b",
+    "CHASSIS/USER/straight_test.inc": "85ab908ad6df83c62f26f939e739ef0fbb2ae1eb83e4172320241579383fc64a",
+    "CHASSIS/USER/vehicle_mission.inc": "df2f406afc53d524da01f79d7395917c3f9a19fc16dead33920f1c2c8fbf39aa",
+    "CHASSIS/USER/main.c": "4d8161f52d2189994ee6dec04ea635dc141a417a796dc43b88924f976c3596a7",
+    "CHASSIS/USER/chassis_auto_test.c": "3ac2b2e4c493223d7be306b2ee3ec68a781297c93f2a05af8958d5889fc82d92",
+    "CHASSIS/USER/chassis_kinematics.c": "30ee713c2d0e5304dd16b9370a812272999c75392270c4d22e65c4daa3b6d2df",
+    "CHASSIS/USER/chassis_kinematics.h": "606ab540f294d296f3dd922fa046a68757eafa929c7894a8c4301e236c771fa2"
+  },
+  "output": "STRAIGHT_MODEL_FORWARD case0 2113.076172\nSTRAIGHT case0 state4 cause0 starts1 progress2100.634\nVM2,0,7855,1,1,4,0,0,0,0,0,0,0,0,0,0,2,1,0,0,0,1,B33A\n\nLT1,0,8355,1,4,0,2100000,400,1021825,7EF4\n\nSTRAIGHT_MODEL_FORWARD case1 2113.076172\nSTRAIGHT case1 state4 cause19 starts1 progress2100.634\nVM2,1,7855,1,1,4,19,0,0,0,0,0,0,0,0,0,2,1,0,0,0,1,062F\n\nLT1,1,8355,1,4,19,2100000,400,1021825,B61B\n\nSTRAIGHT case2 state7 cause2 starts1 progress500.718\nVM2,2,2810,1,1,7,2,6,2,0,0,3,2,0,0,0,2,1,0,0,0,1,D8ED\n\nLT1,2,3310,1,7,2,2100000,400,1021825,0171\n\nSTRAIGHT case3 state6 cause8 starts1 progress500.718\nVM2,3,2811,1,1,6,8,6,2,0,0,3,2,0,0,0,2,1,0,0,0,1,26B1\n\nLT1,3,3311,1,6,8,2100000,400,1021825,1A29\n\nSTRAIGHT case4 state6 cause4 starts1 progress500.718\nVM2,4,2810,1,1,6,4,6,2,0,0,3,2,0,0,0,2,1,0,0,0,1,5BF5\n\nLT1,4,3310,1,6,4,2100000,400,1021825,5628\n\nSTRAIGHT case5 state0 cause1 starts0 progress500.718\nVM2,5,1012,0,1,0,1,0,0,0,0,0,0,0,0,0,2,1,0,0,0,1,B942\n\nLT1,5,1512,0,0,1,2100000,400,1021825,7C1F\n\nSTRAIGHT case6 state6 cause8 starts1 progress0.000\nVM2,6,2106,1,1,6,8,6,2,0,0,3,2,0,0,0,2,1,0,0,0,1,132E\n\nSTRAIGHT case7 state6 cause5 starts1 progress0.000\nLT1,6,21001,1,6,5,2100000,400,1021825,A70B\n\nVM2,7,21501,1,1,6,5,6,2,0,0,3,2,0,0,0,2,1,0,0,0,1,FFB2\n\nSTRAIGHT_MODEL_FORWARD case8 2121.697266\nSTRAIGHT case8 state4 cause0 starts1 progress2100.927\nLT1,7,7911,1,4,0,2100000,400,1021825,7F9E\n\nVM2,8,8411,1,1,4,0,0,0,0,0,0,0,0,0,0,2,1,0,0,0,1,2700\n\nSTRAIGHT case9 state0 cause1 starts0 progress2100.927\nLT1,8,1012,0,0,1,2100000,400,1021825,E5F6\n\nVM2,9,1512,0,1,0,1,0,0,0,0,0,0,0,0,0,2,1,0,0,0,1,F58F\n\nSTRAIGHT checks=26713 failures=0\n",
+  "LT1_roundtrip_frames": 9
+}

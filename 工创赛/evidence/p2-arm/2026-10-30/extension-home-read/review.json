@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-30",
+  "classification": "E node6 home-parameter read-only implementation",
+  "user_text": "没有限位开关，但是可以限位，可以作为原点",
+  "mechanical_stop_origin_candidate": true,
+  "actual_home_parameters_verified": false,
+  "changed_files": [
+    "HARDWARE/EXTENSION/extension.c",
+    "HARDWARE/EXTENSION/extension.h",
+    "SYSTEM/CAN/can.c",
+    "SYSTEM/CAN/can.h",
+    "USER/main.c"
+  ],
+  "protected_files_count": 806,
+  "host_case_count": 105,
+  "motion_regression_cases": 64,
+  "home_read_cases": 41,
+  "stage_build_pass": true,
+  "actual_build_pass": true,
+  "source_hashes_match": true,
+  "no_home_or_parameter_write_command_added": true,
+  "previous_160pulse_motion_bytes_preserved": true,
+  "previous_node5_reader_preserved": true,
+  "flash_performed": false,
+  "hardware_commands_sent": false,
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged_pending_official_clarification"
+}

@@ -1,0 +1,84 @@
+{
+  "hardware_acceptance": false,
+  "motion_allowed": false,
+  "checks": {
+    "regression": "9 passed; observed final run recorded in regression.log",
+    "check": {
+      "image_size": [
+        1920,
+        1080
+      ],
+      "undistort": false,
+      "serial": "DISABLED",
+      "features": [
+        "turntable",
+        "measurement",
+        "material-stop-reference",
+        "ring",
+        "stack",
+        "follow-pixel"
+      ],
+      "metric_geometry_verified": false
+    },
+    "six_modes": "passed; offline smoke only",
+    "four_tool_help": "passed",
+    "compileall": "passed",
+    "changed_code_files_only": [
+      "code/project_detector.py",
+      "code/config/material_color_thresholds.json"
+    ],
+    "camera_tracker_follow_time_gates_and_other_config_byte_unchanged": true,
+    "unique_development_raw_counts": {
+      "20261024-112215-162612": 11,
+      "20261024-111235-577533": 28,
+      "20261024-104324-197600": 26,
+      "20261024-105943-475482": 23
+    },
+    "extracted_check": {
+      "image_size": [
+        1920,
+        1080
+      ],
+      "undistort": false,
+      "serial": "DISABLED",
+      "features": [
+        "turntable",
+        "measurement",
+        "material-stop-reference",
+        "ring",
+        "stack",
+        "follow-pixel"
+      ],
+      "metric_geometry_verified": false
+    },
+    "existing_wrapper_check": {
+      "image_size": [
+        1920,
+        1080
+      ],
+      "undistort": false,
+      "serial": "DISABLED",
+      "features": [
+        "turntable",
+        "measurement",
+        "material-stop-reference",
+        "ring",
+        "stack",
+        "follow-pixel"
+      ],
+      "metric_geometry_verified": false
+    }
+  },
+  "package": {
+    "file": "output\\p2_vision_generic120_black1_20261024.zip",
+    "files": 73,
+    "bytes": 230130,
+    "sha256": "982e99b43cd0ddc14a36b9e3874ccba9d57891bff7477b83fe52ba68a4aa6701"
+  },
+  "limitations": [
+    "saved development images only",
+    "scaled view with multiple supported dark circles deliberately unknown",
+    "board timing and continuous black detection not yet validated",
+    "hull center not a calibrated grasp point"
+  ]
+}

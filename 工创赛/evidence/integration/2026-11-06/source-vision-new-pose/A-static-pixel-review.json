@@ -1,0 +1,43 @@
+{
+  "received_files": [
+    "first-raw.png",
+    "last-raw.png",
+    "last-overlay.png",
+    "observations.jsonl",
+    "session.json"
+  ],
+  "frames": 576,
+  "all_frames_detected_outer_rim": true,
+  "stable_frames": 572,
+  "initial_warmup_unstable_frames": 4,
+  "tracking_modes": {
+    "reacquired": 1,
+    "local": 575
+  },
+  "center_x_range_px": [
+    951.0140787498335,
+    951.3913514585834
+  ],
+  "center_y_range_px": [
+    463.80315086570783,
+    464.1754681495248
+  ],
+  "center_peak_to_peak_px": [
+    0.3772727087498424,
+    0.37231728381698304
+  ],
+  "median_radius_px": 604.6448077294783,
+  "median_rms_px": 1.2644898546917214,
+  "static_pixel_observation_accepted": true,
+  "real_disk_outer_rim_confirmed_by_raw_and_overlay_visual_review": true,
+  "three_drawn_pick_regions_visible": true,
+  "no_material_blocks_visible_in_three_regions": true,
+  "M_detector_or_grasp_success_inferred": false,
+  "metric_transform_configured": false,
+  "physical_mm_precision_verified": false,
+  "image_registration_to_old_pose_accepted": false,
+  "reliable_correspondences_to_old_pose": 4,
+  "old_H_directly_restored": false,
+  "next_step": "single current-pose image with existing measured100x100mm paper; no repeat ruler measurement or motor action",
+  "motion_allowed": false
+}

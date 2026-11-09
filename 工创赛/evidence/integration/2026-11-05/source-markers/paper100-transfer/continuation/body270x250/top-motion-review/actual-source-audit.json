@@ -1,0 +1,25 @@
+{
+  "kind": "read-only actual source audit, not running firmware readback",
+  "source_sha256": {
+    "CHASSIS/USER/vehicle_arm.c": "55db333bd101376767501097d656ec4ce1a8269dd58325cae45c0d7d09287c11",
+    "USER/vehicle_parameters.h": "c4fdc01d344e89c3b18cfb0a94b791341114e9e1446dfba7ce62bfa030ce770d",
+    "HARDWARE/DM_CAN2/dm_can2_motion.c": "2f778bf07899c6b75fdb12c159422d4b1a2dcb8f62a56ec02f856bb6dd41eec0",
+    "CHASSIS/USER/source_prepare.inc": "73344afa1e5c9428f3e1e1ed89f57a3755ced0fad18270028913b3d569cf30ae"
+  },
+  "current_source_limits": {
+    "dm_degrees": [
+      0,
+      180
+    ],
+    "general_extension_mm": [
+      0,
+      50
+    ],
+    "source_prepare_extension_mm": 70,
+    "dm_settle_angle_deg": 3,
+    "lift_reference_default_valid": false,
+    "carrier_reference_default_valid": false
+  },
+  "new_candidate_limits_written_to_actual_firmware": false,
+  "hardware_operated": false
+}

@@ -6,6 +6,7 @@ import sys
 
 FEATURES={
     'main':'main.py',
+    'source-observe':'source_observe.py',
     'color':'颜色标定.py',
     'turntable-settings':'转盘参数设置.py',
     'pickup-regions':'物料抓取区域标定.py',

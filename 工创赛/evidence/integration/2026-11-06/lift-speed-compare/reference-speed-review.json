@@ -1,0 +1,36 @@
+{
+  "reference_root": "D:\\新建文件夹4\\工创赛\\资料\\工创赛大佬\\2025智能物流搬运_电控_XAUT_20250811\\Logistics_Vehicle_F407_V2.7.4_OpenSource",
+  "reference_source_sha256": {
+    "USER_Code/tower/tower.c": "dfd54fdd581f82974f0de393157ee6a5b5fe43e399b50b7ce680d27b4e7be431",
+    "RTOS_APP/Tower_task.c": "3ec5e17a47a58d13e0a2d83e0d8627a13a51b6c41c5bba09c9f2928a5f1279b2"
+  },
+  "actual_reference_calls": {
+    "35_argument": 2800,
+    "35_multiplier": 30,
+    "35_transmitted_deci_rpm": 18464,
+    "35_effective_rpm": 1846.4,
+    "28_argument": 2000,
+    "28_multiplier": 0.53,
+    "28_transmitted_deci_rpm": 1060,
+    "28_effective_rpm": 106,
+    "4310_argument_deg_s": 300,
+    "stepper_accel_and_decel_hex": "AFFF",
+    "stepper_accel_and_decel_rpm_s": 45055
+  },
+  "source_prepare_overrides_before": {
+    "DM_deg_s": 150,
+    "extension_rpm": 30,
+    "extension_accel": 60,
+    "startup_DM_speed_scale": 0.5
+  },
+  "candidate_overrides_after": {
+    "DM_deg_s": 300,
+    "extension_rpm": 106,
+    "extension_accel": 45055,
+    "startup_DM_speed_scale": 1
+  },
+  "homing_lift_rpm_unchanged": 60,
+  "homing_extension_rpm_unchanged": 30,
+  "user_explicitly_confirmed_same_reference": true,
+  "physical_speed_verified": false
+}

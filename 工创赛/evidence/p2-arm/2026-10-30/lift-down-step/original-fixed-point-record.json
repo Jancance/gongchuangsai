@@ -1,0 +1,101 @@
+{
+  "schema": "arm-fixed-point-candidate-v1",
+  "date": "2026-10-30",
+  "status": "slot1_overhead_user_confirmed_single_grip_pending",
+  "loaded_by_firmware": false,
+  "motion_allowed": false,
+  "automatic_action_group_accepted": false,
+  "firmware_project": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\gongxun-f407.uvprojx",
+  "existing_commands": {
+    "gripper_open_deg": 180,
+    "gripper_close_deg": 140,
+    "carrier_slot_nominal_deg": [
+      0,
+      120,
+      240
+    ]
+  },
+  "return240_to0_accepted": true,
+  "return240_to0_status": "user confirmed aligned and finally stationary, no fresh return telemetry provided",
+  "last_carrier_observation": {
+    "slot": 3,
+    "command_deg": 240,
+    "functional_observation": "240°没有问题"
+  },
+  "current_arm_orientation": "vehicle three-slot carrier direction, user reported; exact angle unknown",
+  "current_lift_pose": null,
+  "current_extension_pose": null,
+  "lift_current_session_origin_valid": null,
+  "extension_current_session_origin_valid": null,
+  "points": [
+    {
+      "point_id": "clearance",
+      "dm_nominal_logical_deg": null,
+      "dm_target_kind": "unmeasured",
+      "lift_offset_from_top_pulses": null,
+      "extension_offset_from_retract_pulses": null,
+      "lift_height_mm": null,
+      "extension_mm": null,
+      "arrival_evidence": null,
+      "physical_point_accepted": false
+    },
+    {
+      "point_id": "source_pick_above",
+      "dm_nominal_logical_deg": 177.833679,
+      "dm_target_kind": "existing candidate; final physical alignment pending",
+      "lift_offset_from_top_pulses": null,
+      "extension_offset_from_retract_pulses": null,
+      "lift_height_mm": null,
+      "extension_mm": null,
+      "arrival_evidence": null,
+      "physical_point_accepted": false
+    },
+    {
+      "point_id": "source_pick_contact",
+      "dm_nominal_logical_deg": 177.833679,
+      "dm_target_kind": "existing candidate; final physical alignment pending",
+      "lift_offset_from_top_pulses": null,
+      "extension_offset_from_retract_pulses": null,
+      "lift_height_mm": null,
+      "extension_mm": null,
+      "arrival_evidence": null,
+      "physical_point_accepted": false
+    },
+    {
+      "point_id": "carrier_handoff_above",
+      "dm_nominal_logical_deg": 33.8401489,
+      "dm_target_kind": "existing candidate; final physical alignment pending",
+      "lift_offset_from_top_pulses": null,
+      "extension_offset_from_retract_pulses": null,
+      "lift_height_mm": null,
+      "extension_mm": null,
+      "arrival_evidence": null,
+      "physical_point_accepted": false,
+      "horizontal_alignment_user_confirmed": true,
+      "alignment_evidence": "evidence/p2-arm/2026-10-30/fixed-points-intake/slot1-overhead-user-confirmation.json",
+      "grip_height_confirmed": null
+    },
+    {
+      "point_id": "carrier_handoff_contact",
+      "dm_nominal_logical_deg": 33.8401489,
+      "dm_target_kind": "existing candidate; final physical alignment pending",
+      "lift_offset_from_top_pulses": null,
+      "extension_offset_from_retract_pulses": null,
+      "lift_height_mm": null,
+      "extension_mm": null,
+      "arrival_evidence": null,
+      "physical_point_accepted": false
+    }
+  ],
+  "geometry_version": null,
+  "field_source_tray_height_mm": null,
+  "vehicle_carrier_height_mm": null,
+  "source_hashes": {
+    "HARDWARE/DM_CAN2/dm_can2_motion.c": "700bfe480942ba960e4fc2948c926cde83c26cc673ca69d56c8821a1302cbb13",
+    "HARDWARE/LIFT/lift_config.h": "ab6256acf06aca5f498fac7dafb920d31c927bd495e0e63743c39888b170ba16",
+    "HARDWARE/EXTENSION/extension_config.h": "bfc70097b5b9fdfe22c05afc80b659ff001b0ba0e7070ff186b79eeb28325c5f",
+    "HARDWARE/GRIPPER/gripper_config.h": "3c13357f9921adda435558c11bc350bd75b8aef96033a195aadbe63bd2295bf3"
+  },
+  "note": "Pure planning record, no firmware loading. Keep measured millimetres and relative pulse offsets unset until actual teach-in. Do not use stepper raw feedback or historic approximate travel as metric calibration.",
+  "single_material_grip_accepted": false
+}

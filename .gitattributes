@@ -1,2 +1,7 @@
 # Preserve exact captured UART bytes; CRC and raw SHA must survive checkout.
 工创赛/evidence/integration/2026-11-03/startup_extension_home/**/*.raw -text
+
+# pzq snapshot/source and raw evidence are byte-verified; preserve checkout bytes.
+工创赛/handoff/pzq/** -text
+工创赛/handoff/integration13_final_20261109/** -text
+工创赛/evidence/** -text

@@ -1,0 +1,225 @@
+{
+  "scope": "Saved-image detector replay only; not capture/GUI timing, host-frame age, exposure-to-result latency or physical acceptance.",
+  "camera_opened": false,
+  "serial_opened": false,
+  "motion_allowed": false,
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "opencv": "5.0.0",
+  "opencv_threads": 16,
+  "main_import_ms": 505.01749999966705,
+  "color_module_loaded_before_analysis": true,
+  "diagnostic_sha256": "95752cf04a2b6aa3086fcfa6aff4f96f3bc6f76349a0d1d91a540e0e46dd2e2c",
+  "runtime_before": {},
+  "runtime_after": {},
+  "app_main_module": "D:\\Codex\\工创赛\\output\\p2_vision_generic135_blue1_20261026\\vision_app\\code\\main.py",
+  "module_matches": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true
+  },
+  "config_matches": {
+    "material_color_thresholds.json": true,
+    "project_profile.json": true,
+    "camera_processing.json": true
+  },
+  "rows": [
+    {
+      "image": "first-frame-raw.png",
+      "case": "no_history",
+      "prior_count": 0,
+      "call_ms": [
+        157.1686999996018,
+        98.4969999999521
+      ],
+      "median_ms": 127.83284999977695,
+      "max_ms": 157.1686999996018,
+      "classified_outputs": [
+        [
+          {
+            "label": "lightblue",
+            "source": "combined_silhouette",
+            "center_px": [
+              1389.1977669595349,
+              603.960194469766
+            ]
+          },
+          {
+            "label": "blue",
+            "source": "projected_blue_component",
+            "center_px": [
+              478.6709041691965,
+              594.8587520238817
+            ]
+          }
+        ],
+        [
+          {
+            "label": "lightblue",
+            "source": "combined_silhouette",
+            "center_px": [
+              1389.1977669595349,
+              603.960194469766
+            ]
+          },
+          {
+            "label": "blue",
+            "source": "projected_blue_component",
+            "center_px": [
+              478.6709041691965,
+              594.8587520238817
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "image": "first-frame-raw.png",
+      "case": "saved_previous_tracks",
+      "prior_count": 0,
+      "call_ms": [
+        92.25419999984297,
+        101.42009999981383
+      ],
+      "median_ms": 96.8371499998284,
+      "max_ms": 101.42009999981383,
+      "classified_outputs": [
+        [
+          {
+            "label": "lightblue",
+            "source": "combined_silhouette",
+            "center_px": [
+              1389.1977669595349,
+              603.960194469766
+            ]
+          },
+          {
+            "label": "blue",
+            "source": "projected_blue_component",
+            "center_px": [
+              478.6709041691965,
+              594.8587520238817
+            ]
+          }
+        ],
+        [
+          {
+            "label": "lightblue",
+            "source": "combined_silhouette",
+            "center_px": [
+              1389.1977669595349,
+              603.960194469766
+            ]
+          },
+          {
+            "label": "blue",
+            "source": "projected_blue_component",
+            "center_px": [
+              478.6709041691965,
+              594.8587520238817
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "image": "sample-04-raw.png",
+      "case": "no_history",
+      "prior_count": 0,
+      "call_ms": [
+        98.86699999970006,
+        92.0853999996325
+      ],
+      "median_ms": 95.47619999966628,
+      "max_ms": 98.86699999970006,
+      "classified_outputs": [
+        [
+          {
+            "label": "lightblue",
+            "source": "combined_silhouette",
+            "center_px": [
+              1389.5164845137617,
+              603.9875734121582
+            ]
+          },
+          {
+            "label": "blue",
+            "source": "projected_blue_component",
+            "center_px": [
+              478.5322992990135,
+              594.6466203571541
+            ]
+          }
+        ],
+        [
+          {
+            "label": "lightblue",
+            "source": "combined_silhouette",
+            "center_px": [
+              1389.5164845137617,
+              603.9875734121582
+            ]
+          },
+          {
+            "label": "blue",
+            "source": "projected_blue_component",
+            "center_px": [
+              478.5322992990135,
+              594.6466203571541
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "image": "sample-04-raw.png",
+      "case": "saved_previous_tracks",
+      "prior_count": 2,
+      "call_ms": [
+        89.93109999937587,
+        102.06720000041969
+      ],
+      "median_ms": 95.99914999989778,
+      "max_ms": 102.06720000041969,
+      "classified_outputs": [
+        [
+          {
+            "label": "lightblue",
+            "source": "combined_silhouette",
+            "center_px": [
+              1389.5164845137617,
+              603.9875734121582
+            ]
+          },
+          {
+            "label": "blue",
+            "source": "projected_blue_component",
+            "center_px": [
+              478.5322992990135,
+              594.6466203571541
+            ]
+          }
+        ],
+        [
+          {
+            "label": "lightblue",
+            "source": "combined_silhouette",
+            "center_px": [
+              1389.5164845137617,
+              603.9875734121582
+            ]
+          },
+          {
+            "label": "blue",
+            "source": "projected_blue_component",
+            "center_px": [
+              478.5322992990135,
+              594.6466203571541
+            ]
+          }
+        ]
+      ]
+    }
+  ],
+  "profile": "         18336 function calls in 0.389 seconds\n\n   Ordered by: cumulative time\n   List reduced from 153 to 40 due to restriction <40>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        4    0.030    0.008    0.389    0.097 D:\\Codex\\工创赛\\output\\p2_vision_generic135_blue1_20261026\\vision_app\\code\\project_detector.py:578(analyze)\n        8    0.007    0.001    0.148    0.019 D:\\Codex\\工创赛\\output\\p2_vision_generic135_blue1_20261026\\vision_app\\code\\project_detector.py:357(chromatic_fallback)\n       56    0.103    0.002    0.103    0.002 {inRange}\n        4    0.001    0.000    0.080    0.020 D:\\Codex\\工创赛\\output\\p2_vision_generic135_blue1_20261026\\vision_app\\code\\project_detector.py:586(<dictcomp>)\n       24    0.000    0.000    0.079    0.003 D:\\Codex\\工创赛\\output\\p2_vision_generic135_blue1_20261026\\vision_app\\code\\颜色标定.py:286(_mask_from_hsv)\n       84    0.057    0.001    0.057    0.001 {findContours}\n        8    0.001    0.000    0.053    0.007 D:\\Codex\\工创赛\\output\\p2_vision_generic135_blue1_20261026\\vision_app\\code\\project_detector.py:228(current_pale_circle)\n       16    0.004    0.000    0.035    0.002 D:\\Codex\\工创赛\\output\\p2_vision_generic135_blue1_20261026\\vision_app\\code\\project_detector.py:69(pale_face_candidate)\n        4    0.016    0.004    0.032    0.008 D:\\Codex\\工创赛\\output\\p2_vision_generic135_blue1_20261026\\vision_app\\code\\project_detector.py:266(black_edge_recovery)\n       12    0.026    0.002    0.026    0.002 {HoughCircles}\n        4    0.005    0.001    0.025    0.006 D:\\Codex\\工创赛\\output\\p2_vision_generic135_blue1_20261026\\vision_app\\code\\project_detector.py:480(black_face_supported_hull)\n       12    0.003    0.000    0.021    0.002 D:\\Codex\\工创赛\\output\\p2_vision_generic135_blue1_20261026\\vision_app\\code\\project_detector.py:125(hinted_color_circles)\n       48    0.006    0.000    0.017    0.000 D:\\Codex\\工创赛\\output\\p2_vision_generic135_blue1_20261026\\vision_app\\code\\project_detector.py:16(bright_round_face)\n      784    0.016    0.000    0.016    0.000 {method 'reduce' of 'numpy.ufunc' objects}\n       60    0.014    0.000    0.014    0.000 {morphologyEx}\n        4    0.014    0.004    0.014    0.004 {split}\n      368    0.010    0.000    0.010    0.000 {method 'astype' of 'numpy.ndarray' objects}\n       32    0.010    0.000    0.010    0.000 {cvtColor}\n      182    0.000    0.000    0.010    0.000 {method 'sum' of 'numpy.ndarray' objects}\n      182    0.000    0.000    0.009    0.000 C:\\Users\\Tenderness\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy\\_core\\_methods.py:47(_sum)\n      342    0.002    0.000    0.009    0.000 C:\\Users\\Tenderness\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy\\_core\\_methods.py:115(_mean)\n       32    0.009    0.000    0.009    0.000 {bitwise_or}\n      234    0.000    0.000    0.008    0.000 {method 'mean' of 'numpy.ndarray' objects}\n       12    0.000    0.000    0.007    0.001 C:\\Users\\Tenderness\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy\\lib\\_function_base_impl.py:4052(percentile)\n       12    0.000    0.000    0.007    0.001 C:\\Users\\Tenderness\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy\\lib\\_function_base_impl.py:4500(_quantile_unchecked)\n       12    0.000    0.000    0.007    0.001 C:\\Users\\Tenderness\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy\\lib\\_function_base_impl.py:3815(_ureduce)\n       12    0.000    0.000    0.007    0.001 C:\\Users\\Tenderness\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy\\lib\\_function_base_impl.py:4639(_quantile_ureduce_func)\n       12    0.001    0.000    0.007    0.001 C:\\Users\\Tenderness\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy\\lib\\_function_base_impl.py:4714(_quantile)\n        8    0.003    0.000    0.007    0.001 D:\\Codex\\工创赛\\output\\p2_vision_generic135_blue1_20261026\\vision_app\\code\\project_detector.py:635(<dictcomp>)\n     6596    0.005    0.000    0.005    0.000 {contourArea}\n       40    0.005    0.000    0.005    0.000 {bitwise_and}\n       16    0.004    0.000    0.004    0.000 {Sobel}\n       12    0.004    0.000    0.004    0.000 {method 'partition' of 'numpy.ndarray' objects}\n       24    0.004    0.000    0.004    0.000 {bitwise_not}\n       56    0.003    0.000    0.003    0.000 {drawContours}\n        4    0.001    0.000    0.003    0.001 D:\\Codex\\工创赛\\output\\p2_vision_generic135_blue1_20261026\\vision_app\\code\\project_detector.py:415(<dictcomp>)\n       16    0.002    0.000    0.002    0.000 {GaussianBlur}\n        4    0.002    0.001    0.002    0.001 {method 'copy' of 'numpy.ndarray' objects}\n        4    0.000    0.000    0.002    0.001 D:\\Codex\\工创赛\\output\\p2_vision_generic135_blue1_20261026\\vision_app\\code\\project_detector.py:244(conflicting_pale_evidence)\n       56    0.002    0.000    0.002    0.000 {convexHull}\n\n\n"
+}

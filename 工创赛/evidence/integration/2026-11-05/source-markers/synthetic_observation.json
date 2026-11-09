@@ -1,0 +1,52 @@
+{
+  "calibration_id": "synthetic-only",
+  "context": {
+    "camera_id": "synthetic",
+    "mount_id": "test",
+    "arm_pose_id": "held-pose-test",
+    "plane_id": "surface",
+    "plane_z_mm": 90,
+    "chassis_origin": "test origin",
+    "axes": "x_right_y_forward_mm",
+    "image_size": [
+      1920,
+      1080
+    ],
+    "pixel_space": "raw",
+    "lens_profile_id": null
+  },
+  "targets": [
+    {
+      "id": "center",
+      "kind": "physical_marker",
+      "image_px": [
+        500,
+        400
+      ]
+    },
+    {
+      "id": "position1",
+      "kind": "feature_on_calibrated_plane",
+      "image_px": [
+        300,
+        300
+      ]
+    },
+    {
+      "id": "position2",
+      "kind": "feature_on_calibrated_plane",
+      "image_px": [
+        700,
+        300
+      ]
+    },
+    {
+      "id": "position3",
+      "kind": "feature_on_calibrated_plane",
+      "image_px": [
+        500,
+        550
+      ]
+    }
+  ]
+}

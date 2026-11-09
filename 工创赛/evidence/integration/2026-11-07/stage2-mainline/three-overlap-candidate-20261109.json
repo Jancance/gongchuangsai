@@ -1,0 +1,34 @@
+{
+  "matlab": "passed",
+  "sources": {
+    "integration10_complete.inc": "6539aad9c9c982a344a07adb5aacec4de958ef03b5d480488688c0f867e31086",
+    "vehicle_source_parallel.inc": "5961d144d7253f6c0ccc38b1b25a14dbecc97986b404e7118b020ac6d0ce33aa"
+  },
+  "images": {
+    "Vehicle_LiftRuler": {
+      "axf": "tmp/stage2_three_overlap_20261109/project/Objects/Vehicle_LiftRuler/Vehicle_LiftRuler.axf",
+      "sha256": "4aa68a090da08bcebeb28e3a8b6b57ee897a85b48ee7f1fd0c73eebb158d18dd",
+      "build_log": "tmp/stage2_three_overlap_20261109/Vehicle_LiftRuler-build.log"
+    },
+    "Vehicle_LiftRuler_Offline": {
+      "axf": "tmp/stage2_three_overlap_20261109/project/Objects/Vehicle_LiftRuler_Offline/Vehicle_LiftRuler_Offline.axf",
+      "sha256": "620489ddf9476024052270fe049046a965a71aa80ba356ec2a1273a64bb98523",
+      "build_log": "tmp/stage2_three_overlap_20261109/Vehicle_LiftRuler_Offline-build.log"
+    }
+  },
+  "host_check": {
+    "log": "evidence/integration/2026-11-07/stage2-mainline/three-overlap-host-check-20261109.log",
+    "passed": true
+  },
+  "deployed": true,
+  "hardware_motion": true,
+  "field_run": {
+    "trace": "evidence/integration/2026-11-07/stage2-mainline/three-overlap-live-20261109.json",
+    "flash_bytes": 160392,
+    "flash_log": "evidence/integration/2026-11-07/stage2-mainline/three-overlap-flash-20261109.log",
+    "postflash": "evidence/integration/2026-11-07/stage2-mainline/three-overlap-postflash-readonly-20261109.json",
+    "three_to_release_s": 34.843,
+    "three_to_transport_s": 36.406,
+    "operator_observation": "三槽各有一件、都已放稳，机构已停稳"
+  }
+}

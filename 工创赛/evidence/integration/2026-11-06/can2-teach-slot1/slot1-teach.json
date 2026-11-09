@@ -1,0 +1,66 @@
+{
+  "date": "2026-11-06",
+  "board": "F407 gongxun-f407, target Vehicle_LiftRuler",
+  "probe": "6afaae24",
+  "image_sha256": "BC8070E7DAD0D7DD14845FFFE1F89F00ABA70B65091A5A7C243F460007A6FFF1",
+  "purpose": "teach slot-1 (carrier slot 1) rotation angle by hand, motor de-energised",
+  "motor": {
+    "model": "DM-J4310-2EC V1.1",
+    "bus": "CAN2, 1Mbps, PB12/PB13 AF9",
+    "esc_id": 1,
+    "master_id": 0,
+    "ctrl_mode": 1,
+    "ctrl_mode_name": "MIT",
+    "pmax": 12.5,
+    "vmax": 30.0,
+    "tmax": 10.0
+  },
+  "verification": {
+    "read_result": 1,
+    "tx_count": 7,
+    "rx_count": 7,
+    "esr": 0,
+    "motor_state": 0,
+    "motor_state_name": "disabled",
+    "torque_nm": -0.007,
+    "stability": {
+      "samples": 6,
+      "interval_s": 0.4,
+      "position_raw_span": 0,
+      "verdict": "stable, zero drift"
+    }
+  },
+  "teach_value_slot1": {
+    "position_raw": 20836,
+    "position_deg_raw_frame": -260.786,
+    "logical_position_deg": 35.758,
+    "logical_zero_reference_deg": 296.544,
+    "note": "logical = raw_deg + 296.544 (mod 360)"
+  },
+  "pose_before_teach": {
+    "position_raw": 27356,
+    "position_deg_raw_frame": -118.279,
+    "logical_position_deg": 178.265,
+    "note": "value before user rotated arm toward slot 1"
+  },
+  "rotation_applied_deg": -143.12,
+  "carrier": {
+    "channel": "TIM3_CH4 / PB1",
+    "pulse_us": 500,
+    "angle_deg": 0,
+    "state": "commanded by direct TIM3 CCR4 write (action 8 blocked: lift top_valid=0)"
+  },
+  "gripper": {
+    "channel": "TIM2_CH1 / PA0",
+    "pulse_us": 1537,
+    "angle_deg": 140,
+    "mode": "closed / grab"
+  },
+  "root_cause_notes": [
+    "Earlier result=4 ACK error with TEC=128 was a physical link fault (ACK from no node).",
+    "After re-soldering: ESR=0, but DM read still failed because the motor needs >1s after VM power-up before answering parameter reads.",
+    "Firmware reply timeout raised 150ms -> 1200ms and total 2000ms -> 15000ms; read then succeeds 7/7.",
+    "CAN1 re-serialisation was also fixed: CAN1 is now hardware-initialised once only, ABOM enabled, and CAN1 services are gated while a DM transaction is in flight."
+  ],
+  "boundary": "This record proves the taught angle and read-back only. No motion, no enable, no mode change was commanded. Position-speed mode not yet verified."
+}

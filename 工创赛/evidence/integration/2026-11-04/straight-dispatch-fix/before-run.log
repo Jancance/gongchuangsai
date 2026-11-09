@@ -1,0 +1,71 @@
+failed line 414 check 3
+failed line 439 check 9
+failed line 440 check 10
+STRAIGHT_MODEL_FORWARD case0 0.000000
+STRAIGHT case0 state6 cause5 starts0 progress0.000
+VM2,0,21000,1,1,6,5,6,2,0,0,3,2,0,0,0,2,1,0,0,0,1,9666
+
+LT1,0,21500,1,6,5,2100000,400,1021825,D641
+
+failed line 439 check 12
+failed line 440 check 13
+STRAIGHT_MODEL_FORWARD case1 0.000000
+failed line 443 check 14
+STRAIGHT case1 state7 cause5 starts0 progress0.000
+VM2,1,21000,1,1,7,5,6,2,0,0,3,2,0,0,0,2,1,0,0,0,1,A2BA
+
+LT1,1,21500,1,7,5,2100000,400,1021825,7D67
+
+failed line 445 check 17
+STRAIGHT case2 state6 cause5 starts0 progress0.000
+VM2,2,21000,1,1,6,5,6,2,0,0,3,2,0,0,0,2,1,0,0,0,1,D7B5
+
+LT1,2,21500,1,6,5,2100000,400,1021825,FE2A
+
+STRAIGHT case3 state6 cause5 starts0 progress0.000
+VM2,3,21000,1,1,6,5,6,2,0,0,3,2,0,0,0,2,1,0,0,0,1,7F4C
+
+LT1,3,21500,1,6,5,2100000,400,1021825,620F
+
+STRAIGHT case4 state6 cause5 starts0 progress0.000
+VM2,4,21000,1,1,6,5,6,2,0,0,3,2,0,0,0,2,1,0,0,0,1,15C0
+
+Traceback (most recent call last):
+LT1,4,21500,1,6,5,2100000,400,1021825,8697
+
+STRAIGHT case5 state0 cause1 starts0 progress0.000
+VM2,5,1012,0,1,0,1,0,0,0,0,0,0,0,0,0,2,1,0,0,0,1,B942
+
+LT1,5,1512,0,0,1,2100000,400,1021825,7C1F
+
+STRAIGHT case6 state6 cause5 starts0 progress0.000
+VM2,6,21000,1,1,6,5,6,2,0,0,3,2,0,0,0,2,1,0,0,0,1,5413
+
+LT1,6,21500,1,6,5,2100000,400,1021825,AEFC
+
+STRAIGHT case7 state6 cause5 starts0 progress0.000
+VM2,7,21000,1,1,6,5,6,2,0,0,3,2,0,0,0,2,1,0,0,0,1,FCEA
+
+LT1,7,21500,1,6,5,2100000,400,1021825,32D9
+
+failed line 439 check 29
+failed line 440 check 30
+STRAIGHT_MODEL_FORWARD case8 0.000000
+STRAIGHT case8 state6 cause5 starts0 progress0.000
+VM2,8,21000,1,1,6,5,6,2,0,0,3,2,0,0,0,2,1,0,0,0,1,810B
+
+LT1,8,21500,1,6,5,2100000,400,1021825,77ED
+
+STRAIGHT case9 state0 cause1 starts0 progress0.000
+VM2,9,1012,0,1,0,1,0,0,0,0,0,0,0,0,0,2,1,0,0,0,1,1873
+
+LT1,9,1512,0,0,1,2100000,400,1021825,4549
+
+STRAIGHT checks=32 failures=9
+
+  File "D:\Codex\������\scripts\check_straight_dispatch_fix_20261104.py", line 7, in <module>
+    exec(compile(s,str(R/'scripts/check_straight210_20261104.py'),'exec'))
+  File "D:\Codex\������\scripts\check_straight210_20261104.py", line 100, in <module>
+    (E/'result.json').write_text(json.dumps(dict(passed=f.returncode==0,cases=10,actual_mission_and_CAN_backend=True,devices_sensors_and_partial_scheduler_are_models=True,hardware_accessed=False,source_sha256={n:hashlib.sha256((S/n).read_bytes()).hexdigest() for n in files},output=f.stdout),indent=2),encoding='utf-8');assert f.returncode==0
+                                                                                                                                                                                                                                                                                                                                       ^^^^^^^^^^^^^^^
+AssertionError

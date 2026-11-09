@@ -1,0 +1,75 @@
+{
+  "classification": "E: provisional ruler-measured relative travel, not an automatic motion profile",
+  "status": "awaiting_valid_measurements",
+  "samples": [
+    {
+      "sample_id": "trial1_failed",
+      "usable": false,
+      "rejection_reasons": [
+        "missing_or_invalid_fields"
+      ],
+      "input": {
+        "sample_id": "trial1_failed",
+        "direction": "retract",
+        "command_pulses": "1600",
+        "start_mm": "",
+        "end_mm": "",
+        "motion_state": "9",
+        "motion_result": "5",
+        "flags": "0x05",
+        "speed_rpm": "",
+        "manual_stop": "false",
+        "actual_movement_confirmed": "false",
+        "notes": "User: still no movement; 515ms/raw309/stop_ack1; target based on installed candidate context, loaded binary not independently read back; no ruler measurements; invalid calibration sample"
+      }
+    },
+    {
+      "sample_id": "trial2_user_report",
+      "usable": false,
+      "rejection_reasons": [
+        "missing_or_invalid_fields"
+      ],
+      "input": {
+        "sample_id": "trial2_user_report",
+        "direction": "retract",
+        "command_pulses": "1600",
+        "start_mm": "",
+        "end_mm": "",
+        "motion_state": "7",
+        "motion_result": "1",
+        "flags": "0x03",
+        "speed_rpm": "0",
+        "manual_stop": "false",
+        "actual_movement_confirmed": "true",
+        "notes": "User approximately50mm/self-stop; verified7/1/flags3/6195ms, stall events/max0, stop0; speed0 follows current-source completion condition, not separate visible Watch; precise X0/X1 still unmeasured, coarse32 pulses/mm only"
+      }
+    }
+  ],
+  "usable_sample_count": 0,
+  "by_direction": {
+    "retract": {
+      "sample_count": 0,
+      "candidate_pulses_per_mm": null,
+      "minimum_sample_ratio": null,
+      "maximum_sample_ratio": null,
+      "repeatability_assessed": false
+    },
+    "extend": {
+      "sample_count": 0,
+      "candidate_pulses_per_mm": null,
+      "minimum_sample_ratio": null,
+      "maximum_sample_ratio": null,
+      "repeatability_assessed": false
+    }
+  },
+  "reported_remaining_retract_mm_before_test": 30,
+  "remaining_distance_source": "User report, not total travel or a calibrated zero.",
+  "total_usable_travel_mm": null,
+  "backlash_mm": null,
+  "home_valid": false,
+  "ruler_resolution_mm": null,
+  "absolute_position_verified": false,
+  "metric_calibration_accepted": false,
+  "motion_allowed": false,
+  "next": "Measure accepted complete steps in both directions; inspect repeatability, reversal/backlash and usable endpoints independently. Never use commanded pulses for an interrupted step."
+}

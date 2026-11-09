@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "reference_id": "source-tcp-image-center-20261105-stroke170-body283x253-revision3",
+  "calibration_id": "source-paper100-image-8fa7a4e70382-candidate",
+  "image_size": [1920, 1080],
+  "reference_image_px": [960.0, 540.0],
+  "reference_basis": "用户：夹爪中心就在摄像头中心；当前按画面宽高各一半解释，非镜头主点测量",
+  "extension_image_direction": [0.0, -1.0],
+  "extension_direction_basis": "用户确认伸出方向为画面上方",
+  "extension_chassis_direction": "right",
+  "frame_basis": "用户确认伸出朝车身右侧；无镜像顶视原图约定下，局部右=车后、局部前=车右。底盘发动作前仍需实物轴向/图像姿态一致性核对",
+  "pose_continuity_basis": "用户确认底盘、转盘、相机及机械臂全部保持整合8拍照位置，未复位",
+  "workflow": {
+    "selected": "one_chassis_stop_for_all_three",
+    "basis": "用户明确选择保持三个目标共用一个停车点",
+    "two_pose_candidate_selected": false
+  },
+  "scene_measurements": {
+    "gripper_tip_above_source_plane_mm": 119.0,
+    "material_height_mm": 60.0,
+    "current_chassis_to_disk_min_gap_mm": 70.0,
+    "basis": "用户本轮静态尺量，指尖距离约119mm、料高60mm、最短车盘净距70mm",
+    "chassis_bounds_from_dm_axis_mm": {
+      "front": 141.5,
+      "rear": 141.5,
+      "left": 223.0,
+      "right": 30.0
+    },
+    "chassis_reported_length_mm": 283.0,
+    "chassis_reported_width_mm": 253.0,
+    "chassis_bounds_basis": "用户本轮纠正：前141.5、后141.5、左223、右30mm；长度283、宽度253mm，前后之和及左右之和一致",
+    "chassis_bounds_superseded_input": {
+      "front_mm": 145.0,
+      "rear_mm": 145.0,
+      "conflict": "前后之和290与报告长283不符，已由用户纠正为141.5+141.5"
+    }
+  },
+  "mechanics": {
+    "source_prepare_nominal_extension_mm": 70.0,
+    "current_rotation_pivot_to_tcp_mm": 235.0,
+    "extension_max_from_home_mm": 170.0,
+    "additional_extension_available_mm": 100.0,
+    "measurement_basis": "用户纠正：当前水平距离约23.5cm，70mm为当前伸出量，最多还可再伸10cm；170=70+100为工程推导，非独立行程标定。旧135/205撤回",
+    "superseded_additional_extension_mm": 135.0,
+    "superseded_max_extension_mm": 205.0,
+    "positive_rotation_direction_confirmed": true,
+    "positive_rotation_top_view": "counterclockwise",
+    "rotation_reference_basis": "用户确认启动后0度为基准，逆时针转至180度取料；与2026-10-29正负向实物记录相符",
+    "source_reference_logical_deg": 180.0,
+    "current_firmware_rotation_min_deg": 0.0,
+    "current_firmware_rotation_max_deg": 180.0,
+    "mechanical_extra_past_180_user_confirmed": true,
+    "mechanical_rotation_max_deg": 360.0,
+    "mechanical_rotation_range_note": "用户随后明确4310电机360度均有余量可转；记录用户机械能力确认，当前扩展机构/线缆扫掠与实际执行仍需本轮验证，固件0..180准入尚未修改"
+  },
+  "physical_tcp_verified": false,
+  "physical_height_plane_verified": false,
+  "field_calibration_accepted": false,
+  "motion_enabled": false
+}

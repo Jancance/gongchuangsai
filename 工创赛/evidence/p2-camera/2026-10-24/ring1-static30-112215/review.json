@@ -1,0 +1,313 @@
+{
+  "crc": "passed",
+  "archive_sha256": "8d0a1855501a80944624fca64d341b020eee0eba4b1f4b1a000a10b2a2942229",
+  "frames": 356,
+  "contiguous_indices": true,
+  "strict_timestamp_increase": true,
+  "span_s": 29.929339074999916,
+  "states": {
+    "FOLLOWING_PIXEL": 356
+  },
+  "target_counts": {
+    "both": 342,
+    "green_only": 14
+  },
+  "green_present_all": true,
+  "green_ids": [
+    "T002"
+  ],
+  "black_ids": [
+    "T001"
+  ],
+  "black_missing_periods": [
+    {
+      "first_frame": 39,
+      "last_frame": 39,
+      "missing_processed_frames": 1,
+      "missing_first_to_recovery_s": 0.06867505199988955
+    },
+    {
+      "first_frame": 45,
+      "last_frame": 46,
+      "missing_processed_frames": 2,
+      "missing_first_to_recovery_s": 0.19723096000052465
+    },
+    {
+      "first_frame": 50,
+      "last_frame": 51,
+      "missing_processed_frames": 2,
+      "missing_first_to_recovery_s": 0.16748463300064032
+    },
+    {
+      "first_frame": 57,
+      "last_frame": 57,
+      "missing_processed_frames": 1,
+      "missing_first_to_recovery_s": 0.07938867600023514
+    },
+    {
+      "first_frame": 59,
+      "last_frame": 60,
+      "missing_processed_frames": 2,
+      "missing_first_to_recovery_s": 0.19676750899998297
+    },
+    {
+      "first_frame": 62,
+      "last_frame": 62,
+      "missing_processed_frames": 1,
+      "missing_first_to_recovery_s": 0.10280739400059247
+    },
+    {
+      "first_frame": 65,
+      "last_frame": 65,
+      "missing_processed_frames": 1,
+      "missing_first_to_recovery_s": 0.10853126299934956
+    },
+    {
+      "first_frame": 70,
+      "last_frame": 71,
+      "missing_processed_frames": 2,
+      "missing_first_to_recovery_s": 0.17289058999995177
+    },
+    {
+      "first_frame": 117,
+      "last_frame": 117,
+      "missing_processed_frames": 1,
+      "missing_first_to_recovery_s": 0.07412942499922792
+    },
+    {
+      "first_frame": 173,
+      "last_frame": 173,
+      "missing_processed_frames": 1,
+      "missing_first_to_recovery_s": 0.0874047179995614
+    }
+  ],
+  "black_identity_unverified_on_recovery": true,
+  "all_motion_disabled": true,
+  "timing_ms": {
+    "detector_call_ms": {
+      "min": 51.43344699990848,
+      "median": 68.60519900010331,
+      "p95": 75.67384949970801,
+      "max": 127.7940870004386
+    },
+    "result_host_age_ms": {
+      "min": 55.26617800023814,
+      "median": 84.1717895000329,
+      "p95": 107.4577280005542,
+      "max": 144.73061400076404
+    }
+  },
+  "module_hash_matches": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true
+  },
+  "active_config_byte_matches": {
+    "camera_processing.json": true,
+    "material_color_thresholds.json": true,
+    "project_profile.json": true
+  },
+  "controls": {
+    "gain": 80,
+    "white_balance_temperature_auto": 0,
+    "white_balance_temperature": 4600,
+    "exposure_auto": 1,
+    "exposure_absolute": 83
+  },
+  "sample62_offline_replays": [
+    {
+      "ring_enabled": true,
+      "regions": [
+        {
+          "bbox_px": [
+            169,
+            395,
+            381,
+            306
+          ],
+          "area_px2": 35156.5,
+          "label": "UNKNOWN",
+          "reason": "SHAPE_UNCERTAIN",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            836,
+            453,
+            206,
+            206
+          ],
+          "area_px2": 29731.0,
+          "label": "UNKNOWN",
+          "reason": "SHAPE_UNCERTAIN",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            311,
+            431,
+            203,
+            234
+          ],
+          "area_px2": 1221.0,
+          "label": "UNKNOWN",
+          "reason": "SHAPE_UNCERTAIN",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            824,
+            440,
+            188,
+            232
+          ],
+          "area_px2": 1025.0,
+          "label": "UNKNOWN",
+          "reason": "SHAPE_UNCERTAIN",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            844,
+            461,
+            191,
+            191
+          ],
+          "area_px2": 28167.5,
+          "label": "green",
+          "reason": "ISOLATED_CHROMATIC_COMPONENT",
+          "proposal_source": "chromatic_component",
+          "center_reference": "chromatic_region_not_calibrated_grasp_point",
+          "circularity": 0.6954361563940938,
+          "solidity": 0.958420524336923,
+          "usable_fraction": 0.9301136797131304,
+          "color_fractions": {
+            "red": 0.0,
+            "yellow": 0.0,
+            "blue": 0.0,
+            "green": 1.0,
+            "black": 0.00041013862685587726,
+            "lightblue": 0.0
+          },
+          "dark_fraction": 0.00041013862685587726,
+          "silhouette_center_px": [
+            939.0466435904262,
+            556.2743173278897
+          ]
+        }
+      ],
+      "circle_diagnostics": [
+        {
+          "color": "black",
+          "reason": "BLACK_EDGE_NO_UNIQUE_SUPPORT",
+          "supported_ellipse_count": 0,
+          "distinct_ellipse_count": 0,
+          "colour_rejection_count": 0
+        }
+      ]
+    },
+    {
+      "ring_enabled": false,
+      "regions": [
+        {
+          "bbox_px": [
+            169,
+            395,
+            381,
+            306
+          ],
+          "area_px2": 35156.5,
+          "label": "UNKNOWN",
+          "reason": "SHAPE_UNCERTAIN",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            836,
+            453,
+            206,
+            206
+          ],
+          "area_px2": 29731.0,
+          "label": "UNKNOWN",
+          "reason": "SHAPE_UNCERTAIN",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            311,
+            431,
+            203,
+            234
+          ],
+          "area_px2": 1221.0,
+          "label": "UNKNOWN",
+          "reason": "SHAPE_UNCERTAIN",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            824,
+            440,
+            188,
+            232
+          ],
+          "area_px2": 1025.0,
+          "label": "UNKNOWN",
+          "reason": "SHAPE_UNCERTAIN",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            844,
+            461,
+            191,
+            191
+          ],
+          "area_px2": 28167.5,
+          "label": "green",
+          "reason": "ISOLATED_CHROMATIC_COMPONENT",
+          "proposal_source": "chromatic_component",
+          "center_reference": "chromatic_region_not_calibrated_grasp_point",
+          "circularity": 0.6954361563940938,
+          "solidity": 0.958420524336923,
+          "usable_fraction": 0.9301136797131304,
+          "color_fractions": {
+            "red": 0.0,
+            "yellow": 0.0,
+            "blue": 0.0,
+            "green": 1.0,
+            "black": 0.00041013862685587726,
+            "lightblue": 0.0
+          },
+          "dark_fraction": 0.00041013862685587726,
+          "silhouette_center_px": [
+            939.0466435904262,
+            556.2743173278897
+          ]
+        }
+      ],
+      "circle_diagnostics": [
+        {
+          "color": "black",
+          "reason": "BLACK_EDGE_NO_UNIQUE_SUPPORT",
+          "supported_ellipse_count": 0,
+          "distinct_ellipse_count": 0,
+          "colour_rejection_count": 0
+        }
+      ]
+    }
+  ],
+  "visual_review": [
+    "sample-02-before-raw.png"
+  ],
+  "conclusion": "Static requested condition still has 14 black misses with no stale results. Same IDs do not imply continuous observations. Ring switch off does not repair saved missed image. Existing shape/edge recovery path remains failing.",
+  "limitations": [
+    "Console absent; no JPEG warning claim",
+    "Same identity can be retained internally while absent in current output",
+    "Whole black silhouette can contain sidewall and print; not a calibrated grasp point",
+    "OpenCV offline replay version differs from board"
+  ],
+  "next": "Use saved static missed frame62 and preceding frame61 hints to diagnose and develop an isolated black-candidate correction; no more identical physical capture until software change warrants revalidation."
+}

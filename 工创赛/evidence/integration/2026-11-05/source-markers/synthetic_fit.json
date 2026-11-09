@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "calibration_id": "synthetic-only",
+  "context": {
+    "camera_id": "synthetic",
+    "mount_id": "test",
+    "arm_pose_id": "held-pose-test",
+    "plane_id": "surface",
+    "plane_z_mm": 90,
+    "chassis_origin": "test origin",
+    "axes": "x_right_y_forward_mm",
+    "image_size": [
+      1920,
+      1080
+    ],
+    "pixel_space": "raw",
+    "lens_profile_id": null
+  },
+  "homography_image_to_chassis": [
+    [
+      0.3999999777193526,
+      0.01999999422214507,
+      -159.99999359931053
+    ],
+    [
+      0.009999965970531365,
+      -0.35000002556777393,
+      600.0000203230637
+    ],
+    [
+      0.00019999995523735462,
+      -0.00010000001478195554,
+      1.0
+    ]
+  ],
+  "coordinate_frame": "chassis",
+  "fit_hull_image_px": [
+    [
+      100.0,
+      100.0
+    ],
+    [
+      900.0,
+      100.0
+    ],
+    [
+      900.0,
+      700.0
+    ],
+    [
+      100.0,
+      700.0
+    ]
+  ],
+  "fit": {
+    "rms_mm": 1.2040768446682373e-05,
+    "p95_mm": 1.6993531357299796e-05,
+    "max_mm": 1.775847124001947e-05,
+    "count": 4
+  },
+  "validation": {
+    "rms_mm": 8.566556291655292e-06,
+    "p95_mm": 1.0712329533881453e-05,
+    "max_mm": 1.1051639021875386e-05,
+    "count": 3
+  },
+  "errors_mm": {
+    "0": 1.775847124001947e-05,
+    "1": 8.86068098793118e-06,
+    "2": 1.2658872021888314e-05,
+    "3": 5.079213514655282e-06,
+    "4": 1.1051639021875386e-05,
+    "5": 7.65854414193607e-06,
+    "6": 6.274204065096587e-06
+  },
+  "limits": {
+    "fit_max_mm": 0.01,
+    "validation_max_mm": 0.01
+  },
+  "independent_check_passed": true,
+  "motion_allowed": false,
+  "physical_pick_verified": false,
+  "note": "仅当前姿态/特征平面的离线映射；原始图尚未完成CAL-03，不是动作许可"
+}

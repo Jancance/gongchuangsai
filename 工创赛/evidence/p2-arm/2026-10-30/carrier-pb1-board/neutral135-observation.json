@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-30",
+  "classification": "E first carrier software window observation, no physical movement seen",
+  "user_report": "没见到转动",
+  "earlier_watch": {
+    "g_carrier_debug_angle": 135,
+    "g_carrier_test_enable": 0,
+    "g_carrier_request": 0,
+    "g_lift_state": 5,
+    "g_vm_test_request": 1
+  },
+  "current_watch": {
+    "g_carrier_debug_angle": 135,
+    "g_carrier_test_enable": 1,
+    "g_carrier_request": 0,
+    "g_lift_state": 4,
+    "g_vm_test_request": 1,
+    "g_carrier_init_result": 1,
+    "g_carrier_state": 2,
+    "g_carrier_result": 1,
+    "g_carrier_pulse_us": 1500,
+    "g_carrier_signal_active": 0
+  },
+  "screenshots_sha256": {
+    "pretest-lift-read-failed.png": "4ba26fa73e352a5f434587669c782ffe751e3eb5caa49589e132db508f879a27",
+    "neutral135-window-ended.png": "207d89d4e0613cc808baa0548102fff1328f6ffb69f97b98d37b87e8f3fdb2ae"
+  },
+  "accepted": "software initialized and completed the 135-degree nominal command output window",
+  "not_accepted": [
+    "measured PB1 waveform",
+    "servo physical movement or 135-degree position",
+    "mechanical detach confirmation",
+    "three-slot indexing",
+    "physical motor fault diagnosis"
+  ],
+  "earlier_lift_read_failed_currently_recovered_to4": true,
+  "no_movement_hypothesis": "servo may already have been near the requested nominal position; unverified",
+  "next_single_test": {
+    "condition": "confirm servo mechanically detached from tray, powered5V/commonGND, other axes idle",
+    "first": "request2 and allow program to run until state3; this clears enable and releases prior session",
+    "then": [
+      "debug_angle140",
+      "test_enable1",
+      "request1 once"
+    ],
+    "nominal_pulse_us": 1537,
+    "expected_pulse_hex": "0x601",
+    "window_ms": 1500,
+    "executed": false,
+    "if_still_no_movement": "do not keep enlarging target; inspect signal/ground/supply and PB1 PWM"
+  },
+  "assistant_firmware_changes": false,
+  "assistant_flash_performed": false,
+  "assistant_hardware_commands": false,
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged; pending official clarification"
+}

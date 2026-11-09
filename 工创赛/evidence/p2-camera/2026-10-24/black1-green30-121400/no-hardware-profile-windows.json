@@ -1,0 +1,159 @@
+{
+  "scope": "Saved-image detector replay only; not capture/GUI timing, host-frame age, exposure-to-result latency or physical acceptance.",
+  "camera_opened": false,
+  "serial_opened": false,
+  "motion_allowed": false,
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "opencv": "5.0.0",
+  "opencv_threads": 16,
+  "main_import_ms": 136.696600000505,
+  "color_module_loaded_before_analysis": true,
+  "diagnostic_sha256": "6fb98e804264de46daf09a655e048784e4a6bfceeb553dc922a8eb5b13648ee5",
+  "app_main_module": "D:\\Codex\\工创赛\\output\\p2_vision_generic120_black1_20261024\\vision_app\\code\\main.py",
+  "module_matches": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true
+  },
+  "config_matches": {
+    "material_color_thresholds.json": true,
+    "project_profile.json": true,
+    "camera_processing.json": true
+  },
+  "rows": [
+    {
+      "image": "first-frame-raw.png",
+      "case": "no_history",
+      "prior_count": 0,
+      "call_ms": [
+        115.44709999998304,
+        82.21619999949326
+      ],
+      "median_ms": 98.83164999973815,
+      "max_ms": 115.44709999998304,
+      "classified_outputs": [
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "image": "first-frame-raw.png",
+      "case": "saved_previous_tracks",
+      "prior_count": 0,
+      "call_ms": [
+        79.91089999995893,
+        76.27020000018092
+      ],
+      "median_ms": 78.09055000006992,
+      "max_ms": 79.91089999995893,
+      "classified_outputs": [
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "chromatic_component",
+            "center_px": [
+              958.5170048325639,
+              543.9938726951623
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "image": "sample-06-raw.png",
+      "case": "no_history",
+      "prior_count": 0,
+      "call_ms": [
+        53.6552000003212,
+        56.72210000011546
+      ],
+      "median_ms": 55.18865000021833,
+      "max_ms": 56.72210000011546,
+      "classified_outputs": [
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "image": "sample-06-raw.png",
+      "case": "saved_previous_tracks",
+      "prior_count": 1,
+      "call_ms": [
+        54.6846999995978,
+        58.18209999961255
+      ],
+      "median_ms": 56.43339999960517,
+      "max_ms": 58.18209999961255,
+      "classified_outputs": [
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ],
+        [
+          {
+            "label": "green",
+            "source": "combined_silhouette",
+            "center_px": [
+              956.627490942029,
+              540.8083699965493
+            ]
+          }
+        ]
+      ]
+    }
+  ],
+  "profile": "         10170 function calls in 0.270 seconds\n\n   Ordered by: cumulative time\n   List reduced from 106 to 40 due to restriction <40>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        4    0.034    0.009    0.270    0.067 D:\\Codex\\工创赛\\output\\p2_vision_generic120_black1_20261024\\vision_app\\code\\project_detector.py:566(analyze)\n        4    0.001    0.000    0.077    0.019 D:\\Codex\\工创赛\\output\\p2_vision_generic120_black1_20261024\\vision_app\\code\\project_detector.py:574(<dictcomp>)\n       24    0.000    0.000    0.076    0.003 D:\\Codex\\工创赛\\output\\p2_vision_generic120_black1_20261024\\vision_app\\code\\颜色标定.py:286(_mask_from_hsv)\n       28    0.075    0.003    0.075    0.003 {inRange}\n        4    0.002    0.001    0.049    0.012 D:\\Codex\\工创赛\\output\\p2_vision_generic120_black1_20261024\\vision_app\\code\\project_detector.py:357(chromatic_fallback)\n       26    0.047    0.002    0.047    0.002 {findContours}\n        4    0.013    0.003    0.030    0.007 D:\\Codex\\工创赛\\output\\p2_vision_generic120_black1_20261024\\vision_app\\code\\project_detector.py:266(black_edge_recovery)\n        6    0.015    0.002    0.015    0.002 {morphologyEx}\n        4    0.015    0.004    0.015    0.004 {split}\n       12    0.012    0.001    0.012    0.001 {cvtColor}\n      396    0.010    0.000    0.010    0.000 {method 'reduce' of 'numpy.ufunc' objects}\n       32    0.010    0.000    0.010    0.000 {bitwise_or}\n        4    0.002    0.000    0.008    0.002 D:\\Codex\\工创赛\\output\\p2_vision_generic120_black1_20261024\\vision_app\\code\\project_detector.py:468(black_face_supported_hull)\n      126    0.000    0.000    0.008    0.000 {method 'sum' of 'numpy.ndarray' objects}\n      126    0.000    0.000    0.008    0.000 C:\\Users\\Tenderness\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy\\_core\\_methods.py:47(_sum)\n      114    0.007    0.000    0.007    0.000 {method 'astype' of 'numpy.ndarray' objects}\n       54    0.005    0.000    0.005    0.000 {drawContours}\n      162    0.001    0.000    0.004    0.000 C:\\Users\\Tenderness\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy\\_core\\_methods.py:115(_mean)\n      108    0.000    0.000    0.003    0.000 {method 'mean' of 'numpy.ndarray' objects}\n     4444    0.003    0.000    0.003    0.000 {contourArea}\n        2    0.003    0.002    0.003    0.002 {HoughCircles}\n        4    0.002    0.000    0.002    0.000 {method 'copy' of 'numpy.ndarray' objects}\n        8    0.002    0.000    0.002    0.000 {Sobel}\n       16    0.001    0.000    0.001    0.000 {built-in method builtins.sorted}\n        4    0.001    0.000    0.001    0.000 D:\\Codex\\工创赛\\output\\p2_vision_generic120_black1_20261024\\vision_app\\code\\颜色标定.py:178(validate_color_config)\n        2    0.001    0.000    0.001    0.001 D:\\Codex\\工创赛\\output\\p2_vision_generic120_black1_20261024\\vision_app\\code\\project_detector.py:623(<dictcomp>)\n       26    0.001    0.000    0.001    0.000 C:\\Users\\Tenderness\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy\\lib\\_index_tricks_impl.py:146(__getitem__)\n        2    0.001    0.000    0.001    0.001 D:\\Codex\\工创赛\\output\\p2_vision_generic120_black1_20261024\\vision_app\\code\\project_detector.py:409(<dictcomp>)\n       54    0.000    0.000    0.001    0.000 C:\\Users\\Tenderness\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy\\_core\\fromnumeric.py:3699(mean)\n       14    0.001    0.000    0.001    0.000 {convexHull}\n      162    0.001    0.000    0.001    0.000 C:\\Users\\Tenderness\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy\\_core\\_methods.py:73(_count_reduce_items)\n        4    0.001    0.000    0.001    0.000 {GaussianBlur}\n        6    0.000    0.000    0.000    0.000 {erode}\n       24    0.000    0.000    0.000    0.000 D:\\Codex\\工创赛\\output\\p2_vision_generic120_black1_20261024\\vision_app\\code\\颜色标定.py:115(ranges_to_bounds)\n       54    0.000    0.000    0.000    0.000 {method 'max' of 'numpy.ndarray' objects}\n       12    0.000    0.000    0.000    0.000 C:\\Users\\Tenderness\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy\\_core\\numeric.py:170(ones)\n       54    0.000    0.000    0.000    0.000 C:\\Users\\Tenderness\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy\\_core\\_methods.py:39(_amax)\n       54    0.000    0.000    0.000    0.000 {method 'argmax' of 'numpy.ndarray' objects}\n       62    0.000    0.000    0.000    0.000 {built-in method numpy.arange}\n       56    0.000    0.000    0.000    0.000 {built-in method numpy.asarray}\n\n\n"
+}

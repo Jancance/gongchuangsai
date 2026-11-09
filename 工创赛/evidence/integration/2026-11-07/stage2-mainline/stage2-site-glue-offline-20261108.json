@@ -1,0 +1,71 @@
+{
+ "tag": "stage2-site-glue-offline",
+ "when": "2026-11-08T02:23:24",
+ "scope": "offline only - no debugger, no flash, no motion",
+ "problem": "Stage2Body_Configure / SourceStage2Backend_Start had zero callers, so the stage2 body port was permanently unconfigured regardless of VEHICLE_LIFT_RULER_ONLY",
+ "changes": [
+  {
+   "file": "CHASSIS/USER/stage2_site_profile.h",
+   "kind": "new",
+   "note": "site data table, all validity flags 0, ASCII only"
+  },
+  {
+   "file": "CHASSIS/USER/stage2_site_activate.inc",
+   "kind": "new",
+   "note": "Stage2Site_ActivateOnce(): single caller of Stage2Body_Configure; rejects unverified table"
+  },
+  {
+   "file": "CHASSIS/USER/source_stage2_body_port.inc",
+   "kind": "append",
+   "note": "include stage2_site_activate.inc at end"
+  },
+  {
+   "file": "CHASSIS/USER/vehicle_mission.inc",
+   "kind": "byte-edit",
+   "note": "call Stage2Site_ActivateOnce() when g_vehicle_state==8U; GBK/CRLF preserved"
+  }
+ ],
+ "build": {
+  "online": {
+   "exit": 0,
+   "errors": 0,
+   "warnings": 0,
+   "code": 116928,
+   "ro": 7196,
+   "rw": 4288,
+   "zi": 128896,
+   "sha256": "1defe47af48322b54f8537328ae9c06066861e8048ca7a2a29b89a89d0aa82d0",
+   "log": "tmp/build_online_20261108_stage2site.log"
+  },
+  "offline": {
+   "exit": 0,
+   "errors": 0,
+   "warnings": 0,
+   "code": 91056,
+   "ro": 7128,
+   "rw": 4068,
+   "zi": 128516,
+   "sha256": "47b7d2b7f498e0f308bfd1ccef80cde99b45befc25465bc124b9988a459f410f",
+   "log": "tmp/build_offline_20261108_stage2site.log"
+  }
+ },
+ "symbol_proof": {
+  "g_stage2_site_profile": "0x0801de74",
+  "g_stage2_site_limits": "0x0801de9c",
+  "g_stage2_site_state": "0x20000584",
+  "g_stage2_site_reason": "0x20000588",
+  "note": "present in fromelf symbol table; Stage2Site_ActivateOnce inlined"
+ },
+ "expected_runtime": {
+  "g_stage2_site_state": 1,
+  "g_stage2_site_reason": 1,
+  "meaning": "table unverified by design -> Configure rejected, behaviour unchanged"
+ },
+ "tool": "scripts/stage2_wheel_node_triage.py (--check passed)",
+ "not_done": [
+  "no on-board verification",
+  "no flash",
+  "SourceStage2Backend_Start still needs real SPF_Config and hooks",
+  "site table values still empty (need measured session)"
+ ]
+}

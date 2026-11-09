@@ -1,0 +1,55 @@
+{
+  "data_kind": "synthetic-only",
+  "unit_tests": 14,
+  "unit_failures": 0,
+  "unit_errors": 0,
+  "cli_checks": [
+    {
+      "mode": "fit",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "passed": true
+    },
+    {
+      "mode": "preview",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "passed": true
+    },
+    {
+      "mode": "fit",
+      "expected_exit": 1,
+      "actual_exit": 1,
+      "passed": true
+    },
+    {
+      "mode": "fit",
+      "expected_exit": 2,
+      "actual_exit": 2,
+      "passed": true
+    },
+    {
+      "mode": "fit-paper",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "passed": true
+    },
+    {
+      "mode": "fit-paper",
+      "expected_exit": 1,
+      "actual_exit": 1,
+      "passed": true
+    }
+  ],
+  "motion_allowed": false,
+  "hardware_tested": false,
+  "gui_tested_on_orangepi": false,
+  "sha256": {
+    "src/smart_carrier/source_markers.py": "dd5a402972f80b262094c54e462766a7099a28314e30c56d69ec756738414182",
+    "scripts/source_marker_calibration.py": "3a9b38441de32998e598580ccacb41740c6feb55382da87779e8cbb997225700",
+    "scripts/pick_source_markers.py": "ffc7ab478a073a5af91359635530524a36622391cb733acbdb8ea859c0cd30fc",
+    "tests/test_source_markers.py": "1aa0715968e1cc7f07411774404e2f56bf354596833894b08fc4e457c3936d6a",
+    "tests/test_source_paper.py": "c99907578401b5e5e8f18701f6cdf7a04581089496868c994897a7058cad00b2"
+  },
+  "passed": true
+}

@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "offline": 0,
+      "passed": true,
+      "output": "COMPARE_DISPATCH offline=0 scenarios=8 checks=115 failures=0"
+    },
+    {
+      "offline": 1,
+      "passed": true,
+      "output": "COMPARE_DISPATCH offline=1 scenarios=8 checks=32 failures=0"
+    }
+  ],
+  "scope": "actual adapter, actual CAN/home17-byte assembly, extracted task branch; fake bus/ticks/plant",
+  "sha256": {
+    "CHASSIS/USER/main.c": "3918d3a3420b344e52d93f3febd65ec124f049fefaf70c8da5622e6bce106d54",
+    "CHASSIS/USER/vehicle_mission.inc": "f863e63d39f24c4b0a2b5378fcb2a81c46ace692e81932843271a2ad7017cc10",
+    "CHASSIS/SYSTEM/CAN/can.c": "34c6305f13e6c2160f23b7c00fa2170bad1bcec25238b71eb34bdd037c2123af",
+    "CHASSIS/USER/lift_ruler_adapter.c": "9b77edbbdce486c90b405552d476e824e14090fe46db4b8f137c41bba566423a",
+    "CHASSIS/USER/lift_ruler_adapter.h": "669883084095b5a40aabf7f136afd60bb57cee19ca7524e11838e70f6ab9e6d0",
+    "CHASSIS/USER/lift_ruler_calibration.c": "2cc1f07af542bf6abcd59cbbcd6b2b0faf129dfe30028372f64ab0157aecae93",
+    "CHASSIS/USER/lift_ruler_calibration.h": "aef9e315910d8bc6036128caecd04ea988613ce5ed4702ad45b44771158a0871"
+  },
+  "firmware_downloaded": false,
+  "hardware_operated": false
+}

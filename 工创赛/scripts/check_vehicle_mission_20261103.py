@@ -8,7 +8,7 @@ R=Path(__file__).resolve().parents[1];S=firmware_root()
 O=R/'evidence/integration/2026-11-03/early-scan-startup'
 base=(O/'early-scan-unit.c').read_text(encoding='utf-8')
 unit=base[:base.index('static void reset(void)')]
-unit='#define STARTUP_EXTENSION_HOME_TEST_ONLY 0\n#define VEHICLE_PARAMETER_TABLES\n#include <math.h>\n'+unit
+unit='#define VEHICLE_PARAMETER_TABLES\n#include <math.h>\n'+unit
 unit=unit.replace('#define MOTION_ACTION_COUNT 2U', 'static uint32_t s_motion_action_count;\n#define MOTION_ACTION_COUNT (s_motion_action_count)')
 unit=unit.replace('fixture_backend.result=0;return 1;', 'fixture_backend.result=0;fixture_backend.state=0;return 1;')
 unit+=r'''
@@ -17,6 +17,7 @@ static uint32_t g_debug_plan_id=DEBUG_PLAN_DEFAULT,s_motion_timing_count,s_motio
 static uint32_t g_vehicle_arm_state;
 uint32_t g_vehicle_arm_cause,g_startup_axes_cause,g_startup_extension_feedback_valid,g_vehicle_lift_feedback_valid;
 static uint32_t actor_calls,cancel_calls;
+static uint32_t g_safety_ready=1U;
 static float g_startup_extension_current_deg,g_vehicle_lift_current_deg;
 static uint32_t VehicleArm_Busy(void){return g_vehicle_arm_state==1;}
 static uint32_t VehicleArm_Begin(const VehicleArmRow *row,uint32_t item){actor_calls++;g_vehicle_arm_state=1;return 1;}
@@ -115,7 +116,7 @@ int main(void){test_mission();tick+=1000;VehicleMission_Telemetry();printf("%s",
 reports=[]
 for label,offline,bypass,chain in [('single-bypass',0,1,0),('chain-bypass',0,1,1),('single-real',0,0,0),('chain-real',0,0,1),('offline',1,1,0)]:
  exe=O/('mission-'+label+'.exe')
- cmd=['C:/mingw/mingw64/bin/gcc.exe','-std=c99',f'-DAPP_MOTOR_OFFLINE_ONLY={offline}',
+ cmd=['C:/mingw/mingw64/bin/gcc.exe','-DVEHICLE_STARTUP_GROUP_BEFORE_ROUTE=0','-DVEHICLE_STARTUP_GROUP_ONLY=0','-DVEHICLE_EXTENSION_HOME_ONLY=0','-DVEHICLE_DM_STARTUP_ONLY=0','-std=c99',f'-DAPP_MOTOR_OFFLINE_ONLY={offline}',
       f'-DVEHICLE_SCAN_BYPASS={bypass}',f'-DVEHICLE_RUN_ALL={chain}',
       '-I'+str(S/'CHASSIS/USER'),str(O/'mission-unit.c')]
  cmd += [str(S/'CHASSIS/USER'/p) for p in ['field_map.c','app_entry.c','motion_profile.c','chassis_kinematics.c']]

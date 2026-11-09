@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-30",
+  "classification": "E software invalid-angle fault snapshot",
+  "watch": {
+    "g_carrier_signal_active": 0,
+    "g_carrier_latched_angle": 140,
+    "g_carrier_pulse_us": 1537,
+    "g_carrier_state": 9,
+    "g_carrier_result": 3
+  },
+  "screenshot": "invalid-angle-latched-watch.png",
+  "screenshot_sha256": "2ae2043ccebc01d78e9ddf85d010ce9599cee73f73d376ceb10ff24f15fd7bbb",
+  "result3_definition": "debug angle invalid at a processed start request; outside120..150 or nonfinite",
+  "current_debug_angle_visible": false,
+  "debug_angle_at_fault": null,
+  "latched_fields_interpretation": "retained from a previously accepted command; invalid-angle failure does not clear these fields",
+  "latest_window_completed_verified": false,
+  "hardware_fault_inferred": false,
+  "source_checks": "5 current carrier files match installed manifest",
+  "next_single_step": "read g_carrier_debug_angle without editing or triggering requests; retain failure state and snapshot",
+  "assistant_firmware_changes": false,
+  "assistant_flash_performed": false,
+  "assistant_hardware_commands": false,
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged; pending official clarification"
+}

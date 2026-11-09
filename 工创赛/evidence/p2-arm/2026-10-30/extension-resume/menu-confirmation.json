@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-30",
+  "classification": "E user-reported menu configuration confirmation",
+  "user_text": "没有问题就是这些参数",
+  "node_id": 6,
+  "protocol": "CAN1_MAP",
+  "can_baud_bps": 500000,
+  "checksum": "fixed 0x6B",
+  "confirmation_source": "user text; no menu photograph supplied",
+  "installation_and_wiring_not_independently_observed": true,
+  "live_communication_verified": false,
+  "next_action": "after board installed on CAN1, keep other motion requests zero, VM ready and lift_state4, extension_read_request1 once; inspect state/error/three results and raw replies",
+  "assistant_firmware_changes": false,
+  "assistant_hardware_commands": false,
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged_pending_official_clarification"
+}

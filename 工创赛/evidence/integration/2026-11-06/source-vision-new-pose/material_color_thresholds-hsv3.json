@@ -1,0 +1,215 @@
+{
+  "format_version": 1,
+  "color_space": "OpenCV_HSV",
+  "camera_device": "/dev/v4l/by-id/usb-Generic_USB_CAMERA_EP.20CC54K01-video-index0",
+  "image_width": 1920,
+  "image_height": 1080,
+  "calibration_file": "/home/orangepi/p2-source-workflow-20261105/vision_app/code/config/generic_135_unconfigured.yaml",
+  "colors": [
+    {
+      "color_id": 1,
+      "name": "red",
+      "display_bgr": [
+        0,
+        0,
+        255
+      ],
+      "ranges": [
+        {
+          "lower": [
+            0,
+            144,
+            71
+          ],
+          "upper": [
+            6,
+            221,
+            174
+          ]
+        },
+        {
+          "lower": [
+            176,
+            144,
+            71
+          ],
+          "upper": [
+            179,
+            221,
+            174
+          ]
+        }
+      ]
+    },
+    {
+      "color_id": 2,
+      "name": "yellow",
+      "display_bgr": [
+        0,
+        255,
+        255
+      ],
+      "ranges": [
+        {
+          "lower": [
+            17,
+            140,
+            110
+          ],
+          "upper": [
+            30,
+            255,
+            207
+          ]
+        }
+      ]
+    },
+    {
+      "color_id": 3,
+      "name": "blue",
+      "display_bgr": [
+        255,
+        0,
+        0
+      ],
+      "ranges": [
+        {
+          "lower": [
+            101,
+            131,
+            32
+          ],
+          "upper": [
+            113,
+            255,
+            160
+          ]
+        }
+      ]
+    },
+    {
+      "color_id": 4,
+      "name": "green",
+      "display_bgr": [
+        0,
+        255,
+        0
+      ],
+      "ranges": [
+        {
+          "lower": [
+            35,
+            60,
+            35
+          ],
+          "upper": [
+            85,
+            255,
+            255
+          ]
+        }
+      ]
+    },
+    {
+      "color_id": 5,
+      "name": "black",
+      "display_bgr": [
+        80,
+        80,
+        80
+      ],
+      "ranges": [
+        {
+          "lower": [
+            0,
+            0,
+            0
+          ],
+          "upper": [
+            179,
+            255,
+            50
+          ]
+        }
+      ]
+    },
+    {
+      "color_id": 6,
+      "name": "light_blue",
+      "display_bgr": [
+        255,
+        255,
+        0
+      ],
+      "ranges": [
+        {
+          "lower": [
+            91,
+            66,
+            128
+          ],
+          "upper": [
+            104,
+            133,
+            230
+          ]
+        }
+      ]
+    }
+  ],
+  "saved_at_utc": "2026-11-06T11:16:35.392998+00:00",
+  "calibrated_for_this_camera": false,
+  "source": "project candidate HSV ranges; recalibrate with own samples",
+  "_candidate_update": {
+    "version": "lightblue-saturation-candidate-2026-10-06",
+    "basis": "Lightblue top saturation median 140, deepblue mostly 255; replay checked.",
+    "blue_s_min": 150,
+    "lightblue_s_max": 149,
+    "requires_live_validation": true
+  },
+  "round_face_color_candidate": {
+    "version": "paired-face-candidate-v8-20261006",
+    "lightblue_s_max": 189,
+    "requires_live_validation": true,
+    "current_pale_component": true,
+    "component_candidate_version": "v10-current-frame-pale-component",
+    "reject_unverified_blue_family": true,
+    "conflict_candidate_version": "v11-current-color-conflict-rejection"
+  },
+  "black_edge_recovery_candidate": {
+    "enabled": true,
+    "version": "v13-black-colour-overlap-candidate",
+    "requires_live_validation": true,
+    "disjoint_colour_evidence": true
+  },
+  "printed_ring_rejection_candidate": {
+    "enabled": true,
+    "minimum_axis_px": 40,
+    "radial_bins": 80,
+    "core_radius_ratio": 0.5,
+    "solid_core_black_fraction": 0.65,
+    "annulus_inner_ratio": 0.5,
+    "annulus_outer_ratio": 1.03,
+    "dark_band_min_fraction": 0.45,
+    "light_gap_max_fraction": 0.15,
+    "minimum_dark_bands": 3,
+    "note": "E candidate: reject multiple alternating concentric print bands only for black proposals; physical difficult-set validation pending"
+  },
+  "black_face_support_candidate": {
+    "enabled": true,
+    "note": "E candidate: current dark circular face and edge evidence supports parent hull; no calibrated grasp point; board validation pending"
+  },
+  "blue_projected_silhouette_candidate": {
+    "enabled": true,
+    "requires_live_validation": true,
+    "note": "E: current isolated blue silhouette, aspect (1.4,1.8], circularity>=0.60, solidity>=0.95, blue fraction>=0.90; not a grasp point",
+    "solidity94_candidate": true,
+    "solidity94_note": "E blue2 candidate: solidity >=0.94 instead of historical 0.95 only for current projected blue silhouette; retains aspect, circularity, purity and all other gates. Observed false rejection 0.949852; independent live validation pending. Disable this flag to restore perf1 exactly. Historical note above describes blue1. Runs only after original strict and hinted-circle branches both fail to find blue.",
+    "perimeter_denoise_candidate": true
+  },
+  "pale_projected_component_candidate": {
+    "enabled": true,
+    "requires_live_validation": true,
+    "note": "E candidate, missing-only current S189 pale projected component; aspect (1.4,1.8], circularity>=0.60, solidity>=0.94, purity>=0.90. Pixel silhouette center, NOT top face or grasp point. No old valid centers replaced; no arc threshold change. Disable to restore blue2."
+  }
+}

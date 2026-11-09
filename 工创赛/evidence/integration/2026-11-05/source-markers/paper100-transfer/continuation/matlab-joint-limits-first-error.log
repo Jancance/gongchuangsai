@@ -1,0 +1,9 @@
+MATLAB is running in headless mode.  Figure windows will not be displayed.
+{函数或变量 'logical' 无法识别。
+
+出错 validate_source_joint_limits_matlab_20261105/check (line 137)
+  checks(end+1)=struct('name',name,'passed',logical(passed)); %#ok<AGROW>
+
+出错 validate_source_joint_limits_matlab_20261105 (line 21)
+check('new original near point rejects negative stroke',~original.in_stroke(3));
+} 

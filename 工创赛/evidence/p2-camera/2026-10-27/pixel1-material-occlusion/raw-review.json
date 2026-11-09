@@ -1,0 +1,431 @@
+{
+  "run": "20261027-205050-650002",
+  "zip_sha256": "97049559a2e75f6aed779609e5a6fe30a8e924176d86fac18afafe2a808b975f",
+  "archive_crc_and_bytes_match": true,
+  "source_matches_pixel1": {
+    "main.py": true,
+    "ring_station_detector.py": true,
+    "project_camera.py": true,
+    "diagnostic_entry": true
+  },
+  "config_matches_pixel1": {
+    "camera_processing.json": true,
+    "project_profile.json": true,
+    "ring_station_detector.json": true
+  },
+  "source_coverage_limit": "project_ring_pixel.py and imported diagnostic helper hashes were not recorded by this recorder; no claim of full deployment match.",
+  "opencv_local": "5.0.0",
+  "local_replay_cpu_only": true,
+  "frames": 55,
+  "states": {
+    "NO_THREE_CENTERS": 51,
+    "THREE_CENTERS": 4
+  },
+  "candidate_frame_indices": [
+    22,
+    25,
+    26,
+    48
+  ],
+  "candidate_confidences": [
+    0.8228679070879666,
+    0.7979767258567199,
+    0.7979375266359591,
+    0.7978931159322186
+  ],
+  "minimum_confidence": 0.9,
+  "pixel_ready_frames": 0,
+  "all_stable_centers_empty": true,
+  "host_result_age_p50_p95_max_ms": [
+    49.7520210010407,
+    73.68327920121371,
+    82.70196900048177
+  ],
+  "snapshots": {
+    "first-frame": {
+      "frame_index": 1,
+      "ellipses": 34,
+      "groups": [
+        {
+          "median_center_px": [
+            907.7317504882812,
+            1014.3749389648438
+          ],
+          "support": 1,
+          "diameter_bands": 1,
+          "passes_cluster_gate": false
+        },
+        {
+          "median_center_px": [
+            513.2241821289062,
+            679.5200805664062
+          ],
+          "support": 1,
+          "diameter_bands": 1,
+          "passes_cluster_gate": false
+        },
+        {
+          "median_center_px": [
+            971.2483215332031,
+            615.5378723144531
+          ],
+          "support": 14,
+          "diameter_bands": 7,
+          "passes_cluster_gate": true
+        },
+        {
+          "median_center_px": [
+            505.70947265625,
+            616.8731689453125
+          ],
+          "support": 14,
+          "diameter_bands": 7,
+          "passes_cluster_gate": true
+        },
+        {
+          "median_center_px": [
+            1423.720947265625,
+            613.0946960449219
+          ],
+          "support": 4,
+          "diameter_bands": 3,
+          "passes_cluster_gate": false
+        }
+      ],
+      "qualified_candidates": 2,
+      "raw_result": null,
+      "rejection_stage": "cluster_or_triple"
+    },
+    "first-three-centers": {
+      "frame_index": 22,
+      "ellipses": 39,
+      "groups": [
+        {
+          "median_center_px": [
+            907.6940307617188,
+            1014.4833984375
+          ],
+          "support": 1,
+          "diameter_bands": 1,
+          "passes_cluster_gate": false
+        },
+        {
+          "median_center_px": [
+            530.69677734375,
+            716.7567138671875
+          ],
+          "support": 1,
+          "diameter_bands": 1,
+          "passes_cluster_gate": false
+        },
+        {
+          "median_center_px": [
+            513.4237670898438,
+            679.7620239257812
+          ],
+          "support": 1,
+          "diameter_bands": 1,
+          "passes_cluster_gate": false
+        },
+        {
+          "median_center_px": [
+            971.2383117675781,
+            615.5347900390625
+          ],
+          "support": 14,
+          "diameter_bands": 7,
+          "passes_cluster_gate": true
+        },
+        {
+          "median_center_px": [
+            505.7278289794922,
+            616.8627319335938
+          ],
+          "support": 14,
+          "diameter_bands": 7,
+          "passes_cluster_gate": true
+        },
+        {
+          "median_center_px": [
+            1423.7484741210938,
+            613.3291015625
+          ],
+          "support": 6,
+          "diameter_bands": 4,
+          "passes_cluster_gate": true
+        },
+        {
+          "median_center_px": [
+            497.32391357421875,
+            534.5690307617188
+          ],
+          "support": 1,
+          "diameter_bands": 1,
+          "passes_cluster_gate": false
+        },
+        {
+          "median_center_px": [
+            970.8551635742188,
+            495.22393798828125
+          ],
+          "support": 1,
+          "diameter_bands": 1,
+          "passes_cluster_gate": false
+        }
+      ],
+      "qualified_candidates": 3,
+      "raw_result": {
+        "centers": [
+          [
+            505.7278289794922,
+            616.8627319335938
+          ],
+          [
+            971.2383117675781,
+            615.5347900390625
+          ],
+          [
+            1423.7484741210938,
+            613.3291015625
+          ]
+        ],
+        "ellipses": [
+          [
+            [
+              505.7278289794922,
+              616.8627319335938
+            ],
+            [
+              260.0089111328125,
+              264.107177734375
+            ],
+            157.9039306640625
+          ],
+          [
+            [
+              971.2383117675781,
+              615.5347900390625
+            ],
+            [
+              261.620361328125,
+              262.5797119140625
+            ],
+            55.04762649536133
+          ],
+          [
+            [
+              1423.7484741210938,
+              613.3291015625
+            ],
+            [
+              224.7466583251953,
+              232.5807342529297
+            ],
+            10.358448028564453
+          ]
+        ],
+        "confidence": 0.8228679070879666,
+        "yaw": -0.22054090808932694,
+        "perspective": 1.0287213096921193,
+        "residual": 0.22923098614782744
+      },
+      "rejection_stage": "confidence"
+    },
+    "first-unusable": {
+      "frame_index": 23,
+      "ellipses": 35,
+      "groups": [
+        {
+          "median_center_px": [
+            907.7125854492188,
+            1014.5313110351562
+          ],
+          "support": 1,
+          "diameter_bands": 1,
+          "passes_cluster_gate": false
+        },
+        {
+          "median_center_px": [
+            514.057373046875,
+            681.0980224609375
+          ],
+          "support": 1,
+          "diameter_bands": 1,
+          "passes_cluster_gate": false
+        },
+        {
+          "median_center_px": [
+            971.2444458007812,
+            615.5343627929688
+          ],
+          "support": 14,
+          "diameter_bands": 7,
+          "passes_cluster_gate": true
+        },
+        {
+          "median_center_px": [
+            505.7248840332031,
+            616.873779296875
+          ],
+          "support": 15,
+          "diameter_bands": 8,
+          "passes_cluster_gate": true
+        },
+        {
+          "median_center_px": [
+            1417.2614135742188,
+            610.8825073242188
+          ],
+          "support": 4,
+          "diameter_bands": 3,
+          "passes_cluster_gate": false
+        }
+      ],
+      "qualified_candidates": 2,
+      "raw_result": null,
+      "rejection_stage": "cluster_or_triple"
+    },
+    "first-reappearance": {
+      "frame_index": 22,
+      "ellipses": 39,
+      "groups": [
+        {
+          "median_center_px": [
+            907.6940307617188,
+            1014.4833984375
+          ],
+          "support": 1,
+          "diameter_bands": 1,
+          "passes_cluster_gate": false
+        },
+        {
+          "median_center_px": [
+            530.69677734375,
+            716.7567138671875
+          ],
+          "support": 1,
+          "diameter_bands": 1,
+          "passes_cluster_gate": false
+        },
+        {
+          "median_center_px": [
+            513.4237670898438,
+            679.7620239257812
+          ],
+          "support": 1,
+          "diameter_bands": 1,
+          "passes_cluster_gate": false
+        },
+        {
+          "median_center_px": [
+            971.2383117675781,
+            615.5347900390625
+          ],
+          "support": 14,
+          "diameter_bands": 7,
+          "passes_cluster_gate": true
+        },
+        {
+          "median_center_px": [
+            505.7278289794922,
+            616.8627319335938
+          ],
+          "support": 14,
+          "diameter_bands": 7,
+          "passes_cluster_gate": true
+        },
+        {
+          "median_center_px": [
+            1423.7484741210938,
+            613.3291015625
+          ],
+          "support": 6,
+          "diameter_bands": 4,
+          "passes_cluster_gate": true
+        },
+        {
+          "median_center_px": [
+            497.32391357421875,
+            534.5690307617188
+          ],
+          "support": 1,
+          "diameter_bands": 1,
+          "passes_cluster_gate": false
+        },
+        {
+          "median_center_px": [
+            970.8551635742188,
+            495.22393798828125
+          ],
+          "support": 1,
+          "diameter_bands": 1,
+          "passes_cluster_gate": false
+        }
+      ],
+      "qualified_candidates": 3,
+      "raw_result": {
+        "centers": [
+          [
+            505.7278289794922,
+            616.8627319335938
+          ],
+          [
+            971.2383117675781,
+            615.5347900390625
+          ],
+          [
+            1423.7484741210938,
+            613.3291015625
+          ]
+        ],
+        "ellipses": [
+          [
+            [
+              505.7278289794922,
+              616.8627319335938
+            ],
+            [
+              260.0089111328125,
+              264.107177734375
+            ],
+            157.9039306640625
+          ],
+          [
+            [
+              971.2383117675781,
+              615.5347900390625
+            ],
+            [
+              261.620361328125,
+              262.5797119140625
+            ],
+            55.04762649536133
+          ],
+          [
+            [
+              1423.7484741210938,
+              613.3291015625
+            ],
+            [
+              224.7466583251953,
+              232.5807342529297
+            ],
+            10.358448028564453
+          ]
+        ],
+        "confidence": 0.8228679070879666,
+        "yaw": -0.22054090808932694,
+        "perspective": 1.0287213096921193,
+        "residual": 0.22923098614782744
+      },
+      "rejection_stage": "confidence"
+    }
+  },
+  "limits": [
+    "Only archived raw snapshots can be replayed, not all 55 input images.",
+    "No same-pose ground truth; candidate error is unmeasured.",
+    "Some original detail strings contain replacement characters; numeric fields remain primary evidence.",
+    "first-reappearance is a candidate reappearance, not stable recovery.",
+    "No threshold, application, camera parameter, metric gate or actuator changed."
+  ]
+}

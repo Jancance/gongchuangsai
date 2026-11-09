@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-02",
+  "classification": "E",
+  "physical_report": "user reported top contact can block motion; currently at top",
+  "images": ["watch1.png", "watch2.png"],
+  "visible": {
+    "lift_state": 4,
+    "lift_up_pulses": 105000,
+    "lift_motion_request": 0,
+    "lift_motion_state": 9,
+    "lift_motion_result": 4,
+    "lift_flags": 7,
+    "lift_stop_result": 8,
+    "lift_move_result": 1,
+    "lift_delta_raw_nonzero": true,
+    "lift_status_reply_Data1": 3,
+    "gripper_command_angle_deg": 140,
+    "arm_sequence_mode": 0,
+    "arm_sequence_enable": 0,
+    "dm_read_state": 0,
+    "dm_read_result": 0,
+    "dm_posvel_holding": 0
+  },
+  "interpretation": "upward position command was accepted and position changed; normal completion not established. flags7 has stall bit4 but not protection bit8. stop_result8 is rejected/unaccepted stop acknowledgement; current result4 may reflect explicit stop path and does not identify original motion fault. status_reply3 is separate initialization read, not current fault status.",
+  "stop_reply_raw_bytes_visible": false,
+  "fresh_driver_status_after_fault_available": true,
+  "fresh_driver_status_evidence": {
+    "image": "fresh-status0F.png",
+    "lift_state": 4,
+    "status_result": 1,
+    "status_reply_Data1": 15,
+    "driver_stall_and_protection_bits_set": true,
+    "historical_motion_flags": 7
+  },
+  "up_return_accepted": false,
+  "protection_cleared_at_latest_read": true,
+  "protection_clear_evidence": {
+    "image": "protection-cleared-status03.png",
+    "lift_state": 4,
+    "status_result": 1,
+    "status_reply_Data1": 3,
+    "root_cause_closed": false
+  },
+  "next_step": "do not rise/home again at current top; if carrier slot1 empty and transfer path clear, preserve closed gripper and use place_target35.1079407/point_enable1/jog_request5 once; module performs fresh start read/mode switch itself; rotation only, obtain actual slot alignment before descending",
+  "requirements_checked": {
+    "R": ["RUN-01", "RUN-02", "RUN-03", "RUN-04", "PWR-01", "MECH-01", "MECH-02", "FIELD-06"],
+    "E": ["RUN-06", "LOC-03", "CAL-05", "MECH-06"],
+    "Q": "待技术答疑确认"
+  }
+}

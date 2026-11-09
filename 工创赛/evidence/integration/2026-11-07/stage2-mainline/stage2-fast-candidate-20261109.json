@@ -1,0 +1,265 @@
+{
+  "base": "tmp/stage2_three_overlap_20261109/project",
+  "matlab_passed": true,
+  "deployed": true,
+  "hardware_motion": true,
+  "under20_demonstrated": true,
+  "default_start_provider": null,
+  "images": {
+    "Vehicle_LiftRuler": {
+      "axf": "tmp/stage2_sub20_20261109/project/Objects/Vehicle_LiftRuler/Vehicle_LiftRuler.axf",
+      "sha256": "8da8171cb852556eaa8669ee200c18979195d078d084a0a195c78655bf587808",
+      "build_log": "tmp/stage2_sub20_20261109/Vehicle_LiftRuler-build.log",
+      "frozen_axf": "handoff/integration13_candidates_20261109/8da8171cb852556eaa8669ee200c18979195d078d084a0a195c78655bf587808.axf"
+    },
+    "Vehicle_LiftRuler_Offline": {
+      "axf": "tmp/stage2_sub20_20261109/project/Objects/Vehicle_LiftRuler_Offline/Vehicle_LiftRuler_Offline.axf",
+      "sha256": "34613d536fed1a81383124042bac41d4fa6f711649684f487e103cdb8dba507e",
+      "build_log": "tmp/stage2_sub20_20261109/Vehicle_LiftRuler_Offline-build.log",
+      "frozen_axf": "handoff/integration13_candidates_20261109/34613d536fed1a81383124042bac41d4fa6f711649684f487e103cdb8dba507e.axf"
+    }
+  },
+  "changed": {
+    "integration10_complete.inc": "e5310624c7bfd27ffd44fa440a900efd5f8c304221c3e508f97e907b03d8e026",
+    "source_parallel_flow.c": "5405ad875fd2642c467a38bce5fa6f45e56b86a8de7a87a2d82d8bbee82249a1",
+    "source_parallel_flow.h": "f7e125af4328843d45ad112c4de4f4cb5d8d9cca52fb24ca82ff5a7a2e042edf",
+    "stage2_fast_cycle.h": "d43a80caa9a727ced5904c1209812ff52ab32bfeda720330dafdebe5c51b660d",
+    "stage2_fast_cycle.inc": "c67db9ace69d5bd8b4de1b299950bbf9d1b6192a309eb3436accfa5811c4d47d",
+    "vehicle_arm.c": "98371c48130dfff9dbc8d550b6fdfd538d11172ac1a550a4b7870af7dd20d14d",
+    "vehicle_source_parallel.inc": "c37aaa5c52051083d09e20b98486c7849f7199920f39ec8d6722578539716d3a",
+    "integration13_immediate.inc": "f8c7d9ec8b9155321a1c626d8b43dcb15bbb40583ab805a3af7246c81e188312"
+  },
+  "empty_test_entry": {
+    "it_request": 14,
+    "yaw_deg": 195,
+    "max_extension_mm": 156,
+    "depth_virtual_pulses": 118800,
+    "no_body_no_carrier_no_clamp": true,
+    "historical_only": true
+  },
+  "flash_log": "evidence/integration/2026-11-07/stage2-mainline/integration13-zero-transient-flash-20261109.log",
+  "empty_field_run": {
+    "trace": "evidence/integration/2026-11-07/stage2-mainline/integration13-empty-once-20261109-200513.json",
+    "empty_overlap_s": 2.125,
+    "yaw_zero_reached": true,
+    "operator_observation": "全程无碰擦卡顿，已停稳",
+    "loaded_motion_verified": false,
+    "under20_demonstrated": false
+  },
+  "previous_deployed_images": [
+    {
+      "images": {
+        "Vehicle_LiftRuler": {
+          "axf": "tmp/stage2_sub20_20261109/project/Objects/Vehicle_LiftRuler/Vehicle_LiftRuler.axf",
+          "sha256": "b44b6658eb35a988eb5e9f1968baef9ed72311b713d28f1e4d2589ebd6cbfb89",
+          "build_log": "tmp/stage2_sub20_20261109/Vehicle_LiftRuler-build.log"
+        },
+        "Vehicle_LiftRuler_Offline": {
+          "axf": "tmp/stage2_sub20_20261109/project/Objects/Vehicle_LiftRuler_Offline/Vehicle_LiftRuler_Offline.axf",
+          "sha256": "98905788e1eaeae4ee644a08dcb7ee1a0e77ff13b25e0eccdcb04ec587ccb645",
+          "build_log": "tmp/stage2_sub20_20261109/Vehicle_LiftRuler_Offline-build.log"
+        }
+      },
+      "flash_log": "evidence/integration/2026-11-07/stage2-mainline/integration13-empty-flash-20261109.log",
+      "empty_field_run": {
+        "trace": "evidence/integration/2026-11-07/stage2-mainline/integration13-empty-once-20261109-200513.json",
+        "empty_overlap_s": 2.125,
+        "yaw_zero_reached": true,
+        "operator_observation": "全程无碰擦卡顿，已停稳",
+        "loaded_motion_verified": false,
+        "under20_demonstrated": false
+      }
+    },
+    {
+      "images": {
+        "Vehicle_LiftRuler": {
+          "axf": "tmp/stage2_sub20_20261109/project/Objects/Vehicle_LiftRuler/Vehicle_LiftRuler.axf",
+          "sha256": "08f281627e74a3bf87ca952826d308d7e982f9e2dd58cb4571ef6fb0631e70d8",
+          "build_log": "tmp/stage2_sub20_20261109/Vehicle_LiftRuler-build.log",
+          "frozen_axf": "handoff/integration13_candidates_20261109/08f281627e74a3bf87ca952826d308d7e982f9e2dd58cb4571ef6fb0631e70d8.axf"
+        },
+        "Vehicle_LiftRuler_Offline": {
+          "axf": "tmp/stage2_sub20_20261109/project/Objects/Vehicle_LiftRuler_Offline/Vehicle_LiftRuler_Offline.axf",
+          "sha256": "9c012d7cd77540eb747a565359b5addb03130b537c34d60379b39bcd018e2152",
+          "build_log": "tmp/stage2_sub20_20261109/Vehicle_LiftRuler_Offline-build.log",
+          "frozen_axf": "handoff/integration13_candidates_20261109/9c012d7cd77540eb747a565359b5addb03130b537c34d60379b39bcd018e2152.axf"
+        }
+      },
+      "flash_log": "evidence/integration/2026-11-07/stage2-mainline/integration13-left-loaded-flash-20261109.log"
+    },
+    {
+      "images": {
+        "Vehicle_LiftRuler": {
+          "axf": "tmp/stage2_sub20_20261109/project/Objects/Vehicle_LiftRuler/Vehicle_LiftRuler.axf",
+          "sha256": "3101587320b48aaa21ac782f7aae6cab8e1ea32d66f69d3d06ab8ccca0dbbca1",
+          "build_log": "tmp/stage2_sub20_20261109/Vehicle_LiftRuler-build.log",
+          "frozen_axf": "handoff/integration13_candidates_20261109/3101587320b48aaa21ac782f7aae6cab8e1ea32d66f69d3d06ab8ccca0dbbca1.axf"
+        },
+        "Vehicle_LiftRuler_Offline": {
+          "axf": "tmp/stage2_sub20_20261109/project/Objects/Vehicle_LiftRuler_Offline/Vehicle_LiftRuler_Offline.axf",
+          "sha256": "9c557690f3368d208e4117440bb64771b887dd5e046c49462ec9af037512eec8",
+          "build_log": "tmp/stage2_sub20_20261109/Vehicle_LiftRuler_Offline-build.log",
+          "frozen_axf": "handoff/integration13_candidates_20261109/9c557690f3368d208e4117440bb64771b887dd5e046c49462ec9af037512eec8.axf"
+        }
+      },
+      "flash_log": "evidence/integration/2026-11-07/stage2-mainline/integration13-three-direct-flash-20261109.log"
+    },
+    {
+      "images": {
+        "Vehicle_LiftRuler": {
+          "axf": "tmp/stage2_sub20_20261109/project/Objects/Vehicle_LiftRuler/Vehicle_LiftRuler.axf",
+          "sha256": "fd2bdc434e0f2848cc4a4e70859520d45b2bf014ee5c6cfce0aa4531081b5f9a",
+          "build_log": "tmp/stage2_sub20_20261109/Vehicle_LiftRuler-build.log",
+          "frozen_axf": "handoff/integration13_candidates_20261109/fd2bdc434e0f2848cc4a4e70859520d45b2bf014ee5c6cfce0aa4531081b5f9a.axf"
+        },
+        "Vehicle_LiftRuler_Offline": {
+          "axf": "tmp/stage2_sub20_20261109/project/Objects/Vehicle_LiftRuler_Offline/Vehicle_LiftRuler_Offline.axf",
+          "sha256": "7ce6647f67ce4ba0e65aaf1d3902ca2800d669d32ae28fe6b29099f9bc6a2945",
+          "build_log": "tmp/stage2_sub20_20261109/Vehicle_LiftRuler_Offline-build.log",
+          "frozen_axf": "handoff/integration13_candidates_20261109/7ce6647f67ce4ba0e65aaf1d3902ca2800d669d32ae28fe6b29099f9bc6a2945.axf"
+        }
+      },
+      "flash_log": "evidence/integration/2026-11-07/stage2-mainline/integration13-three-immediate-flash-20261109.log"
+    },
+    {
+      "images": {
+        "Vehicle_LiftRuler": {
+          "axf": "tmp/stage2_sub20_20261109/project/Objects/Vehicle_LiftRuler/Vehicle_LiftRuler.axf",
+          "sha256": "72bc9eb7c295b72a5d03c605dc717f1db9ac127dea113bfc918a5add72f20b23",
+          "build_log": "tmp/stage2_sub20_20261109/Vehicle_LiftRuler-build.log",
+          "frozen_axf": "handoff/integration13_candidates_20261109/72bc9eb7c295b72a5d03c605dc717f1db9ac127dea113bfc918a5add72f20b23.axf"
+        },
+        "Vehicle_LiftRuler_Offline": {
+          "axf": "tmp/stage2_sub20_20261109/project/Objects/Vehicle_LiftRuler_Offline/Vehicle_LiftRuler_Offline.axf",
+          "sha256": "db2213a6368e057b71acc4141a61830c955572de85dba1363bd4edd765aee685",
+          "build_log": "tmp/stage2_sub20_20261109/Vehicle_LiftRuler_Offline-build.log",
+          "frozen_axf": "handoff/integration13_candidates_20261109/db2213a6368e057b71acc4141a61830c955572de85dba1363bd4edd765aee685.axf"
+        }
+      },
+      "flash_log": "evidence/integration/2026-11-07/stage2-mainline/integration13-lead5-flash-20261109.log",
+      "verified_run": "evidence/integration/2026-11-07/stage2-mainline/integration13-three-immediate-once-20261109-210430.json",
+      "three_release_command_s": 18.791,
+      "three_zero_s": 19.788,
+      "operator_observation": "三槽各一件且放稳，无碰擦，已停稳"
+    },
+    {
+      "images": {
+        "Vehicle_LiftRuler": {
+          "axf": "tmp/stage2_sub20_20261109/project/Objects/Vehicle_LiftRuler/Vehicle_LiftRuler.axf",
+          "sha256": "4d473bccae7a8727b21db9e83a1c881e0b5f90e68fc9b924ddfe47cde96d617d",
+          "build_log": "tmp/stage2_sub20_20261109/Vehicle_LiftRuler-build.log",
+          "frozen_axf": "handoff/integration13_candidates_20261109/4d473bccae7a8727b21db9e83a1c881e0b5f90e68fc9b924ddfe47cde96d617d.axf"
+        },
+        "Vehicle_LiftRuler_Offline": {
+          "axf": "tmp/stage2_sub20_20261109/project/Objects/Vehicle_LiftRuler_Offline/Vehicle_LiftRuler_Offline.axf",
+          "sha256": "197b403046dc627851dfdb1362a9ad938d3caadc9b68543c084bcc6c357c3cbf",
+          "build_log": "tmp/stage2_sub20_20261109/Vehicle_LiftRuler_Offline-build.log",
+          "frozen_axf": "handoff/integration13_candidates_20261109/197b403046dc627851dfdb1362a9ad938d3caadc9b68543c084bcc6c357c3cbf.axf"
+        }
+      },
+      "flash_log": "evidence/integration/2026-11-07/stage2-mainline/integration13-slot37-release200-flash-20261109.log",
+      "verified_run": "evidence/integration/2026-11-07/stage2-mainline/integration13-three-immediate-once-20261109-211735.json",
+      "release_command_s": 20.18,
+      "zero_s": 21.535,
+      "operator_observation": "three slots each loaded and stable, no contact, stopped"
+    },
+    {
+      "images": {
+        "Vehicle_LiftRuler": {
+          "axf": "tmp/stage2_sub20_20261109/project/Objects/Vehicle_LiftRuler/Vehicle_LiftRuler.axf",
+          "sha256": "e5dde971589715ba8b319afad6660a41c46ae397b1fcb7e2fc0c7164021adc3a",
+          "build_log": "tmp/stage2_sub20_20261109/Vehicle_LiftRuler-build.log"
+        },
+        "Vehicle_LiftRuler_Offline": {
+          "axf": "tmp/stage2_sub20_20261109/project/Objects/Vehicle_LiftRuler_Offline/Vehicle_LiftRuler_Offline.axf",
+          "sha256": "acaf09d6763ab80c92814f4de04565bf088e61e17aacd4800beccf13d3925387",
+          "build_log": "tmp/stage2_sub20_20261109/Vehicle_LiftRuler_Offline-build.log"
+        }
+      },
+      "flash_log": "evidence/integration/2026-11-07/stage2-mainline/integration13-right160-turn-overlap-flash-20261109.log",
+      "failed_run": "evidence/integration/2026-11-07/stage2-mainline/integration13-three-immediate-once-20261109-212842.json"
+    }
+  ],
+  "loaded_test_entry": {
+    "it_request": 15,
+    "left_yaw_deg": 195,
+    "retract_depth_virtual_pulses": 110800,
+    "safe_depth_virtual_pulses": 7200,
+    "tray_other_source_positions_empty_required": true,
+    "field_verified": false,
+    "historical_only": true
+  },
+  "pick_bridge": "actual settled EXT|LIFT group publishes pose; no duplicate motion",
+  "three_direct": {
+    "angles": [
+      180,
+      195,
+      165
+    ],
+    "extension_mm": [
+      0,
+      156,
+      160
+    ],
+    "carry_retract_after_mm": 5,
+    "route3_enabled": false,
+    "right_early_retract_field_verified": true,
+    "after_release_stow_deg": 0
+  },
+  "zero_window_motor_deg": 2,
+  "zero_window_nominal_mm": 0.05634794858249692,
+  "immediate_chain": {
+    "it_request": 16,
+    "fixed_grip_delay_ms": 0,
+    "fixed_release_delay_ms": 200,
+    "source": "software_interfaces/stage2_fast_cycle/integration13_immediate.inc",
+    "physical_grasp_or_placement_feedback": false,
+    "route3_enabled": false
+  },
+  "prepare_wait": "single missed/nonzero speed sample waits within original timeout, position refreshed",
+  "lead5": {
+    "grip_min_depth_pulses": 110800,
+    "yaw_max_depth_pulses": 15200,
+    "extension_ready_before_grip": true,
+    "extension_zero_before_yaw": false,
+    "field_verified": true
+  },
+  "slot_yaw_deg": 37,
+  "release200_applies_to_final_zero": true,
+  "right160_yaw_retract_overlap": {
+    "user_authorized": true,
+    "yaw_max_depth_pulses": 15200,
+    "all_axes_complete_before_release": true,
+    "field_verified": true
+  },
+  "zero_return_transient": {
+    "soft_motor_deg": 60,
+    "hard_motor_deg": 90,
+    "max_ms": 150,
+    "completion_window_motor_deg": 2,
+    "field_verified": false,
+    "whole_cycle_passed": true,
+    "actual_soft_excursion_in_successful_run_logged": false
+  },
+  "under20_scope": "one supervised mechanical three-piece cycle including return0; no route3, no cold-start preparation",
+  "commissioning_start": "IT16 once in sole CAN owner after real references; formal mission/vision provider unbound",
+  "current_field_run": {
+    "trace": "evidence/integration/2026-11-07/stage2-mainline/integration13-three-immediate-once-20261109-213859.json",
+    "third_release_command_s": 17.987,
+    "zero_complete_s": 19.185,
+    "item_to_release_command_s": [
+      6.137,
+      6.016,
+      5.834
+    ],
+    "physical_placement_observed_after_run": true,
+    "operator_observation": "三槽各一件且放稳，无碰擦，已停稳",
+    "exact_physical_stable_time_sensor_present": false,
+    "route3_enabled": false,
+    "start_reference_seconds": [
+      5.093,
+      1.391
+    ]
+  },
+  "final_delivery": "handoff/integration13_final_20261109"
+}

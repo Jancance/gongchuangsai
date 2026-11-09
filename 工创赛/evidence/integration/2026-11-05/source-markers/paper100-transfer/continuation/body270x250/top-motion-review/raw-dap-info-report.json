@@ -1,0 +1,62 @@
+{
+  "operation": "bounded DAP_Info USB-only queries, no SWD or target commands",
+  "reset_called": false,
+  "target_access_attempted": false,
+  "actuator_writes": 0,
+  "queries": [
+    {
+      "request": "DAP_Info",
+      "selector": "0xfe",
+      "name": "packet_count",
+      "tx_bytes": 2,
+      "written": 2,
+      "received_hex": "000120",
+      "rx_length": 3
+    },
+    {
+      "request": "DAP_Info",
+      "selector": "0xff",
+      "name": "packet_size",
+      "tx_bytes": 2,
+      "written": 2,
+      "received_hex": "00024000",
+      "rx_length": 4
+    },
+    {
+      "request": "DAP_Info",
+      "selector": "0xf0",
+      "name": "capabilities",
+      "tx_bytes": 2,
+      "written": 2,
+      "received_hex": "00021301",
+      "rx_length": 4
+    },
+    {
+      "request": "DAP_Info",
+      "selector": "0xfe",
+      "name": "packet_count",
+      "tx_bytes": 64,
+      "written": 64,
+      "received_hex": "000120",
+      "rx_length": 3
+    },
+    {
+      "request": "DAP_Info",
+      "selector": "0xff",
+      "name": "packet_size",
+      "tx_bytes": 64,
+      "written": 64,
+      "received_hex": "00024000",
+      "rx_length": 4
+    },
+    {
+      "request": "DAP_Info",
+      "selector": "0xf0",
+      "name": "capabilities",
+      "tx_bytes": 64,
+      "written": 64,
+      "received_hex": "00021301",
+      "rx_length": 4
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "frames": 356,
+  "states": {
+    "STALE_RESULT": 44,
+    "FOLLOWING_PIXEL": 308,
+    "SEARCHING": 4
+  },
+  "accepted_colors": {
+    "blue": 308
+  },
+  "right_side_candidate_reasons": {
+    "INSUFFICIENT_NONCLIPPED_PIXELS": 170,
+    "TOUCHES_BORDER": 3
+  },
+  "samples": [
+    {
+      "sample": "sample-01",
+      "bbox": [
+        1469,
+        186,
+        160,
+        170
+      ],
+      "recorded_usable_fraction": 0.0,
+      "bbox_HSV_median": [
+        30.0,
+        120.0,
+        255.0
+      ],
+      "bbox_v_ge250_fraction": 0.9393014705882353
+    },
+    {
+      "sample": "sample-02",
+      "bbox": [
+        1468,
+        186,
+        161,
+        170
+      ],
+      "recorded_usable_fraction": 0.0,
+      "bbox_HSV_median": [
+        30.0,
+        121.0,
+        255.0
+      ],
+      "bbox_v_ge250_fraction": 0.9401534526854219
+    },
+    {
+      "sample": "sample-03",
+      "bbox": [
+        1469,
+        184,
+        160,
+        172
+      ],
+      "recorded_usable_fraction": 0.0,
+      "bbox_HSV_median": [
+        30.0,
+        120.0,
+        255.0
+      ],
+      "bbox_v_ge250_fraction": 0.9358648255813954
+    }
+  ],
+  "packaged_source_matches_recorded_modules": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true
+  },
+  "exposure_actual_per_frame_not_recorded": true,
+  "serial_disabled": true,
+  "motion_allowed": false,
+  "remote_configuration_changed": false
+}

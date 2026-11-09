@@ -1,0 +1,108 @@
+{
+  "calibration_id": "synthetic-only",
+  "context": {
+    "camera_id": "synthetic",
+    "mount_id": "test",
+    "arm_pose_id": "held-pose-test",
+    "plane_id": "surface",
+    "plane_z_mm": 90,
+    "chassis_origin": "test origin",
+    "axes": "x_right_y_forward_mm",
+    "image_size": [
+      1920,
+      1080
+    ],
+    "pixel_space": "raw",
+    "lens_profile_id": null
+  },
+  "limits": {
+    "fit_max_mm": 0.01,
+    "validation_max_mm": 0.01
+  },
+  "markers": [
+    {
+      "id": "0",
+      "role": "fit",
+      "image_px": [
+        100,
+        100
+      ],
+      "chassis_mm": [
+        -116.83168316831683,
+        560.3960396039604
+      ]
+    },
+    {
+      "id": "1",
+      "role": "fit",
+      "image_px": [
+        900,
+        100
+      ],
+      "chassis_mm": [
+        172.64957264957266,
+        490.59829059829065
+      ]
+    },
+    {
+      "id": "2",
+      "role": "fit",
+      "image_px": [
+        900,
+        700
+      ],
+      "chassis_mm": [
+        192.79279279279277,
+        327.9279279279279
+      ]
+    },
+    {
+      "id": "3",
+      "role": "fit",
+      "image_px": [
+        100,
+        700
+      ],
+      "chassis_mm": [
+        -111.57894736842105,
+        374.7368421052632
+      ]
+    },
+    {
+      "id": "4",
+      "role": "validation",
+      "image_px": [
+        300,
+        300
+      ],
+      "chassis_mm": [
+        -33.009708737864074,
+        483.49514563106794
+      ]
+    },
+    {
+      "id": "5",
+      "role": "validation",
+      "image_px": [
+        700,
+        300
+      ],
+      "chassis_mm": [
+        113.5135135135135,
+        452.2522522522522
+      ]
+    },
+    {
+      "id": "6",
+      "role": "validation",
+      "image_px": [
+        500,
+        550
+      ],
+      "chassis_mm": [
+        48.803827751196174,
+        394.7368421052632
+      ]
+    }
+  ]
+}

@@ -1,0 +1,884 @@
+{
+  "conflicts": [],
+  "covered": [
+    {
+      "category": "linux-sbc",
+      "id": "deployment.systemd",
+      "occurrences": [
+        {
+          "alias": "watchdog",
+          "file": "main.c",
+          "line": 37
+        },
+        {
+          "alias": "systemd",
+          "file": "zdt_emm_protocol.h",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "category": "wireless",
+      "id": "robot.serial-frame",
+      "occurrences": [
+        {
+          "alias": "sequence",
+          "file": "chassis_auto_test.c",
+          "line": 172
+        },
+        {
+          "alias": "sequence",
+          "file": "chassis_auto_test.h",
+          "line": 115
+        },
+        {
+          "alias": "sequence",
+          "file": "heading_session.c",
+          "line": 75
+        },
+        {
+          "alias": "sequence",
+          "file": "heading_session.h",
+          "line": 33
+        },
+        {
+          "alias": "sequence",
+          "file": "hwt101.c",
+          "line": 50
+        },
+        {
+          "alias": "sequence",
+          "file": "hwt101.h",
+          "line": 10
+        },
+        {
+          "alias": "crc16",
+          "file": "main.c",
+          "line": 2161
+        },
+        {
+          "alias": "crc16",
+          "file": "metric_alignment.h",
+          "line": 102
+        },
+        {
+          "alias": "crc16",
+          "file": "source_observer.c",
+          "line": 23
+        },
+        {
+          "alias": "sequence",
+          "file": "source_parallel_flow.c",
+          "line": 24
+        },
+        {
+          "alias": "sequence",
+          "file": "source_parallel_flow.h",
+          "line": 38
+        },
+        {
+          "alias": "sequence",
+          "file": "source_pick_teach_table.h",
+          "line": 10
+        },
+        {
+          "alias": "sequence",
+          "file": "source_stage2_runtime.c",
+          "line": 39
+        },
+        {
+          "alias": "sequence",
+          "file": "source_stage2_runtime.h",
+          "line": 13
+        },
+        {
+          "alias": "sequence",
+          "file": "source_stage2_vision_bridge.c",
+          "line": 4
+        },
+        {
+          "alias": "sequence",
+          "file": "source_stage2_vision_bridge.h",
+          "line": 6
+        },
+        {
+          "alias": "sequence",
+          "file": "source_vision_runtime.h",
+          "line": 7
+        },
+        {
+          "alias": "sequence",
+          "file": "vehicle_arm.h",
+          "line": 37
+        }
+      ]
+    }
+  ],
+  "gaps": [],
+  "input": {
+    "files_scanned": 77,
+    "files_skipped": [],
+    "path": "D:\\Codex\\工创赛\\tmp\\stage2_three_overlap_20261109\\project\\CHASSIS\\USER"
+  },
+  "maintenance_note": "Do not auto-write these candidates. Classify evidence, remove sensitive data, deduplicate, add regression tests, then promote only reusable knowledge.",
+  "project_id": "USER",
+  "project_specific": [
+    {
+      "occurrences": [
+        {
+          "file": "app_config.h",
+          "line": 72,
+          "value": "40.0"
+        }
+      ],
+      "symbol": "APP_DISTANCE_SCURVE_ACCEL_MM_S2",
+      "values": [
+        "40.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "app_config.h",
+          "line": 76,
+          "value": "2.0"
+        }
+      ],
+      "symbol": "APP_DISTANCE_SCURVE_ARRIVAL_MM",
+      "values": [
+        "2.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "app_config.h",
+          "line": 73,
+          "value": "80.0"
+        }
+      ],
+      "symbol": "APP_DISTANCE_SCURVE_JERK_MM_S3",
+      "values": [
+        "80.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "app_config.h",
+          "line": 75,
+          "value": "50.0"
+        }
+      ],
+      "symbol": "APP_DISTANCE_SCURVE_TRACK_MM",
+      "values": [
+        "50.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "app_config.h",
+          "line": 160,
+          "value": "30"
+        }
+      ],
+      "symbol": "APP_FORWARD_HOLD_FEEDBACK_LIMIT_RPM",
+      "values": [
+        "30"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "app_config.h",
+          "line": 190,
+          "value": "115200"
+        }
+      ],
+      "symbol": "APP_HWT_BAUD",
+      "values": [
+        "115200"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "app_config.h",
+          "line": 141,
+          "value": "30"
+        }
+      ],
+      "symbol": "APP_LATERAL_HOLD_FEEDBACK_LIMIT_RPM",
+      "values": [
+        "30"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "app_config.h",
+          "line": 56,
+          "value": "(APP_ROUTE_SPEED_TRIAL_ENABLE && APP_ROUTE_USE_CUSTOM && APP_DISTANCE_SCURVE_ACTIVE)"
+        }
+      ],
+      "symbol": "APP_ROUTE_SPEED_TRIAL_ACTIVE",
+      "values": [
+        "(APP_ROUTE_SPEED_TRIAL_ENABLE && APP_ROUTE_USE_CUSTOM && APP_DISTANCE_SCURVE_ACTIVE)"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "route_config.h",
+          "line": 8,
+          "value": "1"
+        }
+      ],
+      "symbol": "APP_ROUTE_SPEED_TRIAL_ENABLE",
+      "values": [
+        "1"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "app_config.h",
+          "line": 96,
+          "value": "80"
+        }
+      ],
+      "symbol": "APP_SPEED20_FEEDBACK_RPM",
+      "values": [
+        "80"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "app_config.h",
+          "line": 97,
+          "value": "25000"
+        }
+      ],
+      "symbol": "APP_SPEED20_RUN_MS",
+      "values": [
+        "25000"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "app_config.h",
+          "line": 92,
+          "value": "(APP_SPEED20_TRIAL_ENABLE && APP_DISTANCE_SCURVE_ACTIVE)"
+        }
+      ],
+      "symbol": "APP_SPEED20_TRIAL_ACTIVE",
+      "values": [
+        "(APP_SPEED20_TRIAL_ENABLE && APP_DISTANCE_SCURVE_ACTIVE)"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "app_config.h",
+          "line": 87,
+          "value": "0"
+        }
+      ],
+      "symbol": "APP_SPEED20_TRIAL_ENABLE",
+      "values": [
+        "0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "app_config.h",
+          "line": 94,
+          "value": "2100.0"
+        }
+      ],
+      "symbol": "APP_SPEED20_TRIAL_MM",
+      "values": [
+        "2100.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "app_config.h",
+          "line": 95,
+          "value": "200.0"
+        }
+      ],
+      "symbol": "APP_SPEED20_TRIAL_MM_S",
+      "values": [
+        "200.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "app_config.h",
+          "line": 93,
+          "value": "52"
+        }
+      ],
+      "symbol": "APP_SPEED20_TRIAL_RPM",
+      "values": [
+        "52"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "chassis_auto_test.h",
+          "line": 12,
+          "value": "(APP_HWT_TURN_TEST ? 10U : (CHASSIS_AUTO_TARGET_RPM + 2U))"
+        }
+      ],
+      "symbol": "CHASSIS_AUTO_SPEED_LIMIT_RPM",
+      "values": [
+        "(APP_HWT_TURN_TEST ? 10U : (CHASSIS_AUTO_TARGET_RPM + 2U))"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "chassis_load_diag.h",
+          "line": 13,
+          "value": "4"
+        }
+      ],
+      "symbol": "CHASSIS_LOAD_SPEED_CLIPPED",
+      "values": [
+        "4"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 53,
+          "value": "150.0"
+        }
+      ],
+      "symbol": "FIELD_BODY_HALF_MM",
+      "values": [
+        "150.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 30,
+          "value": "240.0"
+        }
+      ],
+      "symbol": "FIELD_COARSE_X_MM",
+      "values": [
+        "240.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 31,
+          "value": "1200.0"
+        }
+      ],
+      "symbol": "FIELD_COARSE_Y_MM",
+      "values": [
+        "1200.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 13,
+          "value": "480.0"
+        }
+      ],
+      "symbol": "FIELD_GRID_SIZE_MM",
+      "values": [
+        "480.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 48,
+          "value": "0.0"
+        }
+      ],
+      "symbol": "FIELD_QR_PLANE_Y_MM",
+      "values": [
+        "0.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 28,
+          "value": "2160.0"
+        }
+      ],
+      "symbol": "FIELD_RAW_X_MM",
+      "values": [
+        "2160.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 29,
+          "value": "1200.0"
+        }
+      ],
+      "symbol": "FIELD_RAW_Y_MM",
+      "values": [
+        "1200.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 47,
+          "value": "(VEHICLE_BODY_LENGTH_MM*0.5f)"
+        }
+      ],
+      "symbol": "FIELD_SCANNER_REAR_OFFSET_MM",
+      "values": [
+        "(VEHICLE_BODY_LENGTH_MM*0.5f)"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 25,
+          "value": "((FIELD_START1_X_MM+FIELD_START2_X_MM)*0.5f)"
+        }
+      ],
+      "symbol": "FIELD_SCAN_X_MM",
+      "values": [
+        "((FIELD_START1_X_MM+FIELD_START2_X_MM)*0.5f)"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 26,
+          "value": "(FIELD_START1_Y_MM+VEHICLE_STAGE1_FORWARD_CM*10.0f)"
+        }
+      ],
+      "symbol": "FIELD_SCAN_Y_MM",
+      "values": [
+        "(FIELD_START1_Y_MM+VEHICLE_STAGE1_FORWARD_CM*10.0f)"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 12,
+          "value": "2400.0"
+        }
+      ],
+      "symbol": "FIELD_SIZE_MM",
+      "values": [
+        "2400.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 16,
+          "value": "2250.0"
+        }
+      ],
+      "symbol": "FIELD_START1_X_MM",
+      "values": [
+        "2250.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 17,
+          "value": "150.0"
+        }
+      ],
+      "symbol": "FIELD_START1_Y_MM",
+      "values": [
+        "150.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 18,
+          "value": "150.0"
+        }
+      ],
+      "symbol": "FIELD_START2_X_MM",
+      "values": [
+        "150.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 19,
+          "value": "150.0"
+        }
+      ],
+      "symbol": "FIELD_START2_Y_MM",
+      "values": [
+        "150.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 32,
+          "value": "1200.0"
+        }
+      ],
+      "symbol": "FIELD_STORAGE_X_MM",
+      "values": [
+        "1200.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 33,
+          "value": "2160.0"
+        }
+      ],
+      "symbol": "FIELD_STORAGE_Y_MM",
+      "values": [
+        "2160.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "heading_controller.c",
+          "line": 6,
+          "value": "3600.0"
+        }
+      ],
+      "symbol": "HEADING_CONTROLLER_INPUT_LIMIT_DEG",
+      "values": [
+        "3600.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "heading_session.h",
+          "line": 10,
+          "value": "2"
+        }
+      ],
+      "symbol": "HS_STOPPING",
+      "values": [
+        "2"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "lift_ruler_calibration.h",
+          "line": 6,
+          "value": "4"
+        }
+      ],
+      "symbol": "LRC_CAUSE_COMM",
+      "values": [
+        "4"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "lift_ruler_calibration.c",
+          "line": 6,
+          "value": "18464"
+        }
+      ],
+      "symbol": "REFERENCE_SPEED",
+      "values": [
+        "18464"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "route_plan.h",
+          "line": 15,
+          "value": "4"
+        }
+      ],
+      "symbol": "ROUTE_SPEED",
+      "values": [
+        "4"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "runtime_route.h",
+          "line": 10,
+          "value": "3"
+        }
+      ],
+      "symbol": "RQ_COMMIT",
+      "values": [
+        "3"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "source_pick_single_action.h",
+          "line": 31,
+          "value": "50.0"
+        }
+      ],
+      "symbol": "SRC_PICK_DEPTH_MM",
+      "values": [
+        "50.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "source_pick_single_action.h",
+          "line": 29,
+          "value": "0.0"
+        }
+      ],
+      "symbol": "SRC_PICK_EXT_MM",
+      "values": [
+        "0.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "source_pick_teach_table.h",
+          "line": 22,
+          "value": "0.0"
+        }
+      ],
+      "symbol": "SRC_TEACH_DOWN_EXT_MM",
+      "values": [
+        "0.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "source_pick_teach_table.h",
+          "line": 24,
+          "value": "0.0"
+        }
+      ],
+      "symbol": "SRC_TEACH_LEFT_EXT_MM",
+      "values": [
+        "0.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "source_pick_teach_table.h",
+          "line": 26,
+          "value": "0.0"
+        }
+      ],
+      "symbol": "SRC_TEACH_RIGHT_EXT_MM",
+      "values": [
+        "0.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "source_pick_single_action.h",
+          "line": 42,
+          "value": "5.0"
+        }
+      ],
+      "symbol": "SRC_TRANSFER_MARGIN_MM",
+      "values": [
+        "5.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 45,
+          "value": "283.0"
+        }
+      ],
+      "symbol": "VEHICLE_BODY_LENGTH_MM",
+      "values": [
+        "283.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 46,
+          "value": "254.0"
+        }
+      ],
+      "symbol": "VEHICLE_BODY_WIDTH_MM",
+      "values": [
+        "254.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 49,
+          "value": "100.0"
+        }
+      ],
+      "symbol": "VEHICLE_SCAN_MIN_STANDOFF_MM",
+      "values": [
+        "100.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 36,
+          "value": "5.0"
+        }
+      ],
+      "symbol": "VEHICLE_STAGE1_ENTRY_SPEED_CM_S",
+      "values": [
+        "5.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "vehicle_tuning.h",
+          "line": 37,
+          "value": "10.0"
+        }
+      ],
+      "symbol": "VEHICLE_STAGE1_SPEED_CM_S",
+      "values": [
+        "10.0"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "zdt_emm_config.h",
+          "line": 20,
+          "value": "3000"
+        }
+      ],
+      "symbol": "ZDT_EMM_APP_MAX_SPEED_RAW",
+      "values": [
+        "3000"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "zdt_emm_config.h",
+          "line": 24,
+          "value": "236"
+        }
+      ],
+      "symbol": "ZDT_EMM_MOTION_ACCELERATION",
+      "values": [
+        "236"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "zdt_emm_config.h",
+          "line": 21,
+          "value": "65536"
+        }
+      ],
+      "symbol": "ZDT_EMM_POSITION_UNITS_PER_REV",
+      "values": [
+        "65536"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "zdt_emm_config.h",
+          "line": 10,
+          "value": "1"
+        }
+      ],
+      "symbol": "ZDT_EMM_SETTINGS_CONFIRMED",
+      "values": [
+        "1"
+      ]
+    },
+    {
+      "occurrences": [
+        {
+          "file": "zdt_emm_config.h",
+          "line": 15,
+          "value": "1"
+        }
+      ],
+      "symbol": "ZDT_EMM_SPEED_INPUT_DIV10",
+      "values": [
+        "1"
+      ]
+    }
+  ],
+  "sensitive_candidates": [],
+  "skill": {
+    "knowledge_files": [
+      "SKILL.md",
+      "knowledge-index.md",
+      "opencv-playbook.md",
+      "platform-deployment.md",
+      "puzzle-robot-project.md",
+      "reusable-patterns-and-learning.md"
+    ],
+    "root": "D:\\Codex\\home\\skills\\opencv-pzq"
+  },
+  "status": "pass",
+  "suggested_tests": [],
+  "tool": "audit_knowledge",
+  "version": "1.0.0"
+}

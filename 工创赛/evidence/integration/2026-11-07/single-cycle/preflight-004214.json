@@ -1,0 +1,51 @@
+{
+  "reset": false,
+  "halt": false,
+  "writes": 0,
+  "image_sha256": "7c210e8222d047fcf3809d0f307e752fec11483be887672536779f78b10edb0e",
+  "host_snapshot_not_new_motor_query": true,
+  "flash_matches": true,
+  "RAM": {
+    "g_it_state": 2,
+    "g_it_cause": 0,
+    "g_it_request": 0,
+    "g_it_action": 2,
+    "g_it_place_depth_limit_pulses": 0,
+    "g_lift_ruler_state": 4,
+    "g_lift_ruler_request": 0,
+    "g_lift_ruler_cause": 0,
+    "g_lift_compare_operation": 1,
+    "g_lift_compare_top_valid": 1,
+    "g_lift_compare_top_raw": 3,
+    "g_lift_compare_target_pulses": 108400,
+    "g_startup_axes_state": 4,
+    "g_startup_axes_cause": 0,
+    "g_extension_home_reference_valid": 1,
+    "g_extension_hold_confirmed": 1,
+    "g_dm_jog_state": 0,
+    "g_dm_jog_result": 0,
+    "g_dm_jog_request": 0,
+    "g_dm_jog_first_fault": 0,
+    "g_dm_posvel_holding": 0,
+    "g_dm_can2_ctrl_mode": 1,
+    "g_dm_can2_feedback_valid": 1,
+    "g_vm_test_request": 1,
+    "g_startup_axes_vm_request": 1,
+    "g_safety_fault": 0,
+    "g_rtos_fault": 0,
+    "g_can_ctrl_fault_latched": 0
+  },
+  "float_RAM": {
+    "g_it_dm_deg": 180.0,
+    "g_it_extension_mm": 48.0,
+    "g_it_lift_pulses": 108400.0,
+    "g_extension_home_reference_deg": 0.0,
+    "g_startup_extension_current_deg": 0.0,
+    "g_dm_can2_logical_position_deg": 35.75799560546875
+  },
+  "pins": {
+    "PE2_high": true,
+    "gripper_pwm_us": 1537,
+    "carrier_pwm_us": 500
+  }
+}

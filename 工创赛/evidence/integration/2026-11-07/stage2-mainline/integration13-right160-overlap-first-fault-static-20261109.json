@@ -1,0 +1,72 @@
+{
+  "read_only": true,
+  "sha256": "0ca76c4c8bc833860a340e8ab5a24c1c8c30917467719d8bef9988a02466a3d2",
+  "static": {
+    "vsp_axis": {
+      "addr": 268446300,
+      "size": 128,
+      "hex": "010000008400000000000000010000000000000000000000000000007d7a0100300000000074b1c5000000009a998342fd000258025804240000ddd102006b00000000008400000000000000010000000000000000000000000000006e7a010038000000ecd2504600804a4466964744fd01afffafff48200013283102006b00"
+    },
+    "vsp_group": {
+      "addr": 268446428,
+      "size": 144,
+      "hex": "000000000900000005000000000000000700000000000000000000005802000000001442000000000000e145000096430000d442cdcce64400000000010000000000000000000000adf20108cdf7010875ef010885f801086bef010804000000070000000700000000000000010000000700000025750100b6750100117a01005a000000e02e00000300000007000000"
+    },
+    "s_rx": {
+      "addr": 268440016,
+      "size": 20,
+      "hex": "4963020800050000040003fe026b000000000000"
+    }
+  },
+  "globals": {
+    "g_it_state": 9,
+    "g_it_cause": 8,
+    "g_it_request": 0,
+    "g_source_parallel_state": 4,
+    "g_source_parallel_cause": 7,
+    "g_source_parallel_stop_mask": 1,
+    "g_dm_jog_state": 8,
+    "g_dm_jog_first_fault": 0,
+    "g_dm_jog_stop_result": 0,
+    "g_dm_posvel_holding": 0,
+    "g_dm_jog_request": 0,
+    "g_startup_axes_state": 4,
+    "g_startup_axes_cause": 0,
+    "g_safety_fault": 0,
+    "g_lift_ruler_cause": 0,
+    "g_dm_can2_logical_position_deg": 135.84085083007812,
+    "g_startup_extension_current_deg": 65.80000305175781,
+    "g_vehicle_lift_current_deg": 798.3499755859375
+  },
+  "axes": [
+    {
+      "phase": 1,
+      "options": 132,
+      "samples": 0,
+      "flags": 1,
+      "cycle": 0,
+      "stall_active": 0,
+      "stall_ms": 0,
+      "position_tick": 96893,
+      "position_cycle": 48,
+      "before": -5678.5,
+      "goal": 0.0,
+      "current": 65.80000305175781
+    },
+    {
+      "phase": 0,
+      "options": 132,
+      "samples": 0,
+      "flags": 1,
+      "cycle": 0,
+      "stall_active": 0,
+      "stall_ms": 0,
+      "position_tick": 96878,
+      "position_cycle": 56,
+      "before": 13364.73046875,
+      "goal": 810.0,
+      "current": 798.3499755859375
+    }
+  ],
+  "pe2": 1
+}

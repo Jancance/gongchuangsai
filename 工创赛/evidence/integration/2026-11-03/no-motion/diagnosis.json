@@ -1,0 +1,54 @@
+{
+  "initial": {
+    "source": "before-decoded",
+    "vm_state": 6,
+    "vm_cause": 8,
+    "backend_result": 9,
+    "backend_session": 0,
+    "wheel_rpm": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "can_fault": 0,
+    "rtos_fault": 0,
+    "safety_fault": 0
+  },
+  "first_fix": {
+    "source": "flash-result.json",
+    "real_backend_handoff_assertions": 45,
+    "one_file": "CHASSIS/USER/main.c",
+    "mechanism": "Publish the admitted g_vm_test_request to ChassisAuto_SafetyUpdate atomically with session VM request; do not assume power-on wait forces Safety task to run first",
+    "physical_after_fix": "User reports forward motion; HF3 backend_session=1, proving initial admission rejection no longer occurs"
+  },
+  "followup": {
+    "source": "after-key-uart",
+    "user_report": "电机只完成了前移，没有横移；没看到倒退或回弹",
+    "backend_fault_reason": 10,
+    "address": 1,
+    "target_decirpm": 20,
+    "measured_decirpm": -20,
+    "encoder_progress_mm": 145.572,
+    "target_mm": 150,
+    "sequence_completed": 0,
+    "physical_reverse_independently_proven": false
+  },
+  "candidate": {
+    "source": "endpoint",
+    "micro_rpm_before": 0.5,
+    "micro_rpm_candidate": 2.0,
+    "last_mm_window": 10,
+    "target_rpm_max": 2,
+    "timeout_ms_unchanged": 600,
+    "second_fresh_reverse_still_faults": true,
+    "large_or_outside_window_reverse_still_faults": true,
+    "physical_test_pending": true
+  },
+  "operator_procedure": "用户本轮授权助手下载并采日志；后续每次程序改动先对应软件仿真/模型，再构建/下载/日志核对。仿真不当作物理验收。",
+  "assistant_serial_motion_commands_sent": 0,
+  "latest_live_feedback": "endpoint/live-result.json",
+  "latest_two_action_run_completed": true,
+  "physical_stop_point_measured": false,
+  "mechanical_reverse_root_cause_closed": false
+}

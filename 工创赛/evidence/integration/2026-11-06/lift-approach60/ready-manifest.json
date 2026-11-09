@@ -1,0 +1,81 @@
+{
+  "candidate": {
+    "passed": true,
+    "stage": "D:\\Codex\\\u5de5\u521b\u8d5b\\tmp\\lift_approach60_20261106\\project",
+    "changed_files": {
+      "CHASSIS/USER/lift_ruler_calibration.c": {
+        "before": "38aaf18ab0929ac6bc8baa2b00eb34c0666ae7c5949d4402f3f4f78485b1325f",
+        "after": "a478a0dd1c7c8c1e1460bc76482b2954d85f45a529ac96bf8a7f08afb83e45d7"
+      },
+      "CHASSIS/USER/vehicle_mission.inc": {
+        "before": "c3bce99ee243cc72e79d3bd1fc74e612ba946053ecc04c2edfe3d6487e2d5a86",
+        "after": "04e74304d97f4cac7eb786417dcd177b437355d6ac0377bd0be7febe8520451d"
+      }
+    },
+    "host_result": "LIFT_RULER cases=28 checks=339 failures=0",
+    "step_virtual_pulses": 88000,
+    "rpm": 300,
+    "acceleration_rpm_s": 60,
+    "timeout_ms": 14000,
+    "maximum_samples": 1,
+    "nominal_step_mm": 52.8,
+    "nominal_end_height_mm": 60.2,
+    "previous_top_cumulative_pulses": 10000,
+    "nominal_new_top_cumulative_pulses": 98000,
+    "ordinary_top_referenced_limit_pulses": 105000,
+    "ordinary_limit_changed": false,
+    "mechanical_remaining_at_least63mm_user_confirmed": true,
+    "installed_in_external_actual_source": false,
+    "firmware_downloaded": false,
+    "hardware_operated": false
+  },
+  "matlab_cases": 19,
+  "matlab_checks": 92,
+  "dispatch": {
+    "passed": true,
+    "results": [
+      {
+        "offline": 0,
+        "passed": true,
+        "output": "DISPATCH offline=0 scenarios=6 checks=52 failures=0"
+      },
+      {
+        "offline": 1,
+        "passed": true,
+        "output": "DISPATCH offline=1 scenarios=6 checks=18 failures=0"
+      }
+    ],
+    "matlab_checks": 92,
+    "scope": "actual adapter and CAN exchange, extracted mode dispatch, simulated bus/ticks/power; not RTOS or physical timing",
+    "sha256": {
+      "CHASSIS/USER/main.c": "3918d3a3420b344e52d93f3febd65ec124f049fefaf70c8da5622e6bce106d54",
+      "CHASSIS/USER/vehicle_mission.inc": "04e74304d97f4cac7eb786417dcd177b437355d6ac0377bd0be7febe8520451d",
+      "CHASSIS/SYSTEM/CAN/can.c": "c6278fb5998ee02ed5d6b4cc66f0a7b34000990c7c8b7c06cca16d44f261280b",
+      "CHASSIS/USER/lift_ruler_adapter.c": "25c759ea5d70da09a149da5bef3280db0361b774c10e3789949a7bcad4e2633b",
+      "CHASSIS/USER/lift_ruler_calibration.c": "a478a0dd1c7c8c1e1460bc76482b2954d85f45a529ac96bf8a7f08afb83e45d7"
+    },
+    "firmware_downloaded": false,
+    "hardware_operated": false
+  },
+  "builds": {
+    "online": {
+      "target": "Vehicle_LiftRuler",
+      "sha256": "9c00b0128ef9d156be7ca1fff9943271fbb20a6c3c63b241bcbadfb93dd14942",
+      "errors": 0,
+      "warnings": 0
+    },
+    "offline": {
+      "target": "Vehicle_LiftRuler_Offline",
+      "sha256": "446f3d34b7b3b7953fc2de161fe187d85a9b23f75f410d57898b872a800d55d9",
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "stage": "D:\\Codex\\\u5de5\u521b\u8d5b\\tmp\\lift_approach60_20261106\\project",
+  "software_ready": true,
+  "firmware_downloaded": false,
+  "hardware_moved": false,
+  "superseded104mm_candidate_flashed": false,
+  "ordinary_lift_limit_changed": false,
+  "mechanical63mm_user_confirmed": true
+}

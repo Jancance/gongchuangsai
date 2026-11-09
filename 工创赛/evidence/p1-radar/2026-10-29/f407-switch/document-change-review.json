@@ -1,0 +1,103 @@
+{
+  "checks": {
+    "baseline_loc03_f407": true,
+    "pin_table_radar": true,
+    "all_updated_entrypoints_link_current_plan": true,
+    "original_eight_stages_kept": true,
+    "external_firmware_unchanged": true,
+    "archive_unchanged": true,
+    "official_q_markers_kept": true,
+    "current_plan_links_exist": true
+  },
+  "broken_current_plan_links": [],
+  "changes": [
+    {
+      "path": "docs/RADAR_AND_MANUAL_P1_PLAN_2026-09-26.md",
+      "before_sha256": "8e1a5fda28991189df80733a0c9fb878928c141dcb191931a5c24c895dfa53a8",
+      "after_sha256": "a9552ea94f194294db387494ebbf6424151093a7c40ade2d57e622f478e87a52"
+    },
+    {
+      "path": "docs/GROUP_RESPONSIBILITIES_2026-10-06.md",
+      "before_sha256": "d977f9a33ac1bf10c318d599b8cd5ee1809dbcf366fa15a0abbe8909a61c0b8d",
+      "after_sha256": "f22673f6eb9e6316961c9146c942b004288c469796af2a87738e22adfe2734fb"
+    },
+    {
+      "path": "docs/P1_CURRENT_NEXT_PLAN_2026-10-07.md",
+      "before_sha256": "19dc4ab1661e8555c2a025d4829190a82435c03807c9c4d7da336cc554328847",
+      "after_sha256": "46f2151429c931e97a9541964fdb947321a7fe47c3af08b2549fb3ad59348a1d"
+    },
+    {
+      "path": "docs/P1_STM32F407VET6_PIN_PLAN.md",
+      "before_sha256": "231d1de7196198faecdadd7f6f2ccb10a16d63df4dfe9fe43b32ce7bad62768c",
+      "after_sha256": "e01050bb245b8d743340423f46276a5a77834b847b9f788a44ee1275341ea6c3"
+    },
+    {
+      "path": "docs/HARDWARE_AND_PROTOCOL.md",
+      "before_sha256": "15ff5323d096573004b82058a5a2bee9d9619c0d6be0fea0ad655aa367a49829",
+      "after_sha256": "7049c700c29cf7abd4e68b5dc80642b5429a5938d46c4e094dab02d01c7ae573"
+    },
+    {
+      "path": "docs/RADAR_ORANGE_PI_PLAN_2026-10-23.md",
+      "before_sha256": "43780e6e42b250b6d1655311ca0a78ab4cbce2871df1f260b95e6199206826cd",
+      "after_sha256": "7bd7b34f2842c2ac6e36a57d7656a982bfa5af37c25cb6f5366a2eca533428ce"
+    },
+    {
+      "path": "docs/competition_requirements_2027.md",
+      "before_sha256": "bfeee2c8dbb979fde9b7bcbd57456ccb5f97b917ce70b7908e4cfd17b6f6c045",
+      "after_sha256": "ec59064e10b124dca7a8f516e8b0e9b599318f6b51808938eb6d2de791ac5a88"
+    },
+    {
+      "path": "docs/S_CURVE_AND_STARTUP_RADAR_REVIEW_2026-10-28.md",
+      "before_sha256": "990a87d6e25cfadf843db9271a3e2b32ed61d1da63158b8de16db8eaa3a2dc67",
+      "after_sha256": "541e405eea2688a131ed9fcaf35eebb3a9686a20a37dd9ddc0eb8cd831012dc9"
+    },
+    {
+      "path": "docs/PROJECT_REMAINING_OVERVIEW_2026-10-28.md",
+      "before_sha256": "f64a5b455dde67d76ceecc755aa98d2d84a2509cc69ab6892da8b91a20b22d7f",
+      "after_sha256": "0b8c333586e1b8da510cad69d8506887d360679c2b0c162435ecf04945f7faff"
+    },
+    {
+      "path": "docs/P2_NEXT_GATES_2026-09-29.md",
+      "before_sha256": "37b708bd95e6ff142174852bedcc5790235410a4fe447f3c1b008b0ee8b467b5",
+      "after_sha256": "a365f0f459c8f6207cbd517dfa3199d08dfb6004bf8f5e0cb6318d57231b7463"
+    },
+    {
+      "path": "docs/P2_ARM_RESUME_2026-10-28.md",
+      "before_sha256": "e0ace46b5d7ab840894558a6977131e4ace403d9004ad2853bd6b26e51da0f3f",
+      "after_sha256": "077cc3e02130b674c365b2a70e8ca6a20339077b36025f688d0e5dad510fa479"
+    },
+    {
+      "path": "docs/P2_EXECUTION_LOG.md",
+      "before_sha256": "646d40fc72f408c6fe81810d0915197b3c4988221bf266610a447d0dda8f5917",
+      "after_sha256": "753aa5aa75a835dabd58d96d3025d915b9cd801c756d8a8ae5b8f9d44309138a"
+    }
+  ],
+  "new_plan": {
+    "path": "docs/RADAR_F407_PLAN_2026-10-29.md",
+    "sha256": "bde9876f01cba0f33789cbcf055a41e4a0d65a441201b6f343445f2bb6df26cd"
+  },
+  "scope": "架构文档/来源审阅，不是固件/串口/实机测试",
+  "requirements_R": [
+    "FIELD-02",
+    "FIELD-06",
+    "FIELD-07",
+    "OBS-01",
+    "OBS-04",
+    "RUN-01",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "LOC-01~07",
+    "MOT-01~04",
+    "RUN-05",
+    "RUN-06",
+    "CAL-05"
+  ],
+  "open_Q": [
+    "OBS-03",
+    "FIELD-05"
+  ]
+}

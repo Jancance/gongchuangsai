@@ -1,0 +1,221 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "group": "module",
+      "case": "valid",
+      "output": "PASS home module valid result=1"
+    },
+    {
+      "group": "module",
+      "case": "direction1",
+      "output": "PASS home module direction1 result=1"
+    },
+    {
+      "group": "module",
+      "case": "auto1",
+      "output": "PASS home module auto1 result=1"
+    },
+    {
+      "group": "module",
+      "case": "mode0",
+      "output": "PASS home module mode0 result=1"
+    },
+    {
+      "group": "module",
+      "case": "mode_bad",
+      "output": "PASS home module mode_bad result=6"
+    },
+    {
+      "group": "module",
+      "case": "direction_bad",
+      "output": "PASS home module direction_bad result=6"
+    },
+    {
+      "group": "module",
+      "case": "auto_bad",
+      "output": "PASS home module auto_bad result=6"
+    },
+    {
+      "group": "module",
+      "case": "rpm_bad",
+      "output": "PASS home module rpm_bad result=6"
+    },
+    {
+      "group": "module",
+      "case": "detect_rpm_bad",
+      "output": "PASS home module detect_rpm_bad result=6"
+    },
+    {
+      "group": "module",
+      "case": "current_bad",
+      "output": "PASS home module current_bad result=6"
+    },
+    {
+      "group": "module",
+      "case": "head_bad",
+      "output": "PASS home module head_bad result=6"
+    },
+    {
+      "group": "module",
+      "case": "tail_bad",
+      "output": "PASS home module tail_bad result=6"
+    },
+    {
+      "group": "module",
+      "case": "transport_fail",
+      "output": "PASS home module transport_fail result=5"
+    },
+    {
+      "group": "module",
+      "case": "not_ready",
+      "output": "PASS home module not_ready result=7"
+    },
+    {
+      "group": "module",
+      "case": "other_busy",
+      "output": "PASS home module other_busy result=7"
+    },
+    {
+      "group": "module",
+      "case": "motion_busy",
+      "output": "PASS home module motion_busy result=7"
+    },
+    {
+      "group": "module",
+      "case": "motion_pending",
+      "output": "PASS home module motion_pending result=7"
+    },
+    {
+      "group": "module",
+      "case": "identity_busy",
+      "output": "PASS home module identity_busy result=7"
+    },
+    {
+      "group": "module",
+      "case": "invalid_request",
+      "output": "PASS home module invalid_request result=7"
+    },
+    {
+      "group": "module",
+      "case": "invalidate",
+      "output": "PASS home module invalidate result=1"
+    },
+    {
+      "group": "module",
+      "case": "repeat",
+      "output": "PASS home module repeat result=1"
+    },
+    {
+      "group": "transport",
+      "case": "valid",
+      "output": "PASS home transport valid result=1"
+    },
+    {
+      "group": "transport",
+      "case": "stale_start",
+      "output": "PASS home transport stale_start result=1"
+    },
+    {
+      "group": "transport",
+      "case": "duplicate",
+      "output": "PASS home transport duplicate result=6"
+    },
+    {
+      "group": "transport",
+      "case": "out_of_order",
+      "output": "PASS home transport out_of_order result=6"
+    },
+    {
+      "group": "transport",
+      "case": "first_length",
+      "output": "PASS home transport first_length result=6"
+    },
+    {
+      "group": "transport",
+      "case": "last_length",
+      "output": "PASS home transport last_length result=6"
+    },
+    {
+      "group": "transport",
+      "case": "last_tail",
+      "output": "PASS home transport last_tail result=6"
+    },
+    {
+      "group": "transport",
+      "case": "wrong_node",
+      "output": "PASS home transport wrong_node result=5"
+    },
+    {
+      "group": "transport",
+      "case": "wrong_ide",
+      "output": "PASS home transport wrong_ide result=5"
+    },
+    {
+      "group": "transport",
+      "case": "wrong_rtr",
+      "output": "PASS home transport wrong_rtr result=5"
+    },
+    {
+      "group": "transport",
+      "case": "wrong_command",
+      "output": "PASS home transport wrong_command result=5"
+    },
+    {
+      "group": "transport",
+      "case": "missing_last",
+      "output": "PASS home transport missing_last result=5"
+    },
+    {
+      "group": "transport",
+      "case": "no_reply",
+      "output": "PASS home transport no_reply result=5"
+    },
+    {
+      "group": "transport",
+      "case": "wrap_no_reply",
+      "output": "PASS home transport wrap_no_reply result=5"
+    },
+    {
+      "group": "transport",
+      "case": "no_mailbox",
+      "output": "PASS home transport no_mailbox result=4"
+    },
+    {
+      "group": "transport",
+      "case": "tx_fail",
+      "output": "PASS home transport tx_fail result=4"
+    },
+    {
+      "group": "transport",
+      "case": "tx_timeout",
+      "output": "PASS home transport tx_timeout result=4"
+    },
+    {
+      "group": "transport",
+      "case": "init_fail",
+      "output": "PASS home transport init_fail result=3"
+    },
+    {
+      "group": "transport",
+      "case": "null",
+      "output": "PASS home transport null"
+    },
+    {
+      "group": "transport",
+      "case": "disabled",
+      "output": "PASS home transport disabled result=9"
+    }
+  ],
+  "case_count": 41,
+  "source_sha256": {
+    "HARDWARE/EXTENSION/extension.c": "1118e6f1959be09bdd64f95f3322e096e2e56a8a68f69f967e39fe54f7d535c4",
+    "HARDWARE/EXTENSION/extension.h": "52c1b022aa97817a7682b5a015f34fe4141339b4f86710e877497be26418c26f",
+    "SYSTEM/CAN/can.c": "7d129bd28dcb67e34f4d78ce14d772f1ed1a7612eb0143ac133a5dd331ed4864",
+    "SYSTEM/CAN/can.h": "93105feb93dbf879c51cb5371d59e8bfb619f2bb20520369440ade19b37b7b9f",
+    "USER/main.c": "debb698a93ad2776eb7b82c047eb9dae288d34a474f40994cb9f76c653e561f4"
+  },
+  "legacy_can_and_motion_bytes_preserved": true,
+  "synthetic_only": true,
+  "hardware_acceptance": false
+}

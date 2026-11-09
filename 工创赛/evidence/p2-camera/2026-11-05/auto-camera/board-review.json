@@ -1,0 +1,116 @@
+{
+  "zip_bytes": 24475866,
+  "zip_sha256": "f23f4d4e8ca62382bf0662dbc48aac59eb33986341fcebbd286e615c08d0625e",
+  "frames": 616,
+  "fresh": 609,
+  "stale": 7,
+  "stale_fraction": 0.011363636363636364,
+  "states": {
+    "STALE_RESULT": 7,
+    "SEARCHING": 69,
+    "FOLLOWING_PIXEL": 540
+  },
+  "fresh_target_sets": {
+    "none": 69,
+    "red": 96,
+    "green": 1,
+    "blue+red+yellow": 96,
+    "lightblue+red": 1,
+    "red+yellow": 329,
+    "blue+lightblue+red+yellow": 4,
+    "lightblue+red+yellow": 13
+  },
+  "fresh_color_presence": {
+    "red": 539,
+    "yellow": 442,
+    "blue": 100,
+    "green": 1,
+    "black": 0,
+    "lightblue": 18
+  },
+  "age_ms": {
+    "p50": 111.73192799998333,
+    "p95": 136.94249700000682,
+    "max": 197.40177999995012
+  },
+  "detector_call_ms": {
+    "p50": 96.30998699998372,
+    "p95": 109.79776849995915,
+    "max": 175.8657199999334
+  },
+  "diagnostic_io_ms": {
+    "p50": 0.3994315000568349,
+    "p95": 0.5183574999136908,
+    "max": 17.9433619999827
+  },
+  "run": {
+    "frames": 616,
+    "states": {
+      "STALE_RESULT": 7,
+      "SEARCHING": 69,
+      "FOLLOWING_PIXEL": 540
+    },
+    "transition_counts": {
+      "sample-01": 1,
+      "first-frame": 1,
+      "first-nonstale-blue-missing": 509,
+      "first-other-color-candidate": 540,
+      "first-blue-with-red": 539,
+      "sample-02": 1,
+      "first-blue-with-green": 1,
+      "sample-03": 1,
+      "first-blue-with-yellow": 442,
+      "first-blue-visible": 1,
+      "first-blue-loss": 65,
+      "first-duplicate-yellow": 1,
+      "first-blue-with-lightblue": 18,
+      "first-blue-reappearance": 64,
+      "first-blue-id-change": 24,
+      "sample-04": 1,
+      "first-duplicate-lightblue": 1
+    },
+    "saved_events": [
+      "first-blue-id-change",
+      "first-blue-loss",
+      "first-blue-reappearance",
+      "first-blue-visible",
+      "first-blue-with-green",
+      "first-blue-with-lightblue",
+      "first-blue-with-red",
+      "first-blue-with-yellow",
+      "first-duplicate-lightblue",
+      "first-duplicate-yellow",
+      "first-frame",
+      "first-nonstale-blue-missing",
+      "first-other-color-candidate",
+      "sample-01",
+      "sample-02",
+      "sample-03",
+      "sample-04"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "blue",
+    "longest_watched_loss_s": 9.332376874000033,
+    "periodic_samples": {
+      "interval_s": 5.0,
+      "limit": 4,
+      "saved": 4
+    }
+  },
+  "exact_four_module_hashes": true,
+  "helper_hash_in_archive": false,
+  "current_controls_user_reported": {
+    "exposure_auto": 3,
+    "exposure_auto_priority": 0,
+    "exposure_absolute": 50,
+    "gain": 32,
+    "white_balance_temperature_auto": 1,
+    "white_balance_temperature": 4600
+  },
+  "controls_note": "Post-run readback, not per-frame sensor exposure. Switch time unknown; mixed settings.",
+  "acceptance": false
+}

@@ -1,0 +1,82 @@
+{
+  "actual": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程",
+  "stage": "D:\\Codex\\工创赛\\tmp\\startup_group_20261103",
+  "original": {
+    "USER/vehicle_parameters.h": "4e987796be50e3733caa5d8c401fd2d571182ac145dd385162bcb9a96accc20a",
+    "CHASSIS/USER/startup_axes.c": "c5c25dcafc4ebd3b68d31fd8c11a866134858cce9dce9dd927b8f2153551f3c4",
+    "CHASSIS/USER/extension_home_only.inc": "17a57ddb43bb87c6a0a77af8759434cb3524b9ee07c95d662a845ef44c8dc073",
+    "CHASSIS/USER/vehicle_mission.inc": "866f0711e75fa2e6ea1166c5e34fdbff281eee5d7737dc2a0bf19131f082e86b",
+    "CHASSIS/USER/main.c": "ebaf35c8c5efbae7ba7afe4a134ba684661a56f7e87c525a3e99839246b1ecde",
+    "CHASSIS/SYSTEM/CAN/can.c": "c1bca9bfc75966b5228d317817a762289a2867b68bc6793f29f2b39212cb0220",
+    "CHASSIS/USER/startup_pose.c": "c77e530a8e4877bf22d75f91c266dfb698a23495f574a65095b5cd9bf12c520e",
+    "CHASSIS/USER/startup_pose.h": "018c5715806c31368d2d6276244bf65fd6b7af0e21115432dc76ec9ab39a11d4"
+  },
+  "hardware_accessed": false,
+  "flashed": false,
+  "user_group": "4310到0、伸缩回零、载物盘0；夹爪145同角保持",
+  "requirements_R": [
+    "RUN-01",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05",
+    "MECH-06"
+  ],
+  "official_Q": "FIELD-05/OBS-03/QR-04仍待技术答疑确认",
+  "installed": true,
+  "changed": {
+    "USER/vehicle_parameters.h": "dad24068514a0a0504e40f6ecc075e150b0ef0d2dbeff7771f74103866a1ecc2",
+    "CHASSIS/USER/startup_axes.c": "04dc388b1333d72f6c812b2b3ff93c912b245c3f50e0c88f88564a296597fcce",
+    "CHASSIS/USER/extension_home_only.inc": "d4cc49e45beeb769a07fb78953db7ae189d08183b7c53ded0fb025a27e712c87",
+    "CHASSIS/USER/vehicle_mission.inc": "ade902fdc6a031121ac66d6bb04a3050569d41cc803d661b60bd3f81e2b9b8d6",
+    "CHASSIS/USER/main.c": "b0d158d567f357ca5dd9c170e705e0d2afbda457aa1609960d1cffe98ed50438",
+    "CHASSIS/SYSTEM/CAN/can.c": "3b768fcae452bf7d287a768e0976864abe848a19b1c156ed4a8eb005102f4ae9",
+    "CHASSIS/USER/startup_pose.c": "324b6bb274d4db2257b2f1861d85ea36e4d915f33e1001bebefa5fade7e9424d",
+    "CHASSIS/USER/startup_pose.h": "e5864023bc02e5b6a93c47251456a066776660507fd3fdb0c9492b7fbe278027",
+    "CHASSIS/USER/startup_group.inc": "e689718fe17620740eb9b95a7c58c0851ebbc546e254a1fff5d7fc41d571b71d"
+  },
+  "protected_source_files_verified": 1854,
+  "actual_builds": [
+    {
+      "target": "Vehicle_Integrated",
+      "passed": true,
+      "returncode": 0,
+      "log": "actual-Vehicle_Integrated.log",
+      "program_size": "Program Size: Code=92316 RO-data=6592 RW-data=3304 ZI-data=118824  "
+    },
+    {
+      "target": "Vehicle_Offline",
+      "passed": true,
+      "returncode": 0,
+      "log": "actual-Vehicle_Offline.log",
+      "program_size": "Program Size: Code=84876 RO-data=6584 RW-data=3180 ZI-data=118804  "
+    }
+  ],
+  "software_checks": {
+    "group_controller_normal": 66,
+    "group_controller_offline": 2,
+    "can_transport_normal": 18,
+    "can_transport_offline": 9,
+    "pwm_configurations": 7,
+    "mission": 7,
+    "normal_mode_suite_passed": true
+  },
+  "git_commit_performed": false,
+  "git_push_performed": false,
+  "unclosed": [
+    "本次联合运动/同时扫掠与净距",
+    "共享供电峰值及干扰",
+    "载盘0度真实对齐/夹爪保持",
+    "两轴真实完成及联合持位",
+    "故障物理响应",
+    "重复性/机械坐标",
+    "八段及180秒整场"
+  ],
+  "user_reported_joint_function_ok": true,
+  "user_observation": "user-observation.json"
+}

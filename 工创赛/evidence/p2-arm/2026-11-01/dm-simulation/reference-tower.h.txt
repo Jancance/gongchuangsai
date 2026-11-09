@@ -1,0 +1,71 @@
+#ifndef __TOWER_H__
+#define __TOWER_H__
+
+#include "stm32f4xx_hal.h"
+#include "hcan.h"
+
+//塔吊高度define，单位0.1mm
+#define vehicle_h 1120  //车辆顶层高度+物料托盘底厚
+#define table_h 730  //物料台高度
+#define material_h_1 550  //物料底端到上颈部高度
+#define material_h_2 150  //物料底端到下颈部高度
+#define claw_h_max 2030  //夹爪夹持装置到地面最大高度
+#define claw_h_min 550  //夹爪夹持装置到地面最小高度
+#define claw_r_max 2800  //夹爪中心到转轴最大距离
+#define claw_r_min 1200  //夹爪中心到转轴最小距离
+
+#define G6220_Enable 1
+#define G6220_Disable 2
+#define G6220_Save_Zero_Position 3
+#define G6220_Clear_Error 4
+#define G6220_MIT 0
+#define G6220_POZ 0x100
+#define G6220_SPEED 0x200
+#define G6220_Modo G6220_POZ
+#define	G6220_CAN_ID 0X01
+#define P_MAX 12.5f
+#define V_MAX 45.f
+#define T_MAX 10.f
+
+#define	MOTOR35_CAN_ID 0X0300
+#define	MOTOR35_Dir 0x00
+#define	MOTOR35_Reduction 44.94
+
+#define	MOTOR28_CAN_ID 0X0400
+#define	MOTOR28_Dir 0x00
+#define	MOTOR28_Reduction 3.189
+
+#define PWM1_INTI   HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1)
+
+#define	LFD_01M_CL  __HAL_TIM_SetCompare(&htim1,TIM_CHANNEL_1,70)
+#define	LFD_01M_OP_C __HAL_TIM_SetCompare(&htim1,TIM_CHANNEL_1,100)  //车上夹爪打开幅度
+#define	LFD_01M_OP_G  __HAL_TIM_SetCompare(&htim1,TIM_CHANNEL_1,115)  //地面夹爪打开幅度
+#define	LFD_01M_OP_T  __HAL_TIM_SetCompare(&htim1,TIM_CHANNEL_1,135)  //物料台夹爪打开幅度
+#define	LFD_01M_OP_M  __HAL_TIM_SetCompare(&htim1,TIM_CHANNEL_1,155)  //物料台码垛夹爪打开幅度
+
+struct Finish_Flag
+{
+	uint8_t MOTOR35_flag;
+	uint8_t MOTOR28_flag;
+	uint8_t G6220_flag;
+};
+
+extern struct Finish_Flag flag;
+
+void G6220_Command(uint8_t CMD);
+void Motor_Homing(uint16_t ID);
+void TowerMotor_Init(void);
+void G6220_Init(void);
+void Tower_init(void);
+void G6220_Position(int32_t position,uint16_t speed);
+void Motor35_AbsPosition(uint32_t z,uint16_t speed);
+void Motor28_AbsPosition(uint32_t y,uint16_t speed);
+void Response_Handle(uint32_t ExtId,uint32_t StdId, uint8_t *rxBuf);
+void Tower_Control(uint32_t yaw,uint16_t yaw_speed,uint32_t z,uint16_t z_speed,uint32_t y,uint16_t y_speed);
+
+
+
+
+
+
+#endif

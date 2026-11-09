@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "status": "user_selected_not_installed",
+  "decision_date": "2026-10-24",
+  "role": "future_material_ring_stacking_camera",
+  "runtime_config": false,
+  "user_selection": {
+    "same_camera_family_and_other_parameters_as_current": true,
+    "claimed_field_of_view_deg": 135,
+    "field_of_view_axis": "unconfirmed",
+    "claimed_distortion_free": true,
+    "source": "user_explicit_selection_and_not_yet_replaced_confirmation"
+  },
+  "capture_target_only": {
+    "width": 1920,
+    "height": 1080,
+    "fourcc": "MJPG",
+    "requested_fps": 30
+  },
+  "device_by_id": null,
+  "usb_vid_pid": null,
+  "physical_device_verified": false,
+  "controls_verified": false,
+  "intrinsics_verified": false,
+  "residual_distortion_verified": false,
+  "pixel_to_mm_verified": false,
+  "camera_to_tool_verified": false,
+  "calibration_id": null,
+  "serial_enabled": false,
+  "motion_allowed": false,
+  "note": "Planning metadata only. Do not load as camera runtime config. Current 120deg camera packages and evidence remain historical/current until physical replacement; do not inherit calibration or claim 135deg validation from them."
+}

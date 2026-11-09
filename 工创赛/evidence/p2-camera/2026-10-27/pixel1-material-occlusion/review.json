@@ -1,0 +1,52 @@
+{
+  "source": "console.txt",
+  "screenshot": "board-preview.png",
+  "actual_scene": "Blue cylindrical material covers the right printed ring center and a substantial middle band; left and middle printed rings remain visible. Not a measured quarter-edge-only occlusion.",
+  "status_samples": 41,
+  "states": {
+    "LOST": 40,
+    "CANDIDATE": 1
+  },
+  "reasons": {
+    "NO_THREE_CENTERS": 40,
+    "LOW_CONFIDENCE": 1
+  },
+  "all_stable_centers_empty": true,
+  "stable_samples": 0,
+  "nonempty_candidate_samples": [
+    {
+      "sample_index": 23,
+      "state": "CANDIDATE",
+      "reason": "LOW_CONFIDENCE",
+      "fps": 18.7,
+      "centers_px": [],
+      "candidate_centers_px": [
+        [
+          482.49881744384766,
+          612.9437713623047
+        ],
+        [
+          948.6215209960938,
+          607.0758819580078
+        ],
+        [
+          1405.5557250976562,
+          597.2950820922852
+        ]
+      ],
+      "pixel_ready": false
+    }
+  ],
+  "reported_nonzero_loop_fps_min_max": [
+    18.3,
+    24.9
+  ],
+  "error_markers": [],
+  "safety_rejection_observed": true,
+  "occluded_ring_localization_accepted": false,
+  "next_step": "Preserve current object/paper/camera/lighting, capture original 1920x1080 image with the existing v2 recorder for 3 seconds using the pixel1 app. Do not loosen thresholds or change the occlusion yet.",
+  "scope": "Screenshot and once-per-second status samples; no per-frame confidence, candidate contours or native raw frame. Cannot identify the precise internal rejection stage yet.",
+  "metric_valid": false,
+  "motion_allowed": false,
+  "serial": "DISABLED"
+}

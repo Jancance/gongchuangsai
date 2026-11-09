@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "calibration_id": "source-paper100-image-8fa7a4e70382-candidate",
+  "context": {
+    "camera_id": "Generic_USB_CAMERA_EP.20CC54K01-user135",
+    "image_size": [
+      1920,
+      1080
+    ],
+    "mount_id": "current-field-mount-20261105",
+    "arm_pose_id": "image-bound-8fa7a4e70382-pose-feedback-not-recorded",
+    "pixel_space": "raw",
+    "lens_profile_id": null,
+    "plane_id": "paper_on_source_surface",
+    "plane_z_mm": 85.5,
+    "plane_origin": "corner A; X along AB; Y along AD",
+    "axes": "x_along_ab_y_toward_ad_mm"
+  },
+  "homography_image_to_plane": [
+    [
+      0.23968772163773133,
+      0.0049220881384399425,
+      -185.02401339034077
+    ],
+    [
+      -0.00523363285160345,
+      0.23898089575335105,
+      -125.47750516254571
+    ],
+    [
+      -1.4256306830663339e-06,
+      -2.7977716618425685e-05,
+      1.0
+    ]
+  ],
+  "coordinate_frame": "paper_local",
+  "fit_hull_image_px": [
+    [
+      760.8134988121342,
+      541.7141089191585
+    ],
+    [
+      1170.7143018247364,
+      550.6908545198128
+    ],
+    [
+      1157.6372391349978,
+      956.9542037348396
+    ],
+    [
+      752.4615586443748,
+      948.4225217274081
+    ]
+  ],
+  "fit": {
+    "rms_mm": 9.122938620116688e-06,
+    "p95_mm": 1.254002597483064e-05,
+    "max_mm": 1.3111385997190705e-05,
+    "count": 4
+  },
+  "validation": {
+    "rms_mm": 0.6491818878638864,
+    "p95_mm": 0.9844388884096213,
+    "max_mm": 1.0531281714427432,
+    "count": 3
+  },
+  "errors_mm": {
+    "A": 5.454517965234608e-06,
+    "B": 1.3111385997190705e-05,
+    "C": 9.302319181456949e-06,
+    "D": 6.687203085862496e-06,
+    "M": 0.14527250264984046,
+    "E": 0.36623534111152495,
+    "F": 1.0531281714427432
+  },
+  "limits": {
+    "fit_max_mm": 3.0,
+    "validation_max_mm": 3.0
+  },
+  "independent_check_passed": true,
+  "motion_allowed": false,
+  "physical_pick_verified": false,
+  "note": "仅当前姿态/特征平面的离线映射；原始图尚未完成CAL-03，不是动作许可",
+  "method": "measured_rectangle_four_corners_with_held_out_marks",
+  "measured_paper_mm": [
+    100.0,
+    100.0
+  ],
+  "validation_scope": "held-out paper marks only; ruler scale, lens, TCP and physical placement remain unverified",
+  "field_calibration_accepted": false,
+  "pose_feedback_recorded": false,
+  "physical_dimension_reference_confirmed": true
+}

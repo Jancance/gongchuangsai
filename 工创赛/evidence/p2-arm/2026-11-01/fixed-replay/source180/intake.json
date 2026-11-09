@@ -1,0 +1,40 @@
+{
+  "date": "2026-11-01",
+  "classification": "E",
+  "source": "user screenshot codex-clipboard-b4312f90-f705-44d5-99fa-fe2d1c2ec118.png",
+  "image": "source180-watch.png",
+  "visible": {
+    "vm_test_request": 1,
+    "lift_state": 4,
+    "carrier_state": 4,
+    "dm_point_enable": 1,
+    "dm_pick_target_deg": 180.0,
+    "dm_place_target_deg": 33.8401489,
+    "dm_jog_request": 0,
+    "dm_jog_state": 7,
+    "dm_jog_result": 1,
+    "dm_jog_stop_result": 0,
+    "dm_logical_position_deg": 179.975769,
+    "dm_ctrl_mode": 2,
+    "dm_motor_state": 1,
+    "dm_posvel_holding": 1,
+    "lift_down_pulses": 5000,
+    "lift_up_pulses": 5000,
+    "lift_motion_request": 0,
+    "lift_motion_state": 0,
+    "lift_motion_result": 0,
+    "gripper_command_angle_deg": 180.0
+  },
+  "accepted_scope": "software arrival and enabled position-speed hold at source180",
+  "physical_alignment_confirmed": true,
+  "physical_alignment_evidence": "user replied 没有问题 to explicit gripper-above-material-center confirmation",
+  "source_descent_performed_in_this_step": false,
+  "source_pick_down_pulses_confirmed": false,
+  "next_step": "one manual descent of 5000 virtual pulses; obtain completion status and actual remaining grasp-height gap; no automatic sequence start",
+  "notes": "stop_result0 is normal during enabled hold. Current place target is boot default, not the mode3 latched replay place angle. No new motion command, precision acceptance or physical grasp is inferred. Arm mode3 variables are not visible.",
+  "requirements_checked": {
+    "R": ["RUN-01", "RUN-02", "RUN-03", "RUN-04", "MECH-01", "MECH-02", "FIELD-06"],
+    "E": ["RUN-06", "LOC-03", "CAL-05", "MECH-06"],
+    "Q": "待技术答疑确认"
+  }
+}

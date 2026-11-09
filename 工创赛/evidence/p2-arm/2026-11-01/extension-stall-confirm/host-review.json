@@ -1,0 +1,384 @@
+{
+  "passed": true,
+  "case_count": 72,
+  "cases": [
+    {
+      "group": "motion",
+      "case": "positive",
+      "output": "PASS motion positive result=1 moves=1 stops=0"
+    },
+    {
+      "group": "motion",
+      "case": "negative",
+      "output": "PASS motion negative result=1 moves=1 stops=0"
+    },
+    {
+      "group": "motion",
+      "case": "enable",
+      "output": "PASS motion enable result=1 moves=1 stops=0"
+    },
+    {
+      "group": "motion",
+      "case": "wrap",
+      "output": "PASS motion wrap result=1 moves=1 stops=0"
+    },
+    {
+      "group": "motion",
+      "case": "signed",
+      "output": "PASS motion signed result=1 moves=1 stops=0"
+    },
+    {
+      "group": "motion",
+      "case": "repeat",
+      "output": "PASS motion repeat result=1 moves=1 stops=0"
+    },
+    {
+      "group": "motion",
+      "case": "edit_direction",
+      "output": "PASS motion edit_direction result=1 moves=1 stops=0"
+    },
+    {
+      "group": "motion",
+      "case": "ack_only",
+      "output": "PASS motion ack_only result=3 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "no_stop",
+      "output": "PASS motion no_stop result=3 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "no_arrival",
+      "output": "PASS motion no_arrival result=3 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "bad_options",
+      "output": "PASS motion bad_options result=4 moves=0 stops=0"
+    },
+    {
+      "group": "motion",
+      "case": "pre_moving",
+      "output": "PASS motion pre_moving result=5 moves=0 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "fault",
+      "output": "PASS motion fault result=5 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "protect",
+      "output": "PASS motion protect result=5 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "disable",
+      "output": "PASS motion disable result=5 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "read_fail",
+      "output": "PASS motion read_fail result=4 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "move_fail",
+      "output": "PASS motion move_fail result=4 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "not_ready",
+      "output": "PASS motion not_ready result=6 moves=0 stops=0"
+    },
+    {
+      "group": "motion",
+      "case": "busy",
+      "output": "PASS motion busy result=6 moves=0 stops=0"
+    },
+    {
+      "group": "motion",
+      "case": "power_loss",
+      "output": "PASS motion power_loss result=6 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "busy_during",
+      "output": "PASS motion busy_during result=6 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "gap",
+      "output": "PASS motion gap result=7 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "abort",
+      "output": "PASS motion abort result=2 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "stop_fail",
+      "output": "PASS motion stop_fail result=4 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "readonly",
+      "output": "PASS readonly preserved"
+    },
+    {
+      "group": "motion",
+      "case": "readonly_during",
+      "output": "PASS motion readonly_during result=1 moves=1 stops=0"
+    },
+    {
+      "group": "motion",
+      "case": "late_success",
+      "output": "PASS motion late_success result=1 moves=1 stops=0"
+    },
+    {
+      "group": "motion",
+      "case": "transient_stall",
+      "output": "PASS motion transient_stall result=1 moves=1 stops=0"
+    },
+    {
+      "group": "motion",
+      "case": "persistent_stall",
+      "output": "PASS motion persistent_stall result=5 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "wrap_stall",
+      "output": "PASS motion wrap_stall result=5 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "preexisting_stall",
+      "output": "PASS motion preexisting_stall result=5 moves=0 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "stall_then_protect",
+      "output": "PASS motion stall_then_protect result=5 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "stall_then_disable",
+      "output": "PASS motion stall_then_disable result=5 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "stall_then_read_fail",
+      "output": "PASS motion stall_then_read_fail result=4 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "stall_then_abort",
+      "output": "PASS motion stall_then_abort result=2 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "stall_then_power_loss",
+      "output": "PASS motion stall_then_power_loss result=6 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "stall_then_gap",
+      "output": "PASS motion stall_then_gap result=7 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "transient_no_arrival",
+      "output": "PASS motion transient_no_arrival result=3 moves=1 stops=1"
+    },
+    {
+      "group": "motion",
+      "case": "intermittent_stall",
+      "output": "PASS motion intermittent_stall result=1 moves=1 stops=0"
+    },
+    {
+      "group": "motion",
+      "case": "arrival_with_stall",
+      "output": "PASS motion arrival_with_stall result=5 moves=1 stops=1"
+    },
+    {
+      "group": "transport",
+      "case": "valid",
+      "output": "PASS transport valid result=1"
+    },
+    {
+      "group": "transport",
+      "case": "notice",
+      "output": "PASS transport notice result=1"
+    },
+    {
+      "group": "transport",
+      "case": "enable",
+      "output": "PASS transport enable ack"
+    },
+    {
+      "group": "transport",
+      "case": "stop",
+      "output": "PASS transport stop"
+    },
+    {
+      "group": "transport",
+      "case": "bad_small_ack",
+      "output": "PASS transport enable ack"
+    },
+    {
+      "group": "transport",
+      "case": "unlock",
+      "output": "PASS transport unlock rejected"
+    },
+    {
+      "group": "transport",
+      "case": "null",
+      "output": "PASS transport null rejected"
+    },
+    {
+      "group": "transport",
+      "case": "short",
+      "output": "PASS transport short rejected"
+    },
+    {
+      "group": "transport",
+      "case": "bad_direction",
+      "output": "PASS transport bad_direction result=7"
+    },
+    {
+      "group": "transport",
+      "case": "too_fast",
+      "output": "PASS transport too_fast result=7"
+    },
+    {
+      "group": "transport",
+      "case": "high_speed_byte",
+      "output": "PASS transport high_speed_byte result=7"
+    },
+    {
+      "group": "transport",
+      "case": "zero_speed",
+      "output": "PASS transport zero_speed result=7"
+    },
+    {
+      "group": "transport",
+      "case": "zero_pulses",
+      "output": "PASS transport zero_pulses result=7"
+    },
+    {
+      "group": "transport",
+      "case": "too_many_pulses",
+      "output": "PASS transport too_many_pulses result=7"
+    },
+    {
+      "group": "transport",
+      "case": "high_pulse_byte",
+      "output": "PASS transport high_pulse_byte result=7"
+    },
+    {
+      "group": "transport",
+      "case": "bad_mode",
+      "output": "PASS transport bad_mode result=7"
+    },
+    {
+      "group": "transport",
+      "case": "synchronous",
+      "output": "PASS transport synchronous result=7"
+    },
+    {
+      "group": "transport",
+      "case": "bad_checksum",
+      "output": "PASS transport bad_checksum result=7"
+    },
+    {
+      "group": "transport",
+      "case": "too_much_accel",
+      "output": "PASS transport too_much_accel result=7"
+    },
+    {
+      "group": "transport",
+      "case": "zero_accel",
+      "output": "PASS transport zero_accel result=7"
+    },
+    {
+      "group": "transport",
+      "case": "wrong_node",
+      "output": "PASS transport wrong_node result=5"
+    },
+    {
+      "group": "transport",
+      "case": "wrong_ide",
+      "output": "PASS transport wrong_ide result=5"
+    },
+    {
+      "group": "transport",
+      "case": "wrong_rtr",
+      "output": "PASS transport wrong_rtr result=5"
+    },
+    {
+      "group": "transport",
+      "case": "no_reply",
+      "output": "PASS transport no_reply result=5"
+    },
+    {
+      "group": "transport",
+      "case": "bad_length",
+      "output": "PASS transport bad_length result=6"
+    },
+    {
+      "group": "transport",
+      "case": "bad_tail",
+      "output": "PASS transport bad_tail result=6"
+    },
+    {
+      "group": "transport",
+      "case": "bad_ack",
+      "output": "PASS transport bad_ack result=8"
+    },
+    {
+      "group": "transport",
+      "case": "tx_fail",
+      "output": "PASS transport tx_fail result=4"
+    },
+    {
+      "group": "transport",
+      "case": "tx_timeout",
+      "output": "PASS transport tx_timeout result=4"
+    },
+    {
+      "group": "transport",
+      "case": "no_mailbox",
+      "output": "PASS transport no_mailbox result=4"
+    },
+    {
+      "group": "transport",
+      "case": "init_fail",
+      "output": "PASS transport init_fail result=3"
+    },
+    {
+      "group": "transport",
+      "case": "disabled",
+      "output": "PASS transport disabled result=9"
+    }
+  ],
+  "expected_pulses": 1600,
+  "expected_timeout_ms": 10000,
+  "expected_stall_confirm_ms": 2000,
+  "changed_source_sha256": {
+    "HARDWARE/EXTENSION/extension.c": "fc694411786c83a536271b7d0f91e6dde400782ebf4b859c650653a8432241c2",
+    "HARDWARE/EXTENSION/extension.h": "0b7ead0f146dc99d166b1897df34d020f39312e1f7dfb0dd1b31bc5a59bbc833",
+    "HARDWARE/EXTENSION/extension_config.h": "77fd7b02b4e66a7ace31b3d64cb3e58794ceccc8c9b4e6059ec9853b00c56411"
+  },
+  "config_sha256": "77fd7b02b4e66a7ace31b3d64cb3e58794ceccc8c9b4e6059ec9853b00c56411",
+  "source_sha256": {
+    "HARDWARE/EXTENSION/extension.c": "fc694411786c83a536271b7d0f91e6dde400782ebf4b859c650653a8432241c2",
+    "SYSTEM/CAN/can.c": "ae764fdf5db38ef649083bb29557353b113f046a449ff556dcb6eeb396ead37b",
+    "USER/main.c": "c6a2693d269b607353a869bf28d09b7b21c3f92a8dde96ba9f96385010e2bc94"
+  },
+  "protected_source_count": 817,
+  "scope": "Actual ordinary-motion C state machine and CAN transport; unchanged task arbitration protected by hashes, not re-run.",
+  "synthetic_only": true,
+  "hardware_acceptance": false
+}

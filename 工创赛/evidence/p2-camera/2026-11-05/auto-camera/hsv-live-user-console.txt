@@ -1,0 +1,93 @@
+orangepi@robot-opi5pro:~$ python3 /home/orangepi/p2-hsv-live-20261105/vision_app/run.py --check &&
+python3 /home/orangepi/p2-generic135-rejection-audit-20261026/p2_color_follow_audit.py \
+  --app /home/orangepi/p2-hsv-live-20261105/vision_app \
+  --watch-color blue --sample-every 5 --max-samples 4
+{"image_size": [1920, 1080], "undistort": false, "serial": "DISABLED", "features": ["turntable", "measurement", "material-stop-reference", "ring", "stack", "follow-pixel"], "metric_geometry_verified": false, "camera_profile": "generic_135_1920x1080_20261026_v1", "motion_allowed": false}
+Diagnostic folder: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488
+Watch color: blue ; keep F mode; Q quits. No robot control.
+Camera: /dev/v4l/by-id/usb-Generic_USB_CAMERA_EP.20CC54K01-video-index0, 1920x1080, MJPG, requested 30.0 FPS; reconnect every 1.0s
+Undistortion: OFF (raw image)
+Serial: /dev/ttyS7, 115200 baud; RX control: AA 01/02/03/04/05/14/15 BB; task: AA 06 <15 ASCII bytes> BB
+Controls: F = moving follow, A = turntable, M = stop-reference material, R = ring station, S = stacked ring, D = measurement, I = idle, Q or Esc = quit
+Turntable tracking: Hough until stable, then local radial tracking
+Camera connected: /dev/v4l/by-id/usb-Generic_USB_CAMERA_EP.20CC54K01-video-index0, 1920x1080, 30.0 FPS
+Mode=FOLLOW FPS=0.0 Units=px targets=0 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/sample-01
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/first-frame
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/first-nonstale-blue-missing
+Mode=FOLLOW FPS=15.4 Units=px targets=0 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=16.0 Units=px targets=0 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/first-other-color-candidate
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/first-blue-with-red
+Mode=FOLLOW FPS=15.7 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=15.7 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=15.7 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/sample-02
+Mode=FOLLOW FPS=15.7 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=15.6 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=15.4 Units=px targets=1 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=15.4 Units=px targets=0 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/first-blue-with-green
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/sample-03
+Mode=FOLLOW FPS=15.3 Units=px targets=1 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/first-blue-with-yellow
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/first-blue-visible
+Mode=FOLLOW FPS=14.7 Units=px targets=2 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/first-blue-loss
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/first-duplicate-yellow
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/first-blue-with-lightblue
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/first-blue-reappearance
+Mode=FOLLOW FPS=13.6 Units=px targets=3 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/first-blue-id-change
+Mode=FOLLOW FPS=12.8 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=12.1 Units=px targets=3 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/sample-04
+Mode=FOLLOW FPS=11.4 Units=px targets=3 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=10.8 Units=px targets=3 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=10.4 Units=px targets=3 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=10.0 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=9.5 Units=px targets=3 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=9.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=9.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=9.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=9.4 Units=px targets=3 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/first-duplicate-lightblue
+Mode=FOLLOW FPS=9.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=9.2 Units=px targets=3 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=9.1 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.9 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.8 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.8 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.6 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.6 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=3 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=0 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.2 Units=px targets=3 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.3 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=3 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.4 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=2 Ready=False Serial=DISABLED
+Mode=FOLLOW FPS=8.5 Units=px targets=3 Ready=False Serial=DISABLED
+Captured: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488/longest-blue-loss
+Run saved: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488
+Evidence ZIP: /home/orangepi/p2-hsv-live-20261105/color-follow-audits/20261105-161032-971488.zip

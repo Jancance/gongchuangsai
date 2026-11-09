@@ -1,0 +1,295 @@
+--- actual/CHASSIS/USER/extension_home_only.inc
++++ candidate/CHASSIS/USER/extension_home_only.inc
+@@ -4,6 +4,8 @@
+  */
+ volatile uint32_t g_startup_axes_state=0U,g_startup_axes_cause=0U,g_startup_axes_vm_request=0U;
+ volatile uint32_t g_startup_extension_feedback_valid=0U;
++volatile float g_extension_home_reference_deg=0.0f;
++volatile uint32_t g_extension_home_reference_valid=0U;
+ volatile float g_startup_extension_current_deg=0.0f,g_startup_extension_target_deg=0.0f;
+ volatile uint32_t g_extension_home_state=0U,g_extension_home_result=0U;
+ volatile uint32_t g_extension_home_flags=0U,g_extension_home_reported=0U,g_extension_home_elapsed_ms=0U;
+@@ -89,6 +91,7 @@
+     g_extension_hold_ready_tick=g_extension_hold_delta_mdeg=eh_hold_begin=0U;
+     eh_begin=eh_last=(uint32_t)xTaskGetTickCount();eh_phase=eh_started=eh_seen=eh_stop_pending=0U;eh_hold_base_locked=0U;
+     g_extension_home_capture=g_extension_home_done_notice=g_extension_home_reported=0U;
++    g_extension_home_reference_valid=0U;
+     g_startup_axes_cause=g_extension_home_result=0U;
+     g_startup_axes_state=g_extension_home_state=1U;g_startup_axes_vm_request=1U;return 1U;
+ #endif
+@@ -207,6 +210,7 @@
+              if(!(delta<=VEHICLE_EXTENSION_HOLD_POSITION_TOL_DEG)){eh_fail(5U);return;}}
+             if(++g_extension_hold_samples>=VEHICLE_EXTENSION_HOLD_CONFIRM_SAMPLES){
+                 g_extension_hold_confirmed=1U;g_extension_hold_ready_tick=now;eh_started=0U;
++                g_extension_home_reference_valid=1U;
+                 g_extension_home_state=8U;g_extension_home_result=g_extension_home_reported=1U;g_startup_axes_state=4U;
+             }else eh_phase=7U;
+             return;
+@@ -231,6 +235,8 @@
+         raw=((uint32_t)eh_reply.Data[2]<<24)|((uint32_t)eh_reply.Data[3]<<16)|((uint32_t)eh_reply.Data[4]<<8)|eh_reply.Data[5];
+         g_startup_extension_current_deg=(eh_reply.Data[1]?-1.0f:1.0f)*(float)raw*0.1f;
+         g_startup_extension_feedback_valid=1U;g_extension_home_capture=0U;
++        /* Immutable for this homing cycle; hold/rebound samples must not rebase travel. */
++        g_extension_home_reference_deg=g_startup_extension_current_deg;
+         eh_hold_position=g_startup_extension_current_deg;g_startup_extension_target_deg=eh_hold_position;
+         eh_hold_begin=now;eh_phase=3U;g_extension_home_state=9U;
+         /* Not ready until STOP, one enable and three fresh readback bundles. */
+--- actual/CHASSIS/USER/source_prepare.inc
++++ candidate/CHASSIS/USER/source_prepare.inc
+@@ -4,12 +4,63 @@
+ volatile uint32_t g_source_prepare_state=0U,g_source_prepare_cause=0U,g_source_prepare_done_mask=0U;
+ volatile uint32_t g_source_prepare_release_ms=0U,g_source_prepare_elapsed_ms=0U,g_source_prepare_segment=0U;
+ volatile float g_source_prepare_extension_mm=0,g_source_prepare_grip_deg=STARTUP_GROUP_GRIPPER_ANGLE_DEG;
++volatile SourcePrepFault g_source_prepare_fault;
+ #if !APP_MOTOR_OFFLINE_ONLY
+ static uint32_t sp_begin,sp_phase,sp_dm_cycle,sp_samples,sp_grip_tick;
+-static uint32_t sp_bad_pos;
+-/* 伸缩位置反馈有毛刺：单次越界先忽略，连续 8 次(约400ms)才判故障 */
++static uint32_t sp_bad_pos,sp_dm_posted,sp_read_wait,sp_read_begin,sp_position_tick,sp_last_command,sp_last_result;
++static SourcePrepFault sp_bad_snapshot;
++/* Keep the existing envelope; sample count is not a time measurement. */
+ #define SOURCE_PREP_POS_TOL_DEG 10.0f
+ static float sp_origin,sp_goal,sp_before;
++static int32_t SourcePrep_Mdeg(float v)
++{return v>=-2000000.0f && v<=2000000.0f?(int32_t)(v*1000.0f):INT32_MIN;}
++static SourcePrepFault SourcePrep_Snapshot(uint32_t why)
++{
++ SourcePrepFault f;uint32_t i;memset(&f,0,sizeof(f));
++ f.reason=why;f.tick=(uint32_t)xTaskGetTickCount();f.phase=sp_phase;f.segment=g_source_prepare_segment;
++ f.command=sp_last_command;f.result=sp_last_result;f.rx_id=s_rx.ExtId;f.dlc=s_rx.DLC;
++ for(i=0;i<4;i++){f.raw_hi=(f.raw_hi<<8)|s_rx.Data[i];f.raw_lo=(f.raw_lo<<8)|s_rx.Data[i+4];}
++ f.bad_count=sp_bad_pos;f.position_age=f.tick-sp_position_tick;
++ f.origin_mdeg=SourcePrep_Mdeg(sp_origin);f.current_mdeg=SourcePrep_Mdeg(s_current);f.goal_mdeg=SourcePrep_Mdeg(sp_goal);
++ return f;
++}
++static void SourcePrep_RecordFault(uint32_t why)
++{
++ SourcePrepFault f;
++ if(g_source_prepare_fault.reason)return;
++ f=(why==23U && sp_bad_snapshot.reason)?sp_bad_snapshot:SourcePrep_Snapshot(why);
++ f.reason=0U;g_source_prepare_fault=f;g_source_prepare_fault.reason=why;
++}
++static uint32_t SourcePrep_Exchange(const uint8_t *q,uint8_t n,uint8_t rn)
++{
++ memset(&s_rx,0,sizeof(s_rx));sp_last_command=q[0];
++ sp_last_result=VehicleArm_Exchange(6U,q,n,rn,&s_rx);return sp_last_result;
++}
++static void SourcePrep_Fail(uint32_t why);
++static uint32_t SourcePrep_Query(uint8_t command,uint8_t n)
++{
++ uint8_t q[2]={command,0x6b};uint32_t now;
++ if(SourcePrep_Exchange(q,2U,n)==1U){sp_read_wait=0U;return 1U;}
++ sp_samples=0U;now=(uint32_t)xTaskGetTickCount();
++ if(!sp_read_wait){sp_read_wait=1U;sp_read_begin=now;}
++ if(now-sp_read_begin>=400U)SourcePrep_Fail(26U);
++ return 0U;
++}
++static uint32_t SourcePrep_Position(void)
++{
++ uint32_t raw;
++ if(!SourcePrep_Query(0x36,7U))return 0U;
++ if(s_rx.Data[1]>1U){SourcePrep_Fail(27U);return 0U;}
++ raw=((uint32_t)s_rx.Data[2]<<24)|((uint32_t)s_rx.Data[3]<<16)|((uint32_t)s_rx.Data[4]<<8)|s_rx.Data[5];
++ s_current=(s_rx.Data[1]?-1.0f:1.0f)*(float)raw*.1f;return 1U;
++}
++static uint32_t SourcePrep_StartPositionValid(void)
++{
++ float travel=(s_current-sp_origin)*STARTUP_EXTENSION_EXTEND_SIGN;
++ float first=VEHICLE_SOURCE_PREP_EXTENSION_SEGMENT_MM*VEHICLE_EXTENSION_PULSES_PER_MM*360.0f/3200.0f;
++ /* Rebound inside the known first segment does not change the homing origin. */
++ return travel>=-SOURCE_PREP_POS_TOL_DEG && travel<=first && fabsf(s_current-sp_goal)<=180.0f;
++}
+ static uint32_t SourcePrep_Move(void)
+ {
+  uint32_t units,speed;float delta=sp_goal-s_current;uint8_t move[15]={0};
+@@ -21,10 +72,10 @@
+  move[6]=speed>>8;move[7]=speed&255;move[8]=units>>24;move[9]=units>>16;
+  move[10]=units>>8;move[11]=units;move[12]=2;move[14]=0x6b;
+  sp_before=s_current;sp_samples=0;
+- return VehicleArm_Exchange(6,move,15,3,&s_rx)==1 && (s_rx.Data[1]==2 || s_rx.Data[1]==0x9f);
++ return SourcePrep_Exchange(move,15,3)==1 && (s_rx.Data[1]==2 || s_rx.Data[1]==0x9f);
+ }
+ static void SourcePrep_Fail(uint32_t why)
+-{g_source_prepare_cause=why;g_source_prepare_state=4;g_dm_source_go=0;arm_fail(why);}
++{SourcePrep_RecordFault(why);g_source_prepare_cause=why;g_source_prepare_state=4;g_dm_source_go=0;arm_fail(why);}
+ static void SourcePrep_Service(void)
+ {
+  uint32_t now=(uint32_t)xTaskGetTickCount();float ratio,angle,delta;uint8_t enable[5]={0xf3,0xab,1,0,0x6b};
+@@ -35,34 +86,36 @@
+  if(g_source_prepare_state==1){
+   switch(sp_phase){
+   case 0:
++   if(!sp_dm_posted){
+    g_vehicle_arm_dm_owned=g_dm_integrated_owner=1;g_vehicle_arm_axis_owned=6;
+    g_dm_source_smooth=1;g_dm_source_go=0;g_dm_source_accel_deg_s2=VEHICLE_SOURCE_PREP_DM_ACCEL_DEG_S2;
+    g_dm_point_enable=1;g_dm_posvel_speed_deg_s=VEHICLE_SOURCE_PREP_DM_SPEED_DEG_S;
+    g_dm_pick_target_deg=g_dm_place_target_deg=VEHICLE_SOURCE_PREP_DM_DEG;
+    g_dm_jog_request=VEHICLE_SOURCE_PREP_DM_DEG>=g_dm_can2_logical_position_deg?4:5;
+-   sp_dm_cycle=g_dm_can2_read_cycle;
+-if(!query(0x1a,4))return; if((s_rx.Data[2]&3)){SourcePrep_Fail(22);return;}
++   sp_dm_cycle=g_dm_can2_read_cycle;sp_dm_posted=1U;
++   }
++if(!SourcePrep_Query(0x1a,4))return; if((s_rx.Data[2]&3)){SourcePrep_Fail(22);return;}
+    s_options=s_rx.Data[2];sp_phase=1;return;
+   case 1:
+-if(!position())return; if(fabsf(s_current-sp_origin)>SOURCE_PREP_POS_TOL_DEG){SourcePrep_Fail(23);return;}
++if(!SourcePrep_Position())return; if(!SourcePrep_StartPositionValid()){SourcePrep_Fail(23);return;}
+    sp_goal=sp_origin+STARTUP_EXTENSION_EXTEND_SIGN*VEHICLE_SOURCE_PREP_EXTENSION_SEGMENT_MM*VEHICLE_EXTENSION_PULSES_PER_MM*360.0f/3200.0f;
+    sp_phase=2;return;
+   case 2:
+-   if(VehicleArm_Exchange(6,enable,5,3,&s_rx)!=1 || s_rx.Data[1]!=2){SourcePrep_Fail(22);return;}
++   if(SourcePrep_Exchange(enable,5,3)!=1 || s_rx.Data[1]!=2){SourcePrep_Fail(22);return;}
+    sp_phase=3;return;
+   case 3:
+-if(!query(0x3a,3))return; if(!(s_rx.Data[1]&1) || (s_rx.Data[1]&0x0c)){SourcePrep_Fail(24);return;}
++if(!SourcePrep_Query(0x3a,3))return; if(!(s_rx.Data[1]&1) || (s_rx.Data[1]&0x0c)){SourcePrep_Fail(24);return;}
+    sp_phase=4;return;
+   case 4:
+-if(!query(0x35,5))return; if(s_rx.Data[2] || s_rx.Data[3]){SourcePrep_Fail(24);return;}
++if(!SourcePrep_Query(0x35,5))return; if(s_rx.Data[2] || s_rx.Data[3]){SourcePrep_Fail(24);return;}
+    sp_phase=5;return;
+   default:
+    if(g_dm_jog_state!=3 || g_dm_can2_read_cycle==sp_dm_cycle || now-g_dm_can2_feedback_tick>=100)return;
+-if(!position())return; if(fabsf(s_current-sp_origin)>SOURCE_PREP_POS_TOL_DEG){SourcePrep_Fail(23);return;}
++if(!SourcePrep_Position())return; if(!SourcePrep_StartPositionValid()){SourcePrep_Fail(23);return;}
+    /* 同一服务轮发布DM放行/PWM起点/伸缩命令，不宣称硬件同时起动。 */
+    g_source_prepare_release_ms=sp_grip_tick=now;g_dm_source_go=1;
+    if(!jiazhua(STARTUP_GROUP_GRIPPER_ANGLE_DEG) || !SourcePrep_Move()){SourcePrep_Fail(22);return;}
+-   g_source_prepare_segment=1;g_source_prepare_state=2;sp_phase=6;return;
++   g_source_prepare_segment=1;g_source_prepare_state=2;sp_phase=6;sp_position_tick=(uint32_t)xTaskGetTickCount();return;
+   }
+  }
+  ratio=(float)(now-g_source_prepare_release_ms)/(float)VEHICLE_SOURCE_PREP_GRIP_RAMP_MS;
+@@ -74,22 +127,24 @@
+     g_dm_posvel_holding && now-g_dm_can2_feedback_tick<100 && fabsf(g_dm_can2_logical_position_deg-VEHICLE_SOURCE_PREP_DM_DEG)<=3)
+   g_source_prepare_done_mask|=1;
+  if(!(g_source_prepare_done_mask&2)){
++  if(now-sp_position_tick>=400U){SourcePrep_Fail(sp_bad_pos?23U:26U);return;}
+   if(sp_phase==6){
+-if(!query(0x3a,3))return; if(!(s_rx.Data[1]&1) || (s_rx.Data[1]&0x0c)){SourcePrep_Fail(24);return;}
++if(!SourcePrep_Query(0x3a,3))return; if(!(s_rx.Data[1]&1) || (s_rx.Data[1]&0x0c)){SourcePrep_Fail(24);return;}
+    s_flags=s_rx.Data[1];sp_phase=7;return;
+   }
+   if(sp_phase==7){
+-   if(!position())return;
++   if(!SourcePrep_Position())return;
+    if(s_current<fminf(sp_before,sp_goal)-SOURCE_PREP_POS_TOL_DEG || s_current>fmaxf(sp_before,sp_goal)+SOURCE_PREP_POS_TOL_DEG){
+-    /* 位置毛刺：忽略本样本继续采样，连续多次异常才判故障 */
+-    if(++sp_bad_pos>=8U){SourcePrep_Fail(23);return;}
+-    return;
++    sp_samples=0U;sp_bad_pos++;
++    if(!sp_bad_snapshot.reason)sp_bad_snapshot=SourcePrep_Snapshot(23U);
++    if(sp_bad_pos>=8U){SourcePrep_Fail(23);return;}
++    sp_phase=6U;return; /* Recheck driver health before another position sample. */
+    }
+-   sp_bad_pos=0U;
++   sp_bad_pos=0U;memset(&sp_bad_snapshot,0,sizeof(sp_bad_snapshot));sp_position_tick=(uint32_t)xTaskGetTickCount();
+    delta=(s_current-sp_origin)*STARTUP_EXTENSION_EXTEND_SIGN;
+    g_source_prepare_extension_mm=delta*3200.0f/(VEHICLE_EXTENSION_PULSES_PER_MM*360.0f);sp_phase=8;return;
+   }
+-if(!query(0x35,5))return; /* 读失败重试 */
++if(!SourcePrep_Query(0x35,5))return; /* 读失败重试 */
+   if(!s_rx.Data[2] && !s_rx.Data[3] && (s_flags&2) && fabsf(s_current-sp_goal)<=.3f)sp_samples++;else sp_samples=0;
+   if(sp_samples>=3){
+    if(g_source_prepare_segment==1){
+@@ -101,6 +156,8 @@
+  }
+  if(g_source_prepare_done_mask==7){g_source_prepare_state=3;g_vehicle_arm_state=2;g_vehicle_arm_axis_owned=g_vehicle_arm_dm_owned=0;g_dm_source_smooth=0;}
+ }
++#else
++static void SourcePrep_RecordFault(uint32_t why){(void)why;}
+ #endif
+ uint32_t VehicleArm_BeginSourcePreparation(void)
+ {
+@@ -121,15 +178,18 @@
+       VEHICLE_SOURCE_PREP_GRIP_DEG>=0 && VEHICLE_SOURCE_PREP_GRIP_DEG<=180 &&
+       VEHICLE_SOURCE_PREP_GRIP_RAMP_MS>=500 && VEHICLE_SOURCE_PREP_GRIP_RAMP_MS<=3000 &&
+       VEHICLE_SOURCE_PREP_TIMEOUT_MS>=5000 && VEHICLE_SOURCE_PREP_TIMEOUT_MS<=15000))return 0;
+- /* 基准必须取"源区准备开始时的当前位置"，不能用回零瞬间的旧值：
+-  * 回零后的保持期间机械会缓慢漂移，旧基准会让 case1 误报 cause 23。 */
+- s_address=6U;
+- if(!position())return 0;
+- sp_origin=s_current;
++ /* Publish only: all bus transactions remain in VehicleArm_Service / CAN task. */
++ if(!g_extension_home_reference_valid)return 0;
++ sp_origin=g_extension_home_reference_deg;
+  if(!(sp_origin>=-100000 && sp_origin<=100000))return 0;
++ sp_goal=sp_origin+STARTUP_EXTENSION_EXTEND_SIGN*VEHICLE_SOURCE_PREP_EXTENSION_SEGMENT_MM*VEHICLE_EXTENSION_PULSES_PER_MM*360.0f/3200.0f;
++ sp_dm_posted=sp_read_wait=0U;sp_position_tick=(uint32_t)xTaskGetTickCount();
++ sp_last_command=sp_last_result=0U;memset(&sp_bad_snapshot,0,sizeof(sp_bad_snapshot));
++ memset((void *)&g_source_prepare_fault,0,sizeof(g_source_prepare_fault));
+  sp_begin=(uint32_t)xTaskGetTickCount();sp_phase=sp_samples=0;
+  g_source_prepare_cause=g_source_prepare_done_mask=g_source_prepare_segment=g_source_prepare_release_ms=sp_bad_pos=0;
+  g_source_prepare_extension_mm=0;g_source_prepare_grip_deg=STARTUP_GROUP_GRIPPER_ANGLE_DEG;
+- g_source_prepare_state=g_vehicle_arm_state=1;g_vehicle_arm_cause=0;return 1;
++ g_source_prepare_state=1;g_vehicle_arm_cause=0;
++ g_vehicle_arm_state=1;return 1; /* Publish busy last, after the request is initialized. */
+ #endif
+ }
+--- actual/CHASSIS/USER/startup_axes.h
++++ candidate/CHASSIS/USER/startup_axes.h
+@@ -5,6 +5,8 @@
+ extern volatile uint32_t g_startup_axes_vm_request;
+ extern volatile uint32_t g_startup_extension_feedback_valid;
+ extern volatile float g_startup_extension_current_deg,g_startup_extension_target_deg;
++extern volatile float g_extension_home_reference_deg;
++extern volatile uint32_t g_extension_home_reference_valid;
+ uint32_t StartupAxes_Begin(void);
+ void StartupAxes_Cancel(void);
+ void StartupAxes_Service(uint32_t platform_ready,uint32_t can_guard_ready);
+--- actual/CHASSIS/USER/vehicle_arm.c
++++ candidate/CHASSIS/USER/vehicle_arm.c
+@@ -26,8 +26,10 @@
+ extern volatile uint32_t g_dm_integrated_owner;
+ extern void StartupAxes_SetExtensionHoldTarget(float target);
+ uint32_t VehicleArm_Busy(void){return g_vehicle_arm_state==1U;}
++static void SourcePrep_RecordFault(uint32_t why);
+ static void arm_fail(uint32_t why)
+-{g_vehicle_arm_stop_pending=g_vehicle_arm_axis_owned;if(g_vehicle_arm_state!=3U || !g_vehicle_arm_cause)g_vehicle_arm_cause=why;g_vehicle_arm_state=3U;g_dm_jog_request=3U;
++{if(g_source_prepare_state==1U || g_source_prepare_state==2U)SourcePrep_RecordFault(why);
++ g_vehicle_arm_stop_pending=g_vehicle_arm_axis_owned;if(g_vehicle_arm_state!=3U || !g_vehicle_arm_cause)g_vehicle_arm_cause=why;g_vehicle_arm_state=3U;g_dm_jog_request=3U;
+  if(g_source_prepare_state==1U || g_source_prepare_state==2U){g_source_prepare_state=4U;g_source_prepare_cause=why;g_dm_source_go=0U;}StartupAxes_Cancel();}
+ void VehicleArm_Cancel(void)
+ {arm_fail(2U);}
+@@ -64,7 +66,11 @@
+     if(g_vehicle_arm_stop_pending==5U || g_vehicle_arm_stop_pending==6U) {
+         const uint8_t stop[4]={0xfe,0x98,0,0x6b};
+         g_vehicle_arm_stop_result=VehicleArm_Exchange((uint8_t)g_vehicle_arm_stop_pending,stop,4U,3U,&s_rx);
+-        g_vehicle_arm_stop_pending=0U;return;
++        /* STOP is idempotent. Keep retrying until a positive driver ACK;
++         * dropping the pending flag on timeout would leave a powered axis moving. */
++        if(g_vehicle_arm_stop_result==1U && s_rx.Data[1]==2U)g_vehicle_arm_stop_pending=0U;
++        else if(g_vehicle_arm_stop_result==1U)g_vehicle_arm_stop_result=8U;
++        return;
+     }
+     if(!VehicleArm_Busy())return;
+     if(g_source_prepare_state==1U || g_source_prepare_state==2U){SourcePrep_Service();return;}
+--- actual/CHASSIS/USER/vehicle_arm.h
++++ candidate/CHASSIS/USER/vehicle_arm.h
+@@ -14,4 +14,9 @@
+ extern volatile uint32_t g_source_prepare_state,g_source_prepare_cause,g_source_prepare_done_mask;
+ extern volatile uint32_t g_source_prepare_release_ms,g_source_prepare_elapsed_ms,g_source_prepare_segment;
+ extern volatile float g_source_prepare_extension_mm,g_source_prepare_grip_deg;
++typedef struct {
++ uint32_t reason,tick,phase,segment,command,result,rx_id,dlc,raw_hi,raw_lo,bad_count,position_age;
++ int32_t origin_mdeg,current_mdeg,goal_mdeg;
++} SourcePrepFault;
++extern volatile SourcePrepFault g_source_prepare_fault;
+ #endif
+--- actual/CHASSIS/USER/vehicle_mission.inc
++++ candidate/CHASSIS/USER/vehicle_mission.inc
+@@ -504,6 +504,14 @@
+         (unsigned long)g_extension_hold_samples,(unsigned long)g_extension_hold_confirmed,
+         (unsigned long)g_extension_hold_ready_tick,(unsigned long)g_extension_hold_delta_mdeg,
+         (unsigned long)g_eh_first_step,(unsigned long)g_eh_speed_sign,(unsigned long)g_eh_speed_rpm);
++    }else if(kind==3U && g_source_prepare_fault.reason && (frame_seq&1U)){
++        SourcePrepFault f=g_source_prepare_fault;
++        count=snprintf(frame,sizeof(frame),"SF1,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%ld,%ld,%ld,",
++            (unsigned long)frame_seq,(unsigned long)now,(unsigned long)g_vehicle_run_id,
++            (unsigned long)f.reason,(unsigned long)f.tick,(unsigned long)f.phase,(unsigned long)f.segment,
++            (unsigned long)f.command,(unsigned long)f.result,(unsigned long)f.rx_id,(unsigned long)f.dlc,
++            (unsigned long)f.raw_hi,(unsigned long)f.raw_lo,(unsigned long)f.position_age,
++            (long)f.origin_mdeg,(long)f.current_mdeg,(long)f.goal_mdeg);
+     }else if(kind==3U){
+         count=snprintf(frame,sizeof(frame),"SP1,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%ld,%ld,",
+             (unsigned long)frame_seq,(unsigned long)now,(unsigned long)g_vehicle_run_id,

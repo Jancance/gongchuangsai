@@ -1,0 +1,99 @@
+{
+  "archive_sha256": "810a050b2044d21d7961dcc78e003c5c1c5f0509632c5a760dd86b56e8d853cc",
+  "crc": "passed",
+  "frames": 1061,
+  "states": {
+    "STALE_RESULT": 1,
+    "FOLLOWING_PIXEL": 1060
+  },
+  "observed_span_s": 89.90946968899993,
+  "observed_color_ids": {
+    "('green', 'T001')": 1060,
+    "('black', 'T002')": 104
+  },
+  "black_frames": 104,
+  "controls": {
+    "controls": {
+      "gain": 80,
+      "white_balance_temperature_auto": 0,
+      "white_balance_temperature": 4600,
+      "exposure_auto": 1,
+      "exposure_absolute": 83
+    },
+    "raw_readback": "gain: 80\nwhite_balance_temperature_auto: 0\nwhite_balance_temperature: 4600\nexposure_auto: 1 (Manual Mode)\nexposure_absolute: 83\n",
+    "verified_at_host_monotonic": 1769.224167746,
+    "note": "Current readback and one-second settling, not exposure-to-result latency proof."
+  },
+  "first_black_previous": {
+    "bbox_px": [
+      259,
+      389,
+      311,
+      307
+    ],
+    "area_px2": 74159.0,
+    "label": "UNKNOWN",
+    "reason": "AMBIGUOUS_COLOR",
+    "proposal_source": "combined_silhouette",
+    "usable_fraction": 0.5647514980613324,
+    "color_fractions": {
+      "red": 0.0008488328548246161,
+      "yellow": 0.0011733865934340283,
+      "blue": 0.0,
+      "green": 0.004943203095743353,
+      "black": 0.29978779178629383,
+      "lightblue": 7.489701660217201e-05
+    },
+    "dark_fraction": 0.29978779178629383,
+    "silhouette_center_px": [
+      414.1605199638614,
+      542.0715534639535
+    ]
+  },
+  "first_black_current": {
+    "bbox_px": [
+      259,
+      389,
+      311,
+      307
+    ],
+    "area_px2": 74159.5,
+    "label": "black",
+    "reason": "DOMINANT_COLOR_EVIDENCE",
+    "proposal_source": "combined_silhouette",
+    "usable_fraction": 0.5639557836557442,
+    "color_fractions": {
+      "red": 0.0009000450022501125,
+      "yellow": 0.0011000550027501375,
+      "blue": 5.000250012500625e-05,
+      "green": 0.004450222511125556,
+      "black": 0.3008650432521626,
+      "lightblue": 0.0
+    },
+    "dark_fraction": 0.3008650432521626,
+    "silhouette_center_px": [
+      414.16027391410853,
+      542.0751982775863
+    ]
+  },
+  "module_hash_match": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true
+  },
+  "unique_saved_raw_images": 26,
+  "detector_ms_p50_p95_max": [
+    64.98040399992533,
+    72.42272799999228,
+    141.56426399995325
+  ],
+  "result_host_age_ms_p50_p95_max": [
+    82.57312599994293,
+    103.8019909999548,
+    158.95398999987265
+  ],
+  "console_log_received": false,
+  "hardware_acceptance": false,
+  "motion_allowed": false
+}

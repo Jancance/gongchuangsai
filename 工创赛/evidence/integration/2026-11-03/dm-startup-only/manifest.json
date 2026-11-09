@@ -1,0 +1,75 @@
+{
+  "actual": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程",
+  "stage": "D:\\Codex\\工创赛\\tmp\\dm_startup_only_20261103",
+  "original": {
+    "USER/vehicle_parameters.h": "67673fa78bc48dc52ddd214df8343278e81e70b1c1331ac899419f9bab784fce",
+    "CHASSIS/USER/startup_axes.c": "ff82407296780b98d0a2ea5b5ba2fcca7268057fb84eabcd83ea712cf3fda9c8",
+    "CHASSIS/USER/vehicle_mission.inc": "aae7d15ca476c4c695e6e66229ca78a19ce1429b3ea1af7f2740bd4a0166f906",
+    "CHASSIS/USER/main.c": "2d65708492e74aef25c94a0e894ab4d5488be55afc3fa6149a5dacd6d3fed974",
+    "HARDWARE/DM_CAN2/dm_can2_startup_plan.h": "b368d3d4b7cc9bb8fcaf6bc5ebc9c8e0fd4665e1a42cd7cf313cb25dd0d06cd5"
+  },
+  "hardware_accessed": false,
+  "flashed": false,
+  "installed": true,
+  "invalidated_assumption": "用户纠正：赛场出发时4310不会摆在180度，不能沿用调试起始姿态",
+  "user_correction": "4310电机把小车放在赛场上不会让它放置在180°的位置啊",
+  "pending_input": null,
+  "draft_not_for_deployment": false,
+  "user_reported_start_pose": "车的左上角位置差不多；不换算固定角度",
+  "correction_applied": "读取本次角度，不再限制170~190度起点；保留逆时针最大190度行程，拒绝整圈长绕行",
+  "changed": {
+    "USER/vehicle_parameters.h": "4e987796be50e3733caa5d8c401fd2d571182ac145dd385162bcb9a96accc20a",
+    "CHASSIS/USER/startup_axes.c": "c5c25dcafc4ebd3b68d31fd8c11a866134858cce9dce9dd927b8f2153551f3c4",
+    "CHASSIS/USER/vehicle_mission.inc": "866f0711e75fa2e6ea1166c5e34fdbff281eee5d7737dc2a0bf19131f082e86b",
+    "CHASSIS/USER/main.c": "ebaf35c8c5efbae7ba7afe4a134ba684661a56f7e87c525a3e99839246b1ecde",
+    "HARDWARE/DM_CAN2/dm_can2_startup_plan.h": "6a00f904c35ae3578fdeedcc1108008af94f601bd5bceed594ad1e7d223e061c"
+  },
+  "protected_source_files_verified": 1857,
+  "actual_builds": [
+    {
+      "target": "Vehicle_Integrated",
+      "passed": true,
+      "returncode": 0,
+      "log": "actual-Vehicle_Integrated.log",
+      "program_size": "Program Size: Code=88824 RO-data=6592 RW-data=3272 ZI-data=118804  "
+    },
+    {
+      "target": "Vehicle_Offline",
+      "passed": true,
+      "returncode": 0,
+      "log": "actual-Vehicle_Offline.log",
+      "program_size": "Program Size: Code=84516 RO-data=6584 RW-data=3112 ZI-data=118804  "
+    }
+  ],
+  "requirements_R": [
+    "RUN-01",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05",
+    "MECH-06"
+  ],
+  "official_Q": "FIELD-05/OBS-03/QR-04等仍待技术答疑确认",
+  "software_checks": {
+    "dm_controller": 28,
+    "planner": 15,
+    "mission": 7,
+    "actual_dm_driver": 18,
+    "normal_axes": 41
+  },
+  "git_commit_performed": false,
+  "git_push_performed": false,
+  "unclosed": [
+    "原始反馈/机械零基准独立证据",
+    "扫掠/包络定量证据与重复性",
+    "新联合启动、共享供电及到位保持实物",
+    "八段与180秒整场"
+  ],
+  "user_reported_single_function_ok": true,
+  "user_observation": "user-observation.json"
+}

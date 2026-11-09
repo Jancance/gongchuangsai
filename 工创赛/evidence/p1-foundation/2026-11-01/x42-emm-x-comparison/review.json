@@ -1,0 +1,53 @@
+{
+  "date": "2026-11-01",
+  "scope": "User42 chassis motor compatibility and Emm/X comparison, separate from35/28 lift/extension and DM joint",
+  "user_request": "如果可以改用x固件，就先做一份俩个固件的对比吧，做一个仿真进行对比比较下，x固件好就用x固件",
+  "recorded_hardware": "X42S_V2.0 with ZDT_CAN_V1.2 module; four chassis nodes1,2,3,4 at500k per project records. Left-rear photo marking primary evidence, remaining history in current handoff. No new physical board readback this turn.",
+  "switch_capability": "X42S family integrates Emm/X, FWType menu switch supported. This is not oldX42_V1.3 which requires reflashing; current per-motor firmware/settings/calibration must be read before any future actual switch.",
+  "conditional_switch_result": "Not triggered: exact command/planner comparisons and common-controller proxy do not establish physical firmware X superiority on this chassis. Keep Emm, no motor write/flash/calibration/actions performed.",
+  "references_sha256": {
+    "evidence/p1-foundation/2026-10-11/left_rear_driver_can_photo_review.json": "1ec9a7bf73295694e4bcc9fc7abd87aacefa4999f2265b7897a8aa1e9012f8ec",
+    "evidence/p1-foundation/2026-10-11/left_rear_CAN1_MAP_version_read_pass.json": "fb0a707c832b721983cf5b885c10fa186c3d7eb704a899666e4f7e6d845b69fa",
+    "evidence/p1-foundation/2026-10-17/four_motor_S_Vel_IS_disable_user_report.json": "749de1f8197fabbc13a50459d01ddc67a4e999510998d78ac67176e0c5e1fd34",
+    "evidence/p1-foundation/2026-10-21/can_trace_F3_E2_failure.json": "df38bbeaa86ea9201aca2226ac18b0afb34ecb461ed8d9d8fd3142355ebe4190",
+    "docs/P1_CURRENT_NEXT_PLAN_2026-10-07.md": "46f2151429c931e97a9541964fdb947321a7fe47c3af08b2549fb3ad59348a1d",
+    "evidence/p1-0/motor-manuals/ZDT_X42S第二代闭环步进电机用户手册V1.0.5_260527.pdf": "0afae3f30e1a679c0cd425c790b495dee504c352d2afe234cfa474868319ee92"
+  },
+  "checked_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02",
+    "FIELD-02",
+    "FIELD-06"
+  ],
+  "checked_E": [
+    "RUN-06",
+    "LOC-03",
+    "LOC-05",
+    "LOC-06",
+    "LOC-07",
+    "MOT-01",
+    "MOT-02",
+    "MOT-03",
+    "MOT-04",
+    "CAL-05"
+  ],
+  "official_Q": "待技术答疑确认; unchanged",
+  "firmware_changed": false,
+  "driver_mode_changed": false,
+  "hardware_commands_sent": false,
+  "P1_trace_scope": "Last stored P1 prepare-control F3 E2 is not uniquely a firmware defect; no retry/unlock or externally maintained teammate-state assertion in this turn.",
+  "unchanged_application_source_project_count": 820,
+  "offline_checks": [
+    "quantization RMS matches step/sqrt12 across200003 targets",
+    "Emm0.1 input and X0.1 input command sequences identical",
+    "Emmacc236 equalsX1000RPM/s",
+    "480 finite bounded-torque proxy cases",
+    "numerical-step refinement recorded including first failed threshold; refined max endpoint change0.004943deg",
+    "all820 last-delivered C/H/project hashes unchanged"
+  ]
+}

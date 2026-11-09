@@ -1,0 +1,39 @@
+{
+ "tag": "lift-service-probe-01",
+ "when": "2026-11-07T22:57:53",
+ "note": "STOP request on IDLE controller; consumed == service runs; no motion",
+ "before": {
+  "g_lift_ruler_request": 0,
+  "state": 0,
+  "vm": 0,
+  "fault": 0
+ },
+ "trace": [
+  {
+   "ms": 50,
+   "request": 2,
+   "state": 0,
+   "cause": 0,
+   "stop_pending": 0,
+   "vm": 0,
+   "fault": 0
+  },
+  {
+   "ms": 100,
+   "request": 0,
+   "state": 0,
+   "cause": 0,
+   "stop_pending": 0,
+   "vm": 0,
+   "fault": 0
+  }
+ ],
+ "consumed": true,
+ "after": {
+  "state": 0,
+  "cause": 0,
+  "vm": 0,
+  "fault": 0,
+  "safety_ready": 1
+ }
+}

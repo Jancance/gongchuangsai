@@ -1,0 +1,139 @@
+{
+  "frame_index": 7,
+  "host_read_time": 15416.364385354,
+  "detector_started": 15416.371362193,
+  "detector_finished": 15416.488340684,
+  "gui_received": 15416.489299376,
+  "preview_render_ms": 4.152677998717991,
+  "result_queue_wait_ms": 0.9586920004949206,
+  "imshow_ms": 0.4698669999925187,
+  "detector_start_age_ms": 6.976839000344626,
+  "detector_result_age_ms": 123.95533000017167,
+  "display_submission_age_ms": 129.70281399975647,
+  "candidate": {
+    "accepted": true,
+    "centers_px": [
+      [
+        517.5945129394531,
+        557.0907592773438
+      ],
+      [
+        982.2660827636719,
+        558.689697265625
+      ],
+      [
+        1430.9781494140625,
+        560.4414978027344
+      ]
+    ],
+    "stable": false,
+    "metric_valid": false,
+    "motion_allowed": false,
+    "serial": "DISABLED",
+    "units": "px",
+    "method": "partial_arc_template_v2",
+    "reason": "OBSERVED_PARTIAL_ARCS_CANDIDATE_ONLY",
+    "proposals": [
+      {
+        "center_px": [
+          1430.9781494140625,
+          560.4414978027344
+        ],
+        "score": 0.6990740740740741,
+        "runner_score": 0.5856481481481481,
+        "center_margin": 0.11342592592592593,
+        "scale": 0.9550000000000001,
+        "band_coverage": [
+          0.6527777777777778,
+          0.625,
+          0.6944444444444444,
+          0.7222222222222222,
+          0.6805555555555556,
+          0.7916666666666666
+        ],
+        "coherent_angle_fraction": 0.6944444444444444,
+        "supported_bands": 6,
+        "heldout_coherent_angle_fraction": 0.6944444444444444,
+        "visible_edge_distance_p90_px": 2.0,
+        "search_center_offset_px": [
+          0.0,
+          0.0
+        ],
+        "search_radius_px": 12.0,
+        "weak_seed_center_px": [
+          1430.9781494140625,
+          560.4414978027344
+        ],
+        "weak_seed_support": 4,
+        "weak_seed_bands": 3,
+        "anchor_centers_px": [
+          [
+            517.5945129394531,
+            557.0907592773438
+          ],
+          [
+            982.2660827636719,
+            558.689697265625
+          ]
+        ]
+      }
+    ],
+    "processing_ms": 116.94524099948467,
+    "stages_ms": {
+      "extraction": 30.423809999774676,
+      "primary_clustering": 6.56005400014692,
+      "raw_geometry": 0.02741699972830247,
+      "partial_search": 79.93541799987725
+    }
+  },
+  "status": {
+    "state": "WINDOW_STABLE",
+    "reason": "FRESH_SHORT_WINDOW",
+    "host_read_time": 15416.364385354,
+    "result_host_age_ms": 129.70281399975647,
+    "candidate_centers_px": [
+      [
+        517.5945129394531,
+        557.0907592773438
+      ],
+      [
+        982.2660827636719,
+        558.689697265625
+      ],
+      [
+        1430.9781494140625,
+        560.4414978027344
+      ]
+    ],
+    "stable_centers_px": [
+      [
+        517.5968322753906,
+        557.0907592773438
+      ],
+      [
+        982.2660827636719,
+        558.6869506835938
+      ],
+      [
+        1431.037353515625,
+        560.4095458984375
+      ]
+    ],
+    "pixel_ready": true,
+    "stationary_verified": false,
+    "metric_valid": false,
+    "motion_allowed": false,
+    "serial": "DISABLED",
+    "units": "px",
+    "method": "partial_arc_template_v2",
+    "window_frames": 3,
+    "jitter_px": 0.4957275390625,
+    "window_observation_stamps": [
+      15416.13871623,
+      15416.245355315,
+      15416.364385354
+    ],
+    "window_span_ms": 225.66912399997818,
+    "history_semantics": "FRESH_WHEN_OBSERVED; DISPLAY_EXPIRY_REVOKES_OUTPUT_ONLY"
+  }
+}

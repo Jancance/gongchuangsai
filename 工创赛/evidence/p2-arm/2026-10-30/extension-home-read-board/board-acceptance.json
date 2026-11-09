@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-30",
+  "classification": "E node6 actual home-parameter read acceptance, no movement expected",
+  "user_text": "将g_extension_home_read_request=1写一次，电机没有运动",
+  "home_read_request": 0,
+  "home_read_result": 1,
+  "params": {
+    "mode": 0,
+    "direction": 0,
+    "rpm": 30,
+    "timeout_ms": 10000,
+    "detect_rpm": 300,
+    "detect_current_ma": 800,
+    "detect_time_ms": 60,
+    "auto_home": 0
+  },
+  "user_reports_no_motion": true,
+  "readonly_function_accepted": true,
+  "physical_sensorless_home_verified": false,
+  "mechanical_origin_or_repeatability_verified": false,
+  "watch_vm_test_request": 1,
+  "watch_lift_state": 4,
+  "watch_dm_point_enable": 0,
+  "watch_extension_motion_request": 0,
+  "reported_distance_text": "有3.5cm",
+  "reported_retract_stop_clearance_mm": 35,
+  "clearance_independently_measured": false,
+  "raw_can_replies_not_shown": true,
+  "screenshot": "home-parameters-watch.png",
+  "screenshot_sha256": "2c157d0bb61318c97062314d6335d4109dddcab123dd76ef481a767d3520c30f",
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged_pending_official_clarification"
+}

@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-30",
+  "classification": "E physical retreat after first home, user confirmation",
+  "user_message": "是“伸出、离开挡块、停稳",
+  "extends_away_from_stop_confirmed": true,
+  "final_stationary_confirmed": true,
+  "evidence_source": "user report; no new screenshot or telemetry supplied",
+  "motion_watch": null,
+  "software_motion_completion_verified_this_turn": false,
+  "previously_instructed_request": "g_extension_motion_request=2 once;160 pulses;5RPM;3000ms timeout",
+  "actual_metric_gap_mm": null,
+  "exact_pulse_displacement_verified": false,
+  "second_home_executed_or_accepted": false,
+  "next_single_step": "current firmware, VM/lift ready and other axes idle; verify motion_state7/result1 or absence of fault before starting; home_request1 once; observe retract/contact/self-stop and provide fresh home Watch; home_request2 to abort if needed",
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged; pending official clarification",
+  "assistant_firmware_changes": false,
+  "assistant_flash_performed": false,
+  "assistant_hardware_commands": false
+}

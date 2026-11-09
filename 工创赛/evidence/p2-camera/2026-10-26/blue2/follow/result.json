@@ -1,0 +1,139 @@
+{
+  "state": "STALE_RESULT",
+  "targets": [],
+  "unknown_candidates": 0,
+  "ready": false,
+  "motion_allowed": false,
+  "units": "pixels",
+  "timestamp_source": "host_read_completion",
+  "timestamp": 10045.437,
+  "retired_ids": [],
+  "detector_regions": [
+    {
+      "bbox_px": [
+        825,
+        479,
+        234,
+        234
+      ],
+      "area_px2": 42503.5,
+      "label": "UNKNOWN",
+      "reason": "AMBIGUOUS_COLOR",
+      "proposal_source": "combined_silhouette",
+      "usable_fraction": 0.9886956304743842,
+      "color_fractions": {
+        "red": 0.0006309944472488642,
+        "yellow": 2.523977788995457e-05,
+        "blue": 0.0,
+        "green": 0.0,
+        "black": 0.1129480060575467,
+        "lightblue": 0.0
+      },
+      "dark_fraction": 0.1129480060575467,
+      "silhouette_center_px": [
+        941.7492128099254,
+        595.6649217123296
+      ]
+    },
+    {
+      "bbox_px": [
+        349,
+        501,
+        292,
+        208
+      ],
+      "area_px2": 30109.0,
+      "label": "UNKNOWN",
+      "reason": "SHAPE_UNCERTAIN",
+      "proposal_source": "combined_silhouette"
+    },
+    {
+      "bbox_px": [
+        1274,
+        523,
+        238,
+        156
+      ],
+      "area_px2": 25757.0,
+      "label": "lightblue",
+      "reason": "DOMINANT_COLOR_EVIDENCE",
+      "proposal_source": "combined_silhouette",
+      "usable_fraction": 1.0,
+      "color_fractions": {
+        "red": 0.0,
+        "yellow": 0.0,
+        "blue": 0.0001700897223285283,
+        "green": 0.0,
+        "black": 0.002763957987838585,
+        "lightblue": 0.9952374877748013
+      },
+      "dark_fraction": 0.002763957987838585,
+      "silhouette_center_px": [
+        1389.4715352460819,
+        603.7932600846372
+      ]
+    },
+    {
+      "bbox_px": [
+        0,
+        128,
+        80,
+        136
+      ],
+      "area_px2": 3764.5,
+      "label": "UNKNOWN",
+      "reason": "TOUCHES_BORDER",
+      "proposal_source": "combined_silhouette"
+    },
+    {
+      "bbox_px": [
+        0,
+        264,
+        48,
+        104
+      ],
+      "area_px2": 1434.0,
+      "label": "UNKNOWN",
+      "reason": "TOUCHES_BORDER",
+      "proposal_source": "combined_silhouette"
+    },
+    {
+      "bbox_px": [
+        352,
+        524,
+        244,
+        140
+      ],
+      "area_px2": 26233.5,
+      "label": "blue",
+      "reason": "CURRENT_PROJECTED_BLUE_SILHOUETTE",
+      "proposal_source": "projected_blue_component",
+      "center_reference": "current_blue_silhouette_not_calibrated_grasp_point",
+      "circularity": 0.6373280052716538,
+      "solidity": 0.9498524539710701,
+      "usable_fraction": 1.0,
+      "color_fractions": {
+        "red": 0.0,
+        "yellow": 0.0,
+        "blue": 0.996005600395322,
+        "green": 0.0,
+        "black": 0.000205896886839071,
+        "lightblue": 0.003912040849942349
+      },
+      "dark_fraction": 0.000205896886839071,
+      "silhouette_center_px": [
+        478.9653051759518,
+        594.7161707994231
+      ]
+    }
+  ],
+  "circle_diagnostics": [
+    {
+      "color": "black",
+      "reason": "BLACK_EDGE_NO_UNIQUE_SUPPORT",
+      "supported_ellipse_count": 0,
+      "distinct_ellipse_count": 0,
+      "colour_rejection_count": 4
+    }
+  ]
+}

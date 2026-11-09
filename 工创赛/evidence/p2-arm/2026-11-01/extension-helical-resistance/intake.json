@@ -1,0 +1,47 @@
+{
+  "date": "2026-11-01",
+  "classification": "E: user-reported mechanical resistance and gear geometry",
+  "user_reports": [
+    "就是齿轮的问题，阻力有点大怎么办",
+    "用的是斜齿轮",
+    "齿条也是斜齿"
+  ],
+  "pinion_helical_user_confirmed": true,
+  "rack_helical_user_confirmed": true,
+  "previous_can_manually_push_scope": "Local no-complete-jam observation only; does not establish low loaded resistance.",
+  "measured_geometry": {
+    "normal_module": null,
+    "pressure_angle_deg": null,
+    "helix_angle_deg": null,
+    "hand_pair": null,
+    "backlash_mm": null
+  },
+  "gear_end_face_rub_confirmed": false,
+  "axial_support_adequacy_verified": false,
+  "meshing_too_tight_confirmed": false,
+  "mechanical_adjustment_performed": true,
+  "software_change_this_followup": false,
+  "powered_trial_allowed_before_mechanical_check": false,
+  "next_single_action": "Mechanical repair now user-confirmed, ordinary1600-pulse movement approximately50mm and self-stop reported. No repeated mechanical photo/manual-push prerequisite. Keep at current position and capture this trial end-state; current remaining retract clearance approximately50mm, so do not repeat1600 retract.",
+  "source_urls": [
+    "https://khkgears.net/pdf/2023/helical-gears.pdf",
+    "https://www.automate.org/news/khk-usa-inc-mounting"
+  ],
+  "source_scope": "Manufacturer assembly principles, not competition rules or measured machine dimensions.",
+  "valid_metric_samples": 0,
+  "home_valid": false,
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "CAL-05"
+  ],
+  "official_Q": "待技术答疑确认; unchanged",
+  "mechanical_repair_user_confirmed": true,
+  "mechanical_repair_details_independently_observed": false,
+  "latest_evidence": "evidence/p2-arm/2026-11-01/extension-jog1600/hardware-trial-2-user-report.json"
+}

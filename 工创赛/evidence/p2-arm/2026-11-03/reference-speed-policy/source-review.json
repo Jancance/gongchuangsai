@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-03",
+  "source": "用户本聊天要求所有电机后续具备与参考代码一致的速度；实际配置只读核对",
+  "source_sha256": {
+    "HARDWARE/LIFT/lift_config.h": "4067f910460cb5d2eab54afa69d07fa6c118b195f43cd6b359cd94d2a542fefb",
+    "HARDWARE/EXTENSION/extension_config.h": "2476a91648861edb636e3256f7d995ff6801bee17a65cf7c90277d909efab157",
+    "HARDWARE/DM_CAN2/dm_can2.h": "9283ed84b9fbf7086c2755cbb0273cb55abd6092ce8eae1ec97b616c5a136f3a"
+  },
+  "lift_speed_deci_rpm": 18464,
+  "extension_speed_deci_rpm": 1060,
+  "stepper_accel_rpm_s": 45055,
+  "stepper_decel_rpm_s": 45055,
+  "rotation_speed_deg_s": 300,
+  "matched_scope": "机械臂普通自动运动配置的指令值",
+  "chassis_scope": "当前低速测试版尚未对齐参考自动速度；后续整车单独完成物理单位映射和带载验证",
+  "physical_speed_verified": false,
+  "firmware_changed": false,
+  "hardware_commands": false
+}

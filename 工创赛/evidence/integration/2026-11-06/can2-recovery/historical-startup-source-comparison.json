@@ -1,0 +1,46 @@
+{
+  "historical_success_user_report": "启停区出发时4310可以转动",
+  "user_confirms_no_connection_changes": true,
+  "old_project_used_for_source_comparison": "D:\\Codex\\工创赛\\tmp\\restore_integrated_20261104",
+  "old_project_binary_exact_match_to_past_running_image_not_yet_proven": true,
+  "comparison": [
+    {
+      "file": "HARDWARE/DM_CAN2/dm_can2.c",
+      "equal": false,
+      "old_sha256": "41328fe6f17826d58a67fb4d0d3980842144da122c5d13bfbfb3826c809fa879",
+      "current_sha256": "0ed2d8318253d28824dcf2b578e333bc975547949f90ffa5f09101b3d6a47cd0"
+    },
+    {
+      "file": "HARDWARE/DM_CAN2/dm_can2_protocol.c",
+      "equal": true,
+      "old_sha256": "718c39e1edab4099d5900d2bd98a8ab4397663a896b985f27091660aa3a13ba5",
+      "current_sha256": "718c39e1edab4099d5900d2bd98a8ab4397663a896b985f27091660aa3a13ba5"
+    },
+    {
+      "file": "HARDWARE/DM_CAN2/dm_can2_motion.c",
+      "equal": false,
+      "old_sha256": "e43b9066883c22da2d397fe84941b55f4ee302a1da6a98c1ead7bc337305f444",
+      "current_sha256": "62e213ae42f15dbbcc3cb92a475bc2db27a184f22d002ff1b7886dfa868aae03"
+    },
+    {
+      "file": "CHASSIS/HARDWARE/POWER/power.c",
+      "equal": true,
+      "old_sha256": "704840f2a318b38fbdfdf1dfd14746db2161a45dc106d0405fec3aa1d3672ff5",
+      "current_sha256": "704840f2a318b38fbdfdf1dfd14746db2161a45dc106d0405fec3aa1d3672ff5"
+    },
+    {
+      "file": "CHASSIS/SYSTEM/SAFETY/safety.c",
+      "equal": false,
+      "old_sha256": "a254c68d6f322c2636a0a853a5d23d7cedcee87e0374a0b78c994627313b3b50",
+      "current_sha256": "3d6c1ea5928eb5add83fbef21c64c9bea599c4120e46bb3afd56f547c543376c"
+    },
+    {
+      "file": "CHASSIS/USER/app_config.h",
+      "equal": false,
+      "old_sha256": "74658d544da23d193487b3ab2fcaa23bb37528199e7d597c15e99e0484ecabb6",
+      "current_sha256": "9ee03bc1a19e7d1c7157dab1079e1a1f01c70c91078e685544c63d9c0d5615dc"
+    }
+  ],
+  "no_motion_or_VM_requests_issued": true,
+  "next": "trace compiled startup/scheduling path, do not demand rewiring based on suspicion"
+}

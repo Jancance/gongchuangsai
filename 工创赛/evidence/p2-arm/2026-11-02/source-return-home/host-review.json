@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "cases": [
+    "disabled",
+    "missing_height",
+    "complete",
+    "snapshot",
+    "duplicate_start",
+    "stale_home",
+    "home_wait",
+    "home_fail",
+    "lift_fail",
+    "abort_up",
+    "abort_home",
+    "external_stop",
+    "lost_ready",
+    "other_busy",
+    "gap",
+    "gripper_cancel",
+    "mode3_complete",
+    "mode3_home_fail",
+    "mode3_stale_home",
+    "mode4_unchanged",
+    "legacy0"
+  ],
+  "hardware_stubs": true,
+  "actual_main_guard_matched": true,
+  "source_sha256": {
+    "USER/arm_sequence.c": "df9e235be87808252eb8665155ed49c29990d1baa3b1224e77c3886a3a6fddfd",
+    "USER/arm_sequence.h": "1391e76142e324a6d8f6961505a9c53a917a97ce638366ad73307894562059c0"
+  }
+}

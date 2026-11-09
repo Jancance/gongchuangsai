@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-30",
+  "classification": "E user-confirmed tray layout, mounting not yet fixed",
+  "user_reply": "还没有连接死，可以连接好，是的，没有齿轮或皮带",
+  "tray_rigidly_attached": false,
+  "user_can_attach": true,
+  "equal_120_degree_spacing_user_confirmed": true,
+  "gear_or_belt_present_user_report": false,
+  "direct_coupling_plan": true,
+  "measured_transmission_ratio": null,
+  "assembly_reference_plan": {
+    "nominal_command_deg": 135,
+    "pulse_us": 1500,
+    "selected_reference_slot_id": 2,
+    "requires_tray_disengaged_during_servo_positioning": true,
+    "requires_actual_stop_before_mounting": true,
+    "servo_supply_off_during_mounting": true,
+    "preserve_marked_shaft_pose": true,
+    "executed_or_accepted": false
+  },
+  "next_single_step": "close prior session; disengaged servo135 single bounded positioning; observe stop; request2 then5V off; align an empty chosen slot2 to fixed handoff and attach while preserving shaft reference; no side-slot sweeps",
+  "measured_slot_angles": null,
+  "assistant_source_changes": false,
+  "assistant_hardware_commands": false,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged; pending official clarification"
+}

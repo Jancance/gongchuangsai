@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "frames": 536,
+  "error": null,
+  "serial": "DISABLED",
+  "motion_allowed": false,
+  "user_reported_direction_top_view": "clockwise",
+  "user_confirmed_final_stop": true,
+  "user_confirmation": "顺时针转动，最后已停稳",
+  "state_counts": {
+    "WAITING_FOR_MOTION": 2,
+    "CONFIRMING_MOTION": 20,
+    "MOVING": 231,
+    "ACQUIRING": 31,
+    "NEAR_STOP": 13,
+    "READY": 197,
+    "AMBIGUOUS": 39,
+    "SETTLING": 3
+  },
+  "material_count_counts": {
+    "2": 144,
+    "3": 353,
+    "4": 39
+  },
+  "ready_frames": 197,
+  "READY_episodes": [
+    {
+      "first_frame_sequence": 33,
+      "last_frame_sequence": 113,
+      "start_host_relative_s": 1.2918207060001805,
+      "end_host_relative_s": 4.190363748999971,
+      "slot_colors": [
+        1,
+        4,
+        2
+      ]
+    },
+    {
+      "first_frame_sequence": 344,
+      "last_frame_sequence": 422,
+      "start_host_relative_s": 12.666332378000334,
+      "end_host_relative_s": 15.581616733999908,
+      "slot_colors": [
+        4,
+        2,
+        1
+      ]
+    },
+    {
+      "first_frame_sequence": 500,
+      "last_frame_sequence": 536,
+      "start_host_relative_s": 18.381136165000044,
+      "end_host_relative_s": 19.66888989600011,
+      "slot_colors": [
+        1,
+        4,
+        2
+      ]
+    }
+  ],
+  "READY_frames_are_not_serial_transmissions": true,
+  "new_HSV_local_file": "evidence/integration/2026-11-06/source-vision-new-pose/material_color_thresholds-hsv2.json",
+  "new_HSV_sha256": "af8e9843411f297be66e48b46557a9887313709c3024241e95a7ffacf8e6f8fa",
+  "motion_phase_missing_one_target_frames": 144,
+  "ambiguous_four_candidate_frames": 39,
+  "ambiguous_frames_all_two_reds": true,
+  "first_ambiguous_frame_sequence": 179,
+  "last_ambiguous_frame_sequence": 270,
+  "host_record_span_s": 19.66888989600011,
+  "physical_stop_latency_measured": false,
+  "complete_dynamic_recognition_accepted": false,
+  "actual_grasp_or_return_accepted": false,
+  "source_hashes": {
+    "session.json": "0ca478fdcc39da0c718d5785d84a2dd180ba5d2b45b76823bf218c1376d6d3e8",
+    "observations.jsonl": "d3413d81651d50ba5f7a01e0b3abc767e7e4171cae13681d8bf19d2dd16a04bd",
+    "first-raw.png": "7bc8e805f833320eddb7a24f170449d60e8763cc81d53af6d283345b849c0600",
+    "last-raw.png": "b373479ab9de091cd2637755876853730ca14d56dfa86fb7c9ac42ac5638a65c"
+  },
+  "next_step": "user red HSV adjustment with red material at upper-right; keep others unchanged; then static pose observation before reverse test"
+}

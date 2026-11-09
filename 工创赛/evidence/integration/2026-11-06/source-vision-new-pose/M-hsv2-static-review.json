@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "session": "source-finalstop-M-hsv2-20261106",
+  "frames": 279,
+  "error": null,
+  "serial": "DISABLED",
+  "motion_allowed": false,
+  "HSV_config": {
+    "path": "/home/orangepi/p2-source-workflow-20261105/vision_app/code/config/material_color_thresholds.json",
+    "sha256": "af8e9843411f297be66e48b46557a9887313709c3024241e95a7ffacf8e6f8fa"
+  },
+  "HSV_changed_from_old": true,
+  "unchanged_other_config_keys": [
+    "camera_processing_config",
+    "turntable_config",
+    "turntable_material_seed_config",
+    "material_pickup_config"
+  ],
+  "state_counts": {
+    "WAITING_FOR_MOTION": 279
+  },
+  "material_count_counts": {
+    "3": 279
+  },
+  "slot_colors_counts": {
+    "(4, 2, 1)": 279
+  },
+  "motion_confirmed_frames": 0,
+  "ready_frames": 0,
+  "maximum_logged_speed_px_s": 15.16355724723956,
+  "per_color": {
+    "red": {
+      "count": 279,
+      "peak_to_peak_px": [
+        0.6166221130205258,
+        0.4381898403496507
+      ],
+      "maximum_frame_step_px": 0.44085689312207854
+    },
+    "yellow": {
+      "count": 279,
+      "peak_to_peak_px": [
+        0.4263170887684282,
+        0.2909525044019574
+      ],
+      "maximum_frame_step_px": 0.3285174234137004
+    },
+    "green": {
+      "count": 279,
+      "peak_to_peak_px": [
+        0.36141216551027355,
+        0.2439042388644168
+      ],
+      "maximum_frame_step_px": 0.2824063893515671
+    }
+  },
+  "source_artifact_sha256": {
+    "session.json": "bec2abc8b0d0340581e5075c0b62c957f8eaaa50740bc8d67f0986412b6ac24f",
+    "observations.jsonl": "825676fbe84788cc9bbf73e7cd750c3e26603d43f7e06457adc004cc3ea5fa41",
+    "first-raw.png": "b92386bf7be137e0b5f781fde81a03736cd346d62447c9ca2cc07524faa5aae6",
+    "last-raw.png": "dd638fbd388047ea084804b63707a282620321cdc7f9f50366705ebcad1a444f"
+  },
+  "static_recognition_scope_accepted": true,
+  "dynamic_turn_stop_accepted": false,
+  "physical_grasp_or_collision_accepted": false,
+  "filter_implemented": false,
+  "new_HSV_content_archived_locally": true,
+  "new_HSV_contents_received": true,
+  "new_HSV_archived_file": "evidence/integration/2026-11-06/source-vision-new-pose/material_color_thresholds-hsv2.json"
+}

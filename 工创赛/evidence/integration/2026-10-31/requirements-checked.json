@@ -1,0 +1,374 @@
+{
+  "QR-01": {
+    "class": "R",
+    "line_at_audit": 159,
+    "requirement": "任务码按四段解析，不得再写死三色顺序。示例 `156+123+516+231`：第1段为第一批颜色/搬运顺序；第2段为第一批在粗加工区和暂存区的位置；第3段为第二批颜色/搬运顺序；第4段为第二批在粗加工区的位置。",
+    "verification_guidance": "解析结果必须形成两个批次的结构化对象；原始码完整保留用于显示和审计。"
+  },
+  "QR-02": {
+    "class": "E",
+    "line_at_audit": 160,
+    "requirement": "任务对象至少包含：批次、颜色、抓取顺序、粗加工位置、暂存/码垛位置。",
+    "verification_guidance": "解析器与状态机之间只传结构化对象，不传靠下标猜含义的裸字符串。"
+  },
+  "QR-03": {
+    "class": "E",
+    "line_at_audit": 161,
+    "requirement": "对任务码执行格式、段数、字符、取值、重复/冲突和业务合法性校验；非法码不得启动搬运。",
+    "verification_guidance": "保存拒绝原因；允许重新识别，但必须受超时和有限重试约束。"
+  },
+  "QR-04": {
+    "class": "Q",
+    "line_at_audit": 162,
+    "requirement": "决赛待搬物料信息、任务编码及获取方式以现场公布为准；未明确的异常编码/现场变更处理仍待确认。",
+    "verification_guidance": "**待技术答疑确认**；初赛已由QR-01/05/06/07明确的内容不再标未知，决赛使用独立profile。"
+  },
+  "QR-05": {
+    "class": "R",
+    "line_at_audit": 163,
+    "requirement": "初赛颜色编号为红1、黄2、蓝3、绿4、黑5、浅蓝6。",
+    "verification_guidance": "来源2027附件2-1第6页；统一配置映射，颜色号不等于车载槽号。"
+  },
+  "QR-06": {
+    "class": "R",
+    "line_at_audit": 164,
+    "requirement": "初赛扫码确定三种不同颜色物料，三种颜色使用同一种形状，每种颜色两个，实物允许一定色差。",
+    "verification_guidance": "来源附件2-1第5页；必须区分两个同色实例，不能把多个未知物体都推成唯一剩余颜色。"
+  },
+  "QR-07": {
+    "class": "R",
+    "line_at_audit": 165,
+    "requirement": "第二批在暂存区码垛于第一批同色且正确放置的物料上。",
+    "verification_guidance": "来源附件2-1第8页及附件2-2第3页；按第一批颜色与位置关联，不能直接沿用第四段粗加工位置。"
+  },
+  "DSP-01": {
+    "class": "R",
+    "line_at_audit": 166,
+    "requirement": "显示全部任务码、正确抓取次数、正确放置次数，并保持任务/完成状态可核验。",
+    "verification_guidance": "断电前保留本轮最终显示；状态变化有时间戳或日志证据。"
+  },
+  "DSP-02": {
+    "class": "R",
+    "line_at_audit": 167,
+    "requirement": "任务码显示字体至少12mm；屏幕位于机器人上部醒目位置，亮光可读且无遮挡。",
+    "verification_guidance": "屏幕、外壳和机械臂在全行程下均不能遮挡。"
+  },
+  "VIS-01": {
+    "class": "R",
+    "line_at_audit": 197,
+    "requirement": "需要识别红、黄、蓝、绿、黑、浅蓝六色。",
+    "verification_guidance": "数据、配置、测试报告和UI统计均覆盖六类。"
+  },
+  "VIS-02": {
+    "class": "E",
+    "line_at_audit": 198,
+    "requirement": "重点覆盖蓝/浅蓝混淆、黑色、ABS/PLA反光、现场色差、强弱光、阴影、转盘运动及遮挡。",
+    "verification_guidance": "按场景分层统计混淆矩阵，不只报告总体准确率。"
+  },
+  "VIS-03": {
+    "class": "E",
+    "line_at_audit": 199,
+    "requirement": "相机曝光、增益、白平衡和焦距应可锁定；颜色算法不依赖固定RGB阈值。",
+    "verification_guidance": "优先使用LAB/HSV、颜色校准、几何与时序约束；保存锁定参数。"
+  },
+  "VIS-04": {
+    "class": "E",
+    "line_at_audit": 200,
+    "requirement": "建立数字圆环位置映射和局部精定位，优先保障1环精度。",
+    "verification_guidance": "场地级定位负责到达功能区，局部视觉闭环负责最终放置。"
+  },
+  "SCORE-01": {
+    "class": "R",
+    "line_at_audit": 201,
+    "requirement": "圆环1至6环分值依次为15、10、7、5、3、1分；圈外或倾倒为0分。",
+    "verification_guidance": "规划器将放置精度和稳定性作为优先目标，测试记录落环等级。"
+  },
+  "VIS-05": {
+    "class": "E",
+    "line_at_audit": 202,
+    "requirement": "原料区、二维码板及场地装置存在位置偏差，路线和像素阈值不得写死。",
+    "verification_guidance": "所有像素到毫米转换带标定版本；功能区采用在线再定位。"
+  },
+  "VIS-06": {
+    "class": "E",
+    "line_at_audit": 203,
+    "requirement": "增加数字模板匹配，包含ROI矫正、多尺度/旋转处理、歧义拒绝和残缺笔画验证。",
+    "verification_guidance": "模板外字体、污渍、空白和近似并列必须输出未知，不能强猜。"
+  },
+  "VIS-07": {
+    "class": "E",
+    "line_at_audit": 204,
+    "requirement": "增加圆环检测、编号/位置映射、局部精定位和稳定跟踪。",
+    "verification_guidance": "完整圆与部分圆弧分别报告拟合残差、可见比例和毫米坐标。"
+  },
+  "VIS-08": {
+    "class": "E",
+    "line_at_audit": 205,
+    "requirement": "二维码采用多帧一致与四段合法性校验；条形码采用可插拔、aarch64可部署后端。",
+    "verification_guidance": "条码是否为正式任务及码制属于待技术答疑确认；当前不写死。"
+  },
+  "VIS-09": {
+    "class": "E",
+    "line_at_audit": 206,
+    "requirement": "物料识别输出六色实例、姿态、抓取点、实例ID和误差边界，不只做整图颜色占比。",
+    "verification_guidance": "蓝/浅蓝、黑色物料/障碍、反光和遮挡建立困难负样本。"
+  },
+  "VIS-10": {
+    "class": "E",
+    "line_at_audit": 207,
+    "requirement": "码垛识别输出层数、顶层中心/姿态、错位、倾斜/倒塌和放置后验证。",
+    "verification_guidance": "当前视觉证据不足时不得仅凭历史动作判定成功。"
+  },
+  "VIS-11": {
+    "class": "E",
+    "line_at_audit": 208,
+    "requirement": "建立太阳直射、阴影和ABS/PLA反光的质量门禁及硬件遮光/偏振评估。",
+    "verification_guidance": "全饱和或信息丢失区域不能靠软件伪恢复；失败时减速、重采或停车。"
+  },
+  "VIS-12": {
+    "class": "E",
+    "line_at_audit": 209,
+    "requirement": "圆环和物料均使用带时间戳、track ID、遮挡/重捕获和新鲜度检查的稳定跟踪。",
+    "verification_guidance": "相机重启、任务切换或身份不确定时旧轨迹不得继续驱动动作。"
+  },
+  "VIS-13": {
+    "class": "E",
+    "line_at_audit": 210,
+    "requirement": "支持有明确可见证据的残缺特征识别，同时设置可见比例、拟合残差和候选间隔门禁。",
+    "verification_guidance": "信息不足或多解时输出 `UNKNOWN`，不能把“可识别残缺”解释成任何残片都猜测。"
+  },
+  "VIS-14": {
+    "class": "E",
+    "line_at_audit": 211,
+    "requirement": "物料运动判断必须先补偿相机/底盘自身运动，再以地面毫米坐标和真实时间差判定。",
+    "verification_guidance": "输出 `MOVING/STATIONARY/UNKNOWN`并使用迟滞；遮挡或补偿失效时为未知。"
+  },
+  "VIS-15": {
+    "class": "E",
+    "line_at_audit": 212,
+    "requirement": "检测、跟踪、计数和动作验证分层，抓取/放置前要求连续新鲜观测稳定。",
+    "verification_guidance": "单帧检测成功不能直接记为抓取、放置或码垛成功。"
+  },
+  "CAL-02": {
+    "class": "E",
+    "line_at_audit": 213,
+    "requirement": "高精度指标分为标定重投影、静态像素重复性、地面毫米定位和最终物理落点误差。",
+    "verification_guidance": "不得用“一像素”代替全链路精度；各层分别报告分布和最大误差。"
+  },
+  "CAL-03": {
+    "class": "E",
+    "line_at_audit": 214,
+    "requirement": "图像先进行内参/畸变校正并用独立数据报告残余误差。",
+    "verification_guidance": "不宣称物理“无畸变”；镜头、焦距、分辨率、裁剪或安装变化后标定失效。"
+  },
+  "CAL-04": {
+    "class": "E",
+    "line_at_audit": 215,
+    "requirement": "静态受控局部特征以X/Y 95分位≤1px作为候选目标；地面和整机误差必须用mm验收。",
+    "verification_guidance": "该数值是待实测验证的工程目标，不是当前性能或官方规则。"
+  },
+  "CAL-05": {
+    "class": "E",
+    "line_at_audit": 216,
+    "requirement": "场地原料转盘上表面离地高度集中配置；用户2026-10-02确认现场准备覆盖80～100mm，须填实测值，并与车载270°盘、物料/TCP和雷达高度分开。P1动作与P2工作平面使用匹配的几何/标定版本。",
+    "verification_guidance": "80～100mm为用户工程输入，不是官方尺寸。高度变化后复核平面毫米映射和抓放Z、撤销旧目标；版本不一致拒绝抓放。当前仅方案，详见P1_P2_HEIGHT_AND_INTEGRATION_PLAN_2026-10-02.md。"
+  },
+  "FIELD-02": {
+    "class": "R",
+    "line_at_audit": 225,
+    "requirement": "出发区由现场抽签决定，不能自由选择；完成后返回同一个抽中的启停区，回区得2分。",
+    "verification_guidance": "运行配置必须包含 `start_id=1/2`，日志记录抽签起点。"
+  },
+  "FIELD-03": {
+    "class": "E",
+    "line_at_audit": 226,
+    "requirement": "两套起点分别配置初始位姿和二维码路径，主体状态机共用。",
+    "verification_guidance": "对start_id 1和2分别做完整回归，避免复制两套状态机。"
+  },
+  "FIELD-04": {
+    "class": "E",
+    "line_at_audit": 227,
+    "requirement": "回区按最严格标准设计为整车铅垂投影全部进入300×300mm并停止。",
+    "verification_guidance": "以轮廓/角点而不是车体中心判断；留定位和制动余量。"
+  },
+  "FIELD-05": {
+    "class": "Q",
+    "line_at_audit": 228,
+    "requirement": "官方最终回区判定标准。",
+    "verification_guidance": "**待技术答疑确认**；确认前按FIELD-04保守设计。"
+  },
+  "FIELD-06": {
+    "class": "R",
+    "line_at_audit": 229,
+    "requirement": "离开启停区后，车体主体铅垂投影必须保持在灰色车道内；进入其他颜色区域本轮结束，机械臂除外。",
+    "verification_guidance": "规划和安全层都检查车体包络，不能只检查中心点。"
+  },
+  "FIELD-07": {
+    "class": "R",
+    "line_at_audit": 230,
+    "requirement": "只允许垂直向下补光。",
+    "verification_guidance": "灯具安装角度固定并做机械防转；禁止向前/侧照射。"
+  },
+  "FIELD-08": {
+    "class": "E",
+    "line_at_audit": 231,
+    "requirement": "路线不能完全依赖固定坐标，应结合车道、路口、功能区的场地级定位，以及转盘、圆环、码垛中心的局部精定位。",
+    "verification_guidance": "定位置信度或标定失效时停车、重定位或走降级路线。"
+  },
+  "LOC-01": {
+    "class": "E",
+    "line_at_audit": 241,
+    "requirement": "不使用PAW3395、ICM42688；保留HWT101航向，新增所选雷达的开局障碍扫描。",
+    "verification_guidance": "运行中X/Y来源待方案冻结及实测，不宣称雷达已经替代OPS-9或PAW里程计。"
+  },
+  "LOC-02": {
+    "class": "E",
+    "line_at_audit": 242,
+    "requirement": "从 `start_id=1/2` 建立初始位姿，视觉定位与其他位移来源融合方案待验证；累计位姿不得视为无漂移绝对定位。",
+    "verification_guidance": "雷达配置/校准位姿不等于实时测得的车体位姿；HWT101单独不能提供X/Y。"
+  },
+  "LOC-03": {
+    "class": "E",
+    "line_at_audit": 243,
+    "requirement": "用户2026-10-28明确改为雷达USART3 PD8/PD9直连STM32F407，115200/8N1/3.3V TTL；F407以标准库＋原生FreeRTOS适配已提供例程v6，管理选区、开局扫描、地图/各段路径、扫描机构及最终运动控制；Orange Pi继续视觉/任务观测与必要纠偏。",
+    "verification_guidance": "见RADAR_F407_PLAN_2026-10-29.md；替代10月23日雷达接香橙派方案，PA1/PC13锁存及同区返回保持。解析/地图/实时定位分别验收，P2不输出裸PWM；不移入HAL底层，不照搬例程PATH默认或旧图。未移植/实测。"
+  },
+  "LOC-04": {
+    "class": "E",
+    "line_at_audit": 244,
+    "requirement": "每台雷达分别记录扫描高度、安装偏置、旋转零点及双启停区标定；先完成180°升降、ULN2003转向与安装固定的独立调试，再进行实际扫描验收，后期接自动联动。",
+    "verification_guidance": "升降/旋转后停稳，14圈期间保持扫描位姿固定；装配改变后重验标定。原料盘80～100mm与雷达扫描高度分开；原PAW离地要求失效。"
+  },
+  "LOC-05": {
+    "class": "E",
+    "line_at_audit": 245,
+    "requirement": "雷达缺包/溢出/错节点、角度基准不明、定位过期或HWT失效时不得使用旧结果继续盲行。",
+    "verification_guidance": "有限时间内减速、停车或重定位；雷达5秒重连定时器不能替代整车更快的安全响应。"
+  },
+  "LOC-06": {
+    "class": "E",
+    "line_at_audit": 246,
+    "requirement": "最终抓取、落环和回区仍使用局部视觉闭环；雷达方格路径须另经车道/扫掠包络及运动能力验证。",
+    "verification_guidance": "障碍图、实时车体位姿和速度曲线分开验收；方格节点不代表最快轨迹。"
+  },
+  "LOC-07": {
+    "class": "E",
+    "line_at_audit": 247,
+    "requirement": "新定位/扫描组合须通过标定、完整性、四向直线、旋转、2.4m路线、故障注入和双起点整场门禁。",
+    "verification_guidance": "旧PAW替代计划仅供历史追溯；当前缺失X/Y定位与实车证据时不得签署定位闭环。"
+  },
+  "MOT-01": {
+    "class": "E",
+    "line_at_audit": 255,
+    "requirement": "安全可行路段支持移动中逐步改变朝向，平移与旋转同时执行，普通路径点连续衔接；支持指定目标位置和目标朝向的漂移到位，以及平滑连续途经点。",
+    "verification_guidance": "2026-10-01说明与视频仅作结构/效果参考，坐标和四轮公式须修正；详见CHASSIS_DRIFT_REVIEW_2026-10-01.md；实机能力待验收。"
+  },
+  "MOT-02": {
+    "class": "E",
+    "line_at_audit": 256,
+    "requirement": "联合约束线/角速度、加速度、加加速度和各轮驱动能力。",
+    "verification_guidance": "换段、重规划和角度跨界无参考突跳；空载与满载参数分别验证。"
+  },
+  "MOT-03": {
+    "class": "E",
+    "line_at_audit": 257,
+    "requirement": "连续转弯服从随朝向变化的扫掠包络、车道、障碍、定位健康及载物稳定约束。",
+    "verification_guidance": "不以车中心替代轮廓；允许降速、停车或换路，安全响应不因平顺目标延迟。"
+  },
+  "MOT-04": {
+    "class": "E",
+    "line_at_audit": 258,
+    "requirement": "按用户决定，实车直接从完整装机载物开始，低速检查后验证连续转弯、车道通行、实际任务负载、双起点与故障注入；不单设空底盘阶段。",
+    "verification_guidance": "保留软件/静态安全前置检查；固定机位视频和同步日志，测试前冻结误差/运动限值，未完成实测不得宣称达到参考效果。"
+  },
+  "RUN-01": {
+    "class": "R",
+    "line_at_audit": 289,
+    "requirement": "机器人完全自主、一键启动；运行中不得触碰机器人或笔记本电脑，不得遥控。",
+    "verification_guidance": "正式模式禁用遥控入口；调试接口与比赛入口明确隔离。"
+  },
+  "RUN-02": {
+    "class": "R",
+    "line_at_audit": 290,
+    "requirement": "物料必须先放到机器人载台后才能跨区域运输；每次抓取一个再放到车上，不能一直由手爪夹持跨区域运输。",
+    "verification_guidance": "状态机设置“抓取→载台确认→运输→再次抓取/放置”的硬门禁。"
+  },
+  "RUN-03": {
+    "class": "R",
+    "line_at_audit": 291,
+    "requirement": "物料底面一旦接触场地即按该位置评分；之后推动可能直接结束本轮。",
+    "verification_guidance": "放置后禁止以底面接触场地的方式推移校正。"
+  },
+  "RUN-04": {
+    "class": "R",
+    "line_at_audit": 292,
+    "requirement": "15秒停滞会触发结束；等待转盘时规则增加8秒。",
+    "verification_guidance": "所有等待状态显式计时并记录剩余预算。"
+  },
+  "RUN-05": {
+    "class": "E",
+    "line_at_audit": 293,
+    "requirement": "故障恢复、重规划和状态跳转必须在15秒窗口内完成；视觉失败具有超时、有限重试和降级路线。",
+    "verification_guidance": "建议在3秒内作出恢复/降级决策，给实际运动和制动留余量；不得无限重试。"
+  },
+  "RUN-06": {
+    "class": "E",
+    "line_at_audit": 294,
+    "requirement": "状态机不允许卡死；每个状态必须定义进入条件、成功出口、失败出口、超时和安全动作。",
+    "verification_guidance": "故障注入覆盖相机、串口、定位、任务码、抓取和路径失败。"
+  },
+  "RUN-07": {
+    "class": "R",
+    "line_at_audit": 295,
+    "requirement": "智能搬运现场初赛分两轮，每轮调试3分钟、运行3分钟。",
+    "verification_guidance": "来源2027附件2-2第3页；实测调参与整场用时，不把时间规则当成现有程序达标证据。"
+  },
+  "RUN-08": {
+    "class": "R",
+    "line_at_audit": 296,
+    "requirement": "初赛调试剩1分钟抽签确定任务；剩30秒机器人停止场地运行，放在抽中出发位置待机。",
+    "verification_guidance": "来源附件2-1第7页；前150秒完成运行调试，最后30秒按现场流程待发车。"
+  },
+  "PWR-01": {
+    "class": "R",
+    "line_at_audit": 297,
+    "requirement": "机器人只能使用一个内置电源，比赛过程包含调试阶段不得更换。",
+    "verification_guidance": "电源架构不允许临时外接第二电源或中途换电。"
+  },
+  "PWR-02": {
+    "class": "E",
+    "line_at_audit": 298,
+    "requirement": "电量测试必须覆盖完整调试及两轮运行，并留老化、低温和重试余量。",
+    "verification_guidance": "使用最坏负载做端到端续航测试，记录最低母线电压和剩余容量。"
+  },
+  "MECH-01": {
+    "class": "R",
+    "line_at_audit": 304,
+    "requirement": "初始状态含机械臂、软线、屏幕、传感器等的铅垂投影不超过300×300mm，高度不超过400mm。",
+    "verification_guidance": "用实体300×300×400mm检具检查；软线和突出紧固件也计入。"
+  },
+  "MECH-02": {
+    "class": "R",
+    "line_at_audit": 305,
+    "requirement": "折叠机构只能在出发后自行展开。",
+    "verification_guidance": "上电/出发前保持尺寸合规，展开必须自动且可重复。"
+  },
+  "MECH-03": {
+    "class": "E",
+    "line_at_audit": 306,
+    "requirement": "底盘应小于尺寸上限并给回区定位、转弯包络及装配误差留余量。",
+    "verification_guidance": "冻结机械前分别测初始包络、展开包络和动态转弯包络。"
+  },
+  "MECH-04": {
+    "class": "R",
+    "line_at_audit": 307,
+    "requirement": "决赛创新实践成果必须安装到机器人并用于后续任务才是A等级；完成但未应用为B等级；未按要求完成为C等级并取消后续现场决赛资格。",
+    "verification_guidance": "预留标准机械、电气、软件和标定接口，现场改装后有快速自检。"
+  },
+  "MECH-05": {
+    "class": "E",
+    "line_at_audit": 308,
+    "requirement": "采用快速拆装和现场改造设计；准备可快速加工零件、标准紧固件、备用线束和配置模板。",
+    "verification_guidance": "演练限定时间内拆装、识别、配置、测试和实际执行任务。"
+  }
+}

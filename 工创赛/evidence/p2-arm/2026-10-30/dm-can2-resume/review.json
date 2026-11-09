@@ -1,0 +1,205 @@
+{
+  "date": "2026-10-30",
+  "classification": "E",
+  "actual_project": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程",
+  "installed_source_hash_matches": {
+    "HARDWARE/DM_CAN2/dm_can2.h": true,
+    "HARDWARE/DM_CAN2/dm_can2_motion.c": true
+  },
+  "protected_source_hash_matches": {
+    "HARDWARE/DM_CAN2/dm_can2.c": true,
+    "HARDWARE/DM_CAN2/dm_can2_protocol.c": true,
+    "USER/main.c": true,
+    "gongxun-f407.uvprojx": true,
+    "SYSTEM/CAN/can.c": true,
+    "USER/app_config.h": true,
+    "HARDWARE/LIFT/lift.c": true,
+    "HARDWARE/LIFT/lift_home.c": true,
+    "HARDWARE/LIFT/lift_config.h": true,
+    "HARDWARE/EXTENSION/extension.c": true,
+    "HARDWARE/EXTENSION/extension.h": true
+  },
+  "recorded_actual_build_pass": true,
+  "build_rerun": false,
+  "synthetic_model_sha256": "54c5b3a0e8b021e0188ce7000e008a0b5ee497ecee887aec26133e16bfabc3fc",
+  "synthetic_model_cases": [
+    {
+      "case": "positive",
+      "returncode": 0,
+      "output": "PASS motion scenario: positive; tx=618; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "negative",
+      "returncode": 0,
+      "output": "PASS motion scenario: negative; tx=618; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "stale",
+      "returncode": 0,
+      "output": "PASS motion scenario: stale; tx=0; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "txfail",
+      "returncode": 0,
+      "output": "PASS motion scenario: txfail; tx=3; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "noreply",
+      "returncode": 0,
+      "output": "PASS motion scenario: noreply; tx=4; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "fault",
+      "returncode": 0,
+      "output": "PASS motion scenario: fault; tx=4; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "disabled",
+      "returncode": 0,
+      "output": "PASS motion scenario: disabled; tx=4; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "tracking",
+      "returncode": 0,
+      "output": "PASS motion scenario: tracking; tx=4; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "limit",
+      "returncode": 0,
+      "output": "PASS motion scenario: limit; tx=4; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "busy",
+      "returncode": 0,
+      "output": "PASS motion scenario: busy; tx=0; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "abort",
+      "returncode": 0,
+      "output": "PASS motion scenario: abort; tx=81; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "repeat",
+      "returncode": 0,
+      "output": "PASS motion scenario: repeat; tx=618; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "gap",
+      "returncode": 0,
+      "output": "PASS motion scenario: gap; tx=81; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "badprofile",
+      "returncode": 0,
+      "output": "PASS motion scenario: badprofile; tx=0; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "stoplost",
+      "returncode": 0,
+      "output": "PASS motion scenario: stoplost; tx=619; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_pick",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_pick; tx=1518; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_place",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_place; tx=1518; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_minus_turn",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_minus_turn; tx=1518; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_edit",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_edit; tx=1518; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_gated",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_gated; tx=0; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_gate_drop",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_gate_drop; tx=81; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_badtarget",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_badtarget; tx=0; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_nantarget",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_nantarget; tx=0; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_outside",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_outside; tx=0; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_wrong_direction",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_wrong_direction; tx=0; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_abort",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_abort; tx=81; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_repeat",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_repeat; tx=1518; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_stale",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_stale; tx=0; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_noreply",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_noreply; tx=4; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_fault",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_fault; tx=4; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_gap",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_gap; tx=81; no startup/repeat queue, bounded relative targets."
+    },
+    {
+      "case": "point_stoplost",
+      "returncode": 0,
+      "output": "PASS motion scenario: point_stoplost; tx=1519; no startup/repeat queue, bounded relative targets."
+    }
+  ],
+  "hardware_acceptance": false,
+  "flash_performed_this_turn": false,
+  "motion_performed_this_turn": false,
+  "current_board_firmware_and_pose": "awaiting_user",
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged_pending_official_clarification"
+}

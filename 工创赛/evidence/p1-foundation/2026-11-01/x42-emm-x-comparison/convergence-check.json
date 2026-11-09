@@ -1,0 +1,20 @@
+{
+  "initial_check": {
+    "coarse_dt_s": 0.0002,
+    "fine_dt_s": 0.0001,
+    "max_endpoint_difference_deg": 0.03259304169260702,
+    "median_endpoint_difference_deg": 4.41879817572044e-05,
+    "predeclared_threshold_deg": 0.03,
+    "passed": false
+  },
+  "refined_check": {
+    "coarse_dt_s": 0.0001,
+    "fine_dt_s": 5e-05,
+    "cases": 480,
+    "terminal_angle_difference_max_deg": 0.004943139734351121,
+    "terminal_angle_difference_median_deg": 2.858956477780339e-05,
+    "predeclared_threshold_deg": 0.03,
+    "passed": true
+  },
+  "scope": "Numerical integration sensitivity of discontinuous friction/encoder proxy, not motor accuracy or true firmware ranking. Do not use uncertain small endpoint differences to choose firmware."
+}

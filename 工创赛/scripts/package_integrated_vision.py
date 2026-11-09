@@ -15,7 +15,7 @@ def portable_member(name):
         member.extra=struct.pack('<HH',0x7075,len(payload))+payload
     return member
 
-def build_package(target,app=None):
+def build_package(target,app=None,metadata=None):
     app=Path(app) if app is not None else ROOT/'vision_app'
     target=Path(target)
     target.parent.mkdir(parents=True,exist_ok=True)
@@ -26,9 +26,11 @@ def build_package(target,app=None):
             data=p.read_bytes();name='vision_app/'+p.relative_to(app).as_posix()
             z.writestr(portable_member(name),data)
             files.append({'file':name,'sha256':hashlib.sha256(data).hexdigest(),'bytes':len(data)})
-        z.writestr('DEPLOY_MANIFEST.json',json.dumps({'built_for':'DECXIN1280x960 desktop','date':'2026-10-04',
+        manifest={'built_for':'DECXIN1280x960 desktop','date':'2026-10-04',
             'filename_encoding':'UTF-8 with Info-ZIP Unicode Path (0x7075)',
-            'hardware_acceptance':False,'serial_default':'disabled','files':files},ensure_ascii=False,indent=2))
+            'hardware_acceptance':False,'serial_default':'disabled','files':files}
+        if metadata:manifest.update(metadata)
+        z.writestr('DEPLOY_MANIFEST.json',json.dumps(manifest,ensure_ascii=False,indent=2))
     with ZipFile(target) as z:
         assert z.testzip() is None
         for item in files:assert hashlib.sha256(z.read(item['file'])).hexdigest()==item['sha256']

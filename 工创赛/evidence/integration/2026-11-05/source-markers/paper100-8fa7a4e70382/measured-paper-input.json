@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "calibration_id": "source-paper100-image-8fa7a4e70382-candidate",
+  "width_mm": 100.0,
+  "height_mm": 100.0,
+  "context": {
+    "camera_id": "Generic_USB_CAMERA_EP.20CC54K01-user135",
+    "image_size": [
+      1920,
+      1080
+    ],
+    "mount_id": "current-field-mount-20261105",
+    "arm_pose_id": "image-bound-8fa7a4e70382-pose-feedback-not-recorded",
+    "pixel_space": "raw",
+    "lens_profile_id": null,
+    "plane_id": "paper_on_source_surface",
+    "plane_z_mm": 85.5,
+    "plane_origin": "corner A; X along AB; Y along AD",
+    "axes": "x_along_ab_y_toward_ad_mm"
+  },
+  "limits": {
+    "fit_max_mm": 3.0,
+    "validation_max_mm": 3.0
+  },
+  "markers": [
+    {
+      "id": "A",
+      "image_px": [
+        760.8134988121342,
+        541.7141089191585
+      ]
+    },
+    {
+      "id": "B",
+      "image_px": [
+        1170.7143018247364,
+        550.6908545198128
+      ]
+    },
+    {
+      "id": "C",
+      "image_px": [
+        1157.6372391349978,
+        956.9542037348396
+      ]
+    },
+    {
+      "id": "D",
+      "image_px": [
+        752.4615586443748,
+        948.4225217274081
+      ]
+    },
+    {
+      "id": "M",
+      "image_px": [
+        960,
+        751
+      ]
+    },
+    {
+      "id": "E",
+      "image_px": [
+        861,
+        645
+      ]
+    },
+    {
+      "id": "F",
+      "image_px": [
+        1061,
+        651
+      ]
+    }
+  ],
+  "note": "3mm limits are initial engineering diagnostics, not official rules or grasp acceptance; 85.5mm is measured support surface, paper thickness not measured",
+  "measurement_status": "user explicitly confirms black-border AB and AD both 100mm after unit clarification",
+  "pixel_extraction": {
+    "corners": "dark border line intersections; not separately measured physical paper vertices",
+    "M_E_F": "manual visual estimates from original pixels, provisional; not interpolated from fitted H",
+    "manual_point_uncertainty_px": 3,
+    "dimension_reference": "black-border AB/AD intersection-to-intersection lengths, user confirmed 100mm each",
+    "image_sha256": "8fa7a4e703828b6e67d50cfabca7972ffa7468fd09bd7cbcd5b2520ee95a023c"
+  },
+  "dimension_confirmation": {
+    "AB_mm": 100.0,
+    "AD_mm": 100.0,
+    "confirmed": true,
+    "prior_10mm_reply_superseded": true
+  }
+}

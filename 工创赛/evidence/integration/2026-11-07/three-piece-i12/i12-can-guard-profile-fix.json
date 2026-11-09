@@ -1,0 +1,80 @@
+{
+ "tag": "i12-can-guard-profile-fix",
+ "when": "2026-11-07T22:46:30",
+ "trigger": "evidence/integration/2026-11-07/three-piece-i12/i12-three-01-result.json (21:57) failed with g_safety_fault=32 at ~3.0s after VM on",
+ "root_cause": {
+  "fault_bit": "0x20 = SAFETY_FAULT_CAN_DATA (SYSTEM/SAFETY/safety.c)",
+  "mechanism": "Safety_CanGuardUpdate arms on VM request and needs the four wheel nodes (CAN1 addr 1-4) fresh within 1000ms; SAFETY_CAN_BOOT_MS=3000 then latches CAN_DATA with guard_cause=2",
+  "why_wheels_never_ready": "USER/vehicle_parameters.h sets VEHICLE_LIFT_RULER_ONLY=1U; CHASSIS/SYSTEM/CAN/can.c returns 9 for any address!=5 in that profile, so nodes 1-4 can never answer",
+  "profile_also_disables": [
+   "CHASSIS/USER/main.c: Vision_Poll() only runs when VEHICLE_INTEGRATED_ENABLE && !VEHICLE_LIFT_RULER_ONLY",
+   "CHASSIS/USER/source_stage2_body_port.inc: Stage2Body_Configure() returns 0 when isolated_profile (VEHICLE_LIFT_RULER_ONLY) or offline_profile"
+  ],
+  "classification": "build profile contradiction, not a hardware or wiring fault"
+ },
+ "fix": {
+  "file": "CHASSIS/USER/main.c",
+  "change": "call site of Safety_Update now profile-guarded: in VEHICLE_LIFT_RULER_ONLY the VM request is not handed to the four-wheel CAN guard; full-vehicle profile (flag 0) unchanged",
+  "backup": "CHASSIS/USER/main.c.bak-20261107-before-can-guard-profile",
+  "encoding_preserved": "GBK + CRLF",
+  "main_c_sha256_after": "682b5ffac51d5adc227af309cb0b11855ab080560459437761dc7f5cec26ca73"
+ },
+ "builds": {
+  "online": {
+   "target": "Vehicle_LiftRuler",
+   "log": "tmp/build_online_20261107_canguard.log",
+   "result": "0 Error(s), 0 Warning(s)",
+   "axf_sha256": "7f3c6ff40c6f1c27d5175a3e98bcf5cc21d299f0686f29e2d3577996edc9b44a"
+  },
+  "offline": {
+   "target": "Vehicle_LiftRuler_Offline",
+   "log": "tmp/build_offline_20261107_canguard.log",
+   "result": "0 Error(s), 0 Warning(s)",
+   "axf_sha256": "f6c41a33b87602e2c5c92a89f7968e02c84dd8674e80f68e2ad5292142eb7c2b"
+  }
+ },
+ "flash": {
+  "log": "tmp/flash_20261107_canguard.log",
+  "result": "Erase Done. Programming Done. Verify OK. Application running",
+  "at": "2026-11-07 22:46:00"
+ },
+ "flash_compare": {
+  "source": "evidence/integration/2026-11-07/three-piece-i12/post-flash-verify-canguard-20261107.json",
+  "flash_matches": true,
+  "bytes_compared": 129808
+ },
+ "state_after_flash": {
+  "g_safety_ready": 1,
+  "g_safety_fault": 0,
+  "g_can_ctrl_fault_latched": 0,
+  "g_vm_test_request": 0,
+  "g_can_test_result": 1
+ },
+ "vm_probe_attempt": {
+  "script": "scripts/stage2_vm_can_probe.py",
+  "evidence": "evidence/integration/2026-11-07/three-piece-i12/i12-can-guard-probe-01.json",
+  "result": "host write of g_vm_test_request=1 was cleared by firmware within ~120ms (VM not held), so the guard was never armed and no fault appeared; this probe does not prove the fix",
+  "why": "firmware only keeps VM while a motion/owning session holds it; a bare host write is not a valid holder"
+ },
+ "verified": [
+  "source edit compiles in both online and offline targets",
+  "flashed image byte-identical to built AXF, board RUNNING, clean idle state"
+ ],
+ "not_verified": [
+  "VM held >3s on hardware without 0x20 (needs a motion run: lift home / one-cycle)",
+  "three-piece stage2 autorun: blocked by profile, Stage2Body_Configure() refuses when VEHICLE_LIFT_RULER_ONLY=1",
+  "full-vehicle profile (VEHICLE_LIFT_RULER_ONLY=0) build/behavior: not built, not tested"
+ ],
+ "requirement_ids": {
+  "R": [
+   "RUN-02",
+   "PWR-01"
+  ],
+  "E": [
+   "RUN-06",
+   "SRC-04"
+  ],
+  "Q": "official questions still pending technical clarification"
+ },
+ "boundary": "no motor motion commanded this round; only a VM-on probe (cleared by firmware), a rebuild, a flash and read-only flash compare"
+}

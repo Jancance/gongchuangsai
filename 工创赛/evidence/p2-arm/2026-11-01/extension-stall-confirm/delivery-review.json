@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-01",
+  "installed": true,
+  "actual_build_pass": true,
+  "changed_files": [
+    "HARDWARE/EXTENSION/extension.c",
+    "HARDWARE/EXTENSION/extension.h",
+    "HARDWARE/EXTENSION/extension_config.h"
+  ],
+  "protected_other_source_project_count": 817,
+  "cases_passed": 72,
+  "builds": {
+    "stage-build.log": "Program Size: Code=63940 RO-data=608 RW-data=2464 ZI-data=26016  ",
+    "actual-build.log": "Program Size: Code=63940 RO-data=608 RW-data=2464 ZI-data=26016  "
+  },
+  "user_reported_drive_parameters": {
+    "Clog_Ma_ma": 2200,
+    "Clog_Ms_ms": 2000,
+    "home_collision_current_ma": 800
+  },
+  "confirmed_code_cause": "The host stopped on the instantaneous0x04 flag without a duration check, including the captured515ms failure while protection0x08 was clear.",
+  "unconfirmed_physical_cause": "Whether the captured instantaneous flag is a normal start transient, drive/load/feedback issue, or an unsuitable threshold is not established.",
+  "new_running_policy": {
+    "instantaneous0x04_confirm_ms": 2000,
+    "clear_resets_observation": true,
+    "protection0x08_or_disabled": "immediate stop when sampled",
+    "preflight_stall_rejection": "unchanged",
+    "completion_while_stall": "forbidden",
+    "whole_motion_limit_ms": 10000,
+    "confirmation_uses_sampled_status": true
+  },
+  "pulses": 1600,
+  "rpm": 5,
+  "driver_parameters_written": false,
+  "flashed": false,
+  "assistant_hardware_commands_sent": false,
+  "new_hardware_result_pending": true,
+  "valid_mm_samples": 0,
+  "metric_calibration_accepted": false,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "CAL-05"
+  ],
+  "official_Q": "待技术答疑确认"
+}

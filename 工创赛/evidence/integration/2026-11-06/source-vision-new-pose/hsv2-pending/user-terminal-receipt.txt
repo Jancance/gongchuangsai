@@ -1,0 +1,83 @@
+orangepi@robot-opi5pro:~$ python3 ~/p2-source-observer-20261106/vision_app/run.py --feature source-observe --mode A --duration 30 --session-dir ~/source-finalstop-A-20261106
+AUTO CAMERA: AE=3, variable-FPS=0, WB=auto; convergence/colour/freshness NOT validated
+gain: 64
+white_balance_temperature_auto: 1
+white_balance_temperature: 4600
+exposure_auto: 3 (Aperture Priority Mode)
+exposure_absolute: 166
+exposure_auto_priority: 0
+
+Camera connected: /dev/v4l/by-id/usb-Generic_USB_CAMERA_EP.20CC54K01-video-index0, 1920x1080, 30.0 FPS
+{"mode": "A", "frames": 1, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 32, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 62, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 91, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 122, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 152, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 183, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 213, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 243, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 274, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 305, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 336, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 367, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 397, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 427, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 458, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 488, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 518, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 548, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+{"mode": "A", "frames": 578, "metric": "UNCONFIGURED", "serial": "DISABLED", "motion_allowed": false}
+Saved: /home/orangepi/source-finalstop-A-20261106
+orangepi@robot-opi5pro:~$ python3 ~/p2-source-observer-20261106/vision_app/run.py --feature source-observe --mode M --duration 15 --session-dir ~/source-finalstop-M-static-20261106
+AUTO CAMERA: AE=3, variable-FPS=0, WB=auto; convergence/colour/freshness NOT validated
+gain: 64
+white_balance_temperature_auto: 1
+white_balance_temperature: 4600
+exposure_auto: 3 (Aperture Priority Mode)
+exposure_absolute: 166
+exposure_auto_priority: 0
+
+Camera connected: /dev/v4l/by-id/usb-Generic_USB_CAMERA_EP.20CC54K01-video-index0, 1920x1080, 30.0 FPS
+{"mode": "M", "frames": 1, "metric": null, "serial": "DISABLED", "motion_allowed": false}
+{"mode": "M", "frames": 29, "metric": null, "serial": "DISABLED", "motion_allowed": false}
+{"mode": "M", "frames": 57, "metric": null, "serial": "DISABLED", "motion_allowed": false}
+{"mode": "M", "frames": 85, "metric": null, "serial": "DISABLED", "motion_allowed": false}
+{"mode": "M", "frames": 115, "metric": null, "serial": "DISABLED", "motion_allowed": false}
+Saved: /home/orangepi/source-finalstop-M-static-20261106
+orangepi@robot-opi5pro:~$ cd /home/orangepi/p2-source-workflow-20261105 &&
+python3 vision_app/run.py --feature color
+AUTO CAMERA: AE=3, variable-FPS=0, WB=auto; convergence/colour/freshness NOT validated
+gain: 64
+white_balance_temperature_auto: 1
+white_balance_temperature: 4600
+exposure_auto: 3 (Aperture Priority Mode)
+exposure_absolute: 166
+exposure_auto_priority: 0
+
+HSV calibrator controls:
+  1-6 select color; drag left mouse inside material
+  U undo; C clear; R preset; S save; Q/Esc quit
+\u989c\u8272\u914d\u7f6e\u5df2\u4fdd\u5b58\uff1a/home/orangepi/p2-source-workflow-20261105/vision_app/code/config/material_color_thresholds.json
+\u989c\u8272\u914d\u7f6e\u5df2\u4fdd\u5b58\uff1a/home/orangepi/p2-source-workflow-20261105/vision_app/code/config/material_color_thresholds.json
+\u989c\u8272\u914d\u7f6e\u5df2\u4fdd\u5b58\uff1a/home/orangepi/p2-source-workflow-20261105/vision_app/code/config/material_color_thresholds.json
+orangepi@robot-opi5pro:~/p2-source-workflow-20261105$ python3 ~/p2-source-observer-20261106/vision_app/run.py --feature source-observe --mode M --duration 15 --session-dir ~/source-finalstop-M-static-20261106
+Traceback (most recent call last):
+  File "/home/orangepi/p2-source-observer-20261106/vision_app/run.py", line 28, in <module>
+    if __name__=='__main__':main()
+  File "/home/orangepi/p2-source-observer-20261106/vision_app/run.py", line 26, in main
+    runpy.run_path(str(script),run_name='__main__')
+  File "/usr/lib/python3.10/runpy.py", line 289, in run_path
+    return _run_module_code(code, init_globals, run_name,
+  File "/usr/lib/python3.10/runpy.py", line 96, in _run_module_code
+    _run_code(code, mod_globals, init_globals,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/orangepi/p2-source-observer-20261106/vision_app/code/source_observe.py", line 153, in <module>
+    raise SystemExit(main())
+  File "/home/orangepi/p2-source-observer-20261106/vision_app/code/source_observe.py", line 94, in main
+    out.mkdir(parents=True, exist_ok=False)
+  File "/usr/lib/python3.10/pathlib.py", line 1175, in mkdir
+    self._accessor.mkdir(self, mode)
+FileExistsError: [Errno 17] File exists: '/home/orangepi/source-finalstop-M-static-20261106'
+orangepi@robot-opi5pro:~/p2-source-workflow-20261105$ 

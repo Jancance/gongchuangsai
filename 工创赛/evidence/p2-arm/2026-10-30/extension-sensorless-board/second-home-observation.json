@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-30",
+  "classification": "E repeated physical retract-contact-self-stop function",
+  "user_message": "是再次缩回、真正触挡后自行停止，进入下一步",
+  "evidence_source": "user physical observation; no second-home screenshot or telemetry provided",
+  "second_retract_true_contact_self_stop_confirmed": true,
+  "physical_home_retreat_home_sequence_confirmed": true,
+  "second_home_watch": null,
+  "second_home_software_completion_verified": false,
+  "first_home_software_evidence": "first-home-acceptance.json",
+  "retreat_evidence": "retreat-after-first-home.json",
+  "metric_repeatability_verified": false,
+  "full_travel_or_metric_mapping_verified": false,
+  "stop_load_rating_or_long_term_hold_verified": false,
+  "power_loss_recovery_verified": false,
+  "fixed_grasp_or_vision_calibration_verified": false,
+  "next_work_package": "vehicle three-slot carrier actuator intake and single-actuator indexing; retain extension travel/positions as open items before coordinated grasp",
+  "pending_user_input": "actual carrier servo signal pin and supply voltage; PB1 is a historical plan, not confirmed wiring",
+  "assistant_firmware_changes": false,
+  "assistant_flash_performed": false,
+  "assistant_hardware_commands": false,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged; pending official clarification"
+}

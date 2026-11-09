@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-29",
+  "classification": "E 右侧取料姿态人工摆位后的反馈候选",
+  "pose_context": "用户按上一步逆时针手摆至右侧实际取料朝向后回传Watch；本图未独立测量夹爪/物料对齐",
+  "state": 4,
+  "result": 1,
+  "feedback_valid": 1,
+  "motor_state": 0,
+  "read_request": 0,
+  "jog_request": 0,
+  "jog_state": 0,
+  "raw_position_deg": 241.289658,
+  "logical_position_deg": 177.833679,
+  "last_left_raw_position_deg": 63.4615974,
+  "delta_from_last_left_feedback_deg": 177.82806060000001,
+  "left_zero_reference_raw_deg": -296.544037,
+  "candidate_pick_angle_deg": 177.833679,
+  "candidate_pick_saved": true,
+  "automatic_target_motion_verified": false,
+  "full_sweep_safe_limit_verified": false,
+  "grasp_alignment_verified": false,
+  "physical_angular_precision_verified": false,
+  "carrier_transfer_angle_deg": null,
+  "screenshot": "right-pick-read-watch.png",
+  "screenshot_sha256": "6c68eb8a86643bdd62dbce67e2ee4046c36a1af4886f9e66f444e327796a165a",
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q_unchanged": true
+}

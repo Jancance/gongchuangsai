@@ -1,0 +1,41 @@
+{
+  "actual": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程",
+  "stage": "D:\\Codex\\工创赛\\tmp\\endpoint_integer_feedback_20261103",
+  "original": {
+    "CHASSIS/USER/chassis_direction_guard.h": "dad19519e600f9621e6f1458fb8b251b5ac6965575156c8ff2ba341774fc99a3"
+  },
+  "user_observation": "前移完成但未横移；没看到倒退或回弹",
+  "source_fault": "HF3: reason10,address1,target+20decirpm,feedback-20decirpm; encoder progress145.572mm/target150mm",
+  "candidate_not_physical_root_cause_proof": true,
+  "flashed": true,
+  "hardware_commands_sent": true,
+  "installed": true,
+  "changed": {
+    "CHASSIS/USER/chassis_direction_guard.h": "7edfb91d6a207fe71fc240364d04b508f32d28b5cd86dbeb54801e8e2ce6d3de"
+  },
+  "protected_source_files_verified": 1862,
+  "hardware_accessed": true,
+  "actual_builds": [
+    {
+      "target": "Vehicle_Integrated",
+      "passed": true,
+      "returncode": 0,
+      "log": "actual-Vehicle_Integrated.log",
+      "program_size": "Program Size: Code=125412 RO-data=6612 RW-data=3304 ZI-data=118880  "
+    },
+    {
+      "target": "Vehicle_Offline",
+      "passed": true,
+      "returncode": 0,
+      "log": "actual-Vehicle_Offline.log",
+      "program_size": "Program Size: Code=115432 RO-data=6604 RW-data=3180 ZI-data=118804  "
+    }
+  ],
+  "serial_motion_commands_sent": 0,
+  "assistant_RAM_start_writes": 0,
+  "flash_result": "flash-result.json",
+  "hardware_command_scope": "CMSIS-DAP programming/verification only; motion started by user PC13",
+  "live_feedback_run": "live-result.json",
+  "live_two_action_sequence_completed": true,
+  "physical_stop_point_measured": false
+}

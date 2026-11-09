@@ -30,7 +30,8 @@ def command(verb, token=(0, 0)):
 
 def parse_telemetry(line):
     line = line.rstrip(b"\r\n")
-    if not line.startswith(b"TM1,"):
+    quantized = line.startswith(b"TMQ,")
+    if not quantized and not line.startswith(b"TM1,"):
         return None
     if len(line) >= 768:
         raise ValueError("frame too long")
@@ -44,6 +45,8 @@ def parse_telemetry(line):
     if binascii.crc_hqx(prefix + b",", 0xFFFF) != received_crc:
         raise ValueError("CRC mismatch")
     values = prefix.split(b",")[1:]
+    if quantized and len(values) not in (49, 66):
+        raise ValueError("TMQ field count")
     names = (FIELDS + SEQUENCE_FIELDS + CAN_DIAG_FIELDS + ACTION_FIELDS + DISPLAY_FIELDS + DISTANCE_FIELDS + ["distance_fault_reason", "can_stack_words", "debug_plan_id"] if len(values) == len(FIELDS) + 18 else
              FIELDS + SEQUENCE_FIELDS + CAN_DIAG_FIELDS + ACTION_FIELDS + DISPLAY_FIELDS + DISTANCE_FIELDS + ["distance_fault_reason", "can_stack_words"] if len(values) == len(FIELDS) + 17 else
              FIELDS + ["can_stack_words"] if len(values) == len(FIELDS) + 1 else
@@ -61,6 +64,11 @@ def parse_telemetry(line):
     record = dict(zip(names, numbers))
     for name in UINT_FIELDS:
         record[name] &= 0xFFFFFFFF
+    if quantized:
+        # 当前固件明确使用0.1RPM整数线格式，解析后仍提供物理RPM。
+        record["wire_tag"] = "TMQ"
+        for name in ("correction_rpm", "rpm1", "rpm2", "rpm3", "rpm4", "peak_abs_rpm", "last_nonzero_rpm"):
+            record[name] = None if record[name] == -(2**31) else record[name] / 10.0
     return record
 
 
@@ -76,11 +84,15 @@ BACKEND_FAULT_FIELDS = ["backend_fault_reason", "backend_fault_state", "backend_
     "backend_address", "backend_command_age_ms", "backend_status_mask", "backend_speed_mask",
     "backend_feedback_age_ms", "backend_fault_tick_ms"]
 
+DIRECTION_FAULT_FIELDS = ["backend_target_decirpm", "backend_measured_decirpm",
+                          "target_ack_ms", "speed_sample_ms", "reverse_samples"]
+
 
 def parse_fault_telemetry(line):
     """HF1/HF2 is an immutable first-trip snapshot; never a command or freshness token."""
     line = line.rstrip(b"\r\n")
-    extended = line.startswith(b"HF2,")
+    directional = line.startswith(b"HF3,")
+    extended = directional or line.startswith(b"HF2,")
     if not extended and not line.startswith(b"HF1,"):
         return None
     if len(line) >= (512 if extended else 384):
@@ -89,16 +101,21 @@ def parse_fault_telemetry(line):
     if not sep or len(checksum) != 4 or binascii.crc_hqx(prefix+b",", 0xFFFF) != int(checksum,16):
         raise ValueError("fault CRC mismatch")
     values = [int(value) for value in prefix.split(b",")[1:]]
-    fields = FAULT_FIELDS + BACKEND_FAULT_FIELDS if extended else FAULT_FIELDS
+    fields = FAULT_FIELDS + BACKEND_FAULT_FIELDS + DIRECTION_FAULT_FIELDS if directional else (
+        FAULT_FIELDS + BACKEND_FAULT_FIELDS if extended else FAULT_FIELDS)
     if len(values) != len(fields) or any(not 0 <= value <= 0xFFFFFFFF for value in values):
         raise ValueError("fault field count or uint32 range")
     result = dict(zip(fields, values))
     if result["source_valid"] > 1 or result["event_reason"] not in (0,1,2,4) or result["event_seen"] > 3:
         raise ValueError("fault flags")
-    if extended and (result["backend_fault_reason"] > 8 or result["backend_fault_state"] > 11 or
+    if extended and (result["backend_fault_reason"] > (12 if directional else 8) or result["backend_fault_state"] > 11 or
                      result["backend_address"] > 4 or result["backend_status_mask"] > 15 or
                      result["backend_speed_mask"] > 15):
         raise ValueError("backend fault flags")
+    if directional:
+        for name in ("backend_target_decirpm", "backend_measured_decirpm"):
+            if result[name] & 0x80000000:
+                result[name] -= 0x100000000
     return result
 
 

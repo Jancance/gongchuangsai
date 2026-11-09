@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-31",
+  "classification": "E continuation audit, no new firmware changes",
+  "installed_source_checks": {
+    "HARDWARE/LIFT/lift_config.h": true,
+    "HARDWARE/LIFT/lift.h": true,
+    "HARDWARE/LIFT/lift.c": true,
+    "HARDWARE/LIFT/lift_protocol.c": true,
+    "SYSTEM/CAN/can.c": true
+  },
+  "protected_source_project_files": 813,
+  "all_source_checks_pass": true,
+  "only_project": "gongxun-f407.uvprojx",
+  "prior_runtime_scenarios": 25,
+  "prior_build_code_bytes": 59764,
+  "prior_stage_and_actual_build_pass": true,
+  "runtime_tests_or_build_repeated_today": false,
+  "reason": "same5 source and813 protected source/project hashes",
+  "previous_gap_estimate_mm": 30,
+  "physical_execution_since_previous_report": null,
+  "next_candidate_pulses": 40000,
+  "hex": "0x00009C40",
+  "nominal_estimate_mm": 24,
+  "candidate_already_executed_or_passed": false,
+  "must_not_repeat_if_already_executed": true,
+  "flash_performed": false,
+  "hardware_commands_sent": false,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged; pending official clarification"
+}

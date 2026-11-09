@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "calibration_id": "source-paper-current220715-a5702160ff7f-diagnostic",
+  "width_mm": 100,
+  "height_mm": 100,
+  "context": {
+    "camera_id": "Generic_USB_CAMERA_EP.20CC54K01-user135",
+    "image_size": [
+      1920,
+      1080
+    ],
+    "mount_id": "current-field-mount-20261105",
+    "arm_pose_id": "image-bound-a5702160ff7f-joint-reference-not-restored",
+    "pixel_space": "raw",
+    "lens_profile_id": null,
+    "plane_id": "paper_on_source_surface",
+    "plane_z_mm": 85.5,
+    "plane_origin": "current paper corner A; X along AB; Y along AD",
+    "axes": "x_along_ab_y_toward_ad_mm"
+  },
+  "markers": [
+    {
+      "id": "A",
+      "image_px": [
+        1003.4685479595018,
+        489.22434622929995
+      ]
+    },
+    {
+      "id": "B",
+      "image_px": [
+        1381.168548454821,
+        301.55891944839806
+      ]
+    },
+    {
+      "id": "C",
+      "image_px": [
+        1551.3146027711432,
+        679.380933037106
+      ]
+    },
+    {
+      "id": "D",
+      "image_px": [
+        1180.4930553703573,
+        858.0232636963277
+      ]
+    },
+    {
+      "id": "M",
+      "image_px": [
+        1278,
+        584
+      ]
+    },
+    {
+      "id": "E",
+      "image_px": [
+        1142,
+        534
+      ]
+    },
+    {
+      "id": "F",
+      "image_px": [
+        1326,
+        446
+      ]
+    }
+  ],
+  "limits": {
+    "fit_max_mm": 3.0,
+    "validation_max_mm": 3.0
+  },
+  "image_sha256": "a5702160ff7f4f2a7b079d8690d426e537be8b73cfa7c8eba860b6dce10c93bc",
+  "homography_image_to_plane": [
+    [
+      0.21004960850563492,
+      -0.10082439702626686,
+      -161.45242592747252
+    ],
+    [
+      0.10305885081188236,
+      0.20741874872956773,
+      -204.89061712149672
+    ],
+    [
+      1.0943624335867728e-06,
+      -6.281224134810682e-05,
+      1
+    ]
+  ],
+  "fit_hull_image_px": [
+    [
+      1003.4685479595018,
+      489.22434622929995
+    ],
+    [
+      1381.168548454821,
+      301.55891944839806
+    ],
+    [
+      1551.3146027711432,
+      679.380933037106
+    ],
+    [
+      1180.4930553703573,
+      858.0232636963277
+    ]
+  ],
+  "coordinate_frame": "paper_local",
+  "independent_check_passed": true,
+  "validation_scope": "held-out marks on current100mm paper only",
+  "validation": {
+    "rms_mm": 0.7193362462701494,
+    "max_mm": 0.9288751788061905,
+    "count": 3
+  },
+  "point_selection_uncertainty_px": 3,
+  "plane_height_basis": "85.5mm from earlier user measurement; current height not independently remeasured",
+  "field_calibration_accepted": false,
+  "pose_binding_verified": false,
+  "lens_distortion_validated": false,
+  "operational_extrapolation_enabled": false,
+  "motion_allowed": false,
+  "note": "current image received after user power cycle/possible chassis movement; all-three marker check incomplete, right circle covered by paper"
+}

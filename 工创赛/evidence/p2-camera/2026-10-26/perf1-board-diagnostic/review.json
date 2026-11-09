@@ -1,0 +1,516 @@
+{
+  "frames": 1116,
+  "duration_s": 133.41093543199986,
+  "states": {
+    "FOLLOWING_PIXEL": 1085,
+    "STALE_RESULT": 31
+  },
+  "two_targets": 1077,
+  "detector_both": 1111,
+  "stale_but_detector_both": 31,
+  "nonstale_missing_blue": 5,
+  "missing_blue_frame_indices": [
+    158,
+    370,
+    393,
+    553,
+    734
+  ],
+  "hash_matches": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true,
+    "camera_processing.json": true,
+    "project_profile.json": true,
+    "material_color_thresholds.json": true
+  },
+  "source_sha256": "2726d921ab8261c34105b3624a1a065024dfce8db75785ae2de698c47d06edb7",
+  "motion_allowed": false,
+  "unexpected_target_colors": {},
+  "detector_call_ms": {
+    "median": 101.12406949974684,
+    "p95": 119.14864299978944,
+    "max": 141.15105000018957
+  },
+  "result_host_age_ms": {
+    "median": 120.90342800001963,
+    "p95": 145.25983974976953,
+    "max": 174.5090300000811
+  },
+  "diagnostic_io_ms": {
+    "median": 0.3250574995945499,
+    "p95": 0.40023374981501547,
+    "max": 13.53253900015261
+  },
+  "entry_host_age_ms": {
+    "median": 18.772394999814423,
+    "p95": 39.87524275021315,
+    "max": 56.11520900038158
+  },
+  "transition_counts": {
+    "sample-01": 1,
+    "first-frame": 1,
+    "first-other-color-candidate": 1082,
+    "first-blue-with-lightblue": 1082,
+    "first-blue-visible": 1,
+    "first-blue-loss": 34,
+    "first-blue-reappearance": 34,
+    "first-blue-id-change": 30,
+    "sample-02": 1,
+    "sample-03": 1,
+    "sample-04": 1
+  },
+  "longest_blue_missing_s": 0.30267732399988745,
+  "nonstale_missing_details": [
+    {
+      "frame_index": 158,
+      "age_ms": 148.1538569996701,
+      "regions": [
+        {
+          "bbox_px": [
+            348,
+            511,
+            266,
+            170
+          ],
+          "area_px2": 29421.0,
+          "label": "UNKNOWN",
+          "reason": "SHAPE_UNCERTAIN",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            1275,
+            526,
+            236,
+            153
+          ],
+          "area_px2": 25804.5,
+          "label": "lightblue",
+          "reason": "DOMINANT_COLOR_EVIDENCE",
+          "proposal_source": "combined_silhouette",
+          "usable_fraction": 1.0,
+          "color_fractions": {
+            "red": 0.0,
+            "yellow": 0.0,
+            "blue": 8.47565368479044e-05,
+            "green": 0.0,
+            "black": 0.0033055049370682714,
+            "lightblue": 0.9938975293469509
+          },
+          "dark_fraction": 0.0033055049370682714,
+          "silhouette_center_px": [
+            1389.4946682426191,
+            604.0727134156186
+          ]
+        },
+        {
+          "bbox_px": [
+            863,
+            516,
+            159,
+            160
+          ],
+          "area_px2": 17238.0,
+          "label": "UNKNOWN",
+          "reason": "SHAPE_UNCERTAIN",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            0,
+            224,
+            49,
+            128
+          ],
+          "area_px2": 2739.5,
+          "label": "UNKNOWN",
+          "reason": "TOUCHES_BORDER",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            0,
+            164,
+            48,
+            44
+          ],
+          "area_px2": 1099.0,
+          "label": "UNKNOWN",
+          "reason": "TOUCHES_BORDER",
+          "proposal_source": "combined_silhouette"
+        }
+      ]
+    },
+    {
+      "frame_index": 370,
+      "age_ms": 123.31328599975677,
+      "regions": [
+        {
+          "bbox_px": [
+            825,
+            479,
+            234,
+            234
+          ],
+          "area_px2": 42519.5,
+          "label": "UNKNOWN",
+          "reason": "AMBIGUOUS_COLOR",
+          "proposal_source": "combined_silhouette",
+          "usable_fraction": 0.9880013969267611,
+          "color_fractions": {
+            "red": 0.0010856666750826873,
+            "yellow": 5.049612442245058e-05,
+            "blue": 0.0,
+            "green": 0.0,
+            "black": 0.11149544272477087,
+            "lightblue": 0.0
+          },
+          "dark_fraction": 0.11149544272477087,
+          "silhouette_center_px": [
+            941.7432746543742,
+            595.6426463152201
+          ]
+        },
+        {
+          "bbox_px": [
+            349,
+            501,
+            292,
+            208
+          ],
+          "area_px2": 30106.0,
+          "label": "UNKNOWN",
+          "reason": "SHAPE_UNCERTAIN",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            1275,
+            522,
+            237,
+            157
+          ],
+          "area_px2": 25794.0,
+          "label": "lightblue",
+          "reason": "DOMINANT_COLOR_EVIDENCE",
+          "proposal_source": "combined_silhouette",
+          "usable_fraction": 1.0,
+          "color_fractions": {
+            "red": 0.0,
+            "yellow": 0.0,
+            "blue": 0.0001274318239741738,
+            "green": 0.0,
+            "black": 0.0026760683034576503,
+            "lightblue": 0.9950301588650072
+          },
+          "dark_fraction": 0.0026760683034576503,
+          "silhouette_center_px": [
+            1389.4464862629552,
+            603.9027745470522
+          ]
+        },
+        {
+          "bbox_px": [
+            0,
+            176,
+            64,
+            88
+          ],
+          "area_px2": 2019.0,
+          "label": "UNKNOWN",
+          "reason": "TOUCHES_BORDER",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            0,
+            576,
+            20,
+            104
+          ],
+          "area_px2": 1185.5,
+          "label": "UNKNOWN",
+          "reason": "TOUCHES_BORDER",
+          "proposal_source": "combined_silhouette"
+        }
+      ]
+    },
+    {
+      "frame_index": 393,
+      "age_ms": 137.62777200008713,
+      "regions": [
+        {
+          "bbox_px": [
+            348,
+            501,
+            293,
+            208
+          ],
+          "area_px2": 30071.5,
+          "label": "UNKNOWN",
+          "reason": "SHAPE_UNCERTAIN",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            1275,
+            525,
+            236,
+            154
+          ],
+          "area_px2": 25825.5,
+          "label": "lightblue",
+          "reason": "DOMINANT_COLOR_EVIDENCE",
+          "proposal_source": "combined_silhouette",
+          "usable_fraction": 1.0,
+          "color_fractions": {
+            "red": 0.0,
+            "yellow": 0.0,
+            "blue": 0.00016964247847661053,
+            "green": 0.0,
+            "black": 0.003138385851817295,
+            "lightblue": 0.9942745663514144
+          },
+          "dark_fraction": 0.003138385851817295,
+          "silhouette_center_px": [
+            1389.2599562447967,
+            603.8750782495337
+          ]
+        },
+        {
+          "bbox_px": [
+            865,
+            518,
+            157,
+            156
+          ],
+          "area_px2": 17218.0,
+          "label": "UNKNOWN",
+          "reason": "SHAPE_UNCERTAIN",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            0,
+            232,
+            48,
+            96
+          ],
+          "area_px2": 1770.5,
+          "label": "UNKNOWN",
+          "reason": "TOUCHES_BORDER",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            0,
+            160,
+            64,
+            64
+          ],
+          "area_px2": 1692.5,
+          "label": "UNKNOWN",
+          "reason": "TOUCHES_BORDER",
+          "proposal_source": "combined_silhouette"
+        }
+      ]
+    },
+    {
+      "frame_index": 553,
+      "age_ms": 129.9905989999388,
+      "regions": [
+        {
+          "bbox_px": [
+            349,
+            501,
+            293,
+            208
+          ],
+          "area_px2": 30134.5,
+          "label": "UNKNOWN",
+          "reason": "SHAPE_UNCERTAIN",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            1276,
+            522,
+            236,
+            157
+          ],
+          "area_px2": 25796.0,
+          "label": "lightblue",
+          "reason": "DOMINANT_COLOR_EVIDENCE",
+          "proposal_source": "combined_silhouette",
+          "usable_fraction": 1.0,
+          "color_fractions": {
+            "red": 0.0,
+            "yellow": 0.0,
+            "blue": 0.00016987301991761158,
+            "green": 0.0,
+            "black": 0.0034399286533316345,
+            "lightblue": 0.9941393808128424
+          },
+          "dark_fraction": 0.0034399286533316345,
+          "silhouette_center_px": [
+            1389.3867783118828,
+            603.9039902827311
+          ]
+        },
+        {
+          "bbox_px": [
+            853,
+            507,
+            179,
+            178
+          ],
+          "area_px2": 24691.5,
+          "label": "UNKNOWN",
+          "reason": "AMBIGUOUS_COLOR",
+          "proposal_source": "combined_silhouette",
+          "usable_fraction": 0.9880061282556358,
+          "color_fractions": {
+            "red": 0.001019006690000443,
+            "yellow": 0.0,
+            "blue": 0.0,
+            "green": 0.0,
+            "black": 0.11962252447831288,
+            "lightblue": 0.0
+          },
+          "dark_fraction": 0.11962252447831288,
+          "silhouette_center_px": [
+            941.9122032548312,
+            595.4865507023335
+          ]
+        },
+        {
+          "bbox_px": [
+            0,
+            184,
+            64,
+            64
+          ],
+          "area_px2": 1510.5,
+          "label": "UNKNOWN",
+          "reason": "TOUCHES_BORDER",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            0,
+            264,
+            64,
+            80
+          ],
+          "area_px2": 1256.0,
+          "label": "UNKNOWN",
+          "reason": "TOUCHES_BORDER",
+          "proposal_source": "combined_silhouette"
+        }
+      ]
+    },
+    {
+      "frame_index": 734,
+      "age_ms": 146.79004500067094,
+      "regions": [
+        {
+          "bbox_px": [
+            825,
+            479,
+            234,
+            234
+          ],
+          "area_px2": 42510.5,
+          "label": "UNKNOWN",
+          "reason": "AMBIGUOUS_COLOR",
+          "proposal_source": "combined_silhouette",
+          "usable_fraction": 0.9889983784458026,
+          "color_fractions": {
+            "red": 0.0001765714862274241,
+            "yellow": 0.0003531429724548482,
+            "blue": 0.0,
+            "green": 0.0,
+            "black": 0.11202199576228433,
+            "lightblue": 0.0
+          },
+          "dark_fraction": 0.11202199576228433,
+          "silhouette_center_px": [
+            941.7632506478791,
+            595.6012475349227
+          ]
+        },
+        {
+          "bbox_px": [
+            348,
+            473,
+            294,
+            236
+          ],
+          "area_px2": 34606.5,
+          "label": "UNKNOWN",
+          "reason": "SHAPE_UNCERTAIN",
+          "proposal_source": "combined_silhouette"
+        },
+        {
+          "bbox_px": [
+            1276,
+            522,
+            235,
+            157
+          ],
+          "area_px2": 25848.0,
+          "label": "lightblue",
+          "reason": "DOMINANT_COLOR_EVIDENCE",
+          "proposal_source": "combined_silhouette",
+          "usable_fraction": 1.0,
+          "color_fractions": {
+            "red": 0.0,
+            "yellow": 0.0,
+            "blue": 8.47565368479044e-05,
+            "green": 0.0,
+            "black": 0.0033902614739161757,
+            "lightblue": 0.993855151078527
+          },
+          "dark_fraction": 0.0033902614739161757,
+          "silhouette_center_px": [
+            1389.307070824306,
+            603.7089587846899
+          ]
+        },
+        {
+          "bbox_px": [
+            0,
+            160,
+            64,
+            64
+          ],
+          "area_px2": 1362.5,
+          "label": "UNKNOWN",
+          "reason": "TOUCHES_BORDER",
+          "proposal_source": "combined_silhouette"
+        }
+      ]
+    }
+  ],
+  "nonstale_missing_lightblue_frame_indices": [
+    197,
+    1042,
+    1083
+  ],
+  "duplicate_lightblue_frame_indices": [
+    197,
+    1042,
+    1083
+  ],
+  "visual_review": {
+    "longest-blue-loss-before-raw.png": "Blue and lightblue objects visibly present, no visible hand occlusion. This image represents a stale-result frame, not the five nonstale blue misses."
+  },
+  "limitations": [
+    "Sequential runs differ in duration and unfrozen system load; observed rate differences are not causal proof.",
+    "Five nonstale blue misses and three lightblue duplicate events have no matching saved raw image; no shape threshold change authorized by this evidence.",
+    "detector_call_ms measures MaterialFollower.detect including tracker/result assembly, not only analyze.",
+    "detector_both counts presence of both color labels, not uniqueness or classification accuracy."
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "cases": [
+    "disabled",
+    "missing_height",
+    "complete",
+    "snapshot",
+    "duplicate_start",
+    "stale_home",
+    "home_wait",
+    "home_fail",
+    "lift_fail",
+    "abort_up",
+    "abort_home",
+    "external_stop",
+    "lost_ready",
+    "other_busy",
+    "gap",
+    "gripper_cancel",
+    "mode3_complete",
+    "mode3_home_fail",
+    "mode3_stale_home",
+    "mode3_final_home_fail",
+    "mode3_final_home_stale",
+    "mode3_abort_final_home",
+    "mode3_carrier_down_fail",
+    "mode3_carrier_up_fail",
+    "mode4_unchanged",
+    "legacy0"
+  ],
+  "hardware_stubs": true,
+  "actual_main_guard_matched": true,
+  "source_sha256": {
+    "USER/arm_sequence.c": "9c29f23c700e92814ecb0e1180aecc494334337decfd81ef830807d79ae2d7f8",
+    "USER/arm_sequence.h": "c4925f97e66152e469c0ecfc31c57791b32e42d6d2e816c7435b2057dc84e7b5"
+  }
+}

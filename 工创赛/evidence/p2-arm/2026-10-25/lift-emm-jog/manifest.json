@@ -1,0 +1,83 @@
+{
+  "actual": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程",
+  "stage": "D:\\Codex\\工创赛\\tmp\\lift_emm_jog_20261025\\project",
+  "files": [
+    {
+      "file": "USER/app_config.h",
+      "before_sha256": "5e6bc3c4ae4e4c43b7742b8c6400d2768c9e8069905ec1b63d26dd75aa0a5169",
+      "after_sha256": "381c7a1d809a61f03f7874a4097ca0f18983b5890459ad9fa10fc5b8587bcacd"
+    },
+    {
+      "file": "USER/arm_power_mode.h",
+      "before_sha256": "449cc3ad43b0fc92421bbdd614b59d88c39ebf7b4e6271d8af56f30ae17533ed",
+      "after_sha256": "ce4c5d032dc919eb023839bfddd763cb3a4853e3265b8297cae81e779c1c839b"
+    },
+    {
+      "file": "USER/arm_power_mode.c",
+      "before_sha256": "faaa9ed2940c9a913eeaafc671dff46d146a43f755d4e20119532b122b480198",
+      "after_sha256": "35d5834218c8072f96434fcc9761f538280cc52c34967d48edc064a686ad5622"
+    },
+    {
+      "file": "USER/main.c",
+      "before_sha256": "f4c6d45be8b2ff6dc909f9a8ef8073bba7b4b841fe7e30a39c5607fe5e20b4ff",
+      "after_sha256": "8a3c76464ef81a848f5f517cae5291b5087052098eeada2aa606ffe84b789dc7"
+    },
+    {
+      "file": "SYSTEM/SAFETY/safety.c",
+      "before_sha256": "a019b1099939036713266fdcd5d08d6c8ce6e53bf6e6074c03a54556a11bac67",
+      "after_sha256": "ee6377247afd85ab6992785d6139b1d94fea93a1d47e765f3036931d740e57bc"
+    },
+    {
+      "file": "HARDWARE/LIFT/lift_config.h",
+      "before_sha256": "14027aaf9ca7713a88ef799167f3481383a7c1bcd7ac52bae6f0591d6e078f01",
+      "after_sha256": "62d0a78963eb87fc90eb01425f63b5a787f30b25b585c6d7890f3150c23ffde0"
+    },
+    {
+      "file": "HARDWARE/LIFT/lift.h",
+      "before_sha256": "3dfed201fa67464555fb22a48f5be50a521a681c6af43c84e2296497c87f99e1",
+      "after_sha256": "1691dc47939e62bde482f8474f4bde2ad7f4c056fdd451a03a79780ce725bba2"
+    },
+    {
+      "file": "HARDWARE/LIFT/lift.c",
+      "before_sha256": "c91a69db4f641c25260bc956eb6c38f663ba3f4a8e4c05c8884a81107425137a",
+      "after_sha256": "6727f4861931ab7c0b710df10f8b62e93182f1a4018da295b59d6c7dce33d95a"
+    },
+    {
+      "file": "HARDWARE/LIFT/lift_protocol.c",
+      "before_sha256": null,
+      "after_sha256": "a33bc10d7b07042e3b9a5402945deff47a8dd8fbeef8f2e008d978d68653f012"
+    },
+    {
+      "file": "HARDWARE/LIFT/lift_protocol.h",
+      "before_sha256": null,
+      "after_sha256": "0ffc14edd4d4d3df537fdd8a4576cb5411058b373d9728bcc9bb51d28ce05b62"
+    },
+    {
+      "file": "SYSTEM/CAN/can.c",
+      "before_sha256": "330874c3a9624aaf4d574f001c615eb9761a022a971fd2d8bcfa02c1285134bc",
+      "after_sha256": "83eeab34297b619585c16f3ea6bfc82cc0203d4ddb68e4c5f27d56af02b1c93c"
+    },
+    {
+      "file": "SYSTEM/CAN/can.h",
+      "before_sha256": "41fc501b2ccf7529a2b68c7d8f76ba70432574e07103eeddf8e19362ec154c56",
+      "after_sha256": "36b197142f69327e03f46f8669dcbc0c60bbad28c63bd85e90fa638a7fcd0dbf"
+    },
+    {
+      "file": "gongxun-f407.uvprojx",
+      "before_sha256": "1cd4ba764a8f356990c62c40ba82f2f037689b02d26b283f3fc2a92328b511d2",
+      "after_sha256": "db5dd7f4d6fa2242d051163fad48bf8dfbecd6645b7d2c1e95ff72dccc899be3"
+    }
+  ],
+  "mode": "Isolated node5 Emm16-pulse relative-to-real-position jog,5RPM",
+  "flash_performed": false,
+  "validation": {
+    "stage_build": "0 errors 0 warnings",
+    "host_check": "PASS; packet/invalid bounds/idle/directions/enable-only/read-fault-stop/fw mismatch/busy timeout/cancel/power loss",
+    "old_CAN_functions_byte_preserved": true,
+    "new_transport_node5_only": true,
+    "maximum_command_pulses": 16,
+    "maximum_speed_rpm": 5,
+    "hardware_motion_executed": false,
+    "power_in_lift_mode": "Manual VM request; no menu timer forced power cut during gravity-axis operation"
+  }
+}

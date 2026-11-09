@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "calibration_id": "source-paper100-image-8fa7a4e70382-candidate",
+  "coordinate_frame": "paper_local",
+  "context": {
+    "camera_id": "Generic_USB_CAMERA_EP.20CC54K01-user135",
+    "image_size": [
+      1920,
+      1080
+    ],
+    "mount_id": "current-field-mount-20261105",
+    "arm_pose_id": "image-bound-8fa7a4e70382-pose-feedback-not-recorded",
+    "pixel_space": "raw",
+    "lens_profile_id": null,
+    "plane_id": "paper_on_source_surface",
+    "plane_z_mm": 85.5,
+    "plane_origin": "corner A; X along AB; Y along AD",
+    "axes": "x_along_ab_y_toward_ad_mm"
+  },
+  "length_error_limit_mm": 3.0,
+  "views": [
+    {
+      "label": "left",
+      "diagnostic_corners_paper_mm": [
+        [
+          -64.69878129987427,
+          -94.83791613906352
+        ],
+        [
+          34.60104253418111,
+          -89.20518734376172
+        ],
+        [
+          27.799773716319905,
+          11.13903636697609
+        ],
+        [
+          -71.20532039494198,
+          3.574407207516786
+        ]
+      ],
+      "AB_BC_CD_DA_mm": [
+        99.45945227657278,
+        100.5744524700155,
+        99.29366683882697,
+        98.62717899984527
+      ],
+      "AC_BD_mm": [
+        140.66661701537888,
+        140.72327313344064
+      ],
+      "corner_angles_deg": [
+        90.53601726987834,
+        89.36905138972362,
+        89.50826297446883,
+        90.5866683659292
+      ],
+      "length_errors_mm": [
+        -10.540547723427224,
+        -9.425547529984499,
+        -10.706333161173035,
+        -11.37282100015473,
+        -14.896874845661586,
+        -14.840218727599819
+      ],
+      "max_abs_length_error_mm": 14.896874845661586,
+      "length_consistency_passed": false,
+      "outside_original_fit_hull": true
+    },
+    {
+      "label": "right",
+      "diagnostic_corners_paper_mm": [
+        [
+          58.87851298534724,
+          -57.46155124545893
+        ],
+        [
+          145.77686789053982,
+          -105.4220279019698
+        ],
+        [
+          193.64257655593485,
+          -17.212479290165263
+        ],
+        [
+          106.61651239135202,
+          30.338750125537924
+        ]
+      ],
+      "AB_BC_CD_DA_mm": [
+        99.2548810202729,
+        100.35960607903351,
+        99.16983040684765,
+        99.93902895328523
+      ],
+      "AC_BD_mm": [
+        140.64615395850603,
+        141.2958679277529
+      ],
+      "corner_angles_deg": [
+        90.36153325527673,
+        89.59091715721348,
+        90.16642038134586,
+        89.88112920616395
+      ],
+      "length_errors_mm": [
+        -0.7451189797270956,
+        0.3596060790335116,
+        -0.8301695931523483,
+        -0.06097104671476927,
+        -0.7752022788034765,
+        -0.1254883095566015
+      ],
+      "max_abs_length_error_mm": 0.8301695931523483,
+      "length_consistency_passed": true,
+      "outside_original_fit_hull": true
+    }
+  ],
+  "length_consistency_passed": false,
+  "original_homography_refitted": false,
+  "operational_extrapolation_enabled": false,
+  "absolute_position_verified": false,
+  "field_calibration_accepted": false,
+  "physical_pick_verified": false,
+  "motion_allowed": false,
+  "note": "只检查已知长度/形状；移动纸的绝对位置、镜头、车体/TCP及物料顶面未验证"
+}

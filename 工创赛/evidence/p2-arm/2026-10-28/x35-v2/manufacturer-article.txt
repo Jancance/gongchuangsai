@@ -1,0 +1,11322 @@
+
+
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+      
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+ZDT_X系列_V2步进闭环驱动说明书Rev1.0_张大头步进电机-CSDN博客
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+        
+
+          {"image":"https://i-blog.csdnimg.cn/blog_migrate/cover/0b1cffaefe788e796f44dc259fba19b7.jpeg","keywords":"单片机,嵌入式硬件","@type":"Article","author":[{"@type":"Person","name":"张大头闭环伺服","url":"https://blog.csdn.net/zhangdatou666"}],"inLanguage":"zh-CN","description":"文章浏览阅读2.8w次，点赞49次，收藏148次。本文是ZDT_X系列_V2步进闭环驱动说明书，介绍了产品特点、参数、尺寸等信息，说明了闭环PCBA安装步骤、编码器校准方法，还阐述了按键操作、OLED菜单功能、脉冲和通讯控制方式，以及原点回零操作、常见问题处理等内容。","dateModified":"2024-01-21T22:10:30+08:00","@context":"https://schema.org","url":"https://blog.csdn.net/zhangdatou666/article/details/135709033","datePublished":"2024-01-21T22:10:08+08:00","publisher":{"@type":"Organization","name":"CSDN","logo":{"@type":"ImageObject","url":"https://g.csdnimg.cn/static/logo/favicon32.ico"}},"geoSummary":{"heading":"内容摘要","items":{"主题":"ZDT_X系列_V2步进闭环驱动说明书Rev1.0","类型":"article","适用场景":"本文是ZDT_X系列_V2步进闭环驱动说明书，介绍了产品特点、参数、尺寸等信息，说明了闭环PCBA安装步骤、编码器校准方法，还阐述了按键操作、OLED菜单功能、脉冲和通讯控制方式，以及原点回零操作、常见问题处理等内容。","核心功能":"单片机,嵌入式硬件","更新日期":"2024-01-21T22:10:30+08:00"},"keyPoints":["单片机","嵌入式硬件"],"citationContext":{"authoritySource":"张大头闭环伺服","factChecked":true,"lastVerified":"2024-01-21T22:10:30+08:00"}},"headline":"ZDT_X系列_V2步进闭环驱动说明书Rev1.0","articleSection":"单片机"}
+        
+
+    
+
+    (function(){
+    var el = document.createElement("script");
+    el.src = "https://lf1-cdn-tos.bytegoofy.com/goofy/ttzz/push.js?1abfa13dfe74d72d41d83c86d240de42fa345e1877a4861fa55a00b4f9f2644d3d72cd14f8a76432df3935ab77ec54f830517b3cb210f7fd334f50ccb772134a";
+    el.id = "ttzz";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(el, s);
+    })(window)
+    
+
+        
+
+        
+
+    
+
+              
+
+      
+
+      
+
+      (function () {
+        var collapsed = true;
+        var drawer = window.innerWidth < 1280;
+        var html = document.documentElement;
+        html.setAttribute('data-csdn-sidebar-mode', drawer ? 'drawer' : 'collapse');
+        html.setAttribute('data-csdn-sidebar-collapsed', collapsed ? '1' : '0');
+        html.setAttribute('data-csdn-sidebar-hidden', drawer ? '1' : '0');
+        html.setAttribute('data-csdn-sidebar-prep', '1');
+        window.__CSDN_BLOG_SIDEBAR_PREP__ = { drawer: drawer, collapsed: collapsed };
+      })();
+      
+
+	      
+
+	        html,
+	        body {
+	          min-width: 0 !important;
+	          max-width: 100%;
+	          overflow-x: hidden;
+	        }
+        html[data-csdn-sidebar-mode="collapse"][data-csdn-sidebar-collapsed="1"] #csdn-blog-sidebar .layout-sidebar-aside,
+        html[data-csdn-sidebar-mode="collapse"][data-csdn-sidebar-collapsed="1"] #csdn-blog-sidebar .layout-sidebar-shadow {
+          width: 72px !important;
+          min-width: 72px !important;
+          max-width: 72px !important;
+          flex: 0 0 72px !important;
+        }
+        html[data-csdn-sidebar-mode="collapse"][data-csdn-sidebar-collapsed="0"] #csdn-blog-sidebar .layout-sidebar-aside,
+        html[data-csdn-sidebar-mode="collapse"][data-csdn-sidebar-collapsed="0"] #csdn-blog-sidebar .layout-sidebar-shadow {
+          width: 256px !important;
+          min-width: 256px !important;
+          max-width: 256px !important;
+          flex: 0 0 256px !important;
+        }
+        html[data-csdn-sidebar-mode="collapse"] #csdn-blog-sidebar .layout-sidebar .layout-logo {
+          position: relative !important;
+          width: 100% !important;
+          left: auto !important;
+          top: auto !important;
+        }
+        html[data-csdn-sidebar-mode="collapse"][data-csdn-sidebar-collapsed="1"] .main_father {
+          padding-left: 72px !important;
+        }
+        html[data-csdn-sidebar-mode="collapse"][data-csdn-sidebar-collapsed="0"] .main_father {
+          padding-left: 256px !important;
+        }
+        html[data-csdn-sidebar-mode="drawer"] .main_father {
+          padding-left: 0 !important;
+        }
+        html[data-csdn-sidebar-mode="drawer"][data-csdn-sidebar-hidden="1"] #csdn-blog-sidebar .layout-sidebar-aside,
+        html[data-csdn-sidebar-mode="drawer"][data-csdn-sidebar-hidden="1"] #csdn-blog-sidebar .layout-sidebar-shadow {
+          width: 0 !important;
+          min-width: 0 !important;
+          max-width: 0 !important;
+          flex: 0 0 0 !important;
+          overflow: hidden !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+        }
+        html[data-csdn-sidebar-prep="1"] #csdn-blog-sidebar {
+          visibility: hidden !important;
+        }
+        html[data-csdn-sidebar-prep="1"] .main_father,
+        html[data-csdn-sidebar-prep="1"] #csdn-blog-sidebar .layout-sidebar-aside,
+        html[data-csdn-sidebar-prep="1"] #csdn-blog-sidebar .layout-sidebar-shadow {
+          transition: none !important;
+        }
+        body.csdn-sidebar-mode-collapse.csdn-sidebar-expanded,
+        body.csdn-sidebar-mode-collapse.csdn-sidebar-collapsed {
+          padding-left: 0 !important;
+        }
+        body.csdn-sidebar-mode-collapse.csdn-sidebar-expanded .main_father {
+          padding-left: 256px;
+        }
+        body.csdn-sidebar-mode-collapse.csdn-sidebar-collapsed .main_father {
+          padding-left: 72px;
+        }
+        body.csdn-sidebar-mode-collapse .main_father {
+          box-sizing: border-box;
+          transition: padding-left var(--layout-transition-duration, 200ms) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        body.csdn-sidebar-prep .main_father,
+        body.csdn-sidebar-prep #csdn-blog-sidebar .layout-sidebar-aside,
+        body.csdn-sidebar-prep #csdn-blog-sidebar .layout-sidebar-shadow {
+          transition: none !important;
+        }
+        body.csdn-sidebar-mode-collapse.csdn-sidebar-collapsed #csdn-blog-sidebar .layout-sidebar-aside,
+        body.csdn-sidebar-mode-collapse.csdn-sidebar-collapsed #csdn-blog-sidebar .layout-sidebar-shadow {
+          width: 72px !important;
+          min-width: 72px !important;
+          max-width: 72px !important;
+          flex: 0 0 72px !important;
+        }
+        body.csdn-sidebar-mode-collapse.csdn-sidebar-expanded #csdn-blog-sidebar .layout-sidebar-aside,
+        body.csdn-sidebar-mode-collapse.csdn-sidebar-expanded #csdn-blog-sidebar .layout-sidebar-shadow {
+          width: 256px !important;
+          min-width: 256px !important;
+          max-width: 256px !important;
+          flex: 0 0 256px !important;
+        }
+        body.csdn-sidebar-mode-collapse #csdn-blog-sidebar .layout-sidebar .layout-logo {
+          position: relative !important;
+          width: 100% !important;
+        }
+        body.csdn-sidebar-mode-drawer .main_father {
+          padding-left: 0 !important;
+        }
+        #csdn-toolbar,
+        #toolbarBox {
+          width: 100%;
+          padding-left: 0 !important;
+        }
+        #csdn-toolbar {
+          position: fixed !important;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 2010;
+          box-shadow: none !important;
+          border-bottom: none !important;
+          overflow: visible !important;
+        }
+        #toolbarBox {
+          height: var(--blog-toolbar-height, 48px);
+          min-height: 48px;
+        }
+        #csdn-toolbar .toolbar-inside,
+        #csdn-toolbar .toolbar-container {
+          box-shadow: none !important;
+          border-bottom: none !important;
+        }
+        #csdn-toolbar::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: auto;
+          bottom: 0;
+          width: 100vw;
+          height: 1px;
+          background: #e8e8ed;
+          pointer-events: none;
+          z-index: 1;
+        }
+        body.is_black_skin #csdn-toolbar::after {
+          background: #333;
+        }
+        body:not(.is_black_skin) #csdn-toolbar,
+        body:not(.is_black_skin) #csdn-toolbar .toolbar-inside,
+        body:not(.is_black_skin) #csdn-toolbar .toolbar-container {
+          background: #fff !important;
+        }
+        #csdn-blog-sidebar .layout-sidebar-aside::after {
+          display: none;
+        }
+        #csdn-blog-sidebar.is-collapse-mode .layout-sidebar-aside {
+          padding-top: 0 !important;
+        }
+        #csdn-blog-sidebar.is-collapse-mode .layout-sidebar .layout-logo {
+          position: relative !important;
+          width: 100%;
+        }
+        #csdn-blog-sidebar .layout-sidebar .layout-logo,
+        #csdn-blog-sidebar .layout-sidebar-float-toggle .layout-logo {
+          box-shadow: inset 0 -1px 0 #e8e8ed;
+          border-bottom: none;
+        }
+        #csdn-blog-sidebar.is-theme-dark .layout-sidebar .layout-logo,
+        #csdn-blog-sidebar.is-theme-dark .layout-sidebar-float-toggle .layout-logo {
+          box-shadow: inset 0 -1px 0 #333;
+        }
+        #csdn-blog-sidebar .layout-sidebar-aside,
+        #csdn-blog-sidebar .layout-sidebar .layout-logo,
+        #csdn-blog-sidebar .layout-sidebar-float-toggle {
+          z-index: 2015 !important;
+        }
+        #csdn-blog-sidebar.not-visible {
+          opacity: 1 !important;
+        }
+      
+
+      
+
+      
+
+        html body .simple-column-page #mainBox {
+          max-width: calc(max(45vw, 820px) + 164px);
+        }
+        html body .simple-column-page.has-ad-slots #mainBox {
+          justify-content: center;
+          max-width: calc(max(45vw, 820px) + 560px);
+        }
+        html.simple-aside-compact body .simple-column-page #mainBox .article-aside-container .sidebar {
+          width: 36px !important;
+          gap: 16px;
+        }
+        html.simple-aside-compact body .simple-column-page #mainBox .article-aside-container .sidebar-item {
+          width: 36px;
+          min-height: 36px;
+          height: 36px;
+          padding: 8px;
+          border-radius: 18px;
+        }
+        html.simple-aside-compact body .simple-column-page #mainBox .article-aside-container .sidebar-item img {
+          width: 20px;
+          height: 20px;
+        }
+        html.simple-aside-compact body .simple-column-page #mainBox .article-aside-container .sidebar-item > span {
+          left: 29px;
+          height: 14px;
+          min-width: 14px;
+          padding: 1px 3px;
+          font-size: 10px;
+          line-height: 12px;
+        }
+        html.simple-aside-compact body .simple-column-page #mainBox .article-aside-container #groupfile {
+          width: 36px !important;
+          max-width: 36px;
+          min-height: 36px;
+          padding: 7px 7px 9px;
+          border-radius: 18px;
+        }
+        html.simple-aside-compact body .simple-column-page #mainBox .article-aside-container #groupfile > img {
+          width: 20px;
+          height: 20px;
+        }
+        html.simple-aside-compact body .simple-column-page #mainBox .article-aside-container #groupfile > p {
+          margin-top: 2px;
+          font-size: 10px;
+          line-height: 12px;
+          white-space: nowrap;
+        }
+        html.simple-aside-compact body.has-simple-ad-background-skin .simple-column-page.has-ad-slots #mainBox .article-aside-container .sidebar {
+          margin-left: -20px;
+        }
+      
+
+      
+
+        (function () {
+          function fitSimpleAside() {
+            document.documentElement.classList.toggle(
+              'simple-aside-compact',
+              window.innerWidth <= 1440 || window.innerHeight <= 800
+            );
+          }
+          fitSimpleAside();
+          window.addEventListener('resize', fitSimpleAside);
+        })();
+      
+
+    
+
+        #content_views pre{
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none; 
+            user-select: none; 
+        }
+        #content_views pre code{
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none; 
+            user-select: none; 
+        }
+    
+
+    
+{"@context":"https://ziyuan.baidu.com/contexts/cambrian.jsonld","@id":"https://blog.csdn.net/zhangdatou666/article/details/135709033","appid":"1638831770136827","pubDate":"2024-01-19T23:36:02","title":"ZDT_X系列_V2步进闭环驱动说明书Rev1.0_张大头步进电机-CSDN博客","upDate":"2024-01-21T22:10:08"}
+
+        
+
+    
+
+        body.has-simple-ad-background-skin {
+            background-image: none !important;
+        }
+        html body.has-simple-ad-background-skin .simple-column-page.has-ad-slots #mainBox {
+          max-width: calc(max(45vw, 820px) + 652px);
+        }
+        html body.has-simple-ad-background-skin .simple-column-page.has-ad-slots #mainBox .simple-ad-slot-left,
+        html body.has-simple-ad-background-skin .simple-column-page.has-ad-slots #mainBox .simple-ad-slot-right {
+          width: 256px;
+          min-width: 256px;
+          max-width: 256px;
+          flex: 0 0 256px;
+        }
+    
+
+    
+
+    
+
+    
+
+        var isCorporate = false;
+        var username =  "zhangdatou666";
+        var skinImg = "white";
+
+        var blog_address = "https://blog.csdn.net/zhangdatou666";
+        var currentUserName = "";
+        var isOwner = false;
+        var loginUrl = "http://passport.csdn.net/account/login?from=https://blog.csdn.net/zhangdatou666/article/details/135709033";
+        var blogUrl = "https://blog.csdn.net/";
+        var csdnBlogDetailTemplateId = "4";
+        var starMapUrl = "https://ai.csdn.net";
+        var paymentBalanceUrl = "https://csdnimg.cn/release/vip-business-components/vipPaymentBalance.js?v=2025122501";
+        var avatar = "https://profile-avatar.csdnimg.cn/9b4d586ba8144fb9b3e029e4cee6743b_zhangdatou666.jpg!1";
+        var isCJBlog = true;
+        var isStarMap = false;
+        var articleTitle = "ZDT_X系列_V2步进闭环驱动说明书Rev1.0";
+        var articleDesc = "文章浏览阅读2.8w次，点赞49次，收藏148次。本文是ZDT_X系列_V2步进闭环驱动说明书，介绍了产品特点、参数、尺寸等信息，说明了闭环PCBA安装步骤、编码器校准方法，还阐述了按键操作、OLED菜单功能、脉冲和通讯控制方式，以及原点回零操作、常见问题处理等内容。";
+        var articleTitles = "ZDT_X系列_V2步进闭环驱动说明书Rev1.0_张大头步进电机-CSDN博客";
+        var nickName = "张大头闭环伺服";
+        var articleDetailUrl = "https://blog.csdn.net/zhangdatou666/article/details/135709033";
+        var vipUrlV = "https://mall.csdn.net/vip?vipSource=learningVip";
+        if(window.location.host.split('.').length == 3) {
+            blog_address = blogUrl + username;
+        }
+        var skinStatus = "White";
+        var isVipSkin = false;
+        var blogStaticHost = "https://csdnimg.cn/release/blogv2/"
+          var payColumn = false
+    
+
+        
+
+    
+
+    
+
+    
+
+        .MathJax_Message, .MathJax_Preview{
+            display: none !important;
+        }
+    
+
+    
+
+      
+
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "lgtpix6r85");
+      
+
+    
+
+    
+
+
+    
+
+
+
+  
+
+    
+
+    
+
+    (function () {
+      var prep = window.__CSDN_BLOG_SIDEBAR_PREP__ || {};
+      var drawer = !!prep.drawer;
+      var collapsed = prep.collapsed !== false;
+      var body = document.body;
+      body.classList.add('csdn-sidebar-prep');
+      body.classList.remove(
+        'csdn-sidebar-mode-collapse',
+        'csdn-sidebar-mode-drawer',
+        'csdn-sidebar-expanded',
+        'csdn-sidebar-collapsed',
+        'csdn-sidebar-hidden'
+      );
+      if (drawer) {
+        body.classList.add('csdn-sidebar-mode-drawer', 'csdn-sidebar-hidden');
+      } else {
+        body.classList.add('csdn-sidebar-mode-collapse');
+        body.classList.add(collapsed ? 'csdn-sidebar-collapsed' : 'csdn-sidebar-expanded');
+      }
+    })();
+    
+
+        
+
+            var toolbarSearchExt = '{\"id\":135709033,\"landingWord\":[\"张大头步进电机\"],\"queryWord\":\"\",\"tag\":[\"单片机\",\"嵌入式硬件\"],\"title\":\"ZDT_X系列_V2步进闭环驱动说明书Rev1.0\"}';
+        
+
+      
+
+      
+
+    
+
+      #csdn-toolbar .toolbar-search {
+        width: 320px !important;
+        max-width: 320px !important;
+        height: 32px !important;
+        line-height: 32px !important;
+        margin-left: auto;
+        margin-right: auto;
+        transition: width 0.2s ease, max-width 0.2s ease;
+      }
+      #csdn-toolbar .toolbar-search:focus-within,
+      #csdn-toolbar .toolbar-search:has(.toolbar-search-container.is-focus) {
+        width: 640px !important;
+        max-width: 640px !important;
+      }
+      #csdn-toolbar .toolbar-search .toolbar-search-container {
+        display: flex !important;
+        align-items: center !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+        height: 32px !important;
+        padding: 0 4px 0 16px !important;
+        gap: 0 !important;
+        border-radius: 100px !important;
+      }
+      #csdn-toolbar .toolbar-search:focus-within .toolbar-search-container,
+      #csdn-toolbar .toolbar-search .toolbar-search-container.is-focus {
+        padding: 0 2px 0 16px !important;
+      }
+      #csdn-toolbar .toolbar-search .toolbar-search-container input {
+        flex: 1 1 auto !important;
+        width: auto !important;
+        min-width: 0 !important;
+        height: 100% !important;
+        margin-right: 0 !important;
+        padding-right: 0 !important;
+        text-indent: 0 !important;
+        border: 0 none !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        font-size: 14px !important;
+      }
+      #csdn-toolbar .toolbar-search .toolbar-search-container input:focus {
+        border: 0 none !important;
+      }
+      #csdn-toolbar .toolbar-search .toolbar-search-container .icon-fire {
+        left: 16px !important;
+      }
+      #csdn-toolbar .toolbar-search .toolbar-search-container input.input-fire-hidden,
+      #csdn-toolbar .toolbar-search.onlySearch .toolbar-search-container input {
+        text-indent: 0 !important;
+      }
+      #csdn-toolbar .toolbar-search .toolbar-search-container .icon-fire + input,
+      #csdn-toolbar .toolbar-search .toolbar-search-container:has(.icon-fire:not(.icon-fire-hidden)) input {
+        text-indent: 20px !important;
+      }
+      #csdn-toolbar .toolbar-search .toolbar-search-container .gradient {
+        display: none !important;
+      }
+      #csdn-toolbar .toolbar-search .toolbar-search-container .clear-icon {
+        position: static !important;
+        transform: none !important;
+        flex: 0 0 18px !important;
+        width: 18px !important;
+        height: 18px !important;
+        margin: 0 4px 0 auto !important;
+        display: inline-block !important;
+        cursor: pointer;
+        z-index: 2;
+      }
+      #csdn-toolbar .toolbar-search #toolbar-search-button {
+        flex: 0 0 40px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 40px !important;
+        min-width: 40px !important;
+        height: 28px !important;
+        margin: 0 0 0 auto !important;
+        padding: 0 !important;
+        border-radius: 100px !important;
+        background-color: #FC5531 !important;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease, background-color 0.2s ease;
+      }
+      #csdn-toolbar .toolbar-search .toolbar-search-container:has(.clear-icon) #toolbar-search-button {
+        margin-left: 0 !important;
+      }
+      #csdn-toolbar .toolbar-search:focus-within #toolbar-search-button,
+      #csdn-toolbar .toolbar-search .toolbar-search-container.is-focus #toolbar-search-button {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      #csdn-toolbar .toolbar-search #toolbar-search-button:hover {
+        background-color: #E34D2C !important;
+      }
+      #csdn-toolbar .toolbar-search #toolbar-search-button span {
+        display: none !important;
+      }
+      #csdn-toolbar .toolbar-search #toolbar-search-button i {
+        width: 16px !important;
+        height: 16px !important;
+        margin: 0 !important;
+        top: 0 !important;
+        background-size: 100% !important;
+      }
+      #csdn-toolbar .toolbar-search .toolbar-search-drop-menu,
+      #csdn-toolbar .toolbar-search .toolbar-new-search-drop-menu {
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      body:not(.is_black_skin) #csdn-toolbar .toolbar-search .toolbar-search-container {
+        background: #F2F2F2 !important;
+        border: 1px solid #E5E5E5 !important;
+      }
+      body:not(.is_black_skin) #csdn-toolbar .toolbar-search:focus-within .toolbar-search-container,
+      body:not(.is_black_skin) #csdn-toolbar .toolbar-search .toolbar-search-container.is-focus {
+        background: #FFFFFF !important;
+        border-color: #FC5531 !important;
+      }
+      body:not(.is_black_skin) #csdn-toolbar .toolbar-search .toolbar-search-container input {
+        color: #1a1a1a !important;
+      }
+      body:not(.is_black_skin) #csdn-toolbar .toolbar-search .toolbar-search-container input::-webkit-input-placeholder {
+        color: #999999 !important;
+      }
+      body:not(.is_black_skin) #csdn-toolbar .toolbar-search .toolbar-search-container input::-moz-placeholder {
+        color: #999999 !important;
+      }
+      body.is_black_skin #csdn-toolbar .toolbar-search .toolbar-search-container {
+        background: #404041 !important;
+        border: 1px solid #555555 !important;
+      }
+      body.is_black_skin #csdn-toolbar .toolbar-search:focus-within .toolbar-search-container,
+      body.is_black_skin #csdn-toolbar .toolbar-search .toolbar-search-container.is-focus {
+        background: #333333 !important;
+        border-color: #FC5531 !important;
+      }
+      body.is_black_skin #csdn-toolbar .toolbar-search .toolbar-search-container input {
+        color: #FFFFFF !important;
+      }
+      body.is_black_skin #csdn-toolbar .toolbar-search .toolbar-search-container input::-webkit-input-placeholder {
+        color: #D3D3D3 !important;
+      }
+      body.is_black_skin #csdn-toolbar .toolbar-search .toolbar-search-container input::-moz-placeholder {
+        color: #D3D3D3 !important;
+      }
+    
+
+    
+
+    (function () {
+      function bindClearFix() {
+        if (!window.jQuery) return;
+        var $ = window.jQuery;
+        var sel = '#csdn-toolbar .toolbar-search .clear-icon';
+        $(document)
+          .off('mousedown.blogDetailSearchClear', sel)
+          .on('mousedown.blogDetailSearchClear', sel, function (e) {
+            e.preventDefault();
+          });
+      }
+      if (window.jQuery) {
+        window.jQuery(bindClearFix);
+        window.jQuery(document).on('toolbarReady', bindClearFix);
+      } else {
+        document.addEventListener('DOMContentLoaded', bindClearFix);
+      }
+    })();
+    
+
+    
+
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    
+
+
+
+
+
+
+
+(function () {
+  var prep = window.__CSDN_BLOG_SIDEBAR_PREP__ || {};
+  var root = document.getElementById('csdn-blog-sidebar');
+  if (!root) {
+    return;
+  }
+  var drawer = !!prep.drawer;
+  var collapsed = prep.collapsed !== false;
+  if (drawer) {
+    root.classList.add('is-drawer', 'is-hidden');
+  } else {
+    root.classList.add('is-collapse-mode');
+    if (collapsed) {
+      root.classList.add('is-collapsed');
+    }
+  }
+})();
+
+
+  
+
+    
+
+    
+
+      
+
+        
+
+          
+
+        
+
+          
+
+            
+
+          
+
+      
+
+    
+
+    
+
+      
+
+        
+
+          
+
+            
+
+          
+
+            
+
+              
+
+            
+
+        
+
+        
+
+          
+
+            
+
+                
+
+                  
+
+                      
+
+                        
+
+                          
+
+                            
+
+                              
+
+                                
+
+                              
+
+                              
+
+                                  首页
+                              
+
+                              
+
+                              
+
+                            
+
+                          
+
+                        
+
+                      
+
+                      
+
+                        
+
+                          
+
+                            
+
+                              
+
+                                
+
+                              
+
+                              
+
+                                  博客
+                              
+
+                              
+
+                              
+
+                            
+
+                          
+
+                        
+
+                      
+
+                      
+
+                        
+
+                          
+
+                            
+
+                              
+
+                                
+
+                              
+
+                              
+
+                                  下载
+                              
+
+                              
+
+                              
+
+                            
+
+                          
+
+                        
+
+                      
+
+                      
+
+                        
+
+                          
+
+                            
+
+                              
+
+                                
+
+                              
+
+                              
+
+                                  学习
+                              
+
+                              
+
+                              
+
+                            
+
+                          
+
+                        
+
+                      
+
+                      
+
+                        
+
+                          
+
+                            
+
+                              
+
+                                
+
+                              
+
+                              
+
+                                  社区
+                              
+
+                              
+
+                              
+
+                            
+
+                          
+
+                        
+
+                      
+
+                  
+
+                    
+
+                
+
+                
+
+                  
+
+                      
+
+                        
+
+                          
+
+                            
+
+                              
+
+                                
+
+                              
+
+                              
+
+                                  模型市场
+                              
+
+                              
+
+                                  
+
+                              
+
+                            
+
+                          
+
+                        
+
+                      
+
+                      
+
+                        
+
+                          
+
+                            
+
+                              
+
+                                
+
+                              
+
+                              
+
+                                  AI搜索
+                              
+
+                              
+
+                              
+
+                            
+
+                          
+
+                        
+
+                      
+
+                      
+
+                        
+
+                          
+
+                            
+
+                              
+
+                                
+
+                              
+
+                              
+
+                                  AtomGit
+                              
+
+                              
+
+                              
+
+                            
+
+                          
+
+                        
+
+                      
+
+                      
+
+                        
+
+                          
+
+                            
+
+                              
+
+                                
+
+                              
+
+                              
+
+                                  InsCode
+                              
+
+                              
+
+                                  
+
+                              
+
+                            
+
+                          
+
+                        
+
+                      
+
+                      
+
+                        
+
+                          
+
+                            
+
+                              
+
+                                
+
+                              
+
+                              
+
+                                  技术会议
+                              
+
+                              
+
+                              
+
+                            
+
+                          
+
+                        
+
+                      
+
+                      
+
+                        
+
+                          
+
+                            
+
+                              
+
+                                
+
+                              
+
+                              
+
+                                      
+墨衍
+
+                                      
+MoGrow
+
+                              
+
+                              
+
+                              
+
+                            
+
+                          
+
+                        
+
+                      
+
+                  
+
+                    
+
+                
+
+                
+
+                  
+
+                      
+
+                        
+
+                          
+
+                            
+
+                              
+
+                                
+
+                              
+
+                              
+
+                                  收藏
+                              
+
+                              
+
+                              
+
+                            
+
+                          
+
+                        
+
+                      
+
+                      
+
+                        
+
+                          
+
+                            
+
+                              
+
+                                
+
+                              
+
+                              
+
+                                  历史
+                              
+
+                              
+
+                              
+
+                            
+
+                          
+
+                        
+
+                      
+
+                      
+
+                        
+
+                          
+
+                            
+
+                              
+
+                                
+
+                              
+
+                              
+
+                                  会员中心
+                              
+
+                              
+
+                              
+
+                            
+
+                          
+
+                        
+
+                      
+
+                      
+
+                        
+
+                          
+
+                            
+
+                              
+
+                                
+
+                              
+
+                              
+
+                                  创作中心
+                              
+
+                              
+
+                              
+
+                            
+
+                          
+
+                        
+
+                      
+
+                  
+
+                
+
+            
+
+          
+
+          
+
+        
+
+      
+
+    
+
+    
+
+  
+
+
+
+
+
+(function () {
+  var prep = window.__CSDN_BLOG_SIDEBAR_PREP__ || {};
+  var root = document.getElementById('csdn-blog-sidebar');
+  if (!root) {
+    return;
+  }
+  var drawer = !!prep.drawer;
+  var collapsed = prep.collapsed !== false;
+  var width = drawer ? 0 : (collapsed ? 72 : 256);
+  var nodes = root.querySelectorAll('.layout-sidebar-aside, .layout-sidebar-shadow');
+  for (var i = 0; i < nodes.length; i++) {
+    nodes[i].style.width = width + 'px';
+    nodes[i].style.minWidth = width + 'px';
+    nodes[i].style.maxWidth = width + 'px';
+    nodes[i].style.flex = '0 0 ' + width + 'px';
+    nodes[i].style.overflow = width === 0 ? 'hidden' : '';
+  }
+  root.classList.toggle('is-drawer', drawer);
+  root.classList.toggle('is-collapse-mode', !drawer);
+  root.classList.toggle('is-collapsed', !drawer && collapsed);
+  root.classList.toggle('is-hidden', drawer);
+  if (!drawer && collapsed) {
+    var menus = root.querySelector('.layout-menus');
+    if (menus) {
+      menus.classList.add('collapse');
+    }
+    var items = root.querySelectorAll('.layout-menu-item');
+    for (var j = 0; j < items.length; j++) {
+      items[j].classList.add('collapse');
+    }
+    var infos = root.querySelectorAll('.layout-menu-item_info');
+    for (var k = 0; k < infos.length; k++) {
+      infos[k].classList.add('vertical');
+    }
+    var footer = root.querySelector('.layout-menus—footer');
+    if (footer) {
+      footer.style.display = 'none';
+    }
+  }
+  document.documentElement.removeAttribute('data-csdn-sidebar-prep');
+  root.style.visibility = 'visible';
+})();
+
+
+    
+
+      window.csdn = window.csdn || {};
+      window.csdn.toolbar = window.csdn.toolbar || {};
+      window.csdn.toolbar.beforeMiniMenuClick = function () {
+        if (window.CsdnBlogSidebar) {
+          window.CsdnBlogSidebar.toggle();
+        }
+        return false;
+      };
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+      var cknowAIBlog = true;
+      var isStarMapSimpleTemplate = false;
+      var isIncomeTemplate = false;
+        var codeSliceIndex = '-1';
+        var cJTemplate = 4;
+      var articleId = 135709033;
+      var annotationModuleBootstrapData = {
+        hasAnnotation: false,
+        totalCount: 0,
+        list: [],
+        categories: []
+      };
+      var annotationFeatureEnabled = false;
+
+        var privateEduData = [];
+        var privateData = [];
+      var crytojs = "https://csdnimg.cn/release/blogv2/dist/components/js/crytojs-ca5b8bf6ae.min.js";
+      var commentscount = 5;
+      var commentAuth = 2;
+      var curentUrl = "https://blog.csdn.net/zhangdatou666/article/details/135709033";
+      var myUrl = "https://my.csdn.net/";
+      var isGitCodeBlog = false;
+var vipActivityIcon = "https://i-operation.csdnimg.cn/images/207d56810fdb47689c653b4c377876d4.gif";
+var vipActivityIconV2 = {
+  icon: "https://i-operation.csdnimg.cn/images/207d56810fdb47689c653b4c377876d4.gif",
+  url: "https://mall.csdn.net/vip?utm_source=261024_vip_blogrighticon"
+};
+      var isOpenSourceBlog = false;
+      var isVipArticle = false;
+        var highlight = ["嵌入式硬件","步进电机","rev","zdt","单片机","说明书","驱动","张大","闭环","系列","步进",".","0","1","2","头"];//高亮数组
+        var isRecommendModule = true;
+          var isBaiduPre = true;
+          var baiduCount = 2;
+          var setBaiduJsCount = 10;
+        var viewCountFormat = 28757;
+      var share_card_url = "https://app-blog.csdn.net/share?article_id=135709033&username=zhangdatou666"
+      var mallVipUrl = "https://mall.csdn.net/vip?vipSource=article"
+      var vipArticleAbStyle = "t_1"
+      var vipArticleCpStyle = "t_1"
+      var detailheaderAbCommunity = "control"
+      var codeAiAbStyle = "exp11"
+      var runProjectDeepBlogAB = "t_1"
+      var gitcodeHighlightWordAB = "exp1"
+      var deepblogUrl = ""
+        deepblogUrl = "https://deepblog.net?utm_source=blog_onekey_run";
+      var codeAiAbObjStyle = ""
+        codeAiAbObjStyle = "{\"control\":{\"title\":\"AI写代码\",\"destUrl\":\"https://trae.com.cn?utm_source=community&utm_medium=csdn&utm_campaign=daima\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/a5fff6f6c9f0464c9a46b130c972952b.png\"},\"exp4\":{\"title\":\"Lobster AI\",\"destUrl\":\"https://lobsterai.youdao.com/#/index?keyfrom=csdn3\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/2c9d3b91a8ad4956bca5af92918b9e75.png\"},\"exp5\":{\"title\":\"用码道免费领 1 个月 Token\",\"destUrl\":\"https://developer.huaweicloud.com/codeartsco.html?source=dmzntgwltcsdn1&sourcead=dmzntgwltcsdnzn11\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/7c0190c005ab41659100f583c0791aee.png\"},\"exp6\":{\"title\":\"AI代码解释\",\"destUrl\":\"https://developer.huaweicloud.com/codeartsco.html?source=dmzntgwltcsdn1&sourcead=dmzntgwltcsdncommunity8\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/7c0190c005ab41659100f583c0791aee.png\"},\"exp7\":{\"title\":\"看看AI怎么写\",\"destUrl\":\"https://developer.huaweicloud.com/codeartsco.html?source=dmzntgwltcsdn1&sourcead=dmzntgwltcsdncommunity9\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/7c0190c005ab41659100f583c0791aee.png\"},\"exp8\":{\"title\":\"点击领取万元奖金\",\"destUrl\":\"https://builderx.csdn.net/activity-site/madao-activity-page/madao?source=community7\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/7c0190c005ab41659100f583c0791aee.png\"},\"exp9\":{\"title\":\"复制一句话领 10 元\",\"destUrl\":\"https://builderx.csdn.net/activity-site/madao-activity-page/index?source=community1\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/7c0190c005ab41659100f583c0791aee.png\"},\"exp10\":{\"title\":\"AI代码解释\",\"destUrl\":\"https://developer.huaweicloud.com/codeartsco.html?source=dmzntgwopczb&sourcead=csdnzb\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/7c0190c005ab41659100f583c0791aee.png\"},\"exp11\":{\"title\":\"领2年VIP\",\"destUrl\":\"https://mall.csdn.net/vip?utm_source=261024_vip_dmk\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/da0a435404304c88ba03c0af9ae723f0.png\"}}";
+      var articleType = 1;
+      var baiduKey = "张大头步进电机";
+      var copyPopSwitch = true;
+      var needInsertBaidu = true;
+      var recommendRegularDomainArr = ["blog.csdn.net/.+/article/details/","download.csdn.net/download/","edu.csdn.net/course/detail/","ask.csdn.net/questions/","bbs.csdn.net/topics/","www.csdn.net/gather_.+/"]
+      var codeStyle = "";
+      var baiduSearchType = "baidulandingword";
+      var sharData = "{\"hot\":[{\"id\":1,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/a5f4260710904e538002a6ab337939b3.png\"},{\"id\":2,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/188b37199a2c4b74b1d9ffc39e0d52de.png\"},{\"id\":3,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/14ded358b631444581edd98a256bc5af.png\"},{\"id\":4,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/1470f23a770444d986ad551b9c33c5be.png\"},{\"id\":5,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/c329f5181dc74f6c9bd28c982bb9f91d.png\"},{\"id\":6,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/ccd8a3305e81460f9c505c95b432a65f.png\"},{\"id\":7,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/bc89d8283389440d97fc4d30e30f45e1.png\"},{\"id\":8,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/452d485b4a654f5592390550d2445edf.png\"},{\"id\":9,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/f8b9939db2ed474a8f43a643015fc8b7.png\"},{\"id\":10,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/6de8864187ab4ed3b1db0856369c36ff.png\"},{\"id\":11,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/673cc3470ff74072acba958dc0c46e2d.png\"},{\"id\":12,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/930c119760ac4491804db80f9c6d4e3f.png\"},{\"id\":13,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/15e6befb05a24233bc2b65e96aa8d972.png\"},{\"id\":14,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/2075fd6822184b95a41e214de4daec13.png\"},{\"id\":15,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/859b1552db244eb6891a809263a5c657.png\"},{\"id\":16,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/0be2f920f1f74290a98921974a9613fd.png\"},{\"id\":17,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/2e97e00b43f14afab494ea55ef3f4a6e.png\"},{\"id\":18,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/ff4ab252f46e444686f5135d6ebbfec0.png\"},{\"id\":19,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/ae029bbe99564e79911657912d36524f.png\"},{\"id\":20,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/b3ece39963de440388728e9e7b9bf427.png\"},{\"id\":21,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/6f14651a99ba486e926d63b6fa692997.png\"},{\"id\":22,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/83ceddf050084875a341e32dcceca721.png\"},{\"id\":23,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/b90368b8fd5d4c6c8c79a707d877cf7c.png\"},{\"id\":24,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/aeffae14ecf14e079b2616528c9a393b.png\"},{\"id\":25,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/c5a06b5a13d44d16bed868fc3384897a.png\"},{\"id\":26,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/08b697658b844b318cea3b119e9541ef.png\"},{\"id\":27,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/68ccb0b8d09346ac961d2b5c1a8c77bf.png\"},{\"id\":28,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/a2227a247e37418cbe0ea972ba6a859b.png\"},{\"id\":29,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/3a42825fede748f9993e5bb844ad350d.png\"},{\"id\":30,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/8882abc1dd484224b636966ea38555c3.png\"},{\"id\":31,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/4f6a5f636a3e444d83cf8cc06d87a159.png\"},{\"id\":32,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/1953ef79c56b4407b78d7181bdff11c3.png\"},{\"id\":33,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/c04a2a4f772948ed85b5b0380ed36287.png\"},{\"id\":34,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/5b4fecd05091405ea04d8c0f53e9f2c7.png\"},{\"id\":35,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/b89f576d700344e280d6ceb2a66c2420.png\"},{\"id\":36,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/1c65780e11804bbd9971ebadb3d78bcf.png\"},{\"id\":37,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/d590db2055f345db9706eb68a7ec151a.png\"},{\"id\":38,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/fe602f80700b4f6fb3c4a9e4c135510e.png\"},{\"id\":39,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/39ff2fcd31e04feba301a071976a0ba7.png\"},{\"id\":40,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/f9b61b3d113f436b828631837f89fb39.png\"},{\"id\":41,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/df1aca5f610c4ad48cd16da88c9c8499.png\"},{\"id\":42,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/d7acf73a1e6b41399a77a85040e10961.png\"},{\"id\":43,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/b7f1b63542524b97962ff649ab4e7e23.png\"}],\"vip\":[{\"id\":1,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101150.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101154.png\"},{\"id\":2,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101204.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101208.png\"},{\"id\":3,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101211.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101215.png\"},{\"id\":4,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101218.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101220.png\"},{\"id\":5,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101223.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101226.png\"},{\"id\":6,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100635.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100639.png\"},{\"id\":7,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100642.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100644.png\"},{\"id\":8,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100647.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100649.png\"},{\"id\":9,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100652.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100655.png\"},{\"id\":10,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/55de67481fde4b04b97ad78f11fe369a.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/bb2418fb537e4d78b10d8765ccd810c5.png\"},{\"id\":11,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/579c713394584d128104ef1044023954.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/f420d9fbcf5548079d31b5e809b6d6cd.png\"},{\"id\":12,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/75b7f3155ba642f5a4cc16b7baf44122.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/a9030f5877be401f8b340b80b0d91e64.png\"},{\"id\":13,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/0903d33cafa54934be3780aa54ae958d.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/2cd8c8929f5a42fca5da2a0aeb456203.png\"},{\"id\":14,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/949fd7c22884439fbfc3c0e9c3b8dee7.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/dafbea9bd9eb4f3b962b48dc41657f89.png\"},{\"id\":15,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/4119cfddd71d4e6a8a27a18dbb74d90e.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/c56310c8b6384d9e85388e4e342ce508.png\"},{\"id\":16,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/121575274da142bcbbbbc2e8243dd411.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/5013993de06542f881018bb9abe2edf7.png\"},{\"id\":17,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/4d97aa6dd4fe4f09a6bef5bdf8a6abcd.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/76f23877b6ad4066ad45ce8e31b4b977.png\"},{\"id\":18,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/fdb619daf21b4c829de63b9ebc78859d.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/a1abe5d27a5441f599adfe662f510243.png\"},{\"id\":19,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/676b7707bb11410f8f56bc0ed2b2345c.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/7ac5b467fbf24e1d8c2de3f3332c4f54.png\"},{\"id\":20,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/0becb8cc227e4723b765bdd69a20fd4a.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/fdec85b26091486b9a89d0b8d45c3749.png\"},{\"id\":21,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/1a6c06235ad44941b38c54cbc25a370c.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/410a06cda2d44b0c84578f88275caf70.png\"}],\"map\":{\"hot\":\"热门\",\"vip\":\"VIP\"}}";
+        var commentListModule = ''
+      var canRead = true;
+      var blogMoveHomeArticle = false;
+      var showSearchText = "";
+      var blogCjShelfAb = "exp2";
+      var articleSource = 1;
+      var articleReport = '{"pid": "blog", "spm":"1001.2101"}';
+        var baiduSearchChannel = 'pc_relevant'
+        var baiduSearchIdentification = '.235^v43^pc_blog_bottom_relevance_base4'
+        var distRequestId = 'silkroad_1793179652817'
+        var initRewardObject = {
+          giver: currentUserName,
+          anchor: username,
+          articleId: articleId,
+          sign: ''
+        }
+        var isLikeStatus = false;
+        var isUnLikeStatus = false;
+        var studyLearnWord = "";
+        var unUseCount = 0;
+        var codeMaxSize = 0;
+        var overCost = true;
+        var isCurrentUserVip = false;
+        var contentViewsHeight = 0;
+        var contentViewsCount = 0;
+        var contentViewsCountLimit = 5;
+        var isShowConcision = false;
+        var lastTime = 0
+        var postTime = "2024-01-21 22:10:08"
+      var isCookieConcision = false
+      var isHasDirectoryModel = false
+      var isShowSideModel = false
+      var isShowDirectoryModel = true
+    
+
+        
+
+        
+
+        (function () {
+          var prep = window.__CSDN_BLOG_SIDEBAR_PREP__;
+          if (!prep) {
+            return;
+          }
+          var drawer = !!prep.drawer;
+          var collapsed = !!prep.collapsed;
+          var pad = drawer ? 0 : (collapsed ? 72 : 256);
+          var el = document.getElementById('csdn-main-father-root');
+          if (el) {
+            el.style.paddingLeft = pad + 'px';
+            el.style.transition = 'none';
+          }
+        })();
+        
+
+          
+
+            
+
+              
+
+              
+
+            
+
+          
+
+
+
+    var resourceId = "";
+
+
+
+
+
+
+
+
+  
+
+    
+
+      
+
+        
+ZDT_X系列_V2步进闭环驱动说明书Rev1.0
+
+      
+
+      
+
+        
+
+          
+
+            
+
+              
+
+                  
+
+              
+
+              
+张大头闭环伺服
+
+                
+
+            
+
+
+
+  
+
+    
+  
+
+    
+
+    
+
+  
+
+
+
+    
+墨衍会员
+
+      
+·
+
+      
+AI 创作全网分发
+
+  
+
+  
+
+    
+
+    
+
+      
+  
+
+    
+
+    
+
+  
+
+
+
+      
+
+        
+墨衍智能分发
+
+        
+本文由作者通过墨衍一键同步至各平台
+
+      
+
+    
+
+      
+
+        
+1
+分发平台
+
+        
+2.8w
+累计阅读
+
+        
+2.9w+
+平均单平台
+
+      
+
+      
+
+        
+已同步平台
+
+        
+
+              
+CSDN
+
+              
+微信公众号
+
+              
+微博
+
+              
+知乎
+
+              
+掘金
+
+              
+百家号
+
+              
+博客园
+
+              
+抖音
+
+              
+小红书
+
+        
+
+      
+
+      
+
+          
+
+            
+你的文章也可以这样分发
+
+            
+墨衍会员 
+¥399
+起/年，写一次发全网
+
+          
+
+        
+
+            我也要 
+→
+
+        
+
+      
+
+  
+
+
+
+              
+
+                  
+码龄5年
+
+              
+
+          
+
+              
+关注
+
+        
+
+        
+
+            
+原创
+
+              
+最新推荐文章于 2026-09-23 16:54:26 发布
+
+            
+2.8w 阅读
+
+          
+
+            
+
+              
+  
+
+    
+
+    
+
+  
+
+
+AI 写同款
+·
+
+              
+GEO 优化
+
+              
+›
+
+            
+
+          
+
+        
+
+      
+
+    
+
+  
+
+
+  
+
+    
+
+      
+手把手教你用Arduino UNO控制
+张大
+头
+Emm_V4
+.
+2
+闭环
+驱动
+器，实现
+步进电机
+精准调速
+
+      
+本文详细介绍了如何使用Arduino UNO控制
+张大
+头
+Emm_V4
+.
+2
+闭环
+驱动
+器实现
+步进电机
+的精准调速。从硬件接线到软件开发，再到核心代码解析和实际应用调试，全面覆盖了
+步进
+闭环
+控制的关键技术点，帮助读者快速掌握速度控制技巧。
+
+    
+
+    
+阅读详情
+
+  
+
+
+
+
+
+
+  
+
+    
+
+      
+
+        /* MD / 富文本中的 .toc（含博客园搬家等嵌套结构）；.toc-box 在侧栏，不受影响 */
+        #content_views .toc,
+        /* 编辑器常在目录前后插入空 p（:empty 仍占 20px），一并去掉避免顶空隙 */
+        #content_views.markdown_views > p:empty:has(+ .toc),
+        #content_views.markdown_views > .toc + p:empty,
+        /* 富文本旧版目录标记 */
+        #content_views.htmledit_views #main-toc,
+        #content_views.htmledit_views #hr-toc,
+        #content_views.htmledit_views p[id*="-toc"] {
+          display: none !important;
+        }
+        /* 目录去掉后，紧跟的首个标题不再多出一块上边距 */
+        #content_views.markdown_views > .toc + h1,
+        #content_views.markdown_views > .toc + h2,
+        #content_views.markdown_views > .toc + h3,
+        #content_views.markdown_views > .toc + h4,
+        #content_views.markdown_views > .toc + p:empty + h1,
+        #content_views.markdown_views > .toc + p:empty + h2,
+        #content_views.markdown_views > .toc + p:empty + h3,
+        #content_views.markdown_views > .toc + p:empty + h4 {
+          margin-top: 0 !important;
+        }
+      
+
+      
+
+      
+
+        
+
+          
+
+
+
+ZDT_X系列_V2步进闭环驱动说明书Rev1.0
+
+
+
+（X28/X35/X42/X57通用）
+
+
+
+
+
+
+
+
+
+一、产品介绍
+
+
+
+1.1
+ 
+产品简介
+
+
+
+ZDT_X57_V2.0是张大头闭环伺服，在ZDT_X57_V1.2的基础上，总结了广大用户的反馈信息，历经一年多的设计和改进升级而来，前后修改的软硬件版本多达几十上百次，经过长时间不断的测试和完善，性能稳定，可靠性高，欢迎大家使用。
+
+
+
+
+
+
+1.2
+ 
+硬件介绍
+
+
+
+
+
+
+1.3 产品特点
+
+
+
+ZDT_X57_V2.0板载工业级高精度16384线磁编码器、板载精密电流传感器;
+采用优异的基于反馈编码器的FOC矢量闭环算法，力矩、速度、位置三闭环控制;
+一键自动识别电机的相电阻和相电感等参数，并自动计算电流环PI参数;
+最大电流
+4000mA
+，转速范围
+0.1RPM - 3000.0RPM+
+（电机参数不同最高转速不同）;
+支持
+脉冲控制
+、支持
+串口/RS232/RS485/CAN通讯控制
+，支持二者混合控制;
+支持
+力矩模式
+、
+速度模式
+、
+位置模式
+控制，支持
+直通限速位置模式
+和
+梯形曲线加减速位置模式
+，每个位置指令都支持
+绝对位置和相对位置运动
+，
+所有的控制模式以及两条命令之间都可以连续无缝平滑过渡
+；
+支持
+单圈就近回零
+、
+单圈方向回零
+、
+多圈无限位碰撞回零
+和
+多圈有限位开关回零
+，支持
+存储回零一组参数，上电自动触发回零功能
+；
+支持自定义协议（支持0x6B、XOR、CRC-8校验）、支持
+Modbus-RTU协议
+；
+支持
+多机通讯和多机同步控制
+，支持最多255个地址的电机进行通讯同步控制；
+支持通讯控制
+到位输出/到位返回命令
+、支持脉冲控制堵转输出和复位堵转保护；
+支持
+存储一组速度参数（方向、速度和加速度）上电自动运行
+，通过En脚控制启停；
+具有
+堵转保护功能
+，支持发送命令或IO控制解除堵转保护，不需要重新上电；
+可
+支持共阳/共阴信号输入
+，可支持PLC的24V信号输入，可选光耦隔离输入；
+支持
+1-256任意细分，支持细分插补功能
+，电机运行更加平滑和静音;
+板载小屏幕实时显示系统信息，板载按键一键修改参数，自动保存，立即生效；
+电机转速和位置实时更新（使能不使能都可以），可发送命令清零位置；
+具有编码器自校准、线序错误识别、自动熄屏、一键恢复出厂设置等众多功能;
+
+
+
+1.4 产品参数
+
+
+
+
+			
+主板型号
+
+			
+
+			
+ZDT_X57_V2.0
+
+			
+
+			
+发布时间
+
+			
+
+			
+2024年1月
+
+			
+
+			
+主控芯片
+
+			
+
+			
+高性能32位ARM处理器
+
+			
+
+			
+驱动电路
+
+			
+
+			
+8个高品质MOS管组成双H桥驱动
+
+			
+
+			
+传感器
+
+			
+
+			
+工业级高精度16384线磁编码器、精密电流传感器
+
+			
+
+			
+供电电压
+
+			
+
+			
+12-32V
+
+			
+
+			
+工作电流
+
+			
+
+			
+0-3000Ma（X28/X35/X42）、0-4000mA（X57）任意电流
+
+			
+
+			
+信号输入
+
+			
+
+			
+3.3V-28V支持共阳/共阴输入、支持PLC的NPN/PNP的24V信号输入
+
+			
+
+			
+闭环反馈频率
+
+			
+
+			
+力矩环20KHz+、速度环20KHz+ 、位置环20KHz+
+
+			
+
+			
+最大脉冲频率
+
+			
+
+			
+160KHz以上
+
+			
+
+			
+转速范围
+
+			
+
+			
+0.1RPM - 3000.0RPM+
+（每个电机参数不一样最高转速可能不同）
+
+			
+
+			
+控制精度
+
+			
+
+			
+小于0.08°
+
+			
+
+			
+细分支持
+
+			
+
+			
+1-256任意细分，支持细分插补功能
+
+			
+
+			
+控制方式
+
+			
+
+			
+脉冲/串口TTL/RS232/RS485/CAN，支持多机通讯和多机同步控制
+
+			
+
+			
+通讯控制模式
+
+			
+
+			
+力矩模式、速度模式、位置模式（直通限速和梯形曲线位置模式）
+
+			
+
+			
+保护措施
+
+			
+
+			
+堵转保护、欠压警告、电流限制、转速限制等
+
+			
+
+			
+静音/震动
+
+			
+
+			
+低速超静音、超低震动，高速运行平稳，不抖动
+
+			
+
+			
+制动/换向
+
+			
+
+			
+支持高速3000.0RPM+立即停止，立即切换方向
+
+			
+
+			
+回零模式
+
+			
+
+			
+单圈就近/方向回零、多圈无限位/有限位开关回零（3D打印不支持）
+
+			
+
+			
+输出类型支持
+
+			
+
+			
+支持通讯控制到位输出/到位返回命令、支持脉冲控制报警输出
+
+			
+
+
+
+1.5 产品尺寸
+
+
+
+
+
+
+
+
+
+二、闭环PCBA安装
+
+
+
+2.1 硬件清单
+
+
+
+
+			
+序号
+
+			
+
+			
+品名
+
+			
+
+			
+数量
+
+			
+
+			
+1
+
+			
+
+			
+57步进电机
+
+			
+
+			
+1
+
+			
+
+			
+2
+
+			
+
+			
+ZDT_X57_V1.2闭环PCBA
+
+			
+
+			
+1
+
+			
+
+			
+3
+
+			
+
+			
+M3*7mm螺丝
+
+			
+
+			
+4
+
+			
+
+			
+4
+
+			
+
+			
+5*3mm径向磁铁
+
+			
+
+			
+1
+
+			
+
+			
+5
+
+			
+
+			
+金属垫片
+
+			
+
+			
+4
+
+			
+
+			
+6
+
+			
+
+			
+3M胶水/超能胶水
+
+			
+
+			
+1
+
+			
+
+			
+8
+
+			
+
+			
+螺丝刀
+
+			
+
+			
+1
+
+			
+
+			
+9
+
+			
+
+			
+1米通讯线
+
+			
+
+			
+1
+
+			
+
+
+
+硬件清单如下图所示
+：
+
+
+
+
+
+
+注意：
+
+
+
+胶水尽量选择3M胶水、超能胶水、AB胶等有粘稠状、对金属和磁铁都有较强粘性的胶水，尽量不选择502等低粘稠状的胶水，此类胶水比较容易渗透到电机内部，造成电机的损坏。
+建议选用本店的28/35/4257磁柱步进电机，其他电机的电机参数不同，可能不适用。
+
+
+
+2.2 安装步骤
+
+
+
+
+
+
+
+
+
+
+
+
+三、首次上电校准编码器
+
+
+
+        按照
+“2.2 安装步骤”
+章节完成闭环PCBA安装到电机后，接入12-32V电源到闭环电机的V+和Gnd进行供电，其他引脚可接可先不接。通电后，会弹出“Not Cal”两秒后进入菜单界面，如下图所示：
+
+
+
+  
+
+
+
+
+
+
+        
+
+
+
+        此时，按一下Enter键确定选择Cal进行编码器校准，
+闭环电机在“哔”的一声后会慢慢的正转一圈，然后反转一圈，最后高速运行几秒（高速运行仅在首次上电校准会执行，后续校准不会再执行）
+。运行结束后，编码器校准完成，闭环电机就可以正常控制使用了。
+如果出现了其他异常情况，请参考下面方法进行处理：
+
+
+
+
+
+
+（1）提示“Phase A+ A- Error！”或“Phase B+ B- Error！”或“Phase AA BB Error！”
+
+
+
+错误类型：
+电机线序错误；
+错误原因：
+A+A-或B+B-的电机线序不对：
+操作步骤：
+57步进的电机线序一般为黑色和绿色是一组，红色和蓝色是一组，分别接到A+A-和B+B-，如果颜色分不出来，可以用万用表的蜂鸣档测一下电机线的任意两根，导通发出声响的两根线为一组，另外两根为一组。
+
+
+
+（2）提示“Waiting V+ Power”
+
+
+
+错误类型：
+电源供电电压太低；
+错误原因：
+电源电压V+和Gnd的电压不足；
+操作步骤：
+请提供12-32V的电压给驱动器进行供电，推荐24V供电，动力足；
+
+
+
+（3）提示“Magnet Loss! Enter..”
+
+
+
+错误类型：
+驱动器上的编码器没检测到磁铁；
+错误原因：
+没粘磁铁到电机轴上，没把驱动板固定到电机背后；
+操作步骤：
+按照2.2章节安装步骤进行磁铁的安装和驱动板的固定；
+
+
+
+（4）提示“Ref Voltage Error!”
+
+
+
+错误类型：
+基准电压芯片故障；
+错误原因：
+基准电压芯片故障；
+操作步骤：
+请联系客服进行处理；
+四、按键操作和OLED显示说明
+
+
+
+
+
+
+
+
+
+五、OLED菜单功能说明
+
+
+
+菜单项目：Lock
+        菜单功能：
+锁定按键
+
+
+
+        菜单选项：
+Disable、Enable
+
+
+
+        菜单作用：
+默认Disable，按下Enter一下就会进入OLED菜单，如果设置为Enable，则需要按住Enter按键3秒以上才能进入OLED菜单，防止按键误触；
+
+
+
+
+
+
+菜单项目：Cal
+        菜单功能：
+校准编码器
+
+
+
+        菜单选项：
+无
+
+
+
+        菜单作用：
+闭环模式下对编码器进行线性化插值和电角度对齐，可以提高编码器的线性精度，校准前请确保电机是空载校准；
+
+
+
+
+
+
+菜单项目：CtrlMode
+        菜单功能：
+控制模式选择
+
+
+
+        菜单选项：
+CR_OPEN、CR_VFOC
+
+
+
+        菜单作用：
+选择以开环模式运行，还是以FOC矢量闭环模式（最高3000.0RPM+）；
+
+
+
+
+
+
+菜单项目：P_Pul
+        菜单功能：
+脉冲端口（En、Dir、Stp引脚）复用功能选择
+
+
+
+        菜单选项：
+PUL_OFF、PUL_ENA、ESI_RCO
+
+
+
+        菜单作用：
+脉冲端口（En、Dir、Stp引脚）复用功能选择：
+
+
+
+PUL_OFF：关闭脉冲端口，脉冲输入控制无效；
+PUL_ENA：使能脉冲端口，脉冲输入控制有效效；
+ESI_RCO：将En引脚复用为多圈限位开关回零的限位开关输入引脚，将Dir引脚复用为电机到位输出高电平（如果Com不接，就输出3.3V；如果Com接了，则输出Com电压）；
+
+
+
+菜单项目： P_Serial
+        菜单功能：
+通讯端口（R/A/H、T/B/L引脚）复用功能选择
+
+
+
+        菜单选项：
+RxTx_OFF、ESI_ALO、UART_FUN、CAN1_MAP
+
+
+
+        菜单作用：
+选择通讯端口复用为哪种通讯方式：
+
+
+
+RxTx_OFF：关闭通讯端口，通讯控制无效；
+ESI_ALO ：将R/A/H引脚复用为上电自动触发多圈限位回零功能的限位开关输入引脚，上电后，如果闭环电机发生了堵转，可以给R/A/H引脚输入低电平(0V)，可以复位堵转保护，将T/B/L端口复用为堵转输出功能，发生堵转时该引脚输出高电平3.3V；
+UART_FUN：将R/A/H和T/B/L端口复用为串口TTL/RS232/RS485通讯控制功能；
+CAN1_MAP：将R/A/H和T/B/L端口复用为CAN通讯控制功能；
+
+
+
+菜单项目：En
+        菜单功能：
+设置En端口的有效电平
+
+
+
+        菜单选项：
+L、H、Hold
+
+
+
+        菜单作用：
+选择En端口的有效电平：
+
+
+
+ L：
+ 
+En端口低电平有效，即En端口控制到低电平电机使能，高电平不使能；
+ H：
+ 
+En端口高电平有效，即En端口控制到高电平电机使能，低电平不使能；
+Hold：En端口一直有效，即无论En端口是高电平还是低电平，电机一直使能；
+        注意：En端口在不接线情况下，En端口默认是Hold模式，即一直使能状态；
+
+
+
+
+
+
+菜单项目：Dir
+        菜单功能：
+设置电机旋转的正方向
+
+
+
+        菜单选项：
+CW、CCW
+
+
+
+        菜单作用：
+设置电机运动的正方向；
+
+
+
+
+
+
+菜单项目：MStep
+        菜单功能：
+设置细分步数
+
+
+
+        菜单选项：
+1、2、4、8、16、32、64、128、256（其他细分可用上位机进行修改）
+
+
+
+        菜单作用：
+设置闭环驱动脉冲输入的细分步数，此值要与你的主板设置的细分步数要保持一样，默认16细分。如果需要用到其他细分，可以通过串口发送命令进行修改；
+
+
+
+
+
+
+菜单项目：MPlyer
+        菜单功能：
+设置脉冲输入控制下，内部的细分插补功能
+
+
+
+        菜单选项：
+Disable、Enable
+
+
+
+        菜单作用：
+使能(Enable)该选项后，驱动器会将你设置的当前细分值，如16细分，内部自动插补到最高细分去运行，这将有效的减少电机低速运动时的震动和噪音；
+
+
+
+
+
+
+菜单项目：AutoSDD
+        菜单功能：
+设置自动熄屏功能
+
+
+
+        菜单选项：
+Disable、Enable
+
+
+
+        菜单作用：
+使能(Enable)该选项后，在7秒内无任何按键操作时，屏幕会自动关闭显示，需要点亮时，可以按任意按键进行重新点亮。
+
+
+
+
+
+
+菜单项目：LPFilter
+        菜单功能：
+设置采样电流的低通滤波器强度
+
+
+
+        菜单选项：
+Def、Low、Med、Hig、DefLIM、LowLIM、MedLIM、HigLIM
+
+
+
+        菜单作用：
+低通滤波器的计算公式为out = (ld - k * (ld - td))，其中，ld为上一次滤波输出值，td为本次传感器采样值，建议保持默认值。
+
+
+
+
+
+
+菜单项目：Ma
+        菜单功能：
+设置开环模式的工作电流（电机相电流）
+
+
+
+        菜单选项：
+200、400、...、4000（其他电流可用上位机进行修改）
+
+
+
+        菜单作用：
+设置开环模式的工作电流。
+
+
+
+
+
+
+菜单项目：Ma_Limit
+        菜单功能：
+设置FOC矢量闭环控制模式下的最大电流（电机相电流）
+
+
+
+        菜单选项：
+200、400、...、4000（其他电流可用上位机进行修改）
+
+
+
+        菜单作用：
+设置FOC矢量闭环控制模式下的最大电流。
+
+
+
+
+
+
+菜单项目：Vm_Limit
+        菜单功能：
+设置FOC矢量闭环控制模式下的最大转速
+
+
+
+        菜单选项：
+200、400、...、3000（单位：RPM，即转/每分钟）
+
+
+
+        菜单作用：
+设置FOC矢量闭环控制模式下的最大转速，默认是3000RPM。
+
+
+
+
+
+
+菜单项目：CurBW_Hz
+        菜单功能：
+设置ZDT_X57_V2.0闭环驱动的电流环带宽
+
+
+
+        菜单选项：
+600、700、...、1500（单位：rad/s）
+
+
+
+        菜单作用：
+建议保持出厂默认值，如果需要调整，则在技术指导下进行调整。
+
+
+
+
+
+
+菜单项目：UartBaud
+        菜单功能：
+设置串口/RS232/RS485通讯的波特率
+
+
+
+        菜单选项：
+9600、19200、25000、38400、57600、115200、256000、512000、921600
+
+
+
+        菜单作用：
+设置串口/RS232/RS485通讯的波特率，默认是115200；
+
+
+
+
+
+
+菜单项目：CAN_Baud
+        菜单功能：
+设置CAN通讯的速率
+
+
+
+        菜单选项：
+10000、20000、50000、83333、100000、125000、250000、500000、800000、1000000
+
+
+
+        菜单作用：
+设置CAN通讯的速率，默认是500000，即500KHz；
+
+
+
+
+
+
+菜单项目：ID_Addr
+        菜单功能：
+设置串口TTL/RS232/RS485/CAN通讯时的电机地址，可设置范围1-255
+
+
+
+        菜单选项：
+1、2、...、10（其他地址可用上位机进行修改）
+
+
+
+        菜单作用：
+设置串口TTL/RS232/RS485/CAN通讯时的电机地址，可设置范围1-255，0为广播地址；
+
+
+
+
+
+
+菜单项目：Checksum
+        菜单功能：
+设置串口TTL/RS232/RS485/CAN通讯校验字节（每条命令最后一个字节）
+
+
+
+        菜单选项：
+0x6B、XOR、CRC-8、Modbus
+
+
+
+        菜单作用：
+默认为0x6B,即通讯控制每条命令的最后一个字节都固定为0x6B，XOR和CRC-8校验的计算方式请查看“通讯控制”章节，Modbus协议请查看“Modbus指令说明”文档；
+
+
+
+
+
+
+菜单项目：Response 
+        菜单功能：
+设置串口TTL/RS232/RS485/CAN通讯控制时
+控制动作命令列表
+是否回复
+
+
+
+        菜单选项：
+None、Receive、Reached、Both、Other
+
+
+
+        菜单作用：
+设置串口/RS232/RS485/CAN总线通讯控制时，主机发送
+控制动作命令列表
+中的命令时，从机收到命令后，是否返回确认收到命令，以及是否返回到位命令；
+
+
+
+None：
+ 
+不返回确认收到命令，在发送位置模式命令时也不返回到位命令；
+Receive：只返回确认收到命令（默认值）；
+Reached：只在发送位置模式命令时返回到位命令（地址 + FB/FD + 9F + 6B）；
+Both：
+ 
+既返回确认收到命令，也在发送位置模式命令时返回到位命令；
+Other：
+ 
+位置模式下只返回到位命令，其他控制动作命令返回确认收到命令；
+
+
+
+菜单项目：S_PosTDP
+        菜单功能：
+将通讯控制位置模式的位置角度放大100倍进行发送，即精确到0.01°。
+
+
+
+        菜单选项：
+Disable、Enable
+
+
+
+        菜单作用：
+使能该选项后，通讯控制位置模式的位置角度将放大100倍（保留2位小数）进行发送，如直通限速位置模式需要转360.00°，则发送01 FB 
+00
+ 03 E8 
+00 00 8C A0
+ 
+00
+ 
+00
+ 6B；如果该选项没使能，则发送01 FA 
+01
+ 03 E8 
+00 00 0E 10
+ 
+00
+ 
+00
+ 6B。
+
+
+
+
+
+
+菜单项目：Clog_Pro
+        菜单功能：
+设置堵转保护功能
+
+
+
+        菜单选项：
+Disable、Enable
+
+
+
+        菜单作用：
+不管堵转保护功能是否开启，电机发生堵转时，蓝色LED都会点亮提示；如果使能(Enable)该选项，则堵转时电机将自动关闭闭环驱动器，可以保护电机和驱动器不受堵转大电流的损坏。如果P_Serial设置为ESI_ALO选项时，则堵转保护后T/B/L引脚将输出3.3V；
+
+
+
+（触发堵转条件：电机实时转速 < 设置的堵转检测转速阈值 + 电机实时相电流 > 
+
+
+
+设置的堵转检测相电流阈值）
+
+
+
+（触发堵转保护条件：电机实时转速 < 设置的堵转检测转速阈值 + 电机实时相电流 > 
+
+
+
+设置的堵转检测相电流阈值 + 持续时间 > 设置的堵转检测时间阈值）
+
+
+
+
+
+
+菜单项目：Clog_Rpm
+        菜单功能：
+设置堵转检测的转速阈值
+
+
+
+        菜单选项：
+4、6、...、30（单位：RPM，即转/每分钟）
+
+
+
+        （如果需要设置为其他值，可以用上位机进行修改）
+
+
+
+        菜单作用：
+堵转保护检测判定条件之一：电机实时转速 < 堵转检测转速阈值。
+
+
+
+
+
+
+菜单项目：Clog_Ma
+        菜单功能：
+设置堵转检测的相电流阈值
+
+
+
+        菜单选项：
+2000、2200、...、4000（单位：Ma）
+
+
+
+        （如果需要设置为其他值，可以用上位机进行修改）
+
+
+
+        菜单作用：
+堵转保护检测判定条件之二：电机实时相电流 > 堵转检测相电流阈值 。
+
+
+
+
+
+
+菜单项目：Clog_Ms
+        菜单功能：
+设置堵转检测的时间阈值
+
+
+
+        菜单选项：
+1000、2000、...、12000（单位：Ms）
+
+
+
+        （如果需要设置为其他值，可以用上位机进行修改）
+
+
+
+        菜单作用：
+堵转保护检测判定条件之三：持续时间 > 堵转检测时间阈值。
+
+
+
+
+
+
+菜单项目：O_Mode
+        菜单功能：
+设置上电自动触发回零功能的回零模式
+
+
+
+        菜单选项：
+Nearest、Dir、Senseless、EndStop
+
+
+
+        菜单作用：
+设置上电自动触发回零的回零模式，分别为单圈就近回零、单圈方向回
+零多圈无限位碰撞回零、多圈有限位开关回零。原点回零操作说明请参考
+第八章节
+；
+
+
+
+
+
+
+菜单项目：O_Dir
+        菜单功能：
+设置回零方向
+
+
+
+        菜单选项：
+CW、CCW
+
+
+
+        菜单作用：
+设置单圈方向回零、多圈无限位碰撞回零、多圈有限位开关回零的方向。
+
+
+
+
+
+
+菜单项目：O_Vel
+        菜单功能：
+设置回零转速
+
+
+
+        菜单选项：
+30、60、...、300（单位：RPM）
+
+
+
+        菜单作用：
+设置回零的速度。
+
+
+
+
+
+
+菜单项目：O_Tmo_Ms
+        菜单功能：
+设置回零超时时间
+
+
+
+        菜单选项：
+2000、4000、...、20000（单位：毫秒）
+
+
+
+        菜单作用：
+设置回零超时时间，回零超过这个时间就自动中断并退出回零。
+
+
+
+
+
+
+菜单项目：O_Set
+        菜单功能：
+设置当前位置为单圈就近/方向回零的零点位置
+
+
+
+        菜单选项：
+Set O、Clear O、Exit
+
+
+
+        菜单作用：
+设置/清除当前位置为单圈就近/方向回零的零点位置。
+
+
+
+（无限位碰撞回零触发条件：电机实时转速 < 设置的碰撞回零转速阈值 + 电机实时相电流 > 设置的碰撞回零相电流阈值 + 持续时间 > 设置的碰撞回零时间阈值）
+
+
+
+
+
+
+菜单项目：O_SL_Rpm
+        菜单功能：
+设置无限位碰撞回零的检测转速
+
+
+
+        菜单选项：
+30、60、...、300（单位：RPM）
+
+
+
+        菜单作用：
+碰撞回零检测判定条件之一：电机实时转速 < 碰撞回零检测转速。
+
+
+
+
+
+
+菜单项目：O_SL_Ma
+        菜单功能：
+设置无限位碰撞回零的检测电流
+
+
+
+        菜单选项：
+400、600、...、2200（单位：Ma）
+
+
+
+        菜单作用：
+碰撞回零检测判定条件之二：电机实时相电流 > 碰撞回零检测电流。
+
+
+
+
+
+
+菜单项目：O_SL_Ms
+        菜单功能：
+设置无限位碰撞回零的检测时间
+
+
+
+        菜单选项：
+20、40、...、200（单位：毫秒）
+
+
+
+        菜单作用：
+碰撞回零检测判定条件之三：持续时间 > 碰撞回零检测时间。
+
+
+
+
+
+
+菜单项目：O_POT_En
+        菜单功能：
+设置上电自动触发回零功能
+
+
+
+        菜单选项：
+Disable、Enable
+
+
+
+        菜单作用：
+设置上电自动触发回零功能，使能后，每次上电都会自动执行回零功能。
+
+
+
+
+
+
+菜单项目：Restore
+        菜单功能：
+恢复出厂设置
+
+
+
+        菜单选项：
+Yes、No
+
+
+
+        菜单作用：
+恢复出厂设置，需要断电重新上电，重新空载校准编码器。
+
+
+
+
+
+
+六、脉冲控制
+
+
+
+6.1 脉冲控制接线
+
+
+
+6.1.1 3D打印主板接线
+
+
+
+
+
+
+（注意：如果需要关闭电机，用手能够拧得动电机的功能，可以在En选项里设置为L，默认是Hold）
+
+
+
+6.1.2 STM32脉冲控制接线
+
+
+
+
+
+
+6.1.3 Arduino脉冲控制接线
+
+
+
+
+
+
+6.1.4 51单片机脉冲控制接线
+
+
+
+
+
+
+6.1.5 PLC脉冲控制接线
+
+
+
+
+
+
+6.1.6 EN+/EN-/PUL+/PUL-/DIR+/DIR-差分脉冲控制接线
+
+
+
+
+
+
+6.2 脉冲控制说明
+
+
+
+1.什么是脉冲？
+
+
+
+控制器控制某一个IO引脚输出一个0（低电平）和一个1（高电平），就是一个脉冲，相当于一个IO引脚取反两次，下图是控制器IO引脚输出2个脉冲，如图所示：
+
+
+
+
+
+
+2.如何发脉冲去控制ZDT_X57_V2.0闭环驱动器？
+
+
+
+按照前面章节安装并校准好编码器后，用你的单片机的一个IO引脚向ZDT_X57_V2.0闭环驱动器的Stp引脚发送脉冲过去，就可以控制电机进行旋转。
+
+
+
+
+
+
+3.如何控制旋转的角度？
+
+
+
+以1.8°步进电机、16细分为例，就是发送3200个脉冲，电机就旋转一圈360°，如果是32细分，那就是发送6400个脉冲，电机旋转一圈，其他细分或角度可以类推。
+
+
+
+
+
+
+4.如何控制旋转的方向？
+
+
+
+用控制器另外一个IO引脚控制ZDT_X57_V2.0闭环驱动器的Dir端口，输出0为一个方向旋转，输出1为另外一个方向旋转。
+
+
+
+
+
+
+5.如何控制旋转的速度？
+
+
+
+控制器输出0和1的时间加快，就能加快电机旋转的速度，也就是加快脉冲频率。
+
+
+
+
+
+
+七、通讯控制
+
+
+
+7.1 通讯控制接线
+
+
+
+7
+.1.1串口TTL通讯控制接线
+
+
+
+串口TTL单机通讯控制接线：
+
+
+
+
+
+
+（
+注意：
+每个ZDT_X57_V1.2闭环驱动的插针上左边都需要插入两个跳线帽，是竖着插）
+
+
+
+7
+.1.2 RS232通讯控制接线
+
+
+
+RS232单机通讯控制接线：
+
+
+
+
+
+
+（
+注意：
+每个ZDT_X57_V1.2闭环驱动的插针上都需要插入一个ZDT_RS232小模块）
+
+
+
+7
+.1.3 RS485通讯控制接线
+
+
+
+RS485单机通讯控制接线：
+
+
+
+
+
+
+（
+注意：
+每个ZDT_X57_V1.2闭环驱动的插针上都需要插入一个ZDT_RS485小模块）
+
+
+
+7
+.1.4 CAN通讯控制接线
+
+
+
+CAN单机通讯控制接线：
+
+
+
+
+
+
+ 
+（
+注意：
+每个ZDT_X57_V1.2闭环驱动的插针上都需要插入一个ZDT_CAN小模块）
+
+
+
+
+
+
+7.2 通讯控制命令格式说明
+
+
+
+7.2.1 串口TTL/RS232/RS485通讯控制命令格式说明
+
+
+
+
+			
+电机地址
+
+			
+
+			
+功能码
+
+			
+
+			
+（辅助码）
+
+			
+
+			
+指令数据
+
+			
+
+			
+校验字节
+
+			
+
+			
+ID_Addr
+
+			
+
+			
+Fun_Code
+
+			
+
+			
+（Aux_Code）
+
+			
+
+			
+
+			
+
+			
+
+			
+
+			
+
+			
+
+			
+CheckSum
+
+			
+电机地址默认为1，可设置范围为1-255，0为广播地址；
+以广播地址0发送命令，则所有的闭环电机都收到并执行这条命令，其中，只有地址为1的电机会回复这条命令（注意：Modbus协议不回复）；
+Checksum默认为0x6B，即每条命令的最后一个字节都是0x6B作为校验字节，比如01 45 42 
+6B
+；如果设置XOR，则为01 06 45 
+42
+，其中0x42 = 0x01 ^ 0x06 ^ 0x45；如果设置CRC-8，则
+请参考文末附录中的CRC-8计算方法
+进行计算最后一个字节；
+串口TTL通讯负载能力较低，一个串口TTL建议挂载4个或以下的闭环；
+RS485总线的负载能力理论上最多能够挂载256个从机；
+串口助手设置如下图所示：
+
+
+
+（勾选16进制发送和16进制显示，取消勾选发送新行，波特率默认是115200）
+
+
+
+
+
+
+7.2.2 CAN通讯控制命令格式说明
+
+
+
+
+			
+功能码
+
+			
+
+			
+（辅助码）
+
+			
+
+			
+指令数据
+
+			
+
+			
+校验字节
+
+			
+
+			
+Fun_Code
+
+			
+
+			
+（Aux_Code）
+
+			
+
+			
+
+			
+
+			
+
+			
+
+			
+
+			
+
+			
+CheckSum
+
+			
+将闭环P_Serial菜单设置为
+CAN1_MAP
+，固定为
+扩展帧
+，默认速率为
+500K
+；
+对于小于8字节的命令
+，则主机的帧ID设置为(
+ID_Addr
+ << 8)，比如，将帧ID
+设置为0x0100，然后发送
+45 42 
+6B
+，等同于串口通讯发送命令
+01 45 42 
+6B
+；
+
+
+
+     
+3.
+ 对于大于8字节的命令
+，则需要将命令进行拆包和分包发送，则主机的帧ID设
+
+
+
+置为((
+ID_Addr
+ << 8) + 第几包数据)，并且每包数据的首个字节都为功能码，比如，梯
+
+
+
+形曲线加减速位置模式命令：01 
+FD
+ 00 01 FF 01 FF 75 30
+ 
+00 36 EE 80 00
+ 00
+ 6B
+，则
+
+
+
+        （1）先设置帧ID为0100，然后发送
+FD
+ 
+00 01 FF 01 FF 75 30
+
+
+
+        （2）再设置帧ID为0101，然后发送
+FD
+ 
+00 36 EE 80 00
+ 00
+ 6B
+
+
+
+     4.下面提供上位机cangaroo的参考示例：
+
+
+
+        （1）小于8字节命令（速度模式：01 F6 01 03 E8 75 30 00 6B）
+
+
+
+
+
+
+        （2）大于8字节命令（梯形位置：01 
+FD
+ 00 01 FF 01 FF 75 30
+ 
+00 36 EE 80 00
+ 00
+ 6B
+）
+
+
+
+                先发送
+FD
+ 
+00 01 FF 01 FF 75 30
+（
+注意：帧ID为0100，表示第0包数据
+）
+
+
+
+
+
+
+                再发送
+FD
+ 
+00 36 EE 80 00
+ 00
+ 6B
+（
+注意：帧ID为0101，表示第1包数据
+）
+
+
+
+
+
+
+
+
+
+7.3 多机通讯及同步控制
+
+
+
+多机通讯：
+
+
+
+1. 多机通讯的接线见7.1章节“
+通讯控制接线
+”。
+
+
+
+2. 修改每个电机的ID地址不同，可在菜单ID_Addr中进行修改。
+
+
+
+3. 按电机ID地址发送命令，控制电机运动，比如有地址1和地址2两个电机：
+
+
+
+发送
+01 F6 01 03 E8 75 30 00 6B
+，则1地址电机执行这条命令运动；
+发送
+02 F6 01 03 E8 75 30 00 6B
+，则2地址电机执行这条命令运动；
+发送
+00 F6 01 03 E8 75 30 00 6B
+，则1和2地址电机都执行这条命令；
+
+
+
+同步控制：
+
+
+
+比如有地址1、地址2两个电机，假设需要：
+
+
+
+地址电机用直通限速位置模式运动-3600.0°；
+2地址电机要同步运动（同时开始运动）；
+1和2地址电机用梯形曲线位置模式运动7200.0°；
+则，可以按照以下操作进行两者的同步控制：
+
+
+
+先发送直通限速位置模式命令
+01 FB 01 03 E8 00 00 8C A0 00 
+01
+ 6B
+，正确返回
+01 FB 02 6B
+，此时1地址电机先不会运动，因为多机同步标志为
+01
+；
+再发送梯形位置模式命令
+02 FD 01 01 FF 01 FF 27 10 00 01 19 40 00 
+01
+ 6B
+，正确返回
+02 FD 02 6B
+，此时2地址电机先不会运动，因为多机同步标志为
+01
+；
+再用
+广播地址
+发送多机同步运动命令
+00
+ FF 66 6B
+，此时1和2地址电机同时开始运动；
+
+
+
+7.4 通讯控制命令列表
+
+
+
+7.4.1 控制动作命令列表
+
+
+
+命令功能：电机使能控制
+        命令格式：
+地址 + 0xF3 + 0xAB + 使能状态 + 多机同步标志 + 校验字节
+
+
+
+        命令返回：
+地址 + 0xF3 + 命令状态 + 校验字节
+
+
+
+        命令示例：
+发送01 F3 AB 01 00 6B，正确返回01 F3 02 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+控制电机使能发送01 F3 AB 01 00 6B；不使能发送01 F3 AB 00 00 6B
+
+
+
+
+
+
+命令功能：力矩模式控制
+        命令格式：
+地址 + 0xF5 + 符号 + 电流斜率 + 电流 + 多机同步标志 + 校验字节
+
+
+
+        命令返回：
+地址 + 0xF5 + 命令状态 + 校验字节
+
+
+
+        命令示例：
+发送01 F5 
+00
+ 
+03 E8
+ 
+03 20
+ 
+00
+ 6B，正确返回01 F5 02 6B，条件不满足返回01 F5 E2 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+00
+表示正电流（
+01
+表示负），
+03 E8
+表示0x03E8 = 1000Ma/s，
+03 20
+表示0x0320 = 800Ma，
+00
+表示多机同步标志，多机同步控制原理请参考
+“7.3多机通讯及同步控制”
+章节；
+（条件不满足情况：触发了堵转保护、电机没使能）
+
+
+
+        总结：
+这条命令表示以1000Ma/s的电流斜率增加/减少电机的相电流到800Ma。
+
+
+
+
+
+
+ 
+命令功能：速度模式控制
+        命令格式：
+地址 + 0xF6 + 符号 + 速度斜率 + 速度 + 多机同步标志 + 校验字节
+
+
+
+        命令返回：
+地址 + 0xF6 + 命令状态 + 校验字节
+
+
+
+        命令示例：
+发送01 F6 
+01
+ 
+03 E8
+ 
+4E 20
+ 
+00
+ 6B，命令正确返回01 F6 02 6B，条件不满足返回01 F6 E2 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+01
+表示负转速（
+00
+表示正），
+03 E8
+表示0x03E8 = 1000RPM/s，
+4E 20
+表示0x4E20 = 20000 = 2000.0RPM，
+00
+表示多机同步标志，多机同步控制原理请参考
+“7.3多机通讯及同步控制”
+章节；
+（条件不满足情况：触发了堵转保护、电机没使能）
+
+
+
+        总结：
+这条命令表示以1000RPM/s的加速度增加/减少电机的转速到2000.0RPM。
+
+
+
+
+
+
+命令功能：直通限速位置模式控制
+        命令格式：
+地址 + 0xFB + 符号（方向） + 速度 + 位置角度 + 相对位置/绝对位置标志 + 多机同步标志 + 校验字节
+
+
+
+        命令返回：
+地址 + 0xFB + 命令状态 + 校验字节
+
+
+
+        命令示例：
+发送01 FB 
+01
+ 
+4E 20
+ 00 00 8C A0
+ 
+00
+ 
+00
+ 6B，正确返回01 FB 02 6B，条件不满足返回01 FB E2 6B，错误命令返回01 00 EE 6B
+
+
+
+ 
+        数据解析：
+01
+表示负位置（
+00
+表示正），
+4E 20
+表示0x4E20 = 20000 = 2000.0RPM
+，
+00 00 8C A0
+表示0x00008CA0 = 
+36000
+ = 3600.0°，
+00
+表示相对位置运动（
+01
+表示绝
+
+
+
+对），
+00
+表示多机同步标志，多机同步控制原理请参考
+“7.3多机通讯及同步控制”
+章节；
+（条件不满足情况：触发了堵转保护、电机没使能）
+
+
+
+        总结：
+这条命令表示以2000.0RPM的速度运动到相对当前位置角度的-
+3600.0°的位置上，就是在当前位置的基础上以2000.0RPM的转速再转10圈
+。
+
+
+
+        （注意：如果是绝对位置模式
+01
+，则是直接运动到
+-
+3600.0°的位置上
+）
+
+
+
+
+
+
+命令功能：梯形曲线位置模式控制
+        命令格式：
+地址 + 0xFD + 符号（方向） + 加速加速度 + 减速加速度 + 最大速度 + 位置角度 + 相对位置/绝对位置标志 + 多机同步标志 + 校验字节
+
+
+
+        命令返回：
+地址 + 0xFD + 命令状态 + 校验字节
+
+
+
+        命令示例：
+发送01 FD 
+01
+ 
+01 FF
+ 
+01 FA
+ 
+27 10
+ 
+00 00 8C A0
+ 
+00
+ 
+00
+ 6B，正确返回01 FD 02 6B，条件不满足返回01 FD E2 6B，错误命令返回01 00 EE 6B
+
+
+
+（条件不满足情况：触发了堵转保护、电机没使能）
+
+
+
+        数据解析：
+01
+表示负位置（
+00
+表示正），
+01 FF
+表示0x01FF = 511RPM/s，
+01 FA
+表示0x01FA = 506RPM/s，
+27 10
+表示0x2710 = 10000
+ = 
+1000.0RPM，
+00 00 8C A0
+表示0x00008CA0 = 
+36000
+ = 3600.0°，
+00
+表示相对位置运动（
+01
+表示绝对），
+00
+表示多机同步标志，多机同步控制原理请参考
+“7.3多机通讯及同步控制”
+章节；
+
+
+
+        总结：
+这条命令表示以511RPM/s的加速加速度，506RPM/s的减速加速度，最大转速
+1000.0RPM的梯形曲线，运动到
+相对当前位置角度的-
+3600.0°的位置上，就是在当前位置的基础上以2000.0RPM的转速再转10圈
+。
+
+
+
+        （注意：如果是绝对位置模式
+01
+，则是直接运动到
+-
+3600.0°的位置上
+）
+
+
+
+
+
+
+命令功能：立即停止
+        命令格式：
+地址 + 0xFE + 0x98 + 多机同步标志 + 校验字节
+
+
+
+        命令返回：
+地址 + 0xFE + 命令状态 + 校验字节
+
+
+
+        命令示例：
+发送01 FE 98 00 6B，正确返回01 FE 02 6B，条件不满足返回01 FE E2 6B，错误命令返回01 00 EE 6B
+（条件不满足情况：触发了堵转保护、正在回零）
+
+
+
+        数据解析：
+让电机立即停止运动，适用于力矩模式、速度模式、位置模式都可以。
+
+
+
+
+
+
+命令功能：多机同步运动
+        命令格式：
+地址 + 0xFF + 0x66 + 校验字节
+
+
+
+        命令返回：
+地址 + 0xFF + 命令状态 + 校验字节
+
+
+
+        命令示例：
+发送01 FF 66 6B，正确返回01 FF 02 6B，条件不满足返回01 FF E2 6B，错误命令返回01 00 EE 6B
+（条件不满足情况：触发了堵转保护、电机没使能）
+
+
+
+        数据解析：
+让多个电机同时开始运动，
+请参考
+“7.3多机通讯及同步控制”
+章节
+。
+
+
+
+
+
+
+7.4.2 原点回零命令列表
+
+
+
+命令功能：设置单圈回零的零点位置
+        命令格式：
+地址 + 0x93 + 0x88 + 是否存储标志 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x93 + 命令状态 + 校验字节
+
+
+
+        命令示例：
+发送01 93 88 01 6B，正确返回01 93 02 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+可以让电机运动到想要的位置，然后发送命令设置单圈回零的零点位置。
+
+
+
+
+
+
+命令功能：触发回零
+        命令格式：
+地址 + 0x9A + 回零模式 + 多机同步标志 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x9A + 命令状态 + 校验字节
+
+
+
+        命令示例：
+发送01 9A 00 00 6B，正 确返回01 9A 02 6B，条件不满足返回01 9A E2 6B，错误命令返回01 00 EE 6B
+
+
+
+（条件不满足的情况有：触发了堵转保护、单圈回零的零点位置值无效）
+
+
+
+        数据解析：
+设置完原点回零参数后，可以发送该命令触发原点回零功能。
+
+
+
+
+
+
+命令功能：强制中断并退出回零操作
+        命令格式：
+地址 + 0x9C + 0x48 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x9C + 命令状态 + 校验字节
+
+
+
+        命令示例：
+发送01 9C 0x48 6B，正 确返回01 9C 02 6B，条件不满足返回01 9C E2 6B，错误命令返回01 00 EE 6B
+
+
+
+（条件不满足的情况有：当前没有触发回零操作）
+
+
+
+        数据解析：
+正在回零的过程中，可以使用该命令强制中断并退出回零操作。
+
+
+
+
+
+
+命令功能：读取原点回零参数
+        命令格式：
+地址 + 0x22 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x22 + 原点回零参数 + 校验字节
+
+
+
+        命令示例：
+发送01 22 6B，正确返回01 22 
+00
+ 
+00
+ 
+00 1E
+ 
+00 00 27 10
+ 
+0F A0
+ 
+03 20
+ 
+00 3C
+ 
+00
+ 6B ，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+返回的原点回零参数，它将按照下面的数据格式进行排列和数据的转换：
+
+
+
+                回零模式 
+   
+  = 
+0x00
+ = Nearest = 单圈就近回零模式
+
+
+
+                回零方向 
+   
+  = 
+0x00
+ = CW
+
+
+
+                回零转速       
+   
+  = 
+0x001E
+ = 30(RPM)
+
+
+
+                回零超时时间         
+   
+  = 
+0x00002710
+ = 10000(ms)
+
+
+
+                无限位碰撞回零检测转速 
+ 
+  = 
+0x0FA0
+ = 4000(RPM)
+
+
+
+                无限位碰撞回零检测电流 
+ 
+  = 
+0x0320
+ = 800(Ma)
+
+
+
+                无限位碰撞回零检测时间 
+ 
+  = 
+0x003C
+ = 60(ms)
+
+
+
+                是否使能上电自动触发回零功能 = 
+0x00
+ = 不使能
+
+
+
+（无限位碰撞回零检测判定条件：电机实时转速 < 碰撞回零检测转速 + 电机实时相电流 > 碰撞回零检测电流 + 持续时间 > 碰撞回零检测时间）
+
+
+
+
+
+
+命令功能：修改原点回零参数
+        命令格式：
+地址 + 0x4C + 0xAE + 是否存储标志 + 原点回零参数 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x4C + 命令状态 + 校验字节
+
+
+
+        命令示例：
+发送01 4C AE 01 原点回零参数 6B，正确返回01 4C 02 6B，
+
+
+
+错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+修改原点回零参数需要按照下面的数据格式进行排列和数据的转换：
+
+
+
+                比如，发送如下数据对原点回零参数进行修改：
+
+
+
+                01 4C AE 01
+ 
+00
+ 
+00
+ 
+00 1E
+ 
+00 00 27 10
+ 
+0F A0
+ 
+03 20
+ 
+00 3C
+ 
+00
+ 6B
+
+
+
+                0x01 = 保存本次修改的配置参数；
+
+
+
+                0x00
+ = 回零模式为Nearest（单圈就近回零模式）；
+
+
+
+                0x00
+ = 回零方向为CW；
+
+
+
+                0x001E
+ = 回零速度为30(RPM)；
+
+
+
+                0x00002710
+ = 回零超时时间为10000(ms)；
+
+
+
+                0x0FA0
+ = 无限位碰撞回零检测转速为4000(RPM)；
+
+
+
+                0x0320
+ = 无限位碰撞回零检测电流为800(Ma)；
+
+
+
+                0x003C
+ = 无限位碰撞回零检测时间为60(ms)；
+
+
+
+                0x00
+ = 不使能上电自动触发回零功能；
+
+
+
+
+
+
+命令功能：读取回零状态标志位
+        命令格式：
+地址 + 0x3B + 校验字节
+
+
+
+        命令返回：
+地址 + 0x3B + 回零状态标志+ 校验字节
+
+
+
+        命令示例：
+发送01 3B 6B，正确返回01 3B 回零状态标志 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+返回的
+回零状态标志字节
+的每一位都代表一种状态，比如，返回的回零状态标志字节为0x03，它将按照下面的数据格式进行排列和数据的转换：
+
+
+
+                编码器就绪状态标志位 
+   
+= 0x03 & 0x01 = TRUE
+
+
+
+                校准表就绪状态标志位 
+   
+= 0x03 & 0x02 = TRUE
+
+
+
+                正在回零标志位       
+   
+= 0x03 & 0x04 = FALSE
+
+
+
+                回零失败标志位          
+   
+= 0x03 & 0x08 = FALSE
+
+
+
+                通讯控制位置角度精度选项（S_PosTDP菜单）
+ 
+= 0x03 & 0x80 = FALSE
+
+
+
+
+
+
+7.4.3 触发动作命令列表
+
+
+
+命令功能：触发编码器校准
+        命令格式：
+地址 + 0x06 + 0x45 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x06 + 状态码 + 校验字节
+
+
+
+        命令示例：
+发送01 06 45 6B，正确返回01 06 02 6B，条件不满足返回01 06 E2 6B，错误命令返回01 00 EE 6B
+（条件不满足的情况：当前是开环模式、触发了堵转保护）
+
+
+
+
+
+
+命令功能：将当前的位置角度清零
+        命令格式：
+地址 + 0x0A + 0x6D + 校验字节
+
+
+
+        命令返回：
+地址 + 0x0A + 状态码 + 校验字节
+
+
+
+        命令示例：
+发送01 0A 6D 6B，正确返回01 0A 02 6B，错误命令返回01 00 EE 6B
+
+
+
+
+
+
+命令功能：解除堵转保护
+        命令格式：
+地址 + 0x0E + 0x52 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x0E + 状态码 + 校验字节
+
+
+
+        命令示例：
+发送01 0E 52 6B，正确返回01 0E 02 6B，错误命令返回01 00 EE 6B
+
+
+
+
+
+
+命令功能：恢复出厂设置
+        命令格式：
+地址 + 0x0F + 0x5F + 校验字节
+
+
+
+        命令返回：
+地址 + 0x0F + 状态码 + 校验字节
+
+
+
+        命令示例：
+发送01 0F 5F 6B，正确返回01 0F 02 6B，错误命令返回01 00 EE 6B，触发恢复出厂设置后，蓝灯亮起，需要断电重新上电校准编码器。
+
+
+
+
+
+
+7.4.4 读取参数命令列表
+
+
+
+命令功能：读取固件版本和硬件版本
+        命令格式：
+地址 + 0x1F + 校验字节
+
+
+
+        命令返回：
+地址 + 0x1F + 固件版本号 + 硬件版本号 + 校验字节
+
+
+
+        命令示例：
+发送01 1F 6B，正确返回01 1F 00 C9 00 78 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+固件版本 = 0xC9 = 201 = ZDT_X57_V2.0.1，硬件版本 = 0x78 = 120 = ZDT_X57_V1.2
+
+
+
+
+
+
+命令功能：读取相电阻和相电感
+        命令格式：
+地址 + 0x20 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x20 + 相电阻 + 相电感 + 校验字节
+
+
+
+        命令示例：
+发送01 20 6B，正确返回01 20 04 7A 0D 28 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+相电阻 = 0x047A = 1146mΩ，相电感 = 0x0D28 = 3368uH
+（注意单位）
+
+
+
+
+
+
+命令功能：读取速度环和位置环PID参数
+        命令格式：
+地址 + 0x21 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x21 + 速度环和位置环PID参数 + 校验字节
+
+
+
+        命令示例：
+发送01 21 6B，正确返回01 21 
+00 01 EE B0
+ 
+00 07 1E D0
+ 
+00 00 3C F0
+ 
+00 00 00 1A
+ 6B ，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+
+
+
+                梯形曲线位置模式位置环Kp = 
+0x0001EEB0
+ = 126640；
+
+
+
+                直通限速位置模式位置环Kp = 
+0x00071ED0
+ = 466640；
+
+
+
+                速度环Kp = 
+0x00003CF0
+ = 15600；
+
+
+
+                速度环Ki = 
+0x0000001A
+ = 26；
+
+
+
+
+
+
+命令功能：读取总线电压
+        命令格式：
+地址 + 0x24 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x24 + 总线电压 + 校验字节
+
+
+
+        命令示例：
+发送01 24 6B，正确返回01 24 5C 6A 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+总线电压 = 0x5C6A = 23658mV
+（输入电压经过反接二极管后会有压降）
+
+
+
+
+
+
+命令功能：读取总线平均电流
+        命令格式：
+地址 + 0x26 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x26 + 总线平均电流 + 校验字节
+
+
+
+        命令示例：
+发送01 26 6B，正确返回01 26 00 80 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+总线平均电流 = 0x0080 = 128Ma
+
+
+
+
+
+
+命令功能：读取相电流
+        命令格式：
+地址 + 0x27 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x27 + 总线相电流 + 校验字节
+
+
+
+        命令示例：
+发送01 27 6B，正确返回01 27 02 73 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+相电流 = 0x0273 = 627Ma
+
+
+
+
+
+
+命令功能：读取编码器原始值
+        命令格式：
+地址 + 0x29 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x29 + 编码器原始值 + 校验字节
+
+
+
+        命令示例：
+发送01 29 6B，正确返回01 29 26 72 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+编码器原始值 = 0x2672 = 9842
+
+
+
+        （注：
+编码器原始值一圈的数值是0-16383，即0-16383表示0-360°
+）
+
+
+
+
+
+
+命令功能：读取实时脉冲数
+        命令格式：
+地址 + 0x30 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x30 + 符号 + 电机实时位置 + 校验字节
+
+
+
+        命令示例：
+发送01 30 6B，正确返回01 30 
+01
+ 00 00 0C 80 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+电机实时脉冲数 = -0x00000C80 = -3200个（
+注：
+00
+为正，
+01
+为负）
+
+
+
+
+
+
+命令功能：读取经过线性化校准后的编码器值
+        命令格式：
+地址 + 0x31 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x31 + 读取经过线性化校准后的编码器值 + 校验字节
+
+
+
+        命令示例：
+发送01 31 6B，正确返回01 31 8D 9E 6B，错误返回01 00 EE 6B
+
+
+
+        数据解析：
+经过线性化校准后的编码器值 = 0x8D9E = 36254
+
+
+
+        （
+注：
+经过线性化校准后，内部对编码器值进行了4倍频，一圈的数值是0-65535）
+
+
+
+
+
+
+
+
+
+命令功能：读取输入脉冲数
+        命令格式：
+地址 + 0x32 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x32 + 符号 + 电机实时位置 + 校验字节
+
+
+
+        命令示例：
+发送01 32 6B，正确返回01 32 
+01
+ 00 00 0C 80 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+输入脉冲数 = -0x00000C80 = -3200个（
+注：
+00
+为正，
+01
+为负）
+
+
+
+
+
+
+命令功能：读取电机目标位置
+        命令格式：
+地址 + 0x33 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x33 + 符号 + 电机目标位置 + 校验字节
+
+
+
+        命令示例：
+发送01 33 6B，正确返回01 33 
+01
+ 00 00 0E 10 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+电机目标位置 = -0x00000E10 = -3600 = -360.0°
+
+
+
+        （
+注：
+00
+为正，
+01
+为负，并且返回的位置角度经过了10倍放大，所以是-360.0°）
+
+
+
+
+
+
+命令功能：读取电机实时设定的目标位置
+        命令格式：
+地址 + 0x34 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x34 + 符号 + 电机目标位置 + 校验字节
+
+
+
+        命令示例：
+发送01 34 6B，正确返回01 34 
+01
+ 00 00 0E 10 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+电机实时设定的目标位置 = -0x00000E10 = -3600 = -360.0°
+
+
+
+        （
+注：
+00
+为正，
+01
+为负，并且返回的位置角度经过了10倍放大，所以是-360.0°）
+
+
+
+
+
+
+命令功能：读取电机实时转速
+        命令格式：
+地址 + 0x35 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x35 + 符号 + 电机实时转速 + 校验字节
+
+
+
+        命令示例：
+发送01 35 6B，正确返回01 35 
+01
+ 4E 20 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+电机实时转速 = -0x4E20 = -20000 = -2000.0RPM（转/每分钟）
+
+
+
+        （
+注：
+00
+为正，
+01
+为负，并且返回的速度经过了10倍放大，所以是-2000.0RPM）
+
+
+
+
+
+
+命令功能：读取电机实时位置
+        命令格式：
+地址 + 0x36 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x36 + 符号 + 电机实时位置 + 校验字节
+
+
+
+        命令示例：
+发送01 36 6B，正确返回01 36 
+01
+ 00 00 1C 19 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+电机实时位置 = -0x00001C19 = -7193 = -719.3°
+
+
+
+        （
+注：
+00
+为正，
+01
+为负，并且返回的位置角度经过了10倍放大，所以是-719.3°）
+
+
+
+
+
+
+命令功能：读取电机位置误差
+        命令格式：
+地址 + 0x37 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x37 + 符号 + 电机位置误差 + 校验字节
+
+
+
+        命令示例：
+发送01 37 6B，正确返回01 37 
+01
+ 00 00 00 08 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+电机位置误差 = -0x00000008 = -8 = -0.08°
+
+
+
+        （
+注：
+00
+为正，
+01
+为负，并且返回的位置角度经过了100倍放大，所以是-0.08°）
+
+
+
+
+
+
+命令功能：读取驱动器实时温度
+        命令格式：
+地址 + 0x39 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x39 + 符号 + 电机实时温度 + 校验字节
+
+
+
+        命令示例：
+发送01 39 6B，正确返回01 39 
+00
+ 21 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+驱动器实时温度 = 0x21 = 33 = 33°
+（注：
+00
+为正，
+01
+为负
+）
+
+
+
+
+
+
+命令功能：读取电机状态标志位
+        命令格式：
+地址 + 0x3A + 校验字节
+
+
+
+        命令返回：
+地址 + 0x3A + 电机状态标志+ 校验字节
+
+
+
+        命令示例：
+发送01 3A 6B，正确返回01 3A 电机状态标志 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+返回的
+电机状态标志字节
+的每一位都代表一种状态，比如，返回的电机状态标志字节为0x03，它将按照下面的数据格式进行排列和数据的转换：
+
+
+
+                电机使能状态标志位 = 0x03 & 0x01 = 0x01 = TRUE
+
+
+
+                电机到位标志位 
+ 
+= 
+ 
+0x03 & 0x02 = 0x02 = TRUE
+
+
+
+                电机堵转标志位 
+ 
+= 
+ 
+0x03 & 0x04 = 0x00 = FALSE
+
+
+
+                电机堵转保护标志 
+ 
+= 
+ 
+0x03 & 0x08 = 0x00 = FALSE
+
+
+
+（
+注：
+某个标志如果不为0表示为TRUE，等于0则表示FALSE）
+
+
+
+
+
+
+7.4.5 修改参数命令列表
+
+
+
+命令功能：修改细分
+        命令格式：
+地址 + 0x84 + 0x8A + 是否存储标志 + 细分值 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x84 + 命令状态 + 校验字节
+
+
+
+        命令示例：
+发送01 84 8A 01 07 6B，正确返回01 84 02 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+修改细分为0x07 = 7细分，并存储到芯片上；
+
+
+
+        （
+注：
+00表示256细分，如果要修改为256细分，则发送01 84 8A 01 00 6B）
+
+
+
+
+
+
+命令功能：修改ID地址
+        命令格式：
+地址 + 0xAE + 0x4B + 是否存储标志 + ID地址 + 校验字节
+
+
+
+        命令返回：
+地址 + 0xAE + 命令状态 + 校验字节
+
+
+
+        命令示例：
+发送01 AE 4B 01 10 6B，正确返回01 AE 02 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+修改ID地址为0x10 = 16，并存储到芯片上；
+
+
+
+
+
+
+命令功能：修改速度环和位置环PID参数
+        命令格式：
+地址 + 0x4A + 0xC3 + 是否存储标志 + 位置环速和度环PID参数 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x4A + 命令状态 + 校验字节
+
+
+
+        命令示例：
+发送01 4A C3 01 速度环和位置环PID参数 6B，正确返回01 4A 02 6B，
+
+
+
+错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+修改速度环和位置环PID参数需要按照下面的数据格式进行排列和数据的转换：
+
+
+
+                比如，发送如下数据对速度环和位置环的PID参数进行修改：
+
+
+
+                01 4A C3 00
+ 
+00 01 EE B0
+ 
+00 07 1E D0
+ 
+00 00 3C F0
+ 
+00 00 00 1A
+ 6B
+
+
+
+                0x00 = 不保存本次修改的配置参数；
+
+
+
+                0x
+0001EEB0
+ = 修改梯形曲线位置模式位置环Kp为126640;
+
+
+
+                0x
+00071ED0
+ = 修改直通位置限速模式位置环Kp为466640;
+
+
+
+                0x
+00003CF0
+ = 修改速度环Kp为15600;
+
+
+
+                0x0000001A
+ = 修改速度环Ki为26;
+
+
+
+
+
+
+八、原点回零操作说明
+
+
+
+8.1 单圈就近/方向回零操作说明
+
+
+
+        单圈回零模式有两种：
+单圈就近回零
+和
+单圈方向回零
+，顾名思义，
+单圈就近回零
+就是往靠近零点位置的方向回零，而
+单圈方向回零
+就是根据O_Dir选项设定的方向回零， 
+单圈就近/方向回零操作步骤如下：
+
+
+
+断电状态将电机轴移动到指定位置、或上电状态下将电机轴运动到指定位置；
+点击菜单O_Set中的Set O选项，或者发送单圈零点设置命令 
+01 93 88 01 6B设置单圈回零的零点位置；
+设置完成后，根据自身需求，可以选择使能上电自动触发回零功能（
+O_POT_En
+菜单设置为Enable），也可以通讯发送
+“触发回零”
+命令进行回零。
+
+
+
+8.2 多圈无限位碰撞回零操作说明
+
+
+
+        原理
+：利用电机运动过程中，
+碰撞到机器结构边缘时，电流会瞬间变大，转速会瞬间变小
+，这一特点，
+就是堵转检测的原理
+，简而言之，就是卡一下电机轴进行回零。
+
+
+
+        
+前提条件：
+电机带的负载固定
+；
+
+
+
+        检测判定条件：
+电机实时转速 < 碰撞回零检测转速 + 电机实时相电流 > 碰撞回零检测电流 + 持续时间 > 碰撞回零检测时间
+（
+注：
+检测阈值可在上位机中进行修改）
+
+
+
+        
+多圈无限位碰撞回零操作步骤如下：
+
+
+
+先用上位机用
+直通限速位置模式
+控制电机带着“
+固定负载
+”，以“
+回零速度
+”正常运动，并观察小屏幕此时的相电流大概是多少，比如大约637Ma；
+修改“无限位碰撞回零检测电流”比637Ma略大一些，比如设置为800Ma；
+修改“无限位碰撞回零检测转速”可以设置为300RPM；
+修改“无限位碰撞回零检测时间”可以设置为60ms；
+根据自身需求，可以将
+“上电自动触发回零功能”
+进行使能（Enable）；
+如果上电自动触发无限位回零的方向不对，可在菜单O_Dir修改回零方向；
+
+
+
+
+
+
+8.3 多圈有限位开关回零操作说明
+
+
+
+        多圈有限位开关回零根据自身使用的控制模式按照下图进行接线和设置：
+
+
+
+       
+ 脉冲模式控制-上电自动回零限位开关接线
+
+
+
+
+
+
+        串口/232/485/CAN通讯控制-上电自动回零限位开关接线
+
+
+
+
+
+
+
+
+
+九、到位输出和报警输出
+
+
+
+9.1 通讯控制到位输出/到位返回命令
+
+
+
+        
+到位输出
+
+
+
+ 
+       菜单P_Pul选择为ESI_RCO，当电机到位，
+即输入位置角度 - 电机实时位置角度 <  位置到达窗口（默认0.3°，可在上位机上修改）时，Dir引脚会输出高电平
+。
+
+
+
+        （
+注：
+如果Com不接，则到位后Dir引脚到位输出3.3V；如果Com接了，则到位后Dir引脚到位输出Com电压；
+到位输出仅适用于PLC套餐，也就是不带光耦隔离的套餐
+。）
+
+
+
+
+
+
+        
+到位返回命令（地址 + FB/FD + 9F + 6B）
+
+
+
+        菜单Response可设置串口/RS232/RS485/CAN总线通讯控制时，主机发送
+控制动作命令列表
+中的命令时，从机收到命令后，是否返回确认收到命令，以及是否返回到位命令；
+
+
+
+        nNone：
+ 
+ 
+不返回确认收到命令，在发送位置模式命令时也不返回到位命令；
+
+
+
+        nReceive：
+ 
+只返回确认收到命令（默认值）；
+
+
+
+        nReached：
+ 
+只在发送位置模式命令时返回到位命令（地址 + FB/FD + 9F + 6B）；
+
+
+
+        nBoth：
+ 
+ 
+既返回确认收到命令，也在发送位置模式命令时返回到位命令；
+
+
+
+        nOther：
+ 
+位置模式下只返回到位命令，其他控制动作命令返回确认收到命令；
+
+
+
+
+
+
+9.2 脉冲控制模式报警输出和复位堵转保护
+
+
+
+        菜单P_Serial选择为ESI_ALO，当闭环电机发生堵转、欠压等异常情况时，T/B/L引脚会输出3.3V高电平，正常情况下默认是0V低电平；发生堵转后，将R/A/H引脚输入低电平0V可以复位堵转保护，不需要重新上电；
+
+
+
+
+
+
+十、常见问题及注意事项
+
+
+
+10.1 常见问题
+
+
+
+
+			
+序号
+
+			
+
+			
+问题
+
+			
+
+			
+解决方法
+
+			
+
+			
+1
+
+			
+
+			
+Waiting V+ Power!
+
+			
+
+			
+供电电压不足，V+和Gnd需要12-32V进行供电
+
+			
+
+			
+2
+
+			
+
+			
+Not Cal
+
+			
+
+			
+未校准编码器，可以点击Cal进行编码器校准
+
+			
+
+			
+3
+
+			
+
+			
+Phase AABB Error!
+
+			
+
+			
+电机线序A+ A-和B+ B-错误，请检查电机线序
+
+			
+
+			
+4
+
+			
+
+			
+ Magnet Loss! Enter..
+
+			
+
+			
+检测不到磁铁，未安装磁铁或驱动到电机上
+
+			
+
+			
+5
+
+			
+
+			
+Encoder Error! Enter..
+
+			
+
+			
+磁编码器通讯失败，可能编码器芯片已经损坏
+
+			
+
+			
+6
+
+			
+
+			
+Ref Voltage Error!
+
+			
+
+			
+基准电压错误，可能基准电压芯片已经损坏
+
+			
+
+			
+7
+
+			
+
+			
+Bus Current Error!
+
+			
+
+			
+上电瞬间总线电流过大，请检查是否短路
+
+			
+
+			
+8
+
+			
+
+			
+Origin Set Done!
+
+			
+
+			
+单圈回零的零点位置设置成功
+
+			
+
+			
+9
+
+			
+
+			
+Origin Set Fail!
+
+			
+
+			
+单圈回零的零点位置设置失败，检查是否校准编码器
+
+			
+
+			
+10
+
+			
+
+			
+Going to Origin..
+
+			
+
+			
+正在执行回零操作
+
+			
+
+			
+11
+
+			
+
+			
+Go to Origin Fail!
+
+			
+
+			
+上电自动回零失败，请检查电机力矩是否足够
+
+			
+
+			
+12
+
+			
+
+			
+Restore Done! Reboot!
+
+			
+
+			
+恢复出厂设置成功，请重新上电校准编码器
+
+			
+
+
+
+10.2 注意事项
+
+
+
+请勿带电拔插供电接口线和电机线，以免造成电气损坏；
+本驱动不一定适用所有的57电机。
+建议搭配本店57磁柱步进电机；
+到店一起购买57步进电机，会安装并校准好整套发货；
+
+
+
+十一、修改记录
+
+
+
+
+			
+日期
+
+			
+
+			
+版本
+
+			
+
+			
+内容
+
+			
+
+			
+2024/1/15
+
+			
+
+			
+Rev1.0
+
+			
+
+			
+初版
+
+			
+
+
+
+十二、附录
+
+
+
+12.1 checksum菜单选择XOR和CRC-8校验的计算方式
+
+
+
+XOR校验：
+
+
+
+unsigned char command_calXOR(unsigned char *p, unsigned char len)
+
+
+
+{
+
+
+
+    unsigned char i = 0, xorV = p[0];
+
+
+
+    for(i=1; i < len; i++)
+
+
+
+    {
+
+
+
+        xorV ^= ( *( p + i ) );
+
+
+
+    }
+
+
+
+    return xorV;
+
+
+
+}
+
+
+
+比如，读取实时位置命令，则发送：01 36 
+37
+，其中0x37 = 0x01 ^ 0x36；
+
+
+
+
+
+
+XCRC-8校验
+：
+
+
+
+const unsigned char crc8Table[256] = {
+
+
+
+0x00, 0x5E, 0xBC, 0xE2, 0x61, 0x3F, 0xDD, 0x83,
+
+
+
+0xC2, 0x9C, 0x7E, 0x20, 0xA3, 0xFD, 0x1F, 0x41,
+
+
+
+0x9D, 0xC3, 0x21, 0x7F, 0xFC, 0xA2, 0x40, 0x1E,
+
+
+
+0x5F, 0x01, 0xE3, 0xBD, 0x3E, 0x60, 0x82, 0xDC,
+
+
+
+0x23, 0x7D, 0x9F, 0xC1, 0x42, 0x1C, 0xFE, 0xA0,
+
+
+
+0xE1, 0xBF, 0x5D, 0x03, 0x80, 0xDE, 0x3C, 0x62,
+
+
+
+0xBE, 0xE0, 0x02, 0x5C, 0xDF, 0x81, 0x63, 0x3D,
+
+
+
+0x7C, 0x22, 0xC0, 0x9E, 0x1D, 0x43, 0xA1, 0xFF,
+
+
+
+0x46, 0x18, 0xFA, 0xA4, 0x27, 0x79, 0x9B, 0xC5,
+
+
+
+0x84, 0xDA, 0x38, 0x66, 0xE5, 0xBB, 0x59, 0x07,
+
+
+
+0xDB, 0x85, 0x67, 0x39, 0xBA, 0xE4, 0x06, 0x58,
+
+
+
+0x19, 0x47, 0xA5, 0xFB, 0x78, 0x26, 0xC4, 0x9A,
+
+
+
+0x65, 0x3B, 0xD9, 0x87, 0x04, 0x5A, 0xB8, 0xE6,
+
+
+
+0xA7, 0xF9, 0x1B, 0x45, 0xC6, 0x98, 0x7A, 0x24,
+
+
+
+0xF8, 0xA6, 0x44, 0x1A, 0x99, 0xC7, 0x25, 0x7B,
+
+
+
+0x3A, 0x64, 0x86, 0xD8, 0x5B, 0x05, 0xE7, 0xB9,
+
+
+
+0x8C, 0xD2, 0x30, 0x6E, 0xED, 0xB3, 0x51, 0x0F,
+
+
+
+0x4E, 0x10, 0xF2, 0xAC, 0x2F, 0x71, 0x93, 0xCD,
+
+
+
+0x11, 0x4F, 0xAD, 0xF3, 0x70, 0x2E, 0xCC, 0x92,
+
+
+
+0xD3, 0x8D, 0x6F, 0x31, 0xB2, 0xEC, 0x0E, 0x50,
+
+
+
+0xAF, 0xF1, 0x13, 0x4D, 0xCE, 0x90, 0x72, 0x2C,
+
+
+
+0x6D, 0x33, 0xD1, 0x8F, 0x0C, 0x52, 0xB0, 0xEE,
+
+
+
+0x32, 0x6C, 0x8E, 0xD0, 0x53, 0x0D, 0xEF, 0xB1,
+
+
+
+0xF0, 0xAE, 0x4C, 0x12, 0x91, 0xCF, 0x2D, 0x73,
+
+
+
+0xCA, 0x94, 0x76, 0x28, 0xAB, 0xF5, 0x17, 0x49,
+
+
+
+0x08, 0x56, 0xB4, 0xEA, 0x69, 0x37, 0xD5, 0x8B,
+
+
+
+0x57, 0x09, 0xEB, 0xB5, 0x36, 0x68, 0x8A, 0xD4,
+
+
+
+0x95, 0xCB, 0x29, 0x77, 0xF4, 0xAA, 0x48, 0x16,
+
+
+
+0xE9, 0xB7, 0x55, 0x0B, 0x88, 0xD6, 0x34, 0x6A,
+
+
+
+0x2B, 0x75, 0x97, 0xC9, 0x4A, 0x14, 0xF6, 0xA8,
+
+
+
+0x74, 0x2A, 0xC8, 0x96, 0x15, 0x4B, 0xA9, 0xF7,
+
+
+
+0xB6, 0xE8, 0x0A, 0x54, 0xD7, 0x89, 0x6B, 0x35
+
+
+
+};
+
+
+
+unsigned char command_calCRC8(unsigned char *p, unsigned char len)
+
+
+
+{
+
+
+
+    unsigned char i = 0, crc8 = p[0];
+
+
+
+    for(i = 1; i < len; i++)
+
+
+
+    {
+
+
+
+        crc8 = crc8Table[crc8 ^ (*(p + i))];
+
+
+
+    }
+
+
+
+    return crc8;
+
+
+
+}
+
+
+
+
+
+
+12.2 修改驱动参数命令
+
+
+
+命令功能：修改驱动参数
+        命令格式：
+地址 + 0x48 + 0xD1 + 是否存储标志 + 驱动参数 + 校验字节
+
+
+
+        命令返回：
+地址 + 0x48 + 命令状态 + 校验字节
+
+
+
+        命令示例：
+发送01 48 D1 01 驱动参数 6B，正确返回01 48 02 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+修改驱动参数需要按照下面的数据格式进行排列和数据的转换：
+
+
+
+                比如，发送如下数据对驱动参数进行修改：
+
+
+
+                01 48 D1 01
+ 
+00 
+01
+ 
+01
+ 
+02
+ 
+02
+ 
+00
+ 
+10
+ 
+01
+ 
+00
+ 
+00 
+04 B0
+ 
+08 98
+ 
+0B B8
+ 
+03 E8
+ 
+05
+ 
+07
+ 
+00
+ 
+01 
+00
+ 
+01
+ 
+00 08
+ 
+07 D0
+ 
+07 D0
+ 
+00 03
+ 6B
+
+
+
+                0x01 = 保存本次修改的配置参数；
+
+
+
+                0x00
+ = 修改锁定按键
+菜单Lock
+为Disable（
+0x01
+为Enable）；
+
+
+
+                0x01 = 修改控制模式
+菜单Ctrl_Mode
+为CR_VFOC，即FOC矢量闭环控制模式；
+
+
+
+                0x01
+ = 修改脉冲端口复用功能
+菜单P_PU
+L为PUL_ENA，即使能脉冲输入控制；
+
+
+
+                0x02
+ = 修改通讯端口复用功能
+菜单P_Serial
+为UART_FUN，即使能串口通讯；
+
+
+
+                0x02 = 修改En引脚的有效电平
+菜单En
+为Hold，即一直有效；
+
+
+
+                0x00
+ = 修改电机旋转正方向
+菜单Dir
+为CW，即顺时针方向；
+
+
+
+                0x10
+ = 修改细分
+菜单MStep
+为16细分;（
+注：
+256细分用00表示）；
+
+
+
+                0x01 = 修改细分插补功能
+菜单MPlyer
+为Enable，即使能细分插补；
+
+
+
+                0x00
+ = 修改自动熄屏功能
+菜单AutoSDD
+为Disable，即关闭自动熄屏功能；
+
+
+
+                0x00
+ = 修改采样电流低通滤波器强度
+菜单LPFilter
+为Def，即默认强度。
+
+
+
+                0x04B0 = 修改开环模式工作电流
+菜单Ma
+为1200Ma；
+
+
+
+                0x0898
+ = 修改闭环模式最大电流
+菜单Ma_Limit
+为2200Ma；
+
+
+
+                0x0BB8 
+= 修改闭环模式最大转速
+菜单Vm_Limit
+为3000RPM（转/每分钟）；
+
+
+
+                0x03E8
+ = 修改电流环带宽
+菜单CurBW_Hz
+为1000rad/s；
+
+
+
+                0x05 = 修改串口波特率
+菜单UartBaud
+为115200;（对应小屏幕选项顺序）
+
+
+
+                0x07 = 修改CAN通讯速率
+菜单CAN_Baud
+为500000;（对应小屏幕选项顺序）
+
+
+
+                0x00
+ = 修改通讯校验方式
+菜单Checksum
+为0x6B;
+
+
+
+                0x01
+ = 修改控制命令应答
+菜单Response
+为Receive，即只返回确认收到命令;
+
+
+
+                0x00
+ = 修改通讯控制输入角度精确度选项
+菜单S_PosTDP
+为Disable;
+
+
+
+                0x01
+ 
+= 修改堵转保护功能
+菜单Clog_Pro
+为Enable，即使能堵转保护;
+
+
+
+                0x0008
+ = 修改
+堵转保护转速
+阈值
+菜单Clog_Rpm
+为8RPM（转/每分钟）;
+
+
+
+                0x07D0 = 修改堵转保护
+电流阈值
+菜单Clog_Ma
+为2000Ma;
+
+
+
+                0x07D0
+ = 修改
+堵转保护
+检测时间阈值
+菜单Clog_Ms
+为2000ms;
+
+
+
+                0x0003 = 修改位置到达窗口为0.3°;
+
+
+
+               （
+注：
+表示当目标位置角度与传感器实时位置角度相差小于0.3°时，认为电机已经到达设定的位置，将置位位置到达标志位）
+
+
+
+
+
+
+12.3 读取驱动参数命令
+
+
+
+命令功能：读取驱动参数
+        命令格式：
+地址 + 0x42 + 0x6C + 校验字节
+
+
+
+        命令返回：
+地址 + 0x42 + 驱动参数 + 校验字节
+
+
+
+        命令示例：
+发送01 42 6C 6B，正确返回01 42 驱动参数 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+命令正确返回01 42后面的字节就是驱动参数，它将按照下面的数据格式进行排列和数据的转换：
+
+
+
+                比如，发送读取驱动参数01 42 6C 6B命令后，返回如下数据：
+
+
+
+                01 42 25
+ 
+18
+ 
+00 
+01
+ 
+01
+ 
+02
+ 
+02
+ 
+00
+ 
+10
+ 
+01
+ 
+00
+ 
+00 
+04 B0
+ 
+08 98
+ 
+0B B8
+ 
+03 E8
+ 
+05
+ 
+07
+ 
+00
+ 
+01 
+00
+ 
+01
+ 
+00 08
+ 
+07 D0
+ 
+07 D0
+ 
+00 03
+ 6B 
+
+
+
+                0x25 = 
+返回命令所包含的字节数
+ = 37个;
+
+
+
+                0x18 = 
+返回命令的配置参数个数
+ = 24个;
+
+
+
+                0x00
+ = 锁定按键
+菜单Lock
+为Disable（
+0x01
+为Enable）；
+
+
+
+                0x01 = 控制模式
+菜单Ctrl_Mode
+为CR_VFOC，即FOC矢量闭环控制模式；
+
+
+
+                0x01
+ = 脉冲端口复用功能
+菜单P_PU
+L为PUL_ENA，即使能脉冲输入控制；
+
+
+
+                0x02
+ = 通讯端口复用功能
+菜单P_Serial
+为UART_FUN，即使能串口通讯；
+
+
+
+                0x02 = En引脚的有效电平
+菜单En
+为Hold，即一直有效；
+
+
+
+                0x00
+ = 电机旋转正方向
+菜单Dir
+为CW，即顺时针方向；
+
+
+
+                0x10
+ = 细分
+菜单MStep
+为16细分;（
+注：
+256细分用00表示）；
+
+
+
+                0x01 = 细分插补功能
+菜单MPlyer
+为Enable，即使能细分插补；
+
+
+
+                0x00
+ = 自动熄屏功能
+菜单AutoSDD
+为Disable，即关闭自动熄屏功能；
+
+
+
+                0x00
+ = 采样电流低通滤波器强度
+菜单LPFilter
+为Def；
+
+
+
+                0x04B0 = 开环模式工作电流
+菜单Ma
+为120 0Ma；
+
+
+
+                0x0898
+ = 闭环模式最大电流
+菜单Ma_Limit
+为2200Ma；
+
+
+
+                0x0BB8 
+= 闭环模式最大转速
+菜单Vm_Limit
+为3000RPM（转/每分钟）；
+
+
+
+                0x03E8
+ = 电流环带宽
+菜单CurBW_Hz
+为1000rad/s；
+
+
+
+                0x05 = 串口波特率
+菜单UartBaud
+为115200;（对应小屏幕选项顺序）
+
+
+
+                0x07 = CAN通讯速率
+菜单CAN_Baud
+为500000;（对应小屏幕选项顺序）
+
+
+
+                0x00
+ = 通讯校验方式
+菜单Checksum
+为0x6B;
+
+
+
+                0x01
+ = 控制命令应答
+菜单Response
+为Receive，即只返回确认收到命令;
+
+
+
+                0x00
+ = 通讯控制输入角度精确度选项
+菜单S_PosTDP
+为Disable;
+
+
+
+                0x01
+ 
+= 堵转保护功能
+菜单Clog_Pro
+为Enable，即使能堵转保护;
+
+
+
+                0x0008
+ = 
+堵转保护转速
+阈值
+菜单Clog_Rpm
+为8RPM（转/每分钟）;
+
+
+
+                0x07D0 = 堵转保护
+电流阈值
+菜单Clog_Ma
+为2000Ma;
+
+
+
+                0x07D0
+ = 
+堵转保护
+检测时间阈值
+菜单Clog_Ms
+为2000ms;
+
+
+
+                0x0003 = 位置到达窗口为0.3°;
+
+
+
+                （
+注：
+表示当目标位置角度与传感器实时位置角度相差小于0.3°时，认为电机已经到达设定的位置，将置位位置到达标志位）
+
+
+
+
+
+
+12.4 读取系统状态参数命令
+
+
+
+命令功能：读取系统状态参数
+        命令格式：
+地址 + 0x43 + 0x7A + 校验字节
+
+
+
+        命令返回：
+地址 + 0x43 + 系统状态参数 + 校验字节
+
+
+
+        命令示例：
+发送01 43 7A 6B，正确返回01 43 系统状态参数 6B，错误命令返回01 00 EE 6B
+
+
+
+        数据解析：
+命令正确返回01 43后面的字节就是系统的状态参数，它将按照下面的数据格式进行排列和数据的转换：
+
+
+
+                比如，发送读取系统状态参数01 43 7A 6B命令后，返回如下数据：
+
+
+
+                01 43 27
+ 
+0C
+ 
+5C 67
+ 
+00 00 
+00 03
+ 
+30 B5
+ 
+43 EB
+ 
+01 00 00 34 2E
+ 
+00 00 00
+ 
+01 00 00 34 2E
+ 
+01 00 00 00 01
+ 
+00 22
+ 
+03
+ 
+03
+ 6B 
+
+
+
+                返回命令所包含的字节数
+ = 
+0x25
+ = 37个;
+
+
+
+                返回命令的配置参数个数
+ = 
+0x0C
+ = 12个;
+
+
+
+                总线电压
+ = 
+0x5C67
+ = 23655mV;
+
+
+
+                总线电流
+ = 
+0x0000
+ = 0Ma;
+
+
+
+                电机相电流
+ = 
+0x0003
+ = 3Ma;
+
+
+
+                编码器原始值
+ = 
+0x30B5
+ = 12469;
+
+
+
+                校准后编码器值
+ = 
+0x43EB
+ = 17387;
+
+
+
+                电机目标位置
+ = 
+-0x0000342E
+ = -13358 = -1335.8°;（位置值前面的01表示符号）
+
+
+
+                电机实时转速
+ = 
+0x0000
+ = 0.0RPM（转/每分钟）;（转速值前面的01表示符号）
+
+
+
+                电机实时位置
+ = 
+-0x0000342E
+ = -13358 = -1335.8°;（位置值前面的01表示符号）
+
+
+
+                电机位置误差
+ = 
+-0x00000001
+ = -1 = -0.01°;（位置误差值前面的01表示符号）
+
+
+
+                电机实时温度
+ = 
+0x22
+ = 34℃;（温度值前面的00表示符号）
+
+
+
+                就绪状态标志
+ = 
+0x03
+；
+
+
+
+编码器就绪状态标志位
+ = 
+0x03
+ & 0x01 = TRUE = 就绪;
+校准表就绪状态标志位
+ = 
+0x03
+ & 0x02 = TRUE = 就绪;
+正在回零标志位
+  
+= 
+0x03
+ & 0x04 = FALSE = 当前没有回零;
+回零失败标志位
+  
+= 
+0x03
+ & 0x08 = FALSE = 没有回零失败;
+通讯控制位置角度精度选项(S_PosTDP菜单) 
+= 0x03 & 0x80 = Disable
+，
+电机状态标志
+ = 
+0x03
+；
+使能状态标志位
+ = 
+0x03
+ & 0x01 = TRUE = 电机处于使能状态;
+堵转保护标志位
+ = 
+0x03
+ & 0x08 = FALSE = 没触发堵转保护;
+电机堵转标志位
+ = 
+0x03
+ & 0x04 = FALSE = 没触发堵转;
+电机到位标志位
+ = 
+0x03
+ & 0x02 = TRUE = 电机已经到位;
+                （
+注：
+某个标志如果不为0表示为TRUE，等于0则表示FALSE）
+
+
+
+
+
+        
+
+    
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+    
+
+      
+·
+
+      
+
+        
+收录于
+
+        
+
+          
+
+
+
+  
+
+    
+
+  
+
+  
+
+    
+当前文章被以下社区和专栏收录：
+
+    
+
+      
+
+    
+
+  
+
+
+
+        
+
+      
+
+    
+
+  
+
+
+
+
+
+
+  
+
+    
+
+      
+标签
+
+      
+
+          
+#单片机
+
+          
+#嵌入式硬件
+
+      
+
+    
+
+  
+
+
+
+
+        
+
+          
+
+              版权声明：本文为博主原创文章，遵循
+ CC 4.0 BY-SA 
+版权协议，转载请附上原文出处链接和本声明。
+          
+
+        
+
+  
+
+
+  
+
+    
+
+      
+基于STM3
+2
+的
+张大
+头
+闭环
+步进电机
+控制实战指南
+
+      
+本文详细介绍了基于STM3
+2
+的
+张大
+头
+闭环
+步进电机
+控制实战指南，涵盖硬件接线、CubeMX工程配置、电机控制程序设计及调试技巧。通过实际案例分享，帮助开发者快速掌握
+闭环
+步进电机
+的速度与位置控制，实现高精度运动控制，适用于自动化设备等应用场景。
+
+    
+
+    
+阅读详情
+
+  
+
+
+
+
+
+
+    
+
+      
+
+        
+相关推荐
+
+        
+
+          
+
+            
+
+          
+
+          换一换
+        
+
+      
+
+      
+
+          
+
+            
+ZDT
+_X
+系列
+V
+2
+步进
+闭环
+驱动
+说明书
+Rev
+1
+.
+0
+：硬件配置、参数调试与通信协议详解
+
+              
+步进电机
+闭环
+控制通过编码器反馈与PID算法解决传统开环丢步问题，显著提升定位精度与动态响应。其技术价值在于低速大力矩、高速抗干扰及堵转保护，广泛应用于3D打印机、CNC雕刻机、机械臂等精密运动场景。
+ZDT
+_X
+系列
+V
+2
+驱动
+器支持脉冲、串口与CAN通信，提供速度、位置、力矩三种控制模式。本
+说明书
+Rev
+1
+.
+0
+详细解析硬件接口、拨码开关配置、上位机调试、寄存器映射及故障排查，助力工程师快速实现
+闭环
+步进
+系统集成与二次开发。
+
+            
+
+                
+weixin_34056162的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    221
+                
+
+            
+
+          
+
+          
+
+            
+Emm_V4
+.
+2
+步进
+闭环
+驱动
+器
+说明书
+Rev
+1
+.
+1
+
+              
+Emm4
+2
+_V4
+.
+x
+步进
+闭环
+驱动
+器是
+张大
+头
+智控为满足广大用户需求而自主研发的一款稳定可靠的产品，它是基于上一代Emm4
+2
+_V3
+.
+6版本升级而来，不仅延续了其优秀的FOC矢量
+闭环
+控制算法，更在其传统的Dir/Step控制模式基础上拓展了通过UART、RS
+2
+3
+2
+、RS485、CAN等总线通讯方式来精准的控制电机，满足了更广大的用户需求，适合3D打印、写字机、雕刻机、PLC控制、机械臂、小车比赛等用户使用。
+
+            
+
+                
+zhangdatou666的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    6万+
+                
+
+            
+
+          
+
+          
+
+            
+MSPM
+0
+G35
+0
+7通过USART+DMA
+驱动
+张大
+头
+4
+2
+步进电机
+（CCS开发）
+
+              
+MSPM
+0
+G35
+0
+7微控制器简介（USART和DMA外设资源）
+张大
+头
+4
+2
+步进电机
+参数与
+驱动
+需求分析开发工具链：Code Composer Studio (CCS) 配置与工程创建。
+
+            
+
+                
+2401_83600211的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    1319
+                
+
+            
+
+          
+
+          
+
+            
+杭电 
+2
+0
+5
+1
+ Bitset
+
+              
+Problem Description
+
+
+
+ 
+Give you a number on base ten,you should output it on base two
+.
+(
+0
+ 
+
+
+
+
+
+
+Input
+
+
+
+ 
+For each case there is a postive number n on base ten, end of file
+.
+
+            
+
+                
+在淘沙 ing
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    759
+                
+
+            
+
+          
+
+          
+
+            
+步进
+闭环
+控制、速度控制（
+张大
+头
+Emm-V4
+.
+2
+驱动
+器）速度控制-stm3
+2
+
+              
+步进
+闭环
+控制、速度控制（
+张大
+头
+Emm_V4
+.
+2
+驱动
+器）速度控制——stm3
+2
+
+            
+
+            
+
+          
+
+          
+
+            
+资料汇总-
+张大
+头
+4
+2
+步进
+.
+zip
+
+              
+资料汇总——
+张大
+头
+4
+2
+步进
+
+            
+
+            
+
+          
+
+          
+
+            
+Linux Crontab 定时任务 命令详解
+
+              
+
+一
+.
+ Crontab 介绍
+
+ crontab命令的功能是在一定的时间间隔调度一些命令的执行。
+
+
+1
+.
+1
+ /etc/crontab 文件
+ 在/etc目录下有一个crontab文件，这里存放有系统运行的一些调度程序。每个用户可以建立自己的调度crontab。
+ 
+如：
+[root@dave ~]# cat /etc/crontab
+SHELL=/bin/bash
+PATH=
+.
+.
+.
+
+            
+
+                
+hunxiejun
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    214
+                
+
+            
+
+          
+
+          
+
+            
+步进
+闭环
+控制、速度控制（Emm-V4
+.
+2
+驱动
+器）速度控制-stm3
+2
+
+
+
+              
+步进
+闭环
+控制、速度控制（Emm_V4
+.
+2
+驱动
+器）速度控制——stm3
+2
+
+
+
+
+            
+
+            
+
+          
+
+          
+
+            
+步进
+闭环
+控制、速度控制（
+张大
+头
+Emm_V4
+.
+2
+驱动
+器）速度控制——Arduino
+
+              
+步进电机
+的精准控制是一个比较麻烦的事，要是不想深入学习电机控制而且又有精准控制的需求的话，可以在某宝搜买
+闭环
+驱动
+器，这里我使用的是
+张大
+头
+4
+2
+步进电机
+闭环
+控制器，“可恶”的是没有在他的例程中提供函数，然后自己写了一个，供大家参考，也望大家批评指正。
+
+            
+
+                
+qq_59953808的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    1万+
+                
+
+            
+
+          
+
+          
+
+            
+PTA 7-8 暴力小学(二年级篇)-求出4个数字 (
+1
+0
+分)java
+
+              
+PTA 7-8 暴力小学(二年级篇)-求出4个数字 (
+1
+0
+分)java
+小博是新城小学二年级学生，这孩子人很老实，数学、语文成绩都是中等。不过一旦坐在电脑前，写起代码来，则有些霸气侧漏，尤其擅长各种暴力方法。本题就是数学莫老师的题目之一，请你和小博一起暴力求解吧。
+
+输入格式:
+第一行给出这个和N（图中例子的和N为
+2
+0
+0
+0
+)。
+输出格式:
+第一行输出所有解的数目K，随后K行按照DCBA 4位数字从
+.
+.
+.
+
+            
+
+                
+qryzhfj的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    2184
+                
+
+            
+
+          
+
+          
+
+            
+ISP调试工程师相关面试问题_
+0
+0
+1
+
+              
+Qualcomm、MTK等ISP pipeline的框架原理及算法原理，还有调试经验。
+
+            
+
+                
+notgoodenouf的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    3529
+                
+
+            
+
+          
+
+          
+
+            
+张大
+头
+步进电机
+
+              
+1
+.
+答：4
+2
+步进电机
+是一种
+步进电机
+的规格型号，其名称中的“4
+2
+”指的是电机机座的尺寸为4
+2
+mm×4
+2
+mm（方形法兰尺寸）。这种电机通常输出扭矩适中，广泛应用于3D打印机、CNC机床、自动化设备等领域。
+
+            
+
+                
+QL_SD的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    4016
+                
+
+            
+
+          
+
+          
+
+            
+【血汗泪心路历程】怎么彻底删掉Sangfor文件？怎么彻底删除easyconnect？删除sangfor后网络坏了、某些app无法正常启动怎么解决？
+
+              
+教程来源于网络的五湖四海＋gpt解答。用到了好几个教程和方法，遂这篇总结一下。会标明出处！先上一下战绩：终于把sangfor扔进回收站里了！！！哈哈哈那一刻真的好爽。
+
+            
+
+                
+weixin_71246590的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    6万+
+                
+
+            
+
+          
+
+          
+
+            
+张大
+头
+闭环
+步进电机
+
+              
+main
+.
+h包含
+头
+文件即可#ifndef __MAIN_H，#define __MAIN_H。首先我们先利用stm3
+2
+cubemax创建工程代码（代码部分于先前博客一致）然后在串口调试助手xcom中输入对应的指令（十六进制）这里以串口3为例。并且调制好显示器中菜单的参数：比特率，串口，通讯地址，模式等。生成代码并添加相对应的文件bsp、datou
+.
+c/h。编译无误后烤录到
+单片机
+stm3
+2
+f
+1
+0
+3即可。
+
+            
+
+                
+m0_75239664的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    6023
+                
+
+            
+
+          
+
+          
+
+            
+AD
+1
+7入门简单教程（一）
+
+              
+AD
+1
+7入门简单教程
+我写这篇文章主要是因为最近刚学习完了AD
+1
+7，想做一下总结，也希望通过自己心得的帮助一些刚入门AD
+1
+7的小白。
+总结一共分为两大部分，包括AD
+1
+7的下载安装与汉化（文末有详细链接）、工程的创建、元器件库、PCB、走线中的常用命令介绍，文末还附有完整的PCB工程以及讲解视频。
+第一部分工程的创建及元器件库常用命令
+
+1
+.
+首先在桌面上创建一个文件夹，然后在AD
+1
+7点击左上角的文件中
+.
+.
+.
+
+            
+
+                
+qq_45433195的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    2万+
+                
+
+            
+
+          
+
+          
+
+            
+最新版谷歌浏览器Axure插件（免翻墙）
+
+              
+本文介绍了在Chrome浏览器无法直接打开Axure导出HTML文件的解决方法。由于国内网络限制无法访问Chrome商店，需手动下载安装AxureRP扩展插件（提供百度网盘下载链接）。安装步骤包括：
+1
+)启用开发者模式；
+2
+)拖拽CRX文件或加载解压文件夹；3)勾选"允许访问文件网址"。同时还提示若浏览器版本过低可能无法正常运行，并给出了浏览器升级方法。该教程详细说明了从插件安装到浏览器升级的完整解决方案。
+
+            
+
+                
+OldCat先生
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    2953
+                
+
+            
+
+          
+
+          
+
+            
+ZDT
+_X
+系列
+V
+2
+闭环
+步进
+驱动
+说明书
+Rev
+1
+.
+0
+：从接线配置到
+闭环
+调参的工程实践指南
+
+              
+步进电机
+闭环
+控制通过编码器反馈实时修正位置误差，解决了开环系统丢步、低速振动和高速堵转等固有缺陷。其核心原理在于动态电流调节与位置误差补偿，在保留脉冲方向控制易用性的同时，显著提升定位精度与运行平稳性。该技术广泛应用于3D打印、CNC雕刻、机械臂及自动化设备中，尤其适合中低负载、成本敏感的运动控制场景。
+ZDT
+_X
+系列
+V
+2
+闭环
+驱动
+说明书
+Rev
+1
+.
+0
+围绕接线规范、拨码配置、串口通信及
+闭环
+参数调试，提供了完整的工程落地指导。
+
+            
+
+                
+weixin_34342992的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    337
+                
+
+            
+
+          
+
+          
+
+            
+ubuntu
+2
+0
+.
+0
+4运行VINS-Mono（跑EuRoC数据集）
+
+              
+在VINS-Mono主工程目录下的config子目录中找到euroc文件夹，并打开其中的euroc_config
+.
+yaml文件，将其中结果输出保存路径修改为本地的绝对路径或相对路径。应该是这个功能包路径没有成功得到，直接注释了这一行，改成你电脑中安装的vins_mono的pose_graph这个功能包路径，备注：直接下可能因为包太大下不下来，我是下载的zip，再解压，将VINS-Mono-master重命名为VINS-Mono。，当时参考了几篇不同的文章，感觉我的这个配置应该也可以编译，就先尝试了一下。
+
+            
+
+                
+2301_80311277的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    2959
+                
+
+            
+
+          
+
+          
+
+            
+Emm_V5
+.
+0
+步进
+闭环
+驱动
+说明书
+Rev
+1
+.
+3
+
+              
+Emm4
+2
+_V5
+.
+0
+是
+张大
+头
+闭环
+伺服全新推出的基于Emm4
+2
+_V4
+.
+2
+的升级版本，它对
+闭环
+算法进行了升级改造，并融合了
+ZDT
+_X4
+2
+_V
+1
+.
+2
+的软硬件框架，使它具有更高的转速和更快的打印速度，并拥有诸如单圈/多圈回零、多机通讯同步控制、实时转速、到位输出/到位返回命令、相对/绝对位置模式控制等更多强大的功能，此外它还支持内置串口/RS
+2
+3
+2
+/RS485/CAN总线模块、支持限制电机堵转电流等，具有更高的安全性和可靠性，满足更广大用户的需求，适合3D打印、写字机、雕刻机、PLC控制、机械臂、小车比赛等用户使用
+
+            
+
+                
+zhangdatou666的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    9万+
+                
+
+            
+
+          
+
+          
+
+            
+Captcha must be filled out，解决Kaggle新用户注册无法弹出验证提示的问题
+
+              
+Captcha must be filled out
+
+            
+
+                
+weixin_46713695的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    5万+
+                
+
+            
+
+          
+
+          
+
+            
+【Arduino+ESP3
+2
+专题】CP
+2
+1
+0
+2
+串口自动下载电路
+
+              
+CP
+2
+1
+0
+2
+串口自动下载电路原理是什么?
+
+            
+
+                
+一点硬件
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    2945
+                
+
+            
+
+          
+
+          
+
+            
+STM3
+2
+步进
+闭环
+控制、速度控制（
+张大
+头
+Emm_V4
+.
+2
+驱动
+器）速度控制 角度控制 位置控制
+
+              
+本文继续简述使用stm3
+2
+对
+张大
+头
+步进电机
+进行速度控制和角度控制。
+张大
+头
+与stm3
+2
+的硬件连接请看这个要注意哈！usart模式要先通过
+张大
+头
+的小屏幕进行设置的哈！！要配置好波特率和地址。这些在
+张大
+头
+提供的pdf说明文档里面都有写!代码的可读性可能不算高，emm，望大佬指正。
+
+            
+
+                
+qq_59953808的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    1万+
+                
+
+            
+
+          
+
+          
+
+            
+jre9下载 jdk9
+
+              
+(Java SE Runtime Environment 9
+.
+0
+) 9
+.
+0
+u
+1
+75 官方最新版 【x86|x64】
+
+            
+
+            
+
+          
+
+          
+
+            
+关于
+张大
+头
+步进电机
+库函数中存在的一些隐患
+
+              
+它的生命周期仅限于函数执行期间，函数一旦返回，栈内存会被回收或后续函数调用覆盖。函数的生命周期较长，栈内存可能未被覆盖，DMA 传输能正常完成。烧录后发现电机没有任何反应，但直接在main里调用又是正常的。最近在使用
+张大
+头
+闭环
+驱动
+时，需要将本身的库函数封装成函数。的栈内存被其他操作覆盖，DMA 异步发送时数据已损坏。在其库函数的局部变量cmd前加上static。中时，外层函数可能快速返回，导致。数组是局部变量，存储在 ​。然后再main函数里调用。发现是串口数据格式错误。
+
+            
+
+                
+2302_79941911的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    1579
+                
+
+            
+
+          
+
+          
+
+            
+复分析 阿尔福斯(Ahlfors)  第三版答案 英文
+
+              
+答案分为十章，有部分习题没有答案，全英文复分析阿尔福斯(Ahlfors) 第三版答案
+
+            
+
+            
+
+          
+
+          
+
+            
+RU DOS版、EFI版3
+2
+bit/64bit BIOS常用工具
+
+              
+DOS版、EFI版的RU工具，可用来查看IO、MEM、PCI、SMBIOS等资源。亲测在EFI SHELL下可用。
+
+            
+
+            
+
+          
+
+          
+
+            
+STM3
+2
+F4
+0
+7控制单个
+张大
+头
+闭环
+步进电机
+讲解与梯形加减速（HAL库）
+
+              
+摘要： 本文介绍了基于STM3
+2
+的
+步进电机
+控制方法，通过定时器TIM5产生PWM脉冲（PA
+2
+）控制
+步进电机
+驱动
+器，PE5控制方向。配置占空比为5
+0
+%，使用3
+2
+0
+0
+步/转（
+1
+6细分）。核心代码包括：初始化电机、设置方向与转速、启动/停止电机，以及通过定时器中断精确计数脉冲。工作流程详细说明了频率计算（如6
+0
+ RPM对应3
+2
+0
+0
+ Hz）、ARR值设置（如84MHz时钟下ARR=
+2
+6
+2
+49），以及中断回调如何实现步数控制。最终通过MoveStepsWithRPM()函数实现指定步数和转速的运动控制。
+
+            
+
+                
+Xjb200512的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    4885
+                
+
+            
+
+          
+
+          
+
+            
+IEM模型，地表粗糙度模拟
+
+              
+利用微波反演土壤水分时候，利用IEM模型可以实现对随机地表的模拟
+
+            
+
+            
+
+          
+
+          
+
+            
+【机创_①基于HAL库的单个
+步进电机
+PWM控制(
+张大
+头
+驱动
+板)】
+
+              
+本文介绍了基于STM3
+2
+F4
+0
+7和HAL库的
+步进电机
+PWM控制方法，通过定时器中断实现精准步数和速度控制。配置步骤包括时钟树设置、定时器参数调整及GPIO初始化，核心功能封装为
+驱动
+模块，支持方向、转速和步数调节。关键点在于定时器中断计数和PWM波形生成，确保低CPU占用率。代码提供了初始化、移动控制和停止功能，适用于机械创新等嵌入式应用场景。
+
+
+            
+
+                
+Xjb200512的博客
+
+                
+
+                  
+
+                    
+
+                    
+
+                  
+
+                    1055
+                
+
+            
+
+          
+
+      
+
+    
+
+
+  
+
+    
+
+      
+上一篇：
+
+      
+
+        ZDT_Emm42_V5.0 Modbus-RTU指令说明
+      
+
+    
+
+    
+
+      
+下一篇：
+
+      
+
+        ZDT_X系列_V2 Modbus-RTU指令说明
+      
+
+    
+
+  
+
+
+
+            
+
+  
+
+    
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+ZDT
+_X
+系列
+V
+2
+步进
+闭环
+驱动
+说明书
+Rev
+1
+.
+0
+：硬件配置、参数调试与通信协议详解
+
+					
+最新发布
+
+				
+
+			
+
+			
+
+				
+
+					
+weixin_34056162的博客
+
+				
+
+				
+
+					
+09-23
+
+					
+
+					221
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+步进电机
+闭环
+控制通过编码器反馈与PID算法解决传统开环丢步问题，显著提升定位精度与动态响应。其技术价值在于低速大力矩、高速抗干扰及堵转保护，广泛应用于3D打印机、CNC雕刻机、机械臂等精密运动场景。
+ZDT
+_X
+系列
+V
+2
+驱动
+器支持脉冲、串口与CAN通信，提供速度、位置、力矩三种控制模式。本
+说明书
+Rev
+1
+.
+0
+详细解析硬件接口、拨码开关配置、上位机调试、寄存器映射及故障排查，助力工程师快速实现
+闭环
+步进
+系统集成与二次开发。
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+Emm_V4
+.
+2
+步进
+闭环
+驱动
+器
+说明书
+Rev
+1
+.
+1
+
+				
+
+			
+
+			
+
+				
+
+					
+zhangdatou666的博客
+
+				
+
+				
+
+					
+12-14
+
+					
+
+					6万+
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+Emm4
+2
+_V4
+.
+x
+步进
+闭环
+驱动
+器是
+张大
+头
+智控为满足广大用户需求而自主研发的一款稳定可靠的产品，它是基于上一代Emm4
+2
+_V3
+.
+6版本升级而来，不仅延续了其优秀的FOC矢量
+闭环
+控制算法，更在其传统的Dir/Step控制模式基础上拓展了通过UART、RS
+2
+3
+2
+、RS485、CAN等总线通讯方式来精准的控制电机，满足了更广大的用户需求，适合3D打印、写字机、雕刻机、PLC控制、机械臂、小车比赛等用户使用。
+
+			
+
+		
+
+	
+
+
+
+		
+
+			
+		
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+MSPM
+0
+G35
+0
+7通过USART+DMA
+驱动
+张大
+头
+4
+2
+步进电机
+（CCS开发）
+
+				
+
+			
+
+			
+
+				
+
+					
+2401_83600211的博客
+
+				
+
+				
+
+					
+07-10
+
+					
+
+					1319
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+MSPM
+0
+G35
+0
+7微控制器简介（USART和DMA外设资源）
+张大
+头
+4
+2
+步进电机
+参数与
+驱动
+需求分析开发工具链：Code Composer Studio (CCS) 配置与工程创建。
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+杭电 
+2
+0
+5
+1
+ Bitset
+
+				
+
+			
+
+			
+
+				
+
+					
+在淘沙 ing
+
+				
+
+				
+
+					
+06-14
+
+					
+
+					759
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+Problem Description
+
+
+
+ 
+Give you a number on base ten,you should output it on base two
+.
+(
+0
+ 
+
+
+
+
+
+
+Input
+
+
+
+ 
+For each case there is a postive number n on base ten, end of file
+.
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+步进
+闭环
+控制、速度控制（
+张大
+头
+Emm-V4
+.
+2
+驱动
+器）速度控制-stm3
+2
+
+				
+
+			
+
+			
+
+				
+
+					
+04-25
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+步进
+闭环
+控制、速度控制（
+张大
+头
+Emm_V4
+.
+2
+驱动
+器）速度控制——stm3
+2
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+资料汇总-
+张大
+头
+4
+2
+步进
+.
+zip
+
+				
+
+			
+
+			
+
+				
+
+					
+07-04
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+资料汇总——
+张大
+头
+4
+2
+步进
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+Linux Crontab 定时任务 命令详解
+
+				
+
+			
+
+			
+
+				
+
+					
+hunxiejun
+
+				
+
+				
+
+					
+02-21
+
+					
+
+					214
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+
+一
+.
+ Crontab 介绍
+
+ crontab命令的功能是在一定的时间间隔调度一些命令的执行。
+
+
+1
+.
+1
+ /etc/crontab 文件
+ 在/etc目录下有一个crontab文件，这里存放有系统运行的一些调度程序。每个用户可以建立自己的调度crontab。
+ 
+如：
+[root@dave ~]# cat /etc/crontab
+SHELL=/bin/bash
+PATH=
+.
+.
+.
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+步进
+闭环
+控制、速度控制（Emm-V4
+.
+2
+驱动
+器）速度控制-stm3
+2
+
+
+
+				
+
+			
+
+			
+
+				
+
+					
+09-19
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+步进
+闭环
+控制、速度控制（Emm_V4
+.
+2
+驱动
+器）速度控制——stm3
+2
+
+
+
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+步进
+闭环
+控制、速度控制（
+张大
+头
+Emm_V4
+.
+2
+驱动
+器）速度控制——Arduino
+
+				
+
+			
+
+			
+
+				
+
+					
+qq_59953808的博客
+
+				
+
+				
+
+					
+04-12
+
+					
+
+					1万+
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+步进电机
+的精准控制是一个比较麻烦的事，要是不想深入学习电机控制而且又有精准控制的需求的话，可以在某宝搜买
+闭环
+驱动
+器，这里我使用的是
+张大
+头
+4
+2
+步进电机
+闭环
+控制器，“可恶”的是没有在他的例程中提供函数，然后自己写了一个，供大家参考，也望大家批评指正。
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+PTA 7-8 暴力小学(二年级篇)-求出4个数字 (
+1
+0
+分)java
+
+				
+
+			
+
+			
+
+				
+
+					
+qryzhfj的博客
+
+				
+
+				
+
+					
+02-07
+
+					
+
+					2184
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+PTA 7-8 暴力小学(二年级篇)-求出4个数字 (
+1
+0
+分)java
+小博是新城小学二年级学生，这孩子人很老实，数学、语文成绩都是中等。不过一旦坐在电脑前，写起代码来，则有些霸气侧漏，尤其擅长各种暴力方法。本题就是数学莫老师的题目之一，请你和小博一起暴力求解吧。
+
+输入格式:
+第一行给出这个和N（图中例子的和N为
+2
+0
+0
+0
+)。
+输出格式:
+第一行输出所有解的数目K，随后K行按照DCBA 4位数字从
+.
+.
+.
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+ISP调试工程师相关面试问题_
+0
+0
+1
+
+				
+
+			
+
+			
+
+				
+
+					
+notgoodenouf的博客
+
+				
+
+				
+
+					
+06-15
+
+					
+
+					3529
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+Qualcomm、MTK等ISP pipeline的框架原理及算法原理，还有调试经验。
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+张大
+头
+步进电机
+
+				
+
+			
+
+			
+
+				
+
+					
+QL_SD的博客
+
+				
+
+				
+
+					
+06-10
+
+					
+
+					4016
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+1
+.
+答：4
+2
+步进电机
+是一种
+步进电机
+的规格型号，其名称中的“4
+2
+”指的是电机机座的尺寸为4
+2
+mm×4
+2
+mm（方形法兰尺寸）。这种电机通常输出扭矩适中，广泛应用于3D打印机、CNC机床、自动化设备等领域。
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+【血汗泪心路历程】怎么彻底删掉Sangfor文件？怎么彻底删除easyconnect？删除sangfor后网络坏了、某些app无法正常启动怎么解决？
+
+				
+
+			
+
+			
+
+				
+
+					
+weixin_71246590的博客
+
+				
+
+				
+
+					
+05-19
+
+					
+
+					6万+
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+教程来源于网络的五湖四海＋gpt解答。用到了好几个教程和方法，遂这篇总结一下。会标明出处！先上一下战绩：终于把sangfor扔进回收站里了！！！哈哈哈那一刻真的好爽。
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+张大
+头
+闭环
+步进电机
+
+				
+
+			
+
+			
+
+				
+
+					
+m0_75239664的博客
+
+				
+
+				
+
+					
+12-10
+
+					
+
+					6023
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+main
+.
+h包含
+头
+文件即可#ifndef __MAIN_H，#define __MAIN_H。首先我们先利用stm3
+2
+cubemax创建工程代码（代码部分于先前博客一致）然后在串口调试助手xcom中输入对应的指令（十六进制）这里以串口3为例。并且调制好显示器中菜单的参数：比特率，串口，通讯地址，模式等。生成代码并添加相对应的文件bsp、datou
+.
+c/h。编译无误后烤录到
+单片机
+stm3
+2
+f
+1
+0
+3即可。
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+AD
+1
+7入门简单教程（一）
+
+				
+
+			
+
+			
+
+				
+
+					
+qq_45433195的博客
+
+				
+
+				
+
+					
+01-10
+
+					
+
+					2万+
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+AD
+1
+7入门简单教程
+我写这篇文章主要是因为最近刚学习完了AD
+1
+7，想做一下总结，也希望通过自己心得的帮助一些刚入门AD
+1
+7的小白。
+总结一共分为两大部分，包括AD
+1
+7的下载安装与汉化（文末有详细链接）、工程的创建、元器件库、PCB、走线中的常用命令介绍，文末还附有完整的PCB工程以及讲解视频。
+第一部分工程的创建及元器件库常用命令
+
+1
+.
+首先在桌面上创建一个文件夹，然后在AD
+1
+7点击左上角的文件中
+.
+.
+.
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+最新版谷歌浏览器Axure插件（免翻墙）
+
+				
+
+			
+
+			
+
+				
+
+					
+OldCat先生
+
+				
+
+				
+
+					
+09-29
+
+					
+
+					2953
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+本文介绍了在Chrome浏览器无法直接打开Axure导出HTML文件的解决方法。由于国内网络限制无法访问Chrome商店，需手动下载安装AxureRP扩展插件（提供百度网盘下载链接）。安装步骤包括：
+1
+)启用开发者模式；
+2
+)拖拽CRX文件或加载解压文件夹；3)勾选"允许访问文件网址"。同时还提示若浏览器版本过低可能无法正常运行，并给出了浏览器升级方法。该教程详细说明了从插件安装到浏览器升级的完整解决方案。
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+ZDT
+_X
+系列
+V
+2
+闭环
+步进
+驱动
+说明书
+Rev
+1
+.
+0
+：从接线配置到
+闭环
+调参的工程实践指南
+
+				
+
+			
+
+			
+
+				
+
+					
+weixin_34342992的博客
+
+				
+
+				
+
+					
+09-23
+
+					
+
+					337
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+步进电机
+闭环
+控制通过编码器反馈实时修正位置误差，解决了开环系统丢步、低速振动和高速堵转等固有缺陷。其核心原理在于动态电流调节与位置误差补偿，在保留脉冲方向控制易用性的同时，显著提升定位精度与运行平稳性。该技术广泛应用于3D打印、CNC雕刻、机械臂及自动化设备中，尤其适合中低负载、成本敏感的运动控制场景。
+ZDT
+_X
+系列
+V
+2
+闭环
+驱动
+说明书
+Rev
+1
+.
+0
+围绕接线规范、拨码配置、串口通信及
+闭环
+参数调试，提供了完整的工程落地指导。
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+ubuntu
+2
+0
+.
+0
+4运行VINS-Mono（跑EuRoC数据集）
+
+				
+
+			
+
+			
+
+				
+
+					
+2301_80311277的博客
+
+				
+
+				
+
+					
+12-16
+
+					
+
+					2959
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+在VINS-Mono主工程目录下的config子目录中找到euroc文件夹，并打开其中的euroc_config
+.
+yaml文件，将其中结果输出保存路径修改为本地的绝对路径或相对路径。应该是这个功能包路径没有成功得到，直接注释了这一行，改成你电脑中安装的vins_mono的pose_graph这个功能包路径，备注：直接下可能因为包太大下不下来，我是下载的zip，再解压，将VINS-Mono-master重命名为VINS-Mono。，当时参考了几篇不同的文章，感觉我的这个配置应该也可以编译，就先尝试了一下。
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+Emm_V5
+.
+0
+步进
+闭环
+驱动
+说明书
+Rev
+1
+.
+3
+
+					
+热门推荐
+
+				
+
+			
+
+			
+
+				
+
+					
+zhangdatou666的博客
+
+				
+
+				
+
+					
+09-03
+
+					
+
+					9万+
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+Emm4
+2
+_V5
+.
+0
+是
+张大
+头
+闭环
+伺服全新推出的基于Emm4
+2
+_V4
+.
+2
+的升级版本，它对
+闭环
+算法进行了升级改造，并融合了
+ZDT
+_X4
+2
+_V
+1
+.
+2
+的软硬件框架，使它具有更高的转速和更快的打印速度，并拥有诸如单圈/多圈回零、多机通讯同步控制、实时转速、到位输出/到位返回命令、相对/绝对位置模式控制等更多强大的功能，此外它还支持内置串口/RS
+2
+3
+2
+/RS485/CAN总线模块、支持限制电机堵转电流等，具有更高的安全性和可靠性，满足更广大用户的需求，适合3D打印、写字机、雕刻机、PLC控制、机械臂、小车比赛等用户使用
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+Captcha must be filled out，解决Kaggle新用户注册无法弹出验证提示的问题
+
+				
+
+			
+
+			
+
+				
+
+					
+weixin_46713695的博客
+
+				
+
+				
+
+					
+06-26
+
+					
+
+					5万+
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+Captcha must be filled out
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+【Arduino+ESP3
+2
+专题】CP
+2
+1
+0
+2
+串口自动下载电路
+
+				
+
+			
+
+			
+
+				
+
+					
+一点硬件
+
+				
+
+				
+
+					
+11-05
+
+					
+
+					2945
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+CP
+2
+1
+0
+2
+串口自动下载电路原理是什么?
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+STM3
+2
+步进
+闭环
+控制、速度控制（
+张大
+头
+Emm_V4
+.
+2
+驱动
+器）速度控制 角度控制 位置控制
+
+				
+
+			
+
+			
+
+				
+
+					
+qq_59953808的博客
+
+				
+
+				
+
+					
+05-16
+
+					
+
+					1万+
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+本文继续简述使用stm3
+2
+对
+张大
+头
+步进电机
+进行速度控制和角度控制。
+张大
+头
+与stm3
+2
+的硬件连接请看这个要注意哈！usart模式要先通过
+张大
+头
+的小屏幕进行设置的哈！！要配置好波特率和地址。这些在
+张大
+头
+提供的pdf说明文档里面都有写!代码的可读性可能不算高，emm，望大佬指正。
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+jre9下载 jdk9
+
+				
+
+			
+
+			
+
+				
+
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+(Java SE Runtime Environment 9
+.
+0
+) 9
+.
+0
+u
+1
+75 官方最新版 【x86|x64】
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+关于
+张大
+头
+步进电机
+库函数中存在的一些隐患
+
+				
+
+			
+
+			
+
+				
+
+					
+2302_79941911的博客
+
+				
+
+				
+
+					
+04-18
+
+					
+
+					1579
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+它的生命周期仅限于函数执行期间，函数一旦返回，栈内存会被回收或后续函数调用覆盖。函数的生命周期较长，栈内存可能未被覆盖，DMA 传输能正常完成。烧录后发现电机没有任何反应，但直接在main里调用又是正常的。最近在使用
+张大
+头
+闭环
+驱动
+时，需要将本身的库函数封装成函数。的栈内存被其他操作覆盖，DMA 异步发送时数据已损坏。在其库函数的局部变量cmd前加上static。中时，外层函数可能快速返回，导致。数组是局部变量，存储在 ​。然后再main函数里调用。发现是串口数据格式错误。
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+复分析 阿尔福斯(Ahlfors)  第三版答案 英文
+
+				
+
+			
+
+			
+
+				
+
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+答案分为十章，有部分习题没有答案，全英文复分析阿尔福斯(Ahlfors) 第三版答案
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+RU DOS版、EFI版3
+2
+bit/64bit BIOS常用工具
+
+				
+
+			
+
+			
+
+				
+
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+DOS版、EFI版的RU工具，可用来查看IO、MEM、PCI、SMBIOS等资源。亲测在EFI SHELL下可用。
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+STM3
+2
+F4
+0
+7控制单个
+张大
+头
+闭环
+步进电机
+讲解与梯形加减速（HAL库）
+
+				
+
+			
+
+			
+
+				
+
+					
+Xjb200512的博客
+
+				
+
+				
+
+					
+06-28
+
+					
+
+					4885
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+摘要： 本文介绍了基于STM3
+2
+的
+步进电机
+控制方法，通过定时器TIM5产生PWM脉冲（PA
+2
+）控制
+步进电机
+驱动
+器，PE5控制方向。配置占空比为5
+0
+%，使用3
+2
+0
+0
+步/转（
+1
+6细分）。核心代码包括：初始化电机、设置方向与转速、启动/停止电机，以及通过定时器中断精确计数脉冲。工作流程详细说明了频率计算（如6
+0
+ RPM对应3
+2
+0
+0
+ Hz）、ARR值设置（如84MHz时钟下ARR=
+2
+6
+2
+49），以及中断回调如何实现步数控制。最终通过MoveStepsWithRPM()函数实现指定步数和转速的运动控制。
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+IEM模型，地表粗糙度模拟
+
+				
+
+			
+
+			
+
+				
+
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+利用微波反演土壤水分时候，利用IEM模型可以实现对随机地表的模拟
+
+			
+
+		
+
+	
+
+
+
+
+
+	
+
+		
+
+			
+
+				
+
+					
+【机创_①基于HAL库的单个
+步进电机
+PWM控制(
+张大
+头
+驱动
+板)】
+
+				
+
+			
+
+			
+
+				
+
+					
+Xjb200512的博客
+
+				
+
+				
+
+					
+01-27
+
+					
+
+					1055
+					
+
+				
+
+			
+
+		
+
+		
+
+			
+
+				
+本文介绍了基于STM3
+2
+F4
+0
+7和HAL库的
+步进电机
+PWM控制方法，通过定时器中断实现精准步数和速度控制。配置步骤包括时钟树设置、定时器参数调整及GPIO初始化，核心功能封装为
+驱动
+模块，支持方向、转速和步数调节。关键点在于定时器中断计数和PWM波形生成，确保低CPU占用率。代码提供了初始化、移动控制和停止功能，适用于机械创新等嵌入式应用场景。
+
+
+			
+
+		
+
+	
+
+
+
+  
+
+
+
+
+
+
+
+    window.csdn.csdnFooter.options = {
+        el: '.blog-footer-bottom',
+        type: 2
+    }
+
+          
+
+          
+
+
+
+  
+
+    
+
+    
+
+      
+
+      
+目录
+
+      
+
+        
+
+          
+
+          
+展开全部
+ 
+
+          
+收起
+ 
+
+        
+
+      
+
+    
+
+    
+
+    
+
+      
+
+      
+
+      
+
+          49
+      
+
+    
+
+    
+
+    
+
+      
+
+      
+
+          5
+      
+
+    
+
+    
+
+    
+
+      
+
+      
+
+      
+
+          148
+      
+
+    
+
+    
+
+    
+
+      
+
+        
+
+        
+
+          
+
+            
+复制链接
+
+          
+
+          
+
+            
+分享到 QQ
+
+          
+
+          
+
+            
+分享到新浪微博
+
+          
+
+          
+
+            
+
+            
+
+              
+扫一扫
+            
+
+          
+
+        
+
+      
+
+    
+
+    
+
+    
+
+      
+
+      
+
+      
+
+        
+
+          
+
+            
+
+              
+举报
+
+            
+
+          
+
+         
+
+      
+
+    
+
+    
+
+    
+
+      
+
+    
+
+  
+
+
+  
+          
+
+            
+
+              
+
+              
+
+            
+
+            
+
+                
++ 关注
+
+            
+
+        
+
+        
+
+        (function () {
+          var slots = document.querySelectorAll('#mainBox .simple-ad-slot');
+          for (var i = 0; i < slots.length; i++) {
+            var fixed = slots[i].querySelector('.simple-ad-slot__fixed');
+            if (!fixed) {
+              continue;
+            }
+            var rect = slots[i].getBoundingClientRect();
+            fixed.style.left = rect.left + 'px';
+            fixed.style.width = rect.width + 'px';
+          }
+        })();
+        
+
+          
+          
+
+
+
+/* Layered artwork adapted from the existing VIP skin.
+   Internal layers: decorations 1-3, main 4; left cards follow DOM order 1-7,
+   brand 8. No document-level overlay or interception of article interactions. */
+.csdn-taotoken-motion {
+  --tao-ease: cubic-bezier(.22,.68,.22,1);
+  --tao-scale: 1;
+  position: relative;
+  display: block;
+  width: 100%;
+  height: min(660px, calc(100dvh - 64px)) !important;
+  overflow: hidden;
+  isolation: isolate;
+  cursor: pointer;
+  text-decoration: none !important;
+  color: #745239;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  pointer-events: auto;
+}
+.csdn-taotoken-motion:focus-visible { outline: 2px solid #745239; outline-offset: -3px; }
+.csdn-taotoken-motion *, .csdn-taotoken-motion *::before { box-sizing: border-box; }
+.csdn-taotoken-motion img { display: block; max-width: none !important; height: auto !important; object-fit: contain !important; border: 0; user-select: none; -webkit-user-drag: none; }
+.csdn-taotoken-motion__stage { position: absolute; top: 0; pointer-events: none; }
+.csdn-taotoken-motion--left { height: min(860px, calc(100dvh - 64px)) !important; }
+.csdn-taotoken-motion--left .csdn-taotoken-motion__stage {
+  width: 320px; height: 860px; right: 0;
+  transform: scale(var(--tao-scale)); transform-origin: right top;
+}
+.csdn-taotoken-motion__brand {
+  position: absolute; top: 46px; left: 75px; z-index: 8;
+  color: #745239;
+  display: flex; gap: 8px; align-items: center;
+  font: 600 25px/32px Arial, "PingFang SC", sans-serif;
+  white-space: nowrap; opacity: .5; transition: opacity 400ms var(--tao-ease);
+}
+.csdn-taotoken-motion__mark { display: block; width: 26px; height: 26px; flex: 0 0 26px; }
+.csdn-taotoken-motion__cards {
+  position: absolute; inset: 0; opacity: .49;
+  transition: opacity 400ms var(--tao-ease);
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 65%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 65%, transparent 100%);
+}
+.csdn-taotoken-motion__card {
+  position: absolute; left: 0; top: 0; width: 280px !important; height: auto;
+  transform-origin: 0 0;
+  transform: translate(var(--rest-x), var(--rest-y)) rotate(var(--angle));
+  transition: transform 420ms var(--tao-ease);
+  filter: drop-shadow(-8px 10px 12px rgb(84 52 24 / .08));
+}
+.csdn-taotoken-motion--left:is(:hover, :focus-visible, .is-preview-active) .csdn-taotoken-motion__card {
+  transform: translate(var(--open-x), var(--open-y)) rotate(var(--angle));
+}
+.csdn-taotoken-motion--left:is(:hover, :focus-visible, .is-preview-active) :is(.csdn-taotoken-motion__cards, .csdn-taotoken-motion__brand) { opacity: 1; }
+
+.csdn-taotoken-motion--right .csdn-taotoken-motion__stage {
+  width: 360px; height: 500px; left: 0;
+  transform: scale(var(--tao-scale)); transform-origin: left top;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 100%);
+}
+.csdn-taotoken-motion__title {
+  position: absolute; left: 45px; top: 66px; width: 210px !important; height: auto;
+  /* Keep the text's left-to-right fade independent of stage size and position. */
+  -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / .15) 0%, #000 55%);
+  mask-image: linear-gradient(90deg, rgb(0 0 0 / .15) 0%, #000 55%);
+  opacity: .3; transform: translate(0, 0) scale(1); transform-origin: 0 50%;
+  transition: transform 320ms var(--tao-ease) 160ms, opacity 300ms ease 160ms;
+}
+.csdn-taotoken-motion__composition { position: absolute; inset: 0; }
+.csdn-taotoken-motion__main {
+  position: absolute; left: 8px; top: 142px; width: 325px !important; height: auto;
+  z-index: 4; opacity: 0;
+  transform: translate(-25px, -56px) scale(.2); transform-origin: 30% 35%;
+  transition: transform 330ms var(--tao-ease) 160ms, opacity 270ms ease 160ms;
+}
+.csdn-taotoken-motion__decor {
+  position: absolute; inset: 0; opacity: 0;
+  transform: scale(.18) rotate(var(--tao-enter-angle, 0deg)); transform-origin: 165px 231px;
+  transition: transform 180ms var(--tao-ease), opacity 150ms ease;
+}
+.csdn-taotoken-motion__decor img { position: absolute; height: auto; }
+/* Opposing entrance turns settle back to the original supplied composition. */
+.csdn-taotoken-motion__ribbons { z-index: 1; --tao-enter-angle: 7deg; }
+.csdn-taotoken-motion__ribbons img { width: 317px !important; left: 2px; top: 105px; }
+.csdn-taotoken-motion__prizes { z-index: 2; --tao-enter-angle: -7deg; }
+.csdn-taotoken-motion__prizes img { width: 275px !important; left: 37px; top: 64px; }
+.csdn-taotoken-motion__tickets { z-index: 3; --tao-enter-angle: 5deg; }
+.csdn-taotoken-motion__tickets img { width: 318px !important; left: 23px; top: 135px; }
+.csdn-taotoken-motion--right[data-ready="true"]:is(:hover, :focus-visible, .is-preview-active) .csdn-taotoken-motion__title {
+  opacity: 0; transform: translate(14px, 30px) scale(.78); transition-delay: 0ms;
+}
+.csdn-taotoken-motion--right[data-ready="true"]:is(:hover, :focus-visible, .is-preview-active) .csdn-taotoken-motion__main {
+  opacity: 1; transform: translate(0, 0) scale(1); transition-delay: 0ms;
+}
+.csdn-taotoken-motion--right[data-ready="true"]:is(:hover, :focus-visible, .is-preview-active) .csdn-taotoken-motion__decor {
+  opacity: 1; transform: scale(1) rotate(0deg);
+  transition-duration: 330ms, 190ms; transition-delay: 340ms;
+}
+/* Embedded-slot adapter. Keep the host's column widths and central article intact. */
+html body.has-simple-ad-background-skin:has(.csdn-taotoken-motion) {
+  background: linear-gradient(90deg,#f6f2ed 0%,#fcfaf7 28%,#fff 76%) !important;
+}
+html body .simple-column-page.has-ad-slots #mainBox:has(.csdn-taotoken-motion) main,
+html body .simple-column-page.has-ad-slots #mainBox:has(.csdn-taotoken-motion) .blog-content-box,
+html body .simple-column-page.has-ad-slots #mainBox:has(.csdn-taotoken-motion) #article-header-box {
+  background-color: transparent !important;
+}
+.simple-ad-slot__fixed:has(> .csdn-taotoken-motion) {
+  background-image: none !important;
+  overflow: hidden !important;
+  pointer-events: none;
+}
+html body .simple-column-page.has-ad-slots #mainBox .simple-ad-slot__fixed:has(> .csdn-taotoken-motion) {
+  top: var(--mogrow-skin-toolbar-height, 48px) !important;
+}
+/* Artwork expansion stays outside the article and its independent action rail. */
+html body .simple-column-page.has-ad-slots #mainBox:has(.csdn-taotoken-motion) {
+  max-width: calc(max(45vw, 820px) + 660px);
+}
+html body .simple-column-page.has-ad-slots #mainBox:has(.csdn-taotoken-motion) .simple-ad-slot-left {
+  width: 200px; min-width: 200px; max-width: 200px; flex: 0 0 200px;
+}
+html body .simple-column-page.has-ad-slots #mainBox .simple-ad-slot-left .simple-ad-slot__fixed:has(> .csdn-taotoken-motion) {
+  --tao-left-frame: clamp(200px, calc((100vw - max(45vw, 820px)) / 2 - 196px), 320px);
+  width: var(--tao-left-frame) !important;
+  margin-left: calc(200px - var(--tao-left-frame)) !important;
+}
+html body .simple-column-page.has-ad-slots #mainBox .simple-ad-slot-right .simple-ad-slot__fixed:has(> .csdn-taotoken-motion) {
+  width: clamp(256px, calc((100vw - max(45vw, 820px)) / 2 - 100px), 400px) !important;
+  margin-left: 0 !important;
+}
+/* Remove legacy side backgrounds only inside this creative. */
+html body.has-simple-ad-background-skin .simple-column-page.has-ad-slots #mainBox .simple-ad-slot-right .simple-ad-slot__fixed:has(> .csdn-taotoken-motion) {
+  background-color: transparent !important;
+}
+html body.has-simple-ad-background-skin .simple-column-page.has-ad-slots #mainBox .simple-ad-slot-right .simple-ad-slot__fixed:has(> .csdn-taotoken-motion)::before,
+html body.has-simple-ad-background-skin .simple-column-page.has-ad-slots #mainBox .simple-ad-slot-right .simple-ad-slot__fixed:has(> .csdn-taotoken-motion)::after {
+  content: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .csdn-taotoken-motion *, .csdn-taotoken-motion *::before {
+    transition-duration: 0s !important; transition-delay: 0s !important;
+  }
+}
+/* No hovering required on touch devices. PC background slots are hidden by host
+   on mobile; if independently embedded on touch, show the completed composition. */
+@media (hover: none) {
+  .csdn-taotoken-motion__card { transform: translate(var(--open-x), var(--open-y)) rotate(var(--angle)); }
+  .csdn-taotoken-motion__cards, .csdn-taotoken-motion__brand { opacity: 1; }
+  .csdn-taotoken-motion--right[data-ready="true"] .csdn-taotoken-motion__title { opacity: 0; }
+  .csdn-taotoken-motion--right[data-ready="true"] .csdn-taotoken-motion__main,
+  .csdn-taotoken-motion--right[data-ready="true"] .csdn-taotoken-motion__decor { opacity: 1; transform: none; }
+}
+
+/* Reserve an independent right column and scale artwork within it. */
+@media (max-width: 1599px) {
+  html body .simple-column-page.has-ad-slots #mainBox:has(.csdn-taotoken-motion) {
+    max-width: none; justify-content: flex-start; gap: 24px; padding: 0 12px;
+  }
+  html body .simple-column-page.has-ad-slots #mainBox:has(.csdn-taotoken-motion) .simple-ad-slot-left {
+    display: none;
+  }
+  html body .simple-column-page.has-ad-slots #mainBox:has(.csdn-taotoken-motion) > main {
+    width: auto; min-width: 0; flex: 1 1 0;
+  }
+  html body .simple-column-page.has-ad-slots #mainBox:has(.csdn-taotoken-motion) .article-aside-container {
+    width: 36px; flex: 0 0 36px;
+  }
+  html body .simple-column-page.has-ad-slots #mainBox:has(.csdn-taotoken-motion) .simple-ad-slot-right {
+    display: block !important; width: 224px; min-width: 224px; max-width: 224px; flex: 0 0 224px;
+  }
+  html body .simple-column-page.has-ad-slots #mainBox .simple-ad-slot-right .simple-ad-slot__fixed:has(> .csdn-taotoken-motion) {
+    left: auto !important; right: 12px !important; width: 224px !important; margin-left: 0 !important;
+  }
+}
+@media (max-width: 900px) {
+  html body .simple-column-page.has-ad-slots #mainBox:has(.csdn-taotoken-motion) .simple-ad-slot-right { display: none !important; }
+  html body .simple-column-page.has-ad-slots #mainBox:has(.csdn-taotoken-motion) { gap: 16px; }
+}
+
+
+
+
+/* Standalone, dependency-free skin. Use instead of, not alongside, the old skin. */
+(() => {
+  'use strict';
+  // All twelve CDN assets are byte-for-byte verified against the lossless originals.
+  const assets = {
+    "card-deepseek": "https://i-operation.csdnimg.cn/images/6780bb9dd4eb484aae6d026902a7085a.webp",
+    "card-kimi": "https://i-operation.csdnimg.cn/images/182f705e09ca456ca7b259e56072f461.webp",
+    "card-glm": "https://i-operation.csdnimg.cn/images/335a569346564288bb730b4d21c44e22.webp",
+    "card-seedance": "https://i-operation.csdnimg.cn/images/1cf91f268764483fb963d207269993ae.webp",
+    "card-qwen": "https://i-operation.csdnimg.cn/images/b351960e75d647b28ee26b8fcc8f2bf7.webp",
+    "card-minimax": "https://i-operation.csdnimg.cn/images/7e3dc73b79514d1eb00c85c50f46c200.webp",
+    "card-doubao": "https://i-operation.csdnimg.cn/images/9cbb1d0768ee4151ab915fd7dde33ee2.webp",
+    "right-main": "https://i-operation.csdnimg.cn/images/4da2ad1333684acd965049252bde100e.webp",
+    "right-prizes": "https://i-operation.csdnimg.cn/images/fc0e45eaf47949cbb7cbf3c742d3a3be.webp",
+    "right-ribbons": "https://i-operation.csdnimg.cn/images/488bf47c7b0b4cd6b94e98e6f08e1434.webp",
+    "right-title": "https://i-operation.csdnimg.cn/images/118adbc7a8844a5b83022ccca40a1417.webp",
+    "right-tickets": "https://i-operation.csdnimg.cn/images/c96ae377edea42a5b293dd93acdeacdf.webp"
+};
+  const asset = name => assets[name];
+  // Campaign URL confirmed by the user; preserve channel attribution.
+  const target = 'http://taotoken.net/?utm_source=blogbackground';
+  const cards = [
+    ['doubao', 'Doubao-Seed 系列', 96, 150, 48, 130, -22],
+    ['minimax', 'minimax', 85, 177, 40, 200, -24],
+    ['qwen', 'qwen 系列', 72, 211, 35, 270, -26],
+    ['seedance', 'seedance', 60, 254, 32, 340, -28],
+    ['glm', 'GLM 系列', 52, 308, 40, 415, -30],
+    ['kimi', 'kimi', 48, 378, 45, 490, -32],
+    ['deepseek', 'deepseek 系列', 45, 463, 55, 565, -34],
+  ];
+  function image(name, className, width, height) {
+    const img = document.createElement('img');
+    img.className = className;
+    img.src = asset(name);
+    img.alt = '';
+    img.width = width;
+    img.height = height;
+    img.draggable = false;
+    img.decoding = 'async';
+    return img;
+  }
+  function mount(host, side) {
+    if (host.querySelector('.csdn-taotoken-motion')) return;
+    const link = document.createElement('a');
+    link.className = `csdn-taotoken-motion csdn-taotoken-motion--${side}`;
+    link.href = target;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.setAttribute('aria-label', side === 'left'
+      ? '了解 TaoToken：Doubao-Seed、minimax、qwen、seedance、GLM、kimi、deepseek（新窗口）'
+      : '1024 程序员节 Coding Plan 限时秒杀，查看活动（新窗口）');
+    const stage = document.createElement('span');
+    stage.className = 'csdn-taotoken-motion__stage';
+    stage.setAttribute('aria-hidden', 'true');
+    link.append(stage);
+    if (side === 'left') {
+      const deck = document.createElement('span');
+      deck.className = 'csdn-taotoken-motion__cards';
+      for (const [id, , x, y, ox, oy, angle] of cards) {
+        const card = image(`card-${id}`, 'csdn-taotoken-motion__card', 560, 640);
+        card.style.cssText = `--rest-x:${x}px;--rest-y:${y}px;--open-x:${ox}px;--open-y:${oy}px;--angle:${angle}deg`;
+        deck.append(card);
+      }
+      const brand = document.createElement('span');
+      brand.className = 'csdn-taotoken-motion__brand';
+      // Official TaoToken mark: https://static.taotoken.net/release/taotoken_fe/dist/logo.svg
+      const mark = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      mark.setAttribute('viewBox', '0 0 152 145');
+      mark.setAttribute('class', 'csdn-taotoken-motion__mark');
+      mark.setAttribute('fill', 'currentColor');
+      const shapes = [
+        'M83 73C83 76.866 79.866 80 76 80C72.134 80 69 76.866 69 73C69 69.134 72.134 66 76 66C79.866 66 83 69.134 83 73Z',
+        'M0 83.6813V117L20 97H58.5C60.7091 97 62.5 98.7909 62.5 101V129L38.3135 145H76H113.687L89.5 129V101C89.5 98.7909 91.2909 97 93.5 97H132L152 117V83.6813C152 78.8277 147.713 75.0923 142.905 75.7565L76 85L9.09486 75.7565C4.28697 75.0923 0 78.8277 0 83.6813Z',
+        'M76 0H38.3135L62.5 16V44C62.5 46.2091 60.7091 48 58.5 48H20L0 28V61.3187C0 66.1723 4.28697 69.9077 9.09486 69.2435L76 60L142.905 69.2435C147.713 69.9077 152 66.1723 152 61.3187V28L132 48H93.5C91.2909 48 89.5 46.2091 89.5 44V16L113.687 0H76Z'
+      ];
+      for (const d of shapes) {
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', d);
+        mark.append(path);
+      }
+      brand.append(mark, document.createTextNode('TaoToken'));
+      stage.append(deck, brand);
+    } else {
+      stage.append(image('right-title', 'csdn-taotoken-motion__title', 510, 618));
+      const composition = document.createElement('span');
+      composition.className = 'csdn-taotoken-motion__composition';
+      for (const [id, width, height] of [['ribbons',902,880], ['prizes',775,929], ['tickets',906,498]]) {
+        const layer = document.createElement('span');
+        layer.className = `csdn-taotoken-motion__decor csdn-taotoken-motion__${id}`;
+        layer.append(image(`right-${id}`, '', width, height));
+        composition.append(layer);
+      }
+      composition.append(image('right-main', 'csdn-taotoken-motion__main', 811, 679));
+      stage.append(composition);
+      // No delayed JS animation jobs: CSS cancels pending transitions on reversal.
+      Promise.all(Array.from(stage.querySelectorAll('img'), img => img.decode())).then(() => {
+        link.dataset.ready = 'true';
+      }).catch(() => {
+        link.dataset.ready = 'false'; // Keep text + accessible link if any art fails.
+      });
+    }
+    host.replaceChildren(link);
+    const resize = () => {
+      const width = link.clientWidth;
+      const nominal = side === 'left' ? 320 : 360;
+      const maxScale = side === 'left' ? 1 : Math.min(4 / 3, link.clientHeight / 500);
+      link.style.setProperty('--tao-scale', (Math.min(maxScale, width / nominal) * 0.94).toFixed(4));
+    };
+    resize();
+    if ('ResizeObserver' in window) {
+      const observer = new ResizeObserver(resize);
+      observer.observe(link);
+      const cleanup = () => observer.disconnect();
+      window.addEventListener('pagehide', cleanup, { once: true });
+      window.addEventListener('pageshow', event => {
+        if (event.persisted && link.isConnected) { observer.observe(link); resize(); }
+      });
+    }
+  }
+  function mountAll() {
+    const left = document.querySelector('[data-taotoken-slot="left"], .simple-ad-slot-left .simple-ad-slot__fixed');
+    const right = document.querySelector('[data-taotoken-slot="right"], .simple-ad-slot-right .simple-ad-slot__fixed');
+    if (left) mount(left, 'left');
+    if (right) mount(right, 'right');
+    return Boolean(left && right);
+  }
+  function init() {
+    if (mountAll()) return;
+    const observer = new MutationObserver(() => {
+      if (mountAll()) { observer.disconnect(); clearTimeout(timeout); }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    const timeout = setTimeout(() => observer.disconnect(), 10000);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+  else init();
+})();
+
+
+
+
+
+
+  
+
+    
+
+      
+
+          
+
+      
+
+      
+
+        
+
+          
+张大头闭环伺服
+
+        
+
+        
+
+            
+
+              
+
+            
+
+            
+码龄5年
+
+          
+1370粉丝
+
+          
+7原创
+
+        
+
+      
+
+    
+
+    
+
+          
++ 关注
+
+    
+
+  
+
+
+
+      
+
+      
+
+        
+
+        var timert = setInterval(function() {
+          sideToolbar = $(".csdn-side-toolbar");
+          if (sideToolbar.length > 0) {
+            sideToolbar.css('cssText', 'bottom:64px !important;')
+            clearInterval(timert);
+          }
+        }, 200);
+        
+
+      
+
+      
+
+
+
+
+
+	
+
+		
+评论 
+5
+
+	
+
+  
+
+    
+
+      
+
+      
+
+      
+
+        
+
+        
+
+          
+
+          
+
+            
+
+              成就一亿技术人!
+            
+
+            
+
+              拼手气红包
+6.0元
+
+            
+
+          
+
+        
+
+        
+
+          
+
+            
+还能输入
+1000
+个字符
+
+          
+
+          
+
+             
+          
+
+          
+
+            
+
+              
+
+              
+插入表情
+
+              
+
+                
+
+              
+
+            
+
+            
+
+              
+
+              
+代码片
+
+              
+
+                
+
+                  
+HTML/XML
+
+                  
+objective-c
+
+                  
+Ruby
+
+                  
+PHP
+
+                  
+C
+
+                  
+C++
+
+                  
+JavaScript
+
+                  
+Python
+
+                  
+Java
+
+                  
+CSS
+
+                  
+SQL
+
+                  
+其它
+
+                
+
+              
+
+            
+
+            
+
+              
+
+              
+
+              
+
+              
+
+              
+
+              
+
+              
+
+            
+
+          
+
+        
+
+      
+
+    
+
+		
+
+			
+
+			
+
+			
+
+				
+查看更多评论
+
+			
+
+			
+
+					
+ 条评论被折叠 
+查看
+
+			
+
+			
+
+				
+
+			
+
+		
+
+	
+
+	
+
+		
+被折叠的 
+ 条评论
+		 
+为什么被折叠?
+
+		 
+
+		 
+到【灌水乐园】发言
+                                
+		
+
+		
+
+		
+
+			
+查看更多评论
+
+		
+
+	
+
+
+
+
+
+  
+
+    
+
+      添加红包
+      
+
+    
+
+    
+
+      
+
+        
+祝福语
+
+        
+
+          
+
+          
+
+        
+
+        
+请填写红包祝福语或标题
+
+      
+
+      
+
+        
+红包数量
+
+        
+
+          
+
+          
+个
+
+        
+
+        
+红包个数最小为10个
+
+      
+
+      
+
+        
+红包总金额
+
+        
+
+          
+
+          
+元
+
+        
+
+        
+红包金额最低5元
+
+      
+
+      
+
+        
+余额支付
+
+        
+
+          当前余额
+3.43
+元
+          
+前往充值 >
+
+        
+
+      
+
+      
+
+        
+
+          需支付：
+10.00
+元
+        
+
+        
+取消
+
+        
+确定
+
+      
+
+    
+
+  
+
+
+
+
+
+
+
+
+  
+
+    
+
+      
+
+        
+
+          
+
+            
+
+            
+成就一亿技术人!
+
+          
+
+          
+
+        
+
+        
+
+          
+
+          
+
+            领取后你会自动成为博主和红包主的粉丝
+            
+规则
+
+          
+
+        
+
+      
+
+      
+
+        
+
+          
+
+            
+
+              
+
+            
+
+            
+
+              
+hope_wisdom
+ 发出的红包
+            
+
+          
+
+        
+
+        
+
+          
+
+          
+
+          
+
+        
+
+      
+
+    
+
+    
+
+  
+
+
+
+      
+
+      
+实付
+元
+
+      
+使用余额支付
+
+      
+
+        
+
+          
+
+            
+
+            
+点击重新获取
+
+          
+
+        
+
+        
+扫码支付
+
+      
+
+      
+
+        
+
+          
+
+            
+
+          
+
+          
+
+        
+
+      
+
+      
+
+        
+
+        
+钱包余额
+
+          
+0
+
+          
+
+            
+
+            
+
+              
+
+                
+抵扣说明：
+
+                
+ 1.余额是钱包充值的虚拟货币，按照1:1的比例进行支付金额的抵扣。
+ 2.余额无法直接购买下载，可以购买VIP、付费专栏及课程。
+
+              
+
+            
+
+          
+
+      
+
+      
+余额充值
+
+    
+
+    
+
+      
+
+    
+
+    
+
+  
+
+    
+
+    
+
+    
+
+    
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+    // 全局声明
+    if (window.csdn === undefined) {
+      window.csdn = {};
+    }
+    $(function() {
+      $(document).on('click', "#toolReportBtnHideNormal,#toolReportBtnHide", function() {
+        window.csdn.loginBox.key({
+          biz: 'blog',
+          subBiz: 'other_service',
+          cb: function() {
+            window.csdn.feedback({
+              "type": 'blog',
+              "rtype": 'article',
+              "rid": articleId,
+              "reportedName": username,
+              "submitOptions": {
+                "title": articleTitle,
+                "contentUrl": articleDetailUrl
+              },
+              "callback": function() {
+                showToast({
+                  text: "感谢您的举报，我们会尽快审核！",
+                  bottom: '10%',
+                  zindex: 9000,
+                  speed: 500,
+                  time: 1500
+                })
+              }
+            })
+          }
+        })
+      });
+    })
+  
+
+    
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+    $(".MathJax").remove();
+    if ($('div.markdown_views pre.prettyprint code.hljs').length > 0) {
+      $('div.markdown_views')[0].className = 'markdown_views';
+    }
+  
+
+  
+
+  
+
+    MathJax.Hub.Config({
+      "HTML-CSS": {
+        linebreaks: { automatic: true, width: "94%container" },
+        imageFont: null
+      },
+      tex2jax: {
+      preview: "none",
+      ignoreClass:"title-article"
+      },
+      mml2jax: {
+      preview: 'none'
+      }
+    });
+  
+
+
+
+window.csdnQualityGuideFreeArticle = true;
+
+
+
+
+
+

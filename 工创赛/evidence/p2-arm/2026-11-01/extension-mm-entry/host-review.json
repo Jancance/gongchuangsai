@@ -1,0 +1,102 @@
+{
+  "passed": true,
+  "case_count": 22,
+  "cases": [
+    {
+      "case": "mm_default",
+      "output": "PASS motion mm_default result=1 moves=1 stops=0"
+    },
+    {
+      "case": "mm_extend",
+      "output": "PASS motion mm_extend result=1 moves=1 stops=0"
+    },
+    {
+      "case": "mm_25",
+      "output": "PASS motion mm_25 result=1 moves=1 stops=0"
+    },
+    {
+      "case": "mm_max",
+      "output": "PASS motion mm_max result=1 moves=1 stops=0"
+    },
+    {
+      "case": "mm_round",
+      "output": "PASS motion mm_round result=1 moves=1 stops=0"
+    },
+    {
+      "case": "mm_min_round",
+      "output": "PASS motion mm_min_round result=1 moves=1 stops=0"
+    },
+    {
+      "case": "mm_zero",
+      "output": "PASS motion mm_zero result=8 moves=0 stops=0"
+    },
+    {
+      "case": "mm_negative",
+      "output": "PASS motion mm_negative result=8 moves=0 stops=0"
+    },
+    {
+      "case": "mm_nan",
+      "output": "PASS motion mm_nan result=8 moves=0 stops=0"
+    },
+    {
+      "case": "mm_inf",
+      "output": "PASS motion mm_inf result=8 moves=0 stops=0"
+    },
+    {
+      "case": "mm_too_far",
+      "output": "PASS motion mm_too_far result=8 moves=0 stops=0"
+    },
+    {
+      "case": "mm_too_small",
+      "output": "PASS motion mm_too_small result=8 moves=0 stops=0"
+    },
+    {
+      "case": "mm_bad_units",
+      "output": "PASS motion mm_bad_units result=8 moves=0 stops=0"
+    },
+    {
+      "case": "raw_fallback",
+      "output": "PASS motion raw_fallback result=1 moves=1 stops=0"
+    },
+    {
+      "case": "mm_busy_edit",
+      "output": "PASS motion mm_busy_edit result=1 moves=1 stops=0"
+    },
+    {
+      "case": "mm_busy_invalid_edit",
+      "output": "PASS motion mm_busy_invalid_edit result=1 moves=1 stops=0"
+    },
+    {
+      "case": "mm_stop_override",
+      "output": "PASS motion mm_stop_override result=2 moves=1 stops=1"
+    },
+    {
+      "case": "mm_fault",
+      "output": "PASS motion mm_fault result=5 moves=1 stops=1"
+    },
+    {
+      "case": "mm_protect",
+      "output": "PASS motion mm_protect result=5 moves=1 stops=1"
+    },
+    {
+      "case": "mm_timeout",
+      "output": "PASS motion mm_timeout result=3 moves=1 stops=1"
+    },
+    {
+      "case": "mm_interlock",
+      "output": "PASS motion mm_interlock result=6 moves=0 stops=0"
+    },
+    {
+      "case": "mm_power_loss",
+      "output": "PASS motion mm_power_loss result=6 moves=1 stops=1"
+    }
+  ],
+  "changed_source_sha256": {
+    "HARDWARE/EXTENSION/extension.c": "adca58c73033a19b3f3bf115f3f358b98e25d01fa8baa555e5c3fb0ea26461af",
+    "HARDWARE/EXTENSION/extension.h": "1ec941dfd7edfd3b88686ecece7d1470bd6814c1c6f04fb88e1098f2bd768274",
+    "HARDWARE/EXTENSION/extension_config.h": "6825bffe2b297a13400ae801aa8d2b2f8d5097dc662adeb468005f7a75aac1ef"
+  },
+  "scope": "New mm conversion, rounding/bounds, private target latching, raw fallback and safety interaction only. Unchanged CAN/arbitration/home/carrier suites not repeated; sources hash protected.",
+  "synthetic_only": true,
+  "hardware_acceptance": false
+}

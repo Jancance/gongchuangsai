@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-30",
+  "classification": "E 160-pulse low-speed direction-test candidate",
+  "user_request": "好像是缩回，步长太小了给我拉大点",
+  "previous_16_pulse_software_feedback_complete": true,
+  "previous_physical_direction": "tentative retract; not definitively accepted",
+  "changed_files": [
+    "HARDWARE/EXTENSION/extension_config.h"
+  ],
+  "source_change": "EXTENSION_JOG_PULSES 16U -> 160U only",
+  "pulses": 160,
+  "rpm": 5,
+  "acceleration": 20,
+  "timeout_ms": 3000,
+  "default_motion_request": 0,
+  "host_case_count": 64,
+  "host_pass": true,
+  "stage_build_pass": true,
+  "actual_build_pass": true,
+  "protected_files_count": 810,
+  "source_hashes_match": true,
+  "flash_performed": false,
+  "hardware_commands_sent": false,
+  "physical_direction_verified": false,
+  "metric_mapping_verified": false,
+  "origin_or_travel_verified": false,
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged_pending_official_clarification"
+}

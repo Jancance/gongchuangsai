@@ -1,0 +1,74 @@
+{
+  "date": "2026-11-07",
+  "classification": "E",
+  "firmware_sha256": "0b2ddaec1216fe0572158e805240761fbc171426530b64cf132bb482a8065d1e",
+  "project": "tmp\\integration11_auto_release_20261107\\project\\gongxun-f407.uvprojx",
+  "target": "Vehicle_LiftRuler",
+  "local_and_flashed_not_pushed": true,
+  "pickup_original_target_pulses": 108400,
+  "home_origin_raw": 0,
+  "safe_pose_raw": 36006,
+  "posthome_release_virtual_pulses": 3200,
+  "posthome_release_rpm": 30,
+  "posthome_release_approx_mm": 2,
+  "new_mm_measurement": false,
+  "home_exit_ack_checked": true,
+  "normal_return_rpm": 1846.4,
+  "last_home_rpm": 60,
+  "first_independent_release_user_confirmed_gap_no_abnormality": true,
+  "loaded_grasp_and_new_safe_pose_clearance_user_confirmed": true,
+  "release_and_carrier_stability_user_confirmed": true,
+  "fingers_separated_user_confirmed": true,
+  "final_top_gap_and_no_abnormal_noise_vibration_user_confirmed": true,
+  "single_cycle_complete": true,
+  "automatic_inventory_transaction": false,
+  "vision_or_three_materials_or_full_match_accepted": false,
+  "matlab_models": [
+    {
+      "name": "release-step",
+      "checks": 34
+    },
+    {
+      "name": "auto-release-coordinates",
+      "checks": 33
+    },
+    {
+      "name": "target-wait",
+      "checks": 72
+    }
+  ],
+  "C_host_check_results": [
+    {
+      "name": "auto-release",
+      "actual_C_result": "checks=14338 failures=0"
+    },
+    {
+      "name": "release-regression",
+      "actual_C_result": "checks=166 failures=0"
+    }
+  ],
+  "online_build_errors": 0,
+  "online_build_warnings": 0,
+  "offline_full_build_done": false,
+  "final_VM_request": 1,
+  "final_PE2": true,
+  "final_gripper_PWM": 2056,
+  "final_slot1_deg": 35.75799560546875,
+  "final_lift_fault": 0,
+  "final_pending_STOP": 0,
+  "R_checked": [
+    "RUN-02",
+    "PWR-01"
+  ],
+  "E_checked": [
+    "RUN-06",
+    "CAL-05"
+  ],
+  "Q": "official questions remain pending technical clarification",
+  "remaining": [
+    "repeatability over further authorised cycles",
+    "ordinary full integrated firmware port and regression",
+    "three materials and dynamic vision",
+    "unmeasured physical millimetre repeatability"
+  ]
+}

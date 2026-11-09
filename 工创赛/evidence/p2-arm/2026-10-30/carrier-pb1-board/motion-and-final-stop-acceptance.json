@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-30",
+  "classification": "E single carrier motion and physical final-stop functional acceptance",
+  "user_motion_confirmation": "现在舵机有转动",
+  "user_final_stop_confirmation": "已经自己停稳了",
+  "software_evidence": "angle145-window-acceptance.json",
+  "single_motion_and_final_stop_accepted": true,
+  "nominal_command_deg": 145,
+  "nominal_pulse_us": 1574,
+  "software_window_state": 2,
+  "software_window_result": 1,
+  "measured_mechanical_angle_deg": null,
+  "slot_alignment_verified": false,
+  "direction_verified": false,
+  "repeatability_verified": false,
+  "loaded_or_grasp_verified": false,
+  "assembly_or_transmission_confirmed": false,
+  "next_single_step": "request2 to close session; register actual tray attachment, transmission and slot spacing before angular calibration",
+  "no_repeated_single_servo_test_requested": true,
+  "assistant_source_changes": false,
+  "assistant_flash_performed": false,
+  "assistant_hardware_commands": false,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged; pending official clarification"
+}

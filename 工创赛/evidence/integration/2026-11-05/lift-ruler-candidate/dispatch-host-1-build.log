@@ -1,0 +1,30 @@
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-05\lift-ruler-candidate\dispatch-host.c:106:16: warning: 'CAN_Transmit' defined but not used [-Wunused-function]
+  106 | static uint8_t CAN_Transmit(unsigned can,const CanTxMsg*t){
+      |                ^~~~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-05\lift-ruler-candidate\dispatch-host.c:101:13: warning: 'CAN_CancelTransmit' defined but not used [-Wunused-function]
+  101 | static void CAN_CancelTransmit(unsigned can,unsigned mb){(void)can;(void)mb;}
+      |             ^~~~~~~~~~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-05\lift-ruler-candidate\dispatch-host.c:100:17: warning: 'CAN_TransmitStatus' defined but not used [-Wunused-function]
+  100 | static uint32_t CAN_TransmitStatus(unsigned can,unsigned mb){(void)can;(void)mb;return CAN_TxStatus_Ok;}
+      |                 ^~~~~~~~~~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-05\lift-ruler-candidate\dispatch-host.c:99:13: warning: 'StartupHome_Receive' defined but not used [-Wunused-function]
+   99 | static void StartupHome_Receive(CanRxMsg*r){*r=queued;queued_valid=0;}
+      |             ^~~~~~~~~~~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-05\lift-ruler-candidate\dispatch-host.c:98:17: warning: 'CAN_MessagePending' defined but not used [-Wunused-function]
+   98 | static uint32_t CAN_MessagePending(unsigned can,unsigned fifo){(void)can;(void)fifo;return queued_valid;}
+      |                 ^~~~~~~~~~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-05\lift-ruler-candidate\dispatch-host.c:97:17: warning: 'CAN1_InitMode' defined but not used [-Wunused-function]
+   97 | static uint32_t CAN1_InitMode(unsigned mode){(void)mode;return 1;}
+      |                 ^~~~~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-05\lift-ruler-candidate\dispatch-host.c:96:13: warning: 'Power_ReadCommandStatus' defined but not used [-Wunused-function]
+   96 | static void Power_ReadCommandStatus(PowerCommandStatus*p){p->active=power_active;}
+      |             ^~~~~~~~~~~~~~~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-05\lift-ruler-candidate\dispatch-host.c:95:13: warning: 'vTaskDelay' defined but not used [-Wunused-function]
+   95 | static void vTaskDelay(uint32_t t){now+=t;}
+      |             ^~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-05\lift-ruler-candidate\dispatch-host.c:94:17: warning: 'xTaskGetTickCount' defined but not used [-Wunused-function]
+   94 | static uint32_t xTaskGetTickCount(void){return now;}
+      |                 ^~~~~~~~~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-05\lift-ruler-candidate\dispatch-host.c:75:32: warning: 's_can1_normal_ready' defined but not used [-Wunused-variable]
+   75 | static uint32_t power_active=1,s_can1_normal_ready=1,other_axis,legacy_calls,g_vehicle_key;
+      |                                ^~~~~~~~~~~~~~~~~~~

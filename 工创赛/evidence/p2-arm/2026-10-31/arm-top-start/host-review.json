@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "cases": [
+    "disabled",
+    "missing_top",
+    "bad_pick",
+    "zero_pick",
+    "bad_up",
+    "zero_up",
+    "bad_return",
+    "bad_mode",
+    "complete",
+    "snapshot",
+    "fresh_place",
+    "place_timeout",
+    "initial_open_failure",
+    "initial_down_failure",
+    "return_failure",
+    "home_failure",
+    "abort_initial",
+    "abort_up",
+    "abort_home",
+    "external_stop_place",
+    "stale_home",
+    "power_loss",
+    "guard_new_phases",
+    "legacy0",
+    "legacy1"
+  ],
+  "actual_main_guard_extracted": true,
+  "hardware_stubs": true,
+  "source_sha256": {
+    "USER/arm_sequence.c": "5932cac923f2178270685577d55548bc2cc80208a87c26c6f4423e0ac64b058b",
+    "USER/arm_sequence.h": "4beba067eb2c962d95bc82aadbd9a1c2fffe218ccd2607c440563a432e79b888",
+    "USER/main.c": "fe58f9a24d511f5d74341c662b756dfc4e320f0de0134859f1ed10c718b07ba1"
+  }
+}

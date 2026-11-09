@@ -1,0 +1,93 @@
+{
+ "when": "2026-11-08T21:22:22",
+ "step": "it1_retry_autorecover",
+ "image": "handoff/stage2_pick_20261108/.../Vehicle_LiftRuler.axf",
+ "attempts": [
+  {
+   "attempt": 1,
+   "result": {
+    "t": 0.2,
+    "it": 9,
+    "cause": 3,
+    "phase": 2,
+    "lrc": 6,
+    "lrccause": 15,
+    "top": 0,
+    "after": 0
+   },
+   "home_params": "22 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 6B",
+   "stop_reason": null,
+   "samples": [
+    {
+     "t": 0.2,
+     "it": 9,
+     "cause": 3,
+     "phase": 2,
+     "lrc": 6,
+     "lrccause": 15,
+     "top": 0,
+     "after": 0
+    }
+   ]
+  },
+  {
+   "attempt": 2,
+   "result": {
+    "t": 0.62,
+    "it": 9,
+    "cause": 3,
+    "phase": 0,
+    "lrc": 6,
+    "lrccause": 4,
+    "top": 0,
+    "after": 0
+   },
+   "home_params": "22 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 6B",
+   "stop_reason": null,
+   "samples": [
+    {
+     "t": 0.2,
+     "it": 0,
+     "cause": 0,
+     "phase": 0,
+     "lrc": 0,
+     "lrccause": 0,
+     "top": 0,
+     "after": 0
+    },
+    {
+     "t": 0.41,
+     "it": 1,
+     "cause": 0,
+     "phase": 0,
+     "lrc": 2,
+     "lrccause": 0,
+     "top": 0,
+     "after": 0
+    },
+    {
+     "t": 0.62,
+     "it": 9,
+     "cause": 3,
+     "phase": 0,
+     "lrc": 6,
+     "lrccause": 4,
+     "top": 0,
+     "after": 0
+    }
+   ]
+  }
+ ],
+ "success": false,
+ "final": {
+  "it_state": 9,
+  "it_cause": 3,
+  "lrc_state": 6,
+  "lrc_cause": 4,
+  "top_valid": 0,
+  "top_raw": 0,
+  "safety_fault": 0,
+  "dm_state": 0,
+  "ext_mm": 48.0
+ }
+}

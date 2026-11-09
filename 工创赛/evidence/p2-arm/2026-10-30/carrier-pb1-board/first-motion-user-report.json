@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-30",
+  "classification": "E physical servo movement reported after fresh-run instructions",
+  "user_report": "现在舵机有转动",
+  "physical_motion_seen": true,
+  "physical_final_stop_confirmed": null,
+  "new_watch_provided": false,
+  "actual_latched_angle": null,
+  "actual_pulse_us": null,
+  "actual_state": null,
+  "actual_result": null,
+  "precise_angle_or_slot_position_accepted": false,
+  "PB1_waveform_measured": false,
+  "old_invalid_angle_fault_root_cause_closed": false,
+  "next_step": "no new motion request; confirm physical final stop and obtain current carrier latched_angle/state/result/pulse_us/signal_active. Mounting and three-slot calibration wait for this result.",
+  "assistant_firmware_changes": false,
+  "assistant_flash_performed": false,
+  "assistant_hardware_commands": false,
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged; pending official clarification"
+}

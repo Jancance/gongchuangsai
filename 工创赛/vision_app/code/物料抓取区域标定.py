@@ -123,9 +123,13 @@ class RegionSelector:
         }
 
     def mouse_callback(self, event, x_value, y_value, _flags, _parameter):
+        frame = self.frozen_frame if self.frozen_frame is not None else self.latest_frame
+        if frame is None:
+            return
+        height, width = frame.shape[:2]
         point = (
-            max(0, min(1279, int(x_value))),
-            max(0, min(719, int(y_value))),
+            max(0, min(width - 1, int(x_value))),
+            max(0, min(height - 1, int(y_value))),
         )
         if event == cv2.EVENT_LBUTTONDOWN and not self.complete:
             self.drag_start = point

@@ -1,0 +1,55 @@
+{
+  "format_version": 1,
+  "image_width": 1280,
+  "image_height": 720,
+  "calibrated": true,
+  "regions": {
+    "workspace": {
+      "x": 327,
+      "y": 7,
+      "width": 623,
+      "height": 516
+    },
+    "left": {
+      "x": 347,
+      "y": 26,
+      "width": 239,
+      "height": 148
+    },
+    "right": {
+      "x": 712,
+      "y": 27,
+      "width": 220,
+      "height": 156
+    },
+    "down": {
+      "x": 544,
+      "y": 301,
+      "width": 221,
+      "height": 197
+    }
+  },
+  "detection": {
+    "processing_scale": 0.5,
+    "open_kernel_px": 5,
+    "close_kernel_px": 11,
+    "minimum_area_px": 450.0,
+    "maximum_area_px": 26000.0,
+    "minimum_dimension_px": 18.0,
+    "maximum_dimension_px": 210.0,
+    "maximum_aspect_ratio": 2.35,
+    "minimum_solidity": 0.55,
+    "minimum_extent": 0.28,
+    "maximum_material_count": 3,
+    "slot_interior_margin_px": 5.0,
+    "maximum_match_distance_px": 80.0
+  },
+  "motion": {
+    "moving_speed_px_s": 30.0,
+    "required_moving_frames": 2,
+    "near_stop_speed_px_s": 25.0,
+    "required_low_speed_frames": 3,
+    "minimum_frame_interval_s": 0.02,
+    "maximum_frame_interval_s": 0.25
+  }
+}

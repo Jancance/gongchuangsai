@@ -1,0 +1,20 @@
+{
+  "user_origin_text": "没有限位开关，但是可以限位，可以作为原点",
+  "user_distance_text": "有3.5cm",
+  "user_continue_text": "继续",
+  "actual_node6_params": {
+    "mode": 0,
+    "direction": 0,
+    "rpm": 30,
+    "timeout_ms": 10000,
+    "detect_rpm": 300,
+    "detect_current_ma": 800,
+    "detect_time_ms": 60,
+    "auto_home": 0
+  },
+  "source_read_evidence": "D:\\Codex\\工创赛\\evidence\\p2-arm\\2026-10-30\\extension-home-read-board\\board-acceptance.json",
+  "protocol_source": "evidence/p2-arm/2026-10-28/x35-v2/manufacturer-body.txt, 7.4.2/3B fields and actual node5 implementation; node6 adapted separately",
+  "first_trial_acceptance": "require actual retract direction, actual contact and self-stop plus matching home state; 35mm not converted to pulses or promised covered by timeout",
+  "driver_threshold_suitability_verified": false,
+  "assistant_hardware_commands": false
+}

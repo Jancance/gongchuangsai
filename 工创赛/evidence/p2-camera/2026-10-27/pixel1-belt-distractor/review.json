@@ -1,0 +1,65 @@
+{
+  "scene": "One timing belt loop above the complete three printed rings; user substitution for proposed tape roll.",
+  "source": "console.txt",
+  "screenshot": "board-preview.png",
+  "log_sha256": "492980a48b82a79c124d479a3192a0b2b0abc2d8f33b94c21d9fee23c8110c2f",
+  "screenshot_sha256": "624bd2a4f87e3ad13f92c04df344c06fa9065565497cbab7e48a063d348562dc",
+  "status_samples": 38,
+  "states": {
+    "CANDIDATE": 1,
+    "STABLE": 37
+  },
+  "first_state": "CANDIDATE",
+  "remaining_samples_all_stable": true,
+  "median_stable_xy_px": [
+    [
+      481.6904067993164,
+      613.1194229125977
+    ],
+    [
+      947.5426330566406,
+      606.9683456420898
+    ],
+    [
+      1405.7353515625,
+      600.2519607543945
+    ]
+  ],
+  "range_stable_xy_px": [
+    [
+      0.01923370361328125,
+      0.0475311279296875
+    ],
+    [
+      0.021331787109375,
+      0.04985809326171875
+    ],
+    [
+      0.0390625,
+      0.05068206787109375
+    ]
+  ],
+  "reported_loop_fps_min_max": [
+    22.1,
+    27.6
+  ],
+  "error_markers": [],
+  "manual_labels": [
+    3,
+    2,
+    1
+  ],
+  "label_source": "MANUAL_FIXED_LAYOUT_NOT_OCR",
+  "visual_review": "Belt is visibly above the paper; three green crosses remain at printed rings; no cross on belt.",
+  "acceptance": "Current stationary single-belt placement, as shown in screenshot and status samples, does not replace a printed-ring center with the distractor.",
+  "limits": [
+    "Timing belt is the actual tested object, not tape. Do not require a tape retest for this gate.",
+    "Status output is about once per second, with no per-line timestamps or per-frame telemetry; no all-frame claim.",
+    "Only one distractor/placement. No conclusion on arbitrary shapes, positions, multiple distractors or target occlusion.",
+    "Cross-run center differences cannot be assigned solely to belt without matched pose and reference truth.",
+    "Loop FPS is not exposure FPS or end-to-end latency; no sustained performance acceptance."
+  ],
+  "metric_valid": false,
+  "motion_allowed": false,
+  "serial": "DISABLED"
+}

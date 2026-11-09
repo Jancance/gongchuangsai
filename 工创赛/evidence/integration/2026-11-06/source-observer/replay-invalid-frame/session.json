@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "serial": "DISABLED",
+  "motion_allowed": false,
+  "camera_opened": false,
+  "timing_source": "host_read_completion_only",
+  "sensor_exposure_age_verified": false,
+  "configs": {
+    "camera_processing_config": {
+      "path": "D:\\Codex\\工创赛\\output\\source-observer-20261106\\vision_app\\code\\config\\camera_processing.json",
+      "sha256": "34ea46956e8efc7d44dd880c3bea5a7b009d79dae986f4c947f870bd5ed92b52"
+    },
+    "turntable_config": {
+      "path": "D:\\Codex\\工创赛\\output\\source-observer-20261106\\vision_app\\code\\config\\turntable_detector.json",
+      "sha256": "8ccf0f264d5ff46af4bf6541467a96fe99fec071b5da6c2749861ed574b2757b"
+    },
+    "turntable_material_seed_config": {
+      "path": "D:\\Codex\\工创赛\\output\\source-observer-20261106\\vision_app\\code\\config\\turntable_material_seed.json",
+      "sha256": "88032d99dae755df5259ed05776b9a14b893832205c47f7b446bec9a45829c87"
+    },
+    "material_pickup_config": {
+      "path": "D:\\Codex\\工创赛\\output\\source-observer-20261106\\vision_app\\code\\config\\material_pickup_detector.json",
+      "sha256": "35f67a37a2d36080921e3698386c98dd5dae84c456481ead5974bf5383118781"
+    },
+    "material_color_config": {
+      "path": "D:\\Codex\\工创赛\\output\\source-observer-20261106\\vision_app\\code\\config\\material_color_thresholds.json",
+      "sha256": "c110ed3c67bd9beaefd5e9875f07d132b955ad5a481283d188fd14c549bcd4a2"
+    }
+  },
+  "mode": "A",
+  "frames": 0,
+  "error": "RuntimeError('replay image must match actual configured1920x1080')"
+}

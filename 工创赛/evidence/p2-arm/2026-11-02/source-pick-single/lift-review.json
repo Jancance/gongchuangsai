@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "hardware_stubs": true,
+  "cases": [
+    "boot",
+    "full",
+    "scaled",
+    "below_cap",
+    "over_cap",
+    "zero",
+    "ordinary",
+    "protection",
+    "stop",
+    "fractional_speed",
+    "wrong_fw"
+  ],
+  "actual_can_builder_precision_cases": 2,
+  "actual_can_builder_boundary_vectors": 6,
+  "source_sha256": {
+    "USER/arm_sequence.c": "b11ed2058b3b87227206d663a48d3f744a9e335561971d3caf19f467734b33dd",
+    "USER/arm_sequence.h": "eafb3b239271c8a39496339cf46edda45f0d3247a09444db28468ddf25c29b12",
+    "HARDWARE/LIFT/lift_config.h": "4067f910460cb5d2eab54afa69d07fa6c118b195f43cd6b359cd94d2a542fefb",
+    "HARDWARE/LIFT/lift.h": "81bce3a16fac159cc1b4cb11c2379e3391b3f13c2637c66858b3d8d4a63d2137"
+  },
+  "protected_owning_sources": {
+    "SYSTEM/CAN/can.c": "2a49560b65e256947f870b3e45a088a02a26d2e27a528c47ab2012bf30c17b44",
+    "SYSTEM/CAN/arm_x.h": "e3d1a78ec0db186b9126b18cc4353ee9e957517792169390c684016d464b41f3",
+    "HARDWARE/LIFT/lift.c": "cfca969d7a949b9421cbbc20dfd8141fd51d84c05de9be576a10b9c86875440a",
+    "HARDWARE/LIFT/lift_protocol.c": "598c94f267da02e8262f7035a705296171334a13cb8a19a98b6a597b767c982b"
+  }
+}

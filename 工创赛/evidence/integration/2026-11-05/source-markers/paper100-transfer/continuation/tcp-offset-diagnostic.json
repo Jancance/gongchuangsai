@@ -1,0 +1,282 @@
+{
+  "schema_version": 1,
+  "calibration_id": "source-paper100-image-8fa7a4e70382-candidate",
+  "context": {
+    "camera_id": "Generic_USB_CAMERA_EP.20CC54K01-user135",
+    "image_size": [
+      1920,
+      1080
+    ],
+    "mount_id": "current-field-mount-20261105",
+    "arm_pose_id": "image-bound-8fa7a4e70382-pose-feedback-not-recorded",
+    "pixel_space": "raw",
+    "lens_profile_id": null,
+    "plane_id": "paper_on_source_surface",
+    "plane_z_mm": 85.5,
+    "plane_origin": "corner A; X along AB; Y along AD",
+    "axes": "x_along_ab_y_toward_ad_mm"
+  },
+  "tcp_reference": {
+    "schema_version": 1,
+    "reference_id": "source-tcp-image-center-20261105-candidate",
+    "calibration_id": "source-paper100-image-8fa7a4e70382-candidate",
+    "image_size": [
+      1920,
+      1080
+    ],
+    "reference_image_px": [
+      960.0,
+      540.0
+    ],
+    "reference_basis": "用户：夹爪中心就在摄像头中心；当前按画面宽高各一半解释，非镜头主点测量",
+    "extension_image_direction": [
+      0.0,
+      -1.0
+    ],
+    "extension_direction_basis": "用户确认伸出方向为画面上方",
+    "pose_continuity_basis": "用户确认底盘、转盘、相机及机械臂全部保持整合8拍照位置，未复位",
+    "mechanics": {
+      "source_prepare_nominal_extension_mm": 70.0,
+      "current_rotation_pivot_to_tcp_mm": 235.0,
+      "extension_max_from_home_mm": 205.0,
+      "additional_extension_available_mm": 135.0,
+      "measurement_basis": "用户：当前水平距离约23.5cm，70mm为当前伸出量，还可再伸135mm；205=70+135为工程推导，非独立行程标定",
+      "positive_rotation_direction_confirmed": false
+    },
+    "physical_tcp_verified": false,
+    "physical_height_plane_verified": false,
+    "field_calibration_accepted": false,
+    "motion_enabled": false
+  },
+  "basis": {
+    "reference_plane_mm": [
+      48.5337976082188,
+      -1.4764355912321736
+    ],
+    "right_unit_in_paper": [
+      0.9996547913762762,
+      -0.026273524286885164
+    ],
+    "forward_unit_in_paper": [
+      -0.026273524286885164,
+      -0.9996547913762762
+    ],
+    "right_forward_mm": [
+      [
+        -79.56993586478936,
+        67.13865072117036
+      ],
+      [
+        91.57723667532142,
+        71.95638912397195
+      ],
+      [
+        10.934326792837023,
+        -77.76193448956289
+      ]
+    ],
+    "coordinate_frame": "tcp_plane_local_right_forward",
+    "motion_allowed": false,
+    "physical_tcp_verified": false,
+    "note": "偏移不是关节命令；仍需旋转中心/臂长/行程/旋转符号和同平面验证"
+  },
+  "method": "Canny 20/60; seed annulus (92,114)px; map every boundary point with original H then least-squares circle",
+  "data_kind": "archived static drawn circles on source plane; not live materials",
+  "circle_fits": [
+    {
+      "center_plane_mm": [
+        -32.77263899883227,
+        -66.50132682873898
+      ],
+      "radius_mm": 24.490803020515482,
+      "boundary_rms_mm": 0.7833041899576442,
+      "boundary_max_mm": 2.2497573982402095,
+      "angular_coverage_deg": 359.3998337218732,
+      "boundary_point_count": 2308,
+      "motion_allowed": false,
+      "target_id": "upper-left",
+      "view": "reference",
+      "image": "evidence/integration/2026-11-05/source-markers/paper100-8fa7a4e70382/source_markers_20261105_185038.png",
+      "image_sha256": "8fa7a4e703828b6e67d50cfabca7972ffa7468fd09bd7cbcd5b2520ee95a023c",
+      "fitted_center_image_px": [
+        630.9372174962613,
+        262.89642128806497
+      ],
+      "outside_original_fit_hull": true
+    },
+    {
+      "center_plane_mm": [
+        138.18887309445788,
+        -75.8140415010614
+      ],
+      "radius_mm": 24.633800119231605,
+      "boundary_rms_mm": 0.7449792754706528,
+      "boundary_max_mm": 2.3475044511485557,
+      "angular_coverage_deg": 359.37903175561735,
+      "boundary_point_count": 2033,
+      "motion_allowed": false,
+      "target_id": "upper-right",
+      "view": "reference",
+      "image": "evidence/integration/2026-11-05/source-markers/paper100-8fa7a4e70382/source_markers_20261105_185038.png",
+      "image_sha256": "8fa7a4e703828b6e67d50cfabca7972ffa7468fd09bd7cbcd5b2520ee95a023c",
+      "fitted_center_image_px": [
+        1338.5800190580737,
+        239.86248174928372
+      ],
+      "outside_original_fit_hull": true
+    },
+    {
+      "center_plane_mm": [
+        138.2111350963127,
+        -75.8254796512188
+      ],
+      "radius_mm": 24.574555142868256,
+      "boundary_rms_mm": 0.7427833479177611,
+      "boundary_max_mm": 2.4624213474889807,
+      "angular_coverage_deg": 359.3546378661886,
+      "boundary_point_count": 2012,
+      "motion_allowed": false,
+      "target_id": "upper-right",
+      "view": "left-paper",
+      "image": "evidence/integration/2026-11-05/source-markers/paper100-transfer/source_markers_20261105_194157.png",
+      "image_sha256": "84bd5d94e5b3e732784a9132bb334fd803c33a39338bca1bcd2721b538b6a84f",
+      "fitted_center_image_px": [
+        1338.673698710919,
+        239.81671979760725
+      ],
+      "outside_original_fit_hull": true
+    },
+    {
+      "center_plane_mm": [
+        61.507429851559024,
+        75.97137150739515
+      ],
+      "radius_mm": 24.686190502306424,
+      "boundary_rms_mm": 0.7057976414034104,
+      "boundary_max_mm": 2.5198174378849103,
+      "angular_coverage_deg": 359.27690354899136,
+      "boundary_point_count": 1918,
+      "motion_allowed": false,
+      "target_id": "lower",
+      "view": "left-paper",
+      "image": "evidence/integration/2026-11-05/source-markers/paper100-transfer/source_markers_20261105_194157.png",
+      "image_sha256": "84bd5d94e5b3e732784a9132bb334fd803c33a39338bca1bcd2721b538b6a84f",
+      "fitted_center_image_px": [
+        1004.4371033709592,
+        856.8704228785357
+      ],
+      "outside_original_fit_hull": true
+    },
+    {
+      "center_plane_mm": [
+        -32.75715242374078,
+        -66.47844142437914
+      ],
+      "radius_mm": 24.453757806450106,
+      "boundary_rms_mm": 0.774846624662615,
+      "boundary_max_mm": 2.4619206857307923,
+      "angular_coverage_deg": 359.44312786455936,
+      "boundary_point_count": 2292,
+      "motion_allowed": false,
+      "target_id": "upper-left",
+      "view": "right-paper",
+      "image": "evidence/integration/2026-11-05/source-markers/paper100-transfer/source_markers_20261105_194452.png",
+      "image_sha256": "ba623aaac7ff5420f35618035d3813898f5479c7091d2d752a4e3cb8875adb6e",
+      "fitted_center_image_px": [
+        630.9996847206246,
+        262.99354193227754
+      ],
+      "outside_original_fit_hull": true
+    },
+    {
+      "center_plane_mm": [
+        61.54579859897421,
+        75.99932303723092
+      ],
+      "radius_mm": 24.71488824564645,
+      "boundary_rms_mm": 0.6869254267227807,
+      "boundary_max_mm": 2.1035454861257996,
+      "angular_coverage_deg": 359.28212114809384,
+      "boundary_point_count": 1909,
+      "motion_allowed": false,
+      "target_id": "lower",
+      "view": "right-paper",
+      "image": "evidence/integration/2026-11-05/source-markers/paper100-transfer/source_markers_20261105_194452.png",
+      "image_sha256": "ba623aaac7ff5420f35618035d3813898f5479c7091d2d752a4e3cb8875adb6e",
+      "fitted_center_image_px": [
+        1004.5898368442687,
+        856.9866542450484
+      ],
+      "outside_original_fit_hull": true
+    }
+  ],
+  "targets": [
+    {
+      "id": "upper-left",
+      "center_plane_mm": [
+        -32.77263899883227,
+        -66.50132682873898
+      ],
+      "primary_image": "evidence/integration/2026-11-05/source-markers/paper100-8fa7a4e70382/source_markers_20261105_185038.png",
+      "same_scene_extraction_difference_mm": 0.027632874276445982,
+      "extraction_difference_is_not_physical_accuracy": true,
+      "right_forward_mm": [
+        -79.56993586478936,
+        67.13865072117036
+      ]
+    },
+    {
+      "id": "upper-right",
+      "center_plane_mm": [
+        138.18887309445788,
+        -75.8140415010614
+      ],
+      "primary_image": "evidence/integration/2026-11-05/source-markers/paper100-8fa7a4e70382/source_markers_20261105_185038.png",
+      "same_scene_extraction_difference_mm": 0.02502854381714975,
+      "extraction_difference_is_not_physical_accuracy": true,
+      "right_forward_mm": [
+        91.57723667532142,
+        71.95638912397195
+      ]
+    },
+    {
+      "id": "lower",
+      "center_plane_mm": [
+        61.507429851559024,
+        75.97137150739515
+      ],
+      "primary_image": "evidence/integration/2026-11-05/source-markers/paper100-transfer/source_markers_20261105_194157.png",
+      "same_scene_extraction_difference_mm": 0.04747050450933111,
+      "extraction_difference_is_not_physical_accuracy": true,
+      "right_forward_mm": [
+        10.934326792837023,
+        -77.76193448956289
+      ]
+    }
+  ],
+  "reference_inside_original_fit_hull": false,
+  "unit_tests": 3,
+  "unit_failures": 0,
+  "unit_errors": 0,
+  "inputs_sha256": {
+    "reference_calibration": "8882e9aef3724891c547e5bafadb91b80fbd80e6751a3c3c46bb73358cbe6b6f",
+    "tcp_reference": "8126ac3c3536763fac38388b3b95bb4382ce40d54ab1a39025a46c8f0a945135"
+  },
+  "source_sha256": {
+    "src/smart_carrier/source_markers.py": "825b0e4ca647d89804cf1e494b39de601439724750a81e2a1251879d48fa2563",
+    "scripts/analyze_source_tcp_center_20261105.py": "f72befb4c499e6405e8f84dd8403250d831f896935379ee7c988b3713cd191bd",
+    "tests/test_source_tcp_geometry.py": "a27db0204e6849ebd4eb47314afef95c226c6e1a8180ba3c79097fa2a0eefffb"
+  },
+  "pending": [
+    "current pivot-to-TCP horizontal length",
+    "extension full usable stroke and rotation sign",
+    "actual TCP/height and independent absolute position verification",
+    "same-plane coverage approval; original preview still rejects extrapolation",
+    "joint/obstacle/power/fault-exit simulation before execution"
+  ],
+  "operational_extrapolation_enabled": false,
+  "field_calibration_accepted": false,
+  "hardware_operated": false,
+  "motion_allowed": false,
+  "passed": true
+}

@@ -1,0 +1,62 @@
+{
+  "source": "ordinary-preview-console.txt",
+  "screenshot": "ordinary-preview-board.png",
+  "status_samples": 25,
+  "states": {
+    "CANDIDATE": 1,
+    "STABLE": 24
+  },
+  "first_state": "CANDIDATE",
+  "remaining_status_samples_all_stable": true,
+  "stable_sample_median_xy_px": [
+    [
+      481.44757080078125,
+      613.2087707519531
+    ],
+    [
+      947.2237091064453,
+      607.0394744873047
+    ],
+    [
+      1405.3804626464844,
+      600.260669708252
+    ]
+  ],
+  "stable_sample_range_xy_px": [
+    [
+      0.01932525634765625,
+      0.01822662353515625
+    ],
+    [
+      0.013916015625,
+      0.03563690185546875
+    ],
+    [
+      0.02471923828125,
+      0.03228759765625
+    ]
+  ],
+  "reported_loop_fps_min_max": [
+    22.8,
+    28.2
+  ],
+  "initial_fps_zero_is_startup": true,
+  "error_markers_found": [],
+  "manual_paper_labels": [
+    3,
+    2,
+    1
+  ],
+  "label_source": "MANUAL_FIXED_LAYOUT_NOT_OCR",
+  "serial_disabled_in_all_samples": true,
+  "metric_unverified_in_all_samples": true,
+  "realtime_gui_and_terminal_confirmed_for_current_stationary_scene": true,
+  "scope": "User screenshot and about-once-per-second status samples only, not per-frame freshness telemetry or an end-to-end latency/long-run/motion acceptance test.",
+  "limits": [
+    "No per-line timestamps, raw frames or new module/config hashes recorded in this pasted console.",
+    "Reported FPS decreases through part of the sample; cause not established; no sustained throughput acceptance.",
+    "Only the initial candidate-to-stable transition and stationary output are observed; no new main-loop loss/reconnect test.",
+    "Manual labels do not implement OCR; window stability does not prove physical stationary state."
+  ],
+  "motion_allowed": false
+}

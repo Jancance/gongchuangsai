@@ -1,0 +1,66 @@
+{
+  "schema": "carrier-slot-calibration-candidate-v1",
+  "date": "2026-10-30",
+  "status": "layout_reported_mounting_pending",
+  "loaded_by_firmware": false,
+  "motion_allowed": false,
+  "calibration_id": null,
+  "signal_pin": "PB1",
+  "reported_supply_v": 5,
+  "servo_nominal_profile": {
+    "period_us": 20000,
+    "pulse_min_us": 500,
+    "pulse_max_us": 2500,
+    "max_deg": 270
+  },
+  "observed_single_test": {
+    "command_deg": 145,
+    "pulse_us": 1574,
+    "physical_motion_seen": true,
+    "physical_final_stop_confirmed": true,
+    "measured_angle_deg": null
+  },
+  "assembly": {
+    "tray_attached_to_servo": false,
+    "transmission_type": "no gear or belt, user report; direct coupling planned",
+    "ratio": null,
+    "sign": null,
+    "assembly_reference_command_deg": 135,
+    "assembly_reference_slot_id": 2,
+    "reference_pose_verified": false
+  },
+  "geometry": {
+    "slot_count": 3,
+    "equal_120_degree_spacing_confirmed": true,
+    "fixed_handoff_reference": null,
+    "safe_command_min_deg": null,
+    "safe_command_max_deg": null,
+    "tray_height_mm": null,
+    "slot_spacing_evidence": "user report; no independent angle measurement"
+  },
+  "slots": [
+    {
+      "slot_id": 1,
+      "command_deg": null,
+      "pulse_us": null,
+      "alignment_observation": null,
+      "accepted": false
+    },
+    {
+      "slot_id": 2,
+      "command_deg": null,
+      "pulse_us": null,
+      "alignment_observation": null,
+      "accepted": false
+    },
+    {
+      "slot_id": 3,
+      "command_deg": null,
+      "pulse_us": null,
+      "alignment_observation": null,
+      "accepted": false
+    }
+  ],
+  "actual_position_feedback": null,
+  "note": "规划/记录模板；不接固件，不预填0/120/240或其他示例槽角；当前固件调试限制120..150保持。"
+}

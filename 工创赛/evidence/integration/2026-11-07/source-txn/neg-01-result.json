@@ -1,0 +1,107 @@
+{
+  "tag": "neg-01",
+  "image_sha256": "5576cc9e259ba60141dcc7e4997b788360f440fb29ea77c40219e7ce762b4890",
+  "cases": [
+    {
+      "case": "stale_5s",
+      "desc": "\u8fc7\u671f(5s\u524d\u7684\u65f6\u95f4\u6233)",
+      "expect_result": 3,
+      "result": 3,
+      "it_rejected": 0,
+      "arm_moved_deg": 0.0,
+      "pass": false
+    },
+    {
+      "case": "deg_out_of_range",
+      "desc": "\u53d6\u4ef6\u89d2 300 \u8d8a\u754c",
+      "expect_result": 4,
+      "result": 3,
+      "it_rejected": 0,
+      "arm_moved_deg": 0.0,
+      "pass": false
+    },
+    {
+      "case": "chassis_dx_overflow",
+      "desc": "\u5e95\u76d8\u7ea0\u504f 25mm \u8d8a\u754c",
+      "expect_result": 4,
+      "result": 4,
+      "it_rejected": 0,
+      "arm_moved_deg": 0.0,
+      "pass": false
+    },
+    {
+      "case": "slot_out_of_range",
+      "desc": "\u8f7d\u76d8\u69fd\u4f4d 4 \u8d8a\u754c",
+      "expect_result": 4,
+      "result": 4,
+      "it_rejected": 0,
+      "arm_moved_deg": 0.0,
+      "pass": false
+    },
+    {
+      "case": "dup_seq",
+      "desc": "\u91cd\u590d\u5e8f\u53f7",
+      "expect_result": 5,
+      "result": 1,
+      "it_rejected": 0,
+      "arm_moved_deg": 0.0,
+      "pass": false
+    },
+    {
+      "case": "valid_accepted",
+      "desc": "\u6b63\u5e38\u4e8b\u52a1\u5e94\u63a5\u53d7\u4e14\u4e0d\u81ea\u52a8\u52a8\u4f5c",
+      "expect_result": 1,
+      "result": 1,
+      "it_rejected": 0,
+      "arm_moved_deg": 0.0,
+      "pass": true
+    }
+  ],
+  "before": {
+    "g_it_request": 0,
+    "g_it_state": 2,
+    "g_it_cause": 0,
+    "g_it_rejected": 0,
+    "g_it_action": 3,
+    "g_src_txn_revision": 3,
+    "g_src_txn_consumed": 3,
+    "g_src_txn_seq": 103,
+    "g_src_txn_tick": 29204,
+    "g_src_txn_result": 1,
+    "g_src_txn_age_ms": 11,
+    "g_src_slot": 3,
+    "g_src_now_ms": 62286,
+    "g_dm_jog_state": 7,
+    "g_lift_ruler_state": 4,
+    "g_lift_ruler_cause": 0,
+    "g_startup_axes_cause": 0,
+    "g_src_pick_deg": 180.6999969482422,
+    "g_src_chassis_dx_mm": -2.0,
+    "g_src_chassis_dy_mm": 1.2000000476837158,
+    "g_dm_can2_logical_position_deg": 179.99188232421875
+  },
+  "all_pass": false,
+  "final": {
+    "g_it_request": 0,
+    "g_it_state": 2,
+    "g_it_cause": 0,
+    "g_it_rejected": 0,
+    "g_it_action": 11,
+    "g_src_txn_revision": 9,
+    "g_src_txn_consumed": 9,
+    "g_src_txn_seq": 205,
+    "g_src_txn_tick": 64380,
+    "g_src_txn_result": 1,
+    "g_src_txn_age_ms": 34,
+    "g_src_slot": 2,
+    "g_src_now_ms": 64817,
+    "g_dm_jog_state": 7,
+    "g_lift_ruler_state": 4,
+    "g_lift_ruler_cause": 0,
+    "g_startup_axes_cause": 0,
+    "g_src_pick_deg": 179.0,
+    "g_src_chassis_dx_mm": 1.0,
+    "g_src_chassis_dy_mm": -1.0,
+    "g_dm_can2_logical_position_deg": 179.99188232421875
+  }
+}

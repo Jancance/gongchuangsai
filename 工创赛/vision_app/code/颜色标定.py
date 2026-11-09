@@ -482,7 +482,11 @@ class ColorCalibratorWindow:
     def create_window(self) -> None:
         # 相机画面保持原始1280x960，额外控制栏拼接在右侧。这样鼠标
         # 框选坐标与矫正图像像素一一对应，滑条也不会占据窗口顶部。
-        cv2.namedWindow(WINDOW_NAME, cv2.WINDOW_AUTOSIZE)
+        # Keep the original canvas/ROI pixels. HighGUI maps mouse events back
+        # to canvas coordinates when the displayed image is resized.
+        cv2.namedWindow(WINDOW_NAME, cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
+        cv2.resizeWindow(WINDOW_NAME, 1140, 540)
+        cv2.moveWindow(WINDOW_NAME, 10, 10)
         cv2.setMouseCallback(WINDOW_NAME, self._on_mouse)
 
     def _sync_trackbars(self) -> None:

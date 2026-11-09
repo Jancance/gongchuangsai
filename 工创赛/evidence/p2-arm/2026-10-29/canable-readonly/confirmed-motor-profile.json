@@ -1,0 +1,26 @@
+{
+  "motor": "DM-J4310-2EC V1.1 DC24V",
+  "can_id": 1,
+  "master_id": 0,
+  "ctrl_mode_value": 1,
+  "ctrl_mode": "MIT",
+  "bitrate": 1000000,
+  "source": "用户分别读取ESC_ID/CTRL_MODE/MST_ID的三张完整截图，用户确认实际Bitrate1Mbps",
+  "read_only_link_verified": true,
+  "stm32_can2_verified": false,
+  "motion_verified": false,
+  "latest_response_id": 0,
+  "latest_response_data": "01 00 33 07 00 00 00 00",
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q_unchanged": true
+}

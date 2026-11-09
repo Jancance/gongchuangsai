@@ -146,7 +146,7 @@ int main(void){run_tests();printf("checks=%u failures=%u\n",checks,failures);for
 reports=[]
 for offline in [0,1]:
     exe=OUT/f'early-scan-{offline}.exe'
-    cmd=['C:/mingw/mingw64/bin/gcc.exe','-std=c99',f'-DAPP_MOTOR_OFFLINE_ONLY={offline}','-DVEHICLE_SCAN_BYPASS=0',
+    cmd=['C:/mingw/mingw64/bin/gcc.exe','-DVEHICLE_STARTUP_GROUP_BEFORE_ROUTE=0','-DVEHICLE_STARTUP_GROUP_ONLY=0','-DVEHICLE_EXTENSION_HOME_ONLY=0','-DVEHICLE_DM_STARTUP_ONLY=0','-std=c99',f'-DAPP_MOTOR_OFFLINE_ONLY={offline}','-DVEHICLE_SCAN_BYPASS=0',
          '-I'+str(FW/'USER'),str(OUT/'early-scan-unit.c')]
     cmd += [str(FW/'USER'/p) for p in ['field_map.c','app_entry.c','motion_profile.c','chassis_kinematics.c']]
     cmd += ['-lm','-o',str(exe)]
@@ -175,7 +175,7 @@ int main(void){StartupPose_Init();
 #if APP_MOTOR_OFFLINE_ONLY
  if(init_gripper || init_carrier || writes)return 1;
 #else
- if(init_gripper!=1 || init_carrier!=1 || gripper_angle!=140.0f || g_startup_gripper_result!=1)return 2;
+ if(init_gripper!=1 || init_carrier!=1 || gripper_angle!=145.0f || g_startup_gripper_result!=1)return 2;
 #if POSE_EXPECT_INVALID
  if(writes || g_startup_carrier_result!=3)return 3;
 #elif POSE_EXPECT_PULSE
@@ -191,7 +191,7 @@ pose_cases=[]
 for label,offline,angle,pulse,invalid in [('unset',0,None,0,0),('90deg',0,'90.0f',1167,0),
     ('270deg',0,'270.0f',2500,0),('out-of-range',0,'271.0f',0,1),('offline',1,'90.0f',0,0)]:
     exe=OUT/('pose-'+label+'.exe')
-    cmd=['C:/mingw/mingw64/bin/gcc.exe','-std=c99',f'-DAPP_MOTOR_OFFLINE_ONLY={offline}',
+    cmd=['C:/mingw/mingw64/bin/gcc.exe','-DVEHICLE_STARTUP_GROUP_BEFORE_ROUTE=0','-DVEHICLE_STARTUP_GROUP_ONLY=0','-DVEHICLE_EXTENSION_HOME_ONLY=0','-DVEHICLE_DM_STARTUP_ONLY=0','-std=c99',f'-DAPP_MOTOR_OFFLINE_ONLY={offline}',
         f'-DPOSE_EXPECT_PULSE={pulse}',f'-DPOSE_EXPECT_INVALID={invalid}',
         '-I'+str(FW/'USER'),'-I'+str(FW.parent/'HARDWARE/GRIPPER'),'-I'+str(FW.parent/'HARDWARE/CARRIER')]
     if angle is not None:cmd+=['-DSTARTUP_CARRIER_ANGLE_DEG='+angle]

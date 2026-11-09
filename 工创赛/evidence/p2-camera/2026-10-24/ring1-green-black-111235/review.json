@@ -1,0 +1,206 @@
+{
+  "archive_sha256": "8457a7e507c5ec648613179f638ee8b5f4eba3b2e4a70be5a728d9d8125f6012",
+  "crc": "passed",
+  "user_confirmation": "Moved camera or support during this run; not a static acceptance run",
+  "frames": 1067,
+  "indices_contiguous": true,
+  "timestamps_increasing": true,
+  "observation_span_s": 89.91584350800031,
+  "states": {
+    "FOLLOWING_PIXEL": 1058,
+    "STALE_RESULT": 9
+  },
+  "summary_states_match": true,
+  "output_counts": {
+    "black_and_green": 1023,
+    "only_green": 35,
+    "no_targets": 9
+  },
+  "black_detection_missing_indices": [
+    52,
+    53,
+    55,
+    56,
+    58,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    83,
+    88,
+    95,
+    100,
+    104,
+    106,
+    713,
+    765,
+    1015,
+    1020,
+    1021
+  ],
+  "green_detector_present_all_frames": true,
+  "stale_events": [
+    {
+      "frame": 1015,
+      "relative_s": 83.43511121700021,
+      "age_ms": 155.006319000222,
+      "detector_ms": 133.52250700017976,
+      "labels": [
+        "green"
+      ]
+    },
+    {
+      "frame": 1030,
+      "relative_s": 85.28790862000005,
+      "age_ms": 161.89449700004843,
+      "detector_ms": 114.30169799996293,
+      "labels": [
+        "green",
+        "black"
+      ]
+    },
+    {
+      "frame": 1035,
+      "relative_s": 85.92002152900022,
+      "age_ms": 153.63667500014344,
+      "detector_ms": 119.1555350001181,
+      "labels": [
+        "green",
+        "black"
+      ]
+    },
+    {
+      "frame": 1037,
+      "relative_s": 86.18678858800013,
+      "age_ms": 154.81819700016786,
+      "detector_ms": 114.90456299998186,
+      "labels": [
+        "green",
+        "black"
+      ]
+    },
+    {
+      "frame": 1049,
+      "relative_s": 87.71192693700004,
+      "age_ms": 155.90347000033944,
+      "detector_ms": 109.86814600028083,
+      "labels": [
+        "green",
+        "black"
+      ]
+    },
+    {
+      "frame": 1053,
+      "relative_s": 88.18335428700038,
+      "age_ms": 154.66682499982198,
+      "detector_ms": 117.9235559998233,
+      "labels": [
+        "green",
+        "black"
+      ]
+    },
+    {
+      "frame": 1059,
+      "relative_s": 88.91263084400043,
+      "age_ms": 150.52114299987807,
+      "detector_ms": 113.87237200005984,
+      "labels": [
+        "green",
+        "black"
+      ]
+    },
+    {
+      "frame": 1062,
+      "relative_s": 89.27715333300011,
+      "age_ms": 161.26509000014266,
+      "detector_ms": 119.57027800008291,
+      "labels": [
+        "green",
+        "black"
+      ]
+    },
+    {
+      "frame": 1067,
+      "relative_s": 89.91584350800031,
+      "age_ms": 151.3127129996974,
+      "detector_ms": 126.00317199985511,
+      "labels": [
+        "green",
+        "black"
+      ]
+    }
+  ],
+  "timing_ms": {
+    "detector_call_ms": {
+      "min": 51.77960399987569,
+      "median": 63.96990299981553,
+      "p95": 100.05667050008923,
+      "max": 139.7279040002104
+    },
+    "result_host_age_ms": {
+      "min": 55.51521000006687,
+      "median": 80.4703819999304,
+      "p95": 121.2287551999452,
+      "max": 161.89449700004843
+    }
+  },
+  "longest_recorded_green_loss_s": 0.1730187709999882,
+  "reasons": {
+    "DOMINANT_COLOR_EVIDENCE": 1960,
+    "SHAPE_UNCERTAIN": 671,
+    "ISOLATED_CHROMATIC_COMPONENT": 50,
+    "CURRENT_DARK_ELLIPSE_SUPPORT": 88,
+    "TOUCHES_BORDER": 188,
+    "AMBIGUOUS_COLOR": 191
+  },
+  "module_hash_matches": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true
+  },
+  "active_config_byte_matches": {
+    "camera_processing.json": true,
+    "material_color_thresholds.json": true,
+    "project_profile.json": true
+  },
+  "controls": {
+    "gain": 80,
+    "white_balance_temperature_auto": 0,
+    "white_balance_temperature": 4600,
+    "exposure_auto": 1,
+    "exposure_absolute": 83
+  },
+  "visual_review": [
+    "first-frame-raw.png",
+    "sample-02-raw.png",
+    "first-green-loss-raw.png",
+    "longest-green-loss-raw.png"
+  ],
+  "sample02_offline_replay": "With previous row internal hints, ring switch on and off both yield no black, SHAPE_UNCERTAIN and BLACK_EDGE_NO_UNIQUE_SUPPORT; no ring rejection activation. Offline OpenCV version differs; not pixel-exact runtime geometry validation.",
+  "code_evidence": "project_follow.py resets tracker/history on STALE_RESULT; following frames create new IDs by design",
+  "limitations": [
+    "Movement timing not recorded; no proof movement causes timing increase",
+    "No console stderr supplied; error null does not prove no JPEG warnings",
+    "Black detections can include sidewall/printed ring; not calibrated top center or grasp point",
+    "Last stale has no following recovery; longest recovered loss statistic is not the full end-of-run missing duration",
+    "Run does not establish six-color/static/mm/moving-arm acceptance"
+  ],
+  "next": "Isolate static condition: keep both materials and settings, no camera/support/paper/material movement, run existing wrapper --seconds 30, keep console. Do not loosen shape or time gates."
+}

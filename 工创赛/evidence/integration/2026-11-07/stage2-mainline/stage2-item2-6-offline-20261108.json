@@ -1,0 +1,64 @@
+{
+ "tag": "stage2-item2-6-offline",
+ "when": "2026-11-08T03:59:19",
+ "scope": "offline only - no debugger, no flash, no motion",
+ "item2_action_sequence": {
+  "file": "scripts/pick_sequence_20261108.py",
+  "status": "done, --check and --plan verified",
+  "design": [
+   "locate: IT3 axes=1 (arm only) -> IT3 axes=2 (extension only)",
+   "descend: g_lift_compare_target_pulses=118800 + permit + lift_ruler_request=1",
+   "carrier slot + gripper pre-close hidden inside the 2.05s descent",
+   "grip 140, 400ms",
+   "rise: IT4; if ext==0 fire_dm(SLOT) in parallel after 1400ms; if ext>0 must retract first then rotate"
+  ],
+  "hard_constraint_found": {
+   "source": "CHASSIS/USER/integration10_complete.inc:323",
+   "rule": "IT3 rejects when axes has arm bit and extension is not at zero (or axes has ext bit with target>0)",
+   "consequence": [
+    "arm and extension CANNOT move in one IT3 request",
+    "order must be: arm first (extension at zero), then extend",
+    "reverse order sweeps the extended arm through a large arc over the disc"
+   ]
+  },
+  "timing_consequence": {
+   "down_piece_ext0": "5.93s fixed part, rotate can hide inside rise -> same as measured 5.9s",
+   "side_piece_ext_gt0": "serial: rise 3.35s + retract T + rotate T -> slower than 5.9s; T not measured"
+  }
+ },
+ "item6_correction_chain": {
+  "status": "code already exists, no new code needed",
+  "file": "CHASSIS/USER/source_stage2_body_port.inc S2BP_QueueCorrection (line 105-119)",
+  "window": {
+   "min_mm": 10.0,
+   "min_source": "USER/vehicle_parameters.h:212 VEHICLE_MIN_ROUTE_CM 1.0f -> 10mm",
+   "max_mm": 20.0,
+   "below_min": "S2BP_SMALL_STEP - chassis does not move, deviation must be absorbed by arm/vision",
+   "above_max": "S2BP_RANGE - fail, do not attempt"
+  },
+  "prerequisites": [
+   "real vision dx/dy in mm",
+   "four wheel guard ready",
+   "stage2 profile verified flags"
+  ],
+  "conclusion": "correction is NOT missing code; it is waiting for measured inputs"
+ },
+ "item3_four_wheel": {
+  "file": "scripts/stage2_wheel_node_triage.py",
+  "status": "ready, --check passed",
+  "note": "10 minutes on board; decides whether item 6 can run at all"
+ },
+ "not_done_requires_hardware": [
+  "teach capture (operator poses arm, script reads angle)",
+  "four wheel node verdict",
+  "single piece then three piece run",
+  "real vision feeding dx/dy",
+  "chassis correction closed loop"
+ ],
+ "build": {
+  "target": "Vehicle_LiftRuler",
+  "errors": 0,
+  "warnings": 0,
+  "code": 116928
+ }
+}

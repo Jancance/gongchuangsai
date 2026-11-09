@@ -1,0 +1,56 @@
+{
+  "source": "User screenshot after installing CAN communication board, 2026-10-25 12:58:10 filename",
+  "user_reports_can_board_installed": true,
+  "node": 5,
+  "reported_mode": "CAN1_MAP",
+  "reported_baud": 500000,
+  "watch": {
+    "g_lift_state": 4,
+    "g_lift_version_result": 1,
+    "reply": {
+      "ExtId": "0x0500",
+      "IDE": "0x04",
+      "RTR": 0,
+      "DLC": 6,
+      "Data_hex": [
+        "1F",
+        "00",
+        "CA",
+        "22",
+        "14",
+        "6B"
+      ]
+    },
+    "g_vm_test_request": 1,
+    "CAN1_ESR": "0x00000000",
+    "CAN1_BTR": "0x001A0005"
+  },
+  "version_reply_matches_current_code": true,
+  "status_query_completion_inferred_from_state4": true,
+  "raw_status_reply_supplied": false,
+  "firmware_version_raw": "0x00CA",
+  "hardware_version_raw": "0x2214",
+  "FWType": "unconfirmed; independent menu field FW_X or FW_Emm per manufacturer manual page14",
+  "acceptance_scope": "Single node5 version transaction and module read sequence now pass after CAN-board installation. Not movement, sustained bus reliability or actuator completion.",
+  "next_step": "Read FWType menu value only; no repeated power/wiring/register checks or movement before command variant known",
+  "rules_checked": {
+    "R": [
+      "PWR-01",
+      "RUN-01",
+      "MECH-01",
+      "MECH-02"
+    ],
+    "E": [
+      "RUN-06",
+      "LOC-03",
+      "CAL-05"
+    ]
+  },
+  "open_items": [
+    "current FWType",
+    "lift direction and safe travel",
+    "axis feedback and actual motion",
+    "fixed arm action sequence"
+  ],
+  "screenshot_sha256": "d0190f88ee4e5f913e31ddbcb6a6688286503302034b573d3556ac4b06a858b4"
+}

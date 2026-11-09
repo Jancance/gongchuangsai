@@ -1,0 +1,14 @@
+{
+  "checks": 7,
+  "failures": 0,
+  "scope": "simulated V4L2 control contracts; no hardware acceptance",
+  "cases": [
+    "continuous AE/AWB",
+    "AE with startup WB lock",
+    "unsupported mode rejection",
+    "missing control rejection",
+    "readback mismatch rejection",
+    "write error propagation",
+    "invalid WB rejection"
+  ]
+}

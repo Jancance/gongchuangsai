@@ -1,0 +1,54 @@
+{
+ "when": "2026-11-08T15:14:37",
+ "symptom": "DM4310 on CAN2 never answered: g_dm_can2_init_result=0, g_dm_can2_tx_count=0, RCC_APB1ENR.CAN2EN=0, g_dm_can2_feedback_valid=0",
+ "root_cause": {
+  "file": "CHASSIS/USER/extension_home_only.inc",
+  "line": 73,
+  "code_before": "uint32_t StartupAxes_Holding(void){return 0U;}",
+  "why": "With VEHICLE_EXTENSION_HOME_ONLY=1 this .inc replaces the real Holding() in the #else branch of startup_axes.c. Holding() therefore always returned 0, so every DM_CAN2_ModuleService() call site (main.c 3213/3227/3233/3272) was skipped. DM_CAN2_Service only calls DM_CAN2_Init() inside the read_request branch, so CAN2 was never clocked and the 4310 could never be reached.",
+  "verification": "fromelf disassembly: StartupAxes_Holding = MOVS r0,#0 / BX lr (constant 0). RCC_APB1ENR bit26 = 0 after boot. No DM frame ever transmitted (tx_count stayed 0)."
+ },
+ "fix": "StartupAxes_Holding() -> return g_startup_axes_state==4U && g_startup_axes_vm_request==1U;",
+ "secondary_fixes_same_session": [
+  "safety.c: wheel CAN guard is not armed while the chassis is not driving and a mechanism axis owns the VM (mechanism CAN traffic starved the 400ms wheel poll and latched SAFETY_FAULT_CAN_DATA 0x20, which cascaded into StartupAxes FAULT state=5)",
+  "lift_ruler_adapter.c: LiftRuler_Service healthy argument no longer uses g_can_guard_ready (mechanism axes do not drive the wheels)",
+  "main.c: StartupAxes_Service second argument likewise 1U",
+  "main.c: removed !VEHICLE_EXTENSION_HOME_ONLY gating from DM_CAN2_ModuleService / VehicleArm_Service / App_CombinedTestStep service calls (that gating disabled them in exactly the profile that builds the extension hold)",
+  "can.c: CAN1_SINGLE_REPLY_WAIT_MS 30 -> 60 (node4 answers in ~17ms vs 6-8ms for 1/2/3)"
+ ],
+ "after_fix": {
+  "dm_init_result": 1,
+  "dm_state": 4,
+  "dm_result": 1,
+  "feedback_latency_s": 0.13,
+  "logical_deg_samples": [
+   132.8683,
+   132.8683,
+   132.8683,
+   0.0,
+   132.8683
+  ],
+  "note_zero_sample": "one sample read 0 because a new read_request clears feedback_valid before the 7-parameter cycle completes; read timing artefact, not motion",
+  "fault": 0,
+  "axes_state": 4,
+  "hold_confirmed": 1,
+  "lift_state": 4
+ },
+ "pick_table": {
+  "down": {
+   "arm_deg": 180.0,
+   "ext_mm": 0,
+   "source": "field measurement (user)"
+  },
+  "left": {
+   "arm_deg": 132.87,
+   "ext_mm": 156,
+   "source": "measured on hardware"
+  },
+  "right": {
+   "arm_deg": 227.13,
+   "ext_mm": 156,
+   "source": "mirror 360-left"
+  }
+ }
+}

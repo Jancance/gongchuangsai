@@ -16,6 +16,7 @@ class TaskCodeParserTests(unittest.TestCase):
         self.assertEqual(task.batch_1.rough_positions, (1, 2, 3))
         self.assertEqual(task.batch_2.pickup_order, (5, 1, 6))
         self.assertEqual(task.batch_2.rough_positions, (2, 3, 1))
+        self.assertEqual(task.batch_2.stacking_positions, (2, 1, 3))
         self.assertFalse(task.executable)
         self.assertEqual(task.rejection_reason, "QR-04_MAPPING_UNCONFIRMED")
 

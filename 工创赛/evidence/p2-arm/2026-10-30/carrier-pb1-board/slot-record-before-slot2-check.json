@@ -1,0 +1,83 @@
+{
+  "schema": "carrier-slot-calibration-candidate-v1",
+  "date": "2026-10-30",
+  "status": "zero_reference_installed_slot2_pending",
+  "loaded_by_firmware": false,
+  "motion_allowed": false,
+  "calibration_id": null,
+  "signal_pin": "PB1",
+  "reported_supply_v": 5,
+  "servo_nominal_profile": {
+    "period_us": 20000,
+    "pulse_min_us": 500,
+    "pulse_max_us": 2500,
+    "max_deg": 270
+  },
+  "observed_single_test": {
+    "command_deg": 145,
+    "pulse_us": 1574,
+    "physical_motion_seen": true,
+    "physical_final_stop_confirmed": true,
+    "measured_angle_deg": null
+  },
+  "assembly": {
+    "tray_attached_to_servo": true,
+    "transmission_type": "no gear or belt, user report; direct coupling planned",
+    "ratio": null,
+    "sign": null,
+    "assembly_reference_command_deg": 0,
+    "assembly_reference_slot_id": 1,
+    "reference_pose_verified": false,
+    "reference_installation_user_reported": true,
+    "reference_installation_evidence": "evidence/p2-arm/2026-10-30/carrier-pb1-board/zero-reference-installation.json"
+  },
+  "geometry": {
+    "slot_count": 3,
+    "equal_120_degree_spacing_confirmed": true,
+    "fixed_handoff_reference": null,
+    "safe_command_min_deg": null,
+    "safe_command_max_deg": null,
+    "tray_height_mm": null,
+    "slot_spacing_evidence": "user report; no independent angle measurement"
+  },
+  "slots": [
+    {
+      "slot_id": 1,
+      "command_deg": 0,
+      "pulse_us": 500,
+      "alignment_observation": "User reports installation at selected0-degree slot1 reference; independent precision/repeatability not measured.",
+      "accepted": false,
+      "target_kind": "user selected nominal command; physical alignment unverified"
+    },
+    {
+      "slot_id": 2,
+      "command_deg": 120,
+      "pulse_us": 1389,
+      "alignment_observation": null,
+      "accepted": false,
+      "target_kind": "user selected nominal command; physical alignment unverified"
+    },
+    {
+      "slot_id": 3,
+      "command_deg": 240,
+      "pulse_us": 2278,
+      "alignment_observation": null,
+      "accepted": false,
+      "target_kind": "user selected nominal command; physical alignment unverified"
+    }
+  ],
+  "actual_position_feedback": null,
+  "note": "未加载的记录表；固件配置头同步0/120/240标称候选，只有显式调试请求才输出；实测槽角/旋向/到位和正式自主运动仍未验。",
+  "firmware_debug_command_bounds_deg": [
+    0,
+    240
+  ],
+  "nominal_targets_source": "explicit user0-reference decision2026-10-30; supersedes135 proposal",
+  "zero_window_observed": {
+    "command_deg": 0,
+    "pulse_us": 500,
+    "state": 2,
+    "result": 1,
+    "signal_active": 0
+  }
+}

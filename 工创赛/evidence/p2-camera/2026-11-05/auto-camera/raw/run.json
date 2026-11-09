@@ -1,0 +1,58 @@
+{
+  "frames": 616,
+  "states": {
+    "STALE_RESULT": 7,
+    "SEARCHING": 69,
+    "FOLLOWING_PIXEL": 540
+  },
+  "transition_counts": {
+    "sample-01": 1,
+    "first-frame": 1,
+    "first-nonstale-blue-missing": 509,
+    "first-other-color-candidate": 540,
+    "first-blue-with-red": 539,
+    "sample-02": 1,
+    "first-blue-with-green": 1,
+    "sample-03": 1,
+    "first-blue-with-yellow": 442,
+    "first-blue-visible": 1,
+    "first-blue-loss": 65,
+    "first-duplicate-yellow": 1,
+    "first-blue-with-lightblue": 18,
+    "first-blue-reappearance": 64,
+    "first-blue-id-change": 24,
+    "sample-04": 1,
+    "first-duplicate-lightblue": 1
+  },
+  "saved_events": [
+    "first-blue-id-change",
+    "first-blue-loss",
+    "first-blue-reappearance",
+    "first-blue-visible",
+    "first-blue-with-green",
+    "first-blue-with-lightblue",
+    "first-blue-with-red",
+    "first-blue-with-yellow",
+    "first-duplicate-lightblue",
+    "first-duplicate-yellow",
+    "first-frame",
+    "first-nonstale-blue-missing",
+    "first-other-color-candidate",
+    "sample-01",
+    "sample-02",
+    "sample-03",
+    "sample-04"
+  ],
+  "exit_code": 0,
+  "error": null,
+  "serial": "DISABLED",
+  "motion_allowed": false,
+  "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+  "watch_color": "blue",
+  "longest_watched_loss_s": 9.332376874000033,
+  "periodic_samples": {
+    "interval_s": 5.0,
+    "limit": 4,
+    "saved": 4
+  }
+}

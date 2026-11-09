@@ -1,0 +1,281 @@
+#include "tower.h"
+
+struct Finish_Flag flag =
+{
+		.MOTOR35_flag      = 0,
+		.MOTOR28_flag      = 0,
+		.G6220_flag        = 0
+};
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      			塔吊初始化
+//  @return     			/
+//  @Sample usage:    包括can初始化，步进电机初始化和G6220初始化
+//-------------------------------------------------------------------------------------------------------------------
+void Tower_init(void)
+{
+	CAN_Start(CAN_NUM);
+	osDelay(1000);
+	TowerMotor_Init();
+	G6220_Init();	
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      			塔吊位置控制
+//  @return     			/
+//  @param					 yaw   位置,这里采用的是角度制,单圈范围为0-3600，即分辨率为0.1度,可以设置多圈角度
+//  @param					 yaw_speed			速度,采用的也是角度制，速度最大为2300度每秒
+//  @param					 z      高度，单位为0.1mm，表示z轴高度
+//  @param					 z_speed	速度，单位为mm，表示z轴移动的速度
+//  @param					 y      长度，单位为0.1mm，表示吊臂伸长的长度
+//  @param					 y_speed	速度，单位为mm，表示吊臂移动的速度
+//  @Sample usage:    /太长了，自己去下面看内部函数例子
+//-------------------------------------------------------------------------------------------------------------------
+void Tower_Control(uint32_t yaw,uint16_t yaw_speed,uint32_t z,uint16_t z_speed,uint32_t y,uint16_t y_speed)
+{
+	
+	G6220_Position(yaw,yaw_speed);
+	HAL_Delay(200);
+	Motor35_AbsPosition(z,z_speed);
+	HAL_Delay(200);
+	Motor28_AbsPosition(y,y_speed);
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//以下为达妙G6220中空云台电机控制函数
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      			G6220使能
+//  @return     			/
+//  @Sample usage:    /
+//-------------------------------------------------------------------------------------------------------------------
+void G6220_Init(void)
+{
+	 G6220_Command(1);
+}
+
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 G6220命令
+//  @return     		 /
+//  @param					 CMD  基础命令 使能:1,失能:2,零点重置:3,清除报错:4
+//  @Sample usage:   G6220_Command(&hcan1,0x01,1);//电机使能
+//-------------------------------------------------------------------------------------------------------------------
+void G6220_Command(uint8_t CMD)
+{
+	uint8_t Data[8];
+	Data[0] = 0xFF;
+	Data[1] = 0xFF;
+	Data[2] = 0xFF;
+	Data[3] = 0xFF;
+	Data[4] = 0xFF;
+	Data[5] = 0xFF;
+	Data[6] = 0xFF;
+	switch(CMD)
+	{
+		case G6220_Enable :
+			Data[7] = 0xFC;
+		break;
+		case G6220_Disable :
+		Data[7] = 0xFD;
+		break;
+		case G6220_Save_Zero_Position :
+		Data[7] = 0xFE;
+		break;
+		case G6220_Clear_Error :
+		Data[7] = 0xFB;
+		break;
+		default:
+		break;
+	}
+	
+	CAN_SendData(CAN_NUM,G6220_Modo+G6220_CAN_ID,(uint8_t*)Data,8);
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 G6220位置速度模式
+//  @return     		 /
+//  @param					 position   位置,这里采用的是角度制,单圈范围为0-3600，即分辨率为0.1度,可以设置多圈角度
+//  @param					 speed			速度,采用的也是角度制，速度最大为2300度每秒
+//  @Sample usage:   G6220_Position(1800,1800);//以180度每秒的速度转到180度的位置
+//-------------------------------------------------------------------------------------------------------------------
+void G6220_Position(int32_t position,uint16_t speed)
+{
+	float radian;
+	radian = position*0.00174533;//这个系数是pai（3.14159265）除以1800得到的，因为浮点数乘的计算速度更快
+	uint8_t *Postion_Tmp;
+  Postion_Tmp = (uint8_t *)&radian;
+	uint8_t Data[8];
+	Data[0] = *(Postion_Tmp);
+	Data[1] = *(Postion_Tmp + 1);
+	Data[2] = *(Postion_Tmp + 2);
+	Data[3] = *(Postion_Tmp + 3);
+	
+	float velocity;
+	velocity = speed*0.0174533;
+	uint8_t *Velocity_Tmp;
+	Velocity_Tmp = (uint8_t *)&velocity;
+	Data[4] = *(Velocity_Tmp);
+	Data[5] = *(Velocity_Tmp + 1);
+	Data[6] = *(Velocity_Tmp + 2);
+	Data[7] = *(Velocity_Tmp + 3);
+	CAN_SendData(CAN_NUM,G6220_POZ+G6220_CAN_ID,(uint8_t*)Data,8);//当输出为位置速度模式时,id要加0x100
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 G6220速度模式
+//  @return     		 /
+//  @param					 speed			速度,采用的也是角度制，速度最大为2300度每秒
+//  @Sample usage:   G6220_Speed(1800);//以180度每秒的速度持续转动
+//-------------------------------------------------------------------------------------------------------------------
+void G6220_Speed(uint16_t speed)
+{
+	float velocity;
+	velocity = speed*0.0174533;
+	uint8_t *Velocity_Tmp;
+	uint8_t Data[4];
+	Velocity_Tmp = (uint8_t *)&velocity;
+	Data[0] = *(Velocity_Tmp);
+	Data[1] = *(Velocity_Tmp + 1);
+	Data[2] = *(Velocity_Tmp + 2);
+	Data[3] = *(Velocity_Tmp + 3);
+	CAN_SendData(CAN_NUM,G6220_SPEED+G6220_CAN_ID,(uint8_t*)Data,4);//当输出为位置速度模式时,id要加0x200
+}
+
+
+
+//-------------------------------------------------------------------------------------------------------------------
+//以下为张大头步进电机控制函数
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 步进电机初始化
+//  @return     		 /
+//  @Sample usage:   
+//-------------------------------------------------------------------------------------------------------------------
+void TowerMotor_Init(void)
+{
+	Motor_Homing(MOTOR35_CAN_ID);
+  Motor_Homing(MOTOR28_CAN_ID);
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 步进电机多圈无限位回零
+//  @return     		 /
+//  @param					 ID   步进电机的canID
+//  @Sample usage:   Motor_Homing(0x300)//canID为0x300的步进电机进行多圈无限位回零
+//-------------------------------------------------------------------------------------------------------------------
+void Motor_Homing(uint16_t ID)
+{
+	uint8_t Data[4]={0x9A,0x02,0x00,0x6B};
+	CAN_SendEXData(CAN_NUM,ID,(uint8_t*)Data,4);
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 步进电机绝对位置模式
+//  @return     		 /
+//  @param					 dir    方向，表示相对于零点位置的正负
+//  @param					 ID			步进电机的canID
+//  @param					 step   脉冲数，范围是0-uint32，一个脉冲为1.8度
+//  @param					 speed	速度，单位为rpm，范围为0-uint16
+//  @Sample usage:   Motor_AbsPosition(0,0x300,1000,1000);//以1000转每分钟的速度控制canID为0x300的步进电机朝0方向转动1800度
+//-------------------------------------------------------------------------------------------------------------------
+void Motor_AbsPosition(uint8_t dir,uint16_t ID,uint32_t step,uint16_t speed)
+{
+	uint8_t Data[16]={0xFD,0x00,0xAF,0xFF,0xAF,0xFF,0x00,0x00,0xFD,0x00,0x00,0x00,0x00,0x01,0x00,0x6B};
+	
+	Data[1]=dir >> 0;
+	
+	Data[6]=(speed >> 8); 
+	Data[7]=(speed >> 0); 
+	
+	Data[9]=(step >> 24); 
+	Data[10]=(step >> 16); 
+	Data[11]=(step >> 8); 
+	Data[12]=(step >> 0);
+	
+	Can_SendCmd(ID,(uint8_t*)Data,16);
+}
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 35步进电机绝对位置模式（塔吊Z轴高度）
+//  @return     		 /
+//  @param					 h      高度，单位为0.1mm，表示z轴高度
+//  @param					 speed	速度，单位为mm，表示z轴移动的速度
+//  @Sample usage:   Motor35_AbsPosition(1000,50);//以50mm每秒的速度移动至100.0高度处
+//-------------------------------------------------------------------------------------------------------------------
+void Motor35_AbsPosition(uint32_t h,uint16_t speed)
+{
+	uint32_t z = 0;
+	if(h>= claw_h_max)
+		z = 0;
+	else
+	  z = claw_h_max - h;
+	z = z > 1600 ? 1600 : z;
+	Motor_AbsPosition(MOTOR35_Dir,MOTOR35_CAN_ID,z*MOTOR35_Reduction,speed*30);
+}
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 28步进电机绝对位置模式（塔吊吊臂长度）
+//  @return     		 /
+//  @param					 y      长度，单位为0.1mm，表示吊臂伸长的长度
+//  @param					 speed	速度，单位为mm，表示吊臂移动的速度
+//  @Sample usage:   Motor28_AbsPosition(1000,50);//以50mm每秒的速度将工具头移动至100.0mm位置
+//-------------------------------------------------------------------------------------------------------------------
+void Motor28_AbsPosition(uint32_t r,uint16_t speed)
+{
+	r = r < claw_r_min ? claw_r_min : r;
+	uint32_t y = r - claw_r_min;
+	y = y > 1660 ? 1660 : y;
+	Motor_AbsPosition(MOTOR28_Dir,MOTOR28_CAN_ID,y*MOTOR28_Reduction,speed*0.53);
+}
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 can反馈帧处理
+//  @return     		 /
+//  @param					 ExtId  扩展帧
+//  @param					 StdId	标准帧
+//  @param					 rxBuf	can数据帧
+//  @Sample usage:   Response_Handle(ExtId,StdId,rxBuf);
+//-------------------------------------------------------------------------------------------------------------------
+void Response_Handle(uint32_t ExtId,uint32_t StdId, uint8_t *rxBuf)
+{
+	if(ExtId==0x300)
+	{
+		flag.MOTOR35_flag=1;
+	}
+	else if(ExtId==0x400)
+	{
+		flag.MOTOR28_flag=1;
+	}
+	else if(StdId==0)
+	{
+		
+		flag.G6220_flag=1;
+	}
+	
+}
+
+//static float uint_to_float(int X_int, float X_min, float X_max,int Bits){
+//float span = X_max - X_min;
+//float offset = X_min;
+//return ((float)X_int)*span/((float)((1<<Bits)-1)) + offset;
+//}
+
+//typedef struct
+//{
+//uint16_t ID;
+//Motor_CANFrameInfo_typedef CANFrameInfo;
+//DM_Motor_Data_Typedef Data;
+//}DM_Motor_Info_Typedef;
+
+
+//void DM_Motor_Info_Update(uint8_t *Data,DM_Motor_Info_Typedef *DM_Motor)
+//{
+//DM_Motor->ID = Data[0] & 0x0F;
+//DM_Motor->Data.State = Data[0]>>4;
+//DM_Motor->Data.P_int = (uint16_t)(((Data[1]) <<8) | (Data[2]));
+//DM_Motor->Data.V_int = (uint16_t)((Data[3]) <<4) | ((Data[4])>>4);
+//DM_Motor->Data.T_int = (uint16_t)((Data[4]&0xF) <<8) | ((uint16_t)(Data[5]));
+//DM_Motor->Data.Position=uint_to_float(DM_Motor->Data.P_int,-P_MAX,P_MAX,16);
+//DM_Motor->Data.Velocity=uint_to_float(DM_Motor->Data.V_int,-V_MAX,V_MAX,12);
+//DM_Motor->Data.Torque= uint_to_float(DM_Motor->Data.T_int,-T_MAX,T_MAX,12);
+//DM_Motor->Data.Temperature_MOS = (float)(Data[6]);
+//DM_Motor->Data.Temperature_Rotor = (float)(Data[7]);
+//}

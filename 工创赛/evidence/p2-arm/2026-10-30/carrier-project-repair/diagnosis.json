@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-30",
+  "classification": "E project integration repair",
+  "project_sha256_before": "982acd67d44bb3061d0ed1250d705f3d6f1b6b3af2a7c81609cc541b13fd6684",
+  "equals_pre_carrier_project": true,
+  "validated_project_sha256": "116f34ba5ad60dd72e8a6c8b4696b02249468d1a9369a4ee6c50969422e6450f",
+  "carrier_module_and_main_match_previous_install": {
+    "HARDWARE/CARRIER/carrier.c": true,
+    "HARDWARE/CARRIER/carrier.h": true,
+    "HARDWARE/CARRIER/carrier_config.h": true,
+    "HARDWARE/CARRIER/carrier_pwm.c": true,
+    "HARDWARE/CARRIER/carrier_pwm.h": true,
+    "USER/main.c": true
+  },
+  "user_attachment_sha256": "899ae78516d753b39b7d5995ae1e9b80e1df9707fb70f843e44d0d0bd8cfa0c7",
+  "user_main_equals_actual_after_decoding_and_newline_normalization": true,
+  "missing_project_entries": [
+    "C compiler include HARDWARE/CARRIER",
+    "five module references including carrier.c and carrier_pwm.c"
+  ],
+  "how_project_was_reverted": "unknown; stale IDE save is a possibility, not proven",
+  "planned_only_write": "gongxun-f407.uvprojx",
+  "source_changes": false,
+  "flash_performed": false,
+  "hardware_commands_sent": false
+}

@@ -21,7 +21,6 @@ unit=r'''
 uint32_t g_dm_jog_request,g_dm_jog_state,g_dm_jog_result,g_dm_posvel_holding,g_dm_point_enable,g_dm_can2_read_cycle,g_dm_can2_feedback_tick;
 float g_dm_posvel_speed_deg_s,g_dm_pick_target_deg,g_dm_place_target_deg,g_dm_can2_logical_position_deg;
 volatile uint32_t g_dm_integrated_owner;
-volatile float g_startup_extension_zero_deg=0.0f;
 static uint32_t tick=100,holding=1,moves,enable_calls,stop_calls,grips,pwm_calls,io_fail;
 static uint8_t last_move[15],flags=3;
 static float position5,position6,held_extension,last_grip;
@@ -78,7 +77,7 @@ int main(void){VehicleArmRow r;
 (O/'arm-unit.c').write_text(unit,encoding='utf-8')
 reports=[]
 for offline in [0,1]:
- exe=O/f'arm-unit-{offline}.exe';cmd=['C:/mingw/mingw64/bin/gcc.exe','-std=c99',f'-DAPP_MOTOR_OFFLINE_ONLY={offline}',
+ exe=O/f'arm-unit-{offline}.exe';cmd=['C:/mingw/mingw64/bin/gcc.exe','-DVEHICLE_STARTUP_GROUP_BEFORE_ROUTE=0','-DVEHICLE_STARTUP_GROUP_ONLY=0','-DVEHICLE_EXTENSION_HOME_ONLY=0','-DVEHICLE_DM_STARTUP_ONLY=0','-std=c99',f'-DAPP_MOTOR_OFFLINE_ONLY={offline}',
  '-I'+str(D),'-I'+str(S/'CHASSIS/USER'),'-I'+str(S/'HARDWARE/GRIPPER'),'-I'+str(S/'HARDWARE/CARRIER'),str(O/'arm-unit.c'),'-lm','-o',str(exe)]
  p=subprocess.run(cmd,capture_output=True,text=True,errors='replace');assert p.returncode==0,p.stderr[-5000:]
  p=subprocess.run([str(exe)],capture_output=True,text=True);print(offline,p.stdout,flush=True);assert p.returncode==0,p.stdout

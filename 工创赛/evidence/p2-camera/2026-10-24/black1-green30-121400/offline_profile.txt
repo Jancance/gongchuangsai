@@ -1,0 +1,31 @@
+Windows offline profile: 6 full-frame calls on 2 saved images, no priors; not Orange Pi performance or startup-latency proof.
+         33399 function calls (33143 primitive calls) in 0.600 seconds
+
+   Ordered by: cumulative time
+   List reduced from 501 to 22 due to restriction <22>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        6    0.046    0.008    0.600    0.100 C:\Users\Tenderness\Documents\ChatGPT\工创赛\output\p2_vision_generic120_black1_20261024\vision_app\code\project_detector.py:566(analyze)
+        6    0.001    0.000    0.130    0.022 C:\Users\Tenderness\Documents\ChatGPT\工创赛\output\p2_vision_generic120_black1_20261024\vision_app\code\project_detector.py:574(<dictcomp>)
+     36/1    0.001    0.000    0.129    0.129 <frozen importlib._bootstrap>:1165(_find_and_load)
+     36/1    0.000    0.000    0.129    0.129 <frozen importlib._bootstrap>:1120(_find_and_load_unlocked)
+       36    0.001    0.000    0.129    0.004 C:\Users\Tenderness\Documents\ChatGPT\工创赛\output\p2_vision_generic120_black1_20261024\vision_app\code\颜色标定.py:286(_mask_from_hsv)
+     35/1    0.000    0.000    0.127    0.127 <frozen importlib._bootstrap>:666(_load_unlocked)
+     23/1    0.000    0.000    0.127    0.127 <frozen importlib._bootstrap_external>:934(exec_module)
+       42    0.127    0.003    0.127    0.003 {inRange}
+     80/2    0.000    0.000    0.126    0.063 <frozen importlib._bootstrap>:233(_call_with_frames_removed)
+     23/1    0.000    0.000    0.126    0.126 {built-in method builtins.exec}
+        1    0.000    0.000    0.126    0.126 C:\Users\Tenderness\Documents\ChatGPT\工创赛\output\p2_vision_generic120_black1_20261024\vision_app\code\颜色标定.py:1(<module>)
+        6    0.005    0.001    0.081    0.013 C:\Users\Tenderness\Documents\ChatGPT\工创赛\output\p2_vision_generic120_black1_20261024\vision_app\code\project_detector.py:357(chromatic_fallback)
+        1    0.000    0.000    0.080    0.080 C:\Users\Tenderness\Documents\ChatGPT\工创赛\output\p2_vision_generic120_black1_20261024\vision_app\code\project_camera.py:1(<module>)
+       39    0.079    0.002    0.079    0.002 {findContours}
+      154    0.061    0.000    0.061    0.000 {built-in method nt.stat}
+       36    0.001    0.000    0.061    0.002 <frozen importlib._bootstrap>:1054(_find_spec)
+      150    0.000    0.000    0.060    0.000 <frozen importlib._bootstrap_external>:140(_path_stat)
+       29    0.000    0.000    0.060    0.002 <frozen importlib._bootstrap_external>:1499(find_spec)
+       29    0.000    0.000    0.060    0.002 <frozen importlib._bootstrap_external>:1467(_get_spec)
+       95    0.002    0.000    0.059    0.001 <frozen importlib._bootstrap_external>:1607(find_spec)
+        6    0.022    0.004    0.050    0.008 C:\Users\Tenderness\Documents\ChatGPT\工创赛\output\p2_vision_generic120_black1_20261024\vision_app\code\project_detector.py:266(black_edge_recovery)
+        1    0.000    0.000    0.045    0.045 C:\Users\Tenderness\AppData\Local\Programs\Python\Python311\Lib\multiprocessing\__init__.py:1(<module>)
+
+

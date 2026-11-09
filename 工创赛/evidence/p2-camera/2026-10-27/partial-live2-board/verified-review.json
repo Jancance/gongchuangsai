@@ -1,0 +1,133 @@
+{
+  "reviewed_on": "2026-10-28",
+  "archive": "20261027-220732-139248.zip",
+  "archive_bytes": 5684323,
+  "archive_sha256": "139941dc3a1a7019b71bba4a185442d0619990bb7afe9a08d06a9773eb8f5694",
+  "archive_crc_pass": true,
+  "member_sha256": {
+    "camera-events.json": "57f161a7c21ce2a1fab9fedafb43386d09e62f70dda4658f8326caad843062d8",
+    "display-events.json": "ff309cbb49f4c332d541f18bf90886662f1f1d9fef44fd5eed7d3ecde75f8a47",
+    "first-candidate-overlay.png": "df93ae32a23992b6979159d644cc015e61969d73483e44c63facbcc3b6cee982",
+    "first-candidate-raw.png": "d4932459f8d51801f70e1413d8c29929c9217d9324d6239e603acec3c14476bc",
+    "first-candidate.json": "39c194a497d163daf6af2a28ea1fa56f90444577fd3b49d7ab91818a6a7d3e10",
+    "first-frame-overlay.png": "aa46876a1377159bfd306ee641065e97eaa64505b0dc1f0a1186dc6d3f38ae51",
+    "first-frame-raw.png": "5ae823f6a656b416ae568715735237831cfd4fb31b5d6c4917789d1abd353aa9",
+    "first-frame.json": "dd11808eda82b520f77a348fb9ef83942864de184a99f69c9c0b077b504ba6a9",
+    "first-stale-overlay.png": "aa46876a1377159bfd306ee641065e97eaa64505b0dc1f0a1186dc6d3f38ae51",
+    "first-stale-raw.png": "5ae823f6a656b416ae568715735237831cfd4fb31b5d6c4917789d1abd353aa9",
+    "first-stale.json": "dd11808eda82b520f77a348fb9ef83942864de184a99f69c9c0b077b504ba6a9",
+    "first-window-stable-overlay.png": "4dd3df9fbbe4ae3b7abed9eb20a5a243473fc21c79bfe6f45297f2f3f0b90a22",
+    "first-window-stable-raw.png": "ede05160c5dc58faac3c4289c680267e1261bdad7ed3cf099656e39345682a1a",
+    "first-window-stable.json": "ce760c4864472171fa8363c492035944bd99d599942dcd419a07098aefcd0db7",
+    "input-events.json": "e79597f1586aee1cde766d96c50fb06d497896769fee6d6ec31650907656068a",
+    "observations.jsonl": "aa48d9f94a39406f6d30b6f836093f02ee2a7ad5a1a0c34303fa066abd2737dc",
+    "run.json": "e0036907eb8dacc908613fe3e0cffcb877216372ced18a2d61ef6189a52c8dcc",
+    "source.json": "613ba7469dfe0609fc4d82e5d573f52ece405c7a768074da3fd9adb02f5e151e"
+  },
+  "source_manifest_match": true,
+  "source_files_verified": 107,
+  "frozen_gate_checkpoint_replay_pass": true,
+  "snapshot_frame_indices": {
+    "first-frame": 1,
+    "first-candidate": 2,
+    "first-window-stable": 7,
+    "first-stale": 1
+  },
+  "frames": 76,
+  "states": {
+    "STALE": 5,
+    "CANDIDATE": 19,
+    "WINDOW_STABLE": 52
+  },
+  "sampling_span_s": 10.006210858999111,
+  "quality_accepted": 76,
+  "fresh_at_detection": 76,
+  "fresh_at_display_submission": 71,
+  "display_expiry_events": 71,
+  "input_decisions": {
+    "SKIP_INPUT_AGE_OVER_12MS": 61,
+    "PROCESS": 77
+  },
+  "selected_input_skip_fraction": 0.4420289855072464,
+  "processed_not_displayed_at_shutdown": [
+    {
+      "host_read_time": 15425.635632168,
+      "selection_time": 15425.638394496,
+      "input_age_ms": 2.7623280002444517,
+      "capture_sequence": 298,
+      "decision": "PROCESS",
+      "detector_finished": 15425.746038939,
+      "processing_ms": 107.60506800033909,
+      "candidate_accepted": true
+    }
+  ],
+  "durations_ms": {
+    "detector_start_age_ms": {
+      "min": 1.5116829999897163,
+      "p50": 3.90243299989379,
+      "p95": 10.017119250278483,
+      "max": 11.868880001202342
+    },
+    "detector_result_age_ms": {
+      "min": 105.0396129994624,
+      "p50": 120.57292949975817,
+      "p95": 141.542891750305,
+      "max": 144.0939839994826
+    },
+    "result_queue_wait_ms": {
+      "min": 0.09128999954555184,
+      "p50": 1.9165089997841278,
+      "p95": 3.1594245006090205,
+      "max": 3.79801800045243
+    },
+    "preview_render_ms": {
+      "min": 3.763601998798549,
+      "p50": 5.240138999397459,
+      "p95": 18.90237325005728,
+      "max": 24.773741000899463
+    },
+    "imshow_ms": {
+      "min": 0.4698669999925187,
+      "p50": 0.9094009992622887,
+      "p95": 2.695026500532549,
+      "max": 4.450757000086014
+    },
+    "display_submission_age_ms": {
+      "min": 113.80767099944933,
+      "p50": 129.7200220005834,
+      "p95": 153.7212247503703,
+      "max": 162.33100399949763
+    },
+    "algorithm_ms": {
+      "min": 103.06447999937518,
+      "p50": 115.53680750057538,
+      "p95": 136.43589574940052,
+      "max": 141.2106159987161
+    },
+    "observation_gap_ms": {
+      "min": 95.82864600088215,
+      "p50": 133.29550300113624,
+      "p95": 163.57263629997757,
+      "max": 178.39251999976113
+    },
+    "fresh_output_remaining_budget_ms": {
+      "min": 0.1022410000587115,
+      "p50": 21.4355419997446,
+      "p95": 33.149694499479665,
+      "max": 36.19232900055067
+    }
+  },
+  "maximum_window_span_ms": 280.9509660000913,
+  "conclusion": "Latency improved and short fresh pixel windows observed; continuous output remains unaccepted.",
+  "limits": [
+    "Selected-input skips exclude frames never selected from the latest-frame slot; not a sensor frame-loss rate.",
+    "Host read timestamps and imshow return do not measure exposure-to-result or monitor presentation.",
+    "Quality acceptance and short-window repeatability do not establish independent center ground truth or physical stillness.",
+    "Snapshots cover four event types, not all 76 input images.",
+    "Many active outputs expire between observations; 52 WINDOW_STABLE records are not uninterrupted availability."
+  ],
+  "metric_valid": false,
+  "motion_allowed": false,
+  "continuous_output_accepted": false,
+  "hardware_acceptance": false
+}

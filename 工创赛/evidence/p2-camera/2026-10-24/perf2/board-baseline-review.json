@@ -1,0 +1,51 @@
+{
+  "source": "evidence/black1-saved-profile-121400.json",
+  "report_sha256": "f4199a6e1f87307840631ed23178547adc46f29ddbfbf0c030df31f88d110a36",
+  "diagnostic_sha_matches_local": true,
+  "modules_and_configs_match": true,
+  "opencv": "4.5.4",
+  "threads": 8,
+  "preloaded": true,
+  "main_import_ms": 521.1203580001893,
+  "cases": [
+    {
+      "image": "first-frame-raw.png",
+      "case": "no_history",
+      "prior_count": 0,
+      "median_ms": 105.71467150020908,
+      "max_ms": 124.4856310004252,
+      "always_single_green": true
+    },
+    {
+      "image": "first-frame-raw.png",
+      "case": "saved_previous_tracks",
+      "prior_count": 0,
+      "median_ms": 86.57344599987482,
+      "max_ms": 115.74683999970148,
+      "always_single_green": true
+    },
+    {
+      "image": "sample-06-raw.png",
+      "case": "no_history",
+      "prior_count": 0,
+      "median_ms": 64.13176800015208,
+      "max_ms": 84.62703599980159,
+      "always_single_green": true
+    },
+    {
+      "image": "sample-06-raw.png",
+      "case": "saved_previous_tracks",
+      "prior_count": 1,
+      "median_ms": 64.96956850014612,
+      "max_ms": 75.54787499975646,
+      "always_single_green": true
+    }
+  ],
+  "profile_scope": "4 separately profiled detector calls; cvtColor 0.034/0.338 s inclusive, full/crop BGR conversions combined, not all removable",
+  "limitations": [
+    "first image previous-track case has zero priors; timing difference is not evidence of history speedup",
+    "main import before capture is not part of captured frame age",
+    "offline maximum124.486ms does not explain live171.824ms by itself",
+    "V-only candidate rejected in development because blue path needs full HSV; final candidate reuses full HSV"
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "crc": "passed",
+  "archive_sha256": "1330a92cc24da04bcccc57bbf771d59219fb6bf2c7bca45a5d36b9e87fce57ba",
+  "frames": 385,
+  "contiguous_indices": true,
+  "strict_timestamp_increase": true,
+  "span_s": 29.931261684000674,
+  "states": {
+    "FOLLOWING_PIXEL": 385
+  },
+  "module_matches_black1": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true
+  },
+  "source_configs_match_black1": {
+    "camera_processing.json": {
+      "source_sha_matches_package": true,
+      "saved_json_matches_package": true
+    },
+    "material_color_thresholds.json": {
+      "source_sha_matches_package": true,
+      "saved_json_matches_package": true
+    },
+    "project_profile.json": {
+      "source_sha_matches_package": true,
+      "saved_json_matches_package": true
+    }
+  },
+  "target_combinations": {
+    "black+green": 385
+  },
+  "ids": {
+    "black": [
+      "T001"
+    ],
+    "green": [
+      "T002"
+    ]
+  },
+  "black_sources": {
+    "combined_silhouette": 385
+  },
+  "region_reasons": {
+    "DOMINANT_COLOR_EVIDENCE": 770,
+    "SHAPE_UNCERTAIN": 132
+  },
+  "geometry_reference_changed_frames": [],
+  "identity_continuity_unverified_frames": [],
+  "retired_ids_count": 0,
+  "detector_call_ms": {
+    "median": 57.86356400039949,
+    "p95": 72.60758420034108,
+    "max": 100.62336999999388
+  },
+  "result_host_age_ms": {
+    "median": 76.90914300019358,
+    "p95": 104.72082340020279,
+    "max": 125.12829400020564
+  },
+  "max_read_gap_ms": 125.27675000001182,
+  "all_motion_disabled": true,
+  "exposure_readback": {
+    "gain": 80,
+    "white_balance_temperature_auto": 0,
+    "white_balance_temperature": 4600,
+    "exposure_auto": 1,
+    "exposure_absolute": 83
+  },
+  "console_warning_lines": [],
+  "console_completed": true,
+  "run_summary": {
+    "frames": 385,
+    "states": {
+      "FOLLOWING_PIXEL": 385
+    },
+    "transition_counts": {
+      "sample-01": 1,
+      "first-frame": 1,
+      "first-other-color-candidate": 385,
+      "first-green-with-black": 385,
+      "first-green-visible": 1,
+      "sample-02": 1,
+      "sample-03": 1,
+      "sample-04": 1,
+      "sample-05": 1,
+      "sample-06": 1
+    },
+    "saved_events": [
+      "first-frame",
+      "first-green-visible",
+      "first-green-with-black",
+      "first-other-color-candidate",
+      "sample-01",
+      "sample-02",
+      "sample-03",
+      "sample-04",
+      "sample-05",
+      "sample-06"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "green",
+    "longest_watched_loss_s": 0.0,
+    "periodic_samples": {
+      "interval_s": 5.0,
+      "limit": 12,
+      "saved": 6
+    }
+  },
+  "sample_frames": {
+    "sample-01.json": 1,
+    "sample-02.json": 65,
+    "sample-03.json": 129,
+    "sample-04.json": 190,
+    "sample-05.json": 257,
+    "sample-06.json": 324
+  },
+  "images_visually_inspected": [
+    "first-frame-raw.png",
+    "sample-06-raw.png"
+  ],
+  "visual_observation": "Black object on left printed ring, green object on middle ring, right ring empty; similar scene in two inspected images. Not all-frame visual inspection.",
+  "acceptance_scope": "Current 29.93s run: both targets continuously output without stale rejection. New black recovery branch and printed-ring rejection branch not exercised; no metric or motion acceptance.",
+  "next_gate": "Remove only black object, keep green/camera/light/settings unchanged; 30s black1 negative-scene evidence."
+}

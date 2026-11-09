@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-01",
+  "classification": "E: physical fixed-source preparation after user firmware download",
+  "user_flash_confirmation": "烧录进去了进入下一步",
+  "binary_independently_read_back": false,
+  "current_material_location": "车载1号槽内",
+  "smoothness_physically_accepted": false,
+  "next_single_action": "Keep arm stationary/point_enable0/all motion requests0. Current material is in vehicle slot1, confirmed by user; do not repeat accepted in-place grip. Prepare the field source tray at planned pickup position with one standard material, report its direction relative to arm and whether path is clear. Teach actual source-above/contact geometry next; historical177.833679 does not specify the new setup and must not be commanded blindly. No motor movement authorized by this preparation step.",
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "待技术答疑确认; unchanged",
+  "new_firmware_change": false,
+  "assistant_hardware_command_sent": false
+}

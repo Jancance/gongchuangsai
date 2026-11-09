@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-29",
+  "classification": "E 用户工程决定，非竞赛规则",
+  "user_text": "机械臂抓取到物料就只用向着顺时针方向旋转到再无盘即可，设零点的话到时候会让机械臂朝着左侧，到时候逆时针旋转到现在的这种位置去抓取物料，范围大概就在180以内",
+  "interpreted_destination": "车载载物盘",
+  "current_pose": "车身右侧外伸取料姿态",
+  "selected_zero_pose": "机械臂朝车身左侧",
+  "outbound_to_pick": "从左侧基准逆时针转至右侧取料位",
+  "loaded_to_carrier": "抓取后顺时针转至载物盘放料位",
+  "estimated_sweep_deg": 180,
+  "estimated_sweep_is_verified_limit": false,
+  "pick_exact_angle_verified": false,
+  "deposit_exact_angle_verified": false,
+  "deposit_equals_zero_assumed": false,
+  "software_reference_proposal": "先读左侧实体基准的原始反馈角，以软件偏置映射为0度；不自动执行电机内部FE保存零点",
+  "counterclockwise_positive_from_prior_test": true,
+  "full_sweep_clearance_verified": false,
+  "startup_envelope_verified": false,
+  "power_cycle_recovery_verified": false,
+  "screenshot": "arm-right-pick-layout.jpg",
+  "screenshot_sha256": "7d2c3681d81698017df3ca56ee98a8e12b5f880cc8bdc87a08818333b6e62b57",
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q_unchanged": true,
+  "next": "下一单项：确定左侧实体零位，取得该姿态的新鲜反馈角，再建立软件角度偏置；不以右侧当前角或估算180度替代实测"
+}

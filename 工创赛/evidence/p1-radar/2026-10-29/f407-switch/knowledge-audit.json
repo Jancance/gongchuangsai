@@ -1,0 +1,77 @@
+{
+  "conflicts": [],
+  "covered": [
+    {
+      "category": "depth-stereo",
+      "id": "task.pointcloud",
+      "occurrences": [
+        {
+          "alias": "pointcloud",
+          "file": "F407VET6/radar_example/protocol/radar_client.c",
+          "line": 1326
+        },
+        {
+          "alias": "pointcloud",
+          "file": "F407VET6/radar_example/protocol/radar_client.h",
+          "line": 288
+        }
+      ]
+    },
+    {
+      "category": "wireless",
+      "id": "robot.serial-frame",
+      "occurrences": [
+        {
+          "alias": "crc16",
+          "file": "F407VET6/README.md",
+          "line": 36
+        },
+        {
+          "alias": "crc16",
+          "file": "F407VET6/radar_example/protocol/link_protocol.c",
+          "line": 16
+        },
+        {
+          "alias": "crc16",
+          "file": "F407VET6/radar_example/protocol/link_protocol.h",
+          "line": 66
+        },
+        {
+          "alias": "sequence",
+          "file": "F407VET6/radar_example/protocol/radar_client.c",
+          "line": 56
+        },
+        {
+          "alias": "sequence",
+          "file": "F407VET6/radar_example/protocol/radar_client.h",
+          "line": 131
+        }
+      ]
+    }
+  ],
+  "gaps": [],
+  "input": {
+    "files_scanned": 12,
+    "files_skipped": [],
+    "path": "D:\\Codex\\工创赛\\evidence\\p1-radar\\2026-10-29\\f407-switch\\reference"
+  },
+  "maintenance_note": "Do not auto-write these candidates. Classify evidence, remove sensitive data, deduplicate, add regression tests, then promote only reusable knowledge.",
+  "project_id": "radar-f407-source-review",
+  "project_specific": [],
+  "sensitive_candidates": [],
+  "skill": {
+    "knowledge_files": [
+      "SKILL.md",
+      "knowledge-index.md",
+      "opencv-playbook.md",
+      "platform-deployment.md",
+      "puzzle-robot-project.md",
+      "reusable-patterns-and-learning.md"
+    ],
+    "root": "D:\\Codex\\home\\skills\\opencv-pzq"
+  },
+  "status": "pass",
+  "suggested_tests": [],
+  "tool": "audit_knowledge",
+  "version": "1.0.0"
+}

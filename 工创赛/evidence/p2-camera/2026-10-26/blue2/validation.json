@@ -1,0 +1,70 @@
+{
+  "motion_allowed": false,
+  "hardware_acceptance": false,
+  "changed_results": [
+    {
+      "file": "rejection-audit/first-nonstale-blue-missing-raw.png",
+      "history": false,
+      "before": {
+        "lightblue": 1
+      },
+      "after": {
+        "lightblue": 1,
+        "blue": 1
+      },
+      "added": [
+        {
+          "bbox_px": [
+            352,
+            524,
+            244,
+            140
+          ],
+          "area_px2": 26233.5,
+          "label": "blue",
+          "reason": "CURRENT_PROJECTED_BLUE_SILHOUETTE",
+          "proposal_source": "projected_blue_component",
+          "center_reference": "current_blue_silhouette_not_calibrated_grasp_point",
+          "circularity": 0.6373280052716538,
+          "solidity": 0.9498524539710701,
+          "usable_fraction": 1.0,
+          "color_fractions": {
+            "red": 0.0,
+            "yellow": 0.0,
+            "blue": 0.996005600395322,
+            "green": 0.0,
+            "black": 0.000205896886839071,
+            "lightblue": 0.003912040849942349
+          },
+          "dark_fraction": 0.000205896886839071,
+          "silhouette_center_px": [
+            478.9653051759518,
+            594.7161707994231
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": {
+    "all_images_disabled_full_results_exact": true,
+    "all_images_no_known_color_loss": true,
+    "six_color_synthetic_and_unconfigured_overlays_exact": true,
+    "150ms_input_gate": true,
+    "unit": true,
+    "check": true,
+    "offline-follow": true,
+    "offline-turntable": true,
+    "offline-material": true,
+    "offline-ring": true,
+    "offline-stack": true,
+    "offline-measurement": true,
+    "help-color": true,
+    "help-turntable-settings": true,
+    "help-pickup-regions": true,
+    "help-stack-lines": true,
+    "only_detector_and_candidate_config_changed": true,
+    "zip_crc_and_members_match": true
+  },
+  "unique_real_images": 214,
+  "zip_sha256": "39186bd4145a0b8192c3e5261d86addb76ebbaa6877b2fbccef25680b8c5d011"
+}

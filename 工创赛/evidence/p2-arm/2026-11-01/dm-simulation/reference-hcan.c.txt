@@ -1,0 +1,147 @@
+#include "hcan.h"
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 CAN 标识符过滤器复位成默认配置
+//  @return     		 /
+//  @param      		 sFilterConfig   CAN滤波器结构体
+//  @Sample usage:   CAN_Filter_ParamsInit(&sFilterConfig);
+//-------------------------------------------------------------------------------------------------------------------
+static void CAN_Filter_ParamsInit(CAN_FilterTypeDef *sFilterConfig)
+{
+	sFilterConfig->FilterIdHigh = 0;						
+	sFilterConfig->FilterIdLow = 0;							
+	sFilterConfig->FilterMaskIdHigh = 0;					// 不过滤
+	sFilterConfig->FilterMaskIdLow = 0;						// 不过滤
+	sFilterConfig->FilterFIFOAssignment = CAN_FILTER_FIFO0;	// 过滤器关联到FIFO0
+	sFilterConfig->FilterBank = 0;							// 设置过滤器0
+	sFilterConfig->FilterMode = CAN_FILTERMODE_IDMASK;		// 标识符屏蔽模式
+	sFilterConfig->FilterScale = CAN_FILTERSCALE_32BIT;		// 32位宽
+	sFilterConfig->FilterActivation = ENABLE;				// 激活滤波器
+	sFilterConfig->SlaveStartFilterBank = 0;
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 CAN 接收中断回调函数
+//  @return     		 /
+//  @param      		 hcan   CAN通道号
+//  @Sample usage:   CAN_Rx_Callback(&hcan1);
+//-------------------------------------------------------------------------------------------------------------------
+void CAN_Rx_Callback(CAN_HandleTypeDef *hcan)
+{
+
+}
+
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 CAN初始化
+//  @return     		 /
+//  @param      		 hcan   CAN通道号
+//  @Sample usage:   CAN_Start(&hcan1);//初始化CAN1
+//-------------------------------------------------------------------------------------------------------------------
+void CAN_Start(CAN_HandleTypeDef *hcan)
+{
+	CAN_FilterTypeDef sFilterConfig;
+	
+	// 配置CAN标识符滤波器
+	CAN_Filter_ParamsInit(&sFilterConfig);
+	HAL_CAN_ConfigFilter(hcan, &sFilterConfig);
+	HAL_CAN_ActivateNotification(hcan ,CAN_IT_RX_FIFO0_MSG_PENDING);
+	HAL_CAN_Start(hcan);
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 发送标准ID的数据帧
+//  @return     		 /
+//  @param      		 hcan   CAN通道号
+//  @param      		 ID     数据帧ID
+//  @param					 pData  数据指针
+//  @param					 Len    字节数 0~8
+//  @Sample usage:   CAN_SendData(&hcan1,0x01,(uint8_t*)data,len);//data为16进制数组
+//-------------------------------------------------------------------------------------------------------------------
+void CAN_SendData(CAN_HandleTypeDef* hcan,uint16_t ID,uint8_t *pData,uint16_t Len)
+{
+  static CAN_TxHeaderTypeDef   Tx_Header;
+	uint32_t txMailBox;
+	Tx_Header.StdId=ID;
+	Tx_Header.ExtId=0;
+	Tx_Header.IDE=0;
+	Tx_Header.RTR=0;
+	Tx_Header.DLC=Len;
+
+	HAL_CAN_AddTxMessage(hcan, &Tx_Header, pData, &txMailBox);
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 发送扩展ID的数据帧
+//  @return     		 /
+//  @param      		 hcan   CAN通道号
+//  @param      		 ID     数据帧ID
+//  @param					 pData  数据指针
+//  @param					 Len    字节数 0~8
+//  @Sample usage:   CAN_SendData(&hcan1,0x01,(uint8_t*)data,len);//data为16进制数组
+//-------------------------------------------------------------------------------------------------------------------
+void CAN_SendEXData(CAN_HandleTypeDef* hcan,uint16_t ID,uint8_t *pData,uint16_t Len)
+{
+  static CAN_TxHeaderTypeDef   Tx_Header;
+	uint32_t txMailBox;
+	Tx_Header.StdId=0;
+	Tx_Header.ExtId=ID;
+	Tx_Header.IDE=CAN_ID_EXT;
+	Tx_Header.RTR=0;
+	Tx_Header.DLC=Len;
+
+	HAL_CAN_AddTxMessage(hcan, &Tx_Header, pData, &txMailBox);
+}
+
+/**
+	* @brief   CAN发送大于八位的数据
+	* @param   无
+	* @retval  无
+	*/
+
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      		 CAN发送大于八位的数据
+//  @return     		 /
+//  @param					 ID				ID
+//  @param					 cmd			数据指针
+//  @param					 len			数据长度
+//  @Sample usage:   
+//-------------------------------------------------------------------------------------------------------------------
+
+void Can_SendCmd(uint16_t ID,uint8_t *cmd, uint8_t len)
+{
+	 uint8_t i = 0 , n = 0 , packNum = 0,packLast = 0;
+	 uint8_t Data[8];
+	// 发送数据
+		// 小于8字节命令
+		if(len < 8)
+		{
+			for(i=0; i < len; i++) 
+			{ 
+			Data[i]=cmd[i];
+			} 
+			CAN_SendEXData(CAN_NUM,ID,(uint8_t*)Data,8);
+		}
+		// 大于8字节命令，分包发送，每包数据最多发送8个字节
+		else
+		{
+			packNum=len/8;//计算完整包的数量
+			packLast=len%8;//计算余数
+			for(n=0; n < packNum; n++) 
+			{
+				for(i=0; i < 8; i++) 
+				{ 
+					Data[i]=cmd[n*8+i];
+				}
+				CAN_SendEXData(CAN_NUM,ID+n,(uint8_t*)Data,8);// 发送数据，加n是表示这是第n个包
+			} 
+			if(packLast>0)
+			{
+				for(i=0; i < packLast; i++) 
+				{ 
+					Data[i]=cmd[packNum*8+i];
+				}
+				CAN_SendEXData(CAN_NUM,ID+n,(uint8_t*)Data,packLast);// 发送数据
+			}
+		}
+}

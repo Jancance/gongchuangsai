@@ -90,6 +90,13 @@ int main(void){float initial,goal;
  C(fabsf(g_dm_can2_logical_position_deg)<0.05f);
  steps(10);C(g_dm_posvel_holding && enables==1);
  g_dm_jog_request=3;steps(3);C(!g_dm_posvel_holding && g_dm_jog_stop_result==1 && disables==1);
+ for(uint32_t i=0;i<3;i++){
+  const float starts[3]={270.0f,315.0f,350.0f};
+  reset(starts[i]);initial=actual;g_dm_jog_request=6;steps(10);
+  C(g_dm_jog_state==3 && !g_dm_startup_go && fabsf(actual-initial)<0.001f);
+  g_dm_startup_go=1;steps(150);
+  C(g_dm_jog_state==7 && g_dm_posvel_holding && fabsf(actual-(DM_CAN2_LEFT_ZERO_DEG+360.0f)*0.01745329252f)<0.02f);
+ }
  reset(90);g_dm_jog_request=6;steps(4);C(g_dm_jog_state==8 && g_dm_jog_result==14 && !enables);
  reset(0);initial=actual;g_dm_startup_go=1;g_dm_jog_request=6;steps(30);
  C(g_dm_jog_state==7 && fabsf(actual-initial)<0.001f); /* no additional full turn */
@@ -98,7 +105,7 @@ int main(void){float initial,goal;
  printf("actual DM driver checks=%u failures=%u\n",checks,failures);return failures?1:0;}
 '''.replace('__DECLARATIONS__','\n'.join(declarations))
 (O/'dm-driver-unit.c').write_text(unit,encoding='utf-8');exe=O/'dm-driver-unit.exe'
-p=subprocess.run(['C:/mingw/mingw64/bin/gcc.exe','-std=c99','-I'+str(D),'-I'+str(S/'HARDWARE/DM_CAN2'),str(O/'dm-driver-unit.c'),'-lm','-o',str(exe)],capture_output=True,text=True,errors='replace')
+p=subprocess.run(['C:/mingw/mingw64/bin/gcc.exe','-DVEHICLE_STARTUP_GROUP_BEFORE_ROUTE=0','-DVEHICLE_STARTUP_GROUP_ONLY=0','-DVEHICLE_EXTENSION_HOME_ONLY=0','-DVEHICLE_DM_STARTUP_ONLY=0','-std=c99','-I'+str(D),'-I'+str(S/'HARDWARE/DM_CAN2'),str(O/'dm-driver-unit.c'),'-lm','-o',str(exe)],capture_output=True,text=True,errors='replace')
 assert p.returncode==0,p.stderr[-6000:]
 p=subprocess.run([str(exe)],capture_output=True,text=True);print(p.stdout);assert p.returncode==0,p.stdout
 (O/'dm-driver-check.json').write_text(json.dumps(dict(passed=True,output=p.stdout,actual_driver=True,

@@ -1,0 +1,34 @@
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-06\lift-speed-compare\compare-dispatch-host.c: In function 'run_case':
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-06\lift-speed-compare\compare-dispatch-host.c:571:34: warning: unused variable 'before_h' [-Wunused-variable]
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-06\lift-speed-compare\compare-dispatch-host.c:571:25: warning: unused variable 'before_m' [-Wunused-variable]
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-06\lift-speed-compare\compare-dispatch-host.c: At top level:
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-06\lift-speed-compare\compare-dispatch-host.c:149:16: warning: 'CAN_Transmit' defined but not used [-Wunused-function]
+  149 | static uint8_t CAN_Transmit(unsigned can,const CanTxMsg*t){
+      |                ^~~~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-06\lift-speed-compare\compare-dispatch-host.c:140:13: warning: 'CAN_CancelTransmit' defined but not used [-Wunused-function]
+  140 | static void CAN_CancelTransmit(unsigned can,unsigned mb){(void)can;(void)mb;}
+      |             ^~~~~~~~~~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-06\lift-speed-compare\compare-dispatch-host.c:139:17: warning: 'CAN_TransmitStatus' defined but not used [-Wunused-function]
+  139 | static uint32_t CAN_TransmitStatus(unsigned can,unsigned mb){(void)can;(void)mb;return CAN_TxStatus_Ok;}
+      |                 ^~~~~~~~~~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-06\lift-speed-compare\compare-dispatch-host.c:138:13: warning: 'StartupHome_Receive' defined but not used [-Wunused-function]
+  138 | static void StartupHome_Receive(CanRxMsg*r){*r=queue[qi++];}
+      |             ^~~~~~~~~~~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-06\lift-speed-compare\compare-dispatch-host.c:137:17: warning: 'CAN_MessagePending' defined but not used [-Wunused-function]
+  137 | static uint32_t CAN_MessagePending(unsigned can,unsigned fifo){(void)can;(void)fifo;return qn-qi;}
+      |                 ^~~~~~~~~~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-06\lift-speed-compare\compare-dispatch-host.c:136:17: warning: 'CAN1_InitMode' defined but not used [-Wunused-function]
+  136 | static uint32_t CAN1_InitMode(unsigned mode){(void)mode;return 1;}
+      |                 ^~~~~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-06\lift-speed-compare\compare-dispatch-host.c:135:13: warning: 'Power_ReadCommandStatus' defined but not used [-Wunused-function]
+  135 | static void Power_ReadCommandStatus(PowerCommandStatus*p){p->active=power_active;}
+      |             ^~~~~~~~~~~~~~~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-06\lift-speed-compare\compare-dispatch-host.c:134:13: warning: 'vTaskDelay' defined but not used [-Wunused-function]
+  134 | static void vTaskDelay(uint32_t t){now+=t;}
+      |             ^~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-06\lift-speed-compare\compare-dispatch-host.c:133:17: warning: 'xTaskGetTickCount' defined but not used [-Wunused-function]
+  133 | static uint32_t xTaskGetTickCount(void){return now;}
+      |                 ^~~~~~~~~~~~~~~~~
+D:\Codex\宸ュ垱璧沑evidence\integration\2026-11-06\lift-speed-compare\compare-dispatch-host.c:111:32: warning: 's_can1_normal_ready' defined but not used [-Wunused-variable]
+  111 | static uint32_t power_active=1,s_can1_normal_ready=1,other_axis,legacy_calls,g_vehicle_key;
+      |                                ^~~~~~~~~~~~~~~~~~~

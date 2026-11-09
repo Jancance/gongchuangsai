@@ -1,0 +1,91 @@
+lift boot
+
+lift down
+
+lift up
+
+lift scaled
+
+lift motor09
+
+lift wrong_firmware
+
+lift missing_steps
+
+lift speed_fraction
+
+lift stop
+
+lift enable
+
+lift readonly_x
+
+lift readonly_emm
+
+extension PASS motion positive result=1 moves=1 stops=0
+
+extension PASS motion negative result=1 moves=1 stops=0
+
+extension PASS motion enable result=1 moves=1 stops=0
+
+extension PASS motion bad_options result=4 moves=0 stops=0
+
+extension PASS motion ack_only result=3 moves=1 stops=1
+
+extension PASS motion no_stop result=3 moves=1 stops=1
+
+extension PASS motion fault result=5 moves=1 stops=1
+
+extension PASS motion protect result=5 moves=1 stops=1
+
+extension PASS motion abort result=2 moves=1 stops=1
+
+extension PASS motion stop_fail result=4 moves=1 stops=1
+
+extension PASS readonly preserved
+
+extension PASS motion gap result=7 moves=1 stops=1
+
+extension PASS motion signed result=1 moves=1 stops=0
+
+extension PASS motion mm_default result=1 moves=1 stops=0
+
+extension PASS motion mm_extend result=1 moves=1 stops=0
+
+extension PASS motion mm_25 result=1 moves=1 stops=0
+
+extension PASS motion mm_max result=1 moves=1 stops=0
+
+extension PASS motion mm_round result=1 moves=1 stops=0
+
+extension PASS motion mm_min_round result=1 moves=1 stops=0
+
+extension PASS motion mm_zero result=8 moves=0 stops=0
+
+extension PASS motion mm_negative result=8 moves=0 stops=0
+
+extension PASS motion mm_nan result=8 moves=0 stops=0
+
+extension PASS motion mm_inf result=8 moves=0 stops=0
+
+extension PASS motion mm_too_far result=8 moves=0 stops=0
+
+extension PASS motion mm_too_small result=8 moves=0 stops=0
+
+extension PASS motion mm_bad_units result=8 moves=0 stops=0
+
+extension PASS motion mm_busy_edit result=1 moves=1 stops=0
+
+extension PASS motion mm_busy_invalid_edit result=1 moves=1 stops=0
+
+extension PASS motion mm_stop_override result=2 moves=1 stops=1
+
+extension PASS motion mm_fault result=5 moves=1 stops=1
+
+extension PASS motion mm_protect result=5 moves=1 stops=1
+
+extension PASS motion mm_timeout result=3 moves=1 stops=1
+
+extension PASS motion mm_interlock result=6 moves=0 stops=0
+
+extension PASS motion mm_power_loss result=6 moves=1 stops=1

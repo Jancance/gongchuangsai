@@ -1,0 +1,102 @@
+{
+  "scope": "offline_only",
+  "start_id": 2,
+  "start_id_observed": false,
+  "evidence_source": "user_report_in_current_chat",
+  "task": {
+    "raw_code": "123+123+321+321",
+    "profile_id": "2027_preliminary_attachment2_1",
+    "batch_1": [
+      {
+        "order": 1,
+        "color_code": 1,
+        "color_name": "red",
+        "rough_ring": 1,
+        "temporary_ring": 1,
+        "stack_on_first_batch": false
+      },
+      {
+        "order": 2,
+        "color_code": 2,
+        "color_name": "yellow",
+        "rough_ring": 2,
+        "temporary_ring": 2,
+        "stack_on_first_batch": false
+      },
+      {
+        "order": 3,
+        "color_code": 3,
+        "color_name": "blue",
+        "rough_ring": 3,
+        "temporary_ring": 3,
+        "stack_on_first_batch": false
+      }
+    ],
+    "batch_2": [
+      {
+        "order": 1,
+        "color_code": 3,
+        "color_name": "blue",
+        "rough_ring": 3,
+        "temporary_ring": 3,
+        "stack_on_first_batch": true
+      },
+      {
+        "order": 2,
+        "color_code": 2,
+        "color_name": "yellow",
+        "rough_ring": 2,
+        "temporary_ring": 2,
+        "stack_on_first_batch": true
+      },
+      {
+        "order": 3,
+        "color_code": 1,
+        "color_name": "red",
+        "rough_ring": 1,
+        "temporary_ring": 1,
+        "stack_on_first_batch": true
+      }
+    ],
+    "motion_allowed": false
+  },
+  "snapshot": {
+    "session": "p2-user-intake-20261101-task3",
+    "task_code": "123+123+321+321",
+    "correct_picks": 0,
+    "correct_places": 0,
+    "hand": "EMPTY",
+    "inventory_verified": true,
+    "active_sequence": null,
+    "motion_allowed": false
+  },
+  "slots": [
+    {
+      "context_id": "p2-user-intake-20261101-task3",
+      "slot_id": 1,
+      "material_id": "user-observed-b1-red-slot1",
+      "color_code": 1,
+      "occupied": true,
+      "verified": true
+    },
+    {
+      "context_id": "p2-user-intake-20261101-task3",
+      "slot_id": 2,
+      "material_id": "",
+      "color_code": 0,
+      "occupied": false,
+      "verified": true
+    },
+    {
+      "context_id": "p2-user-intake-20261101-task3",
+      "slot_id": 3,
+      "material_id": "",
+      "color_code": 0,
+      "occupied": false,
+      "verified": true
+    }
+  ],
+  "journal": [],
+  "transport_task_prerequisites_met": true,
+  "motion_allowed": false
+}

@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "calibration_id": "synthetic-paper-only",
+  "context": {
+    "camera_id": "synthetic",
+    "mount_id": "synthetic",
+    "arm_pose_id": "held",
+    "plane_id": "paper",
+    "plane_z_mm": 85.5,
+    "image_size": [
+      1920,
+      1080
+    ],
+    "pixel_space": "raw",
+    "lens_profile_id": null,
+    "plane_origin": "A",
+    "axes": "x_along_ab_y_toward_ad_mm"
+  },
+  "homography_image_to_plane": [
+    [
+      0.21732294143410452,
+      0.014885132974938665,
+      -88.41768987113561
+    ],
+    [
+      -0.008957481129362154,
+      0.2687244338808651,
+      -23.289450936341655
+    ],
+    [
+      -1.503376342479634e-05,
+      -2.0777011388706268e-06,
+      1.0
+    ]
+  ],
+  "coordinate_frame": "paper_local",
+  "fit_hull_image_px": [
+    [
+      400.0,
+      100.0
+    ],
+    [
+      1300.0,
+      129.99999999999997
+    ],
+    [
+      1250.0000000000002,
+      850.0000000000001
+    ],
+    [
+      350.0,
+      830.0
+    ]
+  ],
+  "fit": {
+    "rms_mm": 5.639095351848764e-14,
+    "p95_mm": 7.181046693847369e-14,
+    "max_mm": 7.185569525405559e-14,
+    "count": 4
+  },
+  "validation": {
+    "rms_mm": 5.0075202087086204e-14,
+    "p95_mm": 7.352137455640642e-14,
+    "max_mm": 7.815970093361102e-14,
+    "count": 3
+  },
+  "errors_mm": {
+    "A": 7.185569525405559e-14,
+    "B": 2.8651889734451866e-14,
+    "C": 4.0194366942304644e-14,
+    "D": 7.155417315017627e-14,
+    "M": 2.0097183471152322e-14,
+    "E": 7.815970093361102e-14,
+    "F": 3.1776437161565096e-14
+  },
+  "limits": {
+    "fit_max_mm": 0.01,
+    "validation_max_mm": 0.01
+  },
+  "independent_check_passed": true,
+  "motion_allowed": false,
+  "physical_pick_verified": false,
+  "note": "仅当前姿态/特征平面的离线映射；原始图尚未完成CAL-03，不是动作许可",
+  "method": "measured_rectangle_four_corners_with_held_out_marks",
+  "measured_paper_mm": [
+    200,
+    198
+  ],
+  "validation_scope": "held-out paper marks only; ruler scale, lens, TCP and physical placement remain unverified"
+}

@@ -1,0 +1,31 @@
+{
+  "source": "用户完整cangaroo截图",
+  "rx_can_id_hex": "000",
+  "dlc": 8,
+  "rx_data_hex": "01 00 33 08 01 00 00 00",
+  "confirmed_esc_id": 1,
+  "observed_reply_id": 0,
+  "master_id_register_verified": false,
+  "control_mode": null,
+  "bitrate": 1000000,
+  "user_motor_supply": "用户确认24V供电打开、驱动灯亮",
+  "link_evidence": "有效参数请求/回复；不当运动或F407 CAN2通过",
+  "automatic_scan": "未运行，现已有ID1完整回复，不再需要扫描",
+  "next_read": {
+    "can_id_hex": "7FF",
+    "dlc": 8,
+    "data_hex": "01 00 33 0A 00 00 00 00",
+    "purpose": "CTRL_MODE只读",
+    "sent_by_agent": false
+  },
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03"
+  ],
+  "official_Q_unchanged": true,
+  "bitrate_evidence": "用户明确cangaroo Bitrate=1000000（1Mbps），并已取得对应只读合法回包；未独立测量位时间。"
+}

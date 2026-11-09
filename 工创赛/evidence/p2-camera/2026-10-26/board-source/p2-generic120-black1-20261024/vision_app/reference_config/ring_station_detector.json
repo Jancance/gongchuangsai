@@ -1,0 +1,53 @@
+{
+  "format_version": 1,
+  "profile_name": "rough_storage_shared",
+  "geometry": {
+    "center_spacing_mm": 150.0,
+    "outer_diameter_mm": 95.0,
+    "ring1_side": "left"
+  },
+  "detection": {
+    "canny_low": 60,
+    "canny_high": 160,
+    "min_contour_points": 40,
+    "min_minor_axis_px": 25.0,
+    "max_major_axis_px": 320.0,
+    "min_ellipse_aspect": 0.25,
+    "center_cluster_radius_px": 22.0,
+    "diameter_band_gap_px": 5.0,
+    "min_cluster_support": 5,
+    "min_diameter_bands": 4,
+    "min_station_span_ratio": 0.14,
+    "max_collinearity_error_ratio": 0.07,
+    "roi_margin_px": 100,
+    "roi_fallback_after_failures": 2
+  },
+  "reference": {
+    "station_yaw_deg": 0.0,
+    "ring_centers_px": [
+      [380.25, 321.59],
+      [633.50, 321.59],
+      [889.45, 321.59]
+    ],
+    "image_to_station_affine": [
+      [0.5888311, 0.01394],
+      [-0.0144684, 0.6417575]
+    ],
+    "minimum_confidence": 0.9,
+    "stable_frame_count": 3,
+    "maximum_center_jitter_px": 1.5,
+    "maximum_affine_residual": 0.35,
+    "perspective_ratio_range": [0.85, 1.15]
+  },
+  "acceptance": {
+    "maximum_position_error_mm": 2.0,
+    "maximum_angle_error_deg": 1.0
+  },
+  "correction_calibration": {
+    "chassis_image_to_motion": [
+      [-1.014588364986257, -0.03118474834043453, 6.070645748680557],
+      [0.03711521290445699, 0.8632849334721363, -0.12019742313440465],
+      [-0.0020947436569174744, 0.01434889960544932, -1.009467697071416]
+    ]
+  }
+}

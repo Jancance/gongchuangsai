@@ -1,0 +1,72 @@
+PASS motion positive result=1 moves=1 stops=0
+PASS motion negative result=1 moves=1 stops=0
+PASS motion enable result=1 moves=1 stops=0
+PASS motion wrap result=1 moves=1 stops=0
+PASS motion signed result=1 moves=1 stops=0
+PASS motion repeat result=1 moves=1 stops=0
+PASS motion edit_direction result=1 moves=1 stops=0
+PASS motion ack_only result=3 moves=1 stops=1
+PASS motion no_stop result=3 moves=1 stops=1
+PASS motion no_arrival result=3 moves=1 stops=1
+PASS motion bad_options result=4 moves=0 stops=0
+PASS motion pre_moving result=5 moves=0 stops=1
+PASS motion fault result=5 moves=1 stops=1
+PASS motion protect result=5 moves=1 stops=1
+PASS motion disable result=5 moves=1 stops=1
+PASS motion read_fail result=4 moves=1 stops=1
+PASS motion move_fail result=4 moves=1 stops=1
+PASS motion not_ready result=6 moves=0 stops=0
+PASS motion busy result=6 moves=0 stops=0
+PASS motion power_loss result=6 moves=1 stops=1
+PASS motion busy_during result=6 moves=1 stops=1
+PASS motion gap result=7 moves=1 stops=1
+PASS motion abort result=2 moves=1 stops=1
+PASS motion stop_fail result=4 moves=1 stops=1
+PASS readonly preserved
+PASS motion readonly_during result=1 moves=1 stops=0
+PASS motion late_success result=1 moves=1 stops=0
+PASS motion transient_stall result=1 moves=1 stops=0
+PASS motion persistent_stall result=5 moves=1 stops=1
+PASS motion wrap_stall result=5 moves=1 stops=1
+PASS motion preexisting_stall result=5 moves=0 stops=1
+PASS motion stall_then_protect result=5 moves=1 stops=1
+PASS motion stall_then_disable result=5 moves=1 stops=1
+PASS motion stall_then_read_fail result=4 moves=1 stops=1
+PASS motion stall_then_abort result=2 moves=1 stops=1
+PASS motion stall_then_power_loss result=6 moves=1 stops=1
+PASS motion stall_then_gap result=7 moves=1 stops=1
+PASS motion transient_no_arrival result=3 moves=1 stops=1
+PASS motion intermittent_stall result=1 moves=1 stops=0
+PASS motion arrival_with_stall result=5 moves=1 stops=1
+PASS transport valid result=1
+PASS transport notice result=1
+PASS transport enable ack
+PASS transport stop
+PASS transport enable ack
+PASS transport unlock rejected
+PASS transport null rejected
+PASS transport short rejected
+PASS transport bad_direction result=7
+PASS transport too_fast result=7
+PASS transport high_speed_byte result=7
+PASS transport zero_speed result=7
+PASS transport zero_pulses result=7
+PASS transport too_many_pulses result=7
+PASS transport high_pulse_byte result=7
+PASS transport bad_mode result=7
+PASS transport synchronous result=7
+PASS transport bad_checksum result=7
+PASS transport too_much_accel result=7
+PASS transport zero_accel result=7
+PASS transport wrong_node result=5
+PASS transport wrong_ide result=5
+PASS transport wrong_rtr result=5
+PASS transport no_reply result=5
+PASS transport bad_length result=6
+PASS transport bad_tail result=6
+PASS transport bad_ack result=8
+PASS transport tx_fail result=4
+PASS transport tx_timeout result=4
+PASS transport no_mailbox result=4
+PASS transport init_fail result=3
+PASS transport disabled result=9

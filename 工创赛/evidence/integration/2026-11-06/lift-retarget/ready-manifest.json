@@ -1,0 +1,92 @@
+{
+  "software_ready": true,
+  "stage": "D:\\Codex\\工创赛\\tmp\\lift_retarget_20261106\\project",
+  "matlab_checks": 65,
+  "core_checks": {
+    "passed": true,
+    "host_result": "COMPARE cases=27 checks=713 failures=0",
+    "scope": "actual C controller; fake driver, clocks and mechanics",
+    "sha256": {
+      "lift_ruler_calibration.c": "d286d5cbd6839244c07db42528266682490fae34ce525dbbc5b1498b1c972877",
+      "lift_ruler_calibration.h": "5f41c45af6048feb2a6e6808cd323e65272d72543338a88c13a7c5e3f147b281"
+    },
+    "hardware_operated": false,
+    "firmware_downloaded": false
+  },
+  "dispatch_checks": {
+    "passed": true,
+    "results": [
+      {
+        "offline": 0,
+        "passed": true,
+        "output": "COMPARE_DISPATCH offline=0 scenarios=8 checks=144 failures=0"
+      },
+      {
+        "offline": 1,
+        "passed": true,
+        "output": "COMPARE_DISPATCH offline=1 scenarios=8 checks=32 failures=0"
+      }
+    ],
+    "scope": "actual adapter, actual CAN/home17-byte assembly, extracted task branch; fake bus/ticks/plant",
+    "sha256": {
+      "CHASSIS/USER/main.c": "3918d3a3420b344e52d93f3febd65ec124f049fefaf70c8da5622e6bce106d54",
+      "CHASSIS/USER/vehicle_mission.inc": "f863e63d39f24c4b0a2b5378fcb2a81c46ace692e81932843271a2ad7017cc10",
+      "CHASSIS/SYSTEM/CAN/can.c": "34c6305f13e6c2160f23b7c00fa2170bad1bcec25238b71eb34bdd037c2123af",
+      "CHASSIS/USER/lift_ruler_adapter.c": "53366fd67f479da789707717a3e6916695ced2101d0a807902f51eaf4c1c9a1e",
+      "CHASSIS/USER/lift_ruler_adapter.h": "42f3cd5d37459df1b1ac28f8dad8e0ca411e140655de65f3bd41e0d819445db5",
+      "CHASSIS/USER/lift_ruler_calibration.c": "d286d5cbd6839244c07db42528266682490fae34ce525dbbc5b1498b1c972877",
+      "CHASSIS/USER/lift_ruler_calibration.h": "5f41c45af6048feb2a6e6808cd323e65272d72543338a88c13a7c5e3f147b281"
+    },
+    "firmware_downloaded": false,
+    "hardware_operated": false
+  },
+  "builds": {
+    "online": {
+      "target": "Vehicle_LiftRuler",
+      "errors": 0,
+      "warnings": 0,
+      "sha256": "9da090ee48aa1bc446219b93e112ce26544bdaebe097b61f390439aa6cc515c7"
+    },
+    "offline": {
+      "target": "Vehicle_LiftRuler_Offline",
+      "errors": 0,
+      "warnings": 0,
+      "sha256": "992b2c69330be12cf3c0353eac939ae5c1e1fc6ce30fd2e090cdaf60488fdd36"
+    }
+  },
+  "changed_files": {
+    "CHASSIS/USER/lift_ruler_calibration.c": {
+      "before": "2cc1f07af542bf6abcd59cbbcd6b2b0faf129dfe30028372f64ab0157aecae93",
+      "after": "d286d5cbd6839244c07db42528266682490fae34ce525dbbc5b1498b1c972877"
+    },
+    "CHASSIS/USER/lift_ruler_calibration.h": {
+      "before": "aef9e315910d8bc6036128caecd04ea988613ce5ed4702ad45b44771158a0871",
+      "after": "5f41c45af6048feb2a6e6808cd323e65272d72543338a88c13a7c5e3f147b281"
+    },
+    "CHASSIS/USER/lift_ruler_adapter.c": {
+      "before": "9b77edbbdce486c90b405552d476e824e14090fe46db4b8f137c41bba566423a",
+      "after": "53366fd67f479da789707717a3e6916695ced2101d0a807902f51eaf4c1c9a1e"
+    },
+    "CHASSIS/USER/lift_ruler_adapter.h": {
+      "before": "669883084095b5a40aabf7f136afd60bb57cee19ca7524e11838e70f6ab9e6d0",
+      "after": "42f3cd5d37459df1b1ac28f8dad8e0ca411e140655de65f3bd41e0d819445db5"
+    }
+  },
+  "target_pulses": 108400,
+  "configuration_symbol": "g_lift_compare_target_pulses",
+  "allowed_range": [
+    100000,
+    110800
+  ],
+  "configuration_is_motion_request": false,
+  "explicit_key_required": true,
+  "configuration_latched_on_new_request": true,
+  "current_user_height_mm": 48.5,
+  "trim_up_command_canceled_without_execution": true,
+  "VM_power_window_basis": "trim firmware already downloaded under explicit one-time exception; it never ran and remains idle VM0/PE2low; retarget replacement before first reenable adds no new high-to-low interruption",
+  "firmware_downloaded": false,
+  "hardware_operated": false,
+  "other_axes_disabled_in_test": true,
+  "ordinary_reference_speeds_preserved": true,
+  "github_uploaded": false
+}

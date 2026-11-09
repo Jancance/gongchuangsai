@@ -1,0 +1,79 @@
+{
+  "software_candidate_complete": true,
+  "actual_source_before_comparison": {
+    "USER/vehicle_parameters.h": true,
+    "CHASSIS/USER/main.c": true,
+    "CHASSIS/USER/vehicle_mission.inc": true,
+    "CHASSIS/SYSTEM/CAN/can.c": true,
+    "CHASSIS/USER/lift_ruler_calibration.c": true,
+    "CHASSIS/USER/lift_ruler_calibration.h": true,
+    "CHASSIS/USER/lift_ruler_adapter.c": true,
+    "CHASSIS/USER/lift_ruler_adapter.h": true,
+    "gongxun-f407.uvprojx": true
+  },
+  "builds": {
+    "online": {
+      "target": "Vehicle_LiftRuler",
+      "errors": 0,
+      "warnings": 0,
+      "axf": "evidence\\integration\\2026-11-05\\lift-ruler-candidate\\lift-ruler-online.axf",
+      "sha256": "caa8dc1357c2f6448835ac0cfa995438f410dc0568f1c3280e9cb729eec12c0c"
+    },
+    "offline": {
+      "target": "Vehicle_LiftRuler_Offline",
+      "errors": 0,
+      "warnings": 0,
+      "axf": "evidence\\integration\\2026-11-05\\lift-ruler-candidate\\lift-ruler-offline.axf",
+      "sha256": "c811b56b1a04d44496815fd8ac664e2621cc54f874a484e9a310c8be57d26a7b"
+    }
+  },
+  "checked_candidate_sha256": {
+    "USER/vehicle_parameters.h": "b8859acfb532eb11a474c6d86c6abcbf05a0e7dc54092efa271b84adb3791586",
+    "CHASSIS/USER/main.c": "3918d3a3420b344e52d93f3febd65ec124f049fefaf70c8da5622e6bce106d54",
+    "CHASSIS/USER/vehicle_mission.inc": "c3bce99ee243cc72e79d3bd1fc74e612ba946053ecc04c2edfe3d6487e2d5a86",
+    "CHASSIS/SYSTEM/CAN/can.c": "c6278fb5998ee02ed5d6b4cc66f0a7b34000990c7c8b7c06cca16d44f261280b",
+    "CHASSIS/USER/lift_ruler_calibration.c": "38aaf18ab0929ac6bc8baa2b00eb34c0666ae7c5949d4402f3f4f78485b1325f",
+    "CHASSIS/USER/lift_ruler_calibration.h": "40448c1b68af100ad181a027335292093a58c36f1ba2a0e7f30879d9650c9682",
+    "CHASSIS/USER/lift_ruler_adapter.c": "25c759ea5d70da09a149da5bef3280db0361b774c10e3789949a7bcad4e2633b",
+    "CHASSIS/USER/lift_ruler_adapter.h": "4a1e85ee60ddc12e75a0dc9a03390acfa18ab3d8fbd1bf7ca17874d33c43066e",
+    "gongxun-f407.uvprojx": "b2616956cbcc5862009e34ab881100fb957afaf029df30c95f0cbb98a7b2753f"
+  },
+  "dispatch_regression": {
+    "passed": true,
+    "results": [
+      {
+        "offline": 0,
+        "passed": true,
+        "output": "DISPATCH offline=0 scenarios=6 checks=52 failures=0"
+      },
+      {
+        "offline": 1,
+        "passed": true,
+        "output": "DISPATCH offline=1 scenarios=6 checks=18 failures=0"
+      }
+    ],
+    "matlab_checks": 134,
+    "scope": "actual adapter and CAN exchange, extracted mode dispatch, simulated bus/ticks/power; not RTOS or physical timing",
+    "sha256": {
+      "CHASSIS/USER/main.c": "3918d3a3420b344e52d93f3febd65ec124f049fefaf70c8da5622e6bce106d54",
+      "CHASSIS/USER/vehicle_mission.inc": "c3bce99ee243cc72e79d3bd1fc74e612ba946053ecc04c2edfe3d6487e2d5a86",
+      "CHASSIS/SYSTEM/CAN/can.c": "c6278fb5998ee02ed5d6b4cc66f0a7b34000990c7c8b7c06cca16d44f261280b",
+      "CHASSIS/USER/lift_ruler_adapter.c": "25c759ea5d70da09a149da5bef3280db0361b774c10e3789949a7bcad4e2633b",
+      "CHASSIS/USER/lift_ruler_calibration.c": "38aaf18ab0929ac6bc8baa2b00eb34c0666ae7c5949d4402f3f4f78485b1325f"
+    },
+    "firmware_downloaded": false,
+    "hardware_operated": false
+  },
+  "matlab_original_checks": 89,
+  "matlab_dispatch_checks": 134,
+  "prior_c_component_cases": 28,
+  "prior_c_component_checks": 339,
+  "full_rtos_realtime_and_shared_CAN_physical_passed": false,
+  "candidate_installed": false,
+  "candidate_flashed": false,
+  "hardware_operated": false,
+  "lift_calibration_physical_passed": false,
+  "source_three_position_pick_passed": false,
+  "field_resume_date": "2026-11-06",
+  "next_step": "power-up readonly version/state/reference check, then bounded lift calibration deployment and ruler measurement"
+}

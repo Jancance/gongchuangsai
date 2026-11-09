@@ -1,0 +1,202 @@
+{
+  "tag": "fast-01",
+  "image_sha256": "b90779f76c5f4d5e261e51c5bbabf9551e035d5f63a5e0cd20ad5997f4b48ad5",
+  "timing": {},
+  "steps": [
+    {
+      "step": "prep_at_top",
+      "ms": 0
+    },
+    {
+      "step": "down_to_pick",
+      "ms": 1984
+    },
+    {
+      "step": "close_and_rise_start",
+      "ms": 157
+    }
+  ],
+  "writes": [
+    [
+      "g_it_lift_permit",
+      1
+    ],
+    [
+      "g_lift_ruler_request",
+      1
+    ],
+    [
+      "g_it_lift_permit",
+      0
+    ],
+    [
+      "g_it_lift_permit",
+      1
+    ],
+    [
+      "g_lift_ruler_request",
+      3
+    ],
+    [
+      "g_dm_integrated_owner",
+      1
+    ],
+    [
+      "g_dm_point_enable",
+      1
+    ],
+    [
+      "g_dm_posvel_speed_deg_s",
+      300.0
+    ],
+    [
+      "g_dm_pick_target_deg",
+      35.758
+    ],
+    [
+      "g_dm_place_target_deg",
+      35.758
+    ],
+    [
+      "g_dm_jog_request",
+      4
+    ],
+    [
+      "g_lift_ruler_request",
+      2
+    ]
+  ],
+  "rotate_trigger_raw": 445500,
+  "target_pulses": 118800,
+  "material_held": true,
+  "before": {
+    "g_it_request": 0,
+    "g_it_state": 2,
+    "g_it_cause": 0,
+    "g_it_rejected": 0,
+    "g_it_action": 3,
+    "g_it_axes": 1,
+    "g_it_lift_permit": 0,
+    "g_lift_compare_backoff_valid": 1,
+    "g_lift_compare_safe_raw": 36005,
+    "g_lift_compare_top_valid": 1,
+    "g_lift_compare_top_raw": 1,
+    "g_lift_compare_operation": 3,
+    "g_lift_compare_target_pulses": 118800,
+    "g_lift_ruler_state": 4,
+    "g_lift_ruler_request": 0,
+    "g_lift_ruler_rejected": 0,
+    "g_lift_ruler_phase": 13,
+    "g_lift_ruler_cause": 0,
+    "g_lift_ruler_samples": 3,
+    "g_lift_ruler_stop_pending": 0,
+    "g_lift_ruler_before_raw": 1,
+    "g_lift_ruler_after_raw": 36005,
+    "g_lift_ruler_target_raw": 36000,
+    "g_startup_axes_state": 4,
+    "g_startup_axes_cause": 0,
+    "g_extension_home_reference_valid": 1,
+    "g_extension_hold_confirmed": 1,
+    "g_dm_can2_state": 4,
+    "g_dm_can2_result": 1,
+    "g_dm_can2_ctrl_mode": 2,
+    "g_dm_can2_feedback_valid": 1,
+    "g_dm_can2_valid_mask": 7,
+    "g_dm_can2_range_mask": 7,
+    "g_dm_can2_motor_state": 1,
+    "g_dm_jog_state": 7,
+    "g_dm_jog_request": 0,
+    "g_dm_jog_result": 1,
+    "g_dm_jog_first_fault": 0,
+    "g_dm_posvel_holding": 1,
+    "g_dm_point_enable": 1,
+    "g_dm_integrated_owner": 1,
+    "g_vehicle_arm_state": 2,
+    "g_vehicle_lift_feedback_valid": 1,
+    "g_vm_test_request": 1,
+    "g_can_guard_ready": 1,
+    "g_safety_ready": 1,
+    "g_safety_fault": 0,
+    "g_rtos_fault": 0,
+    "g_can_ctrl_fault_latched": 0,
+    "g_dm_can2_logical_position_deg": 179.99188232421875,
+    "g_dm_can2_velocity_rad_s": -0.007326006889343262,
+    "g_dm_posvel_speed_deg_s": 300.0,
+    "g_dm_pick_target_deg": 180.0,
+    "g_dm_place_target_deg": 180.0,
+    "g_vehicle_lift_current_deg": 360.04998779296875,
+    "g_extension_home_reference_deg": 0.0,
+    "g_startup_extension_current_deg": 0.0,
+    "claw_pwm_us": 2056,
+    "carrier_pwm_us": 0,
+    "VM_PE2_high": true
+  },
+  "down_raw": 1336500,
+  "rotate_fired_at_raw": 390920,
+  "rotate_fired_remaining_mm": 21.72,
+  "error": "AssertionError({'g_lift_ruler_cause': 2})",
+  "held_material_stop_requested": true,
+  "final": {
+    "g_it_request": 0,
+    "g_it_state": 2,
+    "g_it_cause": 0,
+    "g_it_rejected": 0,
+    "g_it_action": 3,
+    "g_it_axes": 1,
+    "g_it_lift_permit": 1,
+    "g_lift_compare_backoff_valid": 0,
+    "g_lift_compare_safe_raw": 36005,
+    "g_lift_compare_top_valid": 0,
+    "g_lift_compare_top_raw": 1,
+    "g_lift_compare_operation": 2,
+    "g_lift_compare_target_pulses": 118800,
+    "g_lift_ruler_state": 6,
+    "g_lift_ruler_request": 2,
+    "g_lift_ruler_rejected": 0,
+    "g_lift_ruler_phase": 10,
+    "g_lift_ruler_cause": 2,
+    "g_lift_ruler_samples": 4,
+    "g_lift_ruler_stop_pending": 0,
+    "g_lift_ruler_before_raw": 1336497,
+    "g_lift_ruler_after_raw": 350128,
+    "g_lift_ruler_target_raw": 36001,
+    "g_startup_axes_state": 4,
+    "g_startup_axes_cause": 0,
+    "g_extension_home_reference_valid": 1,
+    "g_extension_hold_confirmed": 1,
+    "g_dm_can2_state": 1,
+    "g_dm_can2_result": 0,
+    "g_dm_can2_ctrl_mode": 2,
+    "g_dm_can2_feedback_valid": 0,
+    "g_dm_can2_valid_mask": 7,
+    "g_dm_can2_range_mask": 1,
+    "g_dm_can2_motor_state": 0,
+    "g_dm_jog_state": 1,
+    "g_dm_jog_request": 0,
+    "g_dm_jog_result": 0,
+    "g_dm_jog_first_fault": 0,
+    "g_dm_posvel_holding": 0,
+    "g_dm_point_enable": 1,
+    "g_dm_integrated_owner": 1,
+    "g_vehicle_arm_state": 2,
+    "g_vehicle_lift_feedback_valid": 1,
+    "g_vm_test_request": 1,
+    "g_can_guard_ready": 1,
+    "g_safety_ready": 1,
+    "g_safety_fault": 0,
+    "g_rtos_fault": 0,
+    "g_can_ctrl_fault_latched": 0,
+    "g_dm_can2_logical_position_deg": 0.0,
+    "g_dm_can2_velocity_rad_s": 0.0,
+    "g_dm_posvel_speed_deg_s": 300.0,
+    "g_dm_pick_target_deg": 35.757999420166016,
+    "g_dm_place_target_deg": 35.757999420166016,
+    "g_vehicle_lift_current_deg": 13365.0,
+    "g_extension_home_reference_deg": 0.0,
+    "g_startup_extension_current_deg": 0.0,
+    "claw_pwm_us": 1537,
+    "carrier_pwm_us": 0,
+    "VM_PE2_high": true
+  },
+  "final_at_top": false
+}

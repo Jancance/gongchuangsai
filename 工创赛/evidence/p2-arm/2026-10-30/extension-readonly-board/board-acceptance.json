@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-30",
+  "classification": "E node6 CAN1 three-read communication functional acceptance",
+  "state": 4,
+  "error": 0,
+  "version_result": 1,
+  "status_result": 1,
+  "options_result": 1,
+  "read_request": 0,
+  "vm_test_request": 1,
+  "node_id": 6,
+  "menu_protocol_user_confirmed": "CAN1_MAP",
+  "menu_baud_bps_user_confirmed": 500000,
+  "frames": [
+    {
+      "command": "version",
+      "ext_id": 1536,
+      "ide": 4,
+      "rtr": 0,
+      "dlc": 6,
+      "data": [
+        31,
+        0,
+        202,
+        33,
+        20,
+        107
+      ]
+    },
+    {
+      "command": "status",
+      "ext_id": 1536,
+      "ide": 4,
+      "rtr": 0,
+      "dlc": 3,
+      "data": [
+        58,
+        3,
+        107
+      ]
+    },
+    {
+      "command": "options",
+      "ext_id": 1536,
+      "ide": 4,
+      "rtr": 0,
+      "dlc": 4,
+      "data": [
+        26,
+        0,
+        6,
+        107
+      ]
+    }
+  ],
+  "options_emm_bit_set": true,
+  "status_flags": 3,
+  "status_semantics_per_existing_driver": "bit0 enabled, bit1 position-complete flag, bits2/3 fault flags clear; not physical motion or position acceptance",
+  "options_bytes_beyond_dlc": "screenshot Data4=FF Data5=F8 excluded, outside DLC4",
+  "version_payload_not_further_decoded": true,
+  "three_read_function_accepted": true,
+  "extension_direction_verified": false,
+  "extension_origin_or_travel_verified": false,
+  "physical_motion_or_grasp_verified": false,
+  "current_two_sided_clearance": "awaiting_user",
+  "assistant_firmware_changes": false,
+  "assistant_flash_performed": false,
+  "assistant_hardware_commands": false,
+  "images": [
+    {
+      "file": "version-status-watch.png",
+      "sha256": "6584da97a55f9bd221a9d7b08e63909902d6b52a1d92c30e48519283868da21d"
+    },
+    {
+      "file": "options-watch.png",
+      "sha256": "3d49a04d535e86d8c6194b317db71c953a1a66e6c5132fe49c017b1696d6e180"
+    }
+  ],
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged_pending_official_clarification"
+}

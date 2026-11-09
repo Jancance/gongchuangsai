@@ -1,0 +1,60 @@
+DEBUG:pyocd.core.session:Project directory: D:\Codex\工创赛
+DEBUG:pyocd.core.session:Project directory: D:\Codex\工创赛
+DEBUG:pyocd.probe.pydapaccess.dap_access_cmsis_dap:Limiting packet count to 1
+DEBUG:pyocd.probe.pydapaccess.dap_access_cmsis_dap:Error parsing CMSIS-DAP protocol version 'V208 v0.1'
+DEBUG:pyocd.probe.pydapaccess.dap_access_cmsis_dap:CMSIS-DAP v2 probe 6afaae24: protocol version 2.0.0
+DEBUG:pyocd.coresight.coresight_target:Using default Cortex-M memory map (no memory map supplied)
+INFO:pyocd.board.board:Target type is cortex_m
+DEBUG:pyocd.utility.sequencer:Running task load_svd
+DEBUG:pyocd.utility.sequencer:Running task pre_connect
+DEBUG:pyocd.utility.sequencer:Running task dp_init
+DEBUG:pyocd.utility.sequencer:Running task lock_probe
+DEBUG:pyocd.utility.sequencer:Running task get_probe_capabilities
+DEBUG:pyocd.utility.sequencer:Running task connect
+DEBUG:pyocd.coresight.dap:Using SWD wire protocol
+DEBUG:pyocd.probe.swj:Sending deprecated SWJ sequence to select SWD
+INFO:pyocd.coresight.dap:DP IDR = 0x2ba01477 (v1 rev2)
+DEBUG:pyocd.utility.sequencer:Running task clear_sticky_err
+DEBUG:pyocd.utility.sequencer:Running task power_up_debug
+DEBUG:pyocd.utility.sequencer:Running task check_version
+DEBUG:pyocd.utility.sequencer:Running task unlock_probe
+DEBUG:pyocd.utility.sequencer:Running task unlock_device
+DEBUG:pyocd.utility.sequencer:Running task create_discoverer
+DEBUG:pyocd.utility.sequencer:Running task discovery
+DEBUG:pyocd.utility.sequencer:Running task find_aps
+DEBUG:pyocd.utility.sequencer:Running task create_aps
+DEBUG:pyocd.utility.sequencer:Running task create_ap.0
+DEBUG:pyocd.coresight.ap:AHB-AP#0 default HPROT=3 HNONSEC=0
+DEBUG:pyocd.coresight.ap:AHB-AP#0 implemented HPROT=3 HNONSEC=0
+INFO:pyocd.coresight.discovery:AHB-AP#0 IDR = 0x24770011 (AHB-AP var1 rev2)
+DEBUG:pyocd.utility.sequencer:Running task find_components
+DEBUG:pyocd.utility.sequencer:Running task init_ap.0
+INFO:pyocd.coresight.rom_table:AHB-AP#0 Class 0x1 ROM table #0 @ 0xe00ff000 (designer=020:ST part=411)
+INFO:pyocd.coresight.rom_table:[0]<e000e000:SCS v7-M class=14 designer=43b:Arm part=00c>
+INFO:pyocd.coresight.rom_table:[1]<e0001000:DWT v7-M class=14 designer=43b:Arm part=002>
+INFO:pyocd.coresight.rom_table:[2]<e0002000:FPB v7-M class=14 designer=43b:Arm part=003>
+INFO:pyocd.coresight.rom_table:[3]<e0000000:ITM v7-M class=14 designer=43b:Arm part=001>
+INFO:pyocd.coresight.rom_table:[4]<e0040000:TPIU M4 class=9 designer=43b:Arm part=9a1 devtype=11 archid=0000 devid=ca1:0:0>
+INFO:pyocd.coresight.rom_table:[5]<e0041000:ETM M4 class=9 designer=43b:Arm part=925 devtype=13 archid=0000 devid=0:0:0>
+DEBUG:pyocd.utility.sequencer:Running task create_cores
+DEBUG:pyocd.coresight.discovery:Creating SCS component
+DEBUG:pyocd.core.soc_target:selected core #0
+INFO:pyocd.coresight.cortex_m:CPU core #0: Cortex-M4 r0p1, v7.0-M architecture
+INFO:pyocd.coresight.cortex_m:  Extensions: [DSP, FPU, FPU_V4, MPU]
+INFO:pyocd.coresight.cortex_m:  FPU present: FPv4-SP-D16-M
+DEBUG:pyocd.utility.sequencer:Running task create_components
+DEBUG:pyocd.coresight.discovery:Creating DWT component
+INFO:pyocd.coresight.dwt:4 hardware watchpoints
+DEBUG:pyocd.coresight.discovery:Creating FPB component
+INFO:pyocd.coresight.fpb:6 hardware breakpoints, 2 literal comparators
+DEBUG:pyocd.coresight.fpb:fpb has been disabled
+DEBUG:pyocd.coresight.discovery:Creating ITM component
+DEBUG:pyocd.coresight.discovery:Creating TPIU component
+DEBUG:pyocd.utility.sequencer:Running task check_for_cores
+DEBUG:pyocd.utility.sequencer:Running task halt_on_connect
+DEBUG:pyocd.utility.sequencer:Running task post_connect
+DEBUG:pyocd.utility.sequencer:Running task post_connect_hook
+DEBUG:pyocd.utility.sequencer:Running task create_flash
+DEBUG:pyocd.utility.sequencer:Running task notify
+DEBUG:pyocd.core.session:uninit session <pyocd.core.session.Session object at 0x0000018DAA408A50>
+DEBUG:pyocd.board.board:uninit board <pyocd.board.board.Board object at 0x0000018DAA446710>

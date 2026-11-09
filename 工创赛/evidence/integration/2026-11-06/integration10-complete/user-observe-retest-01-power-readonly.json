@@ -1,0 +1,66 @@
+{
+  "reset": false,
+  "halt": false,
+  "flash": false,
+  "motor_enable_or_motion_commands": 0,
+  "power_request_written": true,
+  "readonly_DM_request_written": true,
+  "empty_idle_diagnostic_only": true,
+  "VM_off_after_test": true,
+  "samples": [
+    {
+      "g_dm_can2_state": 5,
+      "g_dm_can2_result": 4,
+      "g_dm_can2_read_cycle": 2,
+      "g_dm_can2_valid_mask": 0,
+      "g_dm_can2_range_mask": 0,
+      "g_dm_can2_feedback_valid": 0,
+      "g_dm_can2_ctrl_mode": 0,
+      "g_dm_can2_motor_state": 0,
+      "g_dm_can2_tx_count": 1,
+      "g_dm_can2_rx_count": 0,
+      "g_dm_can2_esr": 8388659,
+      "g_vm_test_request": 1,
+      "g_lift_compare_top_valid": 0,
+      "g_safety_fault": 0,
+      "g_rtos_fault": 0
+    }
+  ],
+  "after": {
+    "g_dm_can2_state": 5,
+    "g_dm_can2_result": 4,
+    "g_dm_can2_read_cycle": 2,
+    "g_dm_can2_valid_mask": 0,
+    "g_dm_can2_range_mask": 0,
+    "g_dm_can2_feedback_valid": 0,
+    "g_dm_can2_ctrl_mode": 0,
+    "g_dm_can2_motor_state": 0,
+    "g_dm_can2_tx_count": 1,
+    "g_dm_can2_rx_count": 0,
+    "g_dm_can2_esr": 8388659,
+    "g_vm_test_request": 1,
+    "g_lift_compare_top_valid": 0,
+    "g_safety_fault": 0,
+    "g_rtos_fault": 0
+  },
+  "angles": {
+    "g_dm_can2_position_deg": 0.0,
+    "g_dm_can2_logical_position_deg": 0.0,
+    "g_dm_can2_velocity_rad_s": 0.0
+  },
+  "CAN2_ESR_now": "0x800033",
+  "VM_PE2_high": true,
+  "recovery_diagnostics": {
+    "g_dm_can2_lec": 3,
+    "g_dm_can2_tec": 128,
+    "g_dm_can2_rec": 0,
+    "g_dm_can2_bus_off": 0,
+    "g_dm_can2_first_error_valid": 1,
+    "g_dm_can2_first_error_esr": 8388659,
+    "g_dm_can2_first_error_tick": 14690,
+    "g_dm_can2_filter_repairs": 1,
+    "g_dm_can2_hardware_initializations": 1
+  },
+  "CAN2_MCR": "0x10040",
+  "VM_off_is_pin_readback_not_voltage_measurement": true
+}

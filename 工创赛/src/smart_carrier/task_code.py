@@ -56,13 +56,19 @@ def parse_task_code(
         raise ValueError("position segment must be a permutation of 1,2,3")
 
     reason = None if official_mapping_confirmed else "QR-04_MAPPING_UNCONFIRMED"
+    # 2027初赛第二批暂存按第一批同色位置，不能复制第四段粗加工位置。
+    # 未形成唯一颜色对应时保持未知；显式初赛入口另校验三色与两批库存。
+    first_color_positions = dict(zip(b1_order, b1_positions))
+    stacking_positions = (
+        tuple(first_color_positions[color] for color in b2_order)
+        if len(first_color_positions) == 3 and set(b1_order) == set(b2_order)
+        else None
+    )
     return TaskCode(
         raw_text=cleaned,
         parser_version=parser_version,
         start_id=start_id,
-        # QR-04尚未确认每个位置段在不同功能区的最终语义。
-        # 当前数据结构保留两个显式目的地字段；同一段暂作两处映射，
-        # execution_lock会阻止它在官方映射确认前驱动物理动作。
+        # 通用兼容入口默认锁定；已核初赛profile由task_materials显式加载。
         batch_1=BatchTask(
             pickup_order=b1_order,
             rough_positions=b1_positions,
@@ -71,7 +77,7 @@ def parse_task_code(
         batch_2=BatchTask(
             pickup_order=b2_order,
             rough_positions=b2_positions,
-            stacking_positions=b2_positions,
+            stacking_positions=stacking_positions,
         ),
         executable=official_mapping_confirmed,
         rejection_reason=reason,

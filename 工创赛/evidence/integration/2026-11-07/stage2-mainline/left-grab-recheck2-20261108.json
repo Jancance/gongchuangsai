@@ -1,0 +1,44 @@
+{
+ "when": "2026-11-08T21:48:04",
+ "step": "left_grab_recheck2",
+ "steps": [
+  {
+   "step": "IT3_arm_166.03",
+   "ok": true,
+   "s": 0.41,
+   "why": "started",
+   "logical": -63.467
+  },
+  {
+   "step": "IT3_extend_156",
+   "ok": true,
+   "s": 0.21,
+   "why": "started",
+   "ext_deg": 0.3,
+   "ext_mm": -0.083
+  },
+  {
+   "step": "descend_118800",
+   "ok": false,
+   "s": 0.2,
+   "why": "fail(0,1)",
+   "after": 27009
+  }
+ ],
+ "final": {
+  "it": 1,
+  "it_cause": 0,
+  "it_rejected": 1,
+  "lrc": 4,
+  "lrc_cause": 0,
+  "after": 27009,
+  "top_valid": 1,
+  "hold": 1,
+  "ext_mm": -0.08,
+  "dm_logical": -63.467,
+  "fault": 0,
+  "arm_state": 1,
+  "src_parallel": 1,
+  "src_cause": 0
+ }
+}

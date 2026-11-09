@@ -1,0 +1,4 @@
+PASS: manual sensorless defaults idle, fresh verified parameters, started/notice evidence, no false idle success, timeout latching, protection/communication/start failure abort, parameter/firmware guards, stop interlock, power-loss invalidation.
+PASS: packet, input guards, startup idle, both directions, enable-only, feedback failure stop, firmware mismatch, busy timeout, cancel, power loss
+PASS: upward bounds, per-request snapshot, no auto-repeat, downward unchanged, stop.
+PASS: actual CAN guard accepts upward 50000, rejects overlimit/downward extension/invalid mode/speed/direction/length.

@@ -1,0 +1,78 @@
+{
+  "surface_z_mm": 85.5,
+  "reported_camera_to_surface_distance_mm": 175,
+  "camera_measurement_start_reference": null,
+  "frame": "turntable_center_origin_axes_parallel_to_chassis",
+  "origin": "actual turntable spindle center; must locate physically, not inferred from fitted image circle",
+  "axes": {
+    "x": "parallel to chassis right",
+    "y": "parallel to chassis forward"
+  },
+  "units": "mm",
+  "turntable_center_in_chassis_mm": null,
+  "markers": [
+    {
+      "id": "P1",
+      "location": "upper-left cross",
+      "local_xy_mm": null
+    },
+    {
+      "id": "P2",
+      "location": "top cross",
+      "local_xy_mm": null
+    },
+    {
+      "id": "P3",
+      "location": "right cross",
+      "local_xy_mm": null
+    },
+    {
+      "id": "P4",
+      "location": "lower-right cross",
+      "local_xy_mm": null
+    },
+    {
+      "id": "P5",
+      "location": "lower-left cross",
+      "local_xy_mm": null
+    },
+    {
+      "id": "P6",
+      "location": "left cross",
+      "local_xy_mm": [
+        -30.0,
+        85.0
+      ],
+      "user_report": {
+        "xy": [
+          -3,
+          8.5
+        ],
+        "units": "cm",
+        "origin": "turntable spindle center",
+        "axes": "chassis right positive X; forward positive Y"
+      },
+      "status": "user_measured; not independently validated"
+    },
+    {
+      "id": "V1",
+      "location": "cross on V1 paper",
+      "local_xy_mm": null
+    },
+    {
+      "id": "V2",
+      "location": "cross on V2 paper",
+      "local_xy_mm": null
+    },
+    {
+      "id": "V3",
+      "location": "cross on V3 paper",
+      "local_xy_mm": null
+    }
+  ],
+  "calibrated": false,
+  "motion_allowed": false,
+  "note": "Worksheet only. Local coordinates cannot be passed as chassis_mm. Need measured turntable-center to chassis-origin relation before metric chassis calibration.",
+  "active_method": "measured_paper_four_corners",
+  "scattered_marker_workflow_status": "superseded by user choice; preserve prior measurements as historical only"
+}

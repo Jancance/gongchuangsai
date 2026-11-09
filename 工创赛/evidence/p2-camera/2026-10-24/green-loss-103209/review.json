@@ -1,0 +1,114 @@
+{
+  "archive_sha256": "9f77985f24b01544af62bdbbcf66a1b94cf76c199df093c67a48567f96baf842",
+  "crc": "passed",
+  "frames": 380,
+  "states": {
+    "SEARCHING": 380
+  },
+  "observation_span_s": 27.761019151000028,
+  "reasons": {
+    "INSUFFICIENT_NONCLIPPED_PIXELS": 380
+  },
+  "usable_fraction_min_p50_max": [
+    0.2542836240422009,
+    0.29580089858286984,
+    0.30890555876130027
+  ],
+  "required_fraction": 0.35,
+  "v_cutoff_exclusive": 250,
+  "detector_ms_min_p50_p95_max": [
+    54.213495000112744,
+    57.8925159999244,
+    60.144597099997554,
+    96.36707000004208
+  ],
+  "result_host_age_ms_min_p50_p95_max": [
+    58.65725300009217,
+    77.73178300010386,
+    99.96664319995716,
+    118.37819600009425
+  ],
+  "module_hash_match": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true
+  },
+  "config_byte_match": {
+    "material_color_thresholds.json": true,
+    "project_profile.json": true,
+    "camera_processing.json": true
+  },
+  "offline_replay": {
+    "first-frame-raw.png": {
+      "decoded_size": [
+        1920,
+        1080
+      ],
+      "regions": [
+        {
+          "bbox_px": [
+            857,
+            451,
+            196,
+            190
+          ],
+          "area_px2": 28097.5,
+          "label": "UNKNOWN",
+          "reason": "INSUFFICIENT_NONCLIPPED_PIXELS",
+          "proposal_source": "combined_silhouette",
+          "usable_fraction": 0.2941605839416058
+        }
+      ],
+      "image_sha256": "48dc5aef44c777dd31d8fe65f357a9ee00a02142eb432beeed0927f081b98fe7"
+    },
+    "sample-02-raw.png": {
+      "decoded_size": [
+        1920,
+        1080
+      ],
+      "regions": [
+        {
+          "bbox_px": [
+            858,
+            451,
+            195,
+            195
+          ],
+          "area_px2": 28067.5,
+          "label": "UNKNOWN",
+          "reason": "INSUFFICIENT_NONCLIPPED_PIXELS",
+          "proposal_source": "combined_silhouette",
+          "usable_fraction": 0.303107214274727
+        }
+      ],
+      "image_sha256": "476524dd807167f5b89b282045a5f7085dc68516c79e4b2df282bfb4f1154465"
+    },
+    "sample-03-raw.png": {
+      "decoded_size": [
+        1920,
+        1080
+      ],
+      "regions": [
+        {
+          "bbox_px": [
+            858,
+            446,
+            195,
+            195
+          ],
+          "area_px2": 28018.0,
+          "label": "UNKNOWN",
+          "reason": "INSUFFICIENT_NONCLIPPED_PIXELS",
+          "proposal_source": "combined_silhouette",
+          "usable_fraction": 0.26945278226737474
+        }
+      ],
+      "image_sha256": "6d9d8958b5c534f54f7c72fd44e2c09ed28889b32304aeb86871b3e23553e3a4"
+    }
+  },
+  "console_log_present": false,
+  "motion_allowed": false,
+  "hardware_acceptance": false,
+  "next": "Temporary live exposure166-to83 test only; candidate, not accepted setting; keep gain/white-balance/HSV/quality gates unchanged"
+}

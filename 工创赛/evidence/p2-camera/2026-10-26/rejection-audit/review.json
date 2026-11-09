@@ -1,0 +1,119 @@
+{
+  "frames": 1309,
+  "duration_s": 156.51851204200102,
+  "states": {
+    "STALE_RESULT": 43,
+    "FOLLOWING_PIXEL": 1266
+  },
+  "normal_two_color_outputs": 1260,
+  "stale_detector_both": 42,
+  "nonstale_detector_missing_blue_frames": [
+    239,
+    539,
+    585,
+    896,
+    1010,
+    1152
+  ],
+  "duplicate_lightblue_frames": [],
+  "hash_matches": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true,
+    "camera_processing.json": true,
+    "project_profile.json": true,
+    "material_color_thresholds.json": true,
+    "diagnostic_entry": true,
+    "diagnostic_base": true
+  },
+  "motion_allowed": false,
+  "zip_sha256": "836177a98433694daa81d4bb16fb52beb530691b149bd2212eb3c01c51596579",
+  "run": {
+    "frames": 1309,
+    "states": {
+      "STALE_RESULT": 43,
+      "FOLLOWING_PIXEL": 1266
+    },
+    "transition_counts": {
+      "sample-01": 1,
+      "first-frame": 1,
+      "first-other-color-candidate": 1266,
+      "first-blue-with-lightblue": 1266,
+      "first-blue-visible": 1,
+      "sample-02": 1,
+      "first-blue-loss": 45,
+      "first-blue-reappearance": 45,
+      "first-blue-id-change": 41,
+      "sample-03": 1,
+      "sample-04": 1,
+      "first-nonstale-blue-missing": 6
+    },
+    "saved_events": [
+      "first-blue-id-change",
+      "first-blue-loss",
+      "first-blue-reappearance",
+      "first-blue-visible",
+      "first-blue-with-lightblue",
+      "first-frame",
+      "first-nonstale-blue-missing",
+      "first-other-color-candidate",
+      "sample-01",
+      "sample-02",
+      "sample-03",
+      "sample-04"
+    ],
+    "exit_code": 0,
+    "error": null,
+    "serial": "DISABLED",
+    "motion_allowed": false,
+    "scope": "Desktop pixel evidence; images encoded in a bounded background writer.",
+    "watch_color": "blue",
+    "longest_watched_loss_s": 0.3073456710008031,
+    "periodic_samples": {
+      "interval_s": 5.0,
+      "limit": 4,
+      "saved": 4
+    }
+  },
+  "visual_review": "first-nonstale-blue-missing-raw.png shows complete visible blue and lightblue objects; no visible hand occlusion. Duplicate-lightblue event not reproduced this run, remains open.",
+  "blue_geometry_trace": {
+    "previous": {
+      "bbox": [
+        352,
+        524,
+        243,
+        140
+      ],
+      "solidity": 0.9583819667347534,
+      "circularity": 0.6560156805117336
+    },
+    "missing": {
+      "bbox": [
+        352,
+        524,
+        244,
+        140
+      ],
+      "solidity": 0.9498524539710701,
+      "circularity": 0.6373280052716538,
+      "aspect": 1.7428571428571429
+    },
+    "reject_reason": "Projected blue aspect exceeds 1.4, so requires solidity >=0.95; actual 0.949852 is below it."
+  },
+  "detector_call_ms": {
+    "median": 101.23709000072267,
+    "p95": 118.10781899948779,
+    "max": 162.2883889995137
+  },
+  "result_host_age_ms": {
+    "median": 121.39065100018342,
+    "p95": 146.4893429998483,
+    "max": 186.21430799976224
+  },
+  "diagnostic_io_ms": {
+    "median": 0.340078000590438,
+    "p95": 0.4290931992727563,
+    "max": 10.880163999900105
+  }
+}

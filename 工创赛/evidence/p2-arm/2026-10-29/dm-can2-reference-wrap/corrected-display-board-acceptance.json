@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-29",
+  "classification": "E 软件相对角显示板端功能验收",
+  "state": 4,
+  "result": 1,
+  "feedback_valid": 1,
+  "motor_state": 0,
+  "read_request": 0,
+  "jog_request": 0,
+  "jog_state": 0,
+  "jog_result": 0,
+  "jog_stop_result": 0,
+  "raw_position_deg": 63.4615974,
+  "logical_position_deg": 0.00564575195,
+  "reference_raw_deg": -296.544037,
+  "left_pose_source": "承接前轮用户确认左侧实体标记未变，本图提供软件显示字段",
+  "display_correction_board_pass": true,
+  "jog_zero_fields_mean": "本次启动后未进行试转，不是试转失败",
+  "logical_value_is_physical_precision_measurement": false,
+  "motor_power_cycle_verified": false,
+  "multi_turn_recovery_verified": false,
+  "raw_jump_root_cause_confirmed": false,
+  "motion_performed_by_agent": false,
+  "screenshot": "corrected-display-board-watch.png",
+  "screenshot_sha256": "9ec65ad62f2d036e1f28bdd580348942126e8fdd09037c70c7e97890999d0e5e",
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q_unchanged": true
+}

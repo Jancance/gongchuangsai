@@ -1,0 +1,99 @@
+{
+ "tag": "i12-profile-integration",
+ "when": "2026-11-07T22:58:07",
+ "goal": "把隔离profile下已验证的抓取动作与i12 stage2自主链路合成一个整车profile构建",
+ "decision": "VEHICLE_LIFT_RULER_ONLY 1U -> 0U；LiftRuler控制器保留为node5执行器，在整车profile下同样被服务",
+ "why_integration_not_just_flag": {
+  "lift_ruler_gate": "lift_ruler_adapter.c 的 DebugService/DebugSafety/DebugCanAllowed 原来都 `if(!VEHICLE_LIFT_RULER_ONLY)return;`",
+  "vsp_dependency": "vehicle_source_parallel.inc:56 的 VSP 升降目标 = SingleTeach_TopDeg() = g_lift_ruler_controller.top_position_raw/top_scale，即 stage2 并行执行依赖本控制器建立的顶部参考",
+  "references_gate": "vehicle_arm.c:58 SingleTeach_ReferencesReady() 要求 top_valid && state==4 && 伸缩回零保持，全部来自本控制器",
+  "vm_owner": "隔离profile下控制器独占VM写权；整车profile下四轮/底盘也有VM归属，必须避免互相清零"
+ },
+ "changes": [
+  {
+   "file": "USER/vehicle_parameters.h",
+   "change": "VEHICLE_LIFT_RULER_ONLY 1U -> 0U"
+  },
+  {
+   "file": "CHASSIS/USER/app_config.h",
+   "change": "新增 LIFT_RULER_SERVICE_ENABLED = (VEHICLE_LIFT_RULER_ONLY || VEHICLE_INTEGRATED_ENABLE)"
+  },
+  {
+   "file": "CHASSIS/USER/lift_ruler_adapter.c",
+   "change": "3处 profile 门禁改用 LIFT_RULER_SERVICE_ENABLED；VM 写权改为：隔离profile照旧单写，整车profile只置位从不清零"
+  },
+  {
+   "file": "CHASSIS/SYSTEM/CAN/can.c",
+   "change": "4处 node5 放行条件由 VEHICLE_LIFT_RULER_ONLY 改为 LIFT_RULER_SERVICE_ENABLED（地址1-4的隔离限制保持只对隔离profile生效）"
+  },
+  {
+   "file": "CHASSIS/USER/main.c",
+   "change": "整车分支新增 LiftRuler_DebugService()+Integration10_Service()（含DM读窗口避让）；KeyTask整车分支新增 LiftRuler_DebugSafety()；App_CombinedTestSafety 的『无会话清VM』增加 !g_lift_ruler_controller.vm_request 条件"
+  }
+ ],
+ "builds": {
+  "online": {
+   "target": "Vehicle_LiftRuler",
+   "log": "tmp/build_online_20261107_integrated.log",
+   "result": "0 Error(s), 0 Warning(s), Code=116928",
+   "axf_sha256": "69b0216086563590fe0eafcad845531bddeb4f18a939b1f5cf5d408c0595aa98"
+  },
+  "offline": {
+   "target": "Vehicle_LiftRuler_Offline",
+   "log": "tmp/build_offline_20261107_integrated.log",
+   "result": "0 Error(s), 0 Warning(s), Code=91056",
+   "axf_sha256": "d84529baa26919522f6e75199db574eb6fda317732c8c71922eb44a1dea300e4"
+  }
+ },
+ "flash": {
+  "log": "tmp/flash_20261107_integrated.log",
+  "result": "Erase Done. Programming Done. Verify OK. Application running",
+  "at": "2026-11-07 22:55:50"
+ },
+ "flash_compare": {
+  "evidence": "three-piece-i12/post-flash-integrated-20261107.json",
+  "flash_matches": true,
+  "bytes_compared": 124304
+ },
+ "runtime_checks": {
+  "integration10_service_runs_in_integrated_profile": {
+   "evidence": "three-piece-i12/integrated-lift-return-02.json",
+   "observed": "g_it_request 被消费，g_it_action=4，g_it_rejected=4",
+   "meaning": "服务确实执行；rejected=4 是 integration10_complete.inc:306 的既有顺序（request 2/3/4 要求已有 top_valid/state==4），整车下建参考仍须先走 request 1",
+   "motion": "none"
+  },
+  "lift_ruler_service_runs_in_integrated_profile": {
+   "evidence": "three-piece-i12/lift-service-probe-01.json",
+   "observed": "对 IDLE 控制器写 STOP(2)，100ms 内被消费为 0，state/cause/vm/fault 全 0",
+   "motion": "none"
+  },
+  "safety_state_after_flash": {
+   "g_safety_ready": 1,
+   "g_safety_fault": 0,
+   "g_can_ctrl_fault_latched": 0,
+   "g_can_test_result": 1,
+   "g_vm_test_request": 0
+  }
+ },
+ "not_verified": [
+  "整车profile下的真实升降/4310/夹爪/载盘运动（本轮零动作）",
+  "顶部参考建立（需 IT request 1：先快速升到顶回零，再下降）——涉及原料转盘区域",
+  "四轮节点在VM下就绪与CAN守卫（需真实运动会话持有VM）",
+  "视觉输入消费（香橙派未运行/未接，g_vis_rx_bytes=0）",
+  "stage2 自主三件的 profile/limits 数据仍缺（Stage2Body_Configure 需要已实测的对齐profile与route3标记）"
+ ],
+ "note_double_vision_poll": "整车profile下 Vision_Poll() 既由 CanTask 调用，也由 Integration10_Service() 首行调用；两者都是非阻塞取帧，未观察到重复消费，但需在真实视觉输入时复核 g_vis_mat_cycle/g_vis_center_cycle 是否只递增一次/帧",
+ "requirement_ids": {
+  "R": [
+   "RUN-02",
+   "PWR-01"
+  ],
+  "E": [
+   "RUN-06",
+   "SRC-04",
+   "VIS-05"
+  ],
+  "Q": "official questions still pending technical clarification"
+ },
+ "boundary": "本轮只做构建、烧录、flash逐段核对与两个零动作探针；未发任何运动指令，未改电机/标定参数"
+}

@@ -1,0 +1,90 @@
+{
+  "frames": 532,
+  "error": null,
+  "serial": "DISABLED",
+  "motion_allowed": false,
+  "direction_capture_requested": "counterclockwise",
+  "direction_independently_physically_reconfirmed": false,
+  "user_reported_operation": "automatic intermittent rotation; stops3seconds then rotates again",
+  "stop_dwell_s_user_reported": 3,
+  "actual_stop_timestamps_independently_measured": false,
+  "HSV_sha256": "c9059f27cbd594c9169b1461108d92b88432f55d017af5036c2b6005c299f883",
+  "HSV_file_archived_locally": true,
+  "state_counts": {
+    "WAITING_FOR_MOTION": 90,
+    "CONFIRMING_MOTION": 8,
+    "MOVING": 262,
+    "ACQUIRING": 7,
+    "NEAR_STOP": 18,
+    "READY": 145,
+    "SETTLING": 1,
+    "AMBIGUOUS": 1
+  },
+  "material_count_counts": {
+    "3": 400,
+    "2": 131,
+    "4": 1
+  },
+  "red_candidate_count_counts": {
+    "1": 486,
+    "0": 45,
+    "2": 1
+  },
+  "READY_episodes": [
+    {
+      "first_frame": 168,
+      "last_frame": 248,
+      "start_host_relative_s": 6.188823896000031,
+      "end_host_relative_s": 9.082964297999752,
+      "slot_colors": [
+        1,
+        2,
+        4
+      ]
+    },
+    {
+      "first_frame": 354,
+      "last_frame": 354,
+      "start_host_relative_s": 12.962967350999861,
+      "end_host_relative_s": 12.962967350999861,
+      "slot_colors": [
+        2,
+        4,
+        1
+      ]
+    },
+    {
+      "first_frame": 372,
+      "last_frame": 376,
+      "start_host_relative_s": 13.67651741499958,
+      "end_host_relative_s": 13.821670563000225,
+      "slot_colors": [
+        2,
+        4,
+        1
+      ]
+    },
+    {
+      "first_frame": 475,
+      "last_frame": 532,
+      "start_host_relative_s": 17.513605955999992,
+      "end_host_relative_s": 19.612430367000343,
+      "slot_colors": [
+        4,
+        1,
+        2
+      ]
+    }
+  ],
+  "final_continuous_READY_frames": 58,
+  "final_READY_duration_host_s": 2.0988244110003507,
+  "brief_READY_before_movement_is_proven_false": false,
+  "complete_dynamic_recognition_accepted": false,
+  "algorithm_modified": false,
+  "actuator_commands": 0,
+  "source_hashes": {
+    "session.json": "06074ce63b7063a52a40c8bc4f9116366e937020482709d1b61ef8506558d13a",
+    "observations.jsonl": "92baf16ec4baece3ddb68c0a45cb902b9bbccf85b9848053ee9625608e64530e",
+    "last-raw.png": "33b12c335170f3c0003ae26b49bcba2af023389f8314f35726cfcd4939d2890a"
+  }
+}

@@ -41,16 +41,114 @@ MISSION_FIELDS = ["seq", "tick_ms", "run_id", "stage", "state", "cause", "startu
                   "reference_feedback_mask", "extension_motor_millideg", "lift_motor_millideg"]
 
 
+GRID_ROUTE_FIELDS = ["seq", "tick_ms", "run_id", "layout_version", "source",
+                     "start_cell", "goal_cell", "waypoint_count", "action_index",
+                     "alignment_state", "position_executor_enabled", "goal_x_mm", "goal_y_mm"]
+
+
+EXTENSION_DIAG_FIELDS = ["seq", "tick_ms", "run_id", "first_reason", "command", "exchange_result",
+                         "reply_flags", "service_gap_ms", "home_phase", "first_tick_ms"]
+EXTENSION_HOLD_FIELDS = ["hold_enable_count", "hold_samples", "hold_confirmed", "hold_ready_tick_ms", "hold_delta_mdeg"]
+SOURCE_PREP_FIELDS = ["seq", "tick_ms", "run_id", "state", "cause", "done_mask", "release_ms", "elapsed_ms", "segment", "extension_milli_mm", "grip_mdeg"]
+
+
+def parse_straight_test(line: bytes):
+    if not line.startswith(b"LT1,"):
+        return None
+    body, sep, checksum = line.rstrip(b"\r\n").rpartition(b",")
+    if not sep or len(checksum)!=4 or binascii.crc_hqx(body+b",",0xffff)!=int(checksum,16):
+        raise ValueError("LT1 CRC mismatch")
+    fields=["seq","tick_ms","run_id","state","cause","distance_milli_mm","reference_mm_s","progress_scale_ppm"]
+    values=list(map(int,body.split(b",")[1:]))
+    if len(values)!=len(fields) or any(not 0<=v<=0xffffffff for v in values):
+        raise ValueError("LT1 field/range")
+    result=dict(zip(fields,values))
+    if result['state']>7 or not 0<result['distance_milli_mm']<=2100000 or not 0<result['reference_mm_s']<=400:
+        raise ValueError("LT1 state/config")
+    return result
+
+
+def parse_source_preparation(line: bytes):
+    if not line.startswith(b"SP1,"):
+        return None
+    body, sep, checksum = line.rstrip(b"\r\n").rpartition(b",")
+    if not sep or len(checksum) != 4 or binascii.crc_hqx(body+b",", 0xffff) != int(checksum,16):
+        raise ValueError("SP1 CRC mismatch")
+    values = list(map(int, body.split(b",")[1:]))
+    if len(values) != len(SOURCE_PREP_FIELDS):
+        raise ValueError("SP1 field count")
+    result = dict(zip(SOURCE_PREP_FIELDS, values))
+    for key, value in result.items():
+        if key in ("extension_milli_mm", "grip_mdeg"):
+            if not -(2**31) <= value < 2**31:
+                raise ValueError("SP1 signed range")
+        elif not 0 <= value <= 0xffffffff:
+            raise ValueError("SP1 uint32 range")
+    if result['state'] > 4 or result['done_mask'] > 7 or result['segment'] > 2:
+        raise ValueError("SP1 state range")
+    return result
+
+
+def parse_extension_diag(line: bytes):
+    if not line.startswith((b"EX1,", b"EX2,", b"EX3,")):
+        return None
+    body, separator, checksum = line.rstrip(b"\r\n").rpartition(b",")
+    if not separator or len(checksum) != 4 or binascii.crc_hqx(body + b",", 0xffff) != int(checksum, 16):
+        raise ValueError("EX1 CRC mismatch")
+    values = body.split(b",")[1:]
+    fields = EXTENSION_DIAG_FIELDS + (EXTENSION_HOLD_FIELDS if line.startswith((b"EX2,", b"EX3,")) else [])
+    if line.startswith(b"EX3,"):
+        fields += ["first_step", "last_speed_sign", "last_speed_rpm"]
+    if len(values) != len(fields):
+        raise ValueError("EX1 field count")
+    result = dict(zip(fields, map(int, values)))
+    if any(not 0 <= value <= 0xffffffff for value in result.values()):
+        raise ValueError("EX1 uint32 range")
+    if (result["first_reason"] > 8 or result["command"] > 255 or
+            result["reply_flags"] not in range(256) and result["reply_flags"] != 0xffffffff):
+        raise ValueError("EX1 diagnostic range")
+    if "hold_confirmed" in result and (result["hold_confirmed"] > 1 or result["hold_samples"] > 5 or result["hold_enable_count"] > 1):
+        raise ValueError("EX2 hold proof range")
+    return result
+
+
+def parse_grid_route(line: bytes):
+    if not line.startswith((b"VG2,", b"VG3,", b"VG4,")):
+        return None
+    body, separator, checksum = line.rstrip(b"\r\n").rpartition(b",")
+    if not separator or len(checksum) != 4 or binascii.crc_hqx(body + b",", 0xffff) != int(checksum, 16):
+        raise ValueError("VG2 CRC mismatch")
+    values = body.split(b",")[1:]
+    fields = GRID_ROUTE_FIELDS + (["handoff_x_milli_mm", "handoff_y_milli_mm", "handoff_valid"] if line.startswith((b"VG3,", b"VG4,")) else [])
+    if line.startswith(b"VG4,"):
+        fields += ["route_phase", "leg_target_x_mm", "leg_target_y_mm"]
+    if len(values) != len(fields):
+        raise ValueError("VG2 field count")
+    result = dict(zip(fields, map(int, values)))
+    if any(not 0 <= value <= 0xffffffff for value in result.values()):
+        raise ValueError("VG2 uint32 range")
+    if (result["source"] not in (1, 2) or result["start_cell"] > 24 or result["goal_cell"] > 24 or
+            not 1 <= result["waypoint_count"] <= 8 or result["action_index"] >= 8 or
+            result["alignment_state"] not in (0, 1, 3) or result["position_executor_enabled"] > 1 or
+            result["goal_x_mm"] >= 2400 or result["goal_y_mm"] >= 2400):
+        raise ValueError("VG2 state/geometry")
+    if line.startswith(b"VG4,") and (result["route_phase"] > 4 or
+            result["leg_target_x_mm"] >= 2400 or result["leg_target_y_mm"] >= 2400):
+        raise ValueError("VG4 route phase/target")
+    return result
+
+
 def parse_mission(line: bytes):
-    if not line.startswith(b"VM1,"):
+    if not line.startswith((b"VM1,", b"VM2,")):
         return None
     body, separator, checksum = line.rstrip(b"\r\n").rpartition(b",")
     if not separator or len(checksum) != 4 or binascii.crc_hqx(body + b",", 0xffff) != int(checksum, 16):
         raise ValueError("VM1 CRC mismatch")
     values = body.decode("ascii").split(",")[1:]
-    if len(values) != len(MISSION_FIELDS):
+    fields = MISSION_FIELDS + (["queue_state", "queue_stage", "queue_first_mask", "queue_last_mask", "queue_wait_ms", "queue_attempts"] if line.startswith(b"VM2,") else [])
+    if len(values) != len(fields):
         raise ValueError("VM1 field count")
-    result = dict(zip(MISSION_FIELDS, map(int, values)))
+    result = dict(zip(fields, map(int, values)))
     for field, value in result.items():
         if field.endswith("millideg"):
             if not -(2**31) <= value < 2**31:
@@ -123,7 +221,7 @@ def parse_wheel(line: bytes):
 
 def decode(line: bytes) -> tuple[str, dict]:
     """CRC正确与物理动作成功是不同概念；不推测缺失的反馈。"""
-    for parser in [parse_mission, parse_stage, parse_wheel, *PARSERS]:
+    for parser in [parse_straight_test, parse_source_preparation, parse_extension_diag, parse_grid_route, parse_mission, parse_stage, parse_wheel, *PARSERS]:
         result = parser(line)
         if result is not None:
             return line.split(b",", 1)[0].decode("ascii"), result
@@ -178,8 +276,8 @@ class Capture:
             "firmware_stage_confirmed": False,
             "tag": tag, "error": error,
         }
-        if not error and tag in ("ST1", "SC1", "VM1"):
-            firmware_stage = data["stage"] if tag == "VM1" else data["stage_id"]
+        if not error and tag in ("ST1", "SC1", "VM1", "VM2"):
+            firmware_stage = data["stage"] if tag in ("VM1", "VM2") else data["stage_id"]
             row["firmware_stage_id"] = firmware_stage
             row["firmware_stage_confirmed"] = self.stage in (0, firmware_stage)
             row["stage_label_mismatch"] = self.stage not in (0, firmware_stage)
@@ -294,7 +392,7 @@ def source_manifest():
     files += sorted(fw.glob("*.uvprojx"))
     hashes = {str(p.relative_to(fw)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
     try:
-        commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+        commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, stderr=subprocess.DEVNULL).strip()
     except (OSError, subprocess.CalledProcessError):
         commit = None
     return {"workspace_git_head": commit, "firmware_source_directory": str(fw), "local_files_sha256": hashes,

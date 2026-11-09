@@ -1,0 +1,92 @@
+{
+  "date": "2026-10-31",
+  "user_steering": "直接进入模式2联调",
+  "manual_recovery_release_user_confirmed": "ok松开了，进入下一步",
+  "new_debug_wait_stage_prepared": true,
+  "new_stage_host_cases": 9,
+  "new_stage_build_pass": true,
+  "actual_install_executed": true,
+  "actual_install_result": "Subsequent explicit authorization; two files installed, actual incremental build passed",
+  "active_confirm_wait_ms": 15000,
+  "new120000_wait_active": "expected after reported download; runtime behavior not independently measured",
+  "board_firmware_version_independently_read": false,
+  "current_physical_pose_user_report": "Mode2 completed at release height, gripper opened; user confirmed full cycle no issue",
+  "next_action": "empty up27000 then existing low-speed true-top home, actual confirmation; prepare extension/rotation fixed-point/clearance records next, no repeat same accepted mode2 cycle",
+  "assistant_flash": false,
+  "assistant_hardware_commands": false,
+  "first_install_attempt_rejected": true,
+  "latest_user_authorization": "安装120秒确认调试版",
+  "actual_old3_sources_hash_match_at_initial_denial": {
+    "USER/arm_sequence.c": true,
+    "USER/arm_sequence.h": true,
+    "USER/main.c": true
+  },
+  "actual_installed_files": [
+    {
+      "file": "USER/arm_sequence.c",
+      "before": "5932cac923f2178270685577d55548bc2cc80208a87c26c6f4423e0ac64b058b",
+      "after": "2a2a8861f155d3e892d1aa0d6f282cd5b18d542e3310ee97ad6a0f04111a05ad"
+    },
+    {
+      "file": "USER/arm_sequence.h",
+      "before": "4beba067eb2c962d95bc82aadbd9a1c2fffe218ccd2607c440563a432e79b888",
+      "after": "5110f5d67fc2693fd46e9cd6a61ebc6d20ff481915c443b2eb1272c0ac6942fd"
+    }
+  ],
+  "protected_source_project_count": 818,
+  "new_actual_build_pass": true,
+  "code_bytes": 63708,
+  "rw_bytes": 2440,
+  "disk_mode2_confirm_wait_ms": 120000,
+  "active_confirm_wait_ms_before_user_download": 15000,
+  "board_new_download_confirmed": true,
+  "second_timeout_user_report": "没有立即写g_arm_grip_confirm = 1",
+  "second_timeout_watch": {
+    "g_arm_sequence_mode": 2,
+    "g_arm_sequence_state": 9,
+    "g_arm_sequence_result": 7,
+    "g_arm_grip_confirm": 1,
+    "g_lift_motion_state": 7,
+    "g_lift_motion_result": 1,
+    "g_lift_home_state": 0,
+    "g_lift_home_reported": 0
+  },
+  "second_timeout_interpretation": "User confirms late grip confirmation after timeout; late1 does not resume fault. No loaded lift observed in this run.",
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-05",
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "待技术答疑确认",
+  "board_new_download_user_report": "已经烧录好，进入下一步",
+  "download_confirmation_basis": "User report only, no independent board firmware checksum readback",
+  "new_mode2_full_cycle_accepted": true,
+  "latest_actual_source_hash_check": {
+    "USER/arm_sequence.c": true,
+    "USER/arm_sequence.h": true
+  },
+  "empty_return_top_user_context_confirmation": "没有问题进入下一步",
+  "empty_return_top_confirmation_scope": "Affirmative reply to explicit true-top/self-stop check; no new numeric home telemetry supplied",
+  "new_mode2_trial_instruction": {
+    "mode": 2,
+    "pick_down_pulses_candidate": 32000,
+    "top_approach_pulses": 27000,
+    "return_down_pulses": 32000,
+    "grip_confirm_state": 2,
+    "place_confirm_state": 12,
+    "confirm_timeout_ms": 120000,
+    "new_trial_result": "single supervised full-cycle function accepted, not formal autonomous"
+  },
+  "new_mode2_acceptance_scope": "One supervised mode2 fixed-pose cycle with two human confirmations, user full-process affirmative reply and state7/result1 screenshot",
+  "new_mode2_acceptance_evidence": "mode2-first-complete-acceptance.json"
+}

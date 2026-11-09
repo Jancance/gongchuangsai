@@ -1,0 +1,97 @@
+{
+  "source_zip": "20261027-175625-750469.zip",
+  "zip_sha256": "4fd546aa583d5ff2c96bc4084077e0961a0fdd4d859c5756622bc77a95c07910",
+  "frames": 1425,
+  "states": {
+    "STALE_RESULT": 30,
+    "FOLLOWING_PIXEL": 1395
+  },
+  "read_completion_span_s": 175.74320182499997,
+  "scope": "Desktop host-read-completion pixel evidence; no exposure latency or physical acceptance.",
+  "target_color_counts": {
+    "NONE": 30,
+    "blue+lightblue": 1384,
+    "blue": 11
+  },
+  "timing_percentiles_p50_p95_max_ms": {
+    "detector_call_ms": [
+      104.18146900002512,
+      111.07720080000263,
+      176.81362700000136
+    ],
+    "result_host_age_ms": [
+      124.43405800001983,
+      146.75270280000632,
+      185.51049600000624
+    ],
+    "diagnostic_io_ms": [
+      0.3298689999837734,
+      0.3960175999623061,
+      11.347694000050979
+    ]
+  },
+  "colors": {
+    "blue": {
+      "normal_missing_frames": [],
+      "proposal_sources": {
+        "combined_silhouette": 1395
+      },
+      "center_range_xy_px": [
+        0.24309977043571962,
+        0.24579483300487937
+      ]
+    },
+    "lightblue": {
+      "normal_missing_frames": [
+        33,
+        68,
+        239,
+        257,
+        351,
+        453,
+        896,
+        966,
+        1258,
+        1305,
+        1348
+      ],
+      "proposal_sources": {
+        "current_pale_circle": 1310,
+        "combined_silhouette": 22,
+        "chromatic_circle": 52
+      },
+      "center_range_xy_px": [
+        52.2554813007896,
+        22.0
+      ]
+    }
+  },
+  "module_matches": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true,
+    "diagnostic_entry": true,
+    "diagnostic_base": true
+  },
+  "config_matches": {
+    "camera_processing.json": {
+      "source_hash_matches_release": true,
+      "effective_matches_release": true
+    },
+    "material_color_thresholds.json": {
+      "source_hash_matches_release": true,
+      "effective_matches_release": true
+    },
+    "project_profile.json": {
+      "source_hash_matches_release": true,
+      "effective_matches_release": true
+    }
+  },
+  "stale_outputs_all_empty": true,
+  "stale_min_age_ms": 150.05543700004864,
+  "normal_max_age_ms": 149.98777400001018,
+  "no_motion_output": true,
+  "normal_duplicate_detector_frames": [],
+  "zip_crc_bad_member": null
+}

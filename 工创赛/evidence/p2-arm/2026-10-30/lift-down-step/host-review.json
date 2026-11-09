@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "runtime_scenarios": 25,
+  "cases": [
+    "boot",
+    "down_default",
+    "down40000",
+    "down50000",
+    "down0",
+    "down50001",
+    "hexmistake",
+    "up233333",
+    "up0",
+    "up233334",
+    "snapshot",
+    "busy",
+    "no_repeat",
+    "stop",
+    "stop_fail",
+    "timeout",
+    "zero_delta",
+    "speed_fail",
+    "drive_fault",
+    "move_fail",
+    "bad_options",
+    "home_busy",
+    "latch_recover",
+    "protocol",
+    "guard"
+  ],
+  "actual_state_machine_protocol_and_node5_guard_tested": true,
+  "source_sha256": {
+    "HARDWARE/LIFT/lift_config.h": "3389e28fdd5aef065dd12dec182905ed5ec78a05c59986f92e6e45eeae114194",
+    "HARDWARE/LIFT/lift.h": "246f59f1acb6f18325ee3e634fc1cbae4724f412fcbcdb8ab8e8f2eaedeba494",
+    "HARDWARE/LIFT/lift.c": "3bd275b71fc2d50b5e0888761238668fdf0ac535cfbe25e998bad8ebba49a826",
+    "HARDWARE/LIFT/lift_protocol.c": "be3a0effd3925f2d13910a77cff3a26676979e7f7fb86faec261d360b92172e1",
+    "SYSTEM/CAN/can.c": "ae764fdf5db38ef649083bb29557353b113f046a449ff556dcb6eeb396ead37b"
+  },
+  "protected_files": 813,
+  "physical_millimetre_calibration_or_move_verified": false
+}

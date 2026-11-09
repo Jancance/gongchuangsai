@@ -1,0 +1,87 @@
+PASS home state normal result=1 starts=1 aborts=0 stops=0
+PASS home state fast_notice result=1 starts=1 aborts=0 stops=0
+PASS home state mode_menu2 result=1 starts=1 aborts=0 stops=0
+PASS home state not_enabled result=1 starts=1 aborts=0 stops=0
+PASS home state wrap result=1 starts=1 aborts=0 stops=0
+PASS home state repeat result=1 starts=1 aborts=0 stops=0
+PASS home state invalidate result=1 starts=1 aborts=0 stops=0
+PASS home state block_move result=1 starts=1 aborts=0 stops=0
+PASS home state bad_options result=4 starts=0 aborts=0 stops=0
+PASS home state param_fail result=4 starts=0 aborts=0 stops=0
+PASS home state wrong_dir result=7 starts=0 aborts=0 stops=0
+PASS home state rpm_changed result=7 starts=0 aborts=0 stops=0
+PASS home state timeout_changed result=7 starts=0 aborts=0 stops=0
+PASS home state detect_rpm_changed result=7 starts=0 aborts=0 stops=0
+PASS home state current_changed result=7 starts=0 aborts=0 stops=0
+PASS home state time_changed result=7 starts=0 aborts=0 stops=0
+PASS home state auto_changed result=7 starts=0 aborts=0 stops=0
+PASS home state status_fail result=4 starts=0 aborts=0 stops=0
+PASS home state status_fault result=5 starts=0 aborts=0 stops=0
+PASS home state bad_home_ready result=5 starts=0 aborts=0 stops=0
+PASS home state home_read_fail result=4 starts=0 aborts=0 stops=0
+PASS home state pre_moving result=5 starts=0 aborts=1 stops=1
+PASS home state unexpected_home result=5 starts=0 aborts=1 stops=1
+PASS home state enable_fail result=4 starts=0 aborts=0 stops=0
+PASS home state start_fail result=4 starts=1 aborts=1 stops=1
+PASS home state idle_only result=3 starts=1 aborts=1 stops=1
+PASS home state stale_notice result=3 starts=1 aborts=1 stops=1
+PASS home state stuck_running result=3 starts=1 aborts=1 stops=1
+PASS home state driver_home_fail result=5 starts=1 aborts=1 stops=1
+PASS home state feedback_fail result=4 starts=1 aborts=1 stops=1
+PASS home state running_speed result=3 starts=1 aborts=1 stops=1
+PASS home state abort result=2 starts=1 aborts=1 stops=1
+PASS home state ordinary_stop result=2 starts=1 aborts=1 stops=1
+PASS home state abort_fail result=4 starts=1 aborts=1 stops=1
+PASS home state abort_idle result=2 starts=1 aborts=1 stops=1
+PASS home state stop_fail result=4 starts=1 aborts=1 stops=1
+PASS home state stop_retry result=4 starts=1 aborts=2 stops=2
+PASS home state power_loss result=6 starts=1 aborts=1 stops=1
+PASS home state busy_after result=6 starts=1 aborts=1 stops=1
+PASS home state gap result=8 starts=1 aborts=1 stops=1
+PASS home state not_ready result=6 starts=0 aborts=0 stops=0
+PASS home state busy_start result=6 starts=0 aborts=0 stops=0
+PASS home state motion_pending result=6 starts=0 aborts=0 stops=0
+PASS home state motion_busy result=6 starts=0 aborts=0 stops=0
+PASS home state identity_busy result=6 starts=0 aborts=0 stops=0
+PASS home state failed_motion result=6 starts=0 aborts=0 stops=0
+PASS home state prep_timeout result=3 starts=0 aborts=0 stops=0
+PASS home invalid request
+PASS home state power_loss_stopfail result=6 starts=1 aborts=2 stops=2
+PASS home integration dm_busy
+PASS home integration lift_busy
+PASS home integration lift_home_busy
+PASS home integration simultaneous_lift
+PASS home integration simultaneous_motion
+PASS home integration simultaneous_dm
+PASS home integration home_stop_failed
+PASS home integration home_active
+PASS home transport valid result=1
+PASS home transport notice result=1
+PASS home transport stale_start result=1
+PASS home transport wrong_node result=5
+PASS home transport wrong_packet result=5
+PASS home transport wrong_ide result=5
+PASS home transport wrong_rtr result=5
+PASS home transport wrong_command result=5
+PASS home transport no_reply result=5
+PASS home transport bad_length result=6
+PASS home transport bad_tail result=6
+PASS home transport bad_ack result=8
+PASS home transport tx_fail result=4
+PASS home transport tx_timeout result=4
+PASS home transport no_mailbox result=4
+PASS home transport init_fail result=3
+PASS null rejected
+PASS abort fixed node6
+PASS abort fixed node6
+PASS abort fixed node6
+PASS status read fixed node6
+PASS session end
+PASS capture node isolation and format
+PASS capture node isolation and format
+PASS capture node isolation and format
+PASS capture node isolation and format
+PASS capture node isolation and format
+PASS capture node isolation and format
+PASS capture node isolation and format
+PASS home transport disabled result=9

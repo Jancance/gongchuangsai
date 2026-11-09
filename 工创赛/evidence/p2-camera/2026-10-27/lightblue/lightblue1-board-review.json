@@ -1,0 +1,155 @@
+{
+  "source_zip": "20261027-183210-098652.zip",
+  "zip_sha256": "8d23bf1233aa2e69cd0b0c8580b5cb9609a2a687c0fab0bae0613fc92ba48d1a",
+  "frames": 1386,
+  "states": {
+    "STALE_RESULT": 26,
+    "FOLLOWING_PIXEL": 1360
+  },
+  "read_completion_span_s": 166.81137845400008,
+  "scope": "Desktop host-read-completion pixel evidence; no exposure latency or physical acceptance.",
+  "target_color_counts": {
+    "NONE": 26,
+    "blue+lightblue": 1360
+  },
+  "timing_percentiles_p50_p95_max_ms": {
+    "detector_call_ms": [
+      101.55089799991401,
+      110.8237962498606,
+      183.55311799996343
+    ],
+    "result_host_age_ms": [
+      122.53265999993346,
+      145.58865149990652,
+      214.49325799994767
+    ],
+    "diagnostic_io_ms": [
+      0.32782849984869245,
+      0.3910470001073918,
+      11.384169999928417
+    ]
+  },
+  "colors": {
+    "blue": {
+      "normal_missing_frames": [],
+      "proposal_sources": {
+        "combined_silhouette": 1360
+      },
+      "center_range_xy_px": [
+        0.28129705261784466,
+        0.1997288874813421
+      ]
+    },
+    "lightblue": {
+      "normal_missing_frames": [],
+      "proposal_sources": {
+        "current_pale_circle": 977,
+        "chromatic_circle": 214,
+        "projected_pale_component": 168,
+        "combined_silhouette": 1
+      },
+      "center_range_xy_px": [
+        61.24080210349348,
+        23.0
+      ]
+    }
+  },
+  "module_matches": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true,
+    "diagnostic_entry": true,
+    "diagnostic_base": true
+  },
+  "config_matches": {
+    "camera_processing.json": {
+      "source_hash_matches_release": true,
+      "effective_matches_release": true
+    },
+    "material_color_thresholds.json": {
+      "source_hash_matches_release": true,
+      "effective_matches_release": true
+    },
+    "project_profile.json": {
+      "source_hash_matches_release": true,
+      "effective_matches_release": true
+    }
+  },
+  "stale_outputs_all_empty": true,
+  "stale_min_age_ms": 150.08951399977377,
+  "normal_max_age_ms": 149.92910000000848,
+  "no_motion_output": true,
+  "normal_duplicate_detector_frames": [],
+  "zip_crc_bad_member": null,
+  "source_coordinate_stats": {
+    "blue": {
+      "geometry_reference_changes": 0,
+      "by_source": {
+        "combined_silhouette": {
+          "count": 1360,
+          "median_xy_px": [
+            450.7114609154369,
+            634.4549861763965
+          ],
+          "range_xy_px": [
+            0.28129705261784466,
+            0.1997288874813421
+          ]
+        }
+      }
+    },
+    "lightblue": {
+      "geometry_reference_changes": 579,
+      "by_source": {
+        "chromatic_circle": {
+          "count": 214,
+          "median_xy_px": [
+            1406.0,
+            641.0
+          ],
+          "range_xy_px": [
+            14.0,
+            22.0
+          ]
+        },
+        "combined_silhouette": {
+          "count": 1,
+          "median_xy_px": [
+            1443.3140263055752,
+            649.1684373111813
+          ],
+          "range_xy_px": [
+            0.0,
+            0.0
+          ]
+        },
+        "current_pale_circle": {
+          "count": 977,
+          "median_xy_px": [
+            1406.0,
+            641.0
+          ],
+          "range_xy_px": [
+            25.0,
+            23.0
+          ]
+        },
+        "projected_pale_component": {
+          "count": 168,
+          "median_xy_px": [
+            1459.8667045313507,
+            652.3442845911991
+          ],
+          "range_xy_px": [
+            0.7575366622920683,
+            0.40924966096110893
+          ]
+        }
+      }
+    }
+  },
+  "all_stale_detector_had_two_colors": true,
+  "auxiliary_helper_hash_recorded": false,
+  "provenance_limit": "Original recorder did not hash the imported pale helper; four main modules, two diagnostic modules and three configs match. New track1 recorder adds both helper hashes."
+}

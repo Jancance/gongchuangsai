@@ -1,0 +1,38 @@
+{
+  "format_version": 1,
+  "middle_circle": {
+    "search_half_width_px": 175,
+    "search_half_height_px": 210,
+    "maximum_reference_distance_px": 180.0,
+    "hough_dp": 1.0,
+    "hough_min_distance_px": 45.0,
+    "canny_high": 100.0,
+    "accumulator_threshold": 20.0,
+    "edge_canny_low": 20.0,
+    "edge_canny_high": 60.0,
+    "minimum_radius_px": 60,
+    "maximum_radius_px": 82,
+    "preferred_radius_px": 70.0,
+    "minimum_edge_support": 0.72,
+    "refinement_distance_px": 3.5,
+    "refinement_minimum_points": 80,
+    "refinement_minimum_arc_deg": 150.0
+  },
+  "reference_lines": {
+    "offset_mm": 75.0,
+    "band_half_height_px": 30,
+    "minimum_half_width_px": 420.0,
+    "station_span_width_factor": 1.02,
+    "hough_theta_step_deg": 0.5,
+    "hough_vote_threshold": 70,
+    "maximum_hough_candidates": 20,
+    "maximum_angle_deg": 8.0,
+    "maximum_target_distance_px": 30.0,
+    "refinement_distance_px": 2.5,
+    "minimum_edge_points": 60,
+    "minimum_x_span_px": 220.0,
+    "maximum_line_disagreement_deg": 2.0
+  },
+  "search_calibration": null,
+  "calibration_verified": false
+}

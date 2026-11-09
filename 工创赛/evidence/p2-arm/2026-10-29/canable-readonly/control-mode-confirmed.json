@@ -1,0 +1,24 @@
+{
+  "rx_can_id": 0,
+  "dlc": 8,
+  "data_hex": "01 00 33 0A 01 00 00 00",
+  "esc_id": 1,
+  "register": "CTRL_MODE 0x0A",
+  "value": 1,
+  "interpretation": "MIT",
+  "mapping_source": "DM_CAN_official_reference.py:707-710, Control_Type.MIT=1/POS_VEL=2",
+  "reference_configuration_difference": "原开源tower.h选择POZ位置速度，现机实读MIT；两者不同，不直接套用0x101位置速度控制",
+  "master_id_register_verified": false,
+  "next_read": "7FF DLC8: 01 00 33 07 00 00 00 00",
+  "bitrate_user_confirmed": 1000000,
+  "enable_or_motion_commands_sent_by_agent": false,
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03"
+  ],
+  "official_Q_unchanged": true
+}

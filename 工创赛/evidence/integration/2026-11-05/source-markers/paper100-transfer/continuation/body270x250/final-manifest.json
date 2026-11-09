@@ -1,0 +1,176 @@
+{
+  "input_body_mm": {
+    "front": 137,
+    "rear": 133,
+    "left": 220,
+    "right": 30,
+    "length": 270,
+    "width": 250
+  },
+  "current_extension_mm": 70,
+  "additional_extension_mm": 100,
+  "both_stroke_lengths_ruler_measured": true,
+  "matlab_executable": "D:/MATLAB1/bin/matlab.exe",
+  "matlab_version": "R2020a",
+  "matlab_batch_exit_codes": [
+    0,
+    0,
+    0
+  ],
+  "single_stop_body_algorithm_checks": 5,
+  "body_pose_algorithm_checks": 8,
+  "measured_stroke_checks": 4,
+  "same_stop_nominal_geometry_candidate": {
+    "chassis_right_forward_mm": [
+      -13.4,
+      -14.9
+    ],
+    "yaw_deg": 0,
+    "endpoint_gap_mm": 88.18957170811905,
+    "extension_mm": [
+      164.37703237088925,
+      164.40499018930296,
+      5.684135056410383
+    ],
+    "logical_deg": [
+      196.66731421058785,
+      166.5394930091815,
+      181.3313292390817
+    ],
+    "translation_mm": 20.03921156133644,
+    "minimum_stroke_margin_mm": 5.595009810697036,
+    "refinement_step_mm": 0.1,
+    "exact_straight_path_gap_mm": 74.78957170811907,
+    "meets_original10mm_margin": false,
+    "sensitivity": {
+      "sets": 162,
+      "targets_checked": 486,
+      "all_targets_in_stroke_sets": 91,
+      "out_of_stroke_sets": 71,
+      "minimum_extension_mm": -2.359315594035934,
+      "maximum_extension_mm": 173.56839738615582,
+      "max_stroke_violation_mm": 8.568397386155823,
+      "current_L_mm": [
+        225,
+        235,
+        245
+      ],
+      "current_E_mm": [
+        65,
+        70,
+        75
+      ],
+      "maximum_E_mm": [
+        165,
+        170
+      ],
+      "target_axis_perturbation_mm": [
+        -3,
+        0,
+        3
+      ],
+      "measured_uncertainty_bounds": false
+    }
+  },
+  "required10mm_margin_found_in_grid": false,
+  "conditional_geometry_scenarios": [
+    {
+      "label": "Measured lengths fixed; target perturbation 3mm; base exact",
+      "ruler_perturbation_mm": 0,
+      "target_axis_perturbation_mm": 3,
+      "base_axis_perturbation_mm": 0,
+      "sets": 27,
+      "targets": 81,
+      "rejected_sets": 0,
+      "minimum_extension_mm": 2.640684405964066,
+      "maximum_extension_mm": 168.56839738615582,
+      "minimum_stroke_margin_mm": 1.431602613844177,
+      "all_within_stroke": true
+    },
+    {
+      "label": "Ruler perturbation 1mm; target 3mm; base exact",
+      "ruler_perturbation_mm": 1,
+      "target_axis_perturbation_mm": 3,
+      "base_axis_perturbation_mm": 0,
+      "sets": 243,
+      "targets": 729,
+      "rejected_sets": 0,
+      "minimum_extension_mm": 1.6406844059640662,
+      "maximum_extension_mm": 169.56839738615582,
+      "minimum_stroke_margin_mm": 0.4316026138441771,
+      "all_within_stroke": true
+    },
+    {
+      "label": "Ruler perturbation 1mm; target 3mm; base 1mm",
+      "ruler_perturbation_mm": 1,
+      "target_axis_perturbation_mm": 3,
+      "base_axis_perturbation_mm": 1,
+      "sets": 2187,
+      "targets": 6561,
+      "rejected_sets": 27,
+      "minimum_extension_mm": 0.6380629726396023,
+      "maximum_extension_mm": 170.8238369710295,
+      "minimum_stroke_margin_mm": -0.8238369710294933,
+      "all_within_stroke": false
+    },
+    {
+      "label": "Ruler perturbation 1mm; target 2mm; base 1mm",
+      "ruler_perturbation_mm": 1,
+      "target_axis_perturbation_mm": 2,
+      "base_axis_perturbation_mm": 1,
+      "sets": 2187,
+      "targets": 6561,
+      "rejected_sets": 0,
+      "minimum_extension_mm": 1.6406844059640662,
+      "maximum_extension_mm": 169.56839738615582,
+      "minimum_stroke_margin_mm": 0.4316026138441771,
+      "all_within_stroke": true
+    },
+    {
+      "label": "Ruler perturbation 1mm; target 2mm; base 2mm",
+      "ruler_perturbation_mm": 1,
+      "target_axis_perturbation_mm": 2,
+      "base_axis_perturbation_mm": 2,
+      "sets": 2187,
+      "targets": 6561,
+      "rejected_sets": 24,
+      "minimum_extension_mm": 0.6380629726396023,
+      "maximum_extension_mm": 170.8238369710295,
+      "minimum_stroke_margin_mm": -0.8238369710294933,
+      "all_within_stroke": false
+    }
+  ],
+  "assumed_error_bounds_physically_verified": false,
+  "full_motion_validation_passed": false,
+  "motion_allowed": false,
+  "hardware_operated": false,
+  "firmware_changed": false,
+  "firmware_downloaded": false,
+  "dimension_conflict_previous_workspace_input_preserved": true,
+  "document_links_checked": true,
+  "sha256": {
+    "calibration/source_tcp_center_reference_20261105.json": "49aab57832c61cb8d768ffcf59204f2e6585d3f38fae24e3403a368ea65846ac",
+    "scripts/validate_source_single_pose_matlab_20261105.m": "2f8c46d9f2d8642404389220805fd031c1a565e46b933309a2ee104966e8d64d",
+    "scripts/validate_source_body_pose_matlab_20261105.m": "f7d28818c89b6fd38d04067ee013e28f9e93d5775082d0fef84e2b7891d9eeb2",
+    "scripts/validate_source_measured_stroke_matlab_20261105.m": "b5c201168c74bfef615b1ea24bcf0d9cbf7695c75711b19f360d22ee1aeff020",
+    "docs/INTEGRATION8_BODY270_SINGLE_STOP_MATLAB_2026-11-05.md": "f181b09e7caf8d379ffd450fac53da16230c1d4b2847badfaa26852ae26d500b",
+    "docs/competition_requirements_2027.md": "f2bf244cbd1022a4994b65a3ca4fb9a504d03888782a99748a43b30c6a68b6dc",
+    "docs/INTEGRATION8_SINGLE_STOP_STROKE170_2026-11-05.md": "dc7d692fdfd9d10988b90be516718e092ea1c223f077f821aeba9cc74088df13",
+    "docs/SOURCE_WORKFLOW_NEXT_2026-11-05.md": "a8147580d9a3d416e4d93b0766878c925fa1ffbeed3ef3b292250005f8cd6041",
+    "evidence/integration/2026-11-05/source-markers/paper100-transfer/continuation/body270x250/matlab-body-pose-first-shape-error.log": "27d4bfd930e7c640b1215e669ea21c8d570191d689c019b6a4b6acf97ea0765f",
+    "evidence/integration/2026-11-05/source-markers/paper100-transfer/continuation/body270x250/matlab-body-pose-run.log": "c7c381572d07fa2dc1a19940d7cfed80ef14ee06f2e14e7208433f69bbd15b76",
+    "evidence/integration/2026-11-05/source-markers/paper100-transfer/continuation/body270x250/matlab-current-body-run.log": "69dae180f1147b26eac945959e09d6e82eb71dc1bc99c8547bf4ea8c7cb00f7f",
+    "evidence/integration/2026-11-05/source-markers/paper100-transfer/continuation/body270x250/matlab-measured-stroke-run.log": "862e53f13b049f52c97f06f92b917fc4a5e6d7522618a8302fa2c8887ac5a833",
+    "evidence/integration/2026-11-05/source-markers/paper100-transfer/continuation/body270x250/reference-before-body270x250.json": "9a7dc81ee96ee29d53a92790b6dbcf39ced85d8ff2800d9dc638556a7791ceaa",
+    "evidence/integration/2026-11-05/source-markers/paper100-transfer/continuation/body270x250/reference-current.json": "9e538174824b489081aaf5975666216e681e7b6a63d78703054265391ce82491",
+    "evidence/integration/2026-11-05/source-markers/paper100-transfer/continuation/body270x250/reference-ruler-confirmed.json": "49aab57832c61cb8d768ffcf59204f2e6585d3f38fae24e3403a368ea65846ac",
+    "evidence/integration/2026-11-05/source-markers/paper100-transfer/continuation/body270x250/restricted-grid-body-pose-result.json": "422a14f36d8507c2d678ab973c6278776c5c48bd1cb025c2dcb570af3e1f2a42",
+    "evidence/integration/2026-11-05/source-markers/paper100-transfer/continuation/body270x250/single-stop-current-body-result.json": "b7ce6527dff74691e0f3a14578ebe52589aea846ee0a1ad99f216f1d4f666e28",
+    "evidence/integration/2026-11-05/source-markers/paper100-transfer/continuation/body270x250/single-stop-current-body.mat": "7e64c862cdc45b63ba860b28ba500700e12a04d6338d54dc004867f7c1bcf45d",
+    "evidence/integration/2026-11-05/source-markers/paper100-transfer/continuation/body270x250/matlab-body-pose/body-pose.png": "b2c29a6a175c3cb35c304e0f94dd34078b1cdd0b942d20a3abe146ba85398d6f",
+    "evidence/integration/2026-11-05/source-markers/paper100-transfer/continuation/body270x250/matlab-body-pose/result.json": "ccd8188b7cf70328a9e66596a3ca6f3604eae17ec2d293d2e771fbe014c70612",
+    "evidence/integration/2026-11-05/source-markers/paper100-transfer/continuation/body270x250/matlab-body-pose/simulation.mat": "8b1ed52a3218bac74be918990a2ed6e11adf8d98a21ae01452ce94369bd6b7ee",
+    "evidence/integration/2026-11-05/source-markers/paper100-transfer/continuation/body270x250/matlab-measured-stroke/result.json": "5e103bb5821131147ef6dc396e82e32508b6dbef3c69deb4f9047a0bbbfcff4e",
+    "evidence/integration/2026-11-05/source-markers/paper100-transfer/continuation/body270x250/matlab-measured-stroke/simulation.mat": "e4b53d9a28c40cb298b217f5a5385ec1c43143b0df43808e0edcdd8424a8c749"
+  }
+}

@@ -1,0 +1,9 @@
+MATLAB is running in headless mode.  Figure windows will not be displayed.
+{位置 2 处的索引超出数组边界(不能超出 1)。
+
+出错 validate_source_body_pose_matlab_20261105>gap (line 155)
+dy=max(max(-b.rear-center(:,2),center(:,2)-b.front),0);d=hypot(dx,dy)-r;
+
+出错 validate_source_body_pose_matlab_20261105 (line 22)
+check('zero-yaw circle rectangle distance',abs(gap(center,b,disk_radius)-single.current_body_model_gap_mm)<1e-9);
+} 

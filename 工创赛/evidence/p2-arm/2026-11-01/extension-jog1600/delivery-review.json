@@ -1,0 +1,43 @@
+{
+  "date": "2026-11-01",
+  "source_installed": true,
+  "actual_build_pass": true,
+  "only_changes": [
+    "EXTENSION_JOG_PULSES:160->1600",
+    "EXTENSION_MOVE_TIMEOUT_MS:3000->10000"
+  ],
+  "protected_other_source_project_count": 819,
+  "host_case_count": 59,
+  "calibration_evidence_unit_tests": {
+    "passed": 7,
+    "command": "python -m unittest discover -s tests -p test_extension_mm_calibration_20261101.py",
+    "result": "7 tests, OK; verified this turn"
+  },
+  "builds": {
+    "stage-build.log": "Program Size: Code=63716 RO-data=608 RW-data=2440 ZI-data=26016  ",
+    "actual-build.log": "Program Size: Code=63716 RO-data=608 RW-data=2440 ZI-data=26016  "
+  },
+  "valid_metric_samples": 0,
+  "metric_status": "awaiting_valid_measurements",
+  "total_travel_mm": null,
+  "pulses_per_mm": null,
+  "home_valid": false,
+  "motion_allowed": false,
+  "flashed_by_assistant": false,
+  "hardware_commands_sent_by_assistant": false,
+  "first_trial_clearance_user_report_mm": 30,
+  "early_stop_observation_line_mm": 10,
+  "user_download_pending": true,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-04",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "CAL-05"
+  ],
+  "official_Q": "待技术答疑确认"
+}

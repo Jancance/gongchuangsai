@@ -1,0 +1,12 @@
+{
+  "adapter": "instance-local synchronous CMSIS-DAPv2 USB transfers",
+  "actuator_writes": 0,
+  "reset_requested": false,
+  "halt_requested": false,
+  "flash_requested": false,
+  "usb_device_reset_called": false,
+  "stage": "enumeration",
+  "error_type": "RuntimeError",
+  "error_repr": "RuntimeError('Expected exactly one probe, found 0')",
+  "traceback": "Traceback (most recent call last):\n  File \"D:\\Codex\\工创赛\\scripts\\source_stage2_readonly_sync_probe_20261105.py\", line 82, in main\n    raise RuntimeError(f\"Expected exactly one probe, found {len(probes)}\")\nRuntimeError: Expected exactly one probe, found 0\n"
+}

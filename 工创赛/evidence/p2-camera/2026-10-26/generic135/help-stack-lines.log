@@ -1,0 +1,22 @@
+usage: 叠放位直线标定.py [-h] [--device DEVICE] [--width WIDTH] [--height HEIGHT]
+                  [--fps FPS] [--calibration CALIBRATION]
+                  [--camera-processing-config CAMERA_PROCESSING_CONFIG]
+                  [--config CONFIG] [--ring-config RING_CONFIG] --diameter-mm
+                  DIAMETER_MM --line-offset-mm LINE_OFFSET_MM
+
+以95mm外圈和上下75mm基准线标定叠放位搜索范围
+
+options:
+  -h, --help            show this help message and exit
+  --device DEVICE
+  --width WIDTH
+  --height HEIGHT
+  --fps FPS
+  --calibration CALIBRATION
+  --camera-processing-config CAMERA_PROCESSING_CONFIG
+  --config CONFIG
+  --ring-config RING_CONFIG
+  --diameter-mm DIAMETER_MM
+                        填写自己工位实测外圈直径mm
+  --line-offset-mm LINE_OFFSET_MM
+                        填写自己工位实测基准线偏置mm

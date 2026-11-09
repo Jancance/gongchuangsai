@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "calibration_id": "source-paper48-0a090fabf61e-diagnostic",
+  "width_mm": 100,
+  "height_mm": 100,
+  "image_sha256": "0a090fabf61ead87795ac9801433dadbfa05768be09d59b9b5424e0fd06b8458",
+  "plain_image_sha256": "ac1117bcd4ae3863ac5e9ea13cbdfcb56d4f3a0359e83258c59a89da2842995f",
+  "context": {
+    "camera_id": "Generic_USB_CAMERA_EP.20CC54K01-user135",
+    "image_size": [
+      1920,
+      1080
+    ],
+    "mount_id": "current-field-mount-20261105",
+    "arm_pose_id": "image-bound-0a090fabf61e-extension48-top-driver-reference-unverified",
+    "pixel_space": "raw",
+    "lens_profile_id": null,
+    "plane_id": "current-source-surface-paper48",
+    "plane_z_mm": 85.5,
+    "plane_origin": "current paper cornerA; X alongAB; Y alongAD",
+    "axes": "x_along_ab_y_toward_ad_mm"
+  },
+  "plane_height_basis": "retained prior measured85.5mm, not newly measured in this scene",
+  "homography_image_to_plane": [
+    [
+      0.16601987115430056,
+      0.16651118631237044,
+      -204.4573478645184
+    ],
+    [
+      -0.16860787879627387,
+      0.1619604670114909,
+      203.185580845071
+    ],
+    [
+      -7.915609693820075e-06,
+      -2.4325079619516805e-05,
+      1
+    ]
+  ],
+  "fit_hull_image_px": [
+    [
+      1218.015056133811,
+      13.46843554989617
+    ],
+    [
+      1506.9156637787924,
+      314.22651273251444
+    ],
+    [
+      1209.9372019587065,
+      607.4567675750382
+    ],
+    [
+      919.5650290660051,
+      311.0378429700245
+    ]
+  ],
+  "coordinate_frame": "paper_local",
+  "independent_check_passed": true,
+  "validation_scope": "paper-local drawnMEF only; sampled points have3px selection uncertainty",
+  "validation": {
+    "rms_mm": 0.47047181307760216,
+    "max_mm": 0.515853294155446,
+    "count": 3
+  },
+  "point_selection_uncertainty_px": 3,
+  "fixed_surface_patch_count": 12,
+  "paper_plain_image_pose_consistency_passed": true,
+  "field_calibration_accepted": false,
+  "pose_binding_verified": false,
+  "lens_distortion_validated": false,
+  "plane_to_chassis": null,
+  "plane_to_chassis_candidate": [
+    [
+      -0.7123261163296082,
+      -0.7018486332499178,
+      333.91367686006197
+    ],
+    [
+      -0.7018486332499178,
+      0.7123261163296082,
+      -61.540520826040655
+    ],
+    [
+      0,
+      0,
+      1
+    ]
+  ],
+  "plane_to_chassis_verified": false,
+  "desired_disk_center_chassis_mm": null,
+  "operational_extrapolation_enabled": false,
+  "rim_limits": {
+    "minimum_points": 12,
+    "minimum_arc_deg": 90,
+    "maximum_rms_mm": 3,
+    "radius_range_mm": [
+      130,
+      170
+    ]
+  },
+  "maximum_preview_translation_mm": 100,
+  "min_confidence": 0.9,
+  "max_frame_age_ms": 200,
+  "motion_allowed": false,
+  "physical_grasp_verified": false,
+  "note": "newpose paper mapping passed locally; three regions from earlier same-view uncovered frame, no motor targets released"
+}

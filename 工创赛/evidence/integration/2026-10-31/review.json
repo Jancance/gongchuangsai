@@ -1,0 +1,171 @@
+{
+  "date": "2026-10-31",
+  "scope": "local current F407 project,workspace source and archived evidence; no physical testing or live OrangePi/teammate workspace inspection",
+  "canonical_projects": [
+    "gongxun-f407.uvprojx"
+  ],
+  "current_lift_installation_unchanged": {
+    "HARDWARE/LIFT/lift_config.h": true,
+    "HARDWARE/LIFT/lift.h": true,
+    "HARDWARE/LIFT/lift.c": true,
+    "HARDWARE/LIFT/lift_protocol.c": true,
+    "SYSTEM/CAN/can.c": true
+  },
+  "other_source_checks_unchanged": true,
+  "protected_file_count": 813,
+  "task_logic_same_as_prior20test_evidence": {
+    "src/smart_carrier/task_materials.py": true,
+    "config/task_materials_preliminary_2027.json": true,
+    "tests/test_task_materials.py": true,
+    "src/smart_carrier/task_code.py": true,
+    "tests/test_task_code.py": true
+  },
+  "prior_tests_not_rerun": true,
+  "arm_test_mode_enabled": true,
+  "fixed_point_accepted_count": 0,
+  "fixed_point_count": 5,
+  "descent40000_physical_result_received": false,
+  "carrier_return0_user_functionally_accepted": true,
+  "carrier_full_metric_calibration_accepted": false,
+  "gripper_task_shared_interlock_gap_reproduced": true,
+  "gripper_reproduction_scope": "two independent host task-level command-forwarding cases; no actual PWM/device or collision test",
+  "root_camera_profile": {
+    "camera_model": "DECXIN user 77deg/960P variant",
+    "image_size": [
+      1280,
+      960
+    ]
+  },
+  "archived135_profile": {
+    "camera_model": "Generic_USB_CAMERA_user135deg",
+    "image_size": [
+      1920,
+      1080
+    ]
+  },
+  "camera_current_live_runtime_rechecked": false,
+  "both_profile_metric_and_serial_disabled": true,
+  "code_refs": {
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\gripper_task.c": {
+      "g_jiazhua_debug_result = jiazhua(JIAZHUA_OPEN_ANGLE_DEG);": 21,
+      "if (request == 1U)": 32
+    },
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\main.c": {
+      "static void App_CarrierStep(void)": 1114,
+      "if (Carrier_IsBusy())": 1129,
+      "if (ArmPower_IsIsolatedMode() != 0U)": 1148
+    },
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\HARDWARE\\CARRIER\\carrier.c": {
+      "uint32_t Carrier_IsBusy": 15,
+      "g_carrier_state = 2U;": 68
+    },
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\HARDWARE\\DM_CAN2\\dm_can2_motion.c": {
+      "DM_CAN2_BuildSwitch(0xFDU": 73
+    },
+    "D:\\Codex\\工创赛\\vision_app\\code\\main.py": {
+      "serial_link = DisabledSerialLink(": 1130
+    },
+    "D:\\Codex\\工创赛\\vision_app\\code\\project_camera.py": {
+      "DEFAULT_WIDTH=1280": 11,
+      "DEFAULT_HEIGHT=960": 12
+    }
+  },
+  "source_sha256": {
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\app_config.h": "381c7a1d809a61f03f7874a4097ca0f18983b5890459ad9fa10fc5b8587bcacd",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\main.c": "0522536fe59d7978b3a6a74f72206698a9aa7830653b114b6f60fa67db9ed1f4",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\USER\\gripper_task.c": "ccaea895327efc722d28ab968b73eca017f58040dcf6ba6f6b0d081051ac748e",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\HARDWARE\\GRIPPER\\gripper_config.h": "3c13357f9921adda435558c11bc350bd75b8aef96033a195aadbe63bd2295bf3",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\HARDWARE\\CARRIER\\carrier.c": "5061644e0af667423c4430358a1f396a7105ac140bcbedce5e66eca31f10beb1",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\HARDWARE\\CARRIER\\carrier_config.h": "8f38273cfb607cd93f7e935736ca71cdac4e2e47c96893faaf7624aef462c919",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\HARDWARE\\DM_CAN2\\dm_can2_motion.c": "700bfe480942ba960e4fc2948c926cde83c26cc673ca69d56c8821a1302cbb13",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\HARDWARE\\LIFT\\lift.c": "3bd275b71fc2d50b5e0888761238668fdf0ac535cfbe25e998bad8ebba49a826",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\HARDWARE\\LIFT\\lift_config.h": "3389e28fdd5aef065dd12dec182905ed5ec78a05c59986f92e6e45eeae114194",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\HARDWARE\\EXTENSION\\extension.c": "50f6f5c6357b27a4100d4281c197103e74a4eecf3b6e589091ec8dc0f6977fb7",
+    "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程\\HARDWARE\\EXTENSION\\extension_home.c": "180a5b99837c947c901e9a00442c9d94aed5303ac35b6cda8cfa4a18073fdaa7",
+    "D:\\Codex\\工创赛\\src\\smart_carrier\\task_materials.py": "d66fff6319b5eef1fb9c23d40568f716ec67800362995eb63913665fad43a912",
+    "D:\\Codex\\工创赛\\src\\smart_carrier\\p2_state_machine.py": "630982db0f3dbc3a688c6412e415a838bc0a4b2aafd9cc74604c14b98f9954f4",
+    "D:\\Codex\\工创赛\\src\\smart_carrier\\protocol.py": "99fb38003408b0a0fc9ceefef2d0023a4bf6a0c92ec5b5e26e780259581e1077",
+    "D:\\Codex\\工创赛\\vision_app\\code\\main.py": "474595bb93d1182104798fe0cde416f076ca9fdc921aabce5e9b7ce0e35bba19",
+    "D:\\Codex\\工创赛\\vision_app\\code\\project_camera.py": "a9d234f1d676afd44cf118a0e60be7aaf636c687ae40e281aa0dd62cb4795df4",
+    "D:\\Codex\\工创赛\\vision_app\\code\\config\\project_profile.json": "2c94b6c3bc592547108b33bec30938174cb61c3451fc70fdbce41be224c4c8e8",
+    "D:\\Codex\\工创赛\\output\\p2_vision_generic135_pixel1_20261027\\vision_app\\code\\config\\project_profile.json": "fb10fe8f06eb6a698f14d0ffb1a03fac159c342e8f22a8b6c25f00841bbf9a96",
+    "D:\\Codex\\工创赛\\config\\arm_fixed_points_candidate_20261030.json": "02a86b4246c67f3113cbb0a165953d4891d2550e5828d87e60c813cca62225ef",
+    "D:\\Codex\\工创赛\\config\\carrier_slots_candidate_20261030.json": "614996f0189c9b4f8a7568434c19a262e0538533174d7800f41c73fe2be437c8"
+  },
+  "firmware_changed_or_flashed": false,
+  "hardware_commands_sent": false,
+  "requirement_count": 62,
+  "requirements_R": [
+    "QR-01",
+    "QR-05",
+    "QR-06",
+    "QR-07",
+    "DSP-01",
+    "DSP-02",
+    "VIS-01",
+    "SCORE-01",
+    "FIELD-02",
+    "FIELD-06",
+    "FIELD-07",
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "RUN-04",
+    "RUN-07",
+    "RUN-08",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02",
+    "MECH-04"
+  ],
+  "requirements_E": [
+    "QR-02",
+    "QR-03",
+    "VIS-02",
+    "VIS-03",
+    "VIS-04",
+    "VIS-05",
+    "VIS-06",
+    "VIS-07",
+    "VIS-08",
+    "VIS-09",
+    "VIS-10",
+    "VIS-11",
+    "VIS-12",
+    "VIS-13",
+    "VIS-14",
+    "VIS-15",
+    "CAL-02",
+    "CAL-03",
+    "CAL-04",
+    "CAL-05",
+    "FIELD-03",
+    "FIELD-04",
+    "FIELD-08",
+    "LOC-01",
+    "LOC-02",
+    "LOC-03",
+    "LOC-04",
+    "LOC-05",
+    "LOC-06",
+    "LOC-07",
+    "MOT-01",
+    "MOT-02",
+    "MOT-03",
+    "MOT-04",
+    "RUN-05",
+    "RUN-06",
+    "PWR-02",
+    "MECH-03",
+    "MECH-05"
+  ],
+  "requirements_Q": [
+    "QR-04",
+    "FIELD-05"
+  ],
+  "official_Q": "all still-pending official items remain pending; no new official ruling obtained",
+  "gripper_interlock_independent_host_scenarios": [
+    "carrier active, lift idle",
+    "lift active, carrier idle"
+  ]
+}

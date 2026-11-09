@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-30",
+  "classification": "E user-provided mechanical origin candidate",
+  "user_text": "没有限位开关，但是可以限位，可以作为原点",
+  "question_context": "28夹爪伸缩轴的缩回端，现在装有原点开关吗",
+  "origin_switch_installed": false,
+  "working_interpretation": "retract-end mechanical limit/stop available as origin candidate",
+  "mechanical_stop_geometry_or_load_capacity_verified": false,
+  "previous_policy": "2026-08-29 engineering plan specified one switch on 28 axis / PE10; 2026-10-25 no-switch change covered 35 only",
+  "current_policy": "user now provides a no-switch mechanical-limit candidate for 28; prior switch plan retained as history, read actual node6 home parameters before selecting or triggering sensorless homing",
+  "retract_protocol_direction": 0,
+  "extend_protocol_direction": 1,
+  "physical_direction_pair_confirmed": true,
+  "no_home_command_added": true,
+  "no_parameter_write_added": true,
+  "actual_node6_home_parameters_verified": false,
+  "physical_origin_or_travel_verified": false,
+  "requirements_R": [
+    "RUN-01",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "RUN-06",
+    "LOC-03",
+    "CAL-05"
+  ],
+  "official_Q": "unchanged_pending_official_clarification"
+}

@@ -1,0 +1,162 @@
+{
+  "hardware_acceptance": false,
+  "motion_allowed": false,
+  "checks": {
+    "regression": "9 passed; see regression.log",
+    "compileall": "passed",
+    "check": {
+      "image_size": [
+        1920,
+        1080
+      ],
+      "undistort": false,
+      "serial": "DISABLED",
+      "features": [
+        "turntable",
+        "measurement",
+        "material-stop-reference",
+        "ring",
+        "stack",
+        "follow-pixel"
+      ],
+      "metric_geometry_verified": false
+    },
+    "four_tool_help": "passed",
+    "six_offline_modes": "passed; smoke only, no accuracy acceptance",
+    "all_configs_byte_identical": "passed",
+    "extracted_check": {
+      "image_size": [
+        1920,
+        1080
+      ],
+      "undistort": false,
+      "serial": "DISABLED",
+      "features": [
+        "turntable",
+        "measurement",
+        "material-stop-reference",
+        "ring",
+        "stack",
+        "follow-pixel"
+      ],
+      "metric_geometry_verified": false
+    },
+    "extracted_four_tool_help": "passed",
+    "documentation_repack": "Deployment paths updated to 20261024; CRC and every member hash rechecked; code unchanged"
+  },
+  "local_benchmark": {
+    "note": "Windows saved startup1 image, repeated no-hint analysis only; not Orange Pi or realtime acceptance",
+    "opencv_version": "5.0.0",
+    "processing_threads": 16,
+    "rounds": [
+      [
+        {
+          "variant": "base",
+          "ms": [
+            124.6921000000043,
+            115.26429999997845,
+            114.99109999999746,
+            114.81520000000955,
+            110.16849999998612,
+            111.15490000003092
+          ],
+          "p50_p95_max": [
+            114.9031500000035,
+            122.33514999999784,
+            124.6921000000043
+          ]
+        },
+        {
+          "variant": "perf1",
+          "ms": [
+            86.16339999997535,
+            72.05510000000004,
+            84.90369999998393,
+            73.87870000002295,
+            81.72339999998712,
+            87.30189999999993
+          ],
+          "p50_p95_max": [
+            83.31354999998553,
+            87.01727499999379,
+            87.30189999999993
+          ]
+        }
+      ],
+      [
+        {
+          "variant": "perf1",
+          "ms": [
+            80.141000000026,
+            86.30759999999782,
+            81.44979999997304,
+            78.60329999999749,
+            81.1322000000132,
+            80.92679999998609
+          ],
+          "p50_p95_max": [
+            81.02949999999964,
+            85.09314999999162,
+            86.30759999999782
+          ]
+        },
+        {
+          "variant": "base",
+          "ms": [
+            98.59960000000001,
+            102.79029999998102,
+            98.9842999999837,
+            103.923199999997,
+            107.40770000001021,
+            106.24500000000126
+          ],
+          "p50_p95_max": [
+            103.356749999989,
+            107.11702500000797,
+            107.40770000001021
+          ]
+        }
+      ],
+      [
+        {
+          "variant": "base",
+          "ms": [
+            105.65729999996165,
+            110.96729999997024,
+            118.74140000003308,
+            123.44350000000759,
+            110.76379999997243,
+            116.84050000002344
+          ],
+          "p50_p95_max": [
+            113.90389999999684,
+            122.26797500001396,
+            123.44350000000759
+          ]
+        },
+        {
+          "variant": "perf1",
+          "ms": [
+            84.2305999999553,
+            82.03219999995781,
+            87.57880000001705,
+            86.06329999997797,
+            84.25820000002204,
+            79.57870000001321
+          ],
+          "p50_p95_max": [
+            84.24439999998867,
+            87.19992500000728,
+            87.57880000001705
+          ]
+        }
+      ]
+    ]
+  },
+  "package": {
+    "file": "output\\p2_vision_generic120_perf1_20261024.zip",
+    "files": 69,
+    "sha256": "be27efed65af12af52451e07fe886df2a6cc9e4ae1ccb08d9e2e9fb4d4d2707d",
+    "crc_and_member_hashes": "passed"
+  }
+}

@@ -416,6 +416,7 @@ static uint32_t g_debug_plan_id=DEBUG_PLAN_DEFAULT,s_motion_timing_count,s_motio
 static uint32_t g_vehicle_arm_state;
 uint32_t g_vehicle_arm_cause,g_startup_axes_cause,g_startup_extension_feedback_valid,g_vehicle_lift_feedback_valid;
 static uint32_t actor_calls,cancel_calls;
+static uint32_t g_safety_ready=1U;
 static float g_startup_extension_current_deg,g_vehicle_lift_current_deg;
 static uint32_t VehicleArm_Busy(void){return g_vehicle_arm_state==1;}
 static uint32_t VehicleArm_Begin(const VehicleArmRow *row,uint32_t item){actor_calls++;g_vehicle_arm_state=1;return 1;}

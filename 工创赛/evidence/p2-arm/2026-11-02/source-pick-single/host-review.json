@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "cases": [
+    "disabled",
+    "missing_top",
+    "complete",
+    "snapshot",
+    "duplicate_start",
+    "stale_lift_done",
+    "lift_fail1",
+    "gripper_fail",
+    "abort_down",
+    "abort_close",
+    "external_stop",
+    "lost_ready",
+    "other_busy",
+    "gap",
+    "gripper_cancel",
+    "legacy0",
+    "legacy3"
+  ],
+  "hardware_stubs": true,
+  "actual_main_guard_unchanged_and_matched": true,
+  "source_sha256": {
+    "USER/arm_sequence.c": "b11ed2058b3b87227206d663a48d3f744a9e335561971d3caf19f467734b33dd",
+    "USER/arm_sequence.h": "eafb3b239271c8a39496339cf46edda45f0d3247a09444db28468ddf25c29b12",
+    "HARDWARE/LIFT/lift_config.h": "4067f910460cb5d2eab54afa69d07fa6c118b195f43cd6b359cd94d2a542fefb",
+    "HARDWARE/LIFT/lift.h": "81bce3a16fac159cc1b4cb11c2379e3391b3f13c2637c66858b3d8d4a63d2137"
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "position_resolution": [
+    {
+      "mode": "Emm16",
+      "step_deg": 0.1125,
+      "command_rmse_deg": 0.03247587145152743,
+      "command_max_error_deg": 0.05624943750564171,
+      "scope": "command quantization, NOT actual positioning accuracy"
+    },
+    {
+      "mode": "Emm64",
+      "step_deg": 0.028125,
+      "command_rmse_deg": 0.008118967862881854,
+      "command_max_error_deg": 0.014062359376424638,
+      "scope": "command quantization, NOT actual positioning accuracy"
+    },
+    {
+      "mode": "Emm256",
+      "step_deg": 0.00703125,
+      "command_rmse_deg": 0.0020297419657204665,
+      "command_max_error_deg": 0.003515589844099054,
+      "scope": "command quantization, NOT actual positioning accuracy"
+    },
+    {
+      "mode": "X_default",
+      "step_deg": 0.1,
+      "command_rmse_deg": 0.02886744129024661,
+      "command_max_error_deg": 0.04999950000501485,
+      "scope": "command quantization, NOT actual positioning accuracy"
+    },
+    {
+      "mode": "X_0p01",
+      "step_deg": 0.01,
+      "command_rmse_deg": 0.0028867441290246587,
+      "command_max_error_deg": 0.0049999500004993536,
+      "scope": "command quantization, NOT actual positioning accuracy"
+    }
+  ],
+  "speed_resolution": [
+    {
+      "mode": "Emm_default",
+      "step_rpm": 1.0,
+      "command_rmse_rpm": 0.3251158228821779,
+      "scope": "command quantization only"
+    },
+    {
+      "mode": "Emm_scale0p1",
+      "step_rpm": 0.1,
+      "command_rmse_rpm": 0.04281406796010266,
+      "scope": "command quantization only"
+    },
+    {
+      "mode": "X",
+      "step_rpm": 0.1,
+      "command_rmse_rpm": 0.04281406796010266,
+      "scope": "command quantization only"
+    }
+  ],
+  "acceleration_mapping": [
+    {
+      "requested_rpm_s": 50,
+      "emm_nearest_acc": 1,
+      "emm_rpm_s": 78.4313725490196,
+      "emm_relative_error_pct": 56.862745098039206,
+      "x_integer_rpm_s": 50,
+      "scope": "known planner input formula, not motor acceleration measurement"
+    },
+    {
+      "requested_rpm_s": 80,
+      "emm_nearest_acc": 6,
+      "emm_rpm_s": 80.0,
+      "emm_relative_error_pct": 0.0,
+      "x_integer_rpm_s": 80,
+      "scope": "known planner input formula, not motor acceleration measurement"
+    },
+    {
+      "requested_rpm_s": 100,
+      "emm_nearest_acc": 56,
+      "emm_rpm_s": 100.0,
+      "emm_relative_error_pct": 0.0,
+      "x_integer_rpm_s": 100,
+      "scope": "known planner input formula, not motor acceleration measurement"
+    },
+    {
+      "requested_rpm_s": 250,
+      "emm_nearest_acc": 176,
+      "emm_rpm_s": 250.0,
+      "emm_relative_error_pct": 0.0,
+      "x_integer_rpm_s": 250,
+      "scope": "known planner input formula, not motor acceleration measurement"
+    },
+    {
+      "requested_rpm_s": 500,
+      "emm_nearest_acc": 216,
+      "emm_rpm_s": 500.0,
+      "emm_relative_error_pct": 0.0,
+      "x_integer_rpm_s": 500,
+      "scope": "known planner input formula, not motor acceleration measurement"
+    },
+    {
+      "requested_rpm_s": 1000,
+      "emm_nearest_acc": 236,
+      "emm_rpm_s": 1000.0,
+      "emm_relative_error_pct": 0.0,
+      "x_integer_rpm_s": 1000,
+      "scope": "known planner input formula, not motor acceleration measurement"
+    },
+    {
+      "requested_rpm_s": 2500,
+      "emm_nearest_acc": 248,
+      "emm_rpm_s": 2500.0,
+      "emm_relative_error_pct": 0.0,
+      "x_integer_rpm_s": 2500,
+      "scope": "known planner input formula, not motor acceleration measurement"
+    },
+    {
+      "requested_rpm_s": 5000,
+      "emm_nearest_acc": 252,
+      "emm_rpm_s": 5000.0,
+      "emm_relative_error_pct": 0.0,
+      "x_integer_rpm_s": 5000,
+      "scope": "known planner input formula, not motor acceleration measurement"
+    },
+    {
+      "requested_rpm_s": 10000,
+      "emm_nearest_acc": 254,
+      "emm_rpm_s": 10000.0,
+      "emm_relative_error_pct": 0.0,
+      "x_integer_rpm_s": 10000,
+      "scope": "known planner input formula, not motor acceleration measurement"
+    },
+    {
+      "requested_rpm_s": 20000,
+      "emm_nearest_acc": 255,
+      "emm_rpm_s": 20000.0,
+      "emm_relative_error_pct": 0.0,
+      "x_integer_rpm_s": 20000,
+      "scope": "known planner input formula, not motor acceleration measurement"
+    },
+    {
+      "requested_rpm_s": 30000,
+      "emm_nearest_acc": 255,
+      "emm_rpm_s": 20000.0,
+      "emm_relative_error_pct": 33.33333333333333,
+      "x_integer_rpm_s": 30000,
+      "scope": "known planner input formula, not motor acceleration measurement"
+    },
+    {
+      "requested_rpm_s": 45055,
+      "emm_nearest_acc": 255,
+      "emm_rpm_s": 20000.0,
+      "emm_relative_error_pct": 55.60981023193874,
+      "x_integer_rpm_s": 45055,
+      "scope": "known planner input formula, not motor acceleration measurement"
+    },
+    {
+      "requested_rpm_s": 65535,
+      "emm_nearest_acc": 255,
+      "emm_rpm_s": 20000.0,
+      "emm_relative_error_pct": 69.48195620660715,
+      "x_integer_rpm_s": 65535,
+      "scope": "known planner input formula, not motor acceleration measurement"
+    }
+  ],
+  "proxy_case_count": 480,
+  "proxy_plant_count": 96,
+  "decision": "No actual-precision superiority established. Retain Emm; X is eligible for later actual same-condition comparison, not automatically switched on surrogate results."
+}

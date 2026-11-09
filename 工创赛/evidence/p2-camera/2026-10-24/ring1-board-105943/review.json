@@ -1,0 +1,71 @@
+{
+  "archive_sha256": "2dafd7555ba79ee825a10bff97b97d9a17675d1baa078044f4589d8c57a3c57e",
+  "crc": "passed",
+  "frames": 936,
+  "frame_indices_contiguous": true,
+  "run_summary_matches": true,
+  "timestamp_strictly_increasing": true,
+  "observation_span_s": 89.96088690099987,
+  "states": {
+    "FOLLOWING_PIXEL": 936
+  },
+  "all_single_green_T001": true,
+  "all_motion_and_ready_false": true,
+  "detector_call_ms": {
+    "min": 68.79924299983031,
+    "median": 77.07937899999706,
+    "p95": 82.01451575018837,
+    "max": 98.50558900006945
+  },
+  "result_host_age_ms": {
+    "min": 72.43480899978749,
+    "median": 96.01698399978886,
+    "p95": 113.84758599990619,
+    "max": 123.05418500000087
+  },
+  "max_read_completion_gap_ms": 139.10521299976608,
+  "candidate_reasons": {
+    "AMBIGUOUS_COLOR": 936,
+    "DOMINANT_COLOR_EVIDENCE": 936,
+    "INSUFFICIENT_NONCLIPPED_PIXELS": 841,
+    "SHAPE_UNCERTAIN": 2092,
+    "TOUCHES_BORDER": 137
+  },
+  "left_ring_rows": 936,
+  "left_ring_black_fraction": {
+    "min": 0.2279111916628908,
+    "median": 0.2362513380489695,
+    "p95": 0.26295144335663184,
+    "max": 0.2667163226218344
+  },
+  "module_hash_matches": {
+    "project_detector.py": true,
+    "project_follow.py": true,
+    "project_tracker.py": true,
+    "project_camera.py": true
+  },
+  "active_config_byte_matches": {
+    "camera_processing.json": true,
+    "material_color_thresholds.json": true,
+    "project_profile.json": true
+  },
+  "controls": {
+    "gain": 80,
+    "white_balance_temperature_auto": 0,
+    "white_balance_temperature": 4600,
+    "exposure_auto": 1,
+    "exposure_absolute": 83
+  },
+  "visual_review": [
+    "first-frame-raw.png",
+    "sample-12-raw.png"
+  ],
+  "limitations": [
+    "No printed-ring rejection branch activated; cannot attribute zero black solely to ring1",
+    "Only sampled original images saved; not all processed frames visually reviewed",
+    "Console stdout/stderr absent; error:null does not prove no JPEG warnings",
+    "Host read completion age is not exposure-to-result latency",
+    "Real black positive sample and six-color/mm/moving-arm acceptance remain open"
+  ],
+  "next": "Keep green and camera/lighting/settings unchanged; put one real black material on left printed 3 ring, remove hands, run same exposure83 ring1 recorder; inspect black+green and preserved ring rejection."
+}

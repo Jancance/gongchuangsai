@@ -1,0 +1,62 @@
+{
+  "actual": "D:\\新建文件夹4\\工创赛\\代码\\stm32\\3.stm32f407工程",
+  "stage": "D:\\Codex\\工创赛\\tmp\\lift_ruler_20261105\\project",
+  "targets": [
+    "Vehicle_LiftRuler",
+    "Vehicle_LiftRuler_Offline"
+  ],
+  "source_before_sha256": {
+    "USER/vehicle_parameters.h": "c4fdc01d344e89c3b18cfb0a94b791341114e9e1446dfba7ce62bfa030ce770d",
+    "CHASSIS/USER/main.c": "d8005d3c07158cf3de57fbb4f5c0c1e2d225479b75847584538991e7a51348b9",
+    "CHASSIS/USER/vehicle_mission.inc": "28c95985bacdeb3ec11fe015ff46fc0d9a9d9a3afceadc2d1a183b7f171fdf5f",
+    "CHASSIS/SYSTEM/CAN/can.c": "fed50430be8911e7bc410d3de4964b7ef940b34a16826db5b5ec4599aa105781",
+    "CHASSIS/USER/lift_ruler_calibration.c": null,
+    "CHASSIS/USER/lift_ruler_calibration.h": null,
+    "CHASSIS/USER/lift_ruler_adapter.c": null,
+    "CHASSIS/USER/lift_ruler_adapter.h": null,
+    "gongxun-f407.uvprojx": "49bd38386fb5ff885bff9662f8cd5bf1cfb679aaae2a3e8af0ac7caf3969e806"
+  },
+  "changed_sha256": {
+    "USER/vehicle_parameters.h": "b8859acfb532eb11a474c6d86c6abcbf05a0e7dc54092efa271b84adb3791586",
+    "CHASSIS/USER/main.c": "3918d3a3420b344e52d93f3febd65ec124f049fefaf70c8da5622e6bce106d54",
+    "CHASSIS/USER/vehicle_mission.inc": "34f093767ded26ce51f612bc5710e2936c912c49668bc89bb2a6d2c7cb1e2868",
+    "CHASSIS/SYSTEM/CAN/can.c": "d9e0a6e822baff6bf8b97dad643358545d717201a6138fd940f05ab9625f7939",
+    "CHASSIS/USER/lift_ruler_calibration.c": "38aaf18ab0929ac6bc8baa2b00eb34c0666ae7c5949d4402f3f4f78485b1325f",
+    "CHASSIS/USER/lift_ruler_calibration.h": "40448c1b68af100ad181a027335292093a58c36f1ba2a0e7f30879d9650c9682",
+    "CHASSIS/USER/lift_ruler_adapter.c": "25c759ea5d70da09a149da5bef3280db0361b774c10e3789949a7bcad4e2633b",
+    "CHASSIS/USER/lift_ruler_adapter.h": "4a1e85ee60ddc12e75a0dc9a03390acfa18ab3d8fbd1bf7ca17874d33c43066e",
+    "gongxun-f407.uvprojx": "b2616956cbcc5862009e34ab881100fb957afaf029df30c95f0cbb98a7b2753f"
+  },
+  "installed_in_actual": false,
+  "firmware_downloaded": false,
+  "hardware_operated": false,
+  "step": "one node5 downward5000 virtual pulses after PC13",
+  "ordinary_boot_motion": false,
+  "actual_source_still_matches_before": {
+    "USER/vehicle_parameters.h": true,
+    "CHASSIS/USER/main.c": true,
+    "CHASSIS/USER/vehicle_mission.inc": true,
+    "CHASSIS/SYSTEM/CAN/can.c": true,
+    "CHASSIS/USER/lift_ruler_calibration.c": true,
+    "CHASSIS/USER/lift_ruler_calibration.h": true,
+    "CHASSIS/USER/lift_ruler_adapter.c": true,
+    "CHASSIS/USER/lift_ruler_adapter.h": true,
+    "gongxun-f407.uvprojx": true
+  },
+  "candidate_online_build": {
+    "target": "Vehicle_LiftRuler",
+    "errors": 0,
+    "warnings": 2,
+    "warning_type": "#111-D unreachable statements in mode-isolated vehicle_mission.inc",
+    "built": true
+  },
+  "candidate_offline_build": {
+    "target": "Vehicle_LiftRuler_Offline",
+    "built": false
+  },
+  "integrated_dispatch_and_CAN_admission_regression_complete": false,
+  "field_work_deferred_by_user_to": "2026-11-06",
+  "boot_lift_motor_motion": false,
+  "boot_gripper_nominal_command_deg": 210,
+  "note": "Boot gripper PWM210 preserves user open command in isolated candidate; it is an actuator position initialization, not a claim of no PWM. Motor5 move still requires physical PC13; no other axis commands planned."
+}

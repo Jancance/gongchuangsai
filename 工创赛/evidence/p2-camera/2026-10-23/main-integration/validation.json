@@ -1,0 +1,83 @@
+{
+  "hardware_acceptance": false,
+  "motion_allowed": false,
+  "checks": {
+    "test_camera120_startup.py": "passed; see log",
+    "test_cyqm_integration.py": "passed; see log",
+    "test_p2_generic120_integration.py": "passed; see log",
+    "compileall": "passed",
+    "check": {
+      "image_size": [
+        1920,
+        1080
+      ],
+      "undistort": false,
+      "serial": "DISABLED",
+      "features": [
+        "turntable",
+        "measurement",
+        "material-stop-reference",
+        "ring",
+        "stack",
+        "follow-pixel"
+      ],
+      "metric_geometry_verified": false
+    },
+    "extracted_check": {
+      "image_size": [
+        1920,
+        1080
+      ],
+      "undistort": false,
+      "serial": "DISABLED",
+      "features": [
+        "turntable",
+        "measurement",
+        "material-stop-reference",
+        "ring",
+        "stack",
+        "follow-pixel"
+      ],
+      "metric_geometry_verified": false
+    },
+    "extracted_four_tool_help": "passed"
+  },
+  "offline": {
+    "follow": {
+      "completed": true,
+      "result": "evidence\\p2-camera\\2026-10-23\\main-integration\\offline\\follow\\result.json",
+      "note": "仅功能冒烟，不评判颜色/位置正确率"
+    },
+    "turntable": {
+      "completed": true,
+      "result": "evidence\\p2-camera\\2026-10-23\\main-integration\\offline\\turntable\\result.json",
+      "note": "仅功能冒烟，不评判颜色/位置正确率"
+    },
+    "material": {
+      "completed": true,
+      "result": "evidence\\p2-camera\\2026-10-23\\main-integration\\offline\\material\\result.json",
+      "note": "仅功能冒烟，不评判颜色/位置正确率"
+    },
+    "ring": {
+      "completed": true,
+      "result": "evidence\\p2-camera\\2026-10-23\\main-integration\\offline\\ring\\result.json",
+      "note": "仅功能冒烟，不评判颜色/位置正确率"
+    },
+    "stack": {
+      "completed": true,
+      "result": "evidence\\p2-camera\\2026-10-23\\main-integration\\offline\\stack\\result.json",
+      "note": "仅功能冒烟，不评判颜色/位置正确率"
+    },
+    "measurement": {
+      "completed": true,
+      "result": "evidence\\p2-camera\\2026-10-23\\main-integration\\offline\\measurement\\result.json",
+      "note": "仅功能冒烟，不评判颜色/位置正确率"
+    }
+  },
+  "package": {
+    "path": "output\\p2_vision_generic120_20261023.zip",
+    "files": 66,
+    "sha256": "d3cf3beef679eb36c3228c0e09f1e566467ffc3a13faa94eec9af4ef44c675e1",
+    "crc_and_member_hashes": "passed"
+  }
+}

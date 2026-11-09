@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-29",
+  "status": "candidate_measurements_only_not_motion_configuration",
+  "units": "degrees",
+  "positive_direction_top_view": "counterclockwise",
+  "logical_display_branch": "[-90,270)",
+  "zero_reference_raw_deg": -296.544037,
+  "points": {
+    "left_zero": {
+      "logical_deg": 0.0,
+      "last_sample_raw_deg": 63.4615974,
+      "last_sample_logical_deg": 0.00564575195,
+      "stationary_power_cycle_function_accepted": true
+    },
+    "right_pick": {
+      "raw_deg": 241.289658,
+      "logical_deg": 177.833679,
+      "source": "right-pick-candidate.json",
+      "automatic_motion_verified": false
+    },
+    "carrier_transfer": {
+      "raw_deg": 97.2961273,
+      "logical_deg": 33.8401489,
+      "sample_received": true,
+      "source": "carrier-place-coarse-candidate.json",
+      "adjustment_required": true,
+      "final_calibration_passed": false,
+      "automatic_motion_verified": false
+    }
+  },
+  "physical_soft_limits_verified": false,
+  "auto_execution_enabled": false
+}

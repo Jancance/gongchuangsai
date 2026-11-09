@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "session": "p2-user-intake-20261101-task3",
+  "task_code": "123+123+321+321",
+  "profile": "config/task_materials_preliminary_2027.json",
+  "batch": 1,
+  "start_id": null,
+  "evidence_source": "user_report_in_current_chat",
+  "evidence_date": "2026-11-01",
+  "scanner_capture_verified": false,
+  "autonomous_inventory_verified": false,
+  "motion_allowed": false,
+  "slots": [
+    {"slot_id": 1, "material_id": "user-observed-b1-red-slot1", "color_code": 1, "occupied": true, "verified": true},
+    {"slot_id": 2, "material_id": "", "color_code": 0, "occupied": false, "verified": true},
+    {"slot_id": 3, "material_id": "", "color_code": 0, "occupied": false, "verified": true}
+  ],
+  "counter_initialization": {"correct_picks": 0, "correct_places": 0},
+  "note": "人工核对快照，仅本次离线接续。verified指用户确认，不代表传感器或视觉自主确认。实例ID是本地记录标签，不是视觉track ID。开机/掉料/未受控移动后须重新核对，不能自动恢复。抽签start_id未知；不追补先前人工动作计数。"
+}
