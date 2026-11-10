@@ -27,8 +27,7 @@ static uint32_t App_Stage1Rearm(void)
     s_motion_has_action=s_combined_turn=s_combined_powered_segment=s_combined_keep_vm=0U;
     s_serial_start_permit=0U;g_serial_motion_state=g_serial_motion_result=0U;
     s_route_heading_reference=(RouteHeadingReference){0};s_route_heading_turn_active=0U;
-    s_perimeter_odom_started=s_perimeter_completed_seen=0U;
-    memset((void*)g_perimeter_records,0,sizeof(g_perimeter_records));
+    AppOdometry_ResetRecords();
     g_stage1_state=0U;g_stage1_scan_valid=0U;
     return 1U;
 }

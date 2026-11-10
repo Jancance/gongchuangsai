@@ -24,10 +24,7 @@ extern volatile RouteCheck g_route_check;
 #include "can.h"
 #include "chassis_kinematics.h"
 #include "chassis_auto_test.h"
-#include "chassis_odometry.h"
-#if APP_POSITION_DIAGNOSTIC && APP_HEADING_SESSION_TEST
-extern volatile ChassisOdometryStatus g_chassis_odometry;
-#endif
+#include "app_odometry.h"
 #include "hwt101.h"
 #include "heading_source.h"
 #include "safety.h"
@@ -1311,9 +1308,6 @@ static uint32_t s_route_ack_pending,s_route_ack_id,s_route_ack_op,s_route_ack_re
 volatile uint32_t g_debug_plan_id = DEBUG_PLAN_DEFAULT;
 #define MOTION_ACTION_COUNT (s_motion_action_count)
 
-typedef struct {uint32_t captured,tick_ms;ChassisOdometryStatus pose;} PerimeterRecord;
-volatile PerimeterRecord g_perimeter_records[9];
-static uint32_t s_perimeter_odom_started,s_perimeter_completed_seen;
 static float s_perimeter_targets[9][3]={
 {2100.0f,2100.0f,-90.0f},
 {2100.0f,300.0f,-90.0f},
@@ -1329,6 +1323,13 @@ static float s_perimeter_targets[9][3]={
 /* 动态预设仍受1..8项及组总时限校验；不是运行中可改路线。 */
 volatile uint32_t g_motion_plan_valid = 0U;
 volatile CombinedTestDebug g_combined_test = {0};
+#if APP_POSITION_DIAGNOSTIC && APP_HEADING_SESSION_TEST
+static const AppOdometryInputs s_odometry_inputs = {
+    &g_vm_test_request, &s_can_jog_preparing,
+    &g_combined_test.state, &g_combined_test.completed,
+    &s_route_heading_reference, &s_runtime_route.committed.id
+};
+#endif
 static uint32_t s_combined_turn, s_combined_mode;
 static uint32_t s_combined_begin_ms, s_combined_stage_ms, s_combined_gap_ms;
 static volatile uint32_t s_combined_end_ms; /* 终态时刻保留供本地诊断。 */
@@ -2366,8 +2367,7 @@ static uint32_t App_RuntimeRouteInstall(const RuntimeRoutePrepared *p,uint32_t n
     g_motion_plan_valid=1U;
     s_route_heading_reference=(RouteHeadingReference){0};
     s_route_heading_turn_active=0U;
-    s_perimeter_odom_started=s_perimeter_completed_seen=0U;
-    memset((void*)g_perimeter_records,0,sizeof(g_perimeter_records));
+    AppOdometry_ResetRecords();
     memcpy(s_perimeter_targets,p->local_targets,sizeof(s_perimeter_targets));
     RuntimeRoute_Install(&s_runtime_route,p);
     return 1U;
@@ -3195,73 +3195,6 @@ float MotionRpmToCmPerSec(float rpm)
     return rpm * 3.14159265358979323846f * g_chassis_geometry.wheel_diameter_mm / 600.0f;
 }
 
-#if APP_POSITION_DIAGNOSTIC && APP_HEADING_SESSION_TEST
-/* CAN任务独占计算状态；TaskA只复制小型只读结果。 */
-static ChassisOdometry s_odometry;
-volatile ChassisOdometryStatus g_chassis_odometry;
-/* 调试Watch：先填三个目标，最后写request=1；仅VM关闭且无运动时受理。
- * result:1接受，2条件不足；CAN任务消费一次，不等待条件后自动执行。 */
-#if APP_IS_DEBUG
-volatile uint32_t g_odometry_pose_request=0U, g_odometry_pose_result=0U;
-volatile float g_odometry_pose_x_mm=0.0f, g_odometry_pose_y_mm=0.0f;
-volatile float g_odometry_pose_heading_deg=0.0f;
-#endif
-static void App_OdometryStep(void)
-{
-    AppHeadingSource source;
-    ChassisOdometrySamples samples;
-    uint32_t i,now=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
-    (void)App_HeadingSourceRead(&source);
-#if APP_IS_DEBUG
-    if(g_odometry_pose_request==1U) {
-        PowerCommandStatus power;
-        float x,y,heading;
-        taskENTER_CRITICAL();
-        x=g_odometry_pose_x_mm; y=g_odometry_pose_y_mm;
-        heading=g_odometry_pose_heading_deg; g_odometry_pose_request=0U;
-        taskEXIT_CRITICAL();
-        Power_ReadCommandStatus(&power);
-        g_odometry_pose_result=2U;
-        if(!g_vm_test_request && !power.active && !g_chassis_auto_active &&
-           !g_wheel_test_active && !s_can_jog_preparing && source.healthy &&
-           App_HeadingFrameAge(&source,now,1U)<ODOM_YAW_MAX_AGE_MS &&
-           !g_safety_fault && !g_rtos_fault && !g_can_ctrl_fault_latched)
-            if(ChassisOdometry_SetPose(&s_odometry,x,y,heading,source.yaw_deg))
-                g_odometry_pose_result=1U;
-    }
-#endif
-    if(!s_perimeter_odom_started && g_combined_test.state==1U && source.healthy) {
-        if(s_route_heading_reference.valid && ChassisOdometry_SetPose(&s_odometry,
-            (VEHICLE_STAGE1_ENABLE || s_runtime_route.committed.id)?0.0f:2100.0f,(VEHICLE_STAGE1_ENABLE || s_runtime_route.committed.id)?0.0f:2100.0f,
-            (VEHICLE_STAGE1_ENABLE || s_runtime_route.committed.id)?0.0f:-90.0f,s_route_heading_reference.origin_deg))
-            s_perimeter_odom_started=1U;
-    }
-    ChassisAuto_ReadOdometrySamples(&samples);
-    if(source.healthy && App_HeadingFrameAge(&source,now,1U)<ODOM_YAW_MAX_AGE_MS)
-        ChassisOdometry_Yaw(&s_odometry,source.yaw_deg,source.angle_ms);
-    else ChassisOdometry_Invalidate(&s_odometry);
-    for(i=0U;i<4U;i++)
-        if(samples.mask & (1UL<<i))
-            ChassisOdometry_Wheel(&s_odometry,i,samples.sign[i],samples.raw[i],samples.ms[i]);
-    if(samples.mask!=15U || g_safety_fault || g_rtos_fault || g_can_ctrl_fault_latched)
-        ChassisOdometry_Invalidate(&s_odometry);
-    ChassisOdometry_Update(&s_odometry,now);
-    taskENTER_CRITICAL();
-    g_chassis_odometry=s_odometry.status;
-    if(s_perimeter_odom_started && !g_perimeter_records[0].captured && s_odometry.status.valid &&
-       g_combined_test.completed==0U) {
-        g_perimeter_records[0].captured=1U;g_perimeter_records[0].tick_ms=now;
-        g_perimeter_records[0].pose=s_odometry.status;
-    }
-    if(g_combined_test.completed>s_perimeter_completed_seen && g_combined_test.completed<=8U) {
-        uint32_t slot=g_combined_test.completed;
-        g_perimeter_records[slot].captured=1U;g_perimeter_records[slot].tick_ms=now;
-        g_perimeter_records[slot].pose=s_odometry.status;
-        s_perimeter_completed_seen=slot;
-    }
-    taskEXIT_CRITICAL();
-}
-#endif
 
 static void App_ComboIdlePoll(void)
 {
@@ -3280,7 +3213,7 @@ static void App_CanTask(void *argument)
 {
     (void)argument;
 #if APP_POSITION_DIAGNOSTIC && APP_HEADING_SESSION_TEST
-    ChassisOdometry_Init(&s_odometry);
+    AppOdometry_Init();
 #endif
     g_can_test_result = CAN1_LoopbackTest();
     while (1)
@@ -3723,7 +3656,7 @@ static void App_CanTask(void *argument)
         }
         } /* 串口测试之外才允许原CAN交易路径 */
 #if APP_POSITION_DIAGNOSTIC && APP_HEADING_SESSION_TEST
-        App_OdometryStep();
+        AppOdometry_Step(&s_odometry_inputs);
 #endif
         g_can_task_stack_words = uxTaskGetStackHighWaterMark(NULL);
         vTaskDelay(pdMS_TO_TICKS(APP_UART_LINK_TEST ? 50U : (APP_HEADING_SESSION_TEST ? 10U : 50U)));
