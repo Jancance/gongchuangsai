@@ -1,0 +1,114 @@
+{
+  "baseline": "5111ab98019619e1b14a97c0b409f759a9662e1c",
+  "before_note": "Existing before Rebuild logs retained; baseline source snapshot matches Git after CRLF normalization and its raw SHA matches the original before manifest.",
+  "final_source_sha256": {
+    "3.stm32f407工程/CHASSIS/USER/main.c": "097a7ae960be2565f43ea72c3ece8404615378d187042c269a53f27b59936311",
+    "3.stm32f407工程/CHASSIS/USER/app_motion_runtime.c": "3f5273c93b9a49313098dd69090718dc2ba4462a32f0293546feb9e42cb30248",
+    "3.stm32f407工程/CHASSIS/USER/app_motion_runtime.h": "308d04adfbf5d2664850eafed8138135b20fe3b4f3ecf373f0f87367d1468982",
+    "3.stm32f407工程/CHASSIS/USER/app_runtime_route.c": "3874b2640beb299f4f0d032a8ec5f09b46ce3fbfda80990bcbd96e6e4932eb29",
+    "3.stm32f407工程/CHASSIS/USER/app_runtime_route.h": "31a34e7c1b812cd5c2ff51050a67e2694765d0502ecfc473d26ca7ec31ea9224",
+    "3.stm32f407工程/CHASSIS/USER/app_serial_internal.h": "a771aa2f4b104b3a0d63d4a8660815fdcbe6a4273eed4db0601c143d4dc92a30",
+    "3.stm32f407工程/CHASSIS/USER/stage1_runtime.inc": "c300b40f06c4cb00602ac7d313a2fff59939a9762064e14dfd75af574a96a890",
+    "3.stm32f407工程/CHASSIS/USER/vehicle_mission.inc": "75fb83e8caaf8220e6f69848cea79d308ba3611aa33a65174c9233fdd3b09112",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "05512867f58e7eb36ff431bfa86b0c21ea4ba67cdac5b1f528ecf6be48824337"
+  },
+  "commands": [
+    "python 工创赛/tmp/build_main_c2c.py final",
+    "python 工创赛/scripts/check_motion_runtime_extraction_20261110.py"
+  ],
+  "targets": {
+    "Vehicle_Integrated": {
+      "before": {
+        "errors": 0,
+        "warnings": 0,
+        "size": {
+          "Code": 126156,
+          "RO": 6668,
+          "RW": 3340,
+          "ZI": 118908
+        },
+        "log_sha256": "4cb96fc18b567d3a1605b45e8583cbfd078b68a43c44286bad335a36a9192da2"
+      },
+      "after": {
+        "errors": 0,
+        "warnings": 0,
+        "size": {
+          "Code": 126392,
+          "RO": 6740,
+          "RW": 3340,
+          "ZI": 119292
+        },
+        "log_sha256": "86537b74e7ff317f2d3e12cd2f6eb37a645a7d030346bf273c4d0d3e289136fd"
+      },
+      "final": {
+        "errors": 0,
+        "warnings": 0,
+        "size": {
+          "Code": 126392,
+          "RO": 6740,
+          "RW": 3340,
+          "ZI": 118908
+        },
+        "log_sha256": "a4b163929cf38c680571ea272f531727553dd138c400c0bcab174a4fb322863a"
+      },
+      "final_artifacts": {
+        "工创赛/tmp/motion_runtime_main_c2c/final/Vehicle_Integrated.axf": "a601e29d5aa810215af48a857db71ace23b8551c2365178f7ad1e24732cb1e35",
+        "工创赛/tmp/motion_runtime_main_c2c/final/Vehicle_Integrated.map": "3c8d09290672a7a1693c453fd12899bb0f81d580eab7e7b85392f6f69d751af5"
+      },
+      "action_owner": {
+        "symbol": "s_motion_actions",
+        "object": "app_motion_runtime.o",
+        "bytes": 192,
+        "instances": 1
+      }
+    },
+    "Vehicle_Offline": {
+      "before": {
+        "errors": 0,
+        "warnings": 0,
+        "size": {
+          "Code": 115328,
+          "RO": 6660,
+          "RW": 3160,
+          "ZI": 118800
+        },
+        "log_sha256": "d9471cb6b2933b1a461123beae789292d1feaa23f959e2a0d2794ebde29ba165"
+      },
+      "after": {
+        "errors": 0,
+        "warnings": 0,
+        "size": {
+          "Code": 115564,
+          "RO": 6732,
+          "RW": 3160,
+          "ZI": 119188
+        },
+        "log_sha256": "7f6b60aa799997bd5c3b02556f8d6a9de9710f483a0b47e288f264e492117943"
+      },
+      "final": {
+        "errors": 0,
+        "warnings": 0,
+        "size": {
+          "Code": 115564,
+          "RO": 6732,
+          "RW": 3160,
+          "ZI": 118796
+        },
+        "log_sha256": "cf2030b2bea550c18e48d73cad20abf1d44aea906e4ae026db1f31145da3216e"
+      },
+      "final_artifacts": {
+        "工创赛/tmp/motion_runtime_main_c2c/final/Vehicle_Offline.axf": "12f65a866cfda0a809c5e9f333d0164761de07f1d5760ddb20b5ba5e56536afa",
+        "工创赛/tmp/motion_runtime_main_c2c/final/Vehicle_Offline.map": "eadc36bb78f259e9454608d0312003637d9ef8ba86d0a44f3e37ab5ef7ce5dbb"
+      },
+      "action_owner": {
+        "symbol": "s_motion_actions",
+        "object": "app_motion_runtime.o",
+        "bytes": 192,
+        "instances": 1
+      }
+    }
+  },
+  "final_build_project_sha256": "725049c03baa5c955969911fe4f026e25fed77304adcf10b51108ad11d1afb86",
+  "build_driver_sha256": "a910df7033c5d538a0b5cdf28b00502e611107b5e7e392b9ba707c1deb2a5b59",
+  "hardware_accessed": false
+}

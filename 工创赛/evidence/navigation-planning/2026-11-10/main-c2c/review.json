@@ -1,0 +1,140 @@
+{
+  "self_review": "passed",
+  "independent_review": "passed; see independent_review.json",
+  "baseline": "5111ab98019619e1b14a97c0b409f759a9662e1c",
+  "product_files": [
+    "3.stm32f407工程/CHASSIS/USER/main.c",
+    "3.stm32f407工程/CHASSIS/USER/app_motion_runtime.c",
+    "3.stm32f407工程/CHASSIS/USER/app_motion_runtime.h",
+    "3.stm32f407工程/CHASSIS/USER/app_runtime_route.c",
+    "3.stm32f407工程/CHASSIS/USER/app_runtime_route.h",
+    "3.stm32f407工程/CHASSIS/USER/app_serial_internal.h",
+    "3.stm32f407工程/gongxun-f407.uvprojx"
+  ],
+  "new_final_fix": "Move exact static MotionAction array definition out of public header into existing mode3 motion private state, no extern/API expansion. Final maps show one 192-byte instance, removing two unintended 192-byte duplicate buffers.",
+  "checks": [
+    "69 original main raw functions restored with explicit narrow bridges",
+    "149 real preprocessed original functions per actual target; only 8 assert line metadata values shift -973",
+    "33 state declarations/storage/initializers preserved; original CombinedTestDebug type unchanged",
+    "672 ARM C differential scenarios / 44418 assertions per actual target; exact selected application function bodies and actual live/serial bridges",
+    "Original two inc files byte unchanged; no mechanical/vision/protection algorithm or parameter edits",
+    "10387 unauthorized existing files raw SHA unchanged; original 10389-entry manifest snapshot validated",
+    "Both final Keil Rebuild targets zero errors/warnings; actual target paths checked",
+    "git -c core.whitespace=cr-at-eol diff --check clean; CRLF retained, no repository Git config changed"
+  ],
+  "raw_sha256_unchanged": true,
+  "protected_existing_files": 10387,
+  "manifest_digest": "8d8edae34f56537633f8176af810380ada477b6406175bdd5fce93a7eb1e2f5e",
+  "source_sha256": {
+    "3.stm32f407工程/CHASSIS/USER/main.c": "097a7ae960be2565f43ea72c3ece8404615378d187042c269a53f27b59936311",
+    "3.stm32f407工程/CHASSIS/USER/app_motion_runtime.c": "3f5273c93b9a49313098dd69090718dc2ba4462a32f0293546feb9e42cb30248",
+    "3.stm32f407工程/CHASSIS/USER/app_motion_runtime.h": "308d04adfbf5d2664850eafed8138135b20fe3b4f3ecf373f0f87367d1468982",
+    "3.stm32f407工程/CHASSIS/USER/app_runtime_route.c": "3874b2640beb299f4f0d032a8ec5f09b46ce3fbfda80990bcbd96e6e4932eb29",
+    "3.stm32f407工程/CHASSIS/USER/app_runtime_route.h": "31a34e7c1b812cd5c2ff51050a67e2694765d0502ecfc473d26ca7ec31ea9224",
+    "3.stm32f407工程/CHASSIS/USER/app_serial_internal.h": "a771aa2f4b104b3a0d63d4a8660815fdcbe6a4273eed4db0601c143d4dc92a30",
+    "3.stm32f407工程/CHASSIS/USER/stage1_runtime.inc": "c300b40f06c4cb00602ac7d313a2fff59939a9762064e14dfd75af574a96a890",
+    "3.stm32f407工程/CHASSIS/USER/vehicle_mission.inc": "75fb83e8caaf8220e6f69848cea79d308ba3611aa33a65174c9233fdd3b09112",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "05512867f58e7eb36ff431bfa86b0c21ea4ba67cdac5b1f528ecf6be48824337"
+  },
+  "target_paths": [
+    {
+      "target": "Vehicle_Integrated",
+      "file": ".\\CHASSIS\\USER\\main.c",
+      "references": 1
+    },
+    {
+      "target": "Vehicle_Integrated",
+      "file": ".\\CHASSIS\\USER\\app_motion_runtime.c",
+      "references": 1
+    },
+    {
+      "target": "Vehicle_Integrated",
+      "file": ".\\CHASSIS\\USER\\app_runtime_route.c",
+      "references": 1
+    },
+    {
+      "target": "Vehicle_Offline",
+      "file": ".\\CHASSIS\\USER\\main.c",
+      "references": 1
+    },
+    {
+      "target": "Vehicle_Offline",
+      "file": ".\\CHASSIS\\USER\\app_motion_runtime.c",
+      "references": 1
+    },
+    {
+      "target": "Vehicle_Offline",
+      "file": ".\\CHASSIS\\USER\\app_runtime_route.c",
+      "references": 1
+    }
+  ],
+  "encoding": {
+    "main.c": {
+      "gbk_decodable": true,
+      "lf": 1821,
+      "crlf": 1821,
+      "crcrlf": 0
+    },
+    "app_motion_runtime.c": {
+      "gbk_decodable": true,
+      "lf": 962,
+      "crlf": 962,
+      "crcrlf": 0
+    },
+    "app_motion_runtime.h": {
+      "gbk_decodable": true,
+      "lf": 46,
+      "crlf": 46,
+      "crcrlf": 0
+    },
+    "app_runtime_route.c": {
+      "gbk_decodable": true,
+      "lf": 123,
+      "crlf": 123,
+      "crcrlf": 0
+    },
+    "app_runtime_route.h": {
+      "gbk_decodable": true,
+      "lf": 13,
+      "crlf": 13,
+      "crcrlf": 0
+    },
+    "app_serial_internal.h": {
+      "gbk_decodable": true,
+      "lf": 21,
+      "crlf": 21,
+      "crcrlf": 0
+    }
+  },
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "FIELD-06",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "LOC-03",
+    "LOC-05",
+    "MOT-02",
+    "RUN-06",
+    "SRC-04"
+  ],
+  "open_Q": [
+    "FIELD-05: 待技术答疑确认",
+    "OBS-03: 待技术答疑确认"
+  ],
+  "hardware_accessed": false,
+  "matlab": "Not applicable to behavior-preserving module extraction; no dynamics or new control behavior.",
+  "limits": [
+    "Actual selected application C and exact API bridges; backend, RTOS/clock, plan generation and action submission are controlled stubs. Both real mode3 targets only; no MATLAB dynamics, physical timing, stack or vehicle validation.",
+    "Original plans/backend action execution are stubbed in the narrow differential replay; numerical algorithms are not revalidated by this step.",
+    "No board download/serial/JLink/reset/run; RTOS stack/timing, bus and vehicle remain unverified."
+  ],
+  "next": "Root local commit, then authorized step D; no push or hardware.",
+  "verification_script_sha256": {
+    "工创赛/scripts/check_motion_runtime_extraction_20261110.py": "3898e24880b44f2ed8632a79a131191e61fd4c2e74fb501a8020d3bd59458246",
+    "工创赛/scripts/check_motion_runtime_arm_20261110.py": "b2f77ea24c4ce99bc47465c5f8b1c49a5dea5fcfb58504ac7f3d6cef3d774c61"
+  }
+}

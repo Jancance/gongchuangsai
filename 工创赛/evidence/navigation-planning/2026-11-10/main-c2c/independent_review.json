@@ -1,0 +1,88 @@
+{
+  "result": "passed",
+  "actionable_findings": [],
+  "reviewer": "main_review_astra_high",
+  "model": "gpt-6-astra",
+  "effort": "high",
+  "baseline": "5111ab98019619e1b14a97c0b409f759a9662e1c",
+  "scope": [
+    "Vehicle_Integrated mode3",
+    "Vehicle_Offline mode3"
+  ],
+  "reviewed_source_sha256": {
+    "3.stm32f407工程/CHASSIS/USER/main.c": "097a7ae960be2565f43ea72c3ece8404615378d187042c269a53f27b59936311",
+    "3.stm32f407工程/CHASSIS/USER/app_motion_runtime.c": "3f5273c93b9a49313098dd69090718dc2ba4462a32f0293546feb9e42cb30248",
+    "3.stm32f407工程/CHASSIS/USER/app_motion_runtime.h": "308d04adfbf5d2664850eafed8138135b20fe3b4f3ecf373f0f87367d1468982",
+    "3.stm32f407工程/CHASSIS/USER/app_runtime_route.c": "3874b2640beb299f4f0d032a8ec5f09b46ce3fbfda80990bcbd96e6e4932eb29",
+    "3.stm32f407工程/CHASSIS/USER/app_runtime_route.h": "31a34e7c1b812cd5c2ff51050a67e2694765d0502ecfc473d26ca7ec31ea9224",
+    "3.stm32f407工程/CHASSIS/USER/app_serial_internal.h": "a771aa2f4b104b3a0d63d4a8660815fdcbe6a4273eed4db0601c143d4dc92a30",
+    "3.stm32f407工程/CHASSIS/USER/stage1_runtime.inc": "c300b40f06c4cb00602ac7d313a2fff59939a9762064e14dfd75af574a96a890",
+    "3.stm32f407工程/CHASSIS/USER/vehicle_mission.inc": "75fb83e8caaf8220e6f69848cea79d308ba3611aa33a65174c9233fdd3b09112",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "05512867f58e7eb36ff431bfa86b0c21ea4ba67cdac5b1f528ecf6be48824337"
+  },
+  "raw_original_functions_token_equal": 69,
+  "preprocessed_functions_per_target": 149,
+  "assert_source_line_deltas": [
+    -973,
+    -973,
+    -973,
+    -973,
+    -973,
+    -973,
+    -973,
+    -973
+  ],
+  "unchanged_original_global_declarations": 118,
+  "reviewed_initializer_change": "s_odometry_inputs.runtime_route_id binds original live address at original CAN initialization point before AppOdometry_Init",
+  "action_array": {
+    "instances_per_target": 1,
+    "owner": "app_motion_runtime.o",
+    "bytes": 192,
+    "storage": "static zero-initialized .bss"
+  },
+  "protected_existing_files_raw_sha_equal": 10387,
+  "original_inc_bytes_unchanged": true,
+  "project_references_per_target": 86,
+  "missing_or_duplicate_project_references": [],
+  "read_only_arm_replay": {
+    "artifact": "工创赛/tmp/motion_runtime_main_c2c/unit/unit.axf",
+    "artifact_scope": "retained last-target artifact",
+    "sha256": "2c2753b9775c83a67bdd40e42100b15b63ec998f0414212b7e726ca04a907818",
+    "return_code": 0,
+    "cases": 672,
+    "assertions": 44418
+  },
+  "evidence_hash_bindings_checked": 23,
+  "evidence_hash_mismatches": [],
+  "check_report_sha256": "c005a32eb2ffe22251588f106e71e1a4c78bbc49853d6555814343a37910c137",
+  "build_summary_sha256": "ac808049ea930839a73a746edb8249d58427acd0c2c951c5724c7c3b8e6ab6fb",
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "FIELD-06",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "LOC-03",
+    "LOC-05",
+    "MOT-02",
+    "RUN-06",
+    "SRC-04"
+  ],
+  "open_Q": [
+    "FIELD-05: 待技术答疑确认",
+    "OBS-03: 待技术答疑确认"
+  ],
+  "limits": [
+    "Narrow actual ARM C replay uses controlled backend, RTOS/clock, plan-generation and action-submission stubs.",
+    "No full competition-chain, RTOS timing/stack, physical bus or vehicle verification.",
+    "Historical non-mode3 configurations are outside scope.",
+    "Behavior-preserving extraction does not require or claim MATLAB dynamics validation."
+  ],
+  "reviewer_file_writes": false,
+  "reviewer_builds": false,
+  "network_accessed": false,
+  "hardware_accessed": false
+}
