@@ -1,0 +1,172 @@
+{
+  "stage": "main-E",
+  "result": "passed",
+  "actionable_findings": [],
+  "reviewer": "main_e_review_astra_high",
+  "model": "gpt-6-astra",
+  "effort": "high",
+  "baseline": "3676d2dacd4889d7439663eeb691c061be387acb",
+  "reviewed_source_sha256": {
+    "3.stm32f407工程/CHASSIS/USER/main.c": "8bda4e64419177851ba46bb261661a1a19db040510a6037d3691b4433aafea42",
+    "3.stm32f407工程/CHASSIS/USER/app_debug_runtime.c": "b796acdd61d5ace3bf3981b4d5dca67ae5c2cdb176c217357ba627e2382b329f",
+    "3.stm32f407工程/CHASSIS/USER/app_debug_runtime.h": "bbd07ab82c966fa0dae789233c9ad94388ab9343fe9cffc856572d11f05a689a",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "cfc78d3681d237797fb84d427d5bc1804d9bcd2ddda99a822fd79e764435c6fd"
+  },
+  "raw_functions_token_equal": 21,
+  "moved_functions": 6,
+  "new_observer_wrapper": 1,
+  "literal_internal_whitespace_preserved": true,
+  "global_definitions_initializers_equal": 76,
+  "original_extern_declarations_equal": 1,
+  "reported_preprocessed_functions_per_target": 82,
+  "independently_compared_preprocessed_functions_per_target": 87,
+  "additional_preprocessed_functions": [
+    "ITM_CheckChar",
+    "ITM_ReceiveChar",
+    "ITM_SendChar",
+    "NVIC_DecodePriority",
+    "NVIC_EncodePriority"
+  ],
+  "assert_metadata_delta": -312,
+  "assert_metadata_count": 8,
+  "moved_owner_symbols": 37,
+  "unique_active_watch_owners_per_target": 5,
+  "protected_existing_files_raw_sha_equal": 10394,
+  "original_inc_bytes_unchanged": true,
+  "source_encoding": "GBK/CRLF preserved",
+  "final_build_errors_per_target": 0,
+  "final_build_warnings_per_target": 0,
+  "offline_zi_delta_bytes": 8,
+  "offline_zi_explanation": {
+    "before_main": {
+      "RW": 160,
+      "ZI": 56
+    },
+    "after_main": {
+      "RW": 148,
+      "ZI": 16
+    },
+    "after_debug": {
+      "RW": 12,
+      "ZI": 40
+    },
+    "object_padding": [
+      5,
+      9
+    ],
+    "library_padding": [
+      0,
+      4
+    ],
+    "declared_data_totals_unchanged": true
+  },
+  "independent_replay_loader": "SHF_ALLOC PROGBITS at execution address, explicit NOBITS zeroing after RAM poisoning",
+  "initialization_checks": [
+    "send_ok,bus_valid,bus.stop_required == 1",
+    "fixture_config points to actual default controller config",
+    "cases/assertions/dry/send/publish state start zero",
+    "original/new bus stop ==1 and private pending/used start zero"
+  ],
+  "read_only_arm_replays": [
+    {
+      "target": "Vehicle_Integrated",
+      "fixture": false,
+      "cases": 2,
+      "assertions": 46,
+      "initialized_rw_bytes": 112,
+      "zeroed_nobits_bytes": 8296,
+      "result": 0,
+      "artifact_sha256": "9d9b9d2d93785f6175a0b4c28f231aa37a921d64b5edc7633182611fb227f330"
+    },
+    {
+      "target": "Vehicle_Offline",
+      "fixture": false,
+      "cases": 2,
+      "assertions": 46,
+      "initialized_rw_bytes": 112,
+      "zeroed_nobits_bytes": 8296,
+      "result": 0,
+      "artifact_sha256": "6138ad326af2f67d425aebd7211a39c7a9c03d75b18895718296d13877a2e767"
+    },
+    {
+      "target": "Vehicle_Integrated_debug_fixture",
+      "fixture": true,
+      "cases": 124,
+      "assertions": 6040,
+      "uart_cases": 32,
+      "heading_cases": 42,
+      "priority_cases": 15,
+      "send_attempts": 90,
+      "send_failures": 6,
+      "publish_calls": 80,
+      "observe_calls": 4,
+      "read_calls": 4,
+      "initialized_rw_bytes": 420,
+      "zeroed_nobits_bytes": 8712,
+      "result": 0,
+      "artifact_sha256": "9315d4c82120425cccd70b4b8cc8214d50ac0d7bc00d1ec43a08cda4a021bc3a"
+    }
+  ],
+  "behavior_checks": [
+    "Initialization/task creation/periods/priorities and guarded CAN observer unchanged.",
+    "Mechanical/safety/key/HWT-turn functions unchanged; preview adds no motor/VM execution.",
+    "UART replies precede pending YAW then heartbeat; failed sends preserve pending retry and exact literals/timeout/wrap semantics."
+  ],
+  "unique_evidence_hash_bindings_checked": 40,
+  "evidence_hash_mismatches": [],
+  "check_report_sha256": "bd5013bf24f21a589611fe1bb6370b8d0ae870078057b0d1d49e0ee4c2fe1031",
+  "build_summary_sha256": "852ce93717fe6bddcbaa9d666a899cba6445cda623987a30a054ac1a65165cb9",
+  "self_review_sha256_at_review": "78ba87c1ce544cf7c2264200bbfaaaa381423439b0f2333b565aa8f339a14cc0",
+  "closed_pre_review_findings": [
+    "Excluded result.json from artifact hash collection; final rerun and all artifact hashes verified."
+  ],
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "FIELD-06",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "LOC-03",
+    "LOC-05",
+    "MOT-02",
+    "RUN-06",
+    "SRC-04"
+  ],
+  "open_Q": [
+    "QR-04: 待技术答疑确认",
+    "FIELD-05: 待技术答疑确认",
+    "OBS-03: 待技术答疑确认"
+  ],
+  "limits": [
+    "Actual mode3 dynamic checks cover active dry-run; UART/static-preview remain disabled.",
+    "Separate fixture supplies already-missing historical value.valid_mask and overrides dormant macros only in harness; does not establish a buildable historical profile.",
+    "Actual controller/kinematics with controlled clock,bus publication/read,UART stubs.",
+    "No MATLAB dynamics, physical timing/stack,bus,download or vehicle validation."
+  ],
+  "reviewer_file_writes": false,
+  "reviewer_builds": false,
+  "network_accessed": false,
+  "hardware_accessed": false,
+  "format_closure": {
+    "result": "passed",
+    "reviewer": "main_e_review_astra_high",
+    "user_confirmed_accidental_keil_open_and_compile": true,
+    "project_raw_sha256": "cfc78d3681d237797fb84d427d5bc1804d9bcd2ddda99a822fd79e764435c6fd",
+    "project_crlf_lines": 2611,
+    "project_diff_from_D": "Only two app_debug_runtime.c file references",
+    "debug_c_change": "Removed exactly one trailing CRLF, all tokens unchanged",
+    "main_and_header_bytes_unchanged": true,
+    "uvoptx_and_uvguix_restored_to_original_raw_hashes": true,
+    "protected_files_raw_sha_equal": 10394,
+    "exceptions_added": false,
+    "final_build_errors": 0,
+    "final_build_warnings": 0,
+    "unique_evidence_hash_bindings_checked": 40,
+    "restoration_records_hashes_checked": 2,
+    "independent_functional_replay_repeated": false,
+    "prior_logic_and_replay_conclusions_retained": true
+  }
+}

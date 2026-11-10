@@ -1,0 +1,102 @@
+{
+  "stage": "main-E",
+  "baseline": "3676d2dacd4889d7439663eeb691c061be387acb",
+  "self_review": "passed after final EOF format correction and exact restoration of user-confirmed accidental Keil settings changes; separate independent supplement pending",
+  "scope": "app_debug_runtime owns heading dry-run, static observe/preview and UART link business, Watch and private states. main retains original tasks, initialization positions and conditional call sites. HWT actual-turn, chassis key and remaining CAN/Safety business remain for F.",
+  "product_files": [
+    "3.stm32f407工程/CHASSIS/USER/main.c",
+    "3.stm32f407工程/CHASSIS/USER/app_debug_runtime.c",
+    "3.stm32f407工程/CHASSIS/USER/app_debug_runtime.h",
+    "3.stm32f407工程/gongxun-f407.uvprojx"
+  ],
+  "checks": {
+    "main_lines": [
+      1121,
+      809
+    ],
+    "original_functions_token_equal": 21,
+    "preprocessed_functions_per_actual_target": 82,
+    "global_definitions_initializers_preserved": 76,
+    "additional_original_extern_declaration_preserved": 1,
+    "moved_owner_symbols": 37,
+    "actual_target_watch_unique_owners": 5,
+    "protected_raw_sha_files": 10394,
+    "protected_includes": [
+      "stage1_runtime.inc",
+      "vehicle_mission.inc"
+    ],
+    "original_GBK_CRLF_preserved": true,
+    "literal_internal_whitespace_preserved_in_token_comparison": true,
+    "identity_bindings_verified": 41,
+    "diff_check": "git -c core.whitespace=cr-at-eol diff --check -- main.c gongxun-f407.uvprojx; passed with original CRLF preserved"
+  },
+  "build": {
+    "before": "Reuse frozen main-D final images; main/project/serial source identities matched D build report.",
+    "final": "Two actual target Rebuilds, Vehicle_Integrated and Vehicle_Offline: 0 errors, 0 warnings, distinct output directories.",
+    "offline_zi_delta_bytes": 8,
+    "offline_zi_explanation": "Old main.o ZI56/RW160 -> new main.o ZI16/RW148 plus app_debug_runtime.o ZI40/RW12; declared data totals unchanged. Object ZI padding 5->9 (+4), library ZI padding 0->4 (+4); independent reviewer checked final map PAD entries. No new product state.",
+    "driver_recovery": "First invocation used an absolute output path containing Chinese characters; Keil could not open .d files. Failure log preserved in tmp/debug_runtime_main_e/initial_absolute_output_path_failure.log. Changed only build driver to relative per-target output paths and successfully rebuilt both targets."
+  },
+  "dynamic_evidence": {
+    "actual_targets": "Each mode3 target: 2 paired calls / 46 assertions; actual original/new heading dry self-test returns result1/case0, ccw[5,3,1,0,0], cw[-5,-3,-1,0,0], wrap error2. Original UART/static preview macros remain disabled.",
+    "isolated_debug_fixture": "124 paired steps / 6040 assertions; 32 command/timeout cases, 15 priority/send cases, 42 preview/observe cases (case categories are not additive to paired-call count). Original C UART PING/ECHO/INFO/GET/SET, whitespace, boundaries, invalid input, overflow recovery, 499/500ms and uint32 wrap, pending drop, reply>YAW>heartbeat, failed sends; actual controller/kinematics for health rejection, one-shot, cancel, fault, wrap, settle, timeout, bus observe.",
+    "loader": "SHF_ALLOC PROGBITS loaded at execution addresses, NOBITS explicitly zeroed after RAM poisoning; original/new nonzero bus stop, test send flags, zero state and real config pointer checked before execution. Artifacts independent for all three profiles.",
+    "fixture_boundary": "The old static-preview function already references undeclared value.valid_mask. Product remains verbatim. Only this extracted-C fixture supplies an AppHeadingSource value input and overrides the dormant static/UART macros after actual includes; this is not a repaired or buildable historical profile.",
+    "report_hash_fix": "Independent prereview found repeat runs could include prior result.json in its own artifact hash list. Excluded result.json, reran final checker and reverified every artifact/source/script identity. No product change was needed."
+  },
+  "final_validation_commands": [
+    "python 工创赛/scripts/build_debug_runtime_20261110.py (2 successful real Rebuild targets)",
+    "python 工创赛/scripts/check_debug_runtime_extraction_20261110.py (6 preprocess calls, 3 independent ARM units, each compiled from unit/controller/kinematics and linked)",
+    "git -c core.whitespace=cr-at-eol diff --check -- 3.stm32f407工程/CHASSIS/USER/main.c 3.stm32f407工程/gongxun-f407.uvprojx",
+    "SHA identity verification across build_summary.json and debug_runtime_check.json (39 bindings)"
+  ],
+  "requirements_checked": {
+    "R": [
+      "RUN-01",
+      "RUN-02",
+      "FIELD-06",
+      "PWR-01",
+      "MECH-01",
+      "MECH-02"
+    ],
+    "E": [
+      "LOC-03",
+      "LOC-05",
+      "MOT-02",
+      "RUN-06",
+      "SRC-04"
+    ],
+    "Q": "QR-04, FIELD-05, OBS-03 remain pending technical clarification; no rule changes."
+  },
+  "limits": "Pure responsibility relocation. No applicable dynamics MATLAB requirement; actual-C replay is not MATLAB simulation, full RTOS timing/stack validation, physical UART/CAN or vehicle acceptance. No hardware, flash, serial port, JLink, remote sync or push. No root handoff document or git add/commit action by implementation agent.",
+  "format_correction_and_user_recovery": {
+    "source": "User explicitly confirmed accidentally opening Keil and clicking compile; no intentional engineering/debug option change.",
+    "product_change": "Only app_debug_runtime.c final redundant CRLF removed; adding one CRLF exactly recreates previous reviewed bytes. main.c/header unchanged. C tokens identical.",
+    "project_restored": "Exact reviewed raw CRLF project cfc78d3681d237797fb84d427d5bc1804d9bcd2ddda99a822fd79e764435c6fd, 104167 bytes / 2611 CRLF; only original two debug.c entries added to D. Hash confirmed before/after final builds/check.",
+    "external_options_restored": "The two accidental .uvguix.lenovo/.uvoptx changes were snapshotted and verified against their known drift SHA before writing; git 3676d2d + original CRLF exactly matches both before-manifest raw SHA. Both checked unchanged after final check. No exception added to protection manifest.",
+    "preserved_archives": [
+      "工创赛/tmp/debug_runtime_main_e/pre_format_candidate/",
+      "工创赛/tmp/debug_runtime_main_e/accidental_keil_project_20261110-225056.uvprojx",
+      "工创赛/tmp/debug_runtime_main_e/accidental_keil_options/"
+    ],
+    "archive_boundary": "pre_format_candidate/ARCHIVE_NOTE.md distinguishes archived working-tree drift project from the original cfc build/review evidence; original reports retained unchanged in archive.",
+    "final_validation": "Two final Rebuilds 0 errors/0 warnings; same main-E checks and ARM counts rerun, no broadened feature validation. 10394 protected original raw SHA all match including restored options. UV4 was not closed; no historical project removed/moved; no git stage/commit action.",
+    "final_source_sha256": {
+      "3.stm32f407工程/CHASSIS/USER/main.c": "8bda4e64419177851ba46bb261661a1a19db040510a6037d3691b4433aafea42",
+      "3.stm32f407工程/CHASSIS/USER/app_debug_runtime.c": "b796acdd61d5ace3bf3981b4d5dca67ae5c2cdb176c217357ba627e2382b329f",
+      "3.stm32f407工程/CHASSIS/USER/app_debug_runtime.h": "bbd07ab82c966fa0dae789233c9ad94388ab9343fe9cffc856572d11f05a689a",
+      "3.stm32f407工程/gongxun-f407.uvprojx": "cfc78d3681d237797fb84d427d5bc1804d9bcd2ddda99a822fd79e764435c6fd"
+    },
+    "final_script_sha256": {
+      "工创赛/scripts/check_debug_runtime_extraction_20261110.py": "d233e3b379e99a5d6be270392e226af72061f246cea946afdcdc7d3f974be957",
+      "工创赛/scripts/check_debug_runtime_arm_20261110.py": "d0d934c4e8b219f799c6cac0bd7b62709a9c1651b827160d57382efd0c54dd42",
+      "工创赛/scripts/build_debug_runtime_20261110.py": "379b321a8258af9d8b601d36d29dc4f02f53da0ec26a8696e8a31cfc1fd8ed58"
+    },
+    "build_report_sha256": "852ce93717fe6bddcbaa9d666a899cba6445cda623987a30a054ac1a65165cb9",
+    "check_report_sha256": "bd5013bf24f21a589611fe1bb6370b8d0ae870078057b0d1d49e0ee4c2fe1031",
+    "restore_record_sha256": {
+      "accidental_keil_restore.json": "a94f36454770f366b94ccefaf6e72fb9921dd7c47724aa6966d182e8d0edf07d",
+      "accidental_keil_options_restore.json": "894af75a95da7a87c0444e202e3ed5044d37031b905b6968c0c8206b649f27af"
+    }
+  }
+}
