@@ -1,0 +1,121 @@
+{
+  "result": "passed",
+  "actionable_findings": [],
+  "reviewer": "main_review_astra_high",
+  "model": "gpt-6-astra",
+  "effort": "high",
+  "baseline": "1f272dd8cae82bea606f4f779573ecf5e22d4cf1",
+  "scope": [
+    "Vehicle_Integrated mode3",
+    "Vehicle_Offline mode3"
+  ],
+  "reviewed_source_sha256": {
+    "3.stm32f407工程/CHASSIS/USER/main.c": "0fcf589ec3abe70afc49d262275489f0e0eb64e74c35af38e9cafbcb541af807",
+    "3.stm32f407工程/CHASSIS/USER/app_serial_runtime.c": "e2d15d8dab98cf06b534fab807e574d491304db1e474a74616bbc6337a77c1d2",
+    "3.stm32f407工程/CHASSIS/USER/app_serial_runtime.h": "3db4681b05e47130d7d21fee880448f1b69c4ba5aa1d553c69e275301f5a5625",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "c1aa59669e95e24d10eb29ba894b650d7bb4a34d8baea4aa003d47eaba2df5f3"
+  },
+  "raw_functions_token_equal": 45,
+  "moved_functions": 24,
+  "unchanged_global_declarations": 85,
+  "preprocessed_functions_per_target": 106,
+  "assert_metadata_delta": -700,
+  "assert_metadata_count": 8,
+  "unique_serial_owner_symbols_per_target": 15,
+  "project_references_per_target": 88,
+  "protected_existing_files_raw_sha_equal": 10392,
+  "original_inc_bytes_unchanged": true,
+  "final_build_errors": 0,
+  "final_build_warnings": 0,
+  "independent_replay_loader": "SHF_ALLOC PROGBITS at execution address; explicit NOBITS zeroing",
+  "initialized_rw_bytes_per_artifact": 540,
+  "zeroed_nobits_bytes_per_artifact": 68716,
+  "independent_initial_values_asserted": [
+    "live_count == 2",
+    "live_rpm == 6",
+    "live_distance == 250.0f"
+  ],
+  "read_only_arm_replays": [
+    {
+      "target": "Vehicle_Integrated",
+      "fixture": false,
+      "entry_constants": [
+        1,
+        1
+      ],
+      "cases": 405,
+      "assertions": 20449,
+      "result": 0
+    },
+    {
+      "target": "Vehicle_Offline",
+      "fixture": false,
+      "entry_constants": [
+        1,
+        1
+      ],
+      "cases": 405,
+      "assertions": 20449,
+      "result": 0
+    },
+    {
+      "target": "Vehicle_Integrated_protocol_fixture",
+      "fixture": true,
+      "overrides": {
+        "VEHICLE_INTEGRATED_ENABLE": 0,
+        "VEHICLE_STAGE1_ENABLE": 0
+      },
+      "entry_constants": [
+        0,
+        0
+      ],
+      "cases": 405,
+      "assertions": 20405,
+      "result": 0
+    }
+  ],
+  "frame_types_verified": [
+    "TMQ",
+    "PE3",
+    "OP1",
+    "OD1",
+    "WF1",
+    "PM1",
+    "BTQ",
+    "XD1"
+  ],
+  "frame_bytes_and_python_crc_match": true,
+  "evidence_hash_bindings_checked": 16,
+  "evidence_hash_mismatches": [],
+  "check_report_sha256": "161aa2d5ec076b436eafba97a2499b3d14fc7eb06aa36e059247674fc2348896",
+  "build_summary_sha256": "5ac5ee65e9369927e2638a22cc1b5ea8fc0c8e0ead17d048d2526f9edee1fdfc",
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "FIELD-06",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "LOC-03",
+    "LOC-05",
+    "MOT-02",
+    "RUN-06",
+    "SRC-04"
+  ],
+  "open_Q": [
+    "FIELD-05: 待技术答疑确认",
+    "OBS-03: 待技术答疑确认"
+  ],
+  "limits": [
+    "Actual serial logic and formatting with backend, UART, clock and other-owner stubs.",
+    "Protocol fixture is separate from actual integrated configuration.",
+    "RQ GO verifies repeated exact forwarding only, not route execution or deduplication.",
+    "No physical RTOS timing/stack, bus, download or vehicle verification; historical non-mode3 excluded."
+  ],
+  "reviewer_file_writes": false,
+  "reviewer_builds": false,
+  "network_accessed": false,
+  "hardware_accessed": false
+}
