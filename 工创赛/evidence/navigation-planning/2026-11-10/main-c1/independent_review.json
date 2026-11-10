@@ -1,0 +1,27 @@
+{
+  "status": "passed; no actionable findings",
+  "reviewer": "main_c1_review_medium",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "baseline": "16f47b7",
+  "findings": [],
+  "reviewed_raw_sha256": {
+    "3.stm32f407工程/CHASSIS/USER/main.c": "1e8e2b4e9036ffb455cc191d22137527170b4f62cbe8946b5e797827dc05256e",
+    "3.stm32f407工程/CHASSIS/USER/app_can_diagnostics.c": "0eda9fdcb4f4920ed7fb53d769c4f711547669a1dde59cf00e79d269119ed958",
+    "3.stm32f407工程/CHASSIS/USER/app_can_diagnostics.h": "3f99969d3dc02bcdd825a0316b219958c1bd784566f5ac9f11c3dfe71539fc96",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "9e9a0a61846a960004af8f57ef96932d90dc6bff3500a50042036edf41f2c5e8"
+  },
+  "checks": [
+    "11 migrated and 78 remaining function bodies restored identically",
+    "104 symbols and 18 shared Watch declarations preserve type/linkage/initializer",
+    "live getter and startup binding preserve observation time",
+    "independently reran ARMCC preprocessing for both real targets:166 bodies each; assert source line metadata shifts only",
+    "10380 protected files independently rehashed unchanged",
+    "four clean rebuild logs and actual source references checked; differential C test inspected"
+  ],
+  "limits": [
+    "Reviewer did not rerun entire differential harness",
+    "No RTOS timing, stack, physical CAN or vehicle test"
+  ],
+  "hardware_accessed": false
+}
