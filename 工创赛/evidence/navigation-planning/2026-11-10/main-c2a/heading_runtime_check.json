@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "baseline": "660223ec734e9fdcdfb86fb47f2314665b245730",
+  "preparation_calls": 202,
+  "begin_calls": 202,
+  "live_mutations": 166,
+  "preprocessed_targets": [
+    {
+      "target": "Vehicle_Integrated",
+      "functions": 155
+    },
+    {
+      "target": "Vehicle_Offline",
+      "functions": 155
+    }
+  ],
+  "moved_functions": 9,
+  "remaining_main_functions": 69,
+  "owned_state_symbols": 29,
+  "actual_arm_cases": 2048,
+  "assertions": 141312,
+  "hardware_accessed": false,
+  "limits": "Actual application, heading_session and heading_controller C. Backend, heading-source publication, clock, power and RTOS effects stubbed; no true task scheduling or hardware validation."
+}

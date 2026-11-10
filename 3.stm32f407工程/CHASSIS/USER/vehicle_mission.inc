@@ -95,7 +95,7 @@ static uint32_t VehicleMission_Load(uint32_t stage)
         if(!ChassisAuto_RearmCompleted(backend.session))return 0U;
         g_combined_test=combined;g_forward_hold=forward;
         g_heading_exec_phase=HR_IDLE;g_heading_exec_state=HS_IDLE;g_heading_exec_request=0U;
-        HeadingSession_Init(&s_heading_exec);
+        AppHeadingRuntime_ResetSession();
         s_motion_has_action=s_combined_turn=s_combined_powered_segment=s_combined_keep_vm=0U;
     }
     s_motion_timing_count=s_motion_timing_cursor=0U;
@@ -126,7 +126,7 @@ static uint32_t VehicleMission_ResetCompleted(void)
     if(!ChassisAuto_RearmCompleted(backend.session))return 0U;
     g_combined_test=combined;g_forward_hold=forward;s_motion_has_action=s_motion_session_open=0U;
     g_heading_exec_phase=HR_IDLE;g_heading_exec_state=HS_IDLE;g_heading_exec_request=0U;
-    HeadingSession_Init(&s_heading_exec);g_serial_motion_state=g_serial_motion_result=0U;g_vehicle_state=0U;return 1U;
+    AppHeadingRuntime_ResetSession();g_serial_motion_state=g_serial_motion_result=0U;g_vehicle_state=0U;return 1U;
 }
 static void VehicleMission_Service(void)
 {

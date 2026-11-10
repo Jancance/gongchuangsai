@@ -23,7 +23,7 @@ static uint32_t App_Stage1Rearm(void)
     if(!ChassisAuto_RearmCompleted(status.session)) return 0U;
     g_combined_test=combined;g_forward_hold=forward;
     g_heading_exec_phase=HR_IDLE;g_heading_exec_state=HS_IDLE;g_heading_exec_request=0U;
-    HeadingSession_Init(&s_heading_exec);
+    AppHeadingRuntime_ResetSession();
     s_motion_has_action=s_combined_turn=s_combined_powered_segment=s_combined_keep_vm=0U;
     s_serial_start_permit=0U;g_serial_motion_state=g_serial_motion_result=0U;
     s_route_heading_reference=(RouteHeadingReference){0};s_route_heading_turn_active=0U;
