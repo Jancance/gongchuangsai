@@ -1,0 +1,31 @@
+{
+  "baseline": "da9f912",
+  "changed_firmware_files": [
+    "3.stm32f407工程/CHASSIS/USER/main.c",
+    "3.stm32f407工程/gongxun-f407.uvprojx"
+  ],
+  "new_firmware_files": [
+    "3.stm32f407工程/CHASSIS/USER/heading_source.c",
+    "3.stm32f407工程/CHASSIS/USER/heading_source.h"
+  ],
+  "unchanged_protected_files": 6323,
+  "encoding": "GBK/CRLF preserved in main and new module",
+  "self_review": [
+    "producer/observer bodies copied verbatim",
+    "90 main functions compared after snapshot access substitution",
+    "snapshot refresh after both critical-section entries retained in three control/service functions",
+    "original HWT Update then Publish call and all task/mechanical service bodies unchanged",
+    "no change to 100ms thresholds, masks, time/sequence wrap or calibration conditions",
+    "no public mutable heading state",
+    "both Keil targets include exactly one new source/header pair",
+    "snapshot struct is 32 bytes; compiler stack allocation and real task high-water marks are not hardware-tested"
+  ],
+  "unresolved_findings": [],
+  "hardware_accessed": false,
+  "flashed": false,
+  "matlab_required": false,
+  "test_limits": "C differential tests stub the RTOS clock/critical sections. Builds and emulation do not prove physical behavior or timing.",
+  "diff_check": "Source/docs checked with cr-at-eol for preserved CRLF; four raw UV4 logs retain the compiler-generated trailing spaces in Program Size lines and are excluded from whitespace-only checks.",
+  "final_rebuild_compiles_main_and_module": true,
+  "reviewed_main_sha256": "c3ce5bfafe0056d317d729ba480b11f84dcffbdd5a3a5f2bcfd4ef8a5a48753c"
+}

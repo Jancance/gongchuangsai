@@ -29,6 +29,7 @@ extern volatile RouteCheck g_route_check;
 extern volatile ChassisOdometryStatus g_chassis_odometry;
 #endif
 #include "hwt101.h"
+#include "heading_source.h"
 #include "safety.h"
 #include "watchdog.h"
 #include "screen.h"
@@ -755,90 +756,7 @@ volatile uint32_t g_heading_bus_stop = 1U;
 volatile uint32_t g_heading_bus_sequence = 0U;
 volatile uint32_t g_heading_publish_result = 0U;
 #endif
-#if APP_HEADING_SESSION_TEST || (APP_HWT_STATIC_TEST && !APP_HWT_TURN_TEST)
-#if configTICK_RATE_HZ != 1000U
-#error Heading_source_requires_1000Hz_tick
-#endif
-#define HEADING_SOURCE_FRESH_MS 100U
-typedef struct
-{
-    uint32_t sequence, sample_ms, angle_ms, rate_ms, healthy, valid_mask;
-    float yaw_deg, rate_dps;
-} AppHeadingSource;
 
-static AppHeadingSource s_heading_source = {0};
-static uint32_t s_heading_source_ready = 0U;
-volatile uint32_t g_heading_source_valid = 0U;
-volatile uint32_t g_heading_source_sequence = 0U;
-volatile uint32_t g_heading_source_age_ms = 0U;
-volatile uint32_t g_heading_source_angle_age_ms = 0U;
-volatile uint32_t g_heading_source_rate_age_ms = 0U;
-volatile float g_heading_source_yaw_deg = 0.0f;
-volatile float g_heading_source_rate_dps = 0.0f;
-
-/* Invalid frame age stays invalid; normal uint32 timer wrap remains supported. */
-static __inline uint32_t App_HeadingFrameAge(const AppHeadingSource *s,uint32_t now,uint32_t bit)
-{ return (s->valid_mask & bit) ? now-((bit==1U)?s->angle_ms:s->rate_ms) : 0xFFFFFFFFU; }
-/* 唯一生产者TaskA：紧接HWT101_Update调用，不代表运动许可。 */
-static void App_HeadingSourcePublish(void)
-{
-    AppHeadingSource value = {0};
-    uint32_t now;
-    taskENTER_CRITICAL();
-    now = (uint32_t)xTaskGetTickCount();
-    value.sample_ms = now;
-    /* 用真实接收帧龄期还原时间，不能用本次发布时刻冒充新帧。 */
-    value.valid_mask=g_hwt_valid_mask & 3U;
-    if(g_hwt_angle_age_ms==0xFFFFFFFFU)value.valid_mask &= ~1U;
-    if(g_hwt_rate_age_ms==0xFFFFFFFFU)value.valid_mask &= ~2U;
-    value.angle_ms=(value.valid_mask & 1U) ? g_hwt_update_tick-g_hwt_angle_age_ms : 0U;
-    value.rate_ms=(value.valid_mask & 2U) ? g_hwt_update_tick-g_hwt_rate_age_ms : 0U;
-    value.yaw_deg = g_hwt_yaw_deg;
-    value.rate_dps = g_hwt_wz_dps;
-    value.healthy = ((g_hwt_version_result == 1U) &&
-        (value.valid_mask == 3U) &&
-        (g_hwt_angle_age_ms < HEADING_SOURCE_FRESH_MS) &&
-        (g_hwt_rate_age_ms < HEADING_SOURCE_FRESH_MS) &&
-        ((uint32_t)(now - g_hwt_update_tick) < HEADING_SOURCE_FRESH_MS) &&
-        ((uint32_t)(App_HeadingFrameAge(&value,now,1U)) < HEADING_SOURCE_FRESH_MS) &&
-        ((uint32_t)(App_HeadingFrameAge(&value,now,2U)) < HEADING_SOURCE_FRESH_MS) &&
-        (value.yaw_deg >= -180.0f && value.yaw_deg <= 180.0f) &&
-        (value.rate_dps >= -2000.0f && value.rate_dps <= 2000.0f) &&
-        (g_hwt_cal_active == 0U) && (g_hwt_cal_request == 0U) &&
-        (g_hwt_cal_end_tx_result != 2U) &&
-        (g_hwt_version_state == 0U) && (g_hwt_version_request == 0U) &&
-        (g_hwt_a7_request == 0U)) ? 1U : 0U;
-    /* 序号只在完整发布时递增；读者不修改它，允许uint32回绕。 */
-    value.sequence = s_heading_source.sequence + 1U;
-    s_heading_source = value;
-    s_heading_source_ready = 1U;
-    taskEXIT_CRITICAL();
-}
-
-/* 唯一观察者CAN任务：只取快照，禁止从这些Watch变量驱动电机。 */
-static void App_HeadingSourceObserve(void)
-{
-    AppHeadingSource value;
-    uint32_t now, ready, valid;
-    taskENTER_CRITICAL();
-    value = s_heading_source;
-    ready = s_heading_source_ready;
-    now = (uint32_t)xTaskGetTickCount();
-    taskEXIT_CRITICAL();
-    valid = ((ready == 1U) && (value.healthy == 1U) &&
-        ((uint32_t)(now - value.sample_ms) < HEADING_SOURCE_FRESH_MS) &&
-        ((uint32_t)(App_HeadingFrameAge(&value,now,1U)) < HEADING_SOURCE_FRESH_MS) &&
-        ((uint32_t)(App_HeadingFrameAge(&value,now,2U)) < HEADING_SOURCE_FRESH_MS)) ? 1U : 0U;
-    g_heading_source_sequence = value.sequence;
-    g_heading_source_age_ms = now - value.sample_ms;
-    g_heading_source_angle_age_ms = App_HeadingFrameAge(&value,now,1U);
-    g_heading_source_rate_age_ms = App_HeadingFrameAge(&value,now,2U);
-    g_heading_source_yaw_deg = value.yaw_deg;
-    g_heading_source_rate_dps = value.rate_dps;
-    /* 失效仍保留原始观测值供排查，必须同时检查valid。 */
-    g_heading_source_valid = valid;
-}
-#endif
 #if APP_HEADING_SESSION_TEST
 /* 只允许CAN任务操作会话对象；Safety只锁存trip并撤销执行。 */
 #if APP_TEST_MODE == 3U
@@ -930,21 +848,24 @@ volatile uint32_t g_heading_fault_tick_ms = 0U;
 
 static void App_HeadingRuntimeTrip(uint32_t cause)
 {
+    AppHeadingSource heading;
+    uint32_t heading_ready;
     uint32_t now, flags;
     taskENTER_CRITICAL();
+    heading_ready = App_HeadingSourceRead(&heading);
     if (g_heading_exec_trip == 0U)
     {
         now = (uint32_t)xTaskGetTickCount();
         App_MotionFaultCapture(cause);
         g_heading_fault_phase = g_heading_exec_phase;
         g_heading_fault_tick_ms = now;
-        g_heading_fault_sample_age_ms = now - s_heading_source.sample_ms;
-        g_heading_fault_angle_age_ms = App_HeadingFrameAge(&s_heading_source,now,1U);
-        g_heading_fault_rate_age_ms = App_HeadingFrameAge(&s_heading_source,now,2U);
+        g_heading_fault_sample_age_ms = now - heading.sample_ms;
+        g_heading_fault_angle_age_ms = App_HeadingFrameAge(&heading,now,1U);
+        g_heading_fault_rate_age_ms = App_HeadingFrameAge(&heading,now,2U);
         g_heading_fault_hwt_update_age_ms = now - g_hwt_update_tick;
         flags = 0U;
-        if (s_heading_source_ready != 1U) flags |= 0x001U;
-        if (s_heading_source.healthy != 1U) flags |= 0x002U;
+        if (heading_ready != 1U) flags |= 0x001U;
+        if (heading.healthy != 1U) flags |= 0x002U;
         if (g_heading_fault_sample_age_ms >= HS_SOURCE_MS) flags |= 0x004U;
         if (g_heading_fault_angle_age_ms >= HS_SOURCE_MS) flags |= 0x008U;
         if (g_heading_fault_rate_age_ms >= HS_SOURCE_MS) flags |= 0x010U;
@@ -984,10 +905,13 @@ static uint32_t App_HeadingRuntimeExclusive(void)
 /* 由调用者在临界区内使用，独立复查真实帧年龄及配置互斥。 */
 static uint32_t App_HeadingRuntimeSource(uint32_t now)
 {
-    return ((s_heading_source_ready == 1U) && (s_heading_source.healthy == 1U) &&
-        ((uint32_t)(now - s_heading_source.sample_ms) < HS_SOURCE_MS) &&
-        ((uint32_t)(App_HeadingFrameAge(&s_heading_source,now,1U)) < HS_SOURCE_MS) &&
-        ((uint32_t)(App_HeadingFrameAge(&s_heading_source,now,2U)) < HS_SOURCE_MS) &&
+    AppHeadingSource heading;
+    uint32_t heading_ready;
+    heading_ready = App_HeadingSourceRead(&heading);
+    return ((heading_ready == 1U) && (heading.healthy == 1U) &&
+        ((uint32_t)(now - heading.sample_ms) < HS_SOURCE_MS) &&
+        ((uint32_t)(App_HeadingFrameAge(&heading,now,1U)) < HS_SOURCE_MS) &&
+        ((uint32_t)(App_HeadingFrameAge(&heading,now,2U)) < HS_SOURCE_MS) &&
         (g_hwt_cal_active == 0U) && (g_hwt_cal_request == 0U) &&
         (g_hwt_cal_end_tx_result != 2U) &&
         (g_hwt_version_state == 0U) && (g_hwt_version_request == 0U) &&
@@ -1035,26 +959,29 @@ static uint32_t App_HeadingPowerReady(uint32_t now)
 static void App_HeadingStopCapture(volatile HeadingStopAngleSample *sample,
     uint32_t now)
 {
+    AppHeadingSource heading;
     PowerCommandStatus power;
     if (sample->captured != 0U) return;
+    (void)App_HeadingSourceRead(&heading);
     Power_ReadCommandStatus(&power);
     sample->valid = App_HeadingRuntimeSource(now);
     sample->event_ms = now;
-    sample->angle_sample_ms = s_heading_source.angle_ms;
-    sample->angle_age_ms = App_HeadingFrameAge(&s_heading_source,now,1U);
-    sample->rate_age_ms = App_HeadingFrameAge(&s_heading_source,now,2U);
-    sample->source_sequence = s_heading_source.sequence;
+    sample->angle_sample_ms = heading.angle_ms;
+    sample->angle_age_ms = App_HeadingFrameAge(&heading,now,1U);
+    sample->rate_age_ms = App_HeadingFrameAge(&heading,now,2U);
+    sample->source_sequence = heading.sequence;
     sample->pe2_active = power.active;
-    sample->yaw_deg = s_heading_source.yaw_deg;
+    sample->yaw_deg = heading.yaw_deg;
     sample->error_deg = HeadingController_ErrorDeg(
-        g_heading_stop_trace.target_deg, s_heading_source.yaw_deg);
-    sample->rate_dps = s_heading_source.rate_dps;
+        g_heading_stop_trace.target_deg, heading.yaw_deg);
+    sample->rate_dps = heading.rate_dps;
     sample->captured = 1U;
 }
 
 /* 每轮观察包括终态；不等待、不延长VM供电，不发送任何动作。 */
 static void App_HeadingStopObserve(uint32_t now)
 {
+    AppHeadingSource heading;
     PowerCommandStatus power;
     uint32_t off_age;
     if (g_heading_stop_trace.started == 0U) return;
@@ -1072,9 +999,10 @@ static void App_HeadingStopObserve(uint32_t now)
         g_heading_stop_trace.post_status = 2U;
         return;
     }
+    (void)App_HeadingSourceRead(&heading);
     /* 至少一秒后采新角度帧，不能用关断前或缓存中的旧样本。 */
     if ((off_age >= 1000U) && (App_HeadingRuntimeSource(now) == 1U) &&
-        ((uint32_t)(App_HeadingFrameAge(&s_heading_source,now,1U)) <= off_age - 1000U))
+        ((uint32_t)(App_HeadingFrameAge(&heading,now,1U)) <= off_age - 1000U))
     {
         App_HeadingStopCapture(&g_heading_stop_trace.after_off, now);
         g_heading_stop_trace.post_status = 1U;
@@ -1132,6 +1060,7 @@ static void App_HeadingRuntimeSafety(void)
 /* 只由唯一CAN任务调用，每轮计算后最多执行原执行器的一步交易。 */
 static void App_HeadingRuntimeStep(void)
 {
+    AppHeadingSource heading;
     HeadingSessionInput input = {0};
     HeadingSessionOutput output = {0};
     ChassisAutoStatus status;
@@ -1141,6 +1070,7 @@ static void App_HeadingRuntimeStep(void)
 
     App_HeadingSourceObserve();
     taskENTER_CRITICAL();
+    (void)App_HeadingSourceRead(&heading);
     critical_cycle=HWT101_TimingBegin();
     now = (uint32_t)xTaskGetTickCount();
     App_HeadingStopObserve(now);
@@ -1171,7 +1101,7 @@ static void App_HeadingRuntimeStep(void)
             (g_vm_test_request != App_StageStartVm()) || (g_heading_exec_trip != 0U) ||
             (status.active != 0U) || (status.result != 0U) ||
             (status.cut_vm != 0U) ||
-            !(s_heading_source.rate_dps >= -3.0f && s_heading_source.rate_dps <= 3.0f))
+            !(heading.rate_dps >= -3.0f && heading.rate_dps <= 3.0f))
             App_HeadingRuntimeTrip(3U);
         else
         {
@@ -1196,11 +1126,11 @@ static void App_HeadingRuntimeStep(void)
 #if APP_TEST_MODE == 3U
             input.max_rpm = s_motion_turn_max_rpm;
 #endif
-            input.sample_ms = s_heading_source.sample_ms;
-            input.sequence = s_heading_source.sequence;
+            input.sample_ms = heading.sample_ms;
+            input.sequence = heading.sequence;
             input.healthy = input.platform_ok = 1U;
-            input.yaw_deg = s_heading_source.yaw_deg;
-            input.rate_dps = s_heading_source.rate_dps;
+            input.yaw_deg = heading.yaw_deg;
+            input.rate_dps = heading.rate_dps;
             input.backend_active = status.active;
             input.backend_running = (status.state == CHASSIS_AUTO_RUN) ? 1U : 0U;
             input.backend_result = status.result;
@@ -1222,7 +1152,9 @@ static void App_HeadingRuntimeStep(void)
             g_heading_prepare_cycles=HWT101_TimingBegin()-prepare_cycle;
             if(g_heading_prepare_cycles>g_heading_prepare_max_cycles)
                 g_heading_prepare_max_cycles=g_heading_prepare_cycles;
-            taskENTER_CRITICAL();critical_cycle=HWT101_TimingBegin();
+            taskENTER_CRITICAL();
+            (void)App_HeadingSourceRead(&heading);
+            critical_cycle=HWT101_TimingBegin();
             now=(uint32_t)xTaskGetTickCount();
             (void)ChassisAuto_ReadStatus(&status);
             /* Preparation never grants motion: recheck cancellation, source epoch and ownership. */
@@ -1266,8 +1198,8 @@ static void App_HeadingRuntimeStep(void)
         else
         {
             input.now_ms = now;
-            input.sample_ms = s_heading_source.sample_ms;
-            input.sequence = s_heading_source.sequence;
+            input.sample_ms = heading.sample_ms;
+            input.sequence = heading.sequence;
             input.healthy = App_HeadingRuntimeSource(now);
             input.platform_ok = ((App_HeadingRuntimeExclusive() == 1U) &&
                 (g_vm_test_request == 1U) &&
@@ -1275,8 +1207,8 @@ static void App_HeadingRuntimeStep(void)
                  ((s_heading_exec.state == HS_STOPPING) &&
                   (status.active == 0U) && (status.result == 1U) &&
                   (status.rotation_stop_mask == 0x0FU)))) ? 1U : 0U;
-            input.yaw_deg = s_heading_source.yaw_deg;
-            input.rate_dps = s_heading_source.rate_dps;
+            input.yaw_deg = heading.yaw_deg;
+            input.rate_dps = heading.rate_dps;
             input.backend_active = status.active;
             input.backend_running = (status.state == CHASSIS_AUTO_RUN) ? 1U : 0U;
             input.backend_result = status.result;
@@ -1456,12 +1388,14 @@ static void App_TimingRecordCompleted(uint32_t index, uint32_t session, uint32_t
 
 static void App_MotionFaultCapture(uint32_t cause)
 {
+    AppHeadingSource heading;
     HwtFaultDiagnostic hwt;
     ChassisAutoFaultDiagnostic backend;
     ChassisAutoStatus status;
     uint32_t now = (uint32_t)xTaskGetTickCount();
     if(g_motion_fault_diag_valid)return;
     HWT101_ReadDiagnostic(&hwt); (void)ChassisAuto_ReadStatus(&status);
+    (void)App_HeadingSourceRead(&heading);
     g_motion_fault_diag[0] = now;
     g_motion_fault_diag[1] = hwt.arm_sequence;
     g_motion_fault_diag[2] = cause;
@@ -1471,8 +1405,8 @@ static void App_MotionFaultCapture(uint32_t cause)
     g_motion_fault_diag[5] = status.cause;
     g_motion_fault_diag[6] = status.session;
     g_motion_fault_diag[7] = App_HeadingRuntimeSource(now);
-    g_motion_fault_diag[8] = App_HeadingFrameAge(&s_heading_source,now,1U);
-    g_motion_fault_diag[9] = App_HeadingFrameAge(&s_heading_source,now,2U);
+    g_motion_fault_diag[8] = App_HeadingFrameAge(&heading,now,1U);
+    g_motion_fault_diag[9] = App_HeadingFrameAge(&heading,now,2U);
     g_motion_fault_diag[10] = g_hwt_uart_errors;
     g_motion_fault_diag[11] = g_hwt_overflows;
     g_motion_fault_diag[12] = g_hwt_checksum_errors;
@@ -1491,7 +1425,7 @@ static void App_MotionFaultCapture(uint32_t cause)
     g_motion_fault_diag[25] = hwt.event_overflows;
     g_motion_fault_diag[26] = hwt.event_checksum_errors;
     g_motion_fault_diag[27] = hwt.event_seen;
-    g_motion_fault_diag[28] = now - s_heading_source.sample_ms;
+    g_motion_fault_diag[28] = now - heading.sample_ms;
     ChassisAuto_ReadFaultDiagnostic(&backend);
     g_motion_fault_diag[29] = backend.reason;
     g_motion_fault_diag[30] = backend.state;
@@ -1515,7 +1449,9 @@ static void App_MotionFaultCapture(uint32_t cause)
 /* trip:1取消、2源失效、3平台、4上电等待、5执行器、6偏角、7截止、8提交。 */
 static void App_ForwardHoldTrip(uint32_t cause)
 {
+    AppHeadingSource heading;
     taskENTER_CRITICAL();
+    (void)App_HeadingSourceRead(&heading);
     if (g_forward_hold.trip == 0U)
     {
         App_MotionFaultCapture(cause);
@@ -1523,7 +1459,7 @@ static void App_ForwardHoldTrip(uint32_t cause)
     }
     g_forward_hold.phase = (g_forward_hold.trip == 1U) ? HR_CANCELLED : HR_FAULT;
     g_forward_hold.correction_rpm = 0;
-    g_forward_hold.final_deg = s_heading_source.yaw_deg;
+    g_forward_hold.final_deg = heading.yaw_deg;
     g_forward_hold.final_valid = App_HeadingRuntimeSource((uint32_t)xTaskGetTickCount());
     g_chassis_auto_request = 0U;
     ChassisAuto_Abort();
@@ -1542,11 +1478,13 @@ static uint32_t App_ForwardHoldOwns(const ChassisAutoStatus *status)
 /* 独立Safety监督，既有100ms源/提交失效和有界等待均不放宽。 */
 static void App_ForwardHoldSafety(void)
 {
+    AppHeadingSource heading;
     ChassisAutoStatus status;
     uint32_t now, normal_done;
     float correction;
     float error;
     taskENTER_CRITICAL();
+    (void)App_HeadingSourceRead(&heading);
     if ((g_forward_hold.phase != HR_WAIT) && (g_forward_hold.phase != HR_RUN))
     { taskEXIT_CRITICAL(); return; }
     now = (uint32_t)xTaskGetTickCount();
@@ -1583,8 +1521,8 @@ static void App_ForwardHoldSafety(void)
             ((uint32_t)(now - s_hold_stop_ms) >= HS_STOP_MS)) App_ForwardHoldTrip(7U);
         else if (!normal_done && ((status.active != 1U) || (status.result != 0U) ||
             (g_safety_ready != 1U) || (g_can_guard_ready != 1U))) App_ForwardHoldTrip(5U);
-        else if (HeadingController_HoldCorrection(s_hold_target, s_heading_source.yaw_deg,
-            s_heading_source.rate_dps, &correction, &error) != 1U) App_ForwardHoldTrip(6U);
+        else if (HeadingController_HoldCorrection(s_hold_target, heading.yaw_deg,
+            heading.rate_dps, &correction, &error) != 1U) App_ForwardHoldTrip(6U);
     }
     taskEXIT_CRITICAL();
 }
@@ -1592,6 +1530,7 @@ static void App_ForwardHoldSafety(void)
 /* 仅CAN任务执行；本模式清除旧转角请求，避免误触发原地转动。 */
 static void App_ForwardHoldStep(void)
 {
+    AppHeadingSource heading;
     ChassisAutoStatus status;
     uint32_t now, request, delta, accepted, critical_cycle, begin_cycle;
 #if APP_DISTANCE_SCURVE_ACTIVE
@@ -1607,6 +1546,7 @@ static void App_ForwardHoldStep(void)
     float error = 0.0f, desired = 0.0f;
     App_HeadingSourceObserve();
     taskENTER_CRITICAL();
+    (void)App_HeadingSourceRead(&heading);
     critical_cycle = HWT101_TimingBegin();
     now = (uint32_t)xTaskGetTickCount();
     request = g_forward_hold.request;
@@ -1627,7 +1567,7 @@ static void App_ForwardHoldStep(void)
             !App_HeadingRuntimeSource(now) || !App_HeadingRuntimeExclusive() ||
             (g_vm_test_request != App_StageStartVm()) || (status.active != 0U) ||
             (status.result != 0U) || (status.cut_vm != 0U) ||
-            !(s_heading_source.rate_dps >= -3.0f && s_heading_source.rate_dps <= 3.0f))
+            !(heading.rate_dps >= -3.0f && heading.rate_dps <= 3.0f))
             App_ForwardHoldTrip(3U);
         else
         {
@@ -1657,6 +1597,7 @@ static void App_ForwardHoldStep(void)
             ChassisAuto_PrepareRouteTranslation(mode,base_rpm,run_ms,distance_mm,route_speed,&prepared) :
             ChassisAuto_PrepareTranslation(mode,base_rpm,run_ms,distance_mm,&prepared);
         taskENTER_CRITICAL();
+        (void)App_HeadingSourceRead(&heading);
         critical_cycle = HWT101_TimingBegin();
         now = (uint32_t)xTaskGetTickCount();
         App_HeadingSourceObserve();
@@ -1680,8 +1621,8 @@ static void App_ForwardHoldStep(void)
         { HWT101_TimingEnd(0U, critical_cycle); taskEXIT_CRITICAL(); return; }
         /* 提交运动前验证固定参考，异常目标不获得电机启动许可。 */
         if (!s_route_heading_reference.valid ||
-            !HeadingController_HoldCorrection(s_route_heading_target,s_heading_source.yaw_deg,
-                s_heading_source.rate_dps,&desired,&error))
+            !HeadingController_HoldCorrection(s_route_heading_target,heading.yaw_deg,
+                heading.rate_dps,&desired,&error))
         {
             App_ForwardHoldTrip(6U);
             HWT101_TimingEnd(0U,critical_cycle);taskEXIT_CRITICAL();return;
@@ -1695,9 +1636,9 @@ static void App_ForwardHoldStep(void)
             (void)ChassisAuto_ReadStatus(&status);
             g_forward_hold.backend_session = status.session;
             s_hold_target = s_route_heading_target;
-            g_forward_hold.start_deg = s_heading_source.yaw_deg;
+            g_forward_hold.start_deg = heading.yaw_deg;
             g_forward_hold.target_deg = s_hold_target;
-            s_hold_sequence = s_heading_source.sequence;
+            s_hold_sequence = heading.sequence;
             s_hold_begin_ms = s_hold_new_ms = now;
             s_hold_controller = (HeadingHoldController){0};
             g_forward_hold.phase = HR_RUN;
@@ -1707,8 +1648,8 @@ static void App_ForwardHoldStep(void)
     {
         (void)ChassisAuto_ReadStatus(&status);
         if (!App_ForwardHoldOwns(&status)) App_ForwardHoldTrip(5U);
-        else if (HeadingController_HoldCorrection(s_hold_target, s_heading_source.yaw_deg,
-            s_heading_source.rate_dps, &desired, &error) != 1U) App_ForwardHoldTrip(6U);
+        else if (HeadingController_HoldCorrection(s_hold_target, heading.yaw_deg,
+            heading.rate_dps, &desired, &error) != 1U) App_ForwardHoldTrip(6U);
         else
         {
             g_forward_hold.error_deg = error;
@@ -1745,24 +1686,24 @@ static void App_ForwardHoldStep(void)
                     s_hold_stop_ms = now;
                 }
             }
-            delta = s_heading_source.sequence - s_hold_sequence;
+            delta = heading.sequence - s_hold_sequence;
             if (delta > 0x7FFFFFFFU) App_ForwardHoldTrip(2U);
             else if (delta != 0U)
             {
                 if (now - s_hold_new_ms > g_forward_hold.max_sample_gap_ms)
                     g_forward_hold.max_sample_gap_ms = now - s_hold_new_ms;
-                s_hold_sequence = s_heading_source.sequence;
+                s_hold_sequence = heading.sequence;
                 s_hold_new_ms = now;
                 g_forward_hold.sample_count++;
-                g_forward_hold.rate_dps = s_heading_source.rate_dps;
+                g_forward_hold.rate_dps = heading.rate_dps;
                 if (((error < 0.0f) ? -error : error) > g_forward_hold.peak_error_deg)
                     g_forward_hold.peak_error_deg = ((error < 0.0f) ? -error : error);
-                if (((s_heading_source.rate_dps < 0.0f) ? -s_heading_source.rate_dps : s_heading_source.rate_dps) > g_forward_hold.peak_rate_dps)
-                    g_forward_hold.peak_rate_dps = ((s_heading_source.rate_dps < 0.0f) ? -s_heading_source.rate_dps : s_heading_source.rate_dps);
+                if (((heading.rate_dps < 0.0f) ? -heading.rate_dps : heading.rate_dps) > g_forward_hold.peak_rate_dps)
+                    g_forward_hold.peak_rate_dps = ((heading.rate_dps < 0.0f) ? -heading.rate_dps : heading.rate_dps);
                 if ((g_forward_hold.trip == 0U) && (g_forward_hold.stopping == 0U))
                 {
                     if (HeadingController_HoldStep(&s_hold_controller, s_hold_target,
-                        s_heading_source.yaw_deg, s_heading_source.rate_dps, now,
+                        heading.yaw_deg, heading.rate_dps, now,
                         &correction, &error) != 1U) App_ForwardHoldTrip(2U);
                     else if (ChassisAuto_UpdateForwardHold(correction) != 1U) App_ForwardHoldTrip(8U);
                     else
@@ -1784,7 +1725,7 @@ static void App_ForwardHoldStep(void)
                             uint32_t index = g_forward_hold_trace_count;
                             g_forward_hold_trace[index].elapsed_ms = g_forward_hold.elapsed_ms;
                             g_forward_hold_trace[index].error_deg = error;
-                            g_forward_hold_trace[index].rate_dps = s_heading_source.rate_dps;
+                            g_forward_hold_trace[index].rate_dps = heading.rate_dps;
                             g_forward_hold_trace[index].correction_rpm = correction;
                             s_hold_trace_ms = now;
                             g_forward_hold_trace_count = index + 1U;
@@ -1796,7 +1737,7 @@ static void App_ForwardHoldStep(void)
                 (status.active == 0U) && (status.result == 1U) &&
                 (status.rotation_stop_mask == 0x0FU))
             {
-                g_forward_hold.final_deg = s_heading_source.yaw_deg;
+                g_forward_hold.final_deg = heading.yaw_deg;
                 g_forward_hold.final_valid = App_HeadingRuntimeSource(now);
                 g_forward_hold.correction_rpm = 0;
                 g_forward_hold.phase = HR_DONE;
@@ -2052,6 +1993,7 @@ static uint32_t App_PerimeterTurnStart(uint32_t direction, float angle_deg, uint
 
 static uint32_t App_CombinedLoadAction(uint32_t index)
 {
+    AppHeadingSource heading;
     const MotionAction *action;
     uint32_t accepted, load_cycle, i;
     float planned_offset=0.0f;
@@ -2064,7 +2006,8 @@ static uint32_t App_CombinedLoadAction(uint32_t index)
     action = &s_motion_actions[index];
     s_route_heading_turn_active = action->kind == MOTION_TURN;
     g_route_heading_targets[index]=s_route_heading_target;
-    g_route_heading_start_yaw[index]=s_heading_source.yaw_deg;
+    (void)App_HeadingSourceRead(&heading);
+    g_route_heading_start_yaw[index]=heading.yaw_deg;
     s_motion_list_submit = 1U;
     if(action->reference_mm_s!=0.0f)
         accepted=App_MoveSubmit(action->kind-MOTION_FORWARD_DISTANCE,action->base_rpm,
@@ -2147,10 +2090,12 @@ static void App_CombinedTestSafety(void)
 }
 static void App_CombinedTestStep(void)
 {
+    AppHeadingSource heading;
     ChassisAutoStatus status;
     PowerCommandStatus power;
     uint32_t now = (uint32_t)xTaskGetTickCount(), request, phase, index;
     taskENTER_CRITICAL();
+    (void)App_HeadingSourceRead(&heading);
     request = g_combined_test.request;
     g_combined_test.request = 0U;
     if (APP_IS_COMPETITION && !AppCompetitionEntry_MotionAllowed())
@@ -2203,7 +2148,7 @@ static void App_CombinedTestStep(void)
             (g_translation_hold_selftest != 1U) || (g_motion_plan_valid != 1U) ||
             (g_forward_hold.phase != HR_IDLE) || (g_heading_exec_phase != HR_IDLE))
         { App_CombinedTestStop(3U); taskEXIT_CRITICAL(); return; }
-        if(!RouteHeading_Init(&s_route_heading_reference,s_heading_source.yaw_deg))
+        if(!RouteHeading_Init(&s_route_heading_reference,heading.yaw_deg))
         { App_CombinedTestStop(3U);taskEXIT_CRITICAL();return; }
         s_combined_powered_segment = 0U;
         s_combined_begin_ms = s_combined_stage_ms = now;
@@ -2253,6 +2198,7 @@ static void App_CombinedTestStep(void)
         if (s_combined_turn) App_HeadingRuntimeStep();
         else App_ForwardHoldStep();
         taskENTER_CRITICAL();
+        (void)App_HeadingSourceRead(&heading);
         if (g_combined_test.state >= 3U)
         { taskEXIT_CRITICAL(); return; }
         phase = s_combined_turn ? g_heading_exec_phase : g_forward_hold.phase;
@@ -2288,7 +2234,7 @@ static void App_CombinedTestStep(void)
                 g_combined_test.phase[index] = phase;
                 g_combined_test.session[index] = status.session;
                 g_combined_test.elapsed_ms[index] = now - s_combined_stage_ms;
-                g_combined_test.final_yaw[index] = s_heading_source.yaw_deg;
+                g_combined_test.final_yaw[index] = heading.yaw_deg;
                 g_combined_test.final_error[index] = s_combined_turn ?
                     g_heading_exec_error_deg : g_forward_hold.error_deg;
 #if APP_SERIAL_MOTION_CONTROL
@@ -2349,6 +2295,7 @@ static uint32_t App_SerialIdleReady(uint32_t now)
 #if APP_MOTOR_OFFLINE_ONLY
     (void)now;return 0U;
 #else
+    AppHeadingSource heading;
     ChassisAutoStatus status;
     PowerCommandStatus power;
     if(!CAN1_EmmSettingsConfirmed())return 0U;
@@ -2358,13 +2305,14 @@ static uint32_t App_SerialIdleReady(uint32_t now)
     if ((g_combined_test.state != 0U) || (g_combined_test.request != 0U) ||
         (g_motion_plan_valid != 1U)) return 0U;
 #endif
+    (void)App_HeadingSourceRead(&heading);
     return ((g_forward_hold.phase == HR_IDLE) && (g_forward_hold.request == 0U) &&
         (g_vm_test_request == 0U) && ((power.active == 0U) || StartupAxes_Holding()) &&
         (status.active == 0U) && (status.result == 0U) && (status.cut_vm == 0U) &&
         (g_translation_hold_selftest == 1U) && (s_serial_proto_ok == 1U) &&
         App_HeadingRuntimeSource(now) && App_HeadingRuntimeExclusive() &&
         (g_can_ctrl_fault_latched == 0U) &&
-        (s_heading_source.rate_dps >= -3.0f && s_heading_source.rate_dps <= 3.0f)) ? 1U : 0U;
+        (heading.rate_dps >= -3.0f && heading.rate_dps <= 3.0f)) ? 1U : 0U;
 #endif
 }
 /* 调用者持锁；只容忍成功终态的晚到KEEP，不续期、不重新发车。 */
@@ -3040,6 +2988,7 @@ static void App_ChassisLoadTelemetry(void)
 
 static void App_SerialMotionTelemetry(void)
 {
+    AppHeadingSource heading;
     static int32_t values[(APP_TEST_MODE == 3U) ? 66U : 49U];
     static char frame[768];
     uint32_t now = (uint32_t)xTaskGetTickCount(), i, used = 4U;
@@ -3049,6 +2998,7 @@ static void App_SerialMotionTelemetry(void)
     ChassisAutoStatus status;
     if (!App_SerialStatusDue(now)) return;
     taskENTER_CRITICAL();
+    (void)App_HeadingSourceRead(&heading);
     Power_ReadCommandStatus(&power); (void)ChassisAuto_ReadStatus(&status);
     values[0] = (int32_t)(s_serial_tx_seq++); /* seq */
     values[1] = (int32_t)(now); /* tick_ms */
@@ -3056,12 +3006,12 @@ static void App_SerialMotionTelemetry(void)
     values[3] = (int32_t)(g_forward_hold.trip); /* trip */
     values[4] = (int32_t)(g_forward_hold.elapsed_ms); /* elapsed_ms */
     values[5] = (int32_t)(App_HeadingRuntimeSource(now)); /* source_valid */
-    values[6] = (int32_t)(App_SerialMilli(s_heading_source.yaw_deg)); /* yaw_mdeg */
+    values[6] = (int32_t)(App_SerialMilli(heading.yaw_deg)); /* yaw_mdeg */
     values[7] = (int32_t)(App_SerialMilli(g_forward_hold.target_deg)); /* target_mdeg */
     values[8] = (int32_t)(App_SerialMilli(g_forward_hold.error_deg)); /* error_mdeg */
-    values[9] = (int32_t)(App_SerialMilli(s_heading_source.rate_dps)); /* rate_mdps */
-    values[10] = (int32_t)(App_HeadingFrameAge(&s_heading_source,now,1U)); /* angle_age_ms */
-    values[11] = (int32_t)(App_HeadingFrameAge(&s_heading_source,now,2U)); /* rate_age_ms */
+    values[9] = (int32_t)(App_SerialMilli(heading.rate_dps)); /* rate_mdps */
+    values[10] = (int32_t)(App_HeadingFrameAge(&heading,now,1U)); /* angle_age_ms */
+    values[11] = (int32_t)(App_HeadingFrameAge(&heading,now,2U)); /* rate_age_ms */
     values[12] = FineRpm_Deci(g_forward_hold.correction_rpm); /* correction_rpm */
     values[13] = ZdtEmm_RpmDeci(g_chassis_auto_driver_rpm[0]); /* rpm1 */
     values[14] = ZdtEmm_RpmDeci(g_chassis_auto_driver_rpm[1]); /* rpm2 */
@@ -3261,7 +3211,7 @@ static void App_OdometryStep(void)
     AppHeadingSource source;
     ChassisOdometrySamples samples;
     uint32_t i,now=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
-    taskENTER_CRITICAL(); source=s_heading_source; taskEXIT_CRITICAL();
+    (void)App_HeadingSourceRead(&source);
 #if APP_IS_DEBUG
     if(g_odometry_pose_request==1U) {
         PowerCommandStatus power;
