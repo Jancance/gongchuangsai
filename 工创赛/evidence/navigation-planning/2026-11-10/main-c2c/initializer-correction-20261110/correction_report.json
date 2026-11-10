@@ -1,0 +1,268 @@
+{
+  "ok": true,
+  "baseline_commit": "5111ab98019619e1b14a97c0b409f759a9662e1c",
+  "candidate_commit": "1f272dd8cae82bea606f4f779573ecf5e22d4cf1",
+  "correction": "Previous program-header-only loading omitted startup RAM copy initialization. The old dynamic results used an incorrect initial state; this separate two-target replay replaces those dynamic claims. Product source is unchanged.",
+  "supersedes_dynamic_claims": [
+    "motion_runtime_check.json.arm_differential",
+    "review.json ARM differential item",
+    "independent_review.json.read_only_arm_replay"
+  ],
+  "unchanged_valid_evidence": [
+    "raw/preprocessed source equivalence and original global declarations",
+    "protected file hashes and two original inc byte identity",
+    "single action array owner and formal two-target Keil builds"
+  ],
+  "historical_evidence_preserved_sha256": {
+    "工创赛/evidence/navigation-planning/2026-11-10/main-c2c/motion_runtime_check.json": "c005a32eb2ffe22251588f106e71e1a4c78bbc49853d6555814343a37910c137",
+    "工创赛/evidence/navigation-planning/2026-11-10/main-c2c/build_summary.json": "ac808049ea930839a73a746edb8249d58427acd0c2c951c5724c7c3b8e6ab6fb",
+    "工创赛/evidence/navigation-planning/2026-11-10/main-c2c/review.json": "fd3dab57d5969432808e6487171dadf93404114e2260e2b3b401885da1516b69",
+    "工创赛/evidence/navigation-planning/2026-11-10/main-c2c/independent_review.json": "e8c45369fcd076136ad2f6bddfb2d3a1cdf1d9fddf8cd4db4a333a0bc4fbc62c",
+    "工创赛/tmp/motion_runtime_main_c2c/unit/unit.axf": "2c2753b9775c83a67bdd40e42100b15b63ec998f0414212b7e726ca04a907818",
+    "工创赛/tmp/motion_runtime_main_c2c/unit/unit.c": "12eb12b556a6239121694b05f6e4220e9499d8fc9994e7276e3dbcdf4c120058"
+  },
+  "frozen_input_sha256": {
+    "3.stm32f407工程/CHASSIS/USER/main.c": "097a7ae960be2565f43ea72c3ece8404615378d187042c269a53f27b59936311",
+    "3.stm32f407工程/CHASSIS/USER/app_motion_runtime.c": "3f5273c93b9a49313098dd69090718dc2ba4462a32f0293546feb9e42cb30248",
+    "3.stm32f407工程/CHASSIS/USER/app_motion_runtime.h": "308d04adfbf5d2664850eafed8138135b20fe3b4f3ecf373f0f87367d1468982",
+    "3.stm32f407工程/CHASSIS/USER/app_runtime_route.c": "3874b2640beb299f4f0d032a8ec5f09b46ce3fbfda80990bcbd96e6e4932eb29",
+    "3.stm32f407工程/CHASSIS/USER/app_runtime_route.h": "31a34e7c1b812cd5c2ff51050a67e2694765d0502ecfc473d26ca7ec31ea9224",
+    "3.stm32f407工程/CHASSIS/USER/app_serial_internal.h": "a771aa2f4b104b3a0d63d4a8660815fdcbe6a4273eed4db0601c143d4dc92a30",
+    "3.stm32f407工程/CHASSIS/USER/stage1_runtime.inc": "c300b40f06c4cb00602ac7d313a2fff59939a9762064e14dfd75af574a96a890",
+    "3.stm32f407工程/CHASSIS/USER/vehicle_mission.inc": "75fb83e8caaf8220e6f69848cea79d308ba3611aa33a65174c9233fdd3b09112",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "05512867f58e7eb36ff431bfa86b0c21ea4ba67cdac5b1f528ecf6be48824337",
+    "3.stm32f407工程/CHASSIS/USER/heading_controller.c": "06e0af899342e7ba66a82ba14c18cfd60e1c08ba5c3c351a9948abf6f9627b21"
+  },
+  "baseline_main_sha256": "d59edd638f1d7070c95c34b5cd2178153792a3b093a9921de9722391b84f0605",
+  "saved_preprocessed_inputs_sha256": {
+    "工创赛/tmp/motion_runtime_main_c2c/Vehicle_Integrated_old.i": "2ed316d34aa21eafe5bf5ee26221150ec3f5334df32a629cd22dc100816ffcf5",
+    "工创赛/tmp/motion_runtime_main_c2c/Vehicle_Integrated_main.i": "7ee9df21a8d46ccf4d236168dbcf9e9a1218fca712763ac6ed4dab34dfd72ae9",
+    "工创赛/tmp/motion_runtime_main_c2c/Vehicle_Integrated_motion.i": "f852c834019fa8c3239f8ba5f14c3e0b9222c0f90b8885a1412960e34c50a4ae",
+    "工创赛/tmp/motion_runtime_main_c2c/Vehicle_Integrated_route.i": "d653f717471f02d7efc8defda0e3f3a9af0eda3b5b2f3bdbe65374b792f2c97a",
+    "工创赛/tmp/motion_runtime_main_c2c/Vehicle_Offline_old.i": "7db5e2d73a99f2a428394849f87934d7f4c19954980b084bd2c083eed9ead69a",
+    "工创赛/tmp/motion_runtime_main_c2c/Vehicle_Offline_main.i": "e6461e9513481eb2bfaa8406a05519cefdab447ffe75336f83d732781c9b51f5",
+    "工创赛/tmp/motion_runtime_main_c2c/Vehicle_Offline_motion.i": "f852c834019fa8c3239f8ba5f14c3e0b9222c0f90b8885a1412960e34c50a4ae",
+    "工创赛/tmp/motion_runtime_main_c2c/Vehicle_Offline_route.i": "d653f717471f02d7efc8defda0e3f3a9af0eda3b5b2f3bdbe65374b792f2c97a"
+  },
+  "dependency_count": 996,
+  "dependency_manifest": "工创赛/tmp/motion_runtime_initializer_correction_20261110/dependency_manifest.json",
+  "dependency_manifest_sha256": "3438b9fa2b973cc163ca4a1a101af5746dcdc40ad0125553b186c19a5fffdd9c",
+  "dependency_identity": "Raw bytes match the original C2c manifests; separately compared against candidate Git blobs after CRLF normalization. Only frozen candidate source/header copies and verified unchanged dependencies compile.",
+  "script_sha256": {
+    "工创赛/scripts/check_motion_runtime_initializer_correction_20261110.py": "2dd0ef692ea1ae81ad7f3bd5c002bfc424b19e54cd13e1bfcb4139b9fbc798db",
+    "工创赛/scripts/check_motion_runtime_arm_20261110.py": "4f726b5891896b04622c4b31cd045a44ad64baf479f56750b745268987662b41",
+    "工创赛/scripts/check_motion_runtime_extraction_20261110.py": "3898e24880b44f2ed8632a79a131191e61fd4c2e74fb501a8020d3bd59458246"
+  },
+  "targets": [
+    {
+      "cases": 672,
+      "assertions": 44418,
+      "load_calls": 384,
+      "install_calls": 180,
+      "rearm_calls": 32,
+      "permit_accepts": 24,
+      "permit_rejects": 48,
+      "select_rejects": 78,
+      "route_rejects": 6,
+      "stop_calls": 398,
+      "live_checks": 672,
+      "loader_initialization": {
+        "allocated_sections": [
+          {
+            "index": 1,
+            "type": "PROGBITS",
+            "address": "0x8000000",
+            "bytes": 11704,
+            "nonzero_bytes": 10690
+          },
+          {
+            "index": 2,
+            "type": "PROGBITS",
+            "address": "0x20000000",
+            "bytes": 636,
+            "nonzero_bytes": 126
+          },
+          {
+            "index": 3,
+            "type": "NOBITS",
+            "address": "0x2000027c",
+            "bytes": 6716,
+            "nonzero_bytes": 0
+          }
+        ],
+        "all_sections_readback_verified": true,
+        "expected_debug_plan_default": 0,
+        "initial_owner_values": {
+          "new_": {
+            "turn_max_rpm": 5,
+            "perimeter_first": [
+              2100.0,
+              2100.0,
+              -90.0
+            ],
+            "debug_plan_id": 0
+          },
+          "old_": {
+            "turn_max_rpm": 5,
+            "perimeter_first": [
+              2100.0,
+              2100.0,
+              -90.0
+            ],
+            "debug_plan_id": 0
+          }
+        },
+        "live_pointers": {
+          "s_motion_action_count": "0x20000044",
+          "s_motion_session_open": "0x20000030",
+          "s_motion_has_action": "0x20000034",
+          "s_combined_turn": "0x2000005c",
+          "s_combined_mode": "0x20000060",
+          "s_combined_base_rpm": "0x20000020",
+          "s_combined_distance_mm": "0x2000002c",
+          "s_combined_reference_mm_s": "0x20000028",
+          "s_combined_begin_ms": "0x20000064",
+          "s_combined_end_ms": "0x20000070",
+          "s_combined_stage_ms": "0x20000068",
+          "s_motion_actions": "0x20000424",
+          "s_perimeter_targets": "0x200001a4"
+        }
+      },
+      "target": "Vehicle_Integrated",
+      "artifact": "工创赛/tmp/motion_runtime_initializer_correction_20261110/Vehicle_Integrated/unit/unit.axf",
+      "artifact_sha256": "ff7acc43f1f06f4eb8292cb411c5e303b51d9f0a07d5e9bc2cddcce370473a6c",
+      "generated_c_sha256": "12eb12b556a6239121694b05f6e4220e9499d8fc9994e7276e3dbcdf4c120058"
+    },
+    {
+      "cases": 672,
+      "assertions": 44418,
+      "load_calls": 384,
+      "install_calls": 180,
+      "rearm_calls": 32,
+      "permit_accepts": 24,
+      "permit_rejects": 48,
+      "select_rejects": 78,
+      "route_rejects": 6,
+      "stop_calls": 398,
+      "live_checks": 672,
+      "loader_initialization": {
+        "allocated_sections": [
+          {
+            "index": 1,
+            "type": "PROGBITS",
+            "address": "0x8000000",
+            "bytes": 11704,
+            "nonzero_bytes": 10690
+          },
+          {
+            "index": 2,
+            "type": "PROGBITS",
+            "address": "0x20000000",
+            "bytes": 636,
+            "nonzero_bytes": 126
+          },
+          {
+            "index": 3,
+            "type": "NOBITS",
+            "address": "0x2000027c",
+            "bytes": 6716,
+            "nonzero_bytes": 0
+          }
+        ],
+        "all_sections_readback_verified": true,
+        "expected_debug_plan_default": 0,
+        "initial_owner_values": {
+          "new_": {
+            "turn_max_rpm": 5,
+            "perimeter_first": [
+              2100.0,
+              2100.0,
+              -90.0
+            ],
+            "debug_plan_id": 0
+          },
+          "old_": {
+            "turn_max_rpm": 5,
+            "perimeter_first": [
+              2100.0,
+              2100.0,
+              -90.0
+            ],
+            "debug_plan_id": 0
+          }
+        },
+        "live_pointers": {
+          "s_motion_action_count": "0x20000044",
+          "s_motion_session_open": "0x20000030",
+          "s_motion_has_action": "0x20000034",
+          "s_combined_turn": "0x2000005c",
+          "s_combined_mode": "0x20000060",
+          "s_combined_base_rpm": "0x20000020",
+          "s_combined_distance_mm": "0x2000002c",
+          "s_combined_reference_mm_s": "0x20000028",
+          "s_combined_begin_ms": "0x20000064",
+          "s_combined_end_ms": "0x20000070",
+          "s_combined_stage_ms": "0x20000068",
+          "s_motion_actions": "0x20000424",
+          "s_perimeter_targets": "0x200001a4"
+        }
+      },
+      "target": "Vehicle_Offline",
+      "artifact": "工创赛/tmp/motion_runtime_initializer_correction_20261110/Vehicle_Offline/unit/unit.axf",
+      "artifact_sha256": "57d8b96715012b8c0622161f44c8239cf16820bb5783ab98bbc67a6630c69360",
+      "generated_c_sha256": "12eb12b556a6239121694b05f6e4220e9499d8fc9994e7276e3dbcdf4c120058"
+    }
+  ],
+  "D_product_and_evidence_unchanged": true,
+  "D_preserved_sha256": {
+    "3.stm32f407工程/CHASSIS/USER/main.c": "0fcf589ec3abe70afc49d262275489f0e0eb64e74c35af38e9cafbcb541af807",
+    "3.stm32f407工程/CHASSIS/USER/app_serial_runtime.c": "e2d15d8dab98cf06b534fab807e574d491304db1e474a74616bbc6337a77c1d2",
+    "3.stm32f407工程/CHASSIS/USER/app_serial_runtime.h": "3db4681b05e47130d7d21fee880448f1b69c4ba5aa1d553c69e275301f5a5625",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "c1aa59669e95e24d10eb29ba894b650d7bb4a34d8baea4aa003d47eaba2df5f3",
+    "工创赛/scripts/check_serial_runtime_extraction_20261110.py": "d2c9bdb62fe72fed852c2683b8c428e0047f53b9e94bf04ba95ad2f33bc8d5aa",
+    "工创赛/scripts/check_serial_runtime_arm_20261110.py": "20b0b13f096b92b56bb3e34ba97f315233c54e317512b01d8a0f43ef0540cfc8",
+    "工创赛/evidence/navigation-planning/2026-11-10/main-d/build_summary.json": "5ac5ee65e9369927e2638a22cc1b5ea8fc0c8e0ead17d048d2526f9edee1fdfc",
+    "工创赛/evidence/navigation-planning/2026-11-10/main-d/final_Vehicle_Integrated.log": "bfe0c4bab6a33469f1d3102edc28206fde4a058604219522c20bb496815bdfa3",
+    "工创赛/evidence/navigation-planning/2026-11-10/main-d/final_Vehicle_Offline.log": "983b6a80ff78fc0458fdabe1a2411fb8d4f0d8e379b647445c9f1a5bb525e636",
+    "工创赛/evidence/navigation-planning/2026-11-10/main-d/independent_review.json": "64f9d5c5dc865437fd307e7863e3e74d680bd532f675f3c5f47e858630860da1",
+    "工创赛/evidence/navigation-planning/2026-11-10/main-d/review.json": "41b303d0768ba6cba3e5f67a0747479dc6d71cdae4ae0fab01ba54ac1f5e4ab2",
+    "工创赛/evidence/navigation-planning/2026-11-10/main-d/serial_runtime_check.json": "161aa2d5ec076b436eafba97a2499b3d14fc7eb06aa36e059247674fc2348896"
+  },
+  "prior_independent_probe": {
+    "scope": "last-target retained artifact only, independently reported by root/high before this correction",
+    "artifact_sha256": "2c2753b9775c83a67bdd40e42100b15b63ec998f0414212b7e726ca04a907818",
+    "initialized_RW_bytes": 636,
+    "nonzero_RW_bytes": 126,
+    "cases": 672,
+    "assertions": 44418
+  },
+  "self_review": "passed; helper changes confined to execution-address initialization and initializer/owner checks; C harness/scenarios unchanged",
+  "independent_review": "pending root high supplemental review",
+  "formal_firmware_rebuilt": false,
+  "hardware_accessed": false,
+  "network_accessed": false,
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "FIELD-06",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "LOC-03",
+    "LOC-05",
+    "MOT-02",
+    "RUN-06",
+    "SRC-04"
+  ],
+  "open_Q": [
+    "FIELD-05: 待技术答疑确认",
+    "OBS-03: 待技术答疑确认"
+  ],
+  "limits": [
+    "Same narrow actual ARM C with controlled backend/RTOS/clock/plan-generation/action-submission stubs.",
+    "Correct initialization is an offline validator correction, not MATLAB dynamics, hardware/RTOS timing/stack or vehicle validation.",
+    "No historical stages outside C2c are revalidated by this report."
+  ]
+}

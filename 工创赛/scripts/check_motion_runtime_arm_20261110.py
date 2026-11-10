@@ -163,12 +163,39 @@ __attribute__((section("i.test_entry"))) uint32_t test_entry(void){
     from unicorn import arm_const as reg
     blob=(out/'unit.axf').read_bytes();elf=struct.unpack_from('<16sHHIIIIIHHHHHH',blob)
     m=uc.Uc(uc.UC_ARCH_ARM,uc.UC_MODE_THUMB|uc.UC_MODE_MCLASS);m.mem_map(0x08000000,0x100000);m.mem_map(0x20000000,0x20000)
-    for i in range(elf[10]):
-        kind,off,addr,_,size,_,_,_=struct.unpack_from('<IIIIIIII',blob,elf[5]+i*elf[9])
-        if kind==1 and size:m.mem_write(addr,blob[off:off+size])
+    # Keil's scatter LOAD image contains initialized RAM at a ROM load address.
+    # Execute-address section loading models startup copy/zero initialization.
+    allocated=[]
+    for i in range(elf[12]):
+        _,kind,flags,addr,off,size,_,_,_,_=struct.unpack_from('<IIIIIIIIII',blob,elf[6]+i*elf[11])
+        if not flags&2 or not size:continue
+        assert kind in (1,8),('unexpected allocated section',i,kind)
+        assert any(start<=addr and addr+size<=start+length for start,length in [(0x08000000,0x100000),(0x20000000,0x20000)]),('section outside mapped memory',i,addr,size)
+        if kind==1:assert off+size<=len(blob),('truncated section',i)
+        data=blob[off:off+size] if kind==1 else bytes(size)
+        m.mem_write(addr,data)
+        allocated.append((addr,data,dict(index=i,type='PROGBITS' if kind==1 else 'NOBITS',address=hex(addr),bytes=size,nonzero_bytes=sum(v!=0 for v in data))))
+    for addr,data,_ in allocated:assert bytes(m.mem_read(addr,len(data)))==data,('allocated section readback',hex(addr))
+    symbols=subprocess.check_output([str(c.B/'fromelf.exe'),'--text','-s','unit.axf'],cwd=out).decode(errors='replace')
+    def address(n):return int(re.search(r'\b'+n+r'\s+(0x[0-9a-fA-F]+)',symbols)[1],16)
+    def value(n):return struct.unpack('<I',m.mem_read(address(n),4))[0]
+    # Resolve the macro under the same real target options, not an assumed value.
+    (out/'initializer_probe.c').write_text('#include "app_entry.h"\nDEBUG_PLAN_DEFAULT\n','ascii')
+    probe=subprocess.run([str(c.B/'armcc.exe')]+opts+['-E','initializer_probe.c'],cwd=out,capture_output=True,timeout=60)
+    assert probe.returncode==0,probe.stderr.decode(errors='replace')
+    expected=int(re.search(r'(\d+)[uUlL]*\s*$',probe.stdout.decode('gbk'))[1])
+    initial={}
+    for prefix in ['', 'old_']:
+        turn=value(prefix+'s_motion_turn_max_rpm');perimeter=list(struct.unpack('<fff',m.mem_read(address(prefix+'s_perimeter_targets'),12)));plan=value(prefix+'g_debug_plan_id')
+        assert turn==5 and perimeter==[2100.0,2100.0,-90.0] and plan==expected,(prefix,turn,perimeter,plan,expected)
+        initial[prefix or 'new_']=dict(turn_max_rpm=turn,perimeter_first=perimeter,debug_plan_id=plan)
+    pointer_names=['s_motion_action_count','s_motion_session_open','s_motion_has_action','s_combined_turn','s_combined_mode','s_combined_base_rpm','s_combined_distance_mm','s_combined_reference_mm_s','s_combined_begin_ms','s_combined_end_ms','s_combined_stage_ms','s_motion_actions','s_perimeter_targets']
+    pointers=struct.unpack('<13I',m.mem_read(address('s_motion_observation'),52))
+    assert list(pointers)==[address(n) for n in pointer_names],'live observation owner wiring'
+    initialization=dict(allocated_sections=[row for _,_,row in allocated],all_sections_readback_verified=True,expected_debug_plan_default=expected,initial_owner_values=initial,live_pointers={n:hex(a) for n,a in zip(pointer_names,pointers)})
     stop=0x080FF000;m.reg_write(reg.UC_ARM_REG_SP,0x2001FFF0);m.reg_write(reg.UC_ARM_REG_LR,stop|1)
     m.emu_start(elf[4]|1,stop,timeout=60000000,count=300000000)
     assert m.reg_read(reg.UC_ARM_REG_PC)==stop;assert m.reg_read(reg.UC_ARM_REG_R0)==0,f'C check line {m.reg_read(reg.UC_ARM_REG_R0)}'
-    symbols=subprocess.check_output([str(c.B/'fromelf.exe'),'--text','-s','unit.axf'],cwd=out).decode(errors='replace')
-    def value(n):a=int(re.search(r'\b'+n+r'\s+(0x[0-9a-fA-F]+)',symbols)[1],16);return struct.unpack('<I',m.mem_read(a,4))[0]
-    return {n:value(n) for n in ['cases','assertions','load_calls','install_calls','rearm_calls','permit_accepts','permit_rejects','select_rejects','route_rejects','stop_calls','live_checks']}
+    result={n:value(n) for n in ['cases','assertions','load_calls','install_calls','rearm_calls','permit_accepts','permit_rejects','select_rejects','route_rejects','stop_calls','live_checks']}
+    result['loader_initialization']=initialization
+    return result
