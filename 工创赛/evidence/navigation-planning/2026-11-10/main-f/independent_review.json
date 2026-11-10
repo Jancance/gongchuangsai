@@ -1,0 +1,32 @@
+{
+  "stage": "main-F",
+  "reviewer": "gpt-6.1-sol/high",
+  "result": "passed; no actionable findings",
+  "review_mode": "independent read-only review",
+  "baseline": "d4d23490dfe74023c7043f209200fc29a6b60a75",
+  "source_hashes_match_frozen_review": true,
+  "script_hashes_match_frozen_review": true,
+  "project": "Both targets include only the two intended source additions; existing target entries remain present.",
+  "code_review": {
+    "main_dispatch_and_task_creation": "Original task wrappers, task parameters, dispatch positions, and Safety_Update placement retained.",
+    "can_and_mechanical_order": "StartupAxes, conditional DM service, VehicleArm, conditional DM service, and Combined admission order retained; poll/feedback reports and odometry remain in their original round positions.",
+    "input_and_safety": "Original key, gate, scan-display, interlock, cancellation, and safety behavior retained; no new gate or weakened protection found.",
+    "actionable_findings": []
+  },
+  "evidence_binding": {
+    "build_summary_sha256": "4c7ff3ddcfb9e1bb9b039d96858a6bdbe24ede93230d11f409243728a5f2feff",
+    "input_chassis_check_sha256": "00d9553562bd9a8db71586788882889a90c8c9734748b9d673d6e10b710a058b",
+    "integrated_build_log_sha256": "0e1af771144adf5639e3e114ac0b102883a55611b44f40255e563f287f8908c2",
+    "offline_build_log_sha256": "c2f64aacfdfd9ed0056b112840cfaa805ed1f463f88b92355684b4a5f8e868c6",
+    "integrated_build_axf_sha256": "0ab09f58f7b94a5fb7e88389b7f5ff1f64ba3172e4173c0c57c163f5554c6d25",
+    "offline_build_axf_sha256": "3f86ac0a47a13091226e3fce319028652ac0997d770fb00ec7f5d7ab1b593de6",
+    "arm_replay": "Existing actual-target reports bind 597 scenarios and 13677 assertions per target. Reviewer verified report/artifact hashes but did not replay the ARM units."
+  },
+  "requirements_checked": {
+    "R": ["RUN-01", "RUN-02", "FIELD-06", "PWR-01", "MECH-01", "MECH-02"],
+    "E": ["LOC-03", "LOC-05", "MOT-02", "RUN-06", "SRC-04"],
+    "Q": "QR-04, FIELD-05, and OBS-03 remain pending technical clarification; no rule changes."
+  },
+  "limits": "Static review and frozen evidence/hash verification only; no independent ARM replay, MATLAB dynamics simulation, hardware, RTOS timing/stack, bus, or vehicle acceptance. Controlled-stub tests do not establish full RTOS or hardware behavior.",
+  "network_or_hardware_accessed": false
+}
