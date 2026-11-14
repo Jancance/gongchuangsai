@@ -10,6 +10,13 @@
 #include "task.h"
 #include <stddef.h>
 #include "power.h"
+#if APP_BASELINE40_ACTIVE
+#include "app_odometry.h"
+#include "app_motion_runtime.h"
+#include "app_entry.h"
+#include "heading_source.h"
+#include <float.h>
+#endif
 #if APP_DISTANCE_SCURVE_ACTIVE
 #include <math.h>
 #endif
@@ -169,6 +176,89 @@ static uint32_t s_sequence_hold, s_sequence_continue;
 #define AUTO_SEQUENCE_HOLD() (0U)
 #endif
 
+#if APP_BASELINE40_ACTIVE
+static uint32_t s_lateral_enabled, s_lateral_tick_valid;
+static uint32_t s_lateral_tick_ms, s_lateral_begin_ms;
+static float s_lateral_vy;
+static int32_t s_lateral_applied_deci;
+static void Auto_LateralReset(void)
+{
+    s_lateral_enabled=s_lateral_tick_valid=0U;
+    s_lateral_tick_ms=s_lateral_begin_ms=0U;
+    s_lateral_vy=0.0f; s_lateral_applied_deci=0;
+}
+static float Auto_LateralClamp(float value,float limit)
+{ return value>limit ? limit : (value< -limit ? -limit : value); }
+/* Trigonometry is outside the state lock; current age/session is checked again inside. */
+static float Auto_LateralTarget(const AppOdometryBaseline40 *od,uint32_t begin_ms,uint32_t now_ms,uint32_t *valid)
+{
+    float angle,delta,e,value;
+    *valid=0U;
+    if(!od->anchor_valid || (int32_t)(od->reference_set_ms-begin_ms)<0 ||
+       !od->pose.valid || od->pose.reasons || od->pose.continuity_lost || od->pose.local_origin ||
+       now_ms-od->pose.sample_ms>=ODOM_WHEEL_MAX_AGE_MS ||
+       !(od->origin_x_mm>=-FLT_MAX && od->origin_x_mm<=FLT_MAX) ||
+       !(od->origin_y_mm>=-FLT_MAX && od->origin_y_mm<=FLT_MAX) ||
+       !(od->heading_offset_deg>=-FLT_MAX && od->heading_offset_deg<=FLT_MAX) ||
+       !(od->path_heading_deg>=-180.0f && od->path_heading_deg<=180.0f) ||
+       !(od->pose.heading_deg>=-180.0f && od->pose.heading_deg<=180.0f) ||
+       !(od->pose.x_mm>=-FLT_MAX && od->pose.x_mm<=FLT_MAX) ||
+       !(od->pose.y_mm>=-FLT_MAX && od->pose.y_mm<=FLT_MAX)) return 0.0f;
+    angle=od->path_heading_deg*0.01745329251994329577f;
+    delta=od->pose.heading_deg-od->path_heading_deg;
+    if(delta>180.0f) delta-=360.0f;
+    if(delta< -180.0f) delta+=360.0f;
+    e=-sinf(angle)*(od->pose.x_mm-od->origin_x_mm)+cosf(angle)*(od->pose.y_mm-od->origin_y_mm);
+    value=-0.75f*e*cosf(delta*0.01745329251994329577f);
+    if(!(value>=-FLT_MAX && value<=FLT_MAX)) return 0.0f;
+    *valid=1U;
+    return value;
+}
+static uint32_t Auto_LateralHeadingFresh(const AppHeadingSource *heading,uint32_t ready,uint32_t now_ms)
+{
+    return ready==1U && heading->healthy==1U && now_ms-heading->sample_ms<100U &&
+        App_HeadingFrameAge(heading,now_ms,1U)<100U &&
+        App_HeadingFrameAge(heading,now_ms,2U)<100U &&
+        heading->yaw_deg>=-180.0f && heading->yaw_deg<=180.0f &&
+        heading->rate_dps>=-2000.0f && heading->rate_dps<=2000.0f;
+}
+static float Auto_LateralFeedforwardPerRpm(const AppOdometryBaseline40 *od,
+    const AppHeadingSource *heading,uint32_t ready,uint32_t now_ms)
+{
+    float delta,value;
+    if(!Auto_LateralHeadingFresh(heading,ready,now_ms)) return 0.0f;
+    delta=heading->yaw_deg+od->heading_offset_deg-od->path_heading_deg;
+    if(!(delta>=-FLT_MAX && delta<=FLT_MAX)) return 0.0f;
+    delta=fmodf(delta,360.0f);
+    if(delta>180.0f) delta-=360.0f;
+    if(delta< -180.0f) delta+=360.0f;
+    if(delta< -10.0f || delta>10.0f) return 0.0f;
+    value=-0.5f*3.14159265358979323846f*g_chassis_geometry.wheel_diameter_mm/60.0f*
+        tanf(delta*0.01745329251994329577f);
+    return (value>=-FLT_MAX && value<=FLT_MAX) ? value:0.0f;
+}
+static uint32_t Auto_LateralStepLocked(uint32_t now_ms,float target,float heading,
+    int32_t *heading_deci,int32_t *lateral_deci)
+{
+    int32_t limit,q;
+    float factor,budget,step;
+    uint32_t elapsed=s_lateral_tick_valid ? now_ms-s_lateral_tick_ms : 0U;
+    if(!Chassis_Baseline40Budget(s_translation_base_rpm,heading,heading_deci,&limit,&factor)) return 0U;
+    s_lateral_tick_ms=now_ms; s_lateral_tick_valid=1U;
+    if(elapsed>100U) elapsed=100U;
+    budget=(float)limit*factor;
+    s_lateral_vy=Auto_LateralClamp(s_lateral_vy,budget);
+    target=Auto_LateralClamp(target,budget);
+    step=20.0f*(float)elapsed*0.001f;
+    s_lateral_vy+=Auto_LateralClamp(target-s_lateral_vy,step);
+    s_lateral_vy=Auto_LateralClamp(s_lateral_vy,budget);
+    q=(int32_t)(fabsf(s_lateral_vy)/factor);
+    if(q>limit) q=limit;
+    *lateral_deci=s_lateral_vy<0.0f ? -q:q;
+    return 1U;
+}
+#endif
+
 /* 以下带Locked的函数只在短临界区内操作内存，不等待CAN */
 /* detail：1命令过期，2状态/速度过期，3端点批次过期，4端点读失败，
  * 5运行位置读失败，6状态/速度读失败，7缺起点，8距离保护；0其它原因。 */
@@ -314,6 +404,9 @@ static void Auto_CutDetailLocked(uint32_t cause, uint32_t detail, uint32_t io, u
         s_endpoints[s_endpoint_index].outcome = 2U;
 #endif
     Auto_BatchEndLocked(2U, xTaskGetTickCount());
+#if APP_BASELINE40_ACTIVE
+    Auto_LateralReset();
+#endif
     g_chassis_auto_active = 0U;
     g_chassis_auto_cut_vm = 1U;
     g_chassis_auto_state = CHASSIS_AUTO_FAULT;
@@ -333,7 +426,12 @@ void ChassisAuto_ReadFaultDiagnostic(ChassisAutoFaultDiagnostic *snapshot)
 
 static void Auto_EnterLocked(uint32_t state, TickType_t now)
 {
-    if (state == CHASSIS_AUTO_STOP) Auto_BatchEndLocked(3U, now);
+    if (state == CHASSIS_AUTO_STOP) {
+        Auto_BatchEndLocked(3U, now);
+#if APP_BASELINE40_ACTIVE
+        Auto_LateralReset();
+#endif
+    }
     g_chassis_auto_state = state;
     s_phase_tick = now;
     /* 普通首次批次没有前端发布时间，以选择START时刻为生成边界。 */
@@ -432,7 +530,7 @@ static void Auto_DistanceFaultLocked(uint32_t reason)
 static void Auto_DistanceCheckLocked(TickType_t now)
 {
     uint32_t i, rpm;
-    float mean, spread, low=0.0f, high=0.0f;
+    float mean;
     uint32_t common_ms=0U, oldest_age=0U;
     ChassisPositionEndpoints *base;
     if (!s_distance_mode || s_finish_requested || s_stop_due ||
@@ -504,13 +602,10 @@ static void Auto_DistanceCheckLocked(TickType_t now)
             if (since>=400U) Auto_DistanceFaultLocked(3U);
             return;
         }
-        if (!i || mm<low) low=mm;
-        if (!i || mm>high) high=mm;
         mean+=mm*0.25f;
     }
-    spread=high-low;
     if (!Chassis_CalibrateDistanceMm(s_translation_mode,mean,&mean) ||
-        mean < -5.0f || spread > 50.0f || mean < s_distance_progress_mm-5.0f ||
+        mean < -5.0f || mean < s_distance_progress_mm-5.0f ||
         mean > s_distance_target_mm+50.0f)
     { Auto_DistanceFaultLocked(5U); return; }
     s_alignment_seen=1U; s_alignment_ms=common_ms;
@@ -687,6 +782,9 @@ void ChassisAuto_Init(void)
     uint32_t i;
     ChassisAutoFaultDiagnostic empty_fault = {0};
     g_chassis_auto_fault_diagnostic = empty_fault; s_fault_diagnostic_valid = 0U;
+#if APP_BASELINE40_ACTIVE
+    Auto_LateralReset();
+#endif
     g_chassis_auto_request = 0U;
     g_chassis_auto_dry_run = g_chassis_auto_mode = 1U;
     g_chassis_auto_state = CHASSIS_AUTO_IDLE;
@@ -761,6 +859,9 @@ static uint32_t Auto_BeginPreparedBasicLocked(uint32_t dry_run,
             for (j = 0U; j < CHASSIS_WHEEL_COUNT; j++) s_commands[i][j] = commands[i * CHASSIS_WHEEL_COUNT + j];
         ChassisAutoFaultDiagnostic empty_fault = {0};
         g_chassis_auto_fault_diagnostic = empty_fault; s_fault_diagnostic_valid = 0U;
+#if APP_BASELINE40_ACTIVE
+        Auto_LateralReset();
+#endif
         s_used = 1U; s_mode = dry_run; g_chassis_auto_mode = dry_run;
         g_chassis_auto_session++;
         for(i=0U;i<4U;i++)DirectionGuard_Reset(&s_direction_guard[i]);
@@ -819,6 +920,9 @@ void ChassisAuto_SafetyUpdate(uint32_t vm_request)
     if (!s_vm_requested)
     {
         Auto_BatchEndLocked(3U, xTaskGetTickCount());
+#if APP_BASELINE40_ACTIVE
+        Auto_LateralReset();
+#endif
 #if APP_POSITION_DIAGNOSTIC
         s_position_valid = s_position_due = 0U;
 #endif
@@ -1183,15 +1287,66 @@ void ChassisAuto_CanStep(void)
     float effective_heading;
     TickType_t now;
     CanRxMsg reply = {0};
+#if APP_BASELINE40_ACTIVE
+    AppOdometryBaseline40 lateral_od;
+    AppHeadingSource lateral_heading={0};
+    uint32_t lateral_session=g_chassis_auto_session, lateral_begin=s_lateral_begin_ms;
+    uint32_t lateral_valid,lateral_heading_ready,lateral_now_ms;
+    float lateral_target,lateral_ff_per_rpm=0.0f;
+    int32_t lateral_deci=s_lateral_applied_deci, heading_deci=0;
+    AppOdometry_ReadBaseline40(&lateral_od);
+    lateral_heading_ready=App_HeadingSourceRead(&lateral_heading);
+    lateral_now_ms=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
+    lateral_target=Auto_LateralTarget(&lateral_od,lateral_begin,lateral_now_ms,&lateral_valid);
+    if(lateral_valid) lateral_ff_per_rpm=Auto_LateralFeedforwardPerRpm(&lateral_od,
+        &lateral_heading,lateral_heading_ready,lateral_now_ms);
+#endif
     taskENTER_CRITICAL();
     now = xTaskGetTickCount(); Auto_CheckLocked(now);
-    if (!g_chassis_auto_active) { taskEXIT_CRITICAL(); return; }
+    if (!g_chassis_auto_active) {
+#if APP_BASELINE40_ACTIVE
+        Auto_LateralReset();
+#endif
+        taskEXIT_CRITICAL(); return;
+    }
     state = g_chassis_auto_state; session = g_chassis_auto_session;
+#if APP_BASELINE40_ACTIVE
+    if(s_stop_due || s_finish_requested || state==CHASSIS_AUTO_STOP) {
+        s_lateral_vy=0.0f; s_lateral_tick_valid=0U; s_lateral_applied_deci=0;
+    }
+    if(s_lateral_enabled && !s_stop_due && !s_finish_requested &&
+       (state==CHASSIS_AUTO_RUN || (state==CHASSIS_AUTO_START &&
+        s_motor_index==0U && s_monitor_between==0U))) {
+        if(lateral_session!=session || lateral_begin!=s_lateral_begin_ms ||
+           (int32_t)(lateral_od.reference_set_ms-s_lateral_begin_ms)<0 ||
+           (uint32_t)now*portTICK_PERIOD_MS-lateral_od.pose.sample_ms>=ODOM_WHEEL_MAX_AGE_MS)
+            lateral_valid=0U;
+        lateral_now_ms=(uint32_t)now*portTICK_PERIOD_MS;
+        if(!Auto_LateralHeadingFresh(&lateral_heading,lateral_heading_ready,lateral_now_ms))
+            lateral_ff_per_rpm=0.0f;
+        if(lateral_valid) {
+            float half=(float)s_translation_base_rpm*lateral_ff_per_rpm;
+            float weight=half>0.0f ? lateral_target/3.0f :
+                (half<0.0f ? -lateral_target/3.0f : 0.0f);
+            weight=weight<0.0f ? 0.0f : (weight>1.0f ? 1.0f : weight);
+            lateral_target+=1.5f*weight*half;
+            lateral_target=(lateral_target>=-FLT_MAX && lateral_target<=FLT_MAX) ?
+                Auto_LateralClamp(lateral_target,12.1f):0.0f;
+        } else lateral_target=0.0f;
+        if(!Auto_LateralStepLocked((uint32_t)now*portTICK_PERIOD_MS,lateral_target,
+                s_heading_pending_rpm,&heading_deci,&lateral_deci))
+        { Auto_CutLocked(8U); taskEXIT_CRITICAL(); return; }
+    }
+#endif
     effective_heading = s_heading_pending_rpm;
 #if APP_DISTANCE_SCURVE_ACTIVE
     if (s_profile_active && !Chassis_ProfileCorrectionRpm(s_translation_base_rpm,
             s_heading_pending_rpm,&effective_heading))
     { Auto_CutLocked(8U); taskEXIT_CRITICAL(); return; }
+#endif
+#if APP_BASELINE40_ACTIVE
+    if(s_lateral_enabled && (state==CHASSIS_AUTO_RUN || (state==CHASSIS_AUTO_START &&
+        s_motor_index==0U && s_monitor_between==0U))) effective_heading=(float)heading_deci*0.1f;
 #endif
 /* 仅在整组边界接纳新目标，避免一组四轮混入两个不同轮速。 */
     if ((s_heading_session == 1U) && (s_stop_due == 0U) &&
@@ -1200,8 +1355,20 @@ void ChassisAuto_CanStep(void)
          ((state == CHASSIS_AUTO_START) && (s_motor_index == 0U) &&
           (s_monitor_between == 0U))) &&
         ((effective_heading != s_heading_applied_rpm) ||
-         (s_distance_mode && s_translation_base_rpm != s_translation_applied_base)))
+         (s_distance_mode && s_translation_base_rpm != s_translation_applied_base)
+#if APP_BASELINE40_ACTIVE
+         || (s_lateral_enabled && lateral_deci!=s_lateral_applied_deci)
+#endif
+         ))
     {
+#if APP_BASELINE40_ACTIVE
+        if(s_lateral_enabled) {
+            if(!Chassis_Baseline40Commands(s_translation_base_rpm,heading_deci,lateral_deci,s_commands[2]))
+            { Auto_CutLocked(8U); taskEXIT_CRITICAL(); return; }
+            if(lateral_deci!=s_lateral_applied_deci) Auto_BatchChangedLocked(now,3U);
+            s_lateral_applied_deci=lateral_deci;
+        } else
+#endif
         if (((s_forward_hold == 1U) ?
 #if APP_DISTANCE_SCURVE_ACTIVE
             (s_profile_active ? ((s_route_trial && s_translation_mode==1U && APP_LEFT_TRIM_ACTIVE) ?
@@ -1603,7 +1770,7 @@ static uint32_t Auto_PrepareTranslationEx(uint32_t motion_mode, uint32_t base_rp
     prepared->valid = 0U;prepared->route_reference_mm_s=0.0f;
     if(route_speed!=0.0f && !MotionRoute_ShapeAllowed(motion_mode,base_rpm,run_ms,distance_mm,route_speed)) return 0U;
     if (__get_BASEPRI() || __get_PRIMASK() || motion_mode > 3U ||
-        base_rpm < 3U || (base_rpm > 15U && route_speed==0.0f && !MotionTrial20Allowed(motion_mode,base_rpm,distance_mm))) return 0U;
+        base_rpm < 3U || (base_rpm > 15U && route_speed==0.0f && !MotionTrial20Allowed(motion_mode,base_rpm,distance_mm) && !MotionTrial40Allowed(motion_mode,base_rpm,distance_mm))) return 0U;
     if (distance_mm != 0.0f)
     {
 #if APP_POSITION_DIAGNOSTIC
@@ -1631,9 +1798,9 @@ static uint32_t Auto_PrepareTranslationEx(uint32_t motion_mode, uint32_t base_rp
         if (!Chassis_CalibrateDistanceMm(motion_mode,
                 3.14159265358979323846f*g_chassis_geometry.wheel_diameter_mm/60.0f,&factor)) return 0U;
         limits.speed = MotionDistanceReferenceSpeed(factor,base_rpm);
-        limits.acceleration = APP_DISTANCE_SCURVE_ACCEL_MM_S2 -
+        limits.acceleration = MotionDistanceAcceleration(motion_mode,base_rpm,distance_mm) -
             factor*2.0f*MotionDistanceFollowRpm(base_rpm)*APP_DISTANCE_SCURVE_FOLLOW_OMEGA;
-        limits.jerk = APP_DISTANCE_SCURVE_JERK_MM_S3 -
+        limits.jerk = MotionDistanceJerk(motion_mode,base_rpm,distance_mm) -
             factor*6.0f*MotionDistanceFollowRpm(base_rpm)*
                 APP_DISTANCE_SCURVE_FOLLOW_OMEGA*APP_DISTANCE_SCURVE_FOLLOW_OMEGA;
         if(route_speed!=0.0f) {
@@ -1670,7 +1837,8 @@ uint32_t ChassisAuto_BeginPreparedTranslation(const ChassisAutoPreparedTranslati
             prepared->distance_mm,prepared->route_reference_mm_s)) return 0U;
     if (!prepared || prepared->valid != 1U || prepared->motion_mode > 3U ||
         prepared->base_rpm < 3U || (prepared->base_rpm > 15U && prepared->route_reference_mm_s==0.0f &&
-            !MotionTrial20Allowed(prepared->motion_mode,prepared->base_rpm,prepared->distance_mm))) return 0U;
+            !MotionTrial20Allowed(prepared->motion_mode,prepared->base_rpm,prepared->distance_mm) &&
+            !MotionTrial40Allowed(prepared->motion_mode,prepared->base_rpm,prepared->distance_mm))) return 0U;
     if (prepared->distance_mm != 0.0f)
     {
 #if APP_POSITION_DIAGNOSTIC
@@ -1697,9 +1865,9 @@ uint32_t ChassisAuto_BeginPreparedTranslation(const ChassisAutoPreparedTranslati
         if (!Chassis_CalibrateDistanceMm(prepared->motion_mode,
                 3.14159265358979323846f*g_chassis_geometry.wheel_diameter_mm/60.0f,&factor) ||
             (!prepared->route_reference_mm_s && (prepared->profile.limits.speed != MotionDistanceReferenceSpeed(factor,prepared->base_rpm) ||
-            prepared->profile.limits.acceleration != APP_DISTANCE_SCURVE_ACCEL_MM_S2 -
+            prepared->profile.limits.acceleration != MotionDistanceAcceleration(prepared->motion_mode,prepared->base_rpm,prepared->distance_mm) -
                 factor*2.0f*MotionDistanceFollowRpm(prepared->base_rpm)*APP_DISTANCE_SCURVE_FOLLOW_OMEGA ||
-            prepared->profile.limits.jerk != APP_DISTANCE_SCURVE_JERK_MM_S3 -
+            prepared->profile.limits.jerk != MotionDistanceJerk(prepared->motion_mode,prepared->base_rpm,prepared->distance_mm) -
                 factor*6.0f*MotionDistanceFollowRpm(prepared->base_rpm)*
                     APP_DISTANCE_SCURVE_FOLLOW_OMEGA*APP_DISTANCE_SCURVE_FOLLOW_OMEGA)) ||
             prepared->profile.boundary_s[0] != 0.0f || prepared->profile.position[0] != 0.0f ||
@@ -1727,6 +1895,13 @@ uint32_t ChassisAuto_BeginPreparedTranslation(const ChassisAutoPreparedTranslati
             s_translation_mode = prepared->motion_mode;
             s_translation_base_rpm = s_translation_applied_base = prepared->base_rpm;
             s_translation_run_ms = prepared->run_ms;s_route_trial=prepared->route_reference_mm_s!=0.0f;
+#if APP_BASELINE40_ACTIVE
+            s_lateral_enabled=g_debug_plan_id==DEBUG_PLAN_FORWARD210_40 &&
+                MotionTrial40Allowed(prepared->motion_mode,prepared->base_rpm,prepared->distance_mm) &&
+                prepared->route_reference_mm_s==0.0f && prepared->profile.valid==1U &&
+                prepared->run_ms==APP_BASELINE40_RUN_MS && (*AppMotion_Live()->action_count)==1U;
+            s_lateral_begin_ms=(*AppMotion_Live()->begin_ms)*portTICK_PERIOD_MS;
+#endif
             s_heading_initial_rpm = s_heading_pending_rpm = s_heading_applied_rpm = 0;
             s_heading_update_tick = s_heading_command_tick = xTaskGetTickCount();
 #if APP_POSITION_DIAGNOSTIC
