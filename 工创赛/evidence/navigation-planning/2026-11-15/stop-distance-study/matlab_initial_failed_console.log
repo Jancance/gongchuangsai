@@ -1,0 +1,31 @@
+The following file can't be accessed C:\Users\lenovo\AppData\Roaming\MathWorks\MATLAB\R2020a\migratePref.txt
+java.lang.IllegalArgumentException: File migratePref.txt should only contain 'T' or 'F'!
+java.io.FileNotFoundException: C:\Users\lenovo\AppData\Roaming\MathWorks\MATLAB\R2020a\migratePref.txt (�ܾ����ʡ�)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at java.io.FileInputStream.<init>(FileInputStream.java:93)
+	at java.io.FileReader.<init>(FileReader.java:58)
+	at com.mathworks.services.Prefs.readMigrateFlag(Prefs.java:2160)
+	at com.mathworks.services.Prefs.createTwoWayMapPrefsSettings(Prefs.java:373)
+	at com.mathworks.services.Prefs.<clinit>(Prefs.java:214)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.mathworks.util.PostVMInit$StartupClass.init(PostVMInit.java:156)
+	at com.mathworks.util.PostVMInit.perform(PostVMInit.java:187)
+java.lang.IllegalArgumentException: File migratePref.txt should only contain 'T' or 'F'!
+	at com.mathworks.services.Prefs.readMigrateFlag(Prefs.java:2182)
+	at com.mathworks.services.Prefs.createTwoWayMapPrefsSettings(Prefs.java:373)
+	at com.mathworks.services.Prefs.<clinit>(Prefs.java:214)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.mathworks.util.PostVMInit$StartupClass.init(PostVMInit.java:156)
+	at com.mathworks.util.PostVMInit.perform(PostVMInit.java:187)
+[����: �޷����ع�����·������ C:\Users\lenovo\AppData\Local\MathWorks\MATLAB\R2020a\toolbox_cache-9.8.0-345199666-win64.xml���û����ļ��ĸ�ʽ��
+��ȷ���˳� MATLAB ʱ���������ɸ��ļ���] 
+{������������Ϊ���������߼�ֵ��
+
+���� stop_distance_study (line 76)
+ if ok;commonmean=mean(wheels)*s.forward_scale;else;commonmean=NaN;end
+} 
+ERROR: MATLAB error Exit Status: 0x00000001

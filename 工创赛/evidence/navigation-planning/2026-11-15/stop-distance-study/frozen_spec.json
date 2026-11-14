@@ -1,0 +1,62 @@
+{
+  "schema": "stop-distance-study-v1",
+  "source_commit": "86ad3415",
+  "scope": "A diagnostics only; B1 gated off unless identifiable B0 passes",
+  "wheel_diameter_mm": 77,
+  "forward_scale": 1.0218254,
+  "distance_mm": 2100,
+  "max_rpm": 100,
+  "requested_speed_mm_s": 400,
+  "requested_acceleration_mm_s2": 150,
+  "requested_jerk_mm_s3": 300,
+  "follow_cap_rpm": 2,
+  "follow_kp": 1,
+  "follow_omega": 1,
+  "follow_min_dt_ms": 10,
+  "follow_max_dt_ms": 100,
+  "approach_floor_rpm": 1,
+  "arrival_mm": 2,
+  "track_mm": 50,
+  "final_wait_ms": 2000,
+  "maxrun_ms": 12779,
+  "B0": {
+    "last_complete_F_tolerance_rpm": 1,
+    "require_internal_state_identifiable": true,
+    "require_arrival_common_mean_reproduced": true
+  },
+  "B1": {
+    "enabled": false,
+    "tail_mm": 120,
+    "lookahead_s": 0.15,
+    "scope": "speed-only smoothstep; original position/scale/follower/floor/STOP unchanged"
+  },
+  "rule_ids": {
+    "R": [
+      "RUN-01",
+      "PWR-01",
+      "MECH-01",
+      "MECH-02"
+    ],
+    "E": [
+      "LOC-01",
+      "LOC-02",
+      "LOC-03",
+      "LOC-05",
+      "LOC-07",
+      "MOT-02",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": [
+      "FIELD-05",
+      "OBS-03",
+      "QR-04"
+    ]
+  },
+  "assumptions": [
+    "no plant fitted or ground trajectory inferred",
+    "single-precision profile arithmetic follows source; prepare integration double",
+    "first TX is a time bound, not asserted internal profile origin",
+    "reached compares calibrated common-time raw mean BEFORE common-time reference compensation and follower"
+  ]
+}

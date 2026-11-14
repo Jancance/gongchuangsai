@@ -1,0 +1,33 @@
+The following file can't be accessed C:\Users\lenovo\AppData\Roaming\MathWorks\MATLAB\R2020a\migratePref.txt
+java.lang.IllegalArgumentException: File migratePref.txt should only contain 'T' or 'F'!
+java.io.FileNotFoundException: C:\Users\lenovo\AppData\Roaming\MathWorks\MATLAB\R2020a\migratePref.txt (拒绝访问。)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at java.io.FileInputStream.<init>(FileInputStream.java:93)
+	at java.io.FileReader.<init>(FileReader.java:58)
+	at com.mathworks.services.Prefs.readMigrateFlag(Prefs.java:2160)
+	at com.mathworks.services.Prefs.createTwoWayMapPrefsSettings(Prefs.java:373)
+	at com.mathworks.services.Prefs.<clinit>(Prefs.java:214)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.mathworks.util.PostVMInit$StartupClass.init(PostVMInit.java:156)
+	at com.mathworks.util.PostVMInit.perform(PostVMInit.java:187)
+java.lang.IllegalArgumentException: File migratePref.txt should only contain 'T' or 'F'!
+	at com.mathworks.services.Prefs.readMigrateFlag(Prefs.java:2182)
+	at com.mathworks.services.Prefs.createTwoWayMapPrefsSettings(Prefs.java:373)
+	at com.mathworks.services.Prefs.<clinit>(Prefs.java:214)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.mathworks.util.PostVMInit$StartupClass.init(PostVMInit.java:156)
+	at com.mathworks.util.PostVMInit.perform(PostVMInit.java:187)
+[警告: 无法加载工具箱路径缓存 C:\Users\lenovo\AppData\Local\MathWorks\MATLAB\R2020a\toolbox_cache-9.8.0-345199666-win64.xml。该缓存文件的格式不
+正确。退出 MATLAB 时将重新生成该文件。] 
+MATLAB 9.8.0.1323502 (R2020a)
+B0_FAIL_NOT_IDENTIFIABLE; B1_executed=0
+profile duration=8.778662682 s factor=4.119704247 mm/(RPM*s), a=133.521179 j=250.563553
+run1 F=19 ref=[18.189 19.162] outerF=[16 21] missingPM>=31 PMfreezeGap=-23.662mm
+run2 F=20 ref=[19.259 20.231] outerF=[17 22] missingPM>=31 PMfreezeGap=-11.307mm
+run3 F=20 ref=[18.902 19.875] outerF=[17 22] missingPM>=34 PMfreezeGap=-24.400mm
+run4 F=18 ref=[17.476 18.449] outerF=[15 20] missingPM>=29 PMfreezeGap=-15.011mm
+applicable mathematical diagnostics passed; product candidate NOT accepted
