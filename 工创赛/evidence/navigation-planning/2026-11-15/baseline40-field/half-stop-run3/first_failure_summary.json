@@ -1,0 +1,39 @@
+{
+  "status": "PLAN8_ack_timeout_no_ARM_START",
+  "firmware_modified": false,
+  "downloaded": false,
+  "reset_count": 1,
+  "start_count": 0,
+  "tail_read": false,
+  "automatic_retry": false,
+  "TX": [
+    {
+      "host_utc": "2026-11-14T23:40:17.889357+00:00",
+      "direction": "TX",
+      "text": "RC1,39,3721,PLAN8,667B"
+    },
+    {
+      "host_utc": "2026-11-14T23:40:19.892319+00:00",
+      "direction": "TX",
+      "text": "RC1,0,0,STOP,A850"
+    }
+  ],
+  "TMQ_count": 23,
+  "first_tick": 3521,
+  "last_tick": 5721,
+  "USART_GPIO_decode": {
+    "UE": true,
+    "RE": true,
+    "TE": true,
+    "RXNEIE": true,
+    "PA9_mode": 2,
+    "PA10_mode": 2,
+    "PA9_af": 7,
+    "PA10_af": 7
+  },
+  "ground_precision_sample": false,
+  "root_cause": "unresolved host-to-MCU receive path; continued MCU-to-host telemetry during PLAN timeout",
+  "current_core": "RUNNING",
+  "VM": 0,
+  "source_hashes_rechecked": true
+}
