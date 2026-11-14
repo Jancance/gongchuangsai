@@ -1,0 +1,129 @@
+{
+  "started_at": "2026-11-15T06:37:59.576077+08:00",
+  "candidate_sha256": "5e803d0def9e33155752d4ceec71b9ca93ab903311407185d5d7af3c4880a185",
+  "elf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\tail-snapshot-build-20261115\\baseline40_integrated\\Vehicle_Integrated.axf",
+  "symbols": {
+    "g_can_ctrl_fault_latched": [
+      268436132,
+      4
+    ],
+    "g_safety_fault": [
+      268436200,
+      4
+    ],
+    "g_vm_test_request": [
+      536870912,
+      4
+    ],
+    "g_rtos_fault": [
+      536871040,
+      4
+    ],
+    "g_chassis_auto_state": [
+      536871060,
+      4
+    ],
+    "g_chassis_auto_active": [
+      536871068,
+      4
+    ],
+    "g_chassis_auto_session": [
+      536871076,
+      4
+    ],
+    "g_chassis_auto_result": [
+      536871080,
+      4
+    ],
+    "g_debug_plan_id": [
+      536871644,
+      4
+    ],
+    "g_chassis_auto_lateral_timing": [
+      536946536,
+      104
+    ],
+    "g_chassis_auto_tail_snapshots": [
+      536948844,
+      176
+    ]
+  },
+  "accepted": true,
+  "acquisition_status": "accepted_stable_double_read",
+  "hardware_accessed": true,
+  "chip_cycles_measured": true,
+  "irq_included": true,
+  "reset": false,
+  "halted": false,
+  "resumed": false,
+  "actuator_requests_written": 0,
+  "vm_writes": 0,
+  "irq_mask_writes": 0,
+  "getter_calls": 0,
+  "automatic_retry": false,
+  "before": {
+    "core": "RUNNING",
+    "values": {
+      "g_chassis_auto_session": 1,
+      "g_chassis_auto_state": 9,
+      "g_chassis_auto_result": 1,
+      "g_chassis_auto_active": 0,
+      "g_vm_test_request": 1,
+      "g_safety_fault": 0,
+      "g_rtos_fault": 0,
+      "g_can_ctrl_fault_latched": 0,
+      "g_debug_plan_id": 8
+    },
+    "pe2": 1
+  },
+  "raw": {
+    "timing_read1.bin": {
+      "size": 104,
+      "sha256": "be9084b0d4af2df24d42bda4871f2ecc42b468ed10fc3e6efee09b8b462d9319"
+    },
+    "tail_read1.bin": {
+      "size": 176,
+      "sha256": "2b5a271ba83ff5378166568edc30ceaf9249a41127520a131168bd810f4a86f5"
+    },
+    "timing_read2.bin": {
+      "size": 104,
+      "sha256": "be9084b0d4af2df24d42bda4871f2ecc42b468ed10fc3e6efee09b8b462d9319"
+    },
+    "tail_read2.bin": {
+      "size": 176,
+      "sha256": "2b5a271ba83ff5378166568edc30ceaf9249a41127520a131168bd810f4a86f5"
+    }
+  },
+  "after": {
+    "core": "RUNNING",
+    "values": {
+      "g_chassis_auto_session": 1,
+      "g_chassis_auto_state": 9,
+      "g_chassis_auto_result": 1,
+      "g_chassis_auto_active": 0,
+      "g_vm_test_request": 1,
+      "g_safety_fault": 0,
+      "g_rtos_fault": 0,
+      "g_can_ctrl_fault_latched": 0,
+      "g_debug_plan_id": 8
+    },
+    "pe2": 1
+  },
+  "SystemCoreClock": 168000000,
+  "counts_and_windows": [
+    {
+      "name": "target_plus_feedforward",
+      "valid": true,
+      "count": 113,
+      "window_ms": 8030
+    },
+    {
+      "name": "step_budget_quantize",
+      "valid": true,
+      "count": 113,
+      "window_ms": 8030
+    }
+  ],
+  "hardware_provenance": "matching ELF + authorized running-core SWD RAM stable double-read",
+  "finished_at": "2026-11-15T06:37:59.970426+08:00"
+}

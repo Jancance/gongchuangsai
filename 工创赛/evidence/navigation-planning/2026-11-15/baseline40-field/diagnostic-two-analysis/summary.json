@@ -1,0 +1,772 @@
+{
+  "scope": "Offline saved-data analysis only; user cancelled further testing",
+  "candidate_sha256": "5e803d0def9e33155752d4ceec71b9ca93ab903311407185d5d7af3c4880a185",
+  "runs": [
+    {
+      "folder": "diagnostic-run1",
+      "candidate_sha256": "5e803d0def9e33155752d4ceec71b9ca93ab903311407185d5d7af3c4880a185",
+      "hardware_snapshot_verified": true,
+      "provenance": {
+        "raw_parser_chip_measured": false,
+        "receipt_chip_measured": true,
+        "trusted_acquisition": true,
+        "reason": "offline parser literal is not a denial of verified hardware read"
+      },
+      "ruler": {
+        "right_mm": 20.0,
+        "forward_mm": 2107.5,
+        "extra_mm": 7.5
+      },
+      "timing": {
+        "enabled": true,
+        "SystemCoreClock": 168000000,
+        "chip_cycles_measured": false,
+        "provenance": "offline decode only; hardware provenance not established",
+        "irq_included": true,
+        "scopes": [
+          {
+            "name": "target_plus_feedforward",
+            "valid": true,
+            "count": 113,
+            "min_cycles": 1263,
+            "last_cycles": 1320,
+            "max_cycles": 1681,
+            "sum_cycles": 149930,
+            "first_ms": 28654,
+            "last_ms": 36618,
+            "window_ms": 7964,
+            "count_saturated": false,
+            "mean_cycles": 1326.8141592920354,
+            "mean_us": 7.897703329119258,
+            "min_us": 7.517857142857143,
+            "last_us": 7.857142857142857,
+            "max_us": 10.005952380952381,
+            "intervals_per_second": 14.063284781516826,
+            "sum_elapsed_us": 892.4404761904761,
+            "measured_scope_cycles_per_own_window_percent": 0.011205932649302815
+          },
+          {
+            "name": "step_budget_quantize",
+            "valid": true,
+            "count": 113,
+            "min_cycles": 634,
+            "last_cycles": 641,
+            "max_cycles": 642,
+            "sum_cycles": 72013,
+            "first_ms": 28654,
+            "last_ms": 36618,
+            "window_ms": 7964,
+            "count_saturated": false,
+            "mean_cycles": 637.2831858407079,
+            "mean_us": 3.7933522966708804,
+            "min_us": 3.7738095238095237,
+            "last_us": 3.8154761904761907,
+            "max_us": 3.8214285714285716,
+            "intervals_per_second": 14.063284781516826,
+            "sum_elapsed_us": 428.6488095238095,
+            "measured_scope_cycles_per_own_window_percent": 0.00538233060677812
+          }
+        ]
+      },
+      "tail": {
+        "format_version": 1,
+        "session": 1,
+        "valid_mask": 7,
+        "event_counts": {
+          "first_entry": 1,
+          "accepted_tail_batch_freezes": 10,
+          "arrival": 1
+        },
+        "reserved": [
+          0,
+          0
+        ],
+        "slots": [
+          {
+            "now_ms": 35914,
+            "run_tick_ms": 28654,
+            "common_ms": 35805,
+            "follow_tick_ms": 35903,
+            "common_mean_mm": 1993.0989990234375,
+            "reference_position_mm": 1993.7357177734375,
+            "reference_rpm": 40.584964752197266,
+            "follow_rpm": 0.810305118560791,
+            "follow_rate_rpm_s": -1.4007742404937744,
+            "pending_base_rpm": 42,
+            "applied_base_rpm": 44,
+            "flags": 197,
+            "slot": 0,
+            "name": "first_tail_entry",
+            "captured": true,
+            "record_valid": true,
+            "elapsed_ms": 7260,
+            "common_age_ms": 109,
+            "follow_state_age_ms": 11,
+            "flags_decoded": {
+              "profile_active": true,
+              "profile_done": false,
+              "run_started": true,
+              "reached_before_event": false,
+              "stop_due_before_event": false,
+              "finish_requested_before_event": false,
+              "alignment_seen": true,
+              "common_age_less_400ms": true
+            },
+            "quantity_kind": "reference/request/applied command; NOT measured wheel or ground speed",
+            "profile_duration_s": 8.7786626816,
+            "profile_time_remaining_s": 1.5186626816000004,
+            "common_mean_minus_current_reference_mm": -0.63671875,
+            "reference_plus_follow_rpm": 41.39526987075806,
+            "pending_minus_current_reference_rpm": 1.4150352478027344
+          },
+          {
+            "now_ms": 36618,
+            "run_tick_ms": 28654,
+            "common_ms": 36498,
+            "follow_tick_ms": 36618,
+            "common_mean_mm": 2095.360595703125,
+            "reference_position_mm": 2078.35546875,
+            "reference_rpm": 17.7680606842041,
+            "follow_rpm": -0.13220536708831787,
+            "follow_rate_rpm_s": -1.178262710571289,
+            "pending_base_rpm": 18,
+            "applied_base_rpm": 18,
+            "flags": 197,
+            "slot": 1,
+            "name": "latest_tail_batch_freeze_NOT_complete_ACK",
+            "captured": true,
+            "record_valid": true,
+            "elapsed_ms": 7964,
+            "common_age_ms": 120,
+            "follow_state_age_ms": 0,
+            "flags_decoded": {
+              "profile_active": true,
+              "profile_done": false,
+              "run_started": true,
+              "reached_before_event": false,
+              "stop_due_before_event": false,
+              "finish_requested_before_event": false,
+              "alignment_seen": true,
+              "common_age_less_400ms": true
+            },
+            "quantity_kind": "reference/request/applied command; NOT measured wheel or ground speed",
+            "profile_duration_s": 8.7786626816,
+            "profile_time_remaining_s": 0.8146626815999998,
+            "common_mean_minus_current_reference_mm": 17.005126953125,
+            "reference_plus_follow_rpm": 17.635855317115784,
+            "pending_minus_current_reference_rpm": 0.23193931579589844
+          },
+          {
+            "now_ms": 36680,
+            "run_tick_ms": 28654,
+            "common_ms": 36575,
+            "follow_tick_ms": 36673,
+            "common_mean_mm": 2102.967529296875,
+            "reference_position_mm": 2082.63720703125,
+            "reference_rpm": 15.758623123168945,
+            "follow_rpm": -0.19626545906066895,
+            "follow_rate_rpm_s": -1.1511027812957764,
+            "pending_base_rpm": 16,
+            "applied_base_rpm": 18,
+            "flags": 197,
+            "slot": 2,
+            "name": "arrival_BEFORE_reached_assignment",
+            "captured": true,
+            "record_valid": true,
+            "elapsed_ms": 8026,
+            "common_age_ms": 105,
+            "follow_state_age_ms": 7,
+            "flags_decoded": {
+              "profile_active": true,
+              "profile_done": false,
+              "run_started": true,
+              "reached_before_event": false,
+              "stop_due_before_event": false,
+              "finish_requested_before_event": false,
+              "alignment_seen": true,
+              "common_age_less_400ms": true
+            },
+            "quantity_kind": "reference/request/applied command; NOT measured wheel or ground speed",
+            "profile_duration_s": 8.7786626816,
+            "profile_time_remaining_s": 0.7526626816000004,
+            "common_mean_minus_current_reference_mm": 20.330322265625,
+            "reference_plus_follow_rpm": 15.562357664108276,
+            "pending_minus_current_reference_rpm": 0.2413768768310547
+          }
+        ],
+        "hardware_provenance_established": false,
+        "acquisition_status": "UNVERIFIED_OFFLINE_BYTES; require external stable double-read receipt",
+        "B1_enabled": false,
+        "ground_distance_accuracy_established": false
+      },
+      "combined_measured_scopes_percent_same_window": 0.016588263256080933,
+      "stop_distance": {
+        "frozen_arrival_mm": 2102.967,
+        "PE_final_encoder_calibrated_mm": 2113.0978784312115,
+        "PE_minus_frozen_mm": 10.130878431211386,
+        "PE_minus_ruler_mm": 5.597878431211484,
+        "ruler_minus_frozen_mm": 4.532999999999902,
+        "PE_end_after_firstSTOP_ms": [
+          1034,
+          1067
+        ],
+        "latest_preSTOP_OD": {
+          "tick_ms": 36120.0,
+          "sample_ms": 35981.0,
+          "along_mm": 2026.0,
+          "right_mm": 3.0,
+          "local_heading_left_deg": -0.5439999999999969,
+          "packet_age_ms": 132.0
+        },
+        "last_OD": {
+          "tick_ms": 37121.0,
+          "sample_ms": 37026.0,
+          "along_mm": 2113.0,
+          "right_mm": 2.0,
+          "local_heading_left_deg": 0.4579999999999984,
+          "packet_age_ms": 88.0
+        },
+        "last_OD_after_STOP_ms": 341.0,
+        "last_complete_batch": {
+          "first_ack_ms": 36542.0,
+          "last_ack_ms": 36608.0,
+          "ack_span_ms": 66.0,
+          "F_deci": 200.0,
+          "L_deci": 3.0,
+          "C_deci": 1.0,
+          "N_deci": 0.0,
+          "F_rpm": 20.0,
+          "L_rpm": 0.3,
+          "C_rpm": 0.1,
+          "preceding_common_OD_along_mm": 2026.0,
+          "preceding_common_OD_age_ms": 627.0,
+          "q1_deci": 202.0,
+          "q2_deci": 198.0,
+          "q3_deci": 196.0,
+          "q4_deci": 204.0
+        },
+        "first_stop_ack_ms": 36685,
+        "stop_ack_span_ms": 33
+      },
+      "observations": {
+        "middle_samples": 4,
+        "middle_sample_peak_abs_mm": 4,
+        "lateral_peak_rpm": 2.0,
+        "lateral_cap30_complete_batches": 0,
+        "heading_peak_rpm": 1.2,
+        "heading_cap20_complete_batches": 0,
+        "hwt_start_deg": 0.0,
+        "hwt_delta_deg": 0.4550000000000125,
+        "moving_sampled_peak_right_yaw_deg": 1.1260000000000048,
+        "pre_stop_left_from_start_deg": -0.09299999999998931,
+        "post_pre_stop_yaw_change_deg": 0.5480000000000018,
+        "pre_stop_gap_to_ack_ms": 55,
+        "xd1": {
+          "session": 1,
+          "expected_records": 925,
+          "received_records": 925,
+          "dropped": 0,
+          "complete": true
+        },
+        "post_complete_tx": 0,
+        "complete_batches": 102
+      },
+      "software_final": {
+        "vm_request": 1,
+        "pe2_active": 1,
+        "backend_active": 0,
+        "backend_state": 9,
+        "backend_result": 1,
+        "can_fault": 0,
+        "rtos_fault": 0,
+        "safety_fault": 0,
+        "stop_mask": 15,
+        "telemetry_dropped": 6,
+        "heap_min_bytes": 9768,
+        "can_stack_words": 111,
+        "max_sample_gap_ms": 13
+      },
+      "powered_tail_s": 20.04699999999866
+    },
+    {
+      "folder": "diagnostic-run2-retry1",
+      "candidate_sha256": "5e803d0def9e33155752d4ceec71b9ca93ab903311407185d5d7af3c4880a185",
+      "hardware_snapshot_verified": true,
+      "provenance": {
+        "raw_parser_chip_measured": false,
+        "receipt_chip_measured": true,
+        "trusted_acquisition": true,
+        "reason": "offline parser literal is not a denial of verified hardware read"
+      },
+      "ruler": {
+        "right_mm": 30.0,
+        "forward_mm": 2110.0,
+        "extra_mm": 10.0
+      },
+      "timing": {
+        "enabled": true,
+        "SystemCoreClock": 168000000,
+        "chip_cycles_measured": false,
+        "provenance": "offline decode only; hardware provenance not established",
+        "irq_included": true,
+        "scopes": [
+          {
+            "name": "target_plus_feedforward",
+            "valid": true,
+            "count": 113,
+            "min_cycles": 1263,
+            "last_cycles": 1320,
+            "max_cycles": 1670,
+            "sum_cycles": 149755,
+            "first_ms": 9034,
+            "last_ms": 17064,
+            "window_ms": 8030,
+            "count_saturated": false,
+            "mean_cycles": 1325.2654867256638,
+            "mean_us": 7.8884850400337125,
+            "min_us": 7.517857142857143,
+            "last_us": 7.857142857142857,
+            "max_us": 9.94047619047619,
+            "intervals_per_second": 13.947696139476962,
+            "sum_elapsed_us": 891.3988095238095,
+            "measured_scope_cycles_per_own_window_percent": 0.011100856905651426
+          },
+          {
+            "name": "step_budget_quantize",
+            "valid": true,
+            "count": 113,
+            "min_cycles": 626,
+            "last_cycles": 641,
+            "max_cycles": 641,
+            "sum_cycles": 71971,
+            "first_ms": 9034,
+            "last_ms": 17064,
+            "window_ms": 8030,
+            "count_saturated": false,
+            "mean_cycles": 636.9115044247787,
+            "mean_us": 3.7911399072903493,
+            "min_us": 3.7261904761904763,
+            "last_us": 3.8154761904761907,
+            "max_us": 3.8154761904761907,
+            "intervals_per_second": 13.947696139476962,
+            "sum_elapsed_us": 428.3988095238095,
+            "measured_scope_cycles_per_own_window_percent": 0.005334978947992647
+          }
+        ]
+      },
+      "tail": {
+        "format_version": 1,
+        "session": 1,
+        "valid_mask": 7,
+        "event_counts": {
+          "first_entry": 1,
+          "accepted_tail_batch_freezes": 11,
+          "arrival": 1
+        },
+        "reserved": [
+          0,
+          0
+        ],
+        "slots": [
+          {
+            "now_ms": 16280,
+            "run_tick_ms": 9034,
+            "common_ms": 16174,
+            "follow_tick_ms": 16272,
+            "common_mean_mm": 1989.8594970703125,
+            "reference_position_mm": 1991.3818359375,
+            "reference_rpm": 41.038726806640625,
+            "follow_rpm": 0.8911933898925781,
+            "follow_rate_rpm_s": -1.3830808401107788,
+            "pending_base_rpm": 42,
+            "applied_base_rpm": 44,
+            "flags": 197,
+            "slot": 0,
+            "name": "first_tail_entry",
+            "captured": true,
+            "record_valid": true,
+            "elapsed_ms": 7246,
+            "common_age_ms": 106,
+            "follow_state_age_ms": 8,
+            "flags_decoded": {
+              "profile_active": true,
+              "profile_done": false,
+              "run_started": true,
+              "reached_before_event": false,
+              "stop_due_before_event": false,
+              "finish_requested_before_event": false,
+              "alignment_seen": true,
+              "common_age_less_400ms": true
+            },
+            "quantity_kind": "reference/request/applied command; NOT measured wheel or ground speed",
+            "profile_duration_s": 8.7786626816,
+            "profile_time_remaining_s": 1.5326626815999997,
+            "common_mean_minus_current_reference_mm": -1.5223388671875,
+            "reference_plus_follow_rpm": 41.9299201965332,
+            "pending_minus_current_reference_rpm": 0.961273193359375
+          },
+          {
+            "now_ms": 17064,
+            "run_tick_ms": 9034,
+            "common_ms": 16922,
+            "follow_tick_ms": 17064,
+            "common_mean_mm": 2098.707275390625,
+            "reference_position_mm": 2082.895751953125,
+            "reference_rpm": 15.628988265991211,
+            "follow_rpm": -0.14946770668029785,
+            "follow_rate_rpm_s": -1.1674507856369019,
+            "pending_base_rpm": 15,
+            "applied_base_rpm": 15,
+            "flags": 197,
+            "slot": 1,
+            "name": "latest_tail_batch_freeze_NOT_complete_ACK",
+            "captured": true,
+            "record_valid": true,
+            "elapsed_ms": 8030,
+            "common_age_ms": 142,
+            "follow_state_age_ms": 0,
+            "flags_decoded": {
+              "profile_active": true,
+              "profile_done": false,
+              "run_started": true,
+              "reached_before_event": false,
+              "stop_due_before_event": false,
+              "finish_requested_before_event": false,
+              "alignment_seen": true,
+              "common_age_less_400ms": true
+            },
+            "quantity_kind": "reference/request/applied command; NOT measured wheel or ground speed",
+            "profile_duration_s": 8.7786626816,
+            "profile_time_remaining_s": 0.7486626816000008,
+            "common_mean_minus_current_reference_mm": 15.8115234375,
+            "reference_plus_follow_rpm": 15.479520559310913,
+            "pending_minus_current_reference_rpm": -0.6289882659912109
+          },
+          {
+            "now_ms": 17080,
+            "run_tick_ms": 9034,
+            "common_ms": 16966,
+            "follow_tick_ms": 17075,
+            "common_mean_mm": 2102.756591796875,
+            "reference_position_mm": 2083.908935546875,
+            "reference_rpm": 15.110433578491211,
+            "follow_rpm": -0.16228032112121582,
+            "follow_rate_rpm_s": -1.1621109247207642,
+            "pending_base_rpm": 15,
+            "applied_base_rpm": 15,
+            "flags": 197,
+            "slot": 2,
+            "name": "arrival_BEFORE_reached_assignment",
+            "captured": true,
+            "record_valid": true,
+            "elapsed_ms": 8046,
+            "common_age_ms": 114,
+            "follow_state_age_ms": 5,
+            "flags_decoded": {
+              "profile_active": true,
+              "profile_done": false,
+              "run_started": true,
+              "reached_before_event": false,
+              "stop_due_before_event": false,
+              "finish_requested_before_event": false,
+              "alignment_seen": true,
+              "common_age_less_400ms": true
+            },
+            "quantity_kind": "reference/request/applied command; NOT measured wheel or ground speed",
+            "profile_duration_s": 8.7786626816,
+            "profile_time_remaining_s": 0.7326626816000008,
+            "common_mean_minus_current_reference_mm": 18.84765625,
+            "reference_plus_follow_rpm": 14.948153257369995,
+            "pending_minus_current_reference_rpm": -0.11043357849121094
+          }
+        ],
+        "hardware_provenance_established": false,
+        "acquisition_status": "UNVERIFIED_OFFLINE_BYTES; require external stable double-read receipt",
+        "B1_enabled": false,
+        "ground_distance_accuracy_established": false
+      },
+      "combined_measured_scopes_percent_same_window": 0.016435835853644075,
+      "stop_distance": {
+        "frozen_arrival_mm": 2102.756,
+        "PE_final_encoder_calibrated_mm": 2113.4335599008045,
+        "PE_minus_frozen_mm": 10.677559900804681,
+        "PE_minus_ruler_mm": 3.433559900804539,
+        "ruler_minus_frozen_mm": 7.244000000000142,
+        "PE_end_after_firstSTOP_ms": [
+          1034,
+          1067
+        ],
+        "latest_preSTOP_OD": {
+          "tick_ms": 16117.0,
+          "sample_ms": 15998.0,
+          "along_mm": 1954.0,
+          "right_mm": 3.0,
+          "local_heading_left_deg": -0.5879999999999939,
+          "packet_age_ms": 110.0
+        },
+        "last_OD": {
+          "tick_ms": 18120.0,
+          "sample_ms": 18033.0,
+          "along_mm": 2113.0,
+          "right_mm": 2.0,
+          "local_heading_left_deg": 0.6979999999999933,
+          "packet_age_ms": 77.0
+        },
+        "last_OD_after_STOP_ms": 946.0,
+        "last_complete_batch": {
+          "first_ack_ms": 16988.0,
+          "last_ack_ms": 17054.0,
+          "ack_span_ms": 66.0,
+          "F_deci": 180.0,
+          "L_deci": 2.0,
+          "C_deci": -6.0,
+          "N_deci": 0.0,
+          "F_rpm": 18.0,
+          "L_rpm": 0.2,
+          "C_rpm": -0.6,
+          "preceding_common_OD_along_mm": 2103.0,
+          "preceding_common_OD_age_ms": 88.0,
+          "q1_deci": 188.0,
+          "q2_deci": 172.0,
+          "q3_deci": 184.0,
+          "q4_deci": 176.0
+        },
+        "first_stop_ack_ms": 17087,
+        "stop_ack_span_ms": 33
+      },
+      "observations": {
+        "middle_samples": 3,
+        "middle_sample_peak_abs_mm": 4,
+        "lateral_peak_rpm": 2.4,
+        "lateral_cap30_complete_batches": 0,
+        "heading_peak_rpm": 1.7,
+        "heading_cap20_complete_batches": 0,
+        "hwt_start_deg": 0.131,
+        "hwt_delta_deg": 0.6920000000000073,
+        "moving_sampled_peak_right_yaw_deg": 1.4050000000000011,
+        "pre_stop_left_from_start_deg": 0.3019999999999925,
+        "post_pre_stop_yaw_change_deg": 0.38999999999998636,
+        "pre_stop_gap_to_ack_ms": 49,
+        "xd1": {
+          "session": 1,
+          "expected_records": 934,
+          "received_records": 934,
+          "dropped": 0,
+          "complete": true
+        },
+        "post_complete_tx": 0,
+        "complete_batches": 103
+      },
+      "software_final": {
+        "vm_request": 1,
+        "pe2_active": 1,
+        "backend_active": 0,
+        "backend_state": 9,
+        "backend_result": 1,
+        "can_fault": 0,
+        "rtos_fault": 0,
+        "safety_fault": 0,
+        "stop_mask": 15,
+        "telemetry_dropped": 7,
+        "heap_min_bytes": 9768,
+        "can_stack_words": 111,
+        "max_sample_gap_ms": 13
+      },
+      "powered_tail_s": 20.0
+    }
+  ],
+  "references": {
+    "half": {
+      "runs": [
+        {
+          "folder": "conservative-ff-run1",
+          "right_mm": 3.5,
+          "extra_mm": 2.5,
+          "OD_middle_peak_mm": 6
+        },
+        {
+          "folder": "conservative-ff-run2",
+          "right_mm": -0.5,
+          "extra_mm": 2.5,
+          "OD_middle_peak_mm": 5
+        },
+        {
+          "folder": "conservative-ff-run3",
+          "right_mm": 10.0,
+          "extra_mm": 2.5,
+          "OD_middle_peak_mm": 5
+        },
+        {
+          "folder": "conservative-ff-run4",
+          "right_mm": 7.5,
+          "extra_mm": 1.0,
+          "OD_middle_peak_mm": 6
+        }
+      ],
+      "signed_right_mean_mm": 5.125,
+      "right_abs_mean_mm": 5.375,
+      "extra_mean_mm": 2.125
+    },
+    "S3": {
+      "runs": [
+        {
+          "folder": "bounded-run1",
+          "right_mm": 5.0,
+          "extra_mm": 5.0,
+          "OD_middle_peak_mm": 5
+        },
+        {
+          "folder": "bounded-run2-retry1",
+          "right_mm": 7.0,
+          "extra_mm": 0.0,
+          "OD_middle_peak_mm": 4
+        },
+        {
+          "folder": "bounded-run3",
+          "right_mm": 13.5,
+          "extra_mm": 10.0,
+          "OD_middle_peak_mm": 4
+        },
+        {
+          "folder": "bounded-run4-retry1",
+          "right_mm": 12.5,
+          "extra_mm": 7.5,
+          "OD_middle_peak_mm": 5
+        }
+      ],
+      "signed_right_mean_mm": 9.5,
+      "right_abs_mean_mm": 9.5,
+      "extra_mean_mm": 5.625
+    },
+    "S2.5": {
+      "runs": [
+        {
+          "folder": "s25-run1",
+          "right_mm": 8.0,
+          "extra_mm": 5.0,
+          "OD_middle_peak_mm": 4
+        },
+        {
+          "folder": "s25-run2",
+          "right_mm": 10.0,
+          "extra_mm": 7.5,
+          "OD_middle_peak_mm": 4
+        },
+        {
+          "folder": "s25-run3",
+          "right_mm": 7.5,
+          "extra_mm": 5.0,
+          "OD_middle_peak_mm": 4
+        },
+        {
+          "folder": "s25-run4",
+          "right_mm": 10.0,
+          "extra_mm": 12.5,
+          "OD_middle_peak_mm": 5
+        }
+      ],
+      "signed_right_mean_mm": 8.875,
+      "right_abs_mean_mm": 8.875,
+      "extra_mean_mm": 7.5
+    }
+  },
+  "failures": [
+    {
+      "folder": "diagnostic-run2",
+      "counts_as_accuracy_trial": false,
+      "result_summary.json": {
+        "status": "telemetry_session_changed",
+        "error": null
+      },
+      "reset_once_receipt.json": {
+        "reset": true,
+        "reset_attempted": true
+      },
+      "reset_observation.json": {
+        "error": "USBTimeoutError(10060, 'Operation timed out')",
+        "reset": false,
+        "limits": "Reset flags are sticky; prior flags were not captured or cleared. Not a unique reset cause."
+      },
+      "first_failure_summary.json": {
+        "status": "first_failure_preserved"
+      }
+    },
+    {
+      "folder": "diagnostic-run3",
+      "counts_as_accuracy_trial": false,
+      "reset_once_receipt.json": {
+        "error": "USBTimeoutError(10060, 'Operation timed out')",
+        "reset": false,
+        "reset_attempted": false
+      }
+    },
+    {
+      "folder": "diagnostic-run3-retry1",
+      "counts_as_accuracy_trial": false,
+      "result_summary.json": {
+        "status": "ack_timeout",
+        "error": null
+      },
+      "reset_once_receipt.json": {
+        "reset": true,
+        "reset_attempted": true
+      },
+      "first_failure_summary.json": {
+        "status": "ack_timeout"
+      },
+      "operator_failure_observation.json": {
+        "user_reply": "没动过再来一次就行"
+      }
+    },
+    {
+      "folder": "diagnostic-run3-retry2",
+      "counts_as_accuracy_trial": false,
+      "result_summary.json": {
+        "status": "ack_timeout",
+        "error": null
+      },
+      "reset_once_receipt.json": {
+        "reset": true,
+        "reset_attempted": true
+      },
+      "first_failure_summary.json": {
+        "status": "ack_timeout"
+      }
+    }
+  ],
+  "comparison": {
+    "diagnostic_right_mean_mm": 25.0,
+    "diagnostic_right_abs_mean_mm": 25.0,
+    "diagnostic_extra_mean_mm": 8.75
+  },
+  "rules_checked": {
+    "R": [
+      "RUN-01",
+      "PWR-01"
+    ],
+    "E": [
+      "LOC-01",
+      "LOC-02",
+      "LOC-03",
+      "LOC-05",
+      "LOC-07",
+      "MOT-02",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q": [
+      "FIELD-05",
+      "OBS-03",
+      "QR-04"
+    ]
+  },
+  "limitations": [
+    "Groups not paired/randomized; endpoint deterioration is real observation, unique cause unknown.",
+    "Sparse wheel OD cannot refute endpoint ruler data or establish ground trajectory.",
+    "DWT includes IRQ/call boundary costs. Ratios cover only two measured scopes, not total CPU occupancy.",
+    "168MHz is recorded SystemCoreClock, not independent RCC measurement.",
+    "Reference/follower/pending/applied RPM are command-state quantities, not measured physical speed.",
+    "PE minus frozen progress mixes time alignment/sample lag/braking; not pure ground after-STOP coasting.",
+    "No successful RCC reset-register read; reset reason unknown. No new hardware, simulation or firmware change."
+  ]
+}
