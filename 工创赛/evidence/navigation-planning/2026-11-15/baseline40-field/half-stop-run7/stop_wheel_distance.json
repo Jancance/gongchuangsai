@@ -1,0 +1,119 @@
+{
+  "label": "wheel endpoint difference with explicit sample timing; NOT physical sliding or ground stopping distance",
+  "session": 1,
+  "arrival": {
+    "control_ms": 14060,
+    "common_ms": 13946,
+    "common_age_ms": 114,
+    "common_progress_mm": 2102.6376953125,
+    "reference_rpm": 15.110433578491211,
+    "follow_state_age_ms": 5
+  },
+  "first_STOP_ACK_ms": 14067,
+  "STOP_ACK_after_arrival_ms": 7,
+  "XD_session_binding": "derived XD lacks per-record session; caller must bind matching raw capture/hash",
+  "PE3": {
+    "packet_ms": 15170,
+    "end_sample_ms": [
+      15101,
+      15112,
+      15123,
+      15134
+    ],
+    "start_sample_ms": [
+      5961,
+      5972,
+      5983,
+      5994
+    ],
+    "logical_wheel_unscaled_mm": [
+      2080.1352809048767,
+      2059.3763023976176,
+      2014.4182017186663,
+      2122.428377586274
+    ],
+    "calibrated_mean_mm": 2114.2482475124016,
+    "end_samples_after_arrival_ms": [
+      1041,
+      1052,
+      1063,
+      1074
+    ],
+    "end_samples_after_STOP_ACK_ms": [
+      1034,
+      1045,
+      1056,
+      1067
+    ]
+  },
+  "PE_minus_arrival_common_progress_mm": 11.610552199901576,
+  "ruler_forward_mm": 2107.0,
+  "PE_minus_ruler_mm": 7.248247512401576,
+  "ruler_minus_arrival_common_progress_mm": 4.3623046875,
+  "measurement_limits": [
+    "PE wheels are sampled asynchronously; arrival progress is at common_ms, not arrival now_ms",
+    "STOP ACK confirms a protocol response, not mechanical stopping",
+    "Encoder response, sample age, wheel-ground slip and body measurement-point rotation are not separable here",
+    "Ruler input is optional external final measurement, not automatically synchronized or same body point"
+  ],
+  "hardware_provenance_established": true,
+  "physical_stopping_distance_established": false,
+  "latest_saved_PM1_before_arrival": {
+    "host_utc": "2026-11-14T23:51:28.952395+00:00",
+    "direction": "RX",
+    "frame_type": "PM1",
+    "tick_ms": 13899,
+    "session": 1,
+    "sample_sequence": 208,
+    "valid_mask": 15,
+    "vm_active": 1,
+    "result1": 1,
+    "sign1": 0,
+    "raw1": 556574,
+    "sample_ms1": 13770,
+    "age_ms1": 129,
+    "result2": 1,
+    "sign2": 1,
+    "raw2": 552448,
+    "sample_ms2": 13825,
+    "age_ms2": 74,
+    "result3": 1,
+    "sign3": 0,
+    "raw3": 537362,
+    "sample_ms3": 13748,
+    "age_ms3": 151,
+    "result4": 1,
+    "sign4": 1,
+    "raw4": 568924,
+    "sample_ms4": 13847,
+    "age_ms4": 52,
+    "signed_counts": [
+      556574,
+      -552448,
+      537362,
+      -568924
+    ]
+  },
+  "latest_saved_OD1_before_arrival": {
+    "host_utc": "2026-11-14T23:51:28.149514+00:00",
+    "direction": "RX",
+    "frame_type": "OD1",
+    "tick_ms": 13109,
+    "sample_ms": 12978,
+    "updates": 178,
+    "valid": 1,
+    "reasons": 0,
+    "continuity_lost": 0,
+    "local_origin": 0,
+    "x_mm": 2095,
+    "y_mm": 146,
+    "heading_mdeg": -90609,
+    "age_ms": 121
+  },
+  "hardware_receipt": "tail_read_receipt.json",
+  "input_sha256": {
+    "tail_read1.bin": "bbd9e8a50b971e39f10f8d727cf87e2efb6d476caac0653d77b5465ba4bf4c57",
+    "serial\\20261115_075118_800700.jsonl": "4bb5360124c0205b281023cb2c286046717e54535113fbf6bc70806b2fe6b0d7",
+    "xd1_records.json": "b539833ce4c6730c19ebaeb26358a3f601064dab9dd627f4d0cc47d930c4acf6"
+  }
+}

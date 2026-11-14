@@ -1,0 +1,129 @@
+{
+  "raw_parser_output": {
+    "format_version": 1,
+    "session": 1,
+    "valid_mask": 7,
+    "event_counts": {
+      "first_entry": 1,
+      "accepted_tail_batch_freezes": 10,
+      "arrival": 1
+    },
+    "reserved": [
+      0,
+      0
+    ],
+    "slots": [
+      {
+        "now_ms": 13294,
+        "run_tick_ms": 6034,
+        "common_ms": 13185,
+        "follow_tick_ms": 13283,
+        "common_mean_mm": 1993.103271484375,
+        "reference_position_mm": 1993.7357177734375,
+        "reference_rpm": 40.584964752197266,
+        "follow_rpm": 0.8246803283691406,
+        "follow_rate_rpm_s": -1.4010009765625,
+        "pending_base_rpm": 42,
+        "applied_base_rpm": 44,
+        "flags": 197,
+        "slot": 0,
+        "name": "first_tail_entry",
+        "captured": true,
+        "record_valid": true,
+        "elapsed_ms": 7260,
+        "common_age_ms": 109,
+        "follow_state_age_ms": 11,
+        "flags_decoded": {
+          "profile_active": true,
+          "profile_done": false,
+          "run_started": true,
+          "reached_before_event": false,
+          "stop_due_before_event": false,
+          "finish_requested_before_event": false,
+          "alignment_seen": true,
+          "common_age_less_400ms": true
+        },
+        "quantity_kind": "reference/request/applied command; NOT measured wheel or ground speed"
+      },
+      {
+        "now_ms": 13998,
+        "run_tick_ms": 6034,
+        "common_ms": 13823,
+        "follow_tick_ms": 13998,
+        "common_mean_mm": 2090.013916015625,
+        "reference_position_mm": 2078.35546875,
+        "reference_rpm": 17.7680606842041,
+        "follow_rpm": -0.1202235221862793,
+        "follow_rate_rpm_s": -1.1833233833312988,
+        "pending_base_rpm": 18,
+        "applied_base_rpm": 18,
+        "flags": 197,
+        "slot": 1,
+        "name": "latest_tail_batch_freeze_NOT_complete_ACK",
+        "captured": true,
+        "record_valid": true,
+        "elapsed_ms": 7964,
+        "common_age_ms": 175,
+        "follow_state_age_ms": 0,
+        "flags_decoded": {
+          "profile_active": true,
+          "profile_done": false,
+          "run_started": true,
+          "reached_before_event": false,
+          "stop_due_before_event": false,
+          "finish_requested_before_event": false,
+          "alignment_seen": true,
+          "common_age_less_400ms": true
+        },
+        "quantity_kind": "reference/request/applied command; NOT measured wheel or ground speed"
+      },
+      {
+        "now_ms": 14060,
+        "run_tick_ms": 6034,
+        "common_ms": 13933,
+        "follow_tick_ms": 14053,
+        "common_mean_mm": 2100.468994140625,
+        "reference_position_mm": 2082.63720703125,
+        "reference_rpm": 15.758623123168945,
+        "follow_rpm": -0.1845642328262329,
+        "follow_rate_rpm_s": -1.1562532186508179,
+        "pending_base_rpm": 16,
+        "applied_base_rpm": 18,
+        "flags": 197,
+        "slot": 2,
+        "name": "arrival_BEFORE_reached_assignment",
+        "captured": true,
+        "record_valid": true,
+        "elapsed_ms": 8026,
+        "common_age_ms": 127,
+        "follow_state_age_ms": 7,
+        "flags_decoded": {
+          "profile_active": true,
+          "profile_done": false,
+          "run_started": true,
+          "reached_before_event": false,
+          "stop_due_before_event": false,
+          "finish_requested_before_event": false,
+          "alignment_seen": true,
+          "common_age_less_400ms": true
+        },
+        "quantity_kind": "reference/request/applied command; NOT measured wheel or ground speed"
+      }
+    ],
+    "hardware_provenance_established": false,
+    "acquisition_status": "UNVERIFIED_OFFLINE_BYTES; require external stable double-read receipt",
+    "B1_enabled": false,
+    "ground_distance_accuracy_established": false
+  },
+  "trusted_acquisition": {
+    "accepted": true,
+    "candidate_sha256": "3966ed37a6c2dd85319884fbe22a2c54a610a9bb9e50f46240e79c006bf1113d",
+    "same_session": 1,
+    "stable_double_read": true,
+    "core_running": true,
+    "no_halt_reset_vm_write": true,
+    "hardware_snapshot_read": true,
+    "wheel_end_state_only": true,
+    "ground_distance_accuracy_established": false
+  }
+}
