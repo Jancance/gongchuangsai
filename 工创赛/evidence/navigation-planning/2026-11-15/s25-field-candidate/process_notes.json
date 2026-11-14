@@ -1,0 +1,15 @@
+{
+  "scope": "Manually recorded tool outcomes; not raw console logs or timestamp receipts",
+  "hardware_accessed": false,
+  "initial_failures": [
+    "apply_patch refused GBK source as invalid UTF8; no write",
+    "two git apply attempts did not match CRLF; source readback remained S3",
+    "wrapper old temporary path mismatch stopped before executing reused runner",
+    "S3 exact output array failed at generated unit.c line2427 under S2.5",
+    "first expectation adapter was inserted before that test was generated; array remained S3 and failed again"
+  ],
+  "resolved_by": "Exactly two equal-length byte replacements; change only final generated S2.5 expectation 0/5/10/20 to 0/5/11/20, other assertions unchanged",
+  "corrected_witness_matlab_exit_code": 0,
+  "old_witness_status": "Invalid S3/S2.5 labels: actual noFF/half; original retained",
+  "warnings": "MATLAB user prefs and toolbox cache warning retained in corrected_witness_matlab.log"
+}

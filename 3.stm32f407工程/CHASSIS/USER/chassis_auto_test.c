@@ -1326,8 +1326,8 @@ void ChassisAuto_CanStep(void)
             lateral_ff_per_rpm=0.0f;
         if(lateral_valid) {
             float half=(float)s_translation_base_rpm*lateral_ff_per_rpm;
-            float weight=half>0.0f ? lateral_target/3.0f :
-                (half<0.0f ? -lateral_target/3.0f : 0.0f);
+            float weight=half>0.0f ? lateral_target/2.5f :
+                (half<0.0f ? -lateral_target/2.5f : 0.0f);
             weight=weight<0.0f ? 0.0f : (weight>1.0f ? 1.0f : weight);
             lateral_target+=1.5f*weight*half;
             lateral_target=(lateral_target>=-FLT_MAX && lateral_target<=FLT_MAX) ?
