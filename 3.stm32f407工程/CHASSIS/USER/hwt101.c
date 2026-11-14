@@ -33,8 +33,6 @@ static void Hwt_TimingInit(void)
     __NOP(); __NOP(); __NOP();
     s_timing_enabled = (DWT->CYCCNT != before) ? 1U : 0U;
 }
-uint32_t HWT101_TimingEnabled(void)
-{ return s_timing_enabled; }
 uint32_t HWT101_TimingBegin(void)
 { return s_timing_enabled ? DWT->CYCCNT : 0U; }
 void HWT101_TimingEnd(uint32_t scope, uint32_t start_cycle)

@@ -18,7 +18,6 @@ void HWT101_ReadDiagnostic(HwtFaultDiagnostic *snapshot);
 /* DWT只读计时：0平移前端临界区、1后端启动、2组合动作装载；无控制副作用。 */
 #define HWT_TIMING_SCOPES 3U
 #define HWT_TIMING_FIELDS 28U
-uint32_t HWT101_TimingEnabled(void);
 uint32_t HWT101_TimingBegin(void);
 void HWT101_TimingEnd(uint32_t scope, uint32_t start_cycle);
 void HWT101_ReadTiming(uint32_t snapshot[HWT_TIMING_FIELDS], uint32_t fault_tick);

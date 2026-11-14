@@ -15,7 +15,6 @@
 #include "app_motion_runtime.h"
 #include "app_entry.h"
 #include "heading_source.h"
-#include "hwt101.h"
 #include <float.h>
 #endif
 #if APP_DISTANCE_SCURVE_ACTIVE
@@ -27,35 +26,6 @@ extern volatile uint32_t g_can_poll_result[4];
 extern volatile uint32_t g_can_poll_flags[4];
 extern volatile TickType_t g_can_poll_tick[4];
 extern volatile uint32_t g_can_poll_count[4];
-
-#if APP_BASELINE40_ACTIVE
-volatile ChassisAutoLateralTiming g_chassis_auto_lateral_timing;
-/* Called only under the existing CanStep lock; statistics are outside scopes. */
-static void Auto_LateralTimingRecordLocked(uint32_t scope, uint32_t enabled,
-    uint32_t start, uint32_t end, uint32_t ms)
-{
-    volatile ChassisAutoLateralScopeTiming *s=&g_chassis_auto_lateral_timing.scope[scope];
-    uint32_t cycles=end-start;
-    g_chassis_auto_lateral_timing.enabled=enabled;
-    g_chassis_auto_lateral_timing.core_clock_hz=SystemCoreClock;
-    /* Freeze at UINT32_MAX: count and sum remain mutually consistent. */
-    if(!enabled || s->count==0xFFFFFFFFU) return;
-    if(!s->count) { s->first_ms=ms; s->min_cycles=cycles; }
-    s->count++; s->last_cycles=cycles;
-    if(cycles<s->min_cycles) s->min_cycles=cycles;
-    if(cycles>s->max_cycles) s->max_cycles=cycles;
-    s->sum_cycles+=(uint64_t)cycles; s->last_ms=ms;
-    s->window_ms=ms-s->first_ms; s->valid=1U;
-}
-void ChassisAuto_ReadLateralTiming(ChassisAutoLateralTiming *snapshot)
-{
-    if(!snapshot) return;
-    taskENTER_CRITICAL();
-    *snapshot=g_chassis_auto_lateral_timing;
-    snapshot->enabled=HWT101_TimingEnabled(); snapshot->core_clock_hz=SystemCoreClock;
-    taskEXIT_CRITICAL();
-}
-#endif
 
 volatile uint32_t g_chassis_auto_request = 0U;
 volatile uint32_t g_chassis_auto_dry_run = 1U;
@@ -211,51 +181,6 @@ static uint32_t s_lateral_enabled, s_lateral_tick_valid;
 static uint32_t s_lateral_tick_ms, s_lateral_begin_ms;
 static float s_lateral_vy;
 static int32_t s_lateral_applied_deci;
-volatile ChassisAutoTailSnapshots g_chassis_auto_tail_snapshots;
-static void Auto_TailSnapshotsResetLocked(void)
-{
-    volatile uint8_t *bytes=(volatile uint8_t *)&g_chassis_auto_tail_snapshots;
-    uint32_t i;
-    for(i=0U;i<sizeof(g_chassis_auto_tail_snapshots);i++) bytes[i]=0U;
-    g_chassis_auto_tail_snapshots.format_version=1U;
-    g_chassis_auto_tail_snapshots.session=g_chassis_auto_session;
-}
-static void Auto_TailSnapshotRecordLocked(uint32_t slot, TickType_t now)
-{
-    volatile ChassisAutoTailSnapshot *p=&g_chassis_auto_tail_snapshots.slot[slot];
-    uint32_t ms=(uint32_t)now*portTICK_PERIOD_MS;
-    if(!s_lateral_enabled || !s_profile_active || !g_chassis_auto_active ||
-       g_chassis_auto_tail_snapshots.session!=g_chassis_auto_session ||
-       (g_chassis_auto_tail_snapshots.valid_mask&4U) ||
-       (slot==0U && (g_chassis_auto_tail_snapshots.valid_mask&1U))) return;
-    p->now_ms=ms; p->run_tick_ms=(uint32_t)s_run_tick*portTICK_PERIOD_MS;
-    p->common_ms=s_alignment_ms;
-    p->follow_tick_ms=(uint32_t)s_profile_follow_tick*portTICK_PERIOD_MS;
-    p->common_mean_mm=s_distance_progress_mm;
-    p->reference_position_mm=s_distance_reference.position_mm;
-    p->reference_rpm=s_distance_reference.speed_mm_s/s_profile_mm_per_rpm_s;
-    p->follow_rpm=s_profile_follow_rpm; p->follow_rate_rpm_s=s_profile_follow_rate;
-    p->pending_base_rpm=s_translation_base_rpm; p->applied_base_rpm=s_translation_applied_base;
-    p->flags=(s_profile_active?CHASSIS_TAIL_PROFILE_ACTIVE:0U) |
-        (s_profile_done?CHASSIS_TAIL_PROFILE_DONE:0U) |
-        (s_run_started?CHASSIS_TAIL_RUN_STARTED:0U) |
-        (s_distance_reached?CHASSIS_TAIL_REACHED_BEFORE_EVENT:0U) |
-        (s_stop_due?CHASSIS_TAIL_STOP_DUE_BEFORE_EVENT:0U) |
-        (s_finish_requested?CHASSIS_TAIL_FINISH_BEFORE_EVENT:0U) |
-        (s_alignment_seen?CHASSIS_TAIL_ALIGNMENT_SEEN:0U) |
-        (s_alignment_seen && ms-s_alignment_ms<400U?CHASSIS_TAIL_COMMON_FRESH:0U);
-    g_chassis_auto_tail_snapshots.valid_mask|=1UL<<slot;
-    if(slot==0U) g_chassis_auto_tail_snapshots.entry_count++;
-    else if(slot==1U) g_chassis_auto_tail_snapshots.freeze_count++;
-    else g_chassis_auto_tail_snapshots.arrival_count++;
-}
-void ChassisAuto_ReadTailSnapshots(ChassisAutoTailSnapshots *snapshot)
-{
-    if(!snapshot) return;
-    taskENTER_CRITICAL();
-    *snapshot=g_chassis_auto_tail_snapshots;
-    taskEXIT_CRITICAL();
-}
 static void Auto_LateralReset(void)
 {
     s_lateral_enabled=s_lateral_tick_valid=0U;
@@ -694,17 +619,10 @@ static void Auto_DistanceCheckLocked(TickType_t now)
         result = MotionProfile_Sample(&s_distance_profile,elapsed,&s_distance_reference);
         if (!result) { Auto_DistanceFaultLocked(8U); return; }
         s_profile_done = (result == MOTION_PROFILE_DONE);
-#if APP_BASELINE40_ACTIVE
-        if(elapsed>=s_distance_profile.boundary_s[4] && mean>=s_distance_target_mm-120.0f)
-            Auto_TailSnapshotRecordLocked(0U,now);
-#endif
         /* 到实际编码目标优先停；参考结束不能冒充实际到距。 */
         if (mean >= s_distance_target_mm ||
             (s_profile_done && mean >= s_distance_target_mm-APP_DISTANCE_SCURVE_ARRIVAL_MM))
         {
-#if APP_BASELINE40_ACTIVE
-            Auto_TailSnapshotRecordLocked(2U,now);
-#endif
             s_distance_reached = 1U; s_finish_requested = s_stop_due = 1U;
             s_finish_tick = now; return;
         }
@@ -1375,17 +1293,13 @@ void ChassisAuto_CanStep(void)
     uint32_t lateral_session=g_chassis_auto_session, lateral_begin=s_lateral_begin_ms;
     uint32_t lateral_valid,lateral_heading_ready,lateral_now_ms;
     float lateral_target,lateral_ff_per_rpm=0.0f;
-    uint32_t lateral_timing_enabled,lateral_timing_start,lateral_timing_end,lateral_step_ok;
     int32_t lateral_deci=s_lateral_applied_deci, heading_deci=0;
     AppOdometry_ReadBaseline40(&lateral_od);
     lateral_heading_ready=App_HeadingSourceRead(&lateral_heading);
     lateral_now_ms=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
-    lateral_timing_enabled=HWT101_TimingEnabled();
-    lateral_timing_start=HWT101_TimingBegin();
     lateral_target=Auto_LateralTarget(&lateral_od,lateral_begin,lateral_now_ms,&lateral_valid);
     if(lateral_valid) lateral_ff_per_rpm=Auto_LateralFeedforwardPerRpm(&lateral_od,
         &lateral_heading,lateral_heading_ready,lateral_now_ms);
-    lateral_timing_end=HWT101_TimingBegin();
 #endif
     taskENTER_CRITICAL();
     now = xTaskGetTickCount(); Auto_CheckLocked(now);
@@ -1410,24 +1324,13 @@ void ChassisAuto_CanStep(void)
         lateral_now_ms=(uint32_t)now*portTICK_PERIOD_MS;
         if(!Auto_LateralHeadingFresh(&lateral_heading,lateral_heading_ready,lateral_now_ms))
             lateral_ff_per_rpm=0.0f;
-        if(lateral_valid) Auto_LateralTimingRecordLocked(0U,lateral_timing_enabled,
-            lateral_timing_start,lateral_timing_end,lateral_now_ms);
         if(lateral_valid) {
-            float half=(float)s_translation_base_rpm*lateral_ff_per_rpm;
-            float weight=half>0.0f ? lateral_target/2.5f :
-                (half<0.0f ? -lateral_target/2.5f : 0.0f);
-            weight=weight<0.0f ? 0.0f : (weight>1.0f ? 1.0f : weight);
-            lateral_target+=1.5f*weight*half;
+            lateral_target+=(float)s_translation_base_rpm*lateral_ff_per_rpm;
             lateral_target=(lateral_target>=-FLT_MAX && lateral_target<=FLT_MAX) ?
                 Auto_LateralClamp(lateral_target,12.1f):0.0f;
         } else lateral_target=0.0f;
-        lateral_timing_start=HWT101_TimingBegin();
-        lateral_step_ok=Auto_LateralStepLocked((uint32_t)now*portTICK_PERIOD_MS,lateral_target,
-                s_heading_pending_rpm,&heading_deci,&lateral_deci);
-        lateral_timing_end=HWT101_TimingBegin();
-        Auto_LateralTimingRecordLocked(1U,lateral_timing_enabled,lateral_timing_start,
-            lateral_timing_end,(uint32_t)now*portTICK_PERIOD_MS);
-        if(!lateral_step_ok)
+        if(!Auto_LateralStepLocked((uint32_t)now*portTICK_PERIOD_MS,lateral_target,
+                s_heading_pending_rpm,&heading_deci,&lateral_deci))
         { Auto_CutLocked(8U); taskEXIT_CRITICAL(); return; }
     }
 #endif
@@ -1486,9 +1389,6 @@ void ChassisAuto_CanStep(void)
         g_chassis_auto_start_mask[2] = 0U;
         Auto_EnterLocked(CHASSIS_AUTO_START, now);
         state = CHASSIS_AUTO_START;
-#if APP_BASELINE40_ACTIVE
-        if(g_chassis_auto_tail_snapshots.valid_mask&1U) Auto_TailSnapshotRecordLocked(1U,now);
-#endif
     }
 
     if ((state == CHASSIS_AUTO_START || state == CHASSIS_AUTO_RUN) && s_stop_due)
@@ -1997,7 +1897,6 @@ uint32_t ChassisAuto_BeginPreparedTranslation(const ChassisAutoPreparedTranslati
                 prepared->route_reference_mm_s==0.0f && prepared->profile.valid==1U &&
                 prepared->run_ms==APP_BASELINE40_RUN_MS && (*AppMotion_Live()->action_count)==1U;
             s_lateral_begin_ms=(*AppMotion_Live()->begin_ms)*portTICK_PERIOD_MS;
-            if(s_lateral_enabled) Auto_TailSnapshotsResetLocked();
 #endif
             s_heading_initial_rpm = s_heading_pending_rpm = s_heading_applied_rpm = 0;
             s_heading_update_tick = s_heading_command_tick = xTaskGetTickCount();

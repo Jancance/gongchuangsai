@@ -1,0 +1,79 @@
+{
+  "status": "LOCAL_SOURCE_RESTORE_COMPLETE",
+  "label": "half geometric FF control + current normal-DONE VM retention and serial handshake fixes",
+  "restored": {
+    "chassis_auto_test.c": {
+      "previous_sha256": "ada294ab54d230e1c791a701b99c9007dc3c15ee7711633d63fe9855b4de122b",
+      "restore_path": "工创赛\\evidence\\navigation-planning\\2026-11-15\\bounded-lateral-enhancement\\chassis_auto_test.before.c",
+      "restored_sha256": "4434979a40f940d8ee582378e5b57b45da8caeefb29bdde1558d1b17e85dac19",
+      "previous_bytes": 98719,
+      "restored_bytes": 93583
+    },
+    "chassis_auto_test.h": {
+      "previous_sha256": "aa431918fb5b111d083647320b7d042ef60fb5d19c05c184c5d101c9882dbefe",
+      "restore_path": "工创赛\\evidence\\navigation-planning\\2026-11-15\\float-timing-20261115\\chassis_auto_test.h.before",
+      "restored_sha256": "e940c64b4a5126f63a6cc6e4d814be2ef3096bd0d59f2e049d6a53257033b764",
+      "previous_bytes": 11857,
+      "restored_bytes": 9820
+    },
+    "hwt101.c": {
+      "previous_sha256": "060b33d363caa9eed79c916864abb793f19272c37db046fedce154f344df0b39",
+      "restore_path": "工创赛\\evidence\\navigation-planning\\2026-11-15\\float-timing-20261115\\hwt101.c.before",
+      "restored_sha256": "690b864c1144baf247a93cffb8be585675a0612002333edaf006026b5dbb3c90",
+      "previous_bytes": 33078,
+      "restored_bytes": 33011
+    },
+    "hwt101.h": {
+      "previous_sha256": "40f4c4e2254ade99fb096ea89bc3c336bcaf359ab9946c3898f153d787dcc73b",
+      "restore_path": "工创赛\\evidence\\navigation-planning\\2026-11-15\\float-timing-20261115\\hwt101.h.before",
+      "restored_sha256": "eb01b7feb7e18c73495c472b09497514ab14de6941013683315b61f929b56429",
+      "previous_bytes": 4073,
+      "restored_bytes": 4035
+    }
+  },
+  "preserved": {
+    "app_motion_runtime.c": "2cded70cccf56c9464a0787be6656e81aad5e9a9d9334620d3c5a958b5eef611",
+    "app_serial_runtime.c": "d99860e5266f1e56156f41f88452895aff55d20a35459649ca97f72facdfbca4"
+  },
+  "source_dependencies_checked": 1731,
+  "changed_source_paths": [
+    "3.stm32f407工程/CHASSIS/USER/chassis_auto_test.c",
+    "3.stm32f407工程/CHASSIS/USER/chassis_auto_test.h",
+    "3.stm32f407工程/CHASSIS/USER/hwt101.c",
+    "3.stm32f407工程/CHASSIS/USER/hwt101.h"
+  ],
+  "old_half_build_AXF": "2661174f8e54f31285cb6666f2ddd1dada110e53f005201b92c5d3b85e29c1e7",
+  "new_AXF_is_not_claimed_old_identical": true,
+  "historical_half_signed_right_mm": [
+    3.5,
+    -0.5,
+    10.0,
+    7.5
+  ],
+  "historical_half_ruler_MAE_mm": 5.375,
+  "historical_auths": [
+    {
+      "path": "工创赛\\evidence\\navigation-planning\\2026-11-14\\baseline40-field\\conservative-ff-run1\\authorization.json",
+      "sha256": "481706b7315b738ede67fa87d56609357eb03fa6287f14afb82cfc7d3b3ade59",
+      "source_sha256": "4434979a40f940d8ee582378e5b57b45da8caeefb29bdde1558d1b17e85dac19"
+    },
+    {
+      "path": "工创赛\\evidence\\navigation-planning\\2026-11-14\\baseline40-field\\conservative-ff-run2\\authorization.json",
+      "sha256": "1a520f3db4cd4765d4dbe07d420f4d04c791b628763cca42a3bfaebc9e56eed2",
+      "source_sha256": "4434979a40f940d8ee582378e5b57b45da8caeefb29bdde1558d1b17e85dac19"
+    },
+    {
+      "path": "工创赛\\evidence\\navigation-planning\\2026-11-14\\baseline40-field\\conservative-ff-run3\\authorization.json",
+      "sha256": "979bf610525c4f38ae270eb110759e396e16ee1dda41ff06f73273a8797d0aad",
+      "source_sha256": "4434979a40f940d8ee582378e5b57b45da8caeefb29bdde1558d1b17e85dac19"
+    },
+    {
+      "path": "工创赛\\evidence\\navigation-planning\\2026-11-14\\baseline40-field\\conservative-ff-run4\\authorization.json",
+      "sha256": "0e4e639076c0d7081e26fe5f960600fb0ad7eb1774913c068a29e2d1995a0c0e",
+      "source_sha256": "4434979a40f940d8ee582378e5b57b45da8caeefb29bdde1558d1b17e85dac19"
+    }
+  ],
+  "hardware_accessed": false,
+  "git_accessed": false,
+  "new_hardware_runs_authorized": false
+}

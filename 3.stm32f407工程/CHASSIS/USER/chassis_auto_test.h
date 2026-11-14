@@ -35,53 +35,6 @@
 #define CHASSIS_AUTO_FAULT 10U
 #define CHASSIS_AUTO_CANCELLED 11U
 
-#if APP_BASELINE40_ACTIVE
-/* Boot-lifetime debug RAM only. scope0: target+FF; scope1: Step/budget/quantize.
- * Elapsed cycles include IRQ preemption; window_ms is last_ms-first_ms.
- * valid=0/count=0 means no measurement, not zero cost. No UART wire changes. */
-typedef struct
-{
-    uint32_t valid, count, min_cycles, last_cycles, max_cycles;
-    uint64_t sum_cycles;
-    uint32_t first_ms, last_ms, window_ms;
-} ChassisAutoLateralScopeTiming;
-typedef struct
-{
-    uint32_t enabled, core_clock_hz;
-    ChassisAutoLateralScopeTiming scope[2];
-} ChassisAutoLateralTiming;
-extern volatile ChassisAutoLateralTiming g_chassis_auto_lateral_timing;
-void ChassisAuto_ReadLateralTiming(ChassisAutoLateralTiming *snapshot);
-/* Three baseline40 tail events, debug RAM only; F is reference/request/applied,
- * never measured speed or a complete ACK batch. Slots: entry/latest freeze/arrival.
- * Retained after STOP/fault; reset only by an accepted matching session. */
-typedef struct
-{
-    uint32_t now_ms, run_tick_ms, common_ms, follow_tick_ms;
-    float common_mean_mm, reference_position_mm, reference_rpm;
-    float follow_rpm, follow_rate_rpm_s;
-    uint32_t pending_base_rpm, applied_base_rpm, flags;
-} ChassisAutoTailSnapshot;
-typedef struct
-{
-    uint32_t format_version, session, valid_mask;
-    uint32_t entry_count, freeze_count, arrival_count, reserved[2];
-    ChassisAutoTailSnapshot slot[3];
-} ChassisAutoTailSnapshots;
-#define CHASSIS_TAIL_PROFILE_ACTIVE 1U
-#define CHASSIS_TAIL_PROFILE_DONE 2U
-#define CHASSIS_TAIL_RUN_STARTED 4U
-#define CHASSIS_TAIL_REACHED_BEFORE_EVENT 8U
-#define CHASSIS_TAIL_STOP_DUE_BEFORE_EVENT 16U
-#define CHASSIS_TAIL_FINISH_BEFORE_EVENT 32U
-#define CHASSIS_TAIL_ALIGNMENT_SEEN 64U
-#define CHASSIS_TAIL_COMMON_FRESH 128U
-typedef char ChassisAutoTailSizeCheck[(sizeof(ChassisAutoTailSnapshot)==48U &&
-    sizeof(ChassisAutoTailSnapshots)==176U) ? 1 : -1];
-extern volatile ChassisAutoTailSnapshots g_chassis_auto_tail_snapshots;
-void ChassisAuto_ReadTailSnapshots(ChassisAutoTailSnapshots *snapshot);
-#endif
-
 extern volatile uint32_t g_chassis_auto_request;
 extern volatile uint32_t g_chassis_auto_dry_run;
 extern volatile uint32_t g_chassis_auto_mode;
