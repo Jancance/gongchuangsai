@@ -35,6 +35,25 @@
 #define CHASSIS_AUTO_FAULT 10U
 #define CHASSIS_AUTO_CANCELLED 11U
 
+#if APP_BASELINE40_ACTIVE
+/* Boot-lifetime debug RAM only. scope0: target+FF; scope1: Step/budget/quantize.
+ * Elapsed cycles include IRQ preemption; window_ms is last_ms-first_ms.
+ * valid=0/count=0 means no measurement, not zero cost. No UART wire changes. */
+typedef struct
+{
+    uint32_t valid, count, min_cycles, last_cycles, max_cycles;
+    uint64_t sum_cycles;
+    uint32_t first_ms, last_ms, window_ms;
+} ChassisAutoLateralScopeTiming;
+typedef struct
+{
+    uint32_t enabled, core_clock_hz;
+    ChassisAutoLateralScopeTiming scope[2];
+} ChassisAutoLateralTiming;
+extern volatile ChassisAutoLateralTiming g_chassis_auto_lateral_timing;
+void ChassisAuto_ReadLateralTiming(ChassisAutoLateralTiming *snapshot);
+#endif
+
 extern volatile uint32_t g_chassis_auto_request;
 extern volatile uint32_t g_chassis_auto_dry_run;
 extern volatile uint32_t g_chassis_auto_mode;

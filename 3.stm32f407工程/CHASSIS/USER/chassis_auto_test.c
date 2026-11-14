@@ -15,6 +15,7 @@
 #include "app_motion_runtime.h"
 #include "app_entry.h"
 #include "heading_source.h"
+#include "hwt101.h"
 #include <float.h>
 #endif
 #if APP_DISTANCE_SCURVE_ACTIVE
@@ -26,6 +27,35 @@ extern volatile uint32_t g_can_poll_result[4];
 extern volatile uint32_t g_can_poll_flags[4];
 extern volatile TickType_t g_can_poll_tick[4];
 extern volatile uint32_t g_can_poll_count[4];
+
+#if APP_BASELINE40_ACTIVE
+volatile ChassisAutoLateralTiming g_chassis_auto_lateral_timing;
+/* Called only under the existing CanStep lock; statistics are outside scopes. */
+static void Auto_LateralTimingRecordLocked(uint32_t scope, uint32_t enabled,
+    uint32_t start, uint32_t end, uint32_t ms)
+{
+    volatile ChassisAutoLateralScopeTiming *s=&g_chassis_auto_lateral_timing.scope[scope];
+    uint32_t cycles=end-start;
+    g_chassis_auto_lateral_timing.enabled=enabled;
+    g_chassis_auto_lateral_timing.core_clock_hz=SystemCoreClock;
+    /* Freeze at UINT32_MAX: count and sum remain mutually consistent. */
+    if(!enabled || s->count==0xFFFFFFFFU) return;
+    if(!s->count) { s->first_ms=ms; s->min_cycles=cycles; }
+    s->count++; s->last_cycles=cycles;
+    if(cycles<s->min_cycles) s->min_cycles=cycles;
+    if(cycles>s->max_cycles) s->max_cycles=cycles;
+    s->sum_cycles+=(uint64_t)cycles; s->last_ms=ms;
+    s->window_ms=ms-s->first_ms; s->valid=1U;
+}
+void ChassisAuto_ReadLateralTiming(ChassisAutoLateralTiming *snapshot)
+{
+    if(!snapshot) return;
+    taskENTER_CRITICAL();
+    *snapshot=g_chassis_auto_lateral_timing;
+    snapshot->enabled=HWT101_TimingEnabled(); snapshot->core_clock_hz=SystemCoreClock;
+    taskEXIT_CRITICAL();
+}
+#endif
 
 volatile uint32_t g_chassis_auto_request = 0U;
 volatile uint32_t g_chassis_auto_dry_run = 1U;
@@ -1293,13 +1323,17 @@ void ChassisAuto_CanStep(void)
     uint32_t lateral_session=g_chassis_auto_session, lateral_begin=s_lateral_begin_ms;
     uint32_t lateral_valid,lateral_heading_ready,lateral_now_ms;
     float lateral_target,lateral_ff_per_rpm=0.0f;
+    uint32_t lateral_timing_enabled,lateral_timing_start,lateral_timing_end,lateral_step_ok;
     int32_t lateral_deci=s_lateral_applied_deci, heading_deci=0;
     AppOdometry_ReadBaseline40(&lateral_od);
     lateral_heading_ready=App_HeadingSourceRead(&lateral_heading);
     lateral_now_ms=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
+    lateral_timing_enabled=HWT101_TimingEnabled();
+    lateral_timing_start=HWT101_TimingBegin();
     lateral_target=Auto_LateralTarget(&lateral_od,lateral_begin,lateral_now_ms,&lateral_valid);
     if(lateral_valid) lateral_ff_per_rpm=Auto_LateralFeedforwardPerRpm(&lateral_od,
         &lateral_heading,lateral_heading_ready,lateral_now_ms);
+    lateral_timing_end=HWT101_TimingBegin();
 #endif
     taskENTER_CRITICAL();
     now = xTaskGetTickCount(); Auto_CheckLocked(now);
@@ -1324,6 +1358,8 @@ void ChassisAuto_CanStep(void)
         lateral_now_ms=(uint32_t)now*portTICK_PERIOD_MS;
         if(!Auto_LateralHeadingFresh(&lateral_heading,lateral_heading_ready,lateral_now_ms))
             lateral_ff_per_rpm=0.0f;
+        if(lateral_valid) Auto_LateralTimingRecordLocked(0U,lateral_timing_enabled,
+            lateral_timing_start,lateral_timing_end,lateral_now_ms);
         if(lateral_valid) {
             float half=(float)s_translation_base_rpm*lateral_ff_per_rpm;
             float weight=half>0.0f ? lateral_target/2.5f :
@@ -1333,8 +1369,13 @@ void ChassisAuto_CanStep(void)
             lateral_target=(lateral_target>=-FLT_MAX && lateral_target<=FLT_MAX) ?
                 Auto_LateralClamp(lateral_target,12.1f):0.0f;
         } else lateral_target=0.0f;
-        if(!Auto_LateralStepLocked((uint32_t)now*portTICK_PERIOD_MS,lateral_target,
-                s_heading_pending_rpm,&heading_deci,&lateral_deci))
+        lateral_timing_start=HWT101_TimingBegin();
+        lateral_step_ok=Auto_LateralStepLocked((uint32_t)now*portTICK_PERIOD_MS,lateral_target,
+                s_heading_pending_rpm,&heading_deci,&lateral_deci);
+        lateral_timing_end=HWT101_TimingBegin();
+        Auto_LateralTimingRecordLocked(1U,lateral_timing_enabled,lateral_timing_start,
+            lateral_timing_end,(uint32_t)now*portTICK_PERIOD_MS);
+        if(!lateral_step_ok)
         { Auto_CutLocked(8U); taskEXIT_CRITICAL(); return; }
     }
 #endif
