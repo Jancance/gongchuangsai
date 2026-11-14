@@ -1,0 +1,177 @@
+{
+  "label": "half geometric FF control + current normal-DONE VM + 176B stop wheel-distance observer",
+  "all_passed": true,
+  "source_control_bytes_equivalent": true,
+  "hardware_accessed": false,
+  "B0": "FAIL_NOT_IDENTIFIABLE",
+  "B1_enabled": false,
+  "actual_ARM": {
+    "candidate_cases": 1393,
+    "candidate_assertions": 16720,
+    "baseline_cases": 1375,
+    "baseline_assertions": 16679,
+    "distance_control_fields_identical": 384,
+    "entry_FLC_equal": true,
+    "ff_observation_equal": true,
+    "external_calls_stubbed": true
+  },
+  "layout": {
+    "header_bytes": 32,
+    "slot_bytes": 48,
+    "total_bytes": 176,
+    "C_sizeof_pass": true,
+    "ELF_symbol_bytes": 176
+  },
+  "builds": {
+    "baseline40_integrated": {
+      "before": "Program Size: Code=101744 RO-data=6572 RW-data=2952 ZI-data=118912  \r",
+      "after": "Program Size: Code=102328 RO-data=6572 RW-data=2952 ZI-data=119096  \r",
+      "size_delta": [
+        584,
+        0,
+        0,
+        184
+      ],
+      "allocated_identical": false,
+      "RAM_detail": {
+        "new_symbol_bytes": 176,
+        "auto_object_ZI_delta": 176,
+        "linker_padding_ZI_delta": 8,
+        "whole_image_ZI_delta": 184
+      }
+    },
+    "baseline40_offline": {
+      "before": "Program Size: Code=101096 RO-data=6564 RW-data=2760 ZI-data=118912  \r",
+      "after": "Program Size: Code=101680 RO-data=6564 RW-data=2760 ZI-data=119088  \r",
+      "size_delta": [
+        584,
+        0,
+        0,
+        176
+      ],
+      "allocated_identical": false,
+      "RAM_detail": {
+        "new_symbol_bytes": 176,
+        "auto_object_ZI_delta": 176,
+        "linker_padding_ZI_delta": 0,
+        "whole_image_ZI_delta": 176
+      }
+    },
+    "baseline_off_integrated": {
+      "before": "Program Size: Code=11974 RO-data=470 RW-data=960 ZI-data=25576  \r",
+      "after": "Program Size: Code=11974 RO-data=470 RW-data=960 ZI-data=25576  \r",
+      "size_delta": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "allocated_identical": true
+    }
+  },
+  "debug_symbols": {
+    "baseline40_integrated": {
+      "symbol": "g_chassis_auto_tail_snapshots",
+      "address": "0x20012d84",
+      "bytes": 176,
+      "axf": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\half-stop-observer-build-20261115\\baseline40_integrated\\Vehicle_Integrated.axf",
+      "axf_sha256": "3966ed37a6c2dd85319884fbe22a2c54a610a9bb9e50f46240e79c006bf1113d",
+      "getter_linked": false,
+      "acquisition": "Future explicitly authorized only: same session DONE/backend inactive/fault0 before and after two equal full176B reads; no halt/reset/VM/IRQ/getter; unstable otherwise"
+    },
+    "baseline40_offline": {
+      "symbol": "g_chassis_auto_tail_snapshots",
+      "address": "0x20012c98",
+      "bytes": 176,
+      "axf": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\half-stop-observer-build-20261115\\baseline40_offline\\Vehicle_Offline.axf",
+      "axf_sha256": "6d1a006d7a02c8e92361bc5913a57f9a5c4c8a28d6c5a2e9b6dd8869d9b8405a",
+      "getter_linked": false,
+      "acquisition": "Future explicitly authorized only: same session DONE/backend inactive/fault0 before and after two equal full176B reads; no halt/reset/VM/IRQ/getter; unstable otherwise"
+    }
+  },
+  "encoding": {
+    "chassis_auto_test.c": {
+      "lf": 2099,
+      "crlf": 2099,
+      "sha256": "ef5e6540df59b976b6200f7601443e7acdbc565ea3c8779f9f15343b64a59a24"
+    },
+    "chassis_auto_test.h": {
+      "lf": 241,
+      "crlf": 1,
+      "sha256": "f1298246023c87b15388529ea5c26e5e23c40bb04ed9ac46e619e9e5bc881fa2"
+    }
+  },
+  "parser_synthetic_tests": 5,
+  "offline_calculation": {
+    "all_passed": true,
+    "synthetic_cases": 5,
+    "hardware_accessed": false,
+    "ground_distance_established": false,
+    "checks": [
+      "PE signed counts/calibration",
+      "different sample times",
+      "uint32 rollover",
+      "unknown STOP and XD session explicit",
+      "invalid/other session rejected"
+    ]
+  },
+  "source_dependencies_checked": 1731,
+  "only_changed_sources": [
+    "3.stm32f407\u5de5\u7a0b/CHASSIS/USER/chassis_auto_test.c",
+    "3.stm32f407\u5de5\u7a0b/CHASSIS/USER/chassis_auto_test.h"
+  ],
+  "hwt_unchanged": true,
+  "normal_DONE_VM_and_serial_unchanged": true,
+  "legacy_protocol": {
+    "scopes": 3,
+    "fields": 28
+  },
+  "static_stack": {
+    "before": {
+      "ChassisAuto_BeginPreparedTranslation": {
+        "local_bytes": 48,
+        "max_depth_bytes": 376,
+        "call_chain": "ChassisAuto_BeginPreparedTranslation \u21d2 Auto_BeginPreparedBasicLocked \u21d2 Auto_PositionReset \u21d2 __aeabi_memcpy4"
+      },
+      "Auto_DistanceCheckLocked": {
+        "local_bytes": 96,
+        "max_depth_bytes": 192,
+        "call_chain": "Auto_DistanceCheckLocked \u21d2 Auto_DistanceFaultLocked \u21d2 Auto_CutDetailLocked \u21d2 Auto_BatchEndLocked \u21d2 __aeabi_memcpy4"
+      },
+      "ChassisAuto_CanStep": {
+        "local_bytes": 200,
+        "max_depth_bytes": 584,
+        "call_chain": "ChassisAuto_CanStep \u21d2 CAN1_SetEmmSpeedRaw \u21d2 CAN1_EmmSpeed \u21d2 CAN1_ControlSingle \u21d2 CAN1_ExchangeSingle \u21d2 CAN1_InitMode \u21d2 vTaskDelay \u21d2 xTaskResumeAll \u21d2 xTaskIncrementTick \u21d2 App_RtosAssertFailed \u21d2 App_RtosStop \u21d2 Power_Disable"
+      }
+    },
+    "after": {
+      "ChassisAuto_BeginPreparedTranslation": {
+        "local_bytes": 48,
+        "max_depth_bytes": 376,
+        "call_chain": "ChassisAuto_BeginPreparedTranslation \u21d2 Auto_BeginPreparedBasicLocked \u21d2 Auto_PositionReset \u21d2 __aeabi_memcpy4"
+      },
+      "Auto_DistanceCheckLocked": {
+        "local_bytes": 96,
+        "max_depth_bytes": 192,
+        "call_chain": "Auto_DistanceCheckLocked \u21d2 Auto_DistanceFaultLocked \u21d2 Auto_CutDetailLocked \u21d2 Auto_BatchEndLocked \u21d2 __aeabi_memcpy4"
+      },
+      "ChassisAuto_CanStep": {
+        "local_bytes": 200,
+        "max_depth_bytes": 584,
+        "call_chain": "ChassisAuto_CanStep \u21d2 CAN1_SetEmmSpeedRaw \u21d2 CAN1_EmmSpeed \u21d2 CAN1_ControlSingle \u21d2 CAN1_ExchangeSingle \u21d2 CAN1_InitMode \u21d2 vTaskDelay \u21d2 xTaskResumeAll \u21d2 xTaskIncrementTick \u21d2 App_RtosAssertFailed \u21d2 App_RtosStop \u21d2 Power_Disable"
+      },
+      "Auto_TailSnapshotsResetLocked": {
+        "local_bytes": 0,
+        "max_depth_bytes": 0,
+        "call_chain": null
+      },
+      "Auto_TailSnapshotRecordLocked": {
+        "local_bytes": 12,
+        "max_depth_bytes": 12,
+        "call_chain": "Auto_TailSnapshotRecordLocked"
+      }
+    }
+  },
+  "hardware_stack_watermark_verified": false,
+  "limits": "ARM execution with external CAN/power/RTOS/source readiness stubs, no M4 wall-time or actual response/ground validation"
+}

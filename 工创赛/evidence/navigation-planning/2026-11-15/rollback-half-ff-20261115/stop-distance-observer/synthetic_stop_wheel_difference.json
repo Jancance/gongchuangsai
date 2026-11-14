@@ -1,0 +1,72 @@
+{
+  "provenance": "synthetic ARM snapshot plus constructed PE/STOP records, NOT hardware",
+  "calculation": {
+    "label": "wheel endpoint difference with explicit sample timing; NOT physical sliding or ground stopping distance",
+    "session": 18,
+    "arrival": {
+      "control_ms": 9050,
+      "common_ms": 9050,
+      "common_age_ms": 0,
+      "common_progress_mm": 2104.0,
+      "reference_rpm": 14.980769157409668,
+      "follow_state_age_ms": 740
+    },
+    "first_STOP_ACK_ms": 9060,
+    "STOP_ACK_after_arrival_ms": 10,
+    "XD_session_binding": "per-record session available",
+    "PE3": {
+      "packet_ms": 10110,
+      "end_sample_ms": [
+        10060,
+        10071,
+        10082,
+        10093
+      ],
+      "start_sample_ms": [
+        1001,
+        1002,
+        1003,
+        1004
+      ],
+      "logical_wheel_unscaled_mm": [
+        2074.421394217601,
+        2074.7905083446863,
+        2074.052280090516,
+        2074.6059512811435
+      ],
+      "calibrated_mean_mm": 2119.743617188777,
+      "end_samples_after_arrival_ms": [
+        1010,
+        1021,
+        1032,
+        1043
+      ],
+      "end_samples_after_STOP_ACK_ms": [
+        1000,
+        1011,
+        1022,
+        1033
+      ]
+    },
+    "PE_minus_arrival_common_progress_mm": 15.74361718877708,
+    "ruler_forward_mm": 2105,
+    "PE_minus_ruler_mm": 14.74361718877708,
+    "ruler_minus_arrival_common_progress_mm": 1.0,
+    "measurement_limits": [
+      "PE wheels are sampled asynchronously; arrival progress is at common_ms, not arrival now_ms",
+      "STOP ACK confirms a protocol response, not mechanical stopping",
+      "Encoder response, sample age, wheel-ground slip and body measurement-point rotation are not separable here",
+      "Ruler input is optional external final measurement, not automatically synchronized or same body point"
+    ],
+    "hardware_provenance_established": false,
+    "physical_stopping_distance_established": false,
+    "latest_saved_PM1_before_arrival": {
+      "frame_type": "PM1",
+      "tick_ms": 9040
+    },
+    "latest_saved_OD1_before_arrival": {
+      "frame_type": "OD1",
+      "tick_ms": 9030
+    }
+  }
+}

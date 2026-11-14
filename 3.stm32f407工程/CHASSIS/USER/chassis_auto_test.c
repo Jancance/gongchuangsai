@@ -181,6 +181,51 @@ static uint32_t s_lateral_enabled, s_lateral_tick_valid;
 static uint32_t s_lateral_tick_ms, s_lateral_begin_ms;
 static float s_lateral_vy;
 static int32_t s_lateral_applied_deci;
+volatile ChassisAutoTailSnapshots g_chassis_auto_tail_snapshots;
+static void Auto_TailSnapshotsResetLocked(void)
+{
+    volatile uint8_t *bytes=(volatile uint8_t *)&g_chassis_auto_tail_snapshots;
+    uint32_t i;
+    for(i=0U;i<sizeof(g_chassis_auto_tail_snapshots);i++) bytes[i]=0U;
+    g_chassis_auto_tail_snapshots.format_version=1U;
+    g_chassis_auto_tail_snapshots.session=g_chassis_auto_session;
+}
+static void Auto_TailSnapshotRecordLocked(uint32_t slot, TickType_t now)
+{
+    volatile ChassisAutoTailSnapshot *p=&g_chassis_auto_tail_snapshots.slot[slot];
+    uint32_t ms=(uint32_t)now*portTICK_PERIOD_MS;
+    if(!s_lateral_enabled || !s_profile_active || !g_chassis_auto_active ||
+       g_chassis_auto_tail_snapshots.session!=g_chassis_auto_session ||
+       (g_chassis_auto_tail_snapshots.valid_mask&4U) ||
+       (slot==0U && (g_chassis_auto_tail_snapshots.valid_mask&1U))) return;
+    p->now_ms=ms; p->run_tick_ms=(uint32_t)s_run_tick*portTICK_PERIOD_MS;
+    p->common_ms=s_alignment_ms;
+    p->follow_tick_ms=(uint32_t)s_profile_follow_tick*portTICK_PERIOD_MS;
+    p->common_mean_mm=s_distance_progress_mm;
+    p->reference_position_mm=s_distance_reference.position_mm;
+    p->reference_rpm=s_distance_reference.speed_mm_s/s_profile_mm_per_rpm_s;
+    p->follow_rpm=s_profile_follow_rpm; p->follow_rate_rpm_s=s_profile_follow_rate;
+    p->pending_base_rpm=s_translation_base_rpm; p->applied_base_rpm=s_translation_applied_base;
+    p->flags=(s_profile_active?CHASSIS_TAIL_PROFILE_ACTIVE:0U) |
+        (s_profile_done?CHASSIS_TAIL_PROFILE_DONE:0U) |
+        (s_run_started?CHASSIS_TAIL_RUN_STARTED:0U) |
+        (s_distance_reached?CHASSIS_TAIL_REACHED_BEFORE_EVENT:0U) |
+        (s_stop_due?CHASSIS_TAIL_STOP_DUE_BEFORE_EVENT:0U) |
+        (s_finish_requested?CHASSIS_TAIL_FINISH_BEFORE_EVENT:0U) |
+        (s_alignment_seen?CHASSIS_TAIL_ALIGNMENT_SEEN:0U) |
+        (s_alignment_seen && ms-s_alignment_ms<400U?CHASSIS_TAIL_COMMON_FRESH:0U);
+    g_chassis_auto_tail_snapshots.valid_mask|=1UL<<slot;
+    if(slot==0U) g_chassis_auto_tail_snapshots.entry_count++;
+    else if(slot==1U) g_chassis_auto_tail_snapshots.freeze_count++;
+    else g_chassis_auto_tail_snapshots.arrival_count++;
+}
+void ChassisAuto_ReadTailSnapshots(ChassisAutoTailSnapshots *snapshot)
+{
+    if(!snapshot) return;
+    taskENTER_CRITICAL();
+    *snapshot=g_chassis_auto_tail_snapshots;
+    taskEXIT_CRITICAL();
+}
 static void Auto_LateralReset(void)
 {
     s_lateral_enabled=s_lateral_tick_valid=0U;
@@ -619,10 +664,17 @@ static void Auto_DistanceCheckLocked(TickType_t now)
         result = MotionProfile_Sample(&s_distance_profile,elapsed,&s_distance_reference);
         if (!result) { Auto_DistanceFaultLocked(8U); return; }
         s_profile_done = (result == MOTION_PROFILE_DONE);
+#if APP_BASELINE40_ACTIVE
+        if(elapsed>=s_distance_profile.boundary_s[4] && mean>=s_distance_target_mm-120.0f)
+            Auto_TailSnapshotRecordLocked(0U,now);
+#endif
         /* 到实际编码目标优先停；参考结束不能冒充实际到距。 */
         if (mean >= s_distance_target_mm ||
             (s_profile_done && mean >= s_distance_target_mm-APP_DISTANCE_SCURVE_ARRIVAL_MM))
         {
+#if APP_BASELINE40_ACTIVE
+            Auto_TailSnapshotRecordLocked(2U,now);
+#endif
             s_distance_reached = 1U; s_finish_requested = s_stop_due = 1U;
             s_finish_tick = now; return;
         }
@@ -1389,6 +1441,9 @@ void ChassisAuto_CanStep(void)
         g_chassis_auto_start_mask[2] = 0U;
         Auto_EnterLocked(CHASSIS_AUTO_START, now);
         state = CHASSIS_AUTO_START;
+#if APP_BASELINE40_ACTIVE
+        if(g_chassis_auto_tail_snapshots.valid_mask&1U) Auto_TailSnapshotRecordLocked(1U,now);
+#endif
     }
 
     if ((state == CHASSIS_AUTO_START || state == CHASSIS_AUTO_RUN) && s_stop_due)
@@ -1897,6 +1952,7 @@ uint32_t ChassisAuto_BeginPreparedTranslation(const ChassisAutoPreparedTranslati
                 prepared->route_reference_mm_s==0.0f && prepared->profile.valid==1U &&
                 prepared->run_ms==APP_BASELINE40_RUN_MS && (*AppMotion_Live()->action_count)==1U;
             s_lateral_begin_ms=(*AppMotion_Live()->begin_ms)*portTICK_PERIOD_MS;
+            if(s_lateral_enabled) Auto_TailSnapshotsResetLocked();
 #endif
             s_heading_initial_rpm = s_heading_pending_rpm = s_heading_applied_rpm = 0;
             s_heading_update_tick = s_heading_command_tick = xTaskGetTickCount();
