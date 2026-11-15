@@ -1,0 +1,67 @@
+{
+  "reviewed_at": "2026-11-15",
+  "repository": "cra-ros-pkg/robot_localization",
+  "branch": "rolling-devel",
+  "scope": "Public main-repository source and official in-repository documentation only. General fusion engine, not a verified ready-made mecanum integration.",
+  "immutable_commit_confirmed": false,
+  "version_note": "Inspected web-rendered/raw rolling-devel branch; no immutable commit SHA asserted, no claim of a numbered release/latest version. package.xml at the viewed branch says 4.0.0.",
+  "external_code_downloaded_or_executed": false,
+  "git_fetch_clone_install": false,
+  "sources": [
+    {
+      "id": "S1",
+      "path": "src/ekf.cpp",
+      "function_or_topic": "Ekf::predict / Ekf::correct",
+      "url": "https://github.com/cra-ros-pkg/robot_localization/blob/rolling-devel/src/ekf.cpp"
+    },
+    {
+      "id": "S2",
+      "path": "src/ros_filter.cpp",
+      "function_or_topic": "odometryCallback / imuCallback / prepareTwist / prepareAcceleration / forceTwoD / enqueueMeasurement",
+      "url": "https://github.com/cra-ros-pkg/robot_localization/blob/rolling-devel/src/ros_filter.cpp"
+    },
+    {
+      "id": "S3",
+      "path": "include/robot_localization/filter_common.hpp",
+      "function_or_topic": "StateMembers / STATE_SIZE",
+      "url": "https://github.com/cra-ros-pkg/robot_localization/blob/rolling-devel/include/robot_localization/filter_common.hpp"
+    },
+    {
+      "id": "S4",
+      "path": "params/ekf.yaml",
+      "function_or_topic": "15-element config masks / example topics / gravity switch",
+      "url": "https://github.com/cra-ros-pkg/robot_localization/blob/rolling-devel/params/ekf.yaml"
+    },
+    {
+      "id": "S5",
+      "path": "doc/configuring_robot_localization.rst",
+      "function_or_topic": "Nonholonomic example / duplicate wheel-derived data / vy=0 / differential",
+      "url": "https://github.com/cra-ros-pkg/robot_localization/blob/rolling-devel/doc/configuring_robot_localization.rst"
+    },
+    {
+      "id": "S6",
+      "path": "doc/preparing_sensor_data.rst",
+      "function_or_topic": "Frames / ENU / signs / covariance / odometry preprocessing",
+      "url": "https://github.com/cra-ros-pkg/robot_localization/blob/rolling-devel/doc/preparing_sensor_data.rst"
+    },
+    {
+      "id": "S7",
+      "path": "doc/state_estimation_nodes.rst",
+      "function_or_topic": "Optional acceleration / gravity / lag smoothing / drift without pose measurements",
+      "url": "https://github.com/cra-ros-pkg/robot_localization/blob/rolling-devel/doc/state_estimation_nodes.rst"
+    },
+    {
+      "id": "S8",
+      "path": "src/filter_base.cpp",
+      "function_or_topic": "FilterBase::processMeasurement",
+      "url": "https://github.com/cra-ros-pkg/robot_localization/blob/rolling-devel/src/filter_base.cpp"
+    },
+    {
+      "id": "S9",
+      "path": "package.xml",
+      "function_or_topic": "ROS2 / Eigen / tf2 / lifecycle / messages dependencies",
+      "url": "https://github.com/cra-ros-pkg/robot_localization/blob/rolling-devel/package.xml"
+    }
+  ],
+  "docs_ros_access": "docs.ros.org noetic page denied by Anubis; used official source rst from the main repository instead."
+}
