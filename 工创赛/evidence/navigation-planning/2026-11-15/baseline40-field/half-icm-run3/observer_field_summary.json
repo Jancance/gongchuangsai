@@ -1,0 +1,300 @@
+{
+  "status": "COMPLETED_RUN_AND_OFFLINE_OBSERVER_ANALYSIS",
+  "candidate_sha256": "0ebf9e4e5d89e507cafd9e5cd17ce66570ec861804d38535e61ee89bbad874b3",
+  "operator_measurement": {
+    "operator_text": "右偏1.1cm多走1cm分析一下数据",
+    "forward_mm": 2110.0,
+    "forward_error_mm": 10.0,
+    "lateral_right_mm": 11.0,
+    "source": "operator ruler measurement",
+    "recorded_at": "2026-11-15T09:21:23.790051+08:00"
+  },
+  "hardware_actions": {
+    "downloads": 0,
+    "resets": 1,
+    "PLAN8": 1,
+    "ARM": 1,
+    "START": 1,
+    "automatic_retry": false
+  },
+  "software_status": "software_complete",
+  "tail_stable_double_read": true,
+  "tail_session": 1,
+  "tail_mask": 7,
+  "io1": {
+    "total": 30,
+    "valid": 9,
+    "decode_errors": [],
+    "phase_definition": {
+      "run_start_ms": 6355,
+      "arrival_event_ms": 14396,
+      "first_DONE_telemetry_ms": 15542
+    },
+    "phases": {
+      "before_run": {
+        "frames": 5,
+        "valid": 0,
+        "reasons": {
+          "16": 4,
+          "32": 1
+        }
+      },
+      "movement_before_arrival": {
+        "frames": 8,
+        "valid": 8,
+        "reasons": {
+          "0": 8
+        }
+      },
+      "STOP_until_first_DONE_telemetry": {
+        "frames": 1,
+        "valid": 1,
+        "reasons": {
+          "0": 1
+        }
+      },
+      "normal_powered_tail": {
+        "frames": 16,
+        "valid": 0,
+        "reasons": {
+          "32": 16
+        }
+      }
+    },
+    "reasons": {
+      "16": "No wheel reference before start, expected diagnostic",
+      "32": "Original wheel pose unavailable/stale; pre-run/after-DONE diagnostic, not new control fault"
+    },
+    "cal_sample_counts": [
+      200
+    ],
+    "observed_gap_counters": [
+      0
+    ],
+    "serial_wire_intervals_ms": {
+      "count": 26,
+      "minimum": 500,
+      "median": 500.0,
+      "maximum": 13050
+    },
+    "valid_publication_endpoint_deltas": [
+      {
+        "estimate_delta_ms": 1005,
+        "publication_delta": 50,
+        "sample_delta": 201
+      },
+      {
+        "estimate_delta_ms": 1000,
+        "publication_delta": 50,
+        "sample_delta": 200
+      },
+      {
+        "estimate_delta_ms": 1000,
+        "publication_delta": 50,
+        "sample_delta": 200
+      },
+      {
+        "estimate_delta_ms": 1000,
+        "publication_delta": 50,
+        "sample_delta": 200
+      },
+      {
+        "estimate_delta_ms": 1005,
+        "publication_delta": 50,
+        "sample_delta": 201
+      },
+      {
+        "estimate_delta_ms": 1000,
+        "publication_delta": 50,
+        "sample_delta": 200
+      },
+      {
+        "estimate_delta_ms": 1000,
+        "publication_delta": 50,
+        "sample_delta": 200
+      },
+      {
+        "estimate_delta_ms": 1000,
+        "publication_delta": 50,
+        "sample_delta": 200
+      }
+    ],
+    "frequency_limit": "Low-priority <=2Hz attempts; captured IO1 contains long TX gaps. Endpoint publication deltas are consistent with20ms updates but do not prove every internal50Hz calculation or its latency."
+  },
+  "ir1": {
+    "frames": 174,
+    "frames_by_source": {
+      "preflight": 16,
+      "serial": 158
+    },
+    "export_intervals_ms": {
+      "count": 171,
+      "minimum": 200,
+      "median": 200,
+      "maximum": 300
+    },
+    "exported_sample_jumps": {
+      "40": 162,
+      "42": 6,
+      "41": 2,
+      "60": 1
+    },
+    "decode_errors": [],
+    "excluded_final_incomplete_fragments": [
+      {
+        "source": "serial",
+        "tag": "IO1",
+        "bytes": 64
+      }
+    ],
+    "age_ms": {
+      "count": 174,
+      "minimum": 0,
+      "median": 2.0,
+      "maximum": 4
+    },
+    "sample_sequence_min": 145,
+    "sample_sequence_max": 7099,
+    "skipped_edges": [
+      0
+    ],
+    "read_races": [
+      0
+    ],
+    "transfer_errors": [
+      0
+    ],
+    "sample_edge_step_disagreements": 0,
+    "last_monotonic_segment_frames": 173,
+    "file_segment_summaries": [
+      {
+        "source": "preflight",
+        "file": "20261115_091758_176300.raw",
+        "frames": 16,
+        "first_tick_ms": 6000,
+        "last_tick_ms": 3600,
+        "segments": [
+          {
+            "index": 0,
+            "frames": 1,
+            "first_raw_line": 5,
+            "last_raw_line": 5,
+            "first_tick_ms": 6000,
+            "last_tick_ms": 6000,
+            "first_sample": 1185,
+            "last_sample": 1185,
+            "export_dt_ms": null,
+            "sample_jumps": {},
+            "used_for_current_summary": false
+          },
+          {
+            "index": 1,
+            "frames": 15,
+            "first_raw_line": 11,
+            "last_raw_line": 76,
+            "first_tick_ms": 800,
+            "last_tick_ms": 3600,
+            "first_sample": 145,
+            "last_sample": 705,
+            "export_dt_ms": {
+              "count": 14,
+              "minimum": 200,
+              "median": 200.0,
+              "maximum": 200
+            },
+            "sample_jumps": {
+              "40": 14
+            },
+            "used_for_current_summary": true
+          }
+        ]
+      },
+      {
+        "source": "serial",
+        "file": "20261115_091802_977200.raw",
+        "frames": 158,
+        "first_tick_ms": 4000,
+        "last_tick_ms": 35570,
+        "segments": [
+          {
+            "index": 0,
+            "frames": 158,
+            "first_raw_line": 3,
+            "last_raw_line": 903,
+            "first_tick_ms": 4000,
+            "last_tick_ms": 35570,
+            "first_sample": 785,
+            "last_sample": 7099,
+            "export_dt_ms": {
+              "count": 157,
+              "minimum": 200,
+              "median": 200,
+              "maximum": 300
+            },
+            "sample_jumps": {
+              "40": 148,
+              "42": 6,
+              "41": 2,
+              "60": 1
+            },
+            "used_for_current_summary": true
+          }
+        ]
+      }
+    ],
+    "nonmonotonic_boundaries": [
+      {
+        "source": "preflight",
+        "file": "20261115_091758_176300.raw",
+        "before_raw_line": 5,
+        "after_raw_line": 11,
+        "before_tick_ms": 6000,
+        "after_tick_ms": 800,
+        "before_sample": 1185,
+        "after_sample": 145
+      }
+    ],
+    "timing_summary_policy": "Keep raw order. No sorting/dedup or modulo conversion at backward boundary. Main timing summary uses the last monotonic segment in each file; all preceding segments remain documented.",
+    "observed_rate_Hz": {
+      "count": 171,
+      "minimum": 200.0,
+      "median": 200.0,
+      "maximum": 200.0
+    },
+    "limit": "IR1 exports sparse snapshots, not all200Hz samples; counter evidence cannot reconstruct unexported acceleration/gyro trajectory."
+  },
+  "icm_stack": {
+    "sampled_minimum_free_words": 80,
+    "sampled_minimum_free_bytes": 320,
+    "allocated_bytes": 1024,
+    "limit": "One saved run watermark only; not worst-case CPU/stack guarantee."
+  },
+  "wheel_summary": {
+    "arrival_common_mm": 2100.677734375,
+    "arrival_common_age_ms": 142,
+    "PE3_mean_mm": 2114.1558408157157,
+    "PE_minus_arrival_mm": 13.478106440715692,
+    "PE_minus_ruler_mm": 4.155840815715692,
+    "physical_stop_distance_established": false
+  },
+  "control_summary": {
+    "xd1": {
+      "session": 1,
+      "expected_records": 934,
+      "received_records": 934,
+      "dropped": 0,
+      "complete": true
+    },
+    "complete_batches": 103,
+    "lateral_peak_rpm": 1.9,
+    "hwt_start_deg": 0.0,
+    "hwt_end_deg": 0.192,
+    "hwt_delta_deg": 0.19200000000000728,
+    "post_complete_tx": 0
+  },
+  "limitations": [
+    "No control change or slip correction from IO1. Ruler is external measured endpoint and remains authoritative for its stated quantity.",
+    "Auxiliary position minus old wheel position mixes extrapolation time, motion and IMU error, not ground estimation accuracy.",
+    "No new motion or hardware access performed by this analysis."
+  ]
+}

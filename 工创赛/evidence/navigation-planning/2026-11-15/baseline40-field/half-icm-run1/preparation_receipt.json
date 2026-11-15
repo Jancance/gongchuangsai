@@ -1,0 +1,38 @@
+{
+  "status": "OFFLINE_PREPARATION_PASS_WAIT_HARDWARE_GO",
+  "hardware_connected": false,
+  "candidate_sha256": "0ebf9e4e5d89e507cafd9e5cd17ce66570ec861804d38535e61ee89bbad874b3",
+  "symbols": {
+    "g_icm_publish_sequence": [
+      536871032,
+      4
+    ],
+    "g_icm_stack_words": [
+      536871036,
+      4
+    ],
+    "g_chassis_auto_tail_snapshots": [
+      536948504,
+      176
+    ]
+  },
+  "scripts": {
+    "decode_io1_once.py": "83a9c87c8c0a6a0afdd77ce32578e3db73d8ffa88a5c06d0a7e442e112713493",
+    "deploy_reset_run_read_once.py": "0aca70f3841b228392eb679576325f2e19011035d368cc8646c899398680bf77",
+    "download_once.py": "e23e93e865be3a03ad787d262a4bd75709e914148c8a249ce27cb2e48def5c55",
+    "p1_serial_motion_powered_done.py": "c8d775e8d91904bb9767a16c44e7b6fae33e3abb6453184f753252d999fbfcb1",
+    "prepare_run.py": "a46550d872b3e88983ca1a9921c3c4af9f897789356a46d63a9517b5d62ee9e4",
+    "read_stop_distance_once.py": "50094915a5680c7b2c382fbe647a0cd66ce70b4cff8627420bedc8b22c462e6a",
+    "reset_once.py": "b5e8ca973ba3f8a5eb8b503d03c57ef8a7fc8b39df36b5f32fc5a2f03292d90d",
+    "run_and_read_once.py": "a41b5599d58e61a79e54583cf7b0fa9d4b28d1473323361d8c7e995a2fa314b3",
+    "run_binding.py": "45006fd48b915923f3380bf5271706d4b78e6dc854f3b28d6244c5301340dd94",
+    "run_once.py": "52418f5c56b3810ef459d9d67b89d886fdb26358fe5d4f91b5ff67b4d0852f8d"
+  },
+  "syntax": "AST parsed all scripts",
+  "review_source_binding": "PASS",
+  "checkpoint_commit": "8387f076",
+  "maximum_downloads": 1,
+  "maximum_resets": 1,
+  "maximum_START": 1,
+  "exclusive_markers": "campaign/download/reset/preflight/START/tail markers created before hardware action"
+}

@@ -1,0 +1,291 @@
+{
+  "status": "TWO_SUCCESSFUL_SAME_IMAGE_RUNS_ONE_SEPARATE_COMMUNICATION_FAILURE",
+  "successful": [
+    {
+      "run": "half-icm-run1",
+      "candidate_sha256": "0ebf9e4e5d89e507cafd9e5cd17ce66570ec861804d38535e61ee89bbad874b3",
+      "ruler_right_mm": 5.0,
+      "ruler_forward_mm": 2107.5,
+      "ruler_forward_error_mm": 7.5,
+      "arrival_common_mm": 2100.30029296875,
+      "arrival_common_age_ms": 164,
+      "PE3_final_wheel_mm": 2114.8668066249106,
+      "PE_minus_arrival_mm": 14.566513656160623,
+      "PE_minus_ruler_mm": 7.366806624910623,
+      "IO1_complete_frames": 31,
+      "IO1_valid_frames": 9,
+      "IO1_complete_CRC_errors": 0,
+      "IO1_incomplete_final_fragments": 0,
+      "last_valid_IO1_estimate_ms": 14570,
+      "last_valid_IO1_wheel_age_ms": 79,
+      "last_valid_IO1_old_wheel_F_mm": 2115.821,
+      "last_valid_IO1_old_wheel_R_mm": 1.28,
+      "last_valid_IO1_aux_F_mm": 2115.795,
+      "last_valid_IO1_aux_R_mm": 1.109,
+      "valid_aux_minus_old_wheel_F_min_mm": -0.02599999999983993,
+      "valid_aux_minus_old_wheel_F_max_mm": 50.10399999999993,
+      "valid_aux_minus_old_wheel_R_min_mm": -1.11,
+      "valid_aux_minus_old_wheel_R_max_mm": 1.2880000000000003,
+      "IR1_all_complete_frames": 177,
+      "IR1_serial_frames": 160,
+      "IR1_current_segment_frames": 175,
+      "IR1_current_export_interval_ms": {
+        "count": 173,
+        "minimum": 200,
+        "median": 200,
+        "maximum": 205
+      },
+      "IR1_current_sample_jumps": {
+        "40": 170,
+        "41": 3
+      },
+      "IR1_preflight_backward_boundaries": [
+        {
+          "source": "preflight",
+          "file": "20261115_090749_972100.raw",
+          "before_raw_line": 7,
+          "after_raw_line": 17,
+          "before_tick_ms": 1600,
+          "after_tick_ms": 800,
+          "before_sample": 305,
+          "after_sample": 145
+        }
+      ],
+      "driver_skips": [
+        0
+      ],
+      "driver_races": [
+        0
+      ],
+      "driver_transfer_errors": [
+        0
+      ],
+      "IO1_observer_gaps": [
+        0
+      ],
+      "ICM_sampled_min_free_stack_bytes": 320,
+      "TM_status_dropped": 2,
+      "IO1_low_priority_dropped": 40,
+      "IO1_max_successful_wire_gap_ms": 13001,
+      "HWT_start_deg": 0.368,
+      "HWT_end_deg": 1.137,
+      "HWT_delta_deg": 0.7690000000000055,
+      "XD": {
+        "session": 1,
+        "expected_records": 928,
+        "received_records": 928,
+        "dropped": 0,
+        "complete": true
+      },
+      "normal_tail_frames": 201,
+      "normal_tail_seconds": 20.047000000005937
+    },
+    {
+      "run": "half-icm-run3",
+      "candidate_sha256": "0ebf9e4e5d89e507cafd9e5cd17ce66570ec861804d38535e61ee89bbad874b3",
+      "ruler_right_mm": 11.0,
+      "ruler_forward_mm": 2110.0,
+      "ruler_forward_error_mm": 10.0,
+      "arrival_common_mm": 2100.677734375,
+      "arrival_common_age_ms": 142,
+      "PE3_final_wheel_mm": 2114.1558408157157,
+      "PE_minus_arrival_mm": 13.478106440715692,
+      "PE_minus_ruler_mm": 4.155840815715692,
+      "IO1_complete_frames": 30,
+      "IO1_valid_frames": 9,
+      "IO1_complete_CRC_errors": 0,
+      "IO1_incomplete_final_fragments": 1,
+      "last_valid_IO1_estimate_ms": 14565,
+      "last_valid_IO1_wheel_age_ms": 102,
+      "last_valid_IO1_old_wheel_F_mm": 2115.69,
+      "last_valid_IO1_old_wheel_R_mm": 1.621,
+      "last_valid_IO1_aux_F_mm": 2114.19,
+      "last_valid_IO1_aux_R_mm": 0.031,
+      "valid_aux_minus_old_wheel_F_min_mm": -1.5,
+      "valid_aux_minus_old_wheel_F_max_mm": 54.62600000000003,
+      "valid_aux_minus_old_wheel_R_min_mm": -1.59,
+      "valid_aux_minus_old_wheel_R_max_mm": 0.7909999999999999,
+      "IR1_all_complete_frames": 174,
+      "IR1_serial_frames": 158,
+      "IR1_current_segment_frames": 173,
+      "IR1_current_export_interval_ms": {
+        "count": 171,
+        "minimum": 200,
+        "median": 200,
+        "maximum": 300
+      },
+      "IR1_current_sample_jumps": {
+        "40": 162,
+        "42": 6,
+        "41": 2,
+        "60": 1
+      },
+      "IR1_preflight_backward_boundaries": [
+        {
+          "source": "preflight",
+          "file": "20261115_091758_176300.raw",
+          "before_raw_line": 5,
+          "after_raw_line": 11,
+          "before_tick_ms": 6000,
+          "after_tick_ms": 800,
+          "before_sample": 1185,
+          "after_sample": 145
+        }
+      ],
+      "driver_skips": [
+        0
+      ],
+      "driver_races": [
+        0
+      ],
+      "driver_transfer_errors": [
+        0
+      ],
+      "IO1_observer_gaps": [
+        0
+      ],
+      "ICM_sampled_min_free_stack_bytes": 320,
+      "TM_status_dropped": 8,
+      "IO1_low_priority_dropped": 40,
+      "IO1_max_successful_wire_gap_ms": 13050,
+      "HWT_start_deg": 0.0,
+      "HWT_end_deg": 0.192,
+      "HWT_delta_deg": 0.19200000000000728,
+      "XD": {
+        "session": 1,
+        "expected_records": 934,
+        "received_records": 934,
+        "dropped": 0,
+        "complete": true
+      },
+      "normal_tail_frames": 200,
+      "normal_tail_seconds": 20.031000000002678
+    }
+  ],
+  "failed": {
+    "run": "half-icm-run2",
+    "counted_for_precision": false,
+    "client_status": "ack_timeout",
+    "transmitted_commands": {
+      "PLAN8": 1,
+      "ARM": 1,
+      "START": 1,
+      "KEEP": 8,
+      "STOP": 1
+    },
+    "last_telemetry_is_stale": true,
+    "read_only_capture_at": "2026-11-15T09:17:16.406466+08:00",
+    "delay_after_failed_campaign_seconds": 330.943683,
+    "live_core_before": "RUNNING",
+    "live_core_after": "RUNNING",
+    "live_before": {
+      "s_serial_tx_seq": 3382,
+      "s_serial_dropped": 2,
+      "s_serial_tx_tick": 337921,
+      "s_serial_tx_valid": 1,
+      "g_tx_length": 172,
+      "g_tx_position": 149,
+      "g_serial_motion_state": 3,
+      "g_serial_motion_result": 8,
+      "g_serial_motion_rejected": 0,
+      "g_serial_motion_accepted": 3,
+      "g_serial_motion_link_lost": 1,
+      "g_safety_fault": 0,
+      "g_watchdog_started": 1,
+      "g_watchdog_feed_count": 16892,
+      "g_reset_iwdg": 0,
+      "g_reset_flags": 335544320,
+      "g_vm_test_request": 0,
+      "g_test_count_a": 33795,
+      "g_test_tick": 337951,
+      "g_serial_rx_count": 67,
+      "g_serial_rx_last": 10,
+      "g_can_task_count": 33761,
+      "g_icm_stack_words": 114,
+      "g_rtos_fault": 0,
+      "g_rtos_assert_line": 0,
+      "g_chassis_auto_state": 0,
+      "g_chassis_auto_active": 0,
+      "g_chassis_auto_session": 0,
+      "g_uart1_rx_errors": 0
+    },
+    "live_after": {
+      "s_serial_tx_seq": 3383,
+      "s_serial_dropped": 2,
+      "s_serial_tx_tick": 338021,
+      "s_serial_tx_valid": 1,
+      "g_tx_length": 172,
+      "g_tx_position": 89,
+      "g_serial_motion_state": 3,
+      "g_serial_motion_result": 8,
+      "g_serial_motion_rejected": 0,
+      "g_serial_motion_accepted": 3,
+      "g_serial_motion_link_lost": 1,
+      "g_safety_fault": 0,
+      "g_watchdog_started": 1,
+      "g_watchdog_feed_count": 16897,
+      "g_reset_iwdg": 0,
+      "g_reset_flags": 335544320,
+      "g_vm_test_request": 0,
+      "g_test_count_a": 33806,
+      "g_test_tick": 338051,
+      "g_serial_rx_count": 67,
+      "g_serial_rx_last": 10,
+      "g_can_task_count": 33771,
+      "g_icm_stack_words": 114,
+      "g_rtos_fault": 0,
+      "g_rtos_assert_line": 0,
+      "g_chassis_auto_state": 0,
+      "g_chassis_auto_active": 0,
+      "g_chassis_auto_session": 0,
+      "g_uart1_rx_errors": 0
+    },
+    "registers": {
+      "USART1_SR": "0x000000d0",
+      "USART1_BRR": "0x000002d9",
+      "USART1_CR1": "0x0000202c",
+      "USART1_CR2": "0x00000000",
+      "USART1_CR3": "0x00000000",
+      "GPIOA_MODER": "0xa828a800",
+      "GPIOA_AFRH": "0x00000770",
+      "RCC_AHB1ENR": "0x0010001f",
+      "RCC_APB2ENR": "0x00005010",
+      "RCC_CSR_current_not_saved_cause": "0x00000003",
+      "SCB_ICSR": "0x00000000",
+      "SCB_SHCSR": "0x00000000",
+      "SCB_CFSR": "0x00000000",
+      "SCB_HFSR": "0x00000000",
+      "SCB_MMFAR": "0x10004a44",
+      "SCB_BFAR": "0x200003ae"
+    },
+    "pe2": 0,
+    "conclusion": "Later running-core read confirms START accepted3/RX67, link_lost1/result8; task/watchdog/TX still advance, VM/PE2 now0 and backend idle/session0. Subsequent KEEP/STOP did not advance MCU RX consumer. USB/COM/USART cause remains unresolved; no automatic retry."
+  },
+  "assessment": {
+    "functional_evidence": "Live independent observer produced timestamped F/R estimates with200-sample startup mean ready, known driver counters0 and observed own gaps0. Both normal runs completed and new-address176B reads were coherent.",
+    "forward_extrapolation": "Old wheel anchors are77..180ms behind these IO1 estimates; added forward displacement reaches about50..55mm during motion, consistent with latency extrapolation. This is not ground-error reduction.",
+    "lateral_benefit": "No demonstrated correction of ground lateral slip or improved ground accuracy. Observer depends on the same wheel anchors, has only9 valid exported snapshots per run and no synchronized ground trajectory.",
+    "motion_accuracy": "Two ruler endpoints are right5/11mm and forward+7.5/+10mm; the observer was not fed to control. Run-to-run variation does not establish improvement or degradation from observer logging.",
+    "frequency": "Valid endpoint publication deltas are50 counts over1000/1005ms; raw sample deltas200/201 over the same span. Consistent with20ms observation/200Hz sampling, but sparse outputs cannot certify every execution, full chronology or latency.",
+    "log_load": {
+      "old_half_stop_run7_TM_drop": 7,
+      "new_runs_TM_drop": [
+        2,
+        8
+      ],
+      "new_runs_IO1_busy_drop": [
+        40,
+        40
+      ],
+      "statement": "Status drops were7 in the referenced old run and2/8 in the two new runs; IO1 low-priority own busy drops40/40 and up to13.001/13.050s successful-output gaps. Different runs, no causal queue/CPU load conclusion."
+    },
+    "stationary_prediction": "Last exported STOP-region estimates include forward velocity−27.445/−36.743mm/s. They are unvalidated model outputs, not evidence the chassis physically reversed or proof of a particular vibration/bias cause."
+  },
+  "limits": [
+    "No additional hardware access, tuning or new test authorization from this analysis.",
+    "Ruler endpoints, asynchronous encoder endpoints, delayed common wheel poses and different-time IO1 estimates are different quantities; no IO1-minus-ruler endpoint accuracy is calculated.",
+    "Only final monotonic segment within each raw file enters IR timing aggregates; earlier preflight segments and their backwards boundaries remain explicitly documented, not sorted away.",
+    "Full-time ground trajectory, attitude calibration/lever compensation, long-term drift and worst-case timing/stack remain unclosed."
+  ],
+  "evidence_manifest_sha256": "3004abddc2b2b1f93561230449a0fd4189d5a261c90e01c499dfa814a4d02e33"
+}
