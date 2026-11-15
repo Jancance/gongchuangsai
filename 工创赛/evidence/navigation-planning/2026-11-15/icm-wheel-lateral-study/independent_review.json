@@ -1,0 +1,177 @@
+{
+  "status": "PASS_FROZEN_LOCAL_OBSERVER_CANDIDATE_WITH_ASSERT_LINE_METADATA_EXCEPTION",
+  "date": "2026-11-15",
+  "reviewer": "/root/observer_review_high",
+  "blocking_findings": [],
+  "candidate_source_sha256": {
+    "app_icm_observer.c": "ef3c62a442fc7b893736cc6ec7da8bf6d7d1d6dd6e20ff50d2c7d24098dff163",
+    "app_icm_observer.h": "d4ccdb7602424eccb112f1d9f11b8513b9d78fdcc90163a981dc0be78c69bc77",
+    "app_serial_runtime.c": "1811c324892e15593b723d00acc2e8c21d31ed29f924753d9218724113dc645a",
+    "main.c": "1f72391ec20a7a05dee4def56f5780082521f0c614ae5d1f9774022f0ca32014"
+  },
+  "project_sha256": "93b1219b6f498d9c9c59c8de72ada80c36007653010e3a4f02a9b08d428eaf28",
+  "parser_sha256": "7c87c2c3b3825aa642a1d642068dea96be7038341004961c22b5b81c96ec700c",
+  "candidate_axf_sha256": {
+    "baseline40_integrated": "0ebf9e4e5d89e507cafd9e5cd17ce66570ec861804d38535e61ee89bbad874b3",
+    "baseline40_offline": "53ca96f5dd4c6e39e3495ccc5a1da0d77bd7ef1e72d5b798f46a635d4972e2d1",
+    "baseline_off_integrated": "cd66ac6d93877e8c2af5f1bf756508f1098d85e5954673856931e5d6172e839b"
+  },
+  "matlab": {
+    "kernel_receipt_exit_code": 0,
+    "kernel_cases": 268,
+    "schedule_receipt_exit_code": 0,
+    "prediction_period_ms": 20,
+    "independently_reran_matlab": false,
+    "reviewed_script_summary_receipt_logs": true
+  },
+  "independent_arm_reexecution": {
+    "existing_frozen_fixture_reran_read_only": true,
+    "fixture_axf_sha256": "bda4264e2d26daa8295c55c07f862cf59d181ec7f98cffc631356de434715a82",
+    "fixture_source_sha256": "c859d7cf81d38f459666bad3b2789b78be6b6d24c6d8b73fcc40d9852df5160c",
+    "return_register_r0": 0,
+    "cases": 98,
+    "assertions": 395,
+    "actual_c_io1_frames_parsed": 3,
+    "wire_lengths": [
+      164,
+      119,
+      95
+    ],
+    "wait_cal_uintmax_age_passed": true,
+    "uint32_high_tick_and_wrap_passed": true,
+    "independently_recompiled": false,
+    "emulator": "Unicorn Cortex-M3 soft-float ARM fixture; not production FPU/RTOS/peripheral timing"
+  },
+  "three_builds_source_and_image_hash_binding": true,
+  "three_builds_zero_errors_zero_warnings": true,
+  "protected_manifest": {
+    "entries": 1937,
+    "changed_existing": [
+      "3.stm32f407工程\\gongxun-f407.uvprojx",
+      "3.stm32f407工程\\CHASSIS\\USER\\app_serial_runtime.c",
+      "3.stm32f407工程\\CHASSIS\\USER\\main.c"
+    ],
+    "other_1934_unchanged": true,
+    "missing": 0
+  },
+  "baseline_off": {
+    "allocated": [
+      {
+        "name": "ER_IROM1",
+        "address": 134217728,
+        "size": 12444,
+        "different_byte_offsets": [
+          6808,
+          6830
+        ]
+      },
+      {
+        "name": "RW_IRAM1",
+        "address": 536871872,
+        "size": 25576,
+        "different_byte_offsets": []
+      }
+    ],
+    "byte_identical": false,
+    "only_metadata_exception": "MOVW r0 assert __LINE__: main.c 401->405 and 471->475; branch/BL destinations unchanged",
+    "independently_disassembled": true
+  },
+  "snapshot_payloads_match_actual_sources": {
+    "3.stm32f407工程/CHASSIS/USER/main.c": true,
+    "3.stm32f407工程/CHASSIS/USER/app_serial_runtime.c": true,
+    "3.stm32f407工程/gongxun-f407.uvprojx": true,
+    "工创赛/scripts/vehicle_uart_capture.py": true,
+    "3.stm32f407工程/CHASSIS/USER/app_icm_observer.c": true,
+    "3.stm32f407工程/CHASSIS/USER/app_icm_observer.h": true
+  },
+  "integration_patch_sha256": "72ad25608c89128520f6310650024402d87447886b7234911799eb0f7f3fd170",
+  "checkpoint_sources_sha256": "2b7e94a63b673836df996d959f639f7ec2dc7a5a64b45a14fa6925577466a395",
+  "checkpoint_limit": "Local observer delta only, not a full checkout/buildable-engineering checkpoint. Four integration files had substantial previous dirty prerequisites; their current hooks remain in working tree. Before/after base64 and precise patch preserve this task without staging older unrelated changes.",
+  "static_memory": {
+    "observer_history_bytes": 1536,
+    "observer_module_rw_plus_zi_bytes": 1924,
+    "io1_static_frame_bytes": 384,
+    "new_tasks": 0,
+    "new_dynamic_allocations": 0,
+    "icm_task_stack_allocated_bytes": 1024,
+    "icm_task_linker_static_chain_bytes": 592,
+    "stack_limits": "Linker known chain only. Interrupt/context overhead and real high-water marks unmeasured; printf library stack unknown.",
+    "linker_records": {
+      "App_IcmRawTask": "App_IcmRawTask  (Thumb, 218 bytes, Stack size 88 bytes, main.o(i.App_IcmRawTask))\n  [Stack]  Max Depth = 592 Call Chain = App_IcmRawTask ⇒ AppIcmObserver_Step ⇒ Obs_Predict ⇒ Obs_Integrals",
+      "AppIcmObserver_Step": "AppIcmObserver_Step  (Thumb, 2066 bytes, Stack size 328 bytes, app_icm_observer.o(i.AppIcmObserver_Step))\n  [Stack]  Max Depth = 504 Call Chain = AppIcmObserver_Step ⇒ Obs_Predict ⇒ Obs_Integrals",
+      "Obs_Predict": "Obs_Predict  (Thumb, 406 bytes, Stack size 80 bytes, app_icm_observer.o(i.Obs_Predict))\n  [Stack]  Max Depth = 176 Call Chain = Obs_Predict ⇒ Obs_Integrals",
+      "Obs_Integrals": "Obs_Integrals  (Thumb, 526 bytes, Stack size 96 bytes, app_icm_observer.o(i.Obs_Integrals))\n  [Stack]  Max Depth = 96 Call Chain = Obs_Integrals",
+      "App_IcmObserverTelemetry": "App_IcmObserverTelemetry  (Thumb, 480 bytes, Stack size 232 bytes, app_serial_runtime.o(i.App_IcmObserverTelemetry))\n  [Stack]  Max Depth = 376 + Unknown Stack Size\n Call Chain = App_IcmObserverTelemetry ⇒ __2snprintf ⇒ _printf_char_common ⇒ __printf",
+      "AppSerial_Telemetry": "AppSerial_Telemetry  (Thumb, 68 bytes, Stack size 8 bytes, app_serial_runtime.o(i.AppSerial_Telemetry))\n  [Stack]  Max Depth = 384 + Unknown Stack Size\n Call Chain = AppSerial_Telemetry ⇒ App_IcmObserverTelemetry ⇒ __2snprintf ⇒ _printf_char_common ⇒ __printf",
+      "App_TestTaskA": "App_TestTaskA  (Thumb, 132 bytes, Stack size 0 bytes, main.o(i.App_TestTaskA))\n  [Stack]  Max Depth = 768 + Unknown Stack Size\n Call Chain = App_TestTaskA ⇒ AppMotion_LoadDefaultPlan ⇒ AppDebugPlan_Load ⇒ RoutePlan_Convert ⇒ MotionRoute_Build ⇒ MotionProfile_Prepare ⇒ __hardfp_powf ⇒ __set_errno"
+    }
+  },
+  "io1": {
+    "max_attempt_rate_Hz": 2,
+    "phase_ms": [
+      40,
+      55
+    ],
+    "retry_on_busy": false,
+    "max_possible_frame_bytes_including_crlf_excluding_nul": 315,
+    "frame_capacity_bytes": 384,
+    "existing_usart_capacity_bytes": 768,
+    "crc_and_invalid_sentinel_actual_c_to_parser": true
+  },
+  "requirements_checked": {
+    "R": [
+      "RUN-01",
+      "PWR-01",
+      "MECH-01",
+      "MECH-02"
+    ],
+    "E": [
+      "LOC-01",
+      "LOC-02",
+      "LOC-03",
+      "LOC-05",
+      "LOC-07",
+      "MOT-02",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q_open": [
+      "FIELD-05",
+      "OBS-03",
+      "QR-04"
+    ]
+  },
+  "unclosed": [
+    "Physical sensor/gyro axes and full calibration",
+    "Startup 200-sample stationarity is an assumption",
+    "Hardware timestamp alignment, physical 200Hz continuity, real 50Hz computation timing and UART load",
+    "Real stack watermark and execution cost",
+    "Long-idle/session gravity drift, vibration and lever-arm effects",
+    "Wheel slip and ground trajectory/endpoint benefit"
+  ],
+  "hardware_accessed": false,
+  "downloaded": false,
+  "git_operations_performed_by_reviewer": false,
+  "product_edits_performed_by_reviewer": false,
+  "evidence_sha256": {
+    "high_plan.md": "de76f3f0a0ee29abb57606580ec6dcb0899699a386035418abdc976d2c87bdf0",
+    "observer_local_matlab.m": "064b7e35919f36eb02f6603934b4a5cda90aec9c260441f48c7446a97975c1eb",
+    "observer_local_matlab_receipt.json": "f2080f30faa933eb176cc075908245f72239585b50bf025ec4caa133fc808cf4",
+    "observer_local_matlab_summary.json": "12f3d5c31abd41d2e9fca030b37f06e4f87a22982fc7e1b57f0efd4f663dda18",
+    "observer_schedule_matlab.m": "ad6356f39edc20d27c8f07803d0bfee16edfe5d3855493108443ab34c42770b0",
+    "observer_schedule_matlab_receipt.json": "5d7cea2016b01aede949b7c5934f3a8339c12a03f9e28da539cda94881d5ce41",
+    "observer_schedule_matlab_summary.json": "5212bb90dc5a80657e04012040bea90dfd50f9d6d92cd8503bda2ce1b43b6f5c",
+    "observer_arm_summary.json": "1981ad44e38f6d1bc4eef3ba4060d571638dc398a967dd54eb14790715d94c47",
+    "build_summary.json": "8e32eade6e83817b3675735a118d666d1d62c6a30c641531b20e135c4234fae3",
+    "observer_validation_summary.json": "f1933632edac18aa84d8663f96a2939a63f6a785e80bd76c6bd241d3afcc57a0",
+    "pre_implementation_manifest.json": "9bd08bda62d1455798591e909ad4fc69e8e4ce4bea4b02b8d3ede1b1fca5d5db"
+  },
+  "coordinator_patch_replay_reviewed": {
+    "status": "PASS_EXACT_BYTE_REPLAY_AND_ACTUAL_REVERSE_CHECK",
+    "receipt_sha256": "4f6437c9e396b9b1c98d651987e16b6004a1722e87ae760a454c48786e1558e1",
+    "reviewer_independently_reran_replay": false,
+    "per_command_core_autocrlf": false,
+    "original_eol_preserved_via_base64": true,
+    "attempt1_preserved": "Default Git autocrlf changed only tmp uvproj LF to CRLF; attempt1 is not a passing exact replay; user Git configuration unchanged."
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "status": "FROZEN_LOCAL_DELTA_NOT_FULL_CHECKOUT_CHECKPOINT",
+  "paths": {
+    "3.stm32f407工程/CHASSIS/USER/main.c": {
+      "before_sha256": "6b0a1380d994d0130abae870e51a527b7e7b7313dfb2de2b543d4be69a6a4636",
+      "after_sha256": "1f72391ec20a7a05dee4def56f5780082521f0c614ae5d1f9774022f0ca32014",
+      "before_snapshot": "before\\main.c",
+      "after_snapshot": "after\\main.c",
+      "bytes": 15965,
+      "CRLF": 480,
+      "LF": 480
+    },
+    "3.stm32f407工程/CHASSIS/USER/app_serial_runtime.c": {
+      "before_sha256": "d99860e5266f1e56156f41f88452895aff55d20a35459649ca97f72facdfbca4",
+      "after_sha256": "1811c324892e15593b723d00acc2e8c21d31ed29f924753d9218724113dc645a",
+      "before_snapshot": "before\\app_serial_runtime.c",
+      "after_snapshot": "after\\app_serial_runtime.c",
+      "bytes": 43583,
+      "CRLF": 912,
+      "LF": 912
+    },
+    "3.stm32f407工程/gongxun-f407.uvprojx": {
+      "before_sha256": "a22c41ff8e04cf496552e1f147ecad06b9fa7a2bd00a9731d09fdfc3a962c14f",
+      "after_sha256": "93b1219b6f498d9c9c59c8de72ada80c36007653010e3a4f02a9b08d428eaf28",
+      "before_snapshot": "before\\gongxun-f407.uvprojx",
+      "after_snapshot": "after\\gongxun-f407.uvprojx",
+      "bytes": 105770,
+      "CRLF": 0,
+      "LF": 2715
+    },
+    "工创赛/scripts/vehicle_uart_capture.py": {
+      "before_sha256": "83705525ed87cd616bf8f01d055bc17807f97c602308e6b49b8c13ed677eee73",
+      "after_sha256": "7c87c2c3b3825aa642a1d642068dea96be7038341004961c22b5b81c96ec700c",
+      "before_snapshot": "before\\vehicle_uart_capture.py",
+      "after_snapshot": "after\\vehicle_uart_capture.py",
+      "bytes": 28512,
+      "CRLF": 533,
+      "LF": 533
+    },
+    "3.stm32f407工程/CHASSIS/USER/app_icm_observer.c": {
+      "before_sha256": null,
+      "after_sha256": "ef3c62a442fc7b893736cc6ec7da8bf6d7d1d6dd6e20ff50d2c7d24098dff163",
+      "before_snapshot": null,
+      "after_snapshot": "after\\app_icm_observer.c",
+      "bytes": 11557,
+      "CRLF": 240,
+      "LF": 240
+    },
+    "3.stm32f407工程/CHASSIS/USER/app_icm_observer.h": {
+      "before_sha256": null,
+      "after_sha256": "d4ccdb7602424eccb112f1d9f11b8513b9d78fdcc90163a981dc0be78c69bc77",
+      "before_snapshot": null,
+      "after_snapshot": "after\\app_icm_observer.h",
+      "bytes": 1153,
+      "CRLF": 32,
+      "LF": 32
+    }
+  },
+  "patch_sha256": "72ad25608c89128520f6310650024402d87447886b7234911799eb0f7f3fd170",
+  "script_sha256": "811aced5724116d80f21dedbab6c7f70a85b11969e9ee0235b6afca65d912722",
+  "note": "Four before snapshots include pre-existing uncommitted work; patch only adds observer integration. No staging/apply/commit/network performed."
+}

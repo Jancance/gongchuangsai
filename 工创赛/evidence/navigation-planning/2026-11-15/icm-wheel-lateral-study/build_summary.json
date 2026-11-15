@@ -1,0 +1,74 @@
+{
+  "project_sha256": "93b1219b6f498d9c9c59c8de72ada80c36007653010e3a4f02a9b08d428eaf28",
+  "source_sha256": {
+    "app_odometry.c": "7f1ac1dfd61af209e892fc2fe206f4ef7a486274f1dc4265060dfb5de148eceb",
+    "app_odometry.h": "ca320eb6be63478404e51ed1d477dff63287d336c7d7ca441e56c133f90adf58",
+    "chassis_kinematics.c": "b54a676083a557fd5a1266d34b5c174e48b569fae5dd98ab46e53e18059ee5e0",
+    "chassis_kinematics.h": "6d5028f598e2f743602526c424b9538b12198985ec9e57248acc3097bf5e3333",
+    "chassis_auto_test.c": "ef5e6540df59b976b6200f7601443e7acdbc565ea3c8779f9f15343b64a59a24",
+    "app_motion_runtime.c": "2cded70cccf56c9464a0787be6656e81aad5e9a9d9334620d3c5a958b5eef611",
+    "app_serial_runtime.c": "1811c324892e15593b723d00acc2e8c21d31ed29f924753d9218724113dc645a",
+    "main.c": "1f72391ec20a7a05dee4def56f5780082521f0c614ae5d1f9774022f0ca32014",
+    "app_icm_observer.c": "ef3c62a442fc7b893736cc6ec7da8bf6d7d1d6dd6e20ff50d2c7d24098dff163",
+    "app_icm_observer.h": "d4ccdb7602424eccb112f1d9f11b8513b9d78fdcc90163a981dc0be78c69bc77"
+  },
+  "builds": {
+    "baseline40_integrated": {
+      "returncode": 0,
+      "target": "Vehicle_Integrated",
+      "defines": "APP_BASELINE40_ENABLE=1,VEHICLE_INTEGRATED_ENABLE=0,VEHICLE_STAGE1_ENABLE=0",
+      "project_copy_sha256": "45f28eedcab543850cb8af7504e217be7ea298526448625f4feea9dd61342e6a",
+      "log_sha256": "8b03319020589735ad492a972edf42881b9640071b6295920d1c3f2ad84056cc",
+      "command": [
+        "D:\\Keil_v5\\UV4\\UV4.exe",
+        "-r",
+        "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\icm-observer-build-20261115\\baseline40_integrated.uvprojx",
+        "-t",
+        "Vehicle_Integrated",
+        "-o",
+        "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-15\\icm-wheel-lateral-study\\baseline40_integrated.log"
+      ],
+      "program_size": "Program Size: Code=106680 RO-data=6572 RW-data=3064 ZI-data=121304  \r",
+      "axf": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\icm-observer-build-20261115\\baseline40_integrated\\Vehicle_Integrated.axf",
+      "axf_sha256": "0ebf9e4e5d89e507cafd9e5cd17ce66570ec861804d38535e61ee89bbad874b3"
+    },
+    "baseline40_offline": {
+      "returncode": 0,
+      "target": "Vehicle_Offline",
+      "defines": "APP_BASELINE40_ENABLE=1,VEHICLE_INTEGRATED_ENABLE=0,VEHICLE_STAGE1_ENABLE=0",
+      "project_copy_sha256": "1057f5cca7db8bbfebafc50970fd3d8dc7aaf6d7b78473cc457e4a901b33abfa",
+      "log_sha256": "38e7e177e5c0aa2d1dc1444a4841dbf37760a534b33461a7df9ab1571a607d5d",
+      "command": [
+        "D:\\Keil_v5\\UV4\\UV4.exe",
+        "-r",
+        "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\icm-observer-build-20261115\\baseline40_offline.uvprojx",
+        "-t",
+        "Vehicle_Offline",
+        "-o",
+        "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-15\\icm-wheel-lateral-study\\baseline40_offline.log"
+      ],
+      "program_size": "Program Size: Code=106032 RO-data=6564 RW-data=2872 ZI-data=121304  \r",
+      "axf": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\icm-observer-build-20261115\\baseline40_offline\\Vehicle_Offline.axf",
+      "axf_sha256": "53ca96f5dd4c6e39e3495ccc5a1da0d77bd7ef1e72d5b798f46a635d4972e2d1"
+    },
+    "baseline_off_integrated": {
+      "returncode": 0,
+      "target": "Vehicle_Integrated",
+      "defines": "",
+      "project_copy_sha256": "eedad653d192cee6cb943f552bad68c7dc64ca7585ac577482ad9782da2f6386",
+      "log_sha256": "b366220b86d56f64043482f96681fa902a03a4e771f12c5508fe7a67ca15e806",
+      "command": [
+        "D:\\Keil_v5\\UV4\\UV4.exe",
+        "-r",
+        "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\icm-observer-build-20261115\\baseline_off_integrated.uvprojx",
+        "-t",
+        "Vehicle_Integrated",
+        "-o",
+        "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-15\\icm-wheel-lateral-study\\baseline_off_integrated.log"
+      ],
+      "program_size": "Program Size: Code=11974 RO-data=470 RW-data=960 ZI-data=25576  \r",
+      "axf": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\icm-observer-build-20261115\\baseline_off_integrated\\Vehicle_Integrated.axf",
+      "axf_sha256": "cd66ac6d93877e8c2af5f1bf756508f1098d85e5954673856931e5d6172e839b"
+    }
+  }
+}

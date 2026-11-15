@@ -1,0 +1,451 @@
+diff --git a/3.stm32f407Â∑•Á®ã/CHASSIS/USER/main.c b/3.stm32f407Â∑•Á®ã/CHASSIS/USER/main.c
+--- a/3.stm32f407Â∑•Á®ã/CHASSIS/USER/main.c
++++ b/3.stm32f407Â∑•Á®ã/CHASSIS/USER/main.c
+@@ -36,6 +36,7 @@
+ #include "chassis_kinematics.h"
+ #include "chassis_auto_test.h"
+ #include "app_odometry.h"
++#include "app_icm_observer.h"
+ #include "app_can_diagnostics.h"
+ #include "app_heading_runtime.h"
+ #include "app_translation_runtime.h"
+@@ -379,6 +380,9 @@
+     {
+         IcmRaw_Service();
+         IcmRaw_GetStatus(&snapshot);
++#if APP_BASELINE40_ACTIVE
++        AppIcmObserver_Step(&snapshot);
++#endif
+         g_icm_publish_sequence++;
+         __DMB();
+         g_icm_raw_status = snapshot;
+diff --git a/3.stm32f407Â∑•Á®ã/CHASSIS/USER/app_serial_runtime.c b/3.stm32f407Â∑•Á®ã/CHASSIS/USER/app_serial_runtime.c
+--- a/3.stm32f407Â∑•Á®ã/CHASSIS/USER/app_serial_runtime.c
++++ b/3.stm32f407Â∑•Á®ã/CHASSIS/USER/app_serial_runtime.c
+@@ -49,6 +49,7 @@
+ #include "vehicle_log_config.h"
+ #include "field_map.h"
+ #include "icm45686_raw.h"
++#include "app_icm_observer.h"
+ 
+ extern volatile uint32_t g_vm_test_request;
+ extern volatile UBaseType_t g_rx_stack_words,g_can_task_stack_words;
+@@ -451,6 +452,43 @@
+ /* PM1”ÎTM1¥Ìø™÷¡…Ÿ40ms£¨æ≤Ã¨ª∫≥Â≤ªµ˛º”TaskA’ª£ª√¶ ±∂™’Ô∂œ÷°°£ */
+ /* WF1£∫≤π∆ÎœµÕ≥±Ê ∂–Ë“™µƒ”¶¥ƒø±Í/’Ê µ¬÷ÀŸ/—˘±æ ±øÃ£ªµÕ”≈œ»º∂π€≤Ï÷°°£ */
+ #if APP_BASELINE40_ACTIVE
++/* IO1 is diagnostic only; no retries or commands. Millimetres scale by 1000. */
++static int32_t App_ObserverMilli(float value)
++{
++    if(!(value>=-2000000.0f && value<=2000000.0f))return (-2147483647L-1L);
++    return (int32_t)(value*1000.0f);
++}
++static void App_IcmObserverTelemetry(void)
++{
++    static char frame[384];static uint32_t last,sent,sequence,dropped;
++    AppIcmObserverStatus o; int32_t values[27];
++    uint32_t now=(uint32_t)xTaskGetTickCount(),phase=now-s_serial_tx_tick,i,used=4U;
++    int n;uint16_t crc;
++    if((sent && (uint32_t)(now-last)<500U) || !App_SerialDiagnosticWindow(now,40U) || phase>55U)return;
++    last=now;sent=1U; /* Attempt budget, including a busy transmitter. */
++    AppIcmObserver_Read(&o);
++    values[0]=(int32_t)sequence++;values[1]=(int32_t)now;values[2]=1;
++    values[3]=(int32_t)o.sequence;values[4]=(int32_t)o.session;
++    values[5]=(int32_t)o.valid;values[6]=(int32_t)o.reasons;values[7]=(int32_t)o.flags;
++    values[8]=(int32_t)o.estimate_ms;values[9]=(int32_t)o.sample_sequence;
++    values[10]=(int32_t)o.reference_ms;values[11]=(int32_t)o.t0_ms;values[12]=(int32_t)o.t1_ms;
++    values[13]=(int32_t)o.wheel_age_ms;values[14]=(int32_t)o.hwt_age_ms;
++    values[15]=(int32_t)o.cal_samples;values[16]=(int32_t)o.history_samples;
++    values[17]=(int32_t)o.gaps;
++    for(i=18U;i<26U;i++)values[i]=(-2147483647L-1L);
++    if(o.flags&ICM_OBS_WHEEL){values[18]=App_ObserverMilli(o.wheel_f_mm);values[19]=App_ObserverMilli(o.wheel_r_mm);}
++    if(o.valid){values[20]=App_ObserverMilli(o.position_f_mm);values[21]=App_ObserverMilli(o.position_r_mm);
++        values[22]=App_ObserverMilli(o.velocity_f_mm_s);values[23]=App_ObserverMilli(o.velocity_r_mm_s);}
++    if(o.flags&ICM_OBS_ACCEL){values[24]=App_ObserverMilli(o.accel_f_mm_s2);values[25]=App_ObserverMilli(o.accel_r_mm_s2);}
++    values[26]=(int32_t)dropped;memcpy(frame,"IO1,",4U);
++    for(i=0U;i<27U;i++) {
++        if(i<18U || i==26U)n=snprintf(frame+used,sizeof(frame)-used,"%lu,",(unsigned long)(uint32_t)values[i]);
++        else n=snprintf(frame+used,sizeof(frame)-used,"%ld,",(long)values[i]);
++        if(n<0 || (uint32_t)n>=sizeof(frame)-used){dropped++;return;}used+=(uint32_t)n;
++    }
++    crc=App_SerialCrc(frame,used);n=snprintf(frame+used,sizeof(frame)-used,"%04X\r\n",crc);
++    if(n<0 || (uint32_t)n>=sizeof(frame)-used || !App_DebugSendString(frame)){dropped++;return;}
++}
+ /* IR1: software association times; DWT cycles are not sensor ADC timestamps. */
+ static void App_IcmRawTelemetry(void)
+ {
+@@ -867,5 +905,8 @@
+         if(!VEHICLE_INTEGRATED_ENABLE)App_PerimeterTelemetry();
+ #endif
+ #endif
+-}
+-#endif
++#if APP_BASELINE40_ACTIVE
++        App_IcmObserverTelemetry();
++#endif
++}
++#endif
+diff --git a/3.stm32f407Â∑•Á®ã/gongxun-f407.uvprojx b/3.stm32f407Â∑•Á®ã/gongxun-f407.uvprojx
+--- a/3.stm32f407Â∑•Á®ã/gongxun-f407.uvprojx
++++ b/3.stm32f407Â∑•Á®ã/gongxun-f407.uvprojx
+@@ -924,6 +924,11 @@
+               <FilePath>.\CHASSIS\USER\app_can_diagnostics.h</FilePath>
+             </File>
+             <File>
++              <FileName>app_icm_observer.c</FileName>
++              <FileType>1</FileType>
++              <FilePath>.\CHASSIS\USER\app_icm_observer.c</FilePath>
++            </File>
++            <File>
+               <FileName>app_odometry.c</FileName>
+               <FileType>1</FileType>
+               <FilePath>.\CHASSIS\USER\app_odometry.c</FilePath>
+@@ -2268,6 +2273,11 @@
+               <FilePath>.\CHASSIS\USER\app_can_diagnostics.h</FilePath>
+             </File>
+             <File>
++              <FileName>app_icm_observer.c</FileName>
++              <FileType>1</FileType>
++              <FilePath>.\CHASSIS\USER\app_icm_observer.c</FilePath>
++            </File>
++            <File>
+               <FileName>app_odometry.c</FileName>
+               <FileType>1</FileType>
+               <FilePath>.\CHASSIS\USER\app_odometry.c</FilePath>
+diff --git a/Â∑•ÂàõËµõ/scripts/vehicle_uart_capture.py b/Â∑•ÂàõËµõ/scripts/vehicle_uart_capture.py
+--- a/Â∑•ÂàõËµõ/scripts/vehicle_uart_capture.py
++++ b/Â∑•ÂàõËµõ/scripts/vehicle_uart_capture.py
+@@ -55,6 +55,42 @@
+ ICM_FIELDS = ['seq', 'tick_ms', 'publication_sequence', 'sample_sequence', 'state', 'last_error', 'failed_reg', 'whoami', 'accel_config', 'gyro_config', 'big_endian', 'edge_sequence', 'edge_cycle', 'read_start_cycle', 'read_end_cycle', 'sample_tick_ms', 'age_ms', 'fresh', 'transfer_errors', 'skipped_edges', 'read_races', 'telemetry_dropped', 'sample_gap', 'dwt_hz', 'accel_x_raw', 'accel_y_raw', 'accel_z_raw', 'gyro_x_raw', 'gyro_y_raw', 'gyro_z_raw', 'temperature_raw']
+ BASELINE40_FIELDS = ["seq", "tick_ms", "plan_id", "base_rpm", "distance_mm", "reference_mm_s",
+                      "acceleration_mm_s2", "jerk_mm_s3", "feedback_limit_rpm", "run_ms"]
++
++ICM_OBSERVER_FIELDS = ["seq", "tick_ms", "format_version", "publication_sequence", "session",
++    "valid", "reasons", "flags", "estimate_ms", "sample_sequence", "reference_ms", "t0_ms", "t1_ms",
++    "wheel_age_ms", "hwt_age_ms", "cal_samples", "history_samples", "gaps",
++    "wheel_f_milli_mm", "wheel_r_milli_mm", "position_f_milli_mm", "position_r_milli_mm",
++    "velocity_f_milli_mm_s", "velocity_r_milli_mm_s", "accel_f_milli_mm_s2", "accel_r_milli_mm_s2",
++    "telemetry_dropped"]
++
++
++def parse_icm_observer(line: bytes):
++    if not line.startswith(b"IO1,"):
++        return None
++    body, sep, checksum = line.rstrip(b"\r\n").rpartition(b",")
++    if not sep or len(checksum) != 4 or binascii.crc_hqx(body+b",", 0xffff) != int(checksum, 16):
++        raise ValueError("IO1 CRC mismatch")
++    values = list(map(int, body.split(b",")[1:]))
++    if len(values) != len(ICM_OBSERVER_FIELDS):
++        raise ValueError("IO1 field count")
++    for i, value in enumerate(values):
++        if not (-(2**31) <= value < 2**31 if 18 <= i < 26 else 0 <= value <= 0xffffffff):
++            raise ValueError("IO1 integer range")
++    r = dict(zip(ICM_OBSERVER_FIELDS, values))
++    if (r['format_version'] != 1 or r['valid'] > 1 or r['flags'] & ~63 or
++            r['reasons'] & ~511 or r['cal_samples'] > 200 or r['history_samples'] > 128):
++        raise ValueError("IO1 version/flags/count")
++    invalid = -(2**31)
++    groups = [(bool(r['flags'] & 2), values[18:20]), (bool(r['valid']), values[20:24]),
++              (bool(r['flags'] & 32), values[24:26])]
++    if any(not enabled and any(v != invalid for v in group) for enabled, group in groups):
++        raise ValueError("IO1 invalid values need sentinel")
++    if r['valid'] and (r['reasons'] or r['flags'] & 35 != 35 or r['wheel_age_ms'] > 200 or
++                       r['hwt_age_ms'] >= 100 or not 1 <= ((r['t1_ms']-r['t0_ms']) & 0xffffffff) <= 250 or
++                       ((r['estimate_ms']-r['t1_ms']) & 0xffffffff) != r['wheel_age_ms'] or
++                       any(v == invalid for v in values[18:26])):
++        raise ValueError("IO1 validity/window")
++    return r
+ 
+ def parse_baseline40(line: bytes):
+     if not line.startswith((b"IR1,", b"BF1,")):
+@@ -257,7 +293,7 @@
+ 
+ def decode(line: bytes) -> tuple[str, dict]:
+     """CRCÊ≠£Á°Æ‰∏éÁâ©ÁêÜÂä®‰ΩúÊàêÂäüÊòØ‰∏çÂêåÊ¶ÇÂøµÔºõ‰∏çÊé®ÊµãÁº∫Â§±ÁöÑÂèçÈ¶à„ÄÇ"""
+-    for parser in [parse_baseline40, parse_straight_test, parse_source_preparation, parse_extension_diag, parse_grid_route, parse_mission, parse_stage, parse_wheel, *PARSERS]:
++    for parser in [parse_icm_observer, parse_baseline40, parse_straight_test, parse_source_preparation, parse_extension_diag, parse_grid_route, parse_mission, parse_stage, parse_wheel, *PARSERS]:
+         result = parser(line)
+         if result is not None:
+             return line.split(b",", 1)[0].decode("ascii"), result
+diff --git a/3.stm32f407Â∑•Á®ã/CHASSIS/USER/app_icm_observer.c b/3.stm32f407Â∑•Á®ã/CHASSIS/USER/app_icm_observer.c
+new file mode 100644
+--- /dev/null
++++ b/3.stm32f407Â∑•Á®ã/CHASSIS/USER/app_icm_observer.c
+@@ -0,0 +1,240 @@
++#include "app_icm_observer.h"
++#if APP_BASELINE40_ACTIVE
++#include "FreeRTOS.h"
++#include "task.h"
++#include "app_odometry.h"
++#include "chassis_auto_test.h"
++#include "heading_source.h"
++#include "power.h"
++#include <math.h>
++#include <string.h>
++
++#define OBS_CAPACITY 128U
++#define OBS_G 9806.65f
++#define OBS_RAD 0.0174532925199433f
++typedef struct { uint32_t ms; float a[2]; } ObsPoint;
++static ObsPoint s_history[OBS_CAPACITY];
++static uint32_t s_count, s_head, s_anchors, s_anchor_ms[2];
++static float s_anchor_p[2][2];
++static float s_gravity[3], s_accel_bias[3], s_gyro_bias[3];
++static int32_t s_accel_sum[3], s_gyro_sum[3];
++static uint32_t s_cal_count, s_cal_ready, s_cal_blocked, s_ever_active;
++static uint32_t s_seen, s_last_seq, s_last_edge, s_last_ms;
++static uint32_t s_last_skipped, s_last_races, s_last_errors;
++static uint32_t s_session, s_reference, s_continuity, s_frame_seen;
++static uint32_t s_last_predict, s_predicted, s_gaps, s_gravity_gap;
++static AppHeadingSource s_yaw;
++static AppIcmObserverStatus s_value, s_published;
++
++static uint32_t Obs_Finite(float x) { return x>=-3.4028234e38f && x<=3.4028234e38f; }
++static void Obs_Clear(void) { s_count=s_head=s_anchors=0U; }
++static void Obs_CalClear(void)
++{
++    s_cal_count=0U;
++    memset(s_accel_sum,0,sizeof(s_accel_sum));
++    memset(s_gyro_sum,0,sizeof(s_gyro_sum));
++}
++static void Obs_Cross(const float *a,const float *b,float *c)
++{
++    c[0]=a[1]*b[2]-a[2]*b[1]; c[1]=a[2]*b[0]-a[0]*b[2];
++    c[2]=a[0]*b[1]-a[1]*b[0];
++}
++static uint32_t Obs_Normalize(float *v)
++{
++    float n=sqrtf(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]); uint32_t i;
++    if (!(n>0.0f) || !Obs_Finite(n)) return 0U;
++    for(i=0U;i<3U;i++) v[i]*=OBS_G/n;
++    return 1U;
++}
++static void Obs_Publish(uint32_t reasons)
++{
++    s_value.reasons=reasons; s_value.valid=(reasons==0U);
++    s_value.flags=(s_cal_ready?ICM_OBS_CAL:0U) | ICM_OBS_NO_LEVER |
++        (s_gravity_gap?ICM_OBS_GRAVITY_GAP:0U) |
++        (s_cal_blocked?ICM_OBS_CAL_BLOCKED:0U) |
++        (s_value.flags&(ICM_OBS_WHEEL|ICM_OBS_ACCEL));
++    s_value.cal_samples=s_cal_count; s_value.history_samples=s_count;
++    s_value.gaps=s_gaps; s_value.sequence++;
++    taskENTER_CRITICAL(); s_published=s_value; taskEXIT_CRITICAL();
++}
++void AppIcmObserver_Read(AppIcmObserverStatus *snapshot)
++{
++    taskENTER_CRITICAL(); *snapshot=s_published; taskEXIT_CRITICAL();
++}
++static const ObsPoint *Obs_At(uint32_t index)
++{ return &s_history[(s_head+OBS_CAPACITY-s_count+index)%OBS_CAPACITY]; }
++static void Obs_Append(uint32_t ms,float f,float r)
++{
++    s_history[s_head].ms=ms; s_history[s_head].a[0]=f; s_history[s_head].a[1]=r;
++    s_head=(s_head+1U)%OBS_CAPACITY; if(s_count<OBS_CAPACITY)s_count++;
++}
++/* Integrate only local time, clipping/interpolating acceleration at each bound. */
++static uint32_t Obs_Integrals(uint32_t start,uint32_t finish,uint32_t origin,
++    uint32_t now,float *iv,float *im)
++{
++    uint32_t i,j,span,lo,hi,left,right; float x,y,d,al,ar,A,B;
++    const ObsPoint *p,*q;
++    iv[0]=iv[1]=im[0]=im[1]=0.0f;
++    if(start==finish)return 1U;
++    for(i=1U;i<s_count;i++) {
++        p=Obs_At(i-1U);q=Obs_At(i);span=q->ms-p->ms;
++        left=start-p->ms;right=finish-p->ms;
++        if((int32_t)(finish-p->ms)<=0 || (int32_t)(start-q->ms)>=0)continue;
++        lo=((int32_t)left>0)?left:0U; hi=(right<span)?right:span;
++        if(hi<=lo)continue;
++        x=(float)lo/(float)span;y=(float)hi/(float)span;d=(float)(hi-lo)*0.001f;
++        for(j=0U;j<2U;j++) {
++            al=p->a[j]+(q->a[j]-p->a[j])*x;ar=p->a[j]+(q->a[j]-p->a[j])*y;
++            A=d*(al+ar)*0.5f;B=d*d*(al+2.0f*ar)/6.0f;
++            iv[j]+=A;
++            if(origin==now)im[j]+=(float)(now-(p->ms+lo))*0.001f*A-B;
++            else im[j]+=(float)((p->ms+lo)-origin)*0.001f*A+B;
++        }
++    }
++    return 1U;
++}
++static uint32_t Obs_Predict(uint32_t now)
++{
++    uint32_t j,delta,age; float first[2],weighted[2],after[2],position[2],u,C,h;
++    if(s_anchors<2U)return ICM_OBS_BAD_WHEEL;
++    delta=s_anchor_ms[1]-s_anchor_ms[0];age=now-s_anchor_ms[1];
++    if(delta<1U || delta>250U || age>200U)return ICM_OBS_WINDOW;
++    if(s_count<2U || (uint32_t)(now-Obs_At(0U)->ms)<(uint32_t)(now-s_anchor_ms[0]) ||
++       Obs_At(s_count-1U)->ms!=now)return ICM_OBS_HISTORY;
++    (void)Obs_Integrals(s_anchor_ms[0],s_anchor_ms[1],s_anchor_ms[0],now,first,weighted);
++    (void)Obs_Integrals(s_anchor_ms[1],now,now,now,after,position);
++    h=(float)age*0.001f;
++    for(j=0U;j<2U;j++) {
++        u=(s_anchor_p[1][j]-s_anchor_p[0][j])/((float)delta*0.001f);
++        C=weighted[j]/((float)delta*0.001f);
++        first[j]=u+C+after[j]; position[j]=s_anchor_p[1][j]+u*h+h*C+position[j];
++        if(!Obs_Finite(first[j]) || !Obs_Finite(position[j]))return ICM_OBS_NUMERIC;
++    }
++    s_value.position_f_mm=position[0];s_value.position_r_mm=position[1];
++    s_value.velocity_f_mm_s=first[0];s_value.velocity_r_mm_s=first[1];
++    return 0U;
++}
++void AppIcmObserver_Step(const IcmRawStatus *raw)
++{
++    AppOdometryBaseline40 wheel; ChassisAutoStatus motion; PowerCommandStatus power;
++    AppHeadingSource yaw; uint32_t i,dt=0U,gap=0U,new_sample,reason=0U,ready;
++    float a[3],w[3],c[3],cc[3],g[3],step,angle,cs,sn,dx,dy,p[2];
++    ready=ChassisAuto_ReadStatus(&motion);Power_ReadCommandStatus(&power);
++    if(ready && motion.active)s_ever_active=1U;
++    if(!s_cal_ready && s_ever_active)s_cal_blocked=1U;
++    new_sample=!s_seen || raw->sample_sequence!=s_last_seq;
++    if(s_seen) {
++        if(raw->skipped_edges!=s_last_skipped || raw->read_races!=s_last_races ||
++           raw->transfer_errors!=s_last_errors)gap=1U;
++        if(new_sample) {
++            dt=raw->sample_tick_ms-s_last_ms;
++            if(raw->sample_sequence-s_last_seq!=1U || raw->edge_sequence-s_last_edge!=1U ||
++               dt<1U || dt>20U)gap=1U;
++        }
++    }
++    s_last_skipped=raw->skipped_edges;s_last_races=raw->read_races;s_last_errors=raw->transfer_errors;
++    if(gap) {
++        Obs_Clear();s_gaps++;if(s_cal_ready)s_gravity_gap=1U;else Obs_CalClear();
++    }
++    if(raw->state!=ICM_RAW_READY || raw->last_error!=ICM_RAW_OK || !raw->fresh ||
++       !raw->sample_sequence || raw->accel_config!=0x38U || raw->gyro_config!=0x28U) {
++        Obs_Clear();s_value.flags=0U;if(!s_cal_ready)Obs_CalClear();
++        Obs_Publish(ICM_OBS_RAW | (s_cal_ready?0U:ICM_OBS_WAIT_CAL));return;
++    }
++    if(!new_sample) {
++        if(gap){s_value.flags=0U;Obs_Publish(ICM_OBS_GAP);}
++        return;
++    }
++    s_seen=1U;s_last_seq=raw->sample_sequence;s_last_edge=raw->edge_sequence;
++    s_last_ms=raw->sample_tick_ms;
++    s_value.sample_sequence=raw->sample_sequence;s_value.estimate_ms=raw->sample_tick_ms;
++    s_value.flags=0U;s_value.hwt_age_ms=s_value.wheel_age_ms=0xFFFFFFFFU;
++    a[0]=-(float)raw->raw_accel[1]*(OBS_G/8192.0f);
++    a[1]=-(float)raw->raw_accel[0]*(OBS_G/8192.0f);
++    a[2]=-(float)raw->raw_accel[2]*(OBS_G/8192.0f);
++    w[0]=-(float)raw->raw_gyro[1]*(1000.0f/32768.0f)*OBS_RAD;
++    w[1]=-(float)raw->raw_gyro[0]*(1000.0f/32768.0f)*OBS_RAD;
++    w[2]=-(float)raw->raw_gyro[2]*(1000.0f/32768.0f)*OBS_RAD;
++    if(!s_cal_ready) {
++        if(!ready || motion.active || power.active || s_cal_blocked)Obs_CalClear();
++        else {
++            s_accel_sum[0]-=raw->raw_accel[1];s_accel_sum[1]-=raw->raw_accel[0];s_accel_sum[2]-=raw->raw_accel[2];
++            s_gyro_sum[0]-=raw->raw_gyro[1];s_gyro_sum[1]-=raw->raw_gyro[0];s_gyro_sum[2]-=raw->raw_gyro[2];
++            s_cal_count++;
++            if(s_cal_count==200U) {
++                for(i=0U;i<3U;i++){s_gravity[i]=(float)s_accel_sum[i]*(OBS_G/1638400.0f);
++                    s_gyro_bias[i]=(float)s_gyro_sum[i]*(1000.0f/6553600.0f)*OBS_RAD;}
++                if(!Obs_Normalize(s_gravity)){Obs_CalClear();Obs_Publish(ICM_OBS_NUMERIC);return;}
++                for(i=0U;i<3U;i++)s_accel_bias[i]=(float)s_accel_sum[i]*(OBS_G/1638400.0f)-s_gravity[i];
++                s_cal_ready=1U;dt=0U;
++            }
++        }
++        if(!s_cal_ready){Obs_Publish(ICM_OBS_WAIT_CAL);return;}
++    }
++    if(dt>=1U && dt<=20U) {
++        step=(float)dt*0.001f;
++        for(i=0U;i<3U;i++)w[i]-=s_gyro_bias[i];
++        Obs_Cross(w,s_gravity,c);Obs_Cross(w,c,cc);
++        for(i=0U;i<3U;i++)g[i]=s_gravity[i]-step*c[i]+0.5f*step*step*cc[i];
++        if(!Obs_Normalize(g)){Obs_Clear();Obs_Publish(ICM_OBS_NUMERIC);return;}
++        memcpy(s_gravity,g,sizeof(g));
++    }
++    AppOdometry_ReadBaseline40(&wheel);
++    s_value.session=motion.session;s_value.reference_ms=wheel.reference_set_ms;
++    if(!ready || !wheel.anchor_valid) {
++        Obs_Clear();Obs_Publish(ICM_OBS_REFERENCE);return;
++    }
++    if(!s_frame_seen || motion.session!=s_session || wheel.reference_set_ms!=s_reference ||
++       wheel.pose.continuity_lost!=s_continuity) {
++        Obs_Clear();s_frame_seen=1U;s_session=motion.session;
++        s_reference=wheel.reference_set_ms;s_continuity=wheel.pose.continuity_lost;
++        reason|=ICM_OBS_REFERENCE;
++    }
++    if(!wheel.pose.valid || (int32_t)(wheel.pose.sample_ms-wheel.reference_set_ms)<0) {
++        Obs_Clear();Obs_Publish(ICM_OBS_BAD_WHEEL);return;
++    }
++    if(!App_HeadingSourceRead(&yaw) || !yaw.healthy || !(yaw.valid_mask&1U)) {
++        Obs_Clear();Obs_Publish(ICM_OBS_HWT);return;
++    }
++    if((uint32_t)(raw->sample_tick_ms-yaw.angle_ms)<100U)s_yaw=yaw;
++    s_value.hwt_age_ms=raw->sample_tick_ms-s_yaw.angle_ms;
++    if(!s_yaw.healthy || !(s_yaw.valid_mask&1U) || s_value.hwt_age_ms>=100U) {
++        Obs_Clear();Obs_Publish(ICM_OBS_HWT);return;
++    }
++    angle=(s_yaw.yaw_deg+wheel.heading_offset_deg-wheel.path_heading_deg)*OBS_RAD;
++    cs=cosf(angle);sn=sinf(angle);
++    for(i=0U;i<3U;i++)a[i]-=s_accel_bias[i]+s_gravity[i];
++    s_value.accel_f_mm_s2=cs*a[0]-sn*a[1];
++    s_value.accel_r_mm_s2=-sn*a[0]-cs*a[1];
++    angle=wheel.path_heading_deg*OBS_RAD;cs=cosf(angle);sn=sinf(angle);
++    dx=wheel.pose.x_mm-wheel.origin_x_mm;dy=wheel.pose.y_mm-wheel.origin_y_mm;
++    p[0]=cs*dx+sn*dy;p[1]=sn*dx-cs*dy;
++    if(!Obs_Finite(p[0]) || !Obs_Finite(p[1]) || !Obs_Finite(s_value.accel_f_mm_s2) ||
++       !Obs_Finite(s_value.accel_r_mm_s2)) {
++        Obs_Clear();Obs_Publish(ICM_OBS_NUMERIC);return;
++    }
++    s_value.flags=ICM_OBS_ACCEL;
++    Obs_Append(raw->sample_tick_ms,s_value.accel_f_mm_s2,s_value.accel_r_mm_s2);
++    if((int32_t)(raw->sample_tick_ms-wheel.pose.sample_ms)<0)reason=ICM_OBS_BAD_WHEEL;
++    else if(!s_anchors || wheel.pose.sample_ms!=s_anchor_ms[s_anchors-1U]) {
++        if(s_anchors && (int32_t)(wheel.pose.sample_ms-s_anchor_ms[s_anchors-1U])<=0) {
++            Obs_Clear();reason=ICM_OBS_BAD_WHEEL;
++        } else {
++            if(s_anchors==2U){s_anchor_ms[0]=s_anchor_ms[1];memcpy(s_anchor_p[0],s_anchor_p[1],sizeof(p));}
++            else s_anchors++;
++            s_anchor_ms[s_anchors-1U]=wheel.pose.sample_ms;
++            memcpy(s_anchor_p[s_anchors-1U],p,sizeof(p));
++        }
++    }
++    if(s_anchors) {
++        s_value.flags|=ICM_OBS_WHEEL;s_value.t0_ms=s_anchor_ms[0];
++        s_value.t1_ms=s_anchor_ms[s_anchors-1U];s_value.wheel_age_ms=raw->sample_tick_ms-s_value.t1_ms;
++        s_value.wheel_f_mm=s_anchor_p[s_anchors-1U][0];s_value.wheel_r_mm=s_anchor_p[s_anchors-1U][1];
++    }
++    if(gap)reason|=ICM_OBS_GAP;
++    if(!reason && (!s_predicted || (uint32_t)(raw->sample_tick_ms-s_last_predict)>=20U)) {
++        s_predicted=1U;s_last_predict=raw->sample_tick_ms;reason=Obs_Predict(raw->sample_tick_ms);
++        Obs_Publish(reason);
++    } else if(reason)Obs_Publish(reason);
++}
++#endif
+diff --git a/3.stm32f407Â∑•Á®ã/CHASSIS/USER/app_icm_observer.h b/3.stm32f407Â∑•Á®ã/CHASSIS/USER/app_icm_observer.h
+new file mode 100644
+--- /dev/null
++++ b/3.stm32f407Â∑•Á®ã/CHASSIS/USER/app_icm_observer.h
+@@ -0,0 +1,32 @@
++#ifndef APP_ICM_OBSERVER_H
++#define APP_ICM_OBSERVER_H
++#include "app_config.h"
++#if APP_BASELINE40_ACTIVE
++#include "icm45686_raw.h"
++#define ICM_OBS_CAL 1U
++#define ICM_OBS_WHEEL 2U
++#define ICM_OBS_GRAVITY_GAP 4U
++#define ICM_OBS_NO_LEVER 8U
++#define ICM_OBS_CAL_BLOCKED 16U
++#define ICM_OBS_ACCEL 32U
++#define ICM_OBS_WAIT_CAL 1U
++#define ICM_OBS_RAW 2U
++#define ICM_OBS_GAP 4U
++#define ICM_OBS_HWT 8U
++#define ICM_OBS_REFERENCE 16U
++#define ICM_OBS_BAD_WHEEL 32U
++#define ICM_OBS_HISTORY 64U
++#define ICM_OBS_WINDOW 128U
++#define ICM_OBS_NUMERIC 256U
++typedef struct {
++    uint32_t sequence, session, valid, reasons, flags;
++    uint32_t estimate_ms, sample_sequence, reference_ms, t0_ms, t1_ms;
++    uint32_t wheel_age_ms, hwt_age_ms, cal_samples, history_samples, gaps;
++    float wheel_f_mm, wheel_r_mm, position_f_mm, position_r_mm;
++    float velocity_f_mm_s, velocity_r_mm_s, accel_f_mm_s2, accel_r_mm_s2;
++} AppIcmObserverStatus;
++/* Existing ICM task is the sole writer. These outputs never grant motion. */
++void AppIcmObserver_Step(const IcmRawStatus *sample);
++void AppIcmObserver_Read(AppIcmObserverStatus *snapshot);
++#endif
++#endif
