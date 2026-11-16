@@ -1,0 +1,1 @@
+Local checkpoint ee16175e. New finite presets14 forward150,15 forward30,16 backward150,17 backward30,18 left150,19 left30. Keep old8..13. Same per-direction profile/scale/forward lateral/left2percent; no new PID or fit. MATLAB before product. Software only; hardware0. R RUN-01 PWR-01 MECH-01/02; E LOC-02/03/05/07 MOT-02/04 RUN-06; Q FIELD-05 OBS-03 QR-04 pending.

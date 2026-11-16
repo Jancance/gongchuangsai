@@ -1,0 +1,84 @@
+{
+  "status": "PASS_WITH_LIMITATIONS",
+  "reviewer": "current model independent reviewer; not6.1-sol high",
+  "checks": 352,
+  "inputs": 2574,
+  "changed_sources": [
+    "3.stm32f407工程\\CHASSIS\\USER\\app_entry.c",
+    "3.stm32f407工程\\CHASSIS\\USER\\app_entry.h",
+    "3.stm32f407工程\\CHASSIS\\USER\\app_motion_runtime.c",
+    "3.stm32f407工程\\CHASSIS\\USER\\app_serial_runtime.c",
+    "3.stm32f407工程\\CHASSIS\\USER\\chassis_auto_test.c",
+    "3.stm32f407工程\\CHASSIS\\USER\\motion_trial40.h"
+  ],
+  "formats": {
+    "app_entry.c": {
+      "original_CRLF": 105,
+      "current_CRLF": 115,
+      "GBK_decodable": true,
+      "current_sha256": "2bfe4e46797b9f1e2090265a41c35e6f37014d5842fb8da9fae85234d15fe7ac"
+    },
+    "app_entry.h": {
+      "original_CRLF": 37,
+      "current_CRLF": 43,
+      "GBK_decodable": true,
+      "current_sha256": "a90db8d4e3e6cd685a5782d7be5df6189ae59f073c72dafb4afea2f7c5da05e8"
+    },
+    "app_motion_runtime.c": {
+      "original_CRLF": 989,
+      "current_CRLF": 990,
+      "GBK_decodable": true,
+      "current_sha256": "1a14f7056ff7d97b13e803678e460375fa87e7674427d2a116ba8f37065d8526"
+    },
+    "app_serial_runtime.c": {
+      "original_CRLF": 929,
+      "current_CRLF": 934,
+      "GBK_decodable": true,
+      "current_sha256": "f081f77965493618a3b87c545e6a8a5acbf9358f688f89a06c072f8847203293"
+    },
+    "motion_trial40.h": {
+      "original_CRLF": 28,
+      "current_CRLF": 27,
+      "GBK_decodable": true,
+      "current_sha256": "4bba27344c68364df6e52da1aa4b767c9a7055c4e367351a6b7ac8e788d9d46e"
+    },
+    "chassis_auto_test.c": {
+      "original_CRLF": 2106,
+      "current_CRLF": 2106,
+      "GBK_decodable": true,
+      "current_sha256": "48070cbb78eeb61acda667f0c0b8ae842b82fda3340b61270d23f499944bc7a8"
+    }
+  },
+  "client_sha256": "472b219602812a50fbc3c90359611d5eb23f28ace7b4b1d5f1270012ba4427ad",
+  "gate_source_sha256": "48070cbb78eeb61acda667f0c0b8ae842b82fda3340b61270d23f499944bc7a8",
+  "independent_gate_cases": {
+    "trim_on": {
+      "assertions": 10596,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "trim_off": {
+      "assertions": 10596,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "inactive": {
+      "assertions": 8421,
+      "failed_line": 0,
+      "status": "PASS"
+    }
+  },
+  "new_axf_sha256": "6b4c42de810137e39ddfe999800b4b96581790efcf4024daeec29f1262de7095",
+  "old_axf_sha256": "3f8fe3bf732637ebe1e9765b5ebf686c7042d536bcfd1898dc163033d260b3cd",
+  "flash_sections": [
+    {
+      "address": 134217728,
+      "size": 117072,
+      "sha256": "4d2abce83bcd55461bd1d10d070d415e9dbdcd382cf28d3d0751d2171dece584"
+    }
+  ],
+  "hardware_accessed": false,
+  "serial_opened": false,
+  "serial_TX": 0,
+  "git_mutation": false
+}

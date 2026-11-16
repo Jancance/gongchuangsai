@@ -17,7 +17,13 @@
 #define DEBUG_PLAN_BACKWARD210_40 11U
 #define DEBUG_PLAN_RIGHT150_40 12U
 #define DEBUG_PLAN_RIGHT30_40 13U
-#define DEBUG_PLAN_MAX DEBUG_PLAN_RIGHT30_40
+#define DEBUG_PLAN_FORWARD150_40 14U
+#define DEBUG_PLAN_FORWARD30_40 15U
+#define DEBUG_PLAN_BACKWARD150_40 16U
+#define DEBUG_PLAN_BACKWARD30_40 17U
+#define DEBUG_PLAN_LEFT150_40 18U
+#define DEBUG_PLAN_LEFT30_40 19U
+#define DEBUG_PLAN_MAX DEBUG_PLAN_LEFT30_40
 uint32_t AppDebugPlan40Allowed(uint32_t id,uint32_t direction,uint32_t rpm,float mm);
 /* 仅复制参数；许可、空闲和源新鲜度由调用适配层锁内检查。 */
 uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count);
