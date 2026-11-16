@@ -1,0 +1,121 @@
+{
+  "status": "PASS_LINK_LAYOUT_AND_STATIC_STACK_CHECK",
+  "records": {
+    "old_right": {
+      "symbols": {
+        "s_baseline40": {
+          "address": 536962648,
+          "size": 64
+        },
+        "g_fusion_capture_b": {
+          "address": 268464896,
+          "size": 33600
+        },
+        "g_fusion_capture_a": {
+          "address": 536965888,
+          "size": 34020
+        }
+      },
+      "static_callgraph": {
+        "AppOdometry_Step": {
+          "frame": 136,
+          "max_depth": 260
+        },
+        "AppIcmObserver_Step": {
+          "frame": 328,
+          "max_depth": 504
+        },
+        "App_CanTask": {
+          "frame": 0,
+          "max_depth": 1024
+        },
+        "App_IcmRawTask": {
+          "frame": 88,
+          "max_depth": 592
+        }
+      }
+    },
+    "nav_on": {
+      "symbols": {
+        "s_baseline40": {
+          "address": 536962632,
+          "size": 64
+        },
+        "s_navigation40": {
+          "address": 536962696,
+          "size": 64
+        },
+        "s_navigation_left_scope": {
+          "address": 268436392,
+          "size": 4
+        },
+        "g_fusion_capture_b": {
+          "address": 268464896,
+          "size": 33600
+        },
+        "g_fusion_capture_a": {
+          "address": 536965888,
+          "size": 34020
+        }
+      },
+      "static_callgraph": {
+        "AppOdometry_Step": {
+          "frame": 152,
+          "max_depth": 276
+        },
+        "AppIcmObserver_Step": {
+          "frame": 328,
+          "max_depth": 504
+        },
+        "App_CanTask": {
+          "frame": 0,
+          "max_depth": 1024
+        },
+        "App_IcmRawTask": {
+          "frame": 88,
+          "max_depth": 592
+        }
+      }
+    },
+    "nav_off": {
+      "symbols": {
+        "s_baseline40": {
+          "address": 536962648,
+          "size": 64
+        },
+        "g_fusion_capture_b": {
+          "address": 268464896,
+          "size": 33600
+        },
+        "g_fusion_capture_a": {
+          "address": 536965888,
+          "size": 34020
+        }
+      },
+      "static_callgraph": {
+        "AppOdometry_Step": {
+          "frame": 136,
+          "max_depth": 260
+        },
+        "AppIcmObserver_Step": {
+          "frame": 328,
+          "max_depth": 504
+        },
+        "App_CanTask": {
+          "frame": 0,
+          "max_depth": 1024
+        },
+        "App_IcmRawTask": {
+          "frame": 88,
+          "max_depth": 592
+        }
+      }
+    }
+  },
+  "additional_nav_static_bytes": 68,
+  "capture_ABI_unchanged": true,
+  "CAN_stack_allocated_bytes": 1536,
+  "ICM_stack_allocated_bytes": 1024,
+  "limits": "Keil static callgraph has unknown function-pointer/cycle caveats; not runtime high-water measurement",
+  "hardware_accessed": false
+}

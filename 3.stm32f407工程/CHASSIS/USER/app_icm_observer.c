@@ -179,7 +179,7 @@ void AppIcmObserver_Step(const IcmRawStatus *raw)
         if(!Obs_Normalize(g)){Obs_Clear();Obs_Publish(ICM_OBS_NUMERIC);return;}
         memcpy(s_gravity,g,sizeof(g));
     }
-    AppOdometry_ReadBaseline40(&wheel);
+    AppOdometry_ReadNavigation40(&wheel);
     s_value.session=motion.session;s_value.reference_ms=wheel.reference_set_ms;
     if(!ready || !wheel.anchor_valid) {
         Obs_Clear();Obs_Publish(ICM_OBS_REFERENCE);return;

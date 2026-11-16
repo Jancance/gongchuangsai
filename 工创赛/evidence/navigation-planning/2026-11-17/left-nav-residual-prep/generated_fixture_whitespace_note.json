@@ -1,0 +1,10 @@
+{
+  "status": "PRESERVED_AS_COMPILED",
+  "files": [
+    "independent-review/app_config.h",
+    "independent-review/app_motion_runtime.h"
+  ],
+  "reason": "Extracted test metadata/types retained additional CR sequences by text writing; ARM compiler consumed these exact artifacts. Preserve compiled evidence and hashes instead of normalizing after tests.",
+  "product_four_file_CRLF_preserved": true,
+  "product_source_whitespace_pass": true
+}

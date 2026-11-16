@@ -9,14 +9,44 @@
 #include "safety.h"
 #include "can.h"
 #include <string.h>
+#if APP_LEFT_NAV_RESIDUAL_ENABLE
+#include "app_motion_runtime.h"
+#include "app_entry.h"
+#include <math.h>
+#endif
 
 #if APP_BASELINE40_ACTIVE
 static AppOdometryBaseline40 s_baseline40;
+#if APP_LEFT_NAV_RESIDUAL_ENABLE
+static AppOdometryBaseline40 s_navigation40;
+static uint32_t s_navigation_left_scope;
+static uint32_t AppOdometry_LeftNavigationScope(const AppOdometryInputs *inputs)
+{
+    const AppMotionObservation *motion=AppMotion_Live();
+    const MotionAction *action=motion->actions;
+    uint32_t id=g_debug_plan_id;
+    if ((*inputs->runtime_route_id) || (*motion->action_count)!=1U ||
+        (id!=DEBUG_PLAN_LEFT210_40 && id!=DEBUG_PLAN_LEFT150_40) ||
+        action->kind!=MOTION_LEFT_DISTANCE || action->base_rpm!=APP_BASELINE40_LEFT_RPM ||
+        action->run_ms || action->reference_mm_s!=0.0f || action->relative_deg!=0.0f) return 0U;
+    return AppDebugPlan40Allowed(id,1U,action->base_rpm,action->distance_mm);
+}
+#endif
 void AppOdometry_ReadBaseline40(AppOdometryBaseline40 *snapshot)
 {
     taskENTER_CRITICAL();
     *snapshot=s_baseline40;
     taskEXIT_CRITICAL();
+}
+void AppOdometry_ReadNavigation40(AppOdometryBaseline40 *snapshot)
+{
+#if APP_LEFT_NAV_RESIDUAL_ENABLE
+    taskENTER_CRITICAL();
+    *snapshot=s_navigation40;
+    taskEXIT_CRITICAL();
+#else
+    AppOdometry_ReadBaseline40(snapshot);
+#endif
 }
 #endif
 
@@ -27,6 +57,9 @@ void AppOdometry_ResetRecords(void)
 {
 #if APP_BASELINE40_ACTIVE
     s_baseline40.anchor_valid=0U;
+#if APP_LEFT_NAV_RESIDUAL_ENABLE
+    s_navigation40.anchor_valid=0U;
+#endif
 #endif
     s_perimeter_odom_started=s_perimeter_completed_seen=0U;
     memset((void*)g_perimeter_records,0,sizeof(g_perimeter_records));
@@ -48,6 +81,10 @@ void AppOdometry_Init(void)
 {
 #if APP_BASELINE40_ACTIVE
     memset(&s_baseline40,0,sizeof(s_baseline40));
+#if APP_LEFT_NAV_RESIDUAL_ENABLE
+    memset(&s_navigation40,0,sizeof(s_navigation40));
+    s_navigation_left_scope=0U;
+#endif
 #endif
     ChassisOdometry_Init(&s_odometry);
 }
@@ -56,6 +93,9 @@ void AppOdometry_Step(const AppOdometryInputs *inputs)
 {
     AppHeadingSource source;
     ChassisOdometrySamples samples;
+#if APP_LEFT_NAV_RESIDUAL_ENABLE
+    float navigation_x,navigation_y;
+#endif
     uint32_t i,now=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
     (void)App_HeadingSourceRead(&source);
 #if APP_IS_DEBUG
@@ -70,13 +110,21 @@ void AppOdometry_Step(const AppOdometryInputs *inputs)
         g_odometry_pose_result=2U;
 #if APP_BASELINE40_ACTIVE
         s_baseline40.anchor_valid=0U;
+#if APP_LEFT_NAV_RESIDUAL_ENABLE
+        s_navigation40.anchor_valid=0U;
+#endif
 #endif
         if(!(*inputs->vm_request) && !power.active && !g_chassis_auto_active &&
            !g_wheel_test_active && !(*inputs->jog_preparing) && source.healthy &&
            App_HeadingFrameAge(&source,now,1U)<ODOM_YAW_MAX_AGE_MS &&
            !g_safety_fault && !g_rtos_fault && !g_can_ctrl_fault_latched)
             if(ChassisOdometry_SetPose(&s_odometry,x,y,heading,source.yaw_deg))
+            {
                 g_odometry_pose_result=1U;
+#if APP_LEFT_NAV_RESIDUAL_ENABLE
+                s_navigation_left_scope=0U;
+#endif
+            }
     }
 #endif
     if(!s_perimeter_odom_started && (*inputs->combined_state)==1U && source.healthy) {
@@ -92,6 +140,9 @@ void AppOdometry_Step(const AppOdometryInputs *inputs)
             s_baseline40.heading_offset_deg=s_odometry.heading_offset;
             s_baseline40.reference_set_ms=now;
             s_baseline40.anchor_valid=1U;
+#if APP_LEFT_NAV_RESIDUAL_ENABLE
+            s_navigation_left_scope=AppOdometry_LeftNavigationScope(inputs);
+#endif
 #endif
         }
     }
@@ -105,10 +156,29 @@ void AppOdometry_Step(const AppOdometryInputs *inputs)
     if(samples.mask!=15U || g_safety_fault || g_rtos_fault || g_can_ctrl_fault_latched)
         ChassisOdometry_Invalidate(&s_odometry);
     ChassisOdometry_Update(&s_odometry,now);
+#if APP_LEFT_NAV_RESIDUAL_ENABLE
+    navigation_x=s_odometry.status.x_mm;navigation_y=s_odometry.status.y_mm;
+    if(s_navigation_left_scope)
+    {
+        float angle=s_baseline40.path_heading_deg*0.01745329251994329577f;
+        float cs=cosf(angle),sn=sinf(angle);
+        float left=-sn*(navigation_x-s_baseline40.origin_x_mm)+
+            cs*(navigation_y-s_baseline40.origin_y_mm);
+        float correction=APP_LEFT_NAV_RESIDUAL_WEIGHT*APP_LEFT_NAV_RESIDUAL_COEFFICIENT*
+            ((left>0.0f)?left:0.0f);
+        navigation_x+=cs*correction;navigation_y+=sn*correction;
+    }
+#endif
     taskENTER_CRITICAL();
-    g_chassis_odometry=s_odometry.status;
 #if APP_BASELINE40_ACTIVE
     s_baseline40.pose=s_odometry.status;
+#endif
+#if APP_LEFT_NAV_RESIDUAL_ENABLE
+    s_navigation40=s_baseline40;
+    s_navigation40.pose.x_mm=navigation_x;s_navigation40.pose.y_mm=navigation_y;
+    g_chassis_odometry=s_navigation40.pose;
+#else
+    g_chassis_odometry=s_odometry.status;
 #endif
     if(s_perimeter_odom_started && !g_perimeter_records[0].captured && s_odometry.status.valid &&
        (*inputs->combined_completed)==0U) {

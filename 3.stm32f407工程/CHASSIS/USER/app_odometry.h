@@ -29,6 +29,7 @@ typedef struct {
 } AppOdometryBaseline40;
 /* CAN owner publishes one complete pose/reference snapshot; no context calls. */
 void AppOdometry_ReadBaseline40(AppOdometryBaseline40 *snapshot);
+void AppOdometry_ReadNavigation40(AppOdometryBaseline40 *snapshot);
 #endif
 void AppOdometry_Init(void);
 void AppOdometry_Step(const AppOdometryInputs *inputs);

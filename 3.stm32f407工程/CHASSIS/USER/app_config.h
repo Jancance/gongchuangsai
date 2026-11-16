@@ -56,6 +56,17 @@
 #error Right40_forward_trim_requires_baseline40_debug
 #endif
 #define APP_RIGHT40_FORWARD_RATIO 0.01f
+#ifndef APP_LEFT_NAV_RESIDUAL_ENABLE
+#define APP_LEFT_NAV_RESIDUAL_ENABLE 0U
+#endif
+#if APP_LEFT_NAV_RESIDUAL_ENABLE > 1U
+#error Left_nav_residual_enable_invalid
+#endif
+#if APP_LEFT_NAV_RESIDUAL_ENABLE && !APP_BASELINE40_ACTIVE
+#error Left_nav_residual_requires_baseline40_debug
+#endif
+#define APP_LEFT_NAV_RESIDUAL_COEFFICIENT 0.0179055385f
+#define APP_LEFT_NAV_RESIDUAL_WEIGHT 0.5f
 #define APP_BASELINE40_MM 2100.0f
 #define APP_BASELINE40_MM_S 400.0f
 #define APP_BASELINE40_ACCEL_MM_S2 150.0f

@@ -1,0 +1,70 @@
+{
+  "status": "PASS_SOURCE_RESOURCE_AND_BUILD_IDENTITIES",
+  "unchanged_sources": {
+    "app_fusion_capture.c": "1bf13ce0b0a4cb6f61bb69e3a69bd760270c30a57b51d2c3cee0fe61ab18f9bb",
+    "app_fusion_capture.h": "58dfea769d10a566baf5fb9c5b4e4e806dc0ed1ad7ebdf478e201a2cae84ffce",
+    "app_motion_runtime.c": "75e2e426f7ac7903588582618fdbf0eeb9980a5557b02e24522ff932305c5f79",
+    "app_serial_runtime.c": "6a2d57a45cea8b386d20455873de4be817eb08e9d5374c5273c7e80f365a4ee0",
+    "chassis_auto_test.c": "29eb62638f58d0f7bcc2e9690660a4238050f9b63743964ce0657c11d9cff8c9",
+    "chassis_kinematics.c": "9f009f558c6c82607dda9319e8abba96c2b3536343a91d3ffaef5dc2073f76aa",
+    "chassis_kinematics.h": "7a6f763a665691b0b7db04efdcd4fa014b1bb31438d810acaf05300a90e9ce89",
+    "chassis_odometry.c": "963f5a4b58d22df734f7fe8061a408423e90936b8e4931b0e46a25d66f59e17a",
+    "chassis_odometry.h": "ca7cbf0fe3620c5f2d7c9fbaa04b2c940e7b60d0f55a2b7292cc025d1a3dc211",
+    "motion_trial40.h": "aaf77f81f2997b208cd596b7a98644fad4b7b54e11acf522c5995b8a45392625"
+  },
+  "encoding": {
+    "app_config.h": {
+      "sha256": "a4fe963a0373d4b4d9c8b1a1dfae62a29872ac16aa41e8a3fe08cb481e0cdea2",
+      "CRLF": 260,
+      "bareLF": 0
+    },
+    "app_odometry.c": {
+      "sha256": "9afbd5bb380e0498554622177384f73385be68f0c507d37839ecf8be5069001f",
+      "CRLF": 196,
+      "bareLF": 0
+    },
+    "app_odometry.h": {
+      "sha256": "bfdd78e9ab9e52ad5ead220f7c1a6fe6878e186f9b085ab1c51207c2340c6a05",
+      "CRLF": 42,
+      "bareLF": 0
+    },
+    "app_icm_observer.c": {
+      "sha256": "4db507517933936d9452e9ee9be61639325facf9a4e122dee0a6845018095217",
+      "CRLF": 240,
+      "bareLF": 0
+    }
+  },
+  "original_six_dirty_unchanged": true,
+  "old_right1_frozen_unchanged": true,
+  "static_added_bytes": 68,
+  "stack_app_odometry_frame_on_off": [
+    152,
+    136
+  ],
+  "stack_icm_frame_on_off": [
+    328,
+    328
+  ],
+  "stack_can_max_on_off": [
+    1024,
+    1024
+  ],
+  "stack_icm_task_max_on_off": [
+    592,
+    592
+  ],
+  "capture_banks": [
+    {
+      "address": "0x20017300",
+      "bytes": 34020
+    },
+    {
+      "address": "0x10007300",
+      "bytes": 33600
+    }
+  ],
+  "builds": {
+    "build_receipt.json": "c51d57e2234ed0af7cf7a6c1128ca90088592f912147e7a16dcd20a875efef82",
+    "build_off_receipt.json": "34b28982c868b4bbc51a86c05a838c05b4587f70d51103aa3855861c4d9cf354"
+  }
+}

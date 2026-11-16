@@ -1,0 +1,24 @@
+{
+  "user_texts": [
+    "后面每个测试3次轮子误差取平均值",
+    "前移后移右移每组3次取平均值的一半",
+    "算了就用此前讨论50%候选",
+    "右1%后面跟前进后退都测"
+  ],
+  "group_by": [
+    "direction",
+    "distance",
+    "firmware",
+    "load",
+    "measurement_reference"
+  ],
+  "trials_per_group": 3,
+  "retain_all_measurements": true,
+  "residual": "measured minus full wheel/HWT model at comparable reference",
+  "gain": 0.5,
+  "statistical_confidence": false,
+  "do_not_apply_to_total_distance": true,
+  "validate_on_new_trials": true,
+  "no_automatic_motion_authorization": true,
+  "hardware_paused": true
+}

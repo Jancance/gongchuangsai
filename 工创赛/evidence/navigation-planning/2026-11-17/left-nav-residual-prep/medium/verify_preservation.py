@@ -1,0 +1,3 @@
+from pathlib import Path
+import hashlib,json
+R=Path('D:/Desktop/工创赛');E=R/'工创赛/evidence/navigation-planning/2026-11-17/left-nav-residual-prep/medium';before=json.loads((E/'input_sha256_before.json').read_text('utf8'));after={p:hashlib.sha256((R/p).read_bytes()).hexdigest() for p in before};changed=[p for p in before if before[p]!=after[p]];(E/'input_sha256_after.json').write_text(json.dumps(after,indent=2),'utf8');result=dict(status='PASS' if not changed else 'FAIL',checked_files=len(before),changed=changed,hardware_accessed=False,product_written=False);(E/'preservation_checks.json').write_text(json.dumps(result,indent=2),'utf8');assert not changed,changed;print(json.dumps(result))
