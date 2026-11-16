@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "assertions": 416,
+  "failure_line": null,
+  "cases": [
+    {
+      "name": "actual_89_8_then_forward",
+      "x_mm": 3.490510940551758,
+      "y_mm": 999.9922485351562,
+      "heading_deg": 89.80000305175781
+    },
+    {
+      "name": "cross_180_then_forward",
+      "x_mm": -98.47993469238281,
+      "y_mm": -17.364681243896484,
+      "heading_deg": -170.0
+    },
+    {
+      "name": "pure_rotation_both_directions",
+      "x_mm": 0.0,
+      "y_mm": 0.0,
+      "heading_deg": -90.0
+    },
+    {
+      "name": "gap_freezes_pose",
+      "x_mm": 2.044262647628784,
+      "y_mm": 0.0,
+      "heading_deg": 0.0
+    },
+    {
+      "name": "explicit_setpose_restores",
+      "x_mm": 100.0,
+      "y_mm": 210.21754455566406,
+      "heading_deg": 90.0
+    }
+  ],
+  "source_sha256": {
+    "3.stm32f407\u5de5\u7a0b\\CHASSIS\\USER\\chassis_odometry.c": "963f5a4b58d22df734f7fe8061a408423e90936b8e4931b0e46a25d66f59e17a",
+    "3.stm32f407\u5de5\u7a0b\\CHASSIS\\USER\\chassis_odometry.h": "ca7cbf0fe3620c5f2d7c9fbaa04b2c940e7b60d0f55a2b7292cc025d1a3dc211",
+    "3.stm32f407\u5de5\u7a0b\\CHASSIS\\USER\\chassis_kinematics.c": "1c6d4ebcd7aa092eef6ecd639549f62c103f53db71320c7e3a134c8fdeb46b5e",
+    "3.stm32f407\u5de5\u7a0b\\CHASSIS\\USER\\chassis_kinematics.h": "d9600c79c9954277f6e824b895799e7da516ac4068957e8759d100b3d1aed320",
+    "3.stm32f407\u5de5\u7a0b\\USER\\vehicle_parameters.h": "3f39461bade02859ec65069c468bfdd7219c86bb04b72eafe4b8675af9e0f94a"
+  },
+  "constants": {
+    "diameter": "77.0f",
+    "track": "212.0f",
+    "base": "206.0f",
+    "scale": "1.02182540f",
+    "forward_direction": "0U, 1U, 0U, 1U"
+  },
+  "source_copy_byte_identical": true,
+  "hardware_accessed": false,
+  "product_modified": false,
+  "limits": "Actual current pure odometry C on ARM emulator; geometry/sign externs stubbed from current source. Not app lifecycle, scheduling, sensor delay, wheel-ground truth or vehicle acceptance."
+}
