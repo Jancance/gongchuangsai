@@ -1,0 +1,5 @@
+{
+  "error": "Forward2 final grid9.075000000000001 exceeded exact supported9.075 by floating roundoff; interp1 returned NaN; initial reported PASS not valid for that replay",
+  "fix": "clamp only final grid query to actual hi, assert below1e-9 and finite outputs; no extrapolation, no tolerance weakening",
+  "product_changed": false
+}
