@@ -10,7 +10,7 @@
       <TargetName>Vehicle_Integrated</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\arm5_compiler</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -185,6 +185,8 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
+            <RvdsCdeCp>0</RvdsCdeCp>
+            <nBranchProt>0</nBranchProt>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -338,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000,APP_MOTOR_OFFLINE_ONLY=0</Define>
               <Undefine></Undefine>
-              <IncludePath>.\CHASSIS\CORE;.\CHASSIS\USER;.\CHASSIS\StdPeriph_Driver\inc;.\CHASSIS\FreeRTOS\include;.\CHASSIS\FreeRTOS\portable\RVDS\ARM_CM4F;.\CHASSIS\HARDWARE\LED;.\CHASSIS\HARDWARE\BUZZER;.\CHASSIS\SYSTEM\USART;.\CHASSIS\HARDWARE\KEY;.\CHASSIS\HARDWARE\POWER;.\CHASSIS\SYSTEM\CAN;.\CHASSIS\SYSTEM\SAFETY;.\CHASSIS\SYSTEM\WATCHDOG;.\CHASSIS\HARDWARE\SCREEN;.\CHASSIS\HARDWARE\SAOMA;.\CHASSIS\HARDWARE\RADAR_SERVO;.\HARDWARE\GRIPPER;.\HARDWARE\CARRIER;.\HARDWARE\DM_CAN2</IncludePath>
+              <IncludePath>.\CHASSIS\CORE;.\CHASSIS\USER;.\CHASSIS\StdPeriph_Driver\inc;.\CHASSIS\FreeRTOS\include;.\CHASSIS\FreeRTOS\portable\RVDS\ARM_CM4F;.\CHASSIS\HARDWARE\LED;.\CHASSIS\HARDWARE\BUZZER;.\CHASSIS\SYSTEM\USART;.\CHASSIS\HARDWARE\KEY;.\CHASSIS\HARDWARE\POWER;.\CHASSIS\SYSTEM\CAN;.\CHASSIS\SYSTEM\SAFETY;.\CHASSIS\SYSTEM\WATCHDOG;.\CHASSIS\HARDWARE\SCREEN;.\CHASSIS\HARDWARE\SAOMA;.\CHASSIS\HARDWARE\RADAR_SERVO;.\CHASSIS\HARDWARE\RADAR_V6;.\CHASSIS\HARDWARE\ICM45686;.\HARDWARE\GRIPPER;.\HARDWARE\CARRIER;.\HARDWARE\DM_CAN2</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -351,7 +353,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <uClangAs>0</uClangAs>
+            <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -922,6 +924,16 @@
               <FilePath>.\CHASSIS\USER\app_can_diagnostics.h</FilePath>
             </File>
             <File>
+              <FileName>app_icm_observer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\USER\app_icm_observer.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_fusion_capture.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\USER\app_fusion_capture.c</FilePath>
+            </File>
+            <File>
               <FileName>app_odometry.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\CHASSIS\USER\app_odometry.c</FilePath>
@@ -1290,6 +1302,16 @@
               <FilePath>.\CHASSIS\HARDWARE\RADAR_SERVO\radar_servo.c</FilePath>
             </File>
             <File>
+              <FileName>icm45686_raw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\HARDWARE\ICM45686\icm45686_raw.c</FilePath>
+            </File>
+            <File>
+              <FileName>icm45686_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\HARDWARE\ICM45686\icm45686_port.c</FilePath>
+            </File>
+            <File>
               <FileName>radar_lift.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\CHASSIS\HARDWARE\RADAR_SERVO\radar_lift.c</FilePath>
@@ -1308,6 +1330,31 @@
               <FileName>stm32f4xx_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\CHASSIS\StdPeriph_Driver\src\stm32f4xx_tim.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Radar_V6_Observer</GroupName>
+          <Files>
+            <File>
+              <FileName>link_protocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\HARDWARE\RADAR_V6\link_protocol.c</FilePath>
+            </File>
+            <File>
+              <FileName>radar_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\HARDWARE\RADAR_V6\radar_client.c</FilePath>
+            </File>
+            <File>
+              <FileName>radar_uart_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\HARDWARE\RADAR_V6\radar_uart_port.c</FilePath>
+            </File>
+            <File>
+              <FileName>radar_observer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\HARDWARE\RADAR_V6\radar_observer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1492,6 +1539,8 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
+            <RvdsCdeCp>0</RvdsCdeCp>
+            <nBranchProt>0</nBranchProt>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -1645,7 +1694,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000,APP_MOTOR_OFFLINE_ONLY=1</Define>
               <Undefine></Undefine>
-              <IncludePath>.\CHASSIS\CORE;.\CHASSIS\USER;.\CHASSIS\StdPeriph_Driver\inc;.\CHASSIS\FreeRTOS\include;.\CHASSIS\FreeRTOS\portable\RVDS\ARM_CM4F;.\CHASSIS\HARDWARE\LED;.\CHASSIS\HARDWARE\BUZZER;.\CHASSIS\SYSTEM\USART;.\CHASSIS\HARDWARE\KEY;.\CHASSIS\HARDWARE\POWER;.\CHASSIS\SYSTEM\CAN;.\CHASSIS\SYSTEM\SAFETY;.\CHASSIS\SYSTEM\WATCHDOG;.\CHASSIS\HARDWARE\SCREEN;.\CHASSIS\HARDWARE\SAOMA;.\CHASSIS\HARDWARE\RADAR_SERVO;.\HARDWARE\GRIPPER;.\HARDWARE\CARRIER;.\HARDWARE\DM_CAN2</IncludePath>
+              <IncludePath>.\CHASSIS\CORE;.\CHASSIS\USER;.\CHASSIS\StdPeriph_Driver\inc;.\CHASSIS\FreeRTOS\include;.\CHASSIS\FreeRTOS\portable\RVDS\ARM_CM4F;.\CHASSIS\HARDWARE\LED;.\CHASSIS\HARDWARE\BUZZER;.\CHASSIS\SYSTEM\USART;.\CHASSIS\HARDWARE\KEY;.\CHASSIS\HARDWARE\POWER;.\CHASSIS\SYSTEM\CAN;.\CHASSIS\SYSTEM\SAFETY;.\CHASSIS\SYSTEM\WATCHDOG;.\CHASSIS\HARDWARE\SCREEN;.\CHASSIS\HARDWARE\SAOMA;.\CHASSIS\HARDWARE\RADAR_SERVO;.\CHASSIS\HARDWARE\RADAR_V6;.\CHASSIS\HARDWARE\ICM45686;.\HARDWARE\GRIPPER;.\HARDWARE\CARRIER;.\HARDWARE\DM_CAN2</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1658,7 +1707,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <uClangAs>0</uClangAs>
+            <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -2229,6 +2278,16 @@
               <FilePath>.\CHASSIS\USER\app_can_diagnostics.h</FilePath>
             </File>
             <File>
+              <FileName>app_icm_observer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\USER\app_icm_observer.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_fusion_capture.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\USER\app_fusion_capture.c</FilePath>
+            </File>
+            <File>
               <FileName>app_odometry.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\CHASSIS\USER\app_odometry.c</FilePath>
@@ -2597,6 +2656,16 @@
               <FilePath>.\CHASSIS\HARDWARE\RADAR_SERVO\radar_servo.c</FilePath>
             </File>
             <File>
+              <FileName>icm45686_raw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\HARDWARE\ICM45686\icm45686_raw.c</FilePath>
+            </File>
+            <File>
+              <FileName>icm45686_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\HARDWARE\ICM45686\icm45686_port.c</FilePath>
+            </File>
+            <File>
               <FileName>radar_lift.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\CHASSIS\HARDWARE\RADAR_SERVO\radar_lift.c</FilePath>
@@ -2615,6 +2684,31 @@
               <FileName>stm32f4xx_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\CHASSIS\StdPeriph_Driver\src\stm32f4xx_tim.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Radar_V6_Observer</GroupName>
+          <Files>
+            <File>
+              <FileName>link_protocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\HARDWARE\RADAR_V6\link_protocol.c</FilePath>
+            </File>
+            <File>
+              <FileName>radar_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\HARDWARE\RADAR_V6\radar_client.c</FilePath>
+            </File>
+            <File>
+              <FileName>radar_uart_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\HARDWARE\RADAR_V6\radar_uart_port.c</FilePath>
+            </File>
+            <File>
+              <FileName>radar_observer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\HARDWARE\RADAR_V6\radar_observer.c</FilePath>
             </File>
           </Files>
         </Group>

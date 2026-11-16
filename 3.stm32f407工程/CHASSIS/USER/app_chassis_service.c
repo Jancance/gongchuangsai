@@ -58,11 +58,15 @@ void AppChassis_CanStep(void)
 #endif
         #if APP_HEADING_SESSION_TEST
                 #if APP_TEST_MODE == 3U
+#if APP_BASELINE40_ACTIVE
+                App_CombinedTestStep();
+#else
                 StartupAxes_Service(g_safety_ready && g_can_test_result==1U,g_can_guard_ready);
                 if(StartupAxes_Holding())DM_CAN2_ModuleService(1U,0U);
                 if(VehicleArm_Busy() || g_vehicle_arm_stop_pending)VehicleArm_Service();
                 if(StartupAxes_Holding())DM_CAN2_ModuleService(1U,0U);
                 if(!VehicleArm_Busy() && (!VEHICLE_INTEGRATED_ENABLE || StartupAxes_Holding()) && g_startup_axes_state!=1U && g_startup_axes_state!=2U && g_startup_axes_state!=3U) App_CombinedTestStep();
+#endif
 #else
                 if (APP_FORWARD_HOLD_TEST != 0U) App_ForwardHoldStep(&s_translation_runtime_inputs);
                 else App_HeadingRuntimeStep(&s_heading_runtime_inputs);
@@ -80,7 +84,7 @@ void AppChassis_CanStep(void)
         #if APP_HEADING_SESSION_TEST
                 if (g_chassis_auto_active == 0U) {
                     App_ComboIdlePoll();
-                    if(StartupAxes_Holding())DM_CAN2_ModuleService(1U,0U);
+                    if(!APP_BASELINE40_ACTIVE && StartupAxes_Holding())DM_CAN2_ModuleService(1U,0U);
                 }
         #endif
                 if (APP_HEADING_SESSION_TEST == 0U)
@@ -143,8 +147,10 @@ if (APP_UART_LINK_TEST != 0U)
 #endif
 #if APP_HEADING_SESSION_TEST
         #if APP_TEST_MODE == 3U
+#if !APP_BASELINE40_ACTIVE
         StartupAxes_Safety(!g_rtos_fault && !g_safety_fault && !g_can_ctrl_fault_latched);
         if(g_startup_axes_state==5U && (g_combined_test.state==1U || g_combined_test.state==2U)) MotionStop();
+#endif
         App_CombinedTestSafety();
 #else
         if (APP_FORWARD_HOLD_TEST != 0U) App_ForwardHoldSafety(&s_translation_runtime_inputs);

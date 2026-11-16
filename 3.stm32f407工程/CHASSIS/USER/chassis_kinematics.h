@@ -2,6 +2,7 @@
 #define CHASSIS_KINEMATICS_H
 
 #include <stdint.h>
+#include "app_config.h"
 
 /* X形45度麦轮；数组按CAN地址1左后、2右后、3左前、4右前 */
 #define CHASSIS_WHEEL_COUNT 4U
@@ -79,6 +80,15 @@ uint32_t Chassis_TranslationHoldCommandsAtSpeed(uint32_t mode, uint32_t base_rpm
 uint32_t Chassis_ProfileCorrectionRpm(uint32_t base_rpm, float requested, float *effective);
 uint32_t Chassis_TranslationProfileCommands(uint32_t mode, uint32_t base_rpm,
     float correction_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+#if APP_BASELINE40_ACTIVE
+uint32_t Chassis_Left40DriftCommands(uint32_t base_rpm,float correction_rpm,
+    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+/* PLAN8-only budget/mix: integer 0.1RPM, heading first, no forward scaling. */
+uint32_t Chassis_Baseline40Budget(uint32_t base_rpm, float heading_rpm,
+    int32_t *heading_deci, int32_t *lateral_limit_deci, float *mm_s_per_deci);
+uint32_t Chassis_Baseline40Commands(uint32_t base_rpm, int32_t heading_deci,
+    int32_t lateral_deci, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+#endif
 /* 候选专用：整数后向分量显式取整，并共享54RPM余量；不发送CAN。 */
 uint32_t Chassis_LeftTrimCommands(uint32_t base_rpm, float correction_rpm,
     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);

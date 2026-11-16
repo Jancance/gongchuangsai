@@ -259,7 +259,8 @@ static uint32_t App_MotionPlanValid(void)
                 action->relative_deg != 0.0f ||
                 !MotionDistanceAllowed(action->kind-MOTION_FORWARD_DISTANCE,action->base_rpm,action->distance_mm)) return 0U;
             if (action->base_rpm>15U &&
-                (MOTION_ACTION_COUNT!=1U || g_debug_plan_id!=DEBUG_PLAN_FORWARD210_20)) return 0U;
+                (MOTION_ACTION_COUNT!=1U || (g_debug_plan_id!=DEBUG_PLAN_FORWARD210_20 &&
+                 !AppDebugPlan40Allowed(g_debug_plan_id,action->kind-MOTION_FORWARD_DISTANCE,action->base_rpm,action->distance_mm)))) return 0U;
             budget += MotionDistanceRunMsFor(action->kind-MOTION_FORWARD_DISTANCE,
                 action->base_rpm,action->distance_mm) + 3500U;
         }
@@ -347,6 +348,7 @@ static uint32_t App_MoveSubmit(uint32_t direction, uint32_t rpm, uint32_t run_ms
 {
     ForwardHoldDebug empty = {0};
     uint32_t accepted = 0U;
+    if(APP_BASELINE40_ACTIVE && !AppDebugPlan40Allowed(g_debug_plan_id,direction,rpm,distance_mm)) return 0U;
     if(route_speed!=0.0f) {
         if(!APP_POSITION_DIAGNOSTIC || !s_motion_list_submit || g_debug_plan_id!=DEBUG_PLAN_DEFAULT ||
             !MotionRoute_ShapeAllowed(direction,rpm,run_ms,distance_mm,route_speed) ||
@@ -356,7 +358,8 @@ static uint32_t App_MoveSubmit(uint32_t direction, uint32_t rpm, uint32_t run_ms
     {
         if (!APP_POSITION_DIAGNOSTIC || !MotionDistanceAllowed(direction,rpm,distance_mm) ||
             run_ms!=MotionDistanceRunMsFor(direction,rpm,distance_mm) || !Chassis_DistanceSelfTest()) return 0U;
-        if (rpm>15U && (g_debug_plan_id!=DEBUG_PLAN_FORWARD210_20 || !s_motion_list_submit)) return 0U;
+        if (rpm>15U && (!s_motion_list_submit || (g_debug_plan_id!=DEBUG_PLAN_FORWARD210_20 &&
+            !AppDebugPlan40Allowed(g_debug_plan_id,direction,rpm,distance_mm)))) return 0U;
     }
     else if (direction > MOVE_RIGHT || rpm < MOTION_MOVE_MIN_RPM ||
         rpm > MOTION_MOVE_MAX_RPM || !run_ms || run_ms > MOTION_MOVE_MAX_MS) return 0U;
@@ -412,6 +415,7 @@ uint32_t TurnStart(uint32_t direction, float angle_deg, uint32_t max_rpm)
     taskEXIT_CRITICAL();
     return accepted;
 }
+static uint32_t App_Baseline40KeepVm(void);
 uint32_t MotionFinish(void)
 {
     ChassisAutoStatus status;
@@ -420,7 +424,10 @@ uint32_t MotionFinish(void)
     (void)ChassisAuto_ReadStatus(&status);
     if (s_motion_session_open && MotionGetState() == MOTION_DONE && status.result == 1U &&
         !status.active && !status.cause && status.rotation_stop_mask == 15U &&
-        ((g_combined_test.state == 0U) || s_motion_list_submit))
+        ((g_combined_test.state == 0U) || s_motion_list_submit ||
+         (g_combined_test.state==3U && App_Baseline40KeepVm() &&
+          g_combined_test.index<MOTION_ACTION_COUNT &&
+          status.session==g_combined_test.session[g_combined_test.index])))
     {
         s_combined_end_ms = (uint32_t)xTaskGetTickCount();
         s_motion_session_open = s_combined_keep_vm = 0U;
@@ -465,7 +472,11 @@ static uint32_t App_CombinedLoadAction(uint32_t index)
     uint32_t accepted, load_cycle, i;
     float planned_offset=0.0f;
     if (index >= MOTION_ACTION_COUNT || !MOTION_ACTION_COUNT || MOTION_ACTION_COUNT > MOTION_ACTION_CAPACITY ||
-        g_debug_plan_id != DEBUG_PLAN_DEFAULT) return 0U;
+        (g_debug_plan_id != DEBUG_PLAN_DEFAULT &&
+         !(MOTION_ACTION_COUNT==1U && index==0U &&
+           s_motion_actions[0].kind>=MOTION_FORWARD_DISTANCE && s_motion_actions[0].kind<=MOTION_BACKWARD_DISTANCE &&
+           AppDebugPlan40Allowed(g_debug_plan_id,s_motion_actions[0].kind-MOTION_FORWARD_DISTANCE,
+               s_motion_actions[0].base_rpm,s_motion_actions[0].distance_mm)))) return 0U;
     load_cycle = HWT101_TimingBegin();
     /* 目标只从起点和动作表生成，不从上一段实际终点重新设定。 */
     for(i=0U;i<=index;i++) planned_offset=HeadingController_WrapDeg(planned_offset+s_motion_actions[i].relative_deg);
@@ -555,6 +566,15 @@ void App_CombinedTestSafety(void)
     else { g_vm_test_request = 0U; }
     taskEXIT_CRITICAL();
 }
+static uint32_t App_Baseline40KeepVm(void)
+{
+#if APP_BASELINE40_ACTIVE
+    return (g_debug_plan_id==DEBUG_PLAN_FORWARD210_40 || g_debug_plan_id==DEBUG_PLAN_LEFT210_40) && s_motion_session_open &&
+        s_combined_keep_vm && g_vm_test_request==1U;
+#else
+    return 0U;
+#endif
+}
 void App_CombinedTestStep(void)
 {
     AppHeadingSource heading;
@@ -573,7 +593,8 @@ void App_CombinedTestStep(void)
         g_vm_test_request=0U;
         taskEXIT_CRITICAL(); return;
     }
-    if (request == 2U && (g_combined_test.state < 3U))
+    if (request == 2U && (g_combined_test.state < 3U ||
+        (g_combined_test.state == 3U && App_Baseline40KeepVm())))
     { App_CombinedTestStop(1U); taskEXIT_CRITICAL(); return; }
     /* 启动请求尚未发给执行器时已取得码：撤销排队，不制造成功路程。 */
     if (VEHICLE_STAGE1_ENABLE && g_stage1_stop_requested &&
@@ -628,7 +649,8 @@ void App_CombinedTestStep(void)
     { App_CombinedTestStop(4U); taskEXIT_CRITICAL(); return; }
     if (g_combined_test.state >= 3U)
     { g_forward_hold.request = g_heading_exec_request = 0U;
-      g_vm_test_request = 0U; taskEXIT_CRITICAL(); return; }
+      if(g_combined_test.state!=3U || !App_Baseline40KeepVm()) g_vm_test_request=0U;
+      taskEXIT_CRITICAL(); return; }
     if (g_combined_test.state == 2U)
     {
         /* 段间取得码后直接释放已停稳会话，不再装载下一段。 */
@@ -672,7 +694,7 @@ void App_CombinedTestStep(void)
         if (phase == HR_FAULT || phase == HR_CANCELLED)
         { App_CombinedTestStop(5U); taskEXIT_CRITICAL(); return; }
         /* 首段实际开始运行后，只展开PA1锁定的一套，不在上电或ARM时动作。 */
-        if (g_combined_test.index==0U && phase==HR_RUN && !g_radar_servo_departure_done &&
+        if (!APP_BASELINE40_ACTIVE && g_combined_test.index==0U && phase==HR_RUN && !g_radar_servo_departure_done &&
             (s_combined_turn || g_forward_hold.run_started))
         {
             if (!RadarServo_OnDeparture(RadarZoneSwitch_Lock()))
@@ -681,21 +703,23 @@ void App_CombinedTestStep(void)
         if (phase == HR_DONE)
         {
             (void)ChassisAuto_ReadStatus(&status); Power_ReadCommandStatus(&power);
-            /* 正常DONE也会置cut_vm请求断电，此处等待关电而非判故障。 */
+            /* 正常完成先核实四轮STOP，再按本趟供电策略收尾。 */
             if (status.active || status.state != CHASSIS_AUTO_DONE ||
                 status.result != 1U || status.cause || status.rotation_stop_mask != 15U ||
                 !(s_combined_turn ? App_HeadingRuntimeOwns(&status) : App_ForwardHoldOwns(&status,&s_translation_runtime_inputs)))
             { App_CombinedTestStop(4U); taskEXIT_CRITICAL(); return; }
-            if (g_stage1_stop_requested || (g_combined_test.index + 1U) == MOTION_ACTION_COUNT)
+            if ((g_stage1_stop_requested || (g_combined_test.index + 1U) == MOTION_ACTION_COUNT) &&
+                !App_Baseline40KeepVm())
             {
                 s_motion_list_submit = 1U;
                 (void)MotionFinish();
                 s_motion_list_submit = 0U;
             }
-            /* 等安全任务确实发出关闭命令，不把VM请求0当作PE2已关。 */
+            /* 保电完成须已实际通电；其余路径仍等待原关闭条件。 */
             if ((!g_stage1_stop_requested && (g_combined_test.index + 1U) < MOTION_ACTION_COUNT) ?
                 ((g_vm_test_request == 1U) && (power.active == 1U) && !status.cut_vm) :
-                (!g_vm_test_request && (!power.active || StartupAxes_Holding())))
+                (App_Baseline40KeepVm() ? (power.active==1U && !status.cut_vm) :
+                 (!g_vm_test_request && (!power.active || StartupAxes_Holding()))))
             {
                 index = g_combined_test.index;
                 g_combined_test.phase[index] = phase;
@@ -928,7 +952,8 @@ void AppMotion_LoadDefaultPlan(void)
 #if APP_HEADING_SESSION_TEST && APP_FORWARD_HOLD_TEST && APP_TEST_MODE == 3U
     if (APP_IS_DEBUG)
     {
-        (void)AppDebugPlan_Load(DEBUG_PLAN_DEFAULT,s_motion_actions,&s_motion_action_count);
+        g_debug_plan_id=APP_BASELINE40_ACTIVE ? DEBUG_PLAN_FORWARD210_40 : DEBUG_PLAN_DEFAULT;
+        (void)AppDebugPlan_Load(g_debug_plan_id,s_motion_actions,&s_motion_action_count);
         g_motion_plan_valid = App_MotionPlanValid();
     }
 #endif

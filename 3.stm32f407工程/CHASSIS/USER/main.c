@@ -1,3 +1,14 @@
+#ifndef ICM45686_SAMPLE_ONLY
+#if APP_BASELINE40_ENABLE
+#define ICM45686_SAMPLE_ONLY 0U
+#else
+#define ICM45686_SAMPLE_ONLY 1U
+#endif
+#endif
+#if (ICM45686_SAMPLE_ONLY != 0U) && (ICM45686_SAMPLE_ONLY != 1U)
+#error ICM45686_SAMPLE_ONLY must be 0 or 1
+#endif
+
 #include "stm32f4xx.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -12,6 +23,7 @@
 #include "route_plan.h"
 extern volatile RouteCheck g_route_check;
 #include "dm_can2.h"
+#include "radar_observer.h"
 #include "radar_servo.h"
 #include "radar_lift.h"
 #include "radar_zone_switch.h"
@@ -24,6 +36,8 @@ extern volatile RouteCheck g_route_check;
 #include "chassis_kinematics.h"
 #include "chassis_auto_test.h"
 #include "app_odometry.h"
+#include "app_icm_observer.h"
+#include "app_fusion_capture.h"
 #include "app_can_diagnostics.h"
 #include "app_heading_runtime.h"
 #include "app_translation_runtime.h"
@@ -51,6 +65,7 @@ extern volatile RouteCheck g_route_check;
 #include "motion_distance_limits.h"
 #include "vehicle_log_config.h"
 #include "field_map.h"
+#include "icm45686_raw.h"
 
 /* 临时静态供电测试：0关闭，1请求开启 */
 volatile uint32_t g_vm_test_request = 0U;
@@ -92,6 +107,10 @@ volatile UBaseType_t g_stack_b_words = 0U;
 volatile size_t g_heap_free_bytes = 0U;
 volatile size_t g_heap_min_bytes = 0U;
 
+#if APP_BASELINE40_ACTIVE && ICM45686_SAMPLE_ONLY
+#error Baseline40_cannot_use_sample_only
+#endif
+#if !ICM45686_SAMPLE_ONLY
 static void App_CanTask(void *argument)
 {
     (void)argument;
@@ -135,7 +154,7 @@ static void App_TestTaskA(void *argument)
     /* FreeRTOS运行后才开启接收中断 */
     if (APP_IS_DEBUG) USART1_EnableReceive();
     /* 启动时只请求发送一次基础平台就绪信息 */
-    SAOMA_EnableReceive();
+    if (!APP_BASELINE40_ACTIVE) SAOMA_EnableReceive();
     HWT101_EnableReceive();
     g_serial_send_ok = App_DebugSendString("F407 FreeRTOS READY\r\n");
     /* 已验收的基础平台就绪后，只请求一次提示音 */
@@ -152,7 +171,7 @@ static void App_TestTaskA(void *argument)
     AppMotion_LoadDefaultPlan();
 #endif
 #endif
-    AppMotion_InitStage1Plan();
+    if (!APP_BASELINE40_ACTIVE) AppMotion_InitStage1Plan();
     while (1)
     {
         g_test_count_a++;
@@ -167,8 +186,9 @@ static void App_TestTaskA(void *argument)
         App_HeadingLiveStep();
         #endif
         /* 一轮最多处理64字节；只有任务A交接并更新屏幕 */
-        SAOMA_Update();
-        if(VEHICLE_INTEGRATED_ENABLE){AppMotion_MissionService();AppMotion_MissionTelemetry();}
+        if (!APP_BASELINE40_ACTIVE) SAOMA_Update();
+        if(APP_BASELINE40_ACTIVE) { /* Dedicated chassis branch; no mission dispatch. */ }
+        else if(VEHICLE_INTEGRATED_ENABLE){AppMotion_MissionService();AppMotion_MissionTelemetry();}
         else if(VEHICLE_STAGE1_ENABLE)
         {
             AppMotion_Stage1Service();
@@ -179,7 +199,7 @@ static void App_TestTaskA(void *argument)
             AppInput_ScanDisplay(screen_start_tick);
         }
 
-        App_StartGateUpdate();
+        if (!APP_BASELINE40_ACTIVE) App_StartGateUpdate();
 #if APP_SERIAL_MOTION_CONTROL
         AppSerial_Telemetry();
 #endif
@@ -278,11 +298,114 @@ static void App_SafetyTask(void *argument)
     }
 }
 
+/* 单次观察入口：结果0待处理/1接受/2拒绝，拒绝后不自动重试。 */
+volatile uint32_t g_radar_app_config_result = 0U;
+volatile uint32_t g_radar_app_calibration_result = 0U;
+volatile uint32_t g_radar_app_scan_result = 0U;
+
+/* 本次上电仅校准一次；成功并收拢后仅扫描、规划一次，不接底盘。 */
+#if !APP_BASELINE40_ACTIVE
+static void App_RadarTask(void *argument)
+{
+    uint32_t calibration_attempted = 0U;
+    uint32_t scan_attempted = 0U;
+    RadarObserverStatus radar_status;
+    /* 用户2026-11-11临时授权measured=1，仅供校准和路径观察；
+     * 8559约70mm为单样本比例候选，未双向标定；等待时间为工程选择，非实测。 */
+    const RadarZone2Config cfg = {
+        1U, 1U, 8559U, 1000U, 500U, 1000U, 60000U, 1U
+    };
+
+    (void)argument;
+    g_radar_app_config_result = RadarObserver_Configure(&cfg) ? 1U : 2U;
+    for (;;)
+    {
+        if (g_radar_app_config_result == 1U)
+        {
+            RadarObserver_Service();
+            RadarObserver_GetStatus(&radar_status);
+            if (radar_status.stage != 99U && radar_status.error == 0U)
+            {
+                if (calibration_attempted == 0U && RadarClient_IsReady())
+                {
+                    /* 仅入队一次；本次人工确认顶部、180度收拢起点。 */
+                    calibration_attempted = 1U;
+                    /* 默认沿用已保存校准；恢复本行则等待本轮校准成功。 */
+                    /* g_radar_app_calibration_result = RadarCalibration_StartZone2() ? 1U : 2U; */
+                }
+                else if (calibration_attempted != 0U && scan_attempted == 0U &&
+                         (g_radar_app_calibration_result == 0U ||
+                          (g_radar_app_calibration_result == 1U &&
+                         radar_status.stage == 8U && radar_status.calibration_complete == 1U)))
+                {
+                    /* 先观察到校准最终成功，再请求本场扫描和0到24路径。 */
+                    scan_attempted = 1U;
+                    g_radar_app_scan_result = RadarObserver_StartZone2(0, 24, true) ? 1U : 2U;
+                }
+            }
+        }
+        vTaskDelay(pdMS_TO_TICKS(2U));
+    }
+}
+
+#endif /* !APP_BASELINE40_ACTIVE */
+#endif /* !ICM45686_SAMPLE_ONLY */
+
+#if ICM45686_RAW_ENABLE || ICM45686_SAMPLE_ONLY || APP_BASELINE40_ACTIVE
+/* 可选RAW观察，不加入整车安全门槛。创建失败仅保留结果。 */
+volatile BaseType_t g_icm_task_create = pdFAIL;
+volatile IcmRawStatus g_icm_raw_status;
+volatile uint32_t g_icm_publish_sequence = 0U;
+volatile UBaseType_t g_icm_stack_words = 0U;
+uint32_t AppIcm_ReadPublished(IcmRawStatus *out, uint32_t *publication)
+{
+    uint32_t before, after, attempt;
+    if (!out || !publication) return 0U;
+    for (attempt=0U;attempt<3U;attempt++) {
+        before=g_icm_publish_sequence;
+        if (before&1U) continue;
+        __DMB();
+        *out=g_icm_raw_status;
+        __DMB();
+        after=g_icm_publish_sequence;
+        if (before==after && !(after&1U)) { *publication=after;return 1U; }
+    }
+    return 0U;
+}
+static void App_IcmRawTask(void *argument)
+{
+    IcmRawStatus snapshot;
+    (void)argument;
+    (void)IcmRaw_Init();
+    for (;;)
+    {
+        IcmRaw_Service();
+        IcmRaw_GetStatus(&snapshot);
+#if APP_BASELINE40_ACTIVE
+        AppIcmObserver_Step(&snapshot);
+        AppFusionCapture_Step(&snapshot);
+#endif
+        g_icm_publish_sequence++;
+        __DMB();
+        g_icm_raw_status = snapshot;
+        __DMB();
+        g_icm_publish_sequence++;
+        g_icm_stack_words = uxTaskGetStackHighWaterMark(NULL);
+        vTaskDelay(pdMS_TO_TICKS(1U));
+    }
+}
+#endif
+
 int main(void)
 {
     /* 更新时钟，将4位优先级全部用于抢占优先级 */
     SystemCoreClockUpdate();
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+#if ICM45686_SAMPLE_ONLY
+    Power_Init();
+    g_icm_task_create = xTaskCreate(App_IcmRawTask, "IcmRaw", 256U, NULL, 3U, NULL);
+    configASSERT(g_icm_task_create == pdPASS);
+#else
     /* 调度启动前初始化状态灯 */
     LED_Init();
     /* 调度前初始化蜂鸣器，保持关闭 */
@@ -295,11 +418,13 @@ int main(void)
     Key_Init();
     /* 初始化PE2，默认关闭VM允许请求 */
     Power_Init();
+#if !APP_BASELINE40_ACTIVE
     StartupPose_Init();
     RadarZoneSwitch_Init();
     (void)RadarServo_Init();
+#endif
     Safety_Init();
-    SAOMA_Init();
+    if (!APP_BASELINE40_ACTIVE) SAOMA_Init();
     HWT101_Init();
     g_watchdog_init_result = Watchdog_Init();
     configASSERT(g_watchdog_init_result == 1U);
@@ -336,6 +461,15 @@ int main(void)
                                       384U, NULL, 3U, NULL);
     configASSERT(g_can_task_create == pdPASS);
     /* 启动后由任务运行 */
+    /* 雷达仅本次校准/扫描/路径观察；上电自动运行一次，不接底盘。 */
+#if !APP_BASELINE40_ACTIVE
+    configASSERT(xTaskCreate(App_RadarTask, "RadarObs", 768U, NULL, 2U, NULL) == pdPASS);
+#endif
+#if ICM45686_RAW_ENABLE || APP_BASELINE40_ACTIVE
+    g_icm_task_create = xTaskCreate(App_IcmRawTask, "IcmRaw", 256U, NULL, 3U, NULL);
+    configASSERT(g_icm_task_create == pdPASS);
+#endif
+#endif /* ICM45686_SAMPLE_ONLY */
     vTaskStartScheduler();
 
     /* 调度器异常返回时记录并停止 */

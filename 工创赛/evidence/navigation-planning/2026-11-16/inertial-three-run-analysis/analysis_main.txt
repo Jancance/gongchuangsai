@@ -1,0 +1,79 @@
+function replay_forward_three
+out=fileparts(mfilename('fullpath'));diary(fullfile(out,'matlab_diary.log'));
+s=struct('status','RUNNING','started',datestr(now,30),'matlab_version',version);
+try
+p=jsondecode(fileread(fullfile(out,'..','..','2026-11-15','fusion-b-mahony-comparison','frozen_plan.json')));
+C=jsondecode(fileread(fullfile(out,'telemetry_context.json')));s.runs={};rows=[];
+f=figure('Visible','off','Color','w','Position',[50 50 1300 950]);
+for run=1:3
+ c=C(run);d=jsondecode(fileread(fullfile(out,'..',c.name,'capture','decoded.json')));
+ assert(d.header.raw_count==numel(d.raw) && d.header.quality==0 && d.header.frozen && ~d.header.truncated);
+ assert(all(diff([d.raw.sample_sequence])==1));
+ [t,a0,q0]=front(d,p,0);[tm,am,qm]=front(d,p,.5);assert(isequal(t,tm));
+ [E,w,wi]=prepare_wheel(d,t,p);
+ [x0,fd]=filter_intervals(t,a0,E,p.history_s,p.tau_s,[0 0]);
+ [xm,fm]=filter_intervals(t,am,E,p.history_s,p.tau_s,[0 0]);
+ assert(fm.too_old==0 && fm.future==0 && fm.duplicate==0 && fm.STOP_zero_observations==0);
+ assert(all(isfinite([xm(:);x0(:)])));
+ wheelPos=interp1(w.time,w.position(:,1),t,'linear',NaN)*1000;
+ strict=find(t<=w.time(end)+1e-10,1,'last');tail=t>=t(end)-.5-1e-10;
+ rawEnd=(double(d.raw(end).service_ms)-double(d.header.trigger_ms))/1000;
+ hwtObserved=(double(d.hwt(end).observed_ms)-double(d.header.trigger_ms))/1000;
+ hwtSource=(double(d.hwt(end).angle_ms)-double(d.header.trigger_ms))/1000;
+ stop=(double(d.header.stop_ms)-double(d.header.trigger_ms))/1000;
+ ends=zeros(1,4);
+ for j=1:4
+  ww=d.wheel(strcmp({d.wheel.source},'position') & [d.wheel.valid] & [d.wheel.wheel]==j-1);
+  ends(j)=(double(ww(end).source_ms)-double(d.header.trigger_ms))/1000;
+ end
+ r=struct('name',c.name,'raw_count',numel(d.raw),'grid_count',numel(t),'pre_samples',qm.pre_samples,...
+  'stop_request_s',stop,'raw_end_s',rawEnd,'hwt_observed_end_s',hwtObserved,'hwt_source_end_s',hwtSource,...
+  'wheel_source_end_s',ends,'wheel_common_bracket_end_s',w.time(end),'replay_end_s',t(end),...
+  'serial_DONE_s',c.done_s,'serial_persistent_reported_zero_rpm_s',c.persistent_reported_zero_rpm_s,...
+  'BM_end_F_mm',1000*xm(end,1),'B0_end_F_mm',1000*x0(end,1),...
+  'BM_end_vF_mm_s',1000*xm(end,3),'B0_end_vF_mm_s',1000*x0(end,3),...
+  'BM_tail0p5_dF_mm',1000*(xm(end,1)-xm(find(tail,1),1)),...
+  'BM_tail0p5_vF_min_max_mm_s',1000*[min(xm(tail,3)) max(xm(tail,3))],...
+  'B0_tail0p5_dF_mm',1000*(x0(end,1)-x0(find(tail,1),1)),...
+  'strict_common_grid_end_s',t(strict),'strict_common_BM_F_mm',1000*xm(strict,1),...
+  'strict_common_BM_vF_mm_s',1000*xm(strict,3),'strict_common_B0_F_mm',1000*x0(strict,1),...
+  'strict_common_wheel_F_mm',wheelPos(strict),'filter_BM',fm,'filter_B0',fd,'wheel',wi,...
+  'ground_truth_synchronized',false,'physical_standstill_verified',false,'ruler_mm',c.ruler_mm,...
+  'ruler_uncertainty_mm',[],'BM_minus_ruler_apparent_mm',[],'B0_minus_ruler_apparent_mm',[]);
+ if ~isempty(c.ruler_mm),r.BM_minus_ruler_apparent_mm=1000*xm(end,1)-c.ruler_mm;r.B0_minus_ruler_apparent_mm=1000*x0(end,1)-c.ruler_mm;end
+ % Pure encoder average-forward travel; separate from HWT path and BM.
+ points=[t(strict) t(end) rawEnd c.done_s];means=zeros(size(points));endpointSource=zeros(1,4);
+ for j=1:4
+  P=c.positions(j);tt=P.time_s(:);xx=P.counts(:)*p.motor_forward_sign(j)*pi*p.wheel_diameter_mm/p.counts_per_rev*p.forward_scale;
+  assert(all(diff(tt)>0));means=means+interp1(tt,xx,points,'linear',NaN)/4;
+  endpointSource(j)=tt(end);
+ end
+ r.encoder_only=struct('description','Average signed wheel travel with frozen forward scale, bracketed source-time positions; no slip or path-heading guarantee; not BM extension',...
+  'points_s',points,'average_forward_absolute_mm',means,...
+  'strict_common_to_DONE_delta_mm',means(4)-means(1),'replay_end_to_DONE_delta_mm',means(4)-means(2),...
+  'RAW_end_to_DONE_delta_mm',means(4)-means(3),'per_wheel_source_end_s',endpointSource);
+ after=t>=stop;r.BM_stop_to_end_dF_mm=1000*(xm(end,1)-xm(find(after,1),1));
+ r.BM_stop_to_end_vF_min_max_mm_s=1000*[min(xm(after,3)) max(xm(after,3))];
+ r.hwt_yaw_BM_minus_B0_max_rad=max(abs(atan2(sin(qm.yaw_rad-q0.yaw_rad),cos(qm.yaw_rad-q0.yaw_rad))));
+ s.runs{run}=r;
+ ruler=NaN;apparent=NaN;if ~isempty(c.ruler_mm),ruler=c.ruler_mm;apparent=r.BM_minus_ruler_apparent_mm;end
+ rows=[rows;run,numel(d.raw),t(end),r.BM_end_F_mm,r.BM_end_vF_mm_s,ruler,apparent,r.B0_end_F_mm,c.done_s];
+ T=array2table([t,1000*xm(:,1),1000*xm(:,3),1000*x0(:,1),1000*x0(:,3),wheelPos,am(:,1),a0(:,1)],...
+  'VariableNames',{'time_s','BM_F_mm','BM_vF_mm_s','B0_F_mm','B0_vF_mm_s','wheel_F_mm','BM_aF_m_s2','B0_aF_m_s2'});
+ writetable(T,fullfile(out,sprintf('run%d_forward.csv',run)));
+ subplot(3,2,2*run-1);plot(t,1000*xm(:,1),t,1000*x0(:,1));hold on;
+ if ~isempty(c.ruler_mm),plot([0 t(end)],[c.ruler_mm c.ruler_mm],'k:');end
+ xline(stop,'--','STOP request');grid on;title(sprintf('run%d forward published position',run));ylabel('mm');legend('BM','B0');
+ subplot(3,2,2*run);plot(t,1000*xm(:,3),t,1000*x0(:,3));xline(stop,'--','STOP request');grid on;title('Forward velocity: RAW/HWT window ends before DONE');ylabel('mm/s');legend('BM','B0');xlabel('s');
+ fprintf('run%d raw=%d replay_end=%.3f BM_F=%.9f BM_vF=%.9f B0_F=%.9f DONE=%.3f\n',run,numel(d.raw),t(end),r.BM_end_F_mm,r.BM_end_vF_mm_s,r.B0_end_F_mm,c.done_s);
+end
+writetable(array2table(rows,'VariableNames',{'run','raw_count','replay_end_s','BM_F_mm','BM_vF_mm_s','ruler_mm','BM_minus_ruler_apparent_mm','B0_F_mm','serial_DONE_s'}),fullfile(out,'summary.csv'));
+print(f,fullfile(out,'forward_comparison.png'),'-dpng','-r120');close(f);
+s.status='PASS_WITH_LIMITATIONS';s.finished=datestr(now,30);
+s.interpretation='Replay completed, not an accuracy PASS. Endpoint ruler comparisons are apparent differences across unverified times. No post-capture inertial extrapolation, no STOP zero velocity, no endpoint fit, no lateral analysis.';
+write_json(fullfile(out,'summary.json'),s);fprintf('FORWARD_THREE_MATLAB_PASS_WITH_LIMITATIONS\n');
+catch ex
+ s.status='FAIL';s.error=getReport(ex,'extended','hyperlinks','off');write_json(fullfile(out,'summary.json'),s);diary off;rethrow(ex);
+end
+diary off;
+end

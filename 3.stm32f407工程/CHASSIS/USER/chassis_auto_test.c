@@ -1419,7 +1419,14 @@ void ChassisAuto_CanStep(void)
 #endif
         if (((s_forward_hold == 1U) ?
 #if APP_DISTANCE_SCURVE_ACTIVE
-            (s_profile_active ? ((s_route_trial && s_translation_mode==1U && APP_LEFT_TRIM_ACTIVE) ?
+            (s_profile_active ? (
+#if APP_BASELINE40_ACTIVE && APP_LEFT40_DRIFT_TRIM_ENABLE
+                (g_debug_plan_id==DEBUG_PLAN_LEFT210_40 &&
+                s_translation_mode==1U && !s_route_trial &&
+                AppDebugPlan40Allowed(g_debug_plan_id,s_translation_mode,s_distance_max_rpm,s_distance_target_mm)) ?
+                Chassis_Left40DriftCommands(s_translation_base_rpm,effective_heading,s_commands[2]) :
+#endif
+                (s_route_trial && s_translation_mode==1U && APP_LEFT_TRIM_ACTIVE) ?
                 Chassis_LeftTrimCommands(s_translation_base_rpm,effective_heading,s_commands[2]) :
                 Chassis_TranslationProfileCommands(s_translation_mode,
                 s_translation_base_rpm,effective_heading,s_commands[2])) :
@@ -1947,7 +1954,7 @@ uint32_t ChassisAuto_BeginPreparedTranslation(const ChassisAutoPreparedTranslati
             s_translation_base_rpm = s_translation_applied_base = prepared->base_rpm;
             s_translation_run_ms = prepared->run_ms;s_route_trial=prepared->route_reference_mm_s!=0.0f;
 #if APP_BASELINE40_ACTIVE
-            s_lateral_enabled=g_debug_plan_id==DEBUG_PLAN_FORWARD210_40 &&
+            s_lateral_enabled=g_debug_plan_id==DEBUG_PLAN_FORWARD210_40 && prepared->motion_mode==0U &&
                 MotionTrial40Allowed(prepared->motion_mode,prepared->base_rpm,prepared->distance_mm) &&
                 prepared->route_reference_mm_s==0.0f && prepared->profile.valid==1U &&
                 prepared->run_ms==APP_BASELINE40_RUN_MS && (*AppMotion_Live()->action_count)==1U;

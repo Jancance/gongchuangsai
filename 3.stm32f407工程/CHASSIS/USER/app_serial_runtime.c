@@ -48,6 +48,8 @@ extern volatile RouteCheck g_route_check;
 #include "motion_distance_limits.h"
 #include "vehicle_log_config.h"
 #include "field_map.h"
+#include "icm45686_raw.h"
+#include "app_icm_observer.h"
 
 extern volatile uint32_t g_vm_test_request;
 extern volatile UBaseType_t g_rx_stack_words,g_can_task_stack_words;
@@ -154,6 +156,19 @@ uint32_t App_SerialIdleReady(uint32_t now)
         (heading.rate_dps >= -3.0f && heading.rate_dps <= 3.0f)) ? 1U : 0U;
 #endif
 }
+#if APP_BASELINE40_ACTIVE
+static uint32_t App_SerialPoweredDone(const PowerCommandStatus *power,const ChassisAutoStatus *status)
+{
+    return (g_debug_plan_id==DEBUG_PLAN_FORWARD210_40 || g_debug_plan_id==DEBUG_PLAN_LEFT210_40) && g_combined_test.state==3U &&
+        !g_combined_test.cause && g_combined_test.completed==*AppMotion_Live()->action_count &&
+        g_vm_test_request==1U && power->active==1U && *AppMotion_Live()->session_open &&
+        g_combined_test.index<*AppMotion_Live()->action_count &&
+        status->session==g_combined_test.session[g_combined_test.index] &&
+        !status->active && status->result==1U && !status->cause && !status->cut_vm &&
+        status->state==CHASSIS_AUTO_DONE && status->rotation_stop_mask==15U &&
+        !g_can_ctrl_fault_latched && !g_rtos_fault && !g_safety_fault;
+}
+#endif
 /* 调用者持锁；只容忍成功终态的晚到KEEP，不续期、不重新发车。 */
 uint32_t App_SerialCompletedStopped(void)
 {
@@ -167,6 +182,9 @@ uint32_t App_SerialCompletedStopped(void)
     if (g_forward_hold.phase != HR_DONE || g_forward_hold.trip) return 0U;
 #endif
     Power_ReadCommandStatus(&power); (void)ChassisAuto_ReadStatus(&status);
+#if APP_BASELINE40_ACTIVE
+    if(App_SerialPoweredDone(&power,&status))return 1U;
+#endif
     return (!g_vm_test_request && !power.active && !status.active &&
         status.result == 1U && !status.cause && status.rotation_stop_mask == 15U &&
         !g_can_ctrl_fault_latched && !g_rtos_fault && !g_safety_fault) ? 1U : 0U;
@@ -181,7 +199,13 @@ static void App_SerialMotionCommand(char *line)
     if(source_parameter_entry)return;
 
     if(FieldMap_LocalMode()) { App_SerialReject(9U);return; }
-    if(strncmp(line,"RQ1,",4U)==0) { App_RuntimeRouteCommand(line);return; }
+    if(strncmp(line,"RQ1,",4U)==0) {
+#if APP_BASELINE40_ACTIVE
+        App_SerialReject(6U);return;
+#else
+        App_RuntimeRouteCommand(line);return;
+#endif
+    }
     char *last = strrchr(line, ',');
     const char *p;
     uint32_t seq, tick, crc = 0U, i, digit, now;
@@ -229,7 +253,9 @@ static void App_SerialMotionCommand(char *line)
         if ((s_serial_tx_seq == 0U) || ((uint32_t)(s_serial_tx_seq - 1U - seq) > 5U) ||
             ((uint32_t)(now - tick) >= 500U)) App_SerialReject(5U);
         else if ((g_serial_motion_state != 0U) || !App_SerialIdleReady(now) ||
-                 !AppRuntimeRoute_Live()->ready || AppRuntimeRoute_Live()->staging || AppRuntimeRoute_Live()->consumed) App_SerialReject(6U);
+                 (!APP_BASELINE40_ACTIVE && (!AppRuntimeRoute_Live()->ready || AppRuntimeRoute_Live()->staging || AppRuntimeRoute_Live()->consumed)) ||
+                 (APP_BASELINE40_ACTIVE && ((g_debug_plan_id!=DEBUG_PLAN_FORWARD210_40 && g_debug_plan_id!=DEBUG_PLAN_LEFT210_40) ||
+                  *AppMotion_Live()->action_count!=1U))) App_SerialReject(6U);
         else
         {
             s_serial_token_seq = seq; s_serial_token_tick = tick; s_serial_arm_ms = now;
@@ -240,7 +266,7 @@ static void App_SerialMotionCommand(char *line)
     else if ((seq != s_serial_token_seq) || (tick != s_serial_token_tick)) App_SerialReject(5U);
     else if (strcmp(p, "START") == 0)
     {
-#if APP_TEST_MODE == 3U
+#if APP_TEST_MODE == 3U && !APP_BASELINE40_ACTIVE
         App_SerialReject(6U);
 #else
         if (g_serial_motion_state == 2U) { /* 重复帧只确认，不重新启动或续期。 */ }
@@ -425,6 +451,94 @@ static void App_OdometryTelemetry(void)
 #endif
 /* PM1与TM1错开至少40ms，静态缓冲不叠加TaskA栈；忙时丢诊断帧。 */
 /* WF1：补齐系统辨识需要的应答目标/真实轮速/样本时刻；低优先级观察帧。 */
+#if APP_BASELINE40_ACTIVE
+/* IO1 is diagnostic only; no retries or commands. Millimetres scale by 1000. */
+static int32_t App_ObserverMilli(float value)
+{
+    if(!(value>=-2000000.0f && value<=2000000.0f))return (-2147483647L-1L);
+    return (int32_t)(value*1000.0f);
+}
+static void App_IcmObserverTelemetry(void)
+{
+    static char frame[384];static uint32_t last,sent,sequence,dropped;
+    AppIcmObserverStatus o; int32_t values[27];
+    uint32_t now=(uint32_t)xTaskGetTickCount(),phase=now-s_serial_tx_tick,i,used=4U;
+    int n;uint16_t crc;
+    if((sent && (uint32_t)(now-last)<500U) || !App_SerialDiagnosticWindow(now,40U) || phase>55U)return;
+    last=now;sent=1U; /* Attempt budget, including a busy transmitter. */
+    AppIcmObserver_Read(&o);
+    values[0]=(int32_t)sequence++;values[1]=(int32_t)now;values[2]=1;
+    values[3]=(int32_t)o.sequence;values[4]=(int32_t)o.session;
+    values[5]=(int32_t)o.valid;values[6]=(int32_t)o.reasons;values[7]=(int32_t)o.flags;
+    values[8]=(int32_t)o.estimate_ms;values[9]=(int32_t)o.sample_sequence;
+    values[10]=(int32_t)o.reference_ms;values[11]=(int32_t)o.t0_ms;values[12]=(int32_t)o.t1_ms;
+    values[13]=(int32_t)o.wheel_age_ms;values[14]=(int32_t)o.hwt_age_ms;
+    values[15]=(int32_t)o.cal_samples;values[16]=(int32_t)o.history_samples;
+    values[17]=(int32_t)o.gaps;
+    for(i=18U;i<26U;i++)values[i]=(-2147483647L-1L);
+    if(o.flags&ICM_OBS_WHEEL){values[18]=App_ObserverMilli(o.wheel_f_mm);values[19]=App_ObserverMilli(o.wheel_r_mm);}
+    if(o.valid){values[20]=App_ObserverMilli(o.position_f_mm);values[21]=App_ObserverMilli(o.position_r_mm);
+        values[22]=App_ObserverMilli(o.velocity_f_mm_s);values[23]=App_ObserverMilli(o.velocity_r_mm_s);}
+    if(o.flags&ICM_OBS_ACCEL){values[24]=App_ObserverMilli(o.accel_f_mm_s2);values[25]=App_ObserverMilli(o.accel_r_mm_s2);}
+    values[26]=(int32_t)dropped;memcpy(frame,"IO1,",4U);
+    for(i=0U;i<27U;i++) {
+        if(i<18U || i==26U)n=snprintf(frame+used,sizeof(frame)-used,"%lu,",(unsigned long)(uint32_t)values[i]);
+        else n=snprintf(frame+used,sizeof(frame)-used,"%ld,",(long)values[i]);
+        if(n<0 || (uint32_t)n>=sizeof(frame)-used){dropped++;return;}used+=(uint32_t)n;
+    }
+    crc=App_SerialCrc(frame,used);n=snprintf(frame+used,sizeof(frame)-used,"%04X\r\n",crc);
+    if(n<0 || (uint32_t)n>=sizeof(frame)-used || !App_DebugSendString(frame)){dropped++;return;}
+}
+/* IR1: software association times; DWT cycles are not sensor ADC timestamps. */
+static void App_IcmRawTelemetry(void)
+{
+    static char frame[512];static IcmRawStatus sample;
+    static uint32_t sequence,last,last_sample,dropped,seen;
+    uint32_t now=(uint32_t)xTaskGetTickCount(),publication,used,i;
+    uint32_t words[24];int n;uint16_t crc;
+    if ((uint32_t)(now-last)<200U || !App_SerialDiagnosticWindow(now,70U)) return;
+    if (!AppIcm_ReadPublished(&sample,&publication) || !sample.sample_sequence ||
+        (seen && sample.sample_sequence==last_sample)) return;
+    now=(uint32_t)xTaskGetTickCount();
+    sample.age_ms=now-sample.sample_tick_ms;
+    sample.fresh=sample.fresh && sample.age_ms<=20U;
+    words[0]=sequence++;words[1]=now;words[2]=publication;words[3]=sample.sample_sequence;
+    words[4]=sample.state;words[5]=sample.last_error;words[6]=sample.failed_reg;words[7]=sample.whoami;
+    words[8]=sample.accel_config;words[9]=sample.gyro_config;words[10]=sample.big_endian;
+    words[11]=sample.edge_sequence;words[12]=sample.edge_cycle;
+    words[13]=sample.read_start_cycle;words[14]=sample.read_end_cycle;
+    words[15]=sample.sample_tick_ms;words[16]=sample.age_ms;words[17]=sample.fresh;
+    words[18]=sample.transfer_errors;words[19]=sample.skipped_edges;words[20]=sample.read_races;
+    words[21]=dropped;words[22]=seen ? sample.sample_sequence-last_sample-1U : 0U;
+    words[23]=SystemCoreClock;
+    memcpy(frame,"IR1,",4U);used=4U;
+    for (i=0U;i<31U;i++) {
+        if (i<24U) n=snprintf(frame+used,sizeof(frame)-used,"%lu,",(unsigned long)words[i]);
+        else n=snprintf(frame+used,sizeof(frame)-used,"%ld,",(long)(i<27U ? sample.raw_accel[i-24U] :
+            (i<30U ? sample.raw_gyro[i-27U] : sample.raw_temperature)));
+        if (n<0 || (uint32_t)n>=sizeof(frame)-used) {dropped++;return;}used+=(uint32_t)n;
+    }
+    crc=App_SerialCrc(frame,used);n=snprintf(frame+used,sizeof(frame)-used,"%04X\r\n",crc);
+    if (n<0 || (uint32_t)n>=sizeof(frame)-used || !App_DebugSendString(frame)) {dropped++;return;}
+    last=now;last_sample=sample.sample_sequence;seen=1U;
+}
+static void App_Baseline40Telemetry(void)
+{
+    static char frame[160];static uint32_t last,sent,sequence;
+    uint32_t now=(uint32_t)xTaskGetTickCount();int n;uint16_t crc;
+    if ((sent && now-last<1000U) || !App_SerialDiagnosticWindow(now,40U)) return;
+    n=snprintf(frame,sizeof(frame),"BF1,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,",
+        (unsigned long)sequence++,(unsigned long)now,(unsigned long)g_debug_plan_id,
+        (unsigned long)(g_debug_plan_id==DEBUG_PLAN_LEFT210_40 ? APP_BASELINE40_LEFT_RPM : APP_BASELINE40_RPM),(unsigned long)APP_BASELINE40_MM,(unsigned long)APP_BASELINE40_MM_S,
+        (unsigned long)APP_BASELINE40_ACCEL_MM_S2,(unsigned long)APP_BASELINE40_JERK_MM_S3,
+        (unsigned long)APP_BASELINE40_FEEDBACK_RPM,(unsigned long)APP_BASELINE40_RUN_MS);
+    if (n<0 || (uint32_t)n>=sizeof(frame)) return;
+    crc=App_SerialCrc(frame,(uint32_t)n);
+    if (snprintf(frame+n,sizeof(frame)-(uint32_t)n,"%04X\r\n",crc)<0) return;
+    if (App_DebugSendString(frame)) {last=now;sent=1U;}
+}
+#endif
+
 static void App_WheelLogTelemetry(void)
 {
 #if VEHICLE_WHEEL_LOG_ENABLE
@@ -435,7 +549,10 @@ static void App_WheelLogTelemetry(void)
     if (!seen_active || (!g_chassis_auto_active && (uint32_t)(now-last_active)>1000U) ||
         (uint32_t)(now-last)<VEHICLE_WHEEL_LOG_PERIOD_MS ||
         !App_SerialDiagnosticWindow(now,40U)) return;
-    last=now;(void)ChassisAuto_ReadWheelLog(&sample);
+#if !APP_BASELINE40_ACTIVE
+    last=now;
+#endif
+    (void)ChassisAuto_ReadWheelLog(&sample);
     count=snprintf(frame,sizeof(frame),"WF1,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,",
         (unsigned long)sequence++,(unsigned long)sample.tick_ms,(unsigned long)sample.session,
         (unsigned long)sample.active,(unsigned long)sample.state,(unsigned long)sample.dry_run,
@@ -451,6 +568,9 @@ static void App_WheelLogTelemetry(void)
     }
     crc=App_SerialCrc(frame,used);count=snprintf(frame+used,sizeof(frame)-used,"%04X\r\n",crc);
     if(count<0 || (uint32_t)count>=sizeof(frame)-used || !App_DebugSendString(frame)) dropped++;
+#if APP_BASELINE40_ACTIVE
+    else last=now;
+#endif
 #endif
 }
 
@@ -464,7 +584,9 @@ static void App_PositionTelemetry(void)
     uint16_t crc;
     if ((uint32_t)(now - last) < 200U ||
         !App_SerialDiagnosticWindow(now, 40U)) return;
+#if !APP_BASELINE40_ACTIVE
     last = now;
+#endif
     (void)ChassisAuto_ReadPositions(&position);
     count = snprintf(frame, sizeof(frame), "PM1,%lu,%lu,%lu,%lu,%lu,",
         (unsigned long)now, (unsigned long)position.session,
@@ -484,7 +606,11 @@ static void App_PositionTelemetry(void)
     crc = App_SerialCrc(frame, used);
     count = snprintf(frame + used, sizeof(frame) - used, "%04X\r\n", crc);
     if (count < 0 || (uint32_t)count >= sizeof(frame) - used) return;
+#if APP_BASELINE40_ACTIVE
+    if (App_DebugSendString(frame)) last=now;
+#else
     (void)App_DebugSendString(frame);
+#endif
 }
 #endif
 
@@ -570,8 +696,17 @@ static void App_ChassisLoadTelemetry(void)
     uint32_t now=xTaskGetTickCount(),n,i,j,used;int count;uint16_t crc;
     const uint8_t *bytes;static const char hex[]="0123456789ABCDEF";
     Power_ReadCommandStatus(&power);
+#if APP_BASELINE40_ACTIVE
+    if(g_chassis_auto_active || (uint32_t)(now-last)<70U || !App_SerialDiagnosticWindow(now,40U))return;
+    if(power.active || g_vm_test_request) {
+        ChassisAutoStatus status;
+        (void)ChassisAuto_ReadStatus(&status);
+        if(!App_SerialPoweredDone(&power,&status))return;
+    }
+#else
     if(g_chassis_auto_active || power.active || g_vm_test_request || (uint32_t)(now-last)<70U ||
        !App_SerialDiagnosticWindow(now,40U))return;
+#endif
     if(!ChassisLoad_Read(0U,&record,&stats))return;
     if(session!=stats.session){session=stats.session;cursor=0U;}
     if(cursor>=stats.count)return;
@@ -665,6 +800,8 @@ static void App_SerialMotionTelemetry(void)
     values[38] = (int32_t)((g_combined_test.state == 0U) ?
         ((AppMotion_Live()->actions[0].kind == MOTION_TURN) ? 15U : AppMotion_Live()->actions[0].base_rpm) :
         ((*AppMotion_Live()->turn) ? 15U : (*AppMotion_Live()->base_rpm)));
+    if (APP_BASELINE40_ACTIVE && (g_debug_plan_id==DEBUG_PLAN_FORWARD210_40 || g_debug_plan_id==DEBUG_PLAN_LEFT210_40))
+        values[39]=(int32_t)APP_BASELINE40_FEEDBACK_RPM;
     if (APP_SPEED20_TRIAL_ACTIVE && g_debug_plan_id==DEBUG_PLAN_FORWARD210_20)
         values[39]=(int32_t)APP_SPEED20_FEEDBACK_RPM;
     if(APP_ROUTE_SPEED_TRIAL_ACTIVE && g_debug_plan_id==DEBUG_PLAN_DEFAULT)
@@ -699,6 +836,8 @@ static void App_SerialMotionTelemetry(void)
     if(APP_ROUTE_SPEED_TRIAL_ACTIVE && g_debug_plan_id==DEBUG_PLAN_DEFAULT && !(*AppMotion_Live()->turn))
         values[57]=App_SerialMilli(((g_combined_test.state==0U) ?
             AppMotion_Live()->actions[0].reference_mm_s : (*AppMotion_Live()->reference_mm_s))/10.0f);
+    if (APP_BASELINE40_ACTIVE && (g_debug_plan_id==DEBUG_PLAN_FORWARD210_40 || g_debug_plan_id==DEBUG_PLAN_LEFT210_40))
+        values[57]=40000; /* 40cm/s reference ceiling, not wheel/ground measurement. */
     if (g_motion_plan_valid != 1U) values[37] = 2;
     if (g_combined_test.state == 0U && (*AppMotion_Live()->has_action))
     {
@@ -756,11 +895,18 @@ void AppSerial_Telemetry(void)
         App_ChassisLoadTelemetry();
 #if APP_POSITION_DIAGNOSTIC
         App_WheelLogTelemetry();
+#if APP_BASELINE40_ACTIVE
+        App_IcmRawTelemetry();
+        App_Baseline40Telemetry();
+#endif
         App_PositionTelemetry();
 #if APP_HEADING_SESSION_TEST
         App_OdometryTelemetry();
         if(!VEHICLE_INTEGRATED_ENABLE)App_PerimeterTelemetry();
 #endif
+#endif
+#if APP_BASELINE40_ACTIVE
+        App_IcmObserverTelemetry();
 #endif
 }
 #endif

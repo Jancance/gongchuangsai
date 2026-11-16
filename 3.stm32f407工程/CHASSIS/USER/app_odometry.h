@@ -21,6 +21,15 @@ typedef struct {
     const RouteHeadingReference *route_heading_reference;
     const uint32_t *runtime_route_id;
 } AppOdometryInputs;
+#if APP_BASELINE40_ACTIVE
+typedef struct {
+    ChassisOdometryStatus pose;
+    float origin_x_mm, origin_y_mm, path_heading_deg, heading_offset_deg;
+    uint32_t anchor_valid, reference_set_ms;
+} AppOdometryBaseline40;
+/* CAN owner publishes one complete pose/reference snapshot; no context calls. */
+void AppOdometry_ReadBaseline40(AppOdometryBaseline40 *snapshot);
+#endif
 void AppOdometry_Init(void);
 void AppOdometry_Step(const AppOdometryInputs *inputs);
 extern volatile ChassisOdometryStatus g_chassis_odometry;

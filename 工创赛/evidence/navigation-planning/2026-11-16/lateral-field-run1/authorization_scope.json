@@ -1,0 +1,41 @@
+{
+  "recorded_at": "2026-11-16T12:29:47.548128+08:00",
+  "exact_user_test_request": "\u5148\u8fdb\u884c\u4e00\u8d9f\u6a2a\u5411\u6d4b\u8bd5",
+  "exact_user_authorization": "\u6388\u6743\u6309\u9700\u4e0b\u8f7d/\u590d\u4f4d\u5e76\u53d1\u8f66\u4e00\u6b21",
+  "exact_site_confirmation": "\u73b0\u573a\u5df2\u5c31\u7eea\uff0c\u65e0\u7ebf\u5df2\u8fde\u63a5",
+  "scope": "PLAN9 left210_40, left2100mm, reference400mm/s, budget102RPM, needed download/reset, START exactly once maximum",
+  "maximum_starts": 1,
+  "maximum_explicit_resets": 1,
+  "maximum_downloads": 1,
+  "automatic_retry": false,
+  "root_per_stage_go_required": true,
+  "rule_ids_checked": {
+    "R": [
+      "RUN-01",
+      "PWR-01",
+      "MECH-01",
+      "MECH-02"
+    ],
+    "E": [
+      "LOC-01",
+      "LOC-02",
+      "LOC-03",
+      "LOC-05",
+      "LOC-07",
+      "MOT-02",
+      "MOT-04",
+      "RUN-06"
+    ],
+    "Q_unresolved": [
+      "FIELD-05",
+      "OBS-03",
+      "QR-04"
+    ]
+  },
+  "hardware_counts_so_far": {
+    "download": 0,
+    "explicit_reset": 0,
+    "START": 0,
+    "serial_TX_bytes": 0
+  }
+}

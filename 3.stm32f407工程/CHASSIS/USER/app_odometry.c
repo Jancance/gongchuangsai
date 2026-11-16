@@ -10,11 +10,24 @@
 #include "can.h"
 #include <string.h>
 
+#if APP_BASELINE40_ACTIVE
+static AppOdometryBaseline40 s_baseline40;
+void AppOdometry_ReadBaseline40(AppOdometryBaseline40 *snapshot)
+{
+    taskENTER_CRITICAL();
+    *snapshot=s_baseline40;
+    taskEXIT_CRITICAL();
+}
+#endif
+
 #if APP_TEST_MODE == 3U
 volatile PerimeterRecord g_perimeter_records[9];
 static uint32_t s_perimeter_odom_started,s_perimeter_completed_seen;
 void AppOdometry_ResetRecords(void)
 {
+#if APP_BASELINE40_ACTIVE
+    s_baseline40.anchor_valid=0U;
+#endif
     s_perimeter_odom_started=s_perimeter_completed_seen=0U;
     memset((void*)g_perimeter_records,0,sizeof(g_perimeter_records));
 }
@@ -33,6 +46,9 @@ volatile float g_odometry_pose_heading_deg=0.0f;
 #endif
 void AppOdometry_Init(void)
 {
+#if APP_BASELINE40_ACTIVE
+    memset(&s_baseline40,0,sizeof(s_baseline40));
+#endif
     ChassisOdometry_Init(&s_odometry);
 }
 
@@ -52,6 +68,9 @@ void AppOdometry_Step(const AppOdometryInputs *inputs)
         taskEXIT_CRITICAL();
         Power_ReadCommandStatus(&power);
         g_odometry_pose_result=2U;
+#if APP_BASELINE40_ACTIVE
+        s_baseline40.anchor_valid=0U;
+#endif
         if(!(*inputs->vm_request) && !power.active && !g_chassis_auto_active &&
            !g_wheel_test_active && !(*inputs->jog_preparing) && source.healthy &&
            App_HeadingFrameAge(&source,now,1U)<ODOM_YAW_MAX_AGE_MS &&
@@ -64,7 +83,17 @@ void AppOdometry_Step(const AppOdometryInputs *inputs)
         if(inputs->route_heading_reference->valid && ChassisOdometry_SetPose(&s_odometry,
             (VEHICLE_STAGE1_ENABLE || (*inputs->runtime_route_id))?0.0f:2100.0f,(VEHICLE_STAGE1_ENABLE || (*inputs->runtime_route_id))?0.0f:2100.0f,
             (VEHICLE_STAGE1_ENABLE || (*inputs->runtime_route_id))?0.0f:-90.0f,inputs->route_heading_reference->origin_deg))
+        {
             s_perimeter_odom_started=1U;
+#if APP_BASELINE40_ACTIVE
+            s_baseline40.origin_x_mm=s_odometry.status.x_mm;
+            s_baseline40.origin_y_mm=s_odometry.status.y_mm;
+            s_baseline40.path_heading_deg=s_odometry.status.heading_deg;
+            s_baseline40.heading_offset_deg=s_odometry.heading_offset;
+            s_baseline40.reference_set_ms=now;
+            s_baseline40.anchor_valid=1U;
+#endif
+        }
     }
     ChassisAuto_ReadOdometrySamples(&samples);
     if(source.healthy && App_HeadingFrameAge(&source,now,1U)<ODOM_YAW_MAX_AGE_MS)
@@ -78,6 +107,9 @@ void AppOdometry_Step(const AppOdometryInputs *inputs)
     ChassisOdometry_Update(&s_odometry,now);
     taskENTER_CRITICAL();
     g_chassis_odometry=s_odometry.status;
+#if APP_BASELINE40_ACTIVE
+    s_baseline40.pose=s_odometry.status;
+#endif
     if(s_perimeter_odom_started && !g_perimeter_records[0].captured && s_odometry.status.valid &&
        (*inputs->combined_completed)==0U) {
         g_perimeter_records[0].captured=1U;g_perimeter_records[0].tick_ms=now;

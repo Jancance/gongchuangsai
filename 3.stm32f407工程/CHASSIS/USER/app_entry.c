@@ -4,6 +4,12 @@
 #include "field_map.h"
 volatile RouteCheck g_route_check = {0};
 volatile CompetitionEntryStatus g_competition_entry = {0};
+uint32_t AppDebugPlan40Allowed(uint32_t id,uint32_t direction,uint32_t rpm,float mm)
+{
+    return MotionTrial40Allowed(direction,rpm,mm) &&
+        ((id==DEBUG_PLAN_FORWARD210_40 && direction==0U) ||
+         (id==DEBUG_PLAN_LEFT210_40 && direction==1U));
+}
 uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count)
 {
 #if !APP_ROUTE_USE_CUSTOM || (APP_TEST_MODE != 3U)
@@ -16,7 +22,16 @@ uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count)
     };
     uint32_t i,n;
     if (!APP_IS_DEBUG || !actions || !count || id > DEBUG_PLAN_MAX || id == DEBUG_PLAN_FORWARD237) return 0U;
-    if (id == DEBUG_PLAN_DEFAULT) {
+    if (APP_BASELINE40_ACTIVE && id!=DEBUG_PLAN_FORWARD210_40 && id!=DEBUG_PLAN_LEFT210_40) return 0U;
+    if (id == DEBUG_PLAN_FORWARD210_40) {
+        MotionAction trial={MOTION_FORWARD_DISTANCE,APP_BASELINE40_RPM,0U,0.0f,APP_BASELINE40_MM};
+        if (!MotionTrial40Allowed(0U,trial.base_rpm,trial.distance_mm)) return 0U;
+        n=1U;actions[0]=trial;
+    } else if (id == DEBUG_PLAN_LEFT210_40) {
+        MotionAction trial={MOTION_LEFT_DISTANCE,APP_BASELINE40_LEFT_RPM,0U,0.0f,APP_BASELINE40_MM};
+        if (!AppDebugPlan40Allowed(id,1U,trial.base_rpm,trial.distance_mm)) return 0U;
+        n=1U;actions[0]=trial;
+    } else if (id == DEBUG_PLAN_DEFAULT) {
 #if VEHICLE_STAGE1_ENABLE
         FieldStage1Plan p;RouteRow rows[2];RouteCheck check;
         if(!FieldMap_Stage1(&p)) return 0U;

@@ -270,6 +270,58 @@ uint32_t Chassis_TranslationProfileCommands(uint32_t mode, uint32_t base_rpm,
     return Chassis_TranslationCommandsAtSpeed(mode,base_rpm,effective,0U,MOTION_PROFILE_BASE_CEILING,commands);
 }
 
+#if APP_BASELINE40_ACTIVE
+uint32_t Chassis_Left40DriftCommands(uint32_t base_rpm,float correction_rpm,
+    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+{
+    ChassisWheelSpeeds logical;float h,b,t;
+    Chassis_ClearMotorCommands(commands);
+    if (!commands || base_rpm>APP_BASELINE40_LEFT_RPM ||
+        !Chassis_ProfileCorrectionRpm(base_rpm,correction_rpm,&h)) return 0U;
+    b=(float)base_rpm;t=(float)(uint32_t)(APP_LEFT40_DRIFT_RATIO*b+0.5f);
+    logical.rpm[0]=b-t-h;logical.rpm[1]=-b-t+h;
+    logical.rpm[2]=-b-t-h;logical.rpm[3]=b-t+h;
+    return Chassis_EncodeEmm(&logical,APP_BASELINE40_LEFT_RPM+6U,commands);
+}
+uint32_t Chassis_Baseline40Budget(uint32_t base_rpm, float heading_rpm,
+    int32_t *heading_deci, int32_t *lateral_limit_deci, float *mm_s_per_deci)
+{
+    float effective, factor=CHASSIS_PI*g_chassis_geometry.wheel_diameter_mm/600.0f;
+    int32_t c, room, limit;
+    if (!heading_deci || !lateral_limit_deci || !mm_s_per_deci || base_rpm>100U ||
+        !Chassis_ProfileCorrectionRpm(base_rpm,heading_rpm,&effective) ||
+        !Chassis_Finite(factor) || !(factor>0.0f)) return 0U;
+    c=(int32_t)(Chassis_Abs(effective)*10.0f+0.5f);
+    if(effective<0.0f) c=-c;
+    room=(c<0)?-c:c;
+    limit=(int32_t)(12.1f/factor);
+    if(limit>30) limit=30;
+    if(limit>(int32_t)(base_rpm*10U)-room) limit=(int32_t)(base_rpm*10U)-room;
+    if(limit>50-room) limit=50-room;
+    if(limit<0) limit=0;
+    *heading_deci=c; *lateral_limit_deci=limit; *mm_s_per_deci=factor;
+    return 1U;
+}
+uint32_t Chassis_Baseline40Commands(uint32_t base_rpm, int32_t heading_deci,
+    int32_t lateral_deci, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+{
+    int32_t c=heading_deci, l=lateral_deci, b, raw[4], ca, la;
+    uint32_t i;
+    if(!commands || base_rpm>100U || c< -20 || c>20 || l< -30 || l>30) return 0U;
+    b=(int32_t)(10U*base_rpm); ca=(c<0)?-c:c; la=(l<0)?-l:l;
+    if(ca+la>b || ca+la>50) return 0U;
+    raw[0]=b+l-c; raw[1]=b-l+c; raw[2]=b-l-c; raw[3]=b+l+c;
+    for(i=0U;i<4U;i++)
+        if(raw[i]<0 || raw[i]>b+50 || raw[i]>3000) return 0U;
+    for(i=0U;i<4U;i++) {
+        commands[i].address=(uint8_t)(i+1U);
+        commands[i].direction=g_chassis_forward_direction[i];
+        commands[i].speed_raw=(uint16_t)raw[i];
+    }
+    return 1U;
+}
+#endif
+
 uint32_t Chassis_LeftTrimCommands(uint32_t base_rpm, float correction_rpm,
     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
 {

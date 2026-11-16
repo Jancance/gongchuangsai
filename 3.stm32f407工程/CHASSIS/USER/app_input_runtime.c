@@ -266,6 +266,12 @@ void App_HwtTurnSafety(void)
 
 void AppInput_KeyStep(void)
 {
+#if APP_BASELINE40_ACTIVE
+    if (Key_GetEvent()!=0U) {
+        g_start_key_count++;
+        taskENTER_CRITICAL();g_combined_test.request=2U;taskEXIT_CRITICAL();
+    }
+#else
         RadarZoneSwitch_Service((uint32_t)(xTaskGetTickCount()*portTICK_PERIOD_MS));
         RadarLift_Service((uint32_t)(xTaskGetTickCount()*portTICK_PERIOD_MS),
             (g_vm_test_request==0U && g_chassis_auto_active==0U &&
@@ -370,4 +376,5 @@ void AppInput_KeyStep(void)
 
 #endif
         }
+#endif
 }

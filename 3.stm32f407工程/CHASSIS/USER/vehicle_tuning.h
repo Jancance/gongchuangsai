@@ -3,7 +3,9 @@
 /* 整车现场调参入口。单位写在名称和注释中；修改后编译下载。
  * 当前只实现第一阶段：启停区1前进后左移到扫码点；不自动进入第二阶段。
  * 地图按用户图暂作均分估算，不声称与未来雷达真实布局完全一致。 */
+#ifndef VEHICLE_STAGE1_ENABLE
 #define VEHICLE_STAGE1_ENABLE 1U
+#endif
 #include "../../USER/vehicle_parameters.h"
 #ifndef VEHICLE_SCAN_BYPASS
 #define VEHICLE_SCAN_BYPASS 1U

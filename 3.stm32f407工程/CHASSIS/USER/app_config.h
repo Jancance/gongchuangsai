@@ -1,11 +1,39 @@
 #ifndef APP_CONFIG_H
 #define APP_CONFIG_H
+#ifndef APP_BASELINE40_ENABLE
+#define APP_BASELINE40_ENABLE 0U
+#endif
+#if APP_BASELINE40_ENABLE > 1U
+#error Baseline40_enable_invalid
+#endif
+#define APP_BASELINE40_ACTIVE (APP_BASELINE40_ENABLE && APP_IS_DEBUG && (APP_TEST_MODE == 3U))
 #include "../../USER/vehicle_parameters.h"
 #include "zdt_emm_config.h"
 #include "app_entry_config.h"
 #if VEHICLE_INTEGRATED_ENABLE && APP_IS_COMPETITION
 #error Integrated_field_debug_is_not_verified_competition_profile
 #endif
+#if APP_BASELINE40_ENABLE && (!APP_IS_DEBUG || APP_TEST_MODE != 3U || VEHICLE_INTEGRATED_ENABLE)
+#error Baseline40_requires_debug3_and_no_integrated_entry
+#endif
+#if APP_BASELINE40_ENABLE && (!defined(VEHICLE_STAGE1_ENABLE) || VEHICLE_STAGE1_ENABLE)
+#error Baseline40_requires_explicit_stage1_disabled
+#endif
+#define APP_BASELINE40_RPM 100U
+#define APP_BASELINE40_LEFT_RPM 102U
+#ifndef APP_LEFT40_DRIFT_TRIM_ENABLE
+#define APP_LEFT40_DRIFT_TRIM_ENABLE 0U
+#endif
+#if APP_LEFT40_DRIFT_TRIM_ENABLE > 1U
+#error Left40_drift_trim_enable_invalid
+#endif
+#define APP_LEFT40_DRIFT_RATIO 0.04f
+#define APP_BASELINE40_MM 2100.0f
+#define APP_BASELINE40_MM_S 400.0f
+#define APP_BASELINE40_ACCEL_MM_S2 150.0f
+#define APP_BASELINE40_JERK_MM_S3 300.0f
+#define APP_BASELINE40_FEEDBACK_RPM 130U
+#define APP_BASELINE40_RUN_MS 12779U
 #define APP_PERIMETER_TRIAL_ACTIVE 1U
 #define APP_PERIMETER_GROUP_MS 300000U
 #include "route_config.h"

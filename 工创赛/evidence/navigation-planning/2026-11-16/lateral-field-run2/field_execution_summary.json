@@ -1,0 +1,52 @@
+{
+  "hardware_complete_at": "2026-11-16T12:52:21.037683+08:00",
+  "candidate_sha256": "0d5e2b752c92db9094393723b42411cbf02dbdc2f3950ac4c4ca6847fe73242f",
+  "status": "software_complete",
+  "download_count": 0,
+  "actual_explicit_reset_count": 1,
+  "START_count": 1,
+  "initial_reset_precondition_failure_preserved": true,
+  "automatic_retry": false,
+  "powered_tail_valid": true,
+  "powered_tail_frames": 199,
+  "powered_tail_duration_s": 19.96900000000005,
+  "final_active": 0,
+  "final_faults": {
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "can_fault": 0,
+    "distance_fault_reason": 0
+  },
+  "final_wheel_rpm": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "final_VM": 1,
+  "final_PE2": 1,
+  "session_scope": "run2/session1 after run2 uniform reset, distinct from run1/session1",
+  "raw_count": 2032,
+  "PRE": 100,
+  "POST": 1932,
+  "quality": 0,
+  "source_drops": {
+    "wheel_dropped": 0,
+    "hwt_dropped": 0,
+    "od_dropped": 0
+  },
+  "retained_gap_indices": [],
+  "stable_bank_tail_double_read": true,
+  "terminal_tail_completed": true,
+  "truncated": false,
+  "freeze_reason": 1,
+  "stop_ms": 46189,
+  "terminal_ms": 47267,
+  "freeze_ms": 47767,
+  "flash_read_this_run": false,
+  "flash_identity_policy": "inherited verified run1 Flash + frozen candidate/source identity; not a new Flash comparison",
+  "physical_accuracy_analysis_performed": false,
+  "new_ground_measurement": "not received by executor",
+  "data_safe_can_disconnect_or_reset": true,
+  "local_only": true
+}
