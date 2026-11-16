@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "D:\Desktop\工创赛\工创赛\evidence\navigation-planning\2026-11-17\turn90-keepalive3s-prep\check_keepalive.py", line 153, in <module>
+    assertions=struct.unpack('<I',machine.mem_read(address,4))[0];assert result==0,(enabled,result,unit.splitlines()[result-1])
+                                                                         ^^^^^^^^^
+AssertionError: (1, 317, '  reset(id,1);clock_ms+=boundary-1;App_SerialMotionSafety();CK(g_serial_motion_state==2 && permit==1 && !abort_count);')

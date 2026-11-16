@@ -1,0 +1,21 @@
+{
+  "hardware_accessed": false,
+  "actual_c": {
+    "1": {
+      "status": "PASS",
+      "assertions": 100
+    },
+    "0": {
+      "status": "PASS",
+      "assertions": 101
+    }
+  },
+  "source_sha256": "6a2d57a45cea8b386d20455873de4be817eb08e9d5374c5273c7e80f365a4ee0",
+  "status": "PASS",
+  "host_checks": 24,
+  "limitations": [
+    "RTOS scheduling, RF transport and physical stop are not simulated.",
+    "App_SerialIdleReady and low-level CAN/VM effects use bounded stubs; real parser, byte accumulator, safety and CombinedTestStop dispatch are executed.",
+    "One-way no-RX while uplink KEEP arrives can take about 5+3=8 seconds to command cancellation if STOP is lost; not a universal 3-second stop guarantee."
+  ]
+}

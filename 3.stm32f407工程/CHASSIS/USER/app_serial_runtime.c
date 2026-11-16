@@ -338,7 +338,8 @@ void App_SerialMotionSafety(void)
     {
 #if APP_TEST_MODE == 3U
         if (g_combined_test.state >= 3U) g_serial_motion_state = 3U;
-        else if (!VEHICLE_STAGE1_ENABLE && (uint32_t)(now - s_serial_keepalive_ms) >= 1000U)
+        else if (!VEHICLE_STAGE1_ENABLE && (uint32_t)(now - s_serial_keepalive_ms) >=
+            (AppDebugTurn90Plan(g_debug_plan_id) ? 3000U : 1000U))
         {
             AppMotion_SetStartPermit(0U); g_serial_motion_link_lost = 1U;
             g_serial_motion_result = 8U; g_serial_motion_state = 3U;
