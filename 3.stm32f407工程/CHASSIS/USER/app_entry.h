@@ -13,7 +13,10 @@
 #define DEBUG_PLAN_FORWARD210_20 7U /* 仅专用构建允许的20cm/s候选。 */
 #define DEBUG_PLAN_FORWARD210_40 8U
 #define DEBUG_PLAN_LEFT210_40 9U
-#define DEBUG_PLAN_MAX DEBUG_PLAN_LEFT210_40
+#define DEBUG_PLAN_RIGHT210_40 10U
+#define DEBUG_PLAN_BACKWARD210_40 11U
+#define DEBUG_PLAN_RIGHT150_40 12U
+#define DEBUG_PLAN_MAX DEBUG_PLAN_RIGHT150_40
 uint32_t AppDebugPlan40Allowed(uint32_t id,uint32_t direction,uint32_t rpm,float mm);
 /* 仅复制参数；许可、空闲和源新鲜度由调用适配层锁内检查。 */
 uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count);

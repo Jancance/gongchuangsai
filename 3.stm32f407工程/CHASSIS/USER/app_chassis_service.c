@@ -21,6 +21,8 @@
 
 extern volatile uint32_t g_vm_test_request;
 
+
+#if !APP_VM_ONLY_ENABLE
 static void App_ComboIdlePoll(void)
 {
     static uint32_t position_turn;
@@ -34,6 +36,7 @@ static void App_ComboIdlePoll(void)
     }
 }
 
+#endif
 void AppChassis_CanInit(void)
 {
 #if APP_POSITION_DIAGNOSTIC && APP_HEADING_SESSION_TEST
@@ -42,8 +45,32 @@ void AppChassis_CanInit(void)
     g_can_test_result = CAN1_LoopbackTest();
 }
 
+#if APP_VM_ONLY_ENABLE
+volatile uint32_t g_vm_only_cancelled;
+static void App_VmOnlySafety(void)
+{
+    if(g_combined_test.request==2U) {g_combined_test.request=0U;g_vm_only_cancelled=1U;}
+    if(g_rtos_fault || g_safety_fault || g_can_ctrl_fault_latched || g_can_test_result>1U)
+        g_vm_only_cancelled=1U;
+    if(g_vm_only_cancelled) {g_vm_test_request=0U;Power_Disable();}
+}
+static void App_VmOnlyStep(void)
+{
+    App_VmOnlySafety();
+    taskENTER_CRITICAL();
+    if(!g_vm_only_cancelled && g_safety_ready==1U && g_can_test_result==1U)g_vm_test_request=1U;
+    taskEXIT_CRITICAL();
+    if(g_vm_only_cancelled)return;
+    App_CanFeedbackStep();
+    App_CanPollRefresh();
+    Safety_CanReport(g_can_poll_enable,g_can_poll_valid_mask,g_can_poll_protect_mask,g_can_poll_tick);
+}
+#endif
 void AppChassis_CanStep(void)
 {
+#if APP_VM_ONLY_ENABLE
+        App_VmOnlyStep();
+#else
         if (APP_UART_LINK_TEST != 0U)
         {
             g_vm_test_request = 0U;
@@ -134,10 +161,14 @@ void AppChassis_CanStep(void)
 #if APP_POSITION_DIAGNOSTIC && APP_HEADING_SESSION_TEST
         AppMotion_StepOdometry();
 #endif
+#endif
 }
 
 void AppChassis_SafetyCheck(void)
 {
+#if APP_VM_ONLY_ENABLE
+    App_VmOnlySafety();
+#else
 if (APP_UART_LINK_TEST != 0U)
         { g_vm_test_request = 0U; Power_Disable(); }
         else
@@ -162,4 +193,5 @@ if (APP_UART_LINK_TEST != 0U)
         App_HwtTurnSafety();
 #endif
         }
+#endif
 }

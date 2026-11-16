@@ -19,6 +19,24 @@
 #if APP_BASELINE40_ENABLE && (!defined(VEHICLE_STAGE1_ENABLE) || VEHICLE_STAGE1_ENABLE)
 #error Baseline40_requires_explicit_stage1_disabled
 #endif
+#ifndef APP_VM_CALIBRATION_ONLY_ENABLE
+#define APP_VM_CALIBRATION_ONLY_ENABLE 0U
+#endif
+#if APP_VM_CALIBRATION_ONLY_ENABLE > 1U
+#error Vm_calibration_only_enable_invalid
+#endif
+#if APP_VM_CALIBRATION_ONLY_ENABLE && !APP_IS_DEBUG
+#error Vm_calibration_only_requires_debug_entry
+#endif
+#ifndef APP_VM_ONLY_ENABLE
+#define APP_VM_ONLY_ENABLE 0U
+#endif
+#if APP_VM_ONLY_ENABLE > 1U
+#error Vm_only_enable_invalid
+#endif
+#if APP_VM_ONLY_ENABLE && !APP_BASELINE40_ACTIVE
+#error Vm_only_requires_dedicated_baseline40_debug
+#endif
 #define APP_BASELINE40_RPM 100U
 #define APP_BASELINE40_LEFT_RPM 102U
 #ifndef APP_LEFT40_DRIFT_TRIM_ENABLE
@@ -27,7 +45,7 @@
 #if APP_LEFT40_DRIFT_TRIM_ENABLE > 1U
 #error Left40_drift_trim_enable_invalid
 #endif
-#define APP_LEFT40_DRIFT_RATIO 0.04f
+#define APP_LEFT40_DRIFT_RATIO 0.02f
 #define APP_BASELINE40_MM 2100.0f
 #define APP_BASELINE40_MM_S 400.0f
 #define APP_BASELINE40_ACCEL_MM_S2 150.0f

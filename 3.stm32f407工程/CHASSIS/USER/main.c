@@ -107,6 +107,43 @@ volatile UBaseType_t g_stack_b_words = 0U;
 volatile size_t g_heap_free_bytes = 0U;
 volatile size_t g_heap_min_bytes = 0U;
 
+#if APP_VM_CALIBRATION_ONLY_ENABLE
+/* Standalone calibration supply: no scheduler, CAN, Safety or watchdog start. */
+volatile uint32_t g_vm_calibration_only_cancelled, g_vm_calibration_only_active;
+volatile uint32_t g_vm_calibration_only_option_control;
+/* Sampling is inactive; dormant telemetry receives unavailable. */
+uint32_t AppIcm_ReadPublished(IcmRawStatus *out,uint32_t *publication)
+{
+    (void)out;(void)publication;return 0U;
+}
+static void App_VmCalibrationPowerInit(void)
+{
+    GPIO_InitTypeDef gpio;
+    SystemCoreClockUpdate();
+    g_vm_calibration_only_option_control=FLASH->OPTCR;
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE|RCC_AHB1Periph_GPIOC,ENABLE);
+    GPIO_ResetBits(GPIOE,GPIO_Pin_2);
+    GPIO_StructInit(&gpio);gpio.GPIO_Pin=GPIO_Pin_2;gpio.GPIO_Mode=GPIO_Mode_OUT;
+    gpio.GPIO_OType=GPIO_OType_PP;gpio.GPIO_Speed=GPIO_Speed_2MHz;gpio.GPIO_PuPd=GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOE,&gpio);
+    GPIO_StructInit(&gpio);gpio.GPIO_Pin=GPIO_Pin_13;gpio.GPIO_Mode=GPIO_Mode_IN;
+    gpio.GPIO_PuPd=GPIO_PuPd_UP;GPIO_Init(GPIOC,&gpio);
+    if(GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_13)==Bit_RESET)g_vm_calibration_only_cancelled=1U;
+    else {GPIO_SetBits(GPIOE,GPIO_Pin_2);g_vm_calibration_only_active=1U;}
+}
+static void App_VmCalibrationPowerStep(void)
+{
+    if(GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_13)==Bit_RESET) {
+        g_vm_calibration_only_cancelled=1U;g_vm_calibration_only_active=0U;
+        GPIO_ResetBits(GPIOE,GPIO_Pin_2);
+    }
+}
+int main(void)
+{
+    App_VmCalibrationPowerInit();
+    for(;;)App_VmCalibrationPowerStep();
+}
+#else
 #if APP_BASELINE40_ACTIVE && ICM45686_SAMPLE_ONLY
 #error Baseline40_cannot_use_sample_only
 #endif
@@ -480,3 +517,4 @@ int main(void)
     {
     }
 }
+#endif /* APP_VM_CALIBRATION_ONLY_ENABLE */
