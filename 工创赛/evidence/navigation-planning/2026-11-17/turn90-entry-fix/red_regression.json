@@ -1,0 +1,12 @@
+{
+  "--before": {
+    "expected_failure": true,
+    "returncode": 1,
+    "assertion": "(195, '  CK(values[56]==3 && values[57]==(-2147483647L-1L) && values[38]==82 && values[39]==130);memcpy((void*)exported_telemetry[id-19],values,sizeof(values));', (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))"
+  },
+  "--before-motion": {
+    "expected_failure": true,
+    "returncode": 1,
+    "assertion": "(211, '   reset_case(id,starts[z]);CK(AppDebugPlan_Load(id,s_motion_actions,&s_motion_action_count));CK(App_CombinedLoadAction(0));', (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))"
+  }
+}

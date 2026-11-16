@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "D:\Desktop\工创赛\工创赛\evidence\navigation-planning\2026-11-17\turn90-entry-fix\check_integration.py", line 183, in <module>
+    assert result==0,(result,unit.splitlines()[result-1] if result else '',words('debug_values',8,'f'))
+           ^^^^^^^^^
+AssertionError: (211, '   reset_case(id,starts[z]);CK(AppDebugPlan_Load(id,s_motion_actions,&s_motion_action_count));CK(App_CombinedLoadAction(0));', (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))

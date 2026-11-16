@@ -1,0 +1,47 @@
+{
+  "status": "PASS",
+  "hardware_accessed": false,
+  "product_files_written": false,
+  "source_sha256": {
+    "app_motion_runtime.c": "75e2e426f7ac7903588582618fdbf0eeb9980a5557b02e24522ff932305c5f79",
+    "app_serial_runtime.c": "f01a32b794fc1bb310ea0adb7aabb633c19f601eac7ba97aeb8ddf155348215f",
+    "app_heading_runtime.c": "b05eaa5759e703c0581ad670153bb31b554e2c674b31cb9b2667760d317b81dc",
+    "heading_session.c": "e38bab07a132558fc24222f188e6caa33b1b4ffa2417695e30a50fd390fb4a52"
+  },
+  "exact_extraction_checks": {
+    "static uint32_t App_CombinedLoadAction(": "40ce5e71c978aa0da0986a1284a84d519352157b397011d975b61a62c86dea65",
+    "uint32_t TurnStart(": "fbc760cc69caaa316259043d8a9b681ddfe7d867539b2c8aca0dc6289e9f39be",
+    "static uint32_t App_PerimeterTurnStart(": "07c61bbd4cfbaae6b0738fa2fe5427d0495d953c5b2ea018de94c93877644368",
+    "telemetry_slice": "fda871ea1bcfdaebb1925f8fc515cdec68006b32449cc011f14d8ddf861fc6f2",
+    "owner_expression": "f3e4827c784afc7419ed6517b47a7c01efc83d885b6e5054ada35f46ce85a7af"
+  },
+  "c_assertions": 10539,
+  "session_cases": 36,
+  "client_runs": [
+    {
+      "plan": 20,
+      "commands": [
+        "PLAN20",
+        "ARM",
+        "START"
+      ],
+      "status": "software_complete",
+      "telemetry_action_kind_from_actual_c": 3
+    },
+    {
+      "plan": 21,
+      "commands": [
+        "PLAN21",
+        "ARM",
+        "START"
+      ],
+      "status": "software_complete",
+      "telemetry_action_kind_from_actual_c": 3
+    }
+  ],
+  "extra_checks": "Exact RPM/angle/count/id negatives, busy heading rejection and active telemetry.",
+  "limitations": [
+    "HAL/RTOS/CAN acceptance and backend results are stubs; no on-board timing, stack or physical trajectory claim.",
+    "Heading input follows the reference for entry/lifecycle testing; existing MATLAB dynamics are separate."
+  ]
+}

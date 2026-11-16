@@ -849,8 +849,10 @@ static void App_SerialMotionTelemetry(void)
         values[38] = (int32_t)status.distance_base_rpm;
     if(AppDebugTurn90Plan(g_debug_plan_id)) {
         values[38]=82;values[39]=130;
+        if (g_combined_test.state==0U && !(*AppMotion_Live()->has_action) &&
+            (*AppMotion_Live()->action_count)==1U) values[56]=(int32_t)AppMotion_Live()->actions[0].kind;
     }
-    values[57] = (*AppMotion_Live()->turn) ? (-2147483647L - 1L) :
+    values[57] = ((*AppMotion_Live()->turn) || AppDebugTurn90Plan(g_debug_plan_id)) ? (-2147483647L - 1L) :
         App_SerialMilli(MotionRpmToCmPerSec((float)values[38]));
     /* 新候选字段显示参考速度上限，不能把含2RPM余量的基速当成参考速度。 */
     if(APP_ROUTE_SPEED_TRIAL_ACTIVE && g_debug_plan_id==DEBUG_PLAN_DEFAULT && !(*AppMotion_Live()->turn))

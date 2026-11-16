@@ -480,13 +480,18 @@ static uint32_t App_CombinedLoadAction(uint32_t index)
          !(MOTION_ACTION_COUNT==1U && index==0U &&
            s_motion_actions[0].kind>=MOTION_FORWARD_DISTANCE && s_motion_actions[0].kind<=MOTION_BACKWARD_DISTANCE &&
            AppDebugPlan40Allowed(g_debug_plan_id,s_motion_actions[0].kind-MOTION_FORWARD_DISTANCE,
-               s_motion_actions[0].base_rpm,s_motion_actions[0].distance_mm)))) return 0U;
+               s_motion_actions[0].base_rpm,s_motion_actions[0].distance_mm)) &&
+         !(MOTION_ACTION_COUNT==1U && index==0U && s_motion_actions[0].kind==MOTION_TURN &&
+           !s_motion_actions[0].run_ms && s_motion_actions[0].distance_mm==0.0f &&
+           s_motion_actions[0].reference_mm_s==0.0f &&
+           AppDebugTurn90Allowed(g_debug_plan_id,s_motion_actions[0].base_rpm,
+               s_motion_actions[0].relative_deg)))) return 0U;
     load_cycle = HWT101_TimingBegin();
     /* 目标只从起点和动作表生成，不从上一段实际终点重新设定。 */
     for(i=0U;i<=index;i++) planned_offset=HeadingController_WrapDeg(planned_offset+s_motion_actions[i].relative_deg);
     if(!RouteHeading_Target(&s_route_heading_reference,planned_offset,&s_route_heading_target)) return 0U;
     action = &s_motion_actions[index];
-    s_route_heading_turn_active = action->kind == MOTION_TURN;
+    s_route_heading_turn_active = action->kind == MOTION_TURN && !AppDebugTurn90Plan(g_debug_plan_id);
     g_route_heading_targets[index]=s_route_heading_target;
     (void)App_HeadingSourceRead(&heading);
     g_route_heading_start_yaw[index]=heading.yaw_deg;
@@ -494,6 +499,10 @@ static uint32_t App_CombinedLoadAction(uint32_t index)
     if(action->reference_mm_s!=0.0f)
         accepted=App_MoveSubmit(action->kind-MOTION_FORWARD_DISTANCE,action->base_rpm,
             action->run_ms,action->distance_mm,action->reference_mm_s);
+    else if (action->kind == MOTION_TURN && AppDebugTurn90Plan(g_debug_plan_id))
+        accepted = TurnStart((action->relative_deg > 0.0f) ? TURN_CCW : TURN_CW,
+            (action->relative_deg > 0.0f) ? action->relative_deg : -action->relative_deg,
+            action->base_rpm);
     else if (action->kind == MOTION_TURN)
         accepted = App_PerimeterTurnStart((action->relative_deg > 0.0f) ? TURN_CCW : TURN_CW,
             (action->relative_deg > 0.0f) ? action->relative_deg : -action->relative_deg,

@@ -1,0 +1,27 @@
+{
+  "status": "READY_FOR_ONE_AUTHORIZED_RETRY",
+  "recorded_at": "2026-11-17T02:03:51.823182+08:00",
+  "planning_model": "GPT-6.1-sol xhigh",
+  "coding_model": "GPT-6.1-sol medium",
+  "independent_review_model": "GPT-6.1-sol high",
+  "confirmed_blockers": [
+    "Idle selected turn reported runtime kind0",
+    "List whitelist excluded20/21",
+    "List called old Perimeter highRPM path",
+    "Route reference slight yaw drift invalidated exact90 profile"
+  ],
+  "product_files": [
+    "app_motion_runtime.c",
+    "app_serial_runtime.c"
+  ],
+  "medium_assertions": 10482,
+  "high_independent_assertions": 10539,
+  "session_cases": 36,
+  "build_success": true,
+  "new_axf_sha256": "f9f2086e8a2cf29a5aa2e36d23ba6d5efcbd248032b5decd78a4c543f67226e9",
+  "controller_unchanged": true,
+  "matlab_reused": true,
+  "hardware_not_yet_changed": true,
+  "independent_review_artifact": "independent-review/review_verification.json",
+  "user_retry_authorized": true
+}
