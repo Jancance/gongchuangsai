@@ -63,6 +63,9 @@ uint32_t HeadingSession_Start(HeadingSession *s, const HeadingSessionInput *in,
     if (s->turn_trial) {
         TurnBrake_Init(&s->brake, in->now_ms, in->yaw_deg, relative_deg,
             (float)APP_TURN_BRAKE_MAX_RPM * (6.0f*77.0f/418.0f));
+#if APP_TURN90_90_ACTIVE
+        if(!s->brake.profile.valid){HS_Fail(s,HS_CAUSE_INPUT,out);return 0U;}
+#endif
         s->controller.command_rpm = 0;
     }
     s->used = 1U;

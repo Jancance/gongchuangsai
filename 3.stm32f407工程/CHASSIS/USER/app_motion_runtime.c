@@ -225,6 +225,9 @@ static uint32_t App_MotionPlanValid(void)
 {
     uint32_t i, budget = 5000U;
     if (!MOTION_ACTION_COUNT || MOTION_ACTION_COUNT > MOTION_ACTION_CAPACITY) return 0U;
+    if(AppDebugTurn90Plan(g_debug_plan_id) &&
+        (MOTION_ACTION_COUNT!=1U || s_motion_actions[0].kind!=MOTION_TURN ||
+         !AppDebugTurn90Allowed(g_debug_plan_id,s_motion_actions[0].base_rpm,s_motion_actions[0].relative_deg)))return 0U;
     for (i = 0U; i < MOTION_ACTION_COUNT; i++)
     {
         const MotionAction *action = &s_motion_actions[i];
@@ -245,7 +248,7 @@ static uint32_t App_MotionPlanValid(void)
         else if (action->kind == MOTION_TURN)
         {
             if ((action->base_rpm > 5U && !(APP_TURN_BRAKE_TRIAL_ACTIVE &&
-                (MOTION_ACTION_COUNT>=1U && MOTION_ACTION_COUNT<=MOTION_ACTION_CAPACITY) && g_debug_plan_id==DEBUG_PLAN_DEFAULT &&
+                (MOTION_ACTION_COUNT>=1U && MOTION_ACTION_COUNT<=MOTION_ACTION_CAPACITY) && (g_debug_plan_id==DEBUG_PLAN_DEFAULT || AppDebugTurn90Plan(g_debug_plan_id)) &&
                 action->base_rpm==APP_TURN_BRAKE_MAX_RPM &&
                 (action->relative_deg==90.0f || action->relative_deg==-90.0f))) || action->run_ms || action->distance_mm != 0.0f ||
                 !(((action->relative_deg >= 5.0f) && (action->relative_deg <= 90.0f)) ||
@@ -394,7 +397,8 @@ uint32_t TurnStart(uint32_t direction, float angle_deg, uint32_t max_rpm)
     if (direction > TURN_CCW || !(angle_deg >= MOTION_TURN_MIN_DEG && angle_deg <= MOTION_TURN_MAX_DEG) ||
         max_rpm < 1U || (max_rpm > MOTION_TURN_MAX_RPM &&
             !(APP_TURN_BRAKE_TRIAL_ACTIVE && s_motion_list_submit &&
-              MOTION_ACTION_COUNT==1U && g_debug_plan_id==DEBUG_PLAN_DEFAULT &&
+              MOTION_ACTION_COUNT==1U && (g_debug_plan_id==DEBUG_PLAN_DEFAULT ||
+               AppDebugTurn90Allowed(g_debug_plan_id,max_rpm,(direction==TURN_CCW)?angle_deg:-angle_deg)) &&
               angle_deg==90.0f && max_rpm==APP_TURN_BRAKE_MAX_RPM))) return 0U;
     taskENTER_CRITICAL();
     if (!g_heading_exec_trip &&
@@ -572,7 +576,7 @@ static uint32_t App_Baseline40KeepVm(void)
     return (g_debug_plan_id==DEBUG_PLAN_FORWARD210_40 || g_debug_plan_id==DEBUG_PLAN_LEFT210_40 ||
         g_debug_plan_id==DEBUG_PLAN_RIGHT210_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD210_40 ||
         g_debug_plan_id==DEBUG_PLAN_RIGHT150_40 || g_debug_plan_id==DEBUG_PLAN_RIGHT30_40 ||
-        g_debug_plan_id==DEBUG_PLAN_FORWARD150_40 || g_debug_plan_id==DEBUG_PLAN_FORWARD30_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD150_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD30_40 || g_debug_plan_id==DEBUG_PLAN_LEFT150_40 || g_debug_plan_id==DEBUG_PLAN_LEFT30_40) && s_motion_session_open &&
+        g_debug_plan_id==DEBUG_PLAN_FORWARD150_40 || g_debug_plan_id==DEBUG_PLAN_FORWARD30_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD150_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD30_40 || g_debug_plan_id==DEBUG_PLAN_LEFT150_40 || g_debug_plan_id==DEBUG_PLAN_LEFT30_40 || AppDebugTurn90Plan(g_debug_plan_id)) && s_motion_session_open &&
         s_combined_keep_vm && g_vm_test_request==1U;
 #else
     return 0U;

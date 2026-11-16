@@ -4,6 +4,12 @@
 #include "field_map.h"
 volatile RouteCheck g_route_check = {0};
 volatile CompetitionEntryStatus g_competition_entry = {0};
+uint32_t AppDebugTurn90Allowed(uint32_t id,uint32_t rpm,float angle)
+{
+    return AppDebugTurn90Plan(id) && rpm==82U &&
+        ((id==DEBUG_PLAN_TURN_CCW90_90 && angle==90.0f) ||
+         (id==DEBUG_PLAN_TURN_CW90_90 && angle==-90.0f));
+}
 uint32_t AppDebugPlan40Allowed(uint32_t id,uint32_t direction,uint32_t rpm,float mm)
 {
     return MotionTrial40Allowed(direction,rpm,mm) &&
@@ -32,8 +38,15 @@ uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count)
     };
     uint32_t i,n;
     if (!APP_IS_DEBUG || !actions || !count || id > DEBUG_PLAN_MAX || id == DEBUG_PLAN_FORWARD237) return 0U;
+    if ((id==DEBUG_PLAN_TURN_CCW90_90 || id==DEBUG_PLAN_TURN_CW90_90) && !AppDebugTurn90Plan(id)) return 0U;
     if (APP_BASELINE40_ACTIVE && id!=DEBUG_PLAN_FORWARD210_40 && id!=DEBUG_PLAN_LEFT210_40 &&
-        id!=DEBUG_PLAN_RIGHT210_40 && id!=DEBUG_PLAN_BACKWARD210_40 && id!=DEBUG_PLAN_RIGHT150_40 && id!=DEBUG_PLAN_RIGHT30_40 && id!=DEBUG_PLAN_FORWARD150_40 && id!=DEBUG_PLAN_FORWARD30_40 && id!=DEBUG_PLAN_BACKWARD150_40 && id!=DEBUG_PLAN_BACKWARD30_40 && id!=DEBUG_PLAN_LEFT150_40 && id!=DEBUG_PLAN_LEFT30_40) return 0U;
+        id!=DEBUG_PLAN_RIGHT210_40 && id!=DEBUG_PLAN_BACKWARD210_40 && id!=DEBUG_PLAN_RIGHT150_40 && id!=DEBUG_PLAN_RIGHT30_40 && id!=DEBUG_PLAN_FORWARD150_40 && id!=DEBUG_PLAN_FORWARD30_40 && id!=DEBUG_PLAN_BACKWARD150_40 && id!=DEBUG_PLAN_BACKWARD30_40 && id!=DEBUG_PLAN_LEFT150_40 && id!=DEBUG_PLAN_LEFT30_40 && !AppDebugTurn90Plan(id)) return 0U;
+    if (AppDebugTurn90Plan(id)) {
+        MotionAction turn={MOTION_TURN,82U,0U,0.0f,0.0f};
+        turn.relative_deg=(id==DEBUG_PLAN_TURN_CCW90_90)?90.0f:-90.0f;
+        if(!AppDebugTurn90Allowed(id,turn.base_rpm,turn.relative_deg))return 0U;
+        actions[0]=turn;*count=1U;return 1U;
+    }
     if (id == DEBUG_PLAN_FORWARD210_40 || id == DEBUG_PLAN_FORWARD150_40 || id == DEBUG_PLAN_FORWARD30_40) {
         MotionAction trial={MOTION_FORWARD_DISTANCE,APP_BASELINE40_RPM,0U,0.0f,APP_BASELINE40_MM};
         if(id==DEBUG_PLAN_FORWARD150_40) trial.distance_mm=1500.0f;

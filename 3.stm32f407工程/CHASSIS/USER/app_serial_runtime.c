@@ -163,7 +163,7 @@ static uint32_t App_SerialPoweredDone(const PowerCommandStatus *power,const Chas
 {
     return (g_debug_plan_id==DEBUG_PLAN_FORWARD210_40 || g_debug_plan_id==DEBUG_PLAN_LEFT210_40 ||
         g_debug_plan_id==DEBUG_PLAN_RIGHT210_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD210_40 || g_debug_plan_id==DEBUG_PLAN_RIGHT150_40 || g_debug_plan_id==DEBUG_PLAN_RIGHT30_40 ||
-        g_debug_plan_id==DEBUG_PLAN_FORWARD150_40 || g_debug_plan_id==DEBUG_PLAN_FORWARD30_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD150_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD30_40 || g_debug_plan_id==DEBUG_PLAN_LEFT150_40 || g_debug_plan_id==DEBUG_PLAN_LEFT30_40) && g_combined_test.state==3U &&
+        g_debug_plan_id==DEBUG_PLAN_FORWARD150_40 || g_debug_plan_id==DEBUG_PLAN_FORWARD30_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD150_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD30_40 || g_debug_plan_id==DEBUG_PLAN_LEFT150_40 || g_debug_plan_id==DEBUG_PLAN_LEFT30_40 || AppDebugTurn90Plan(g_debug_plan_id)) && g_combined_test.state==3U &&
         !g_combined_test.cause && g_combined_test.completed==*AppMotion_Live()->action_count &&
         g_vm_test_request==1U && power->active==1U && *AppMotion_Live()->session_open &&
         g_combined_test.index<*AppMotion_Live()->action_count &&
@@ -248,12 +248,13 @@ static void App_SerialMotionCommand(char *line)
 #if APP_TEST_MODE == 3U
     else if ((strncmp(p,"PLAN",4U)==0 && p[4]>='0' && p[4]<='9' && p[5]=='\0') ||
              strcmp(p,"PLAN10")==0 || strcmp(p,"PLAN11")==0 || strcmp(p,"PLAN12")==0 || strcmp(p,"PLAN13")==0 ||
-             strcmp(p,"PLAN14")==0 || strcmp(p,"PLAN15")==0 || strcmp(p,"PLAN16")==0 || strcmp(p,"PLAN17")==0 || strcmp(p,"PLAN18")==0 || strcmp(p,"PLAN19")==0)
+             strcmp(p,"PLAN14")==0 || strcmp(p,"PLAN15")==0 || strcmp(p,"PLAN16")==0 || strcmp(p,"PLAN17")==0 || strcmp(p,"PLAN18")==0 || strcmp(p,"PLAN19")==0 ||
+              strcmp(p,"PLAN20")==0 || strcmp(p,"PLAN21")==0)
     {
         if (!s_serial_tx_seq || (uint32_t)(s_serial_tx_seq-1U-seq)>5U ||
             (uint32_t)(now-tick)>=500U) App_SerialReject(5U);
         else if (g_serial_motion_state || AppRuntimeRoute_Live()->staging || AppRuntimeRoute_Live()->committed.id || !App_SerialIdleReady(now) ||
-                 !App_DebugSelectPlan(p[5] ? (10U+(uint32_t)(p[5]-'0')) : (uint32_t)(p[4]-'0'))) App_SerialReject(6U);
+                 !App_DebugSelectPlan(p[5] ? ((uint32_t)(p[4]-'0')*10U+(uint32_t)(p[5]-'0')) : (uint32_t)(p[4]-'0'))) App_SerialReject(6U);
         else g_serial_motion_accepted++;
     }
 #endif
@@ -265,7 +266,7 @@ static void App_SerialMotionCommand(char *line)
                  (!APP_BASELINE40_ACTIVE && (!AppRuntimeRoute_Live()->ready || AppRuntimeRoute_Live()->staging || AppRuntimeRoute_Live()->consumed)) ||
                  (APP_BASELINE40_ACTIVE && ((g_debug_plan_id!=DEBUG_PLAN_FORWARD210_40 && g_debug_plan_id!=DEBUG_PLAN_LEFT210_40 &&
                   g_debug_plan_id!=DEBUG_PLAN_RIGHT210_40 && g_debug_plan_id!=DEBUG_PLAN_BACKWARD210_40 && g_debug_plan_id!=DEBUG_PLAN_RIGHT150_40 && g_debug_plan_id!=DEBUG_PLAN_RIGHT30_40 &&
-                   g_debug_plan_id!=DEBUG_PLAN_FORWARD150_40 && g_debug_plan_id!=DEBUG_PLAN_FORWARD30_40 && g_debug_plan_id!=DEBUG_PLAN_BACKWARD150_40 && g_debug_plan_id!=DEBUG_PLAN_BACKWARD30_40 && g_debug_plan_id!=DEBUG_PLAN_LEFT150_40 && g_debug_plan_id!=DEBUG_PLAN_LEFT30_40) ||
+                   g_debug_plan_id!=DEBUG_PLAN_FORWARD150_40 && g_debug_plan_id!=DEBUG_PLAN_FORWARD30_40 && g_debug_plan_id!=DEBUG_PLAN_BACKWARD150_40 && g_debug_plan_id!=DEBUG_PLAN_BACKWARD30_40 && g_debug_plan_id!=DEBUG_PLAN_LEFT150_40 && g_debug_plan_id!=DEBUG_PLAN_LEFT30_40 && !AppDebugTurn90Plan(g_debug_plan_id)) ||
                   *AppMotion_Live()->action_count!=1U))) App_SerialReject(6U);
         else
         {
@@ -846,6 +847,9 @@ static void App_SerialMotionTelemetry(void)
         (((*AppMotion_Live()->distance_mm) > 0.0f) ? (MOTION_FORWARD_DISTANCE + (*AppMotion_Live()->mode)) : (*AppMotion_Live()->mode)));
     if (status.distance_mode && (status.distance_base_rpm >= 3U || status.distance_profile_mode))
         values[38] = (int32_t)status.distance_base_rpm;
+    if(AppDebugTurn90Plan(g_debug_plan_id)) {
+        values[38]=82;values[39]=130;
+    }
     values[57] = (*AppMotion_Live()->turn) ? (-2147483647L - 1L) :
         App_SerialMilli(MotionRpmToCmPerSec((float)values[38]));
     /* 新候选字段显示参考速度上限，不能把含2RPM余量的基速当成参考速度。 */

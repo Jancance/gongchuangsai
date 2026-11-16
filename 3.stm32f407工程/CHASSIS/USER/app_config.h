@@ -55,6 +55,16 @@
 #define APP_PERIMETER_TRIAL_ACTIVE 1U
 #define APP_PERIMETER_GROUP_MS 300000U
 #include "route_config.h"
+#ifndef APP_TURN90_90_ENABLE
+#define APP_TURN90_90_ENABLE 0U
+#endif
+#if APP_TURN90_90_ENABLE > 1U
+#error Turn90_90_enable_invalid
+#endif
+#define APP_TURN90_90_ACTIVE (APP_TURN90_90_ENABLE && APP_BASELINE40_ACTIVE)
+#if APP_TURN90_90_ENABLE && !APP_BASELINE40_ACTIVE
+#error Turn90_90_requires_baseline40_debug
+#endif
 /* Explicit single-turn debug candidate. Ordinary rotation remains capped at5RPM. */
 #ifndef APP_TURN_BRAKE_TRIAL_ENABLE
 #define APP_TURN_BRAKE_TRIAL_ENABLE 1U
@@ -66,11 +76,14 @@
 #ifndef APP_TURN_BRAKE_TRIAL_DPS
 #define APP_TURN_BRAKE_TRIAL_DPS 30U
 #endif
-#if APP_TURN_BRAKE_TRIAL_DPS != 15U && APP_TURN_BRAKE_TRIAL_DPS != 30U
+#if APP_TURN_BRAKE_TRIAL_DPS != 15U && APP_TURN_BRAKE_TRIAL_DPS != 30U && !(APP_TURN90_90_ACTIVE && APP_TURN_BRAKE_TRIAL_DPS == 90U)
 #error Turn_brake_trial_speed_invalid
 #endif
-#define APP_TURN_BRAKE_MAX_RPM ((APP_TURN_BRAKE_TRIAL_DPS == 30U) ? 27U : 13U)
-#define APP_TURN_BRAKE_FEEDBACK_RPM ((APP_TURN_BRAKE_TRIAL_DPS == 30U) ? 40U : 30U)
+#define APP_TURN_BRAKE_MAX_RPM ((APP_TURN_BRAKE_TRIAL_DPS == 90U) ? 82U : ((APP_TURN_BRAKE_TRIAL_DPS == 30U) ? 27U : 13U))
+#define APP_TURN_BRAKE_FEEDBACK_RPM ((APP_TURN_BRAKE_TRIAL_DPS == 90U) ? 130U : ((APP_TURN_BRAKE_TRIAL_DPS == 30U) ? 40U : 30U))
+#if APP_TURN90_90_ENABLE && APP_TURN_BRAKE_TRIAL_DPS != 90U
+#error Turn90_90_requires_explicit_90dps
+#endif
 
 /* 低速距离S曲线候选，默认关闭；仅调试mode3，仍不超过15RPM。
  * 下列数值为软件候选，未做载物/刹车实测，不作为提速许可。 */

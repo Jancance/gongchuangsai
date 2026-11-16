@@ -23,7 +23,11 @@
 #define DEBUG_PLAN_BACKWARD30_40 17U
 #define DEBUG_PLAN_LEFT150_40 18U
 #define DEBUG_PLAN_LEFT30_40 19U
-#define DEBUG_PLAN_MAX DEBUG_PLAN_LEFT30_40
+#define DEBUG_PLAN_TURN_CCW90_90 20U
+#define DEBUG_PLAN_TURN_CW90_90 21U
+#define DEBUG_PLAN_MAX DEBUG_PLAN_TURN_CW90_90
+#define AppDebugTurn90Plan(id) (APP_TURN90_90_ACTIVE && ((id)==DEBUG_PLAN_TURN_CCW90_90 || (id)==DEBUG_PLAN_TURN_CW90_90))
+uint32_t AppDebugTurn90Allowed(uint32_t id,uint32_t rpm,float angle);
 uint32_t AppDebugPlan40Allowed(uint32_t id,uint32_t direction,uint32_t rpm,float mm);
 /* 仅复制参数；许可、空闲和源新鲜度由调用适配层锁内检查。 */
 uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count);

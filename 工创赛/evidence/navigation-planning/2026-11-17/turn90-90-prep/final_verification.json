@@ -1,0 +1,83 @@
+{
+  "status": "PASS",
+  "hardware_accessed": false,
+  "source_files": {
+    "app_config.h": "1fbe0e65ca569842a4bc80db47b06c16dc8833b9b612a6e781dc59e8e55b4e6f",
+    "app_entry.h": "92b494d3ad8adec8c4ee985e708e105962e382f3a1059a2ee19408168835b542",
+    "app_entry.c": "755a02b5df2b4198896276f48d75cc5bf6206db877d3c94a712ab3e280b63f8d",
+    "app_motion_runtime.c": "08ba4f92fcfc33271e33f1eabb5efe41fb7731bd3d3f3058069e075135816910",
+    "app_serial_runtime.c": "e10d5f080e29a9e870bf2b08b1d0cdc5c42b7e0199b7959aee9595d72cb0b523",
+    "turn_brake.h": "68b550532b3b65ebbc059a297c7b03933eab4d1ef11a2b257de10a616c6abed7",
+    "heading_session.c": "e38bab07a132558fc24222f188e6caa33b1b4ffa2417695e30a50fd390fb4a52"
+  },
+  "source_encoding": {
+    "app_config.h": "gbk",
+    "app_entry.h": "gbk",
+    "app_entry.c": "gbk",
+    "app_motion_runtime.c": "gbk",
+    "app_serial_runtime.c": "gbk",
+    "turn_brake.h": "utf-8",
+    "heading_session.c": "utf-8"
+  },
+  "original_dirty_files_unchanged": 6,
+  "matlab": 54,
+  "actual_c": {
+    "turn90": {
+      "assertions": 78173,
+      "failed_line": 0,
+      "status": "PASS"
+    }
+  },
+  "translation_regression": {
+    "trim_on": {
+      "assertions": 33813,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "trim_off": {
+      "assertions": 33773,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "inactive": {
+      "assertions": 5323,
+      "failed_line": 0,
+      "status": "PASS"
+    }
+  },
+  "host": {
+    "status": "PASS",
+    "checks": 42,
+    "hardware_access": false
+  },
+  "build": {
+    "started_at": "2026-11-17T01:20:08.760188+08:00",
+    "command": [
+      "D:/Keil_v5/UV4/UV4.exe",
+      "-r",
+      "D:\\Desktop\\工创赛\\工创赛\\tmp\\turn90-90-build-20261117\\turn90_90.uvprojx",
+      "-t",
+      "Vehicle_Integrated",
+      "-o",
+      "D:\\Desktop\\工创赛\\工创赛\\evidence\\navigation-planning\\2026-11-17\\turn90-90-prep\\build.log"
+    ],
+    "hardware_accessed": false,
+    "candidate_project": "D:\\Desktop\\工创赛\\工创赛\\tmp\\turn90-90-build-20261117\\turn90_90.uvprojx",
+    "target": "Vehicle_Integrated",
+    "defines": "APP_TURN90_90_ENABLE=1,APP_TURN_BRAKE_TRIAL_DPS=90,APP_VM_CALIBRATION_ONLY_ENABLE=0,APP_VM_ONLY_ENABLE=0,APP_WHEEL_ENABLE_HOLD_ENABLE=0,APP_LEFT40_DRIFT_TRIM_ENABLE=1,APP_BASELINE40_ENABLE=1,VEHICLE_INTEGRATED_ENABLE=0,VEHICLE_STAGE1_ENABLE=0,APP_FUSION_CAPTURE_STATIC_TEST=0,APP_FUSION_CAPTURE_ENABLE=1",
+    "source_checkpoint": "b1dd3449",
+    "finished_at": "2026-11-17T01:20:16.543857+08:00",
+    "returncode": 0,
+    "success": true,
+    "axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\turn90-90-build-20261117\\turn90_90\\Vehicle_Integrated.axf",
+    "axf_sha256": "8d7b533fa93f2180d3c9f3f53b20021c95e0fe053effec2bb5dc5986d2cc1aec"
+  },
+  "CAN_task_allocated_stack_bytes": 1536,
+  "CAN_step_static_max_depth_bytes": 1024,
+  "real_RTOStiming_and_stack_verified": false,
+  "relative_angle_start_cases_deg": [
+    37,
+    170,
+    -170
+  ]
+}
