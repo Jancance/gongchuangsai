@@ -7,7 +7,7 @@ static __inline uint32_t MotionTrial40Allowed(uint32_t direction,uint32_t rpm,fl
         ((mm==APP_BASELINE40_MM &&
           (((direction==0U || direction==3U) && rpm==APP_BASELINE40_RPM) ||
            ((direction==1U || direction==2U) && rpm==APP_BASELINE40_LEFT_RPM))) ||
-         (direction==2U && rpm==APP_BASELINE40_LEFT_RPM && mm==1500.0f));
+         (direction==2U && rpm==APP_BASELINE40_LEFT_RPM && (mm==1500.0f || mm==300.0f)));
 }
 static __inline float MotionDistanceAcceleration(uint32_t direction,uint32_t rpm,float mm)
 {

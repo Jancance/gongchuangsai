@@ -11,7 +11,8 @@ uint32_t AppDebugPlan40Allowed(uint32_t id,uint32_t direction,uint32_t rpm,float
            (id==DEBUG_PLAN_LEFT210_40 && direction==1U) ||
            (id==DEBUG_PLAN_RIGHT210_40 && direction==2U) ||
            (id==DEBUG_PLAN_BACKWARD210_40 && direction==3U)) && mm==APP_BASELINE40_MM) ||
-         (id==DEBUG_PLAN_RIGHT150_40 && direction==2U && mm==1500.0f));
+         (id==DEBUG_PLAN_RIGHT150_40 && direction==2U && mm==1500.0f) ||
+         (id==DEBUG_PLAN_RIGHT30_40 && direction==2U && mm==300.0f));
 }
 uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count)
 {
@@ -26,7 +27,7 @@ uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count)
     uint32_t i,n;
     if (!APP_IS_DEBUG || !actions || !count || id > DEBUG_PLAN_MAX || id == DEBUG_PLAN_FORWARD237) return 0U;
     if (APP_BASELINE40_ACTIVE && id!=DEBUG_PLAN_FORWARD210_40 && id!=DEBUG_PLAN_LEFT210_40 &&
-        id!=DEBUG_PLAN_RIGHT210_40 && id!=DEBUG_PLAN_BACKWARD210_40 && id!=DEBUG_PLAN_RIGHT150_40) return 0U;
+        id!=DEBUG_PLAN_RIGHT210_40 && id!=DEBUG_PLAN_BACKWARD210_40 && id!=DEBUG_PLAN_RIGHT150_40 && id!=DEBUG_PLAN_RIGHT30_40) return 0U;
     if (id == DEBUG_PLAN_FORWARD210_40) {
         MotionAction trial={MOTION_FORWARD_DISTANCE,APP_BASELINE40_RPM,0U,0.0f,APP_BASELINE40_MM};
         if (!MotionTrial40Allowed(0U,trial.base_rpm,trial.distance_mm)) return 0U;
@@ -35,11 +36,12 @@ uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count)
         MotionAction trial={MOTION_LEFT_DISTANCE,APP_BASELINE40_LEFT_RPM,0U,0.0f,APP_BASELINE40_MM};
         if (!AppDebugPlan40Allowed(id,1U,trial.base_rpm,trial.distance_mm)) return 0U;
         n=1U;actions[0]=trial;
-    } else if (id == DEBUG_PLAN_RIGHT210_40 || id == DEBUG_PLAN_BACKWARD210_40 || id == DEBUG_PLAN_RIGHT150_40) {
+    } else if (id == DEBUG_PLAN_RIGHT210_40 || id == DEBUG_PLAN_BACKWARD210_40 || id == DEBUG_PLAN_RIGHT150_40 || id == DEBUG_PLAN_RIGHT30_40) {
         uint32_t direction=id==DEBUG_PLAN_BACKWARD210_40 ? 3U : 2U;
         MotionAction trial={MOTION_RIGHT_DISTANCE,APP_BASELINE40_LEFT_RPM,0U,0.0f,APP_BASELINE40_MM};
         if(direction==3U) {trial.kind=MOTION_BACKWARD_DISTANCE;trial.base_rpm=APP_BASELINE40_RPM;}
         if(id==DEBUG_PLAN_RIGHT150_40) trial.distance_mm=1500.0f;
+        else if(id==DEBUG_PLAN_RIGHT30_40) trial.distance_mm=300.0f;
         if (!AppDebugPlan40Allowed(id,direction,trial.base_rpm,trial.distance_mm)) return 0U;
         n=1U;actions[0]=trial;
     } else if (id == DEBUG_PLAN_DEFAULT) {

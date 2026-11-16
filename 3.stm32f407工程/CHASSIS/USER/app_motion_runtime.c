@@ -571,7 +571,7 @@ static uint32_t App_Baseline40KeepVm(void)
 #if APP_BASELINE40_ACTIVE
     return (g_debug_plan_id==DEBUG_PLAN_FORWARD210_40 || g_debug_plan_id==DEBUG_PLAN_LEFT210_40 ||
         g_debug_plan_id==DEBUG_PLAN_RIGHT210_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD210_40 ||
-        g_debug_plan_id==DEBUG_PLAN_RIGHT150_40) && s_motion_session_open &&
+        g_debug_plan_id==DEBUG_PLAN_RIGHT150_40 || g_debug_plan_id==DEBUG_PLAN_RIGHT30_40) && s_motion_session_open &&
         s_combined_keep_vm && g_vm_test_request==1U;
 #else
     return 0U;
