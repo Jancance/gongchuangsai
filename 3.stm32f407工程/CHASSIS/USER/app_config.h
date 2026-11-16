@@ -46,6 +46,16 @@
 #error Left40_drift_trim_enable_invalid
 #endif
 #define APP_LEFT40_DRIFT_RATIO 0.02f
+#ifndef APP_RIGHT40_FORWARD_TRIM_ENABLE
+#define APP_RIGHT40_FORWARD_TRIM_ENABLE 0U
+#endif
+#if APP_RIGHT40_FORWARD_TRIM_ENABLE > 1U
+#error Right40_forward_trim_enable_invalid
+#endif
+#if APP_RIGHT40_FORWARD_TRIM_ENABLE && !APP_BASELINE40_ACTIVE
+#error Right40_forward_trim_requires_baseline40_debug
+#endif
+#define APP_RIGHT40_FORWARD_RATIO 0.01f
 #define APP_BASELINE40_MM 2100.0f
 #define APP_BASELINE40_MM_S 400.0f
 #define APP_BASELINE40_ACCEL_MM_S2 150.0f

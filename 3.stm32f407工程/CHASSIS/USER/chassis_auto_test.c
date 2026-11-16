@@ -1420,6 +1420,12 @@ void ChassisAuto_CanStep(void)
         if (((s_forward_hold == 1U) ?
 #if APP_DISTANCE_SCURVE_ACTIVE
             (s_profile_active ? (
+#if APP_BASELINE40_ACTIVE && APP_RIGHT40_FORWARD_TRIM_ENABLE
+                ((g_debug_plan_id==DEBUG_PLAN_RIGHT210_40 || g_debug_plan_id==DEBUG_PLAN_RIGHT150_40 || g_debug_plan_id==DEBUG_PLAN_RIGHT30_40) &&
+                s_translation_mode==2U && !s_route_trial &&
+                AppDebugPlan40Allowed(g_debug_plan_id,s_translation_mode,s_distance_max_rpm,s_distance_target_mm)) ?
+                Chassis_Right40ForwardCommands(s_translation_base_rpm,effective_heading,s_commands[2]) :
+#endif
 #if APP_BASELINE40_ACTIVE && APP_LEFT40_DRIFT_TRIM_ENABLE
                 ((g_debug_plan_id==DEBUG_PLAN_LEFT210_40 || g_debug_plan_id==DEBUG_PLAN_LEFT150_40 || g_debug_plan_id==DEBUG_PLAN_LEFT30_40) &&
                 s_translation_mode==1U && !s_route_trial &&

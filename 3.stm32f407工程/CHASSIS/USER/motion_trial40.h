@@ -14,6 +14,10 @@ static __inline float MotionDistanceAcceleration(uint32_t direction,uint32_t rpm
     if (direction==1U && rpm==APP_BASELINE40_LEFT_RPM &&
         MotionTrial40Allowed(direction,rpm,mm)) return APP_BASELINE40_ACCEL_MM_S2/(1.0f+APP_LEFT40_DRIFT_RATIO);
 #endif
+#if APP_RIGHT40_FORWARD_TRIM_ENABLE
+    if (direction==2U && rpm==APP_BASELINE40_LEFT_RPM &&
+        MotionTrial40Allowed(direction,rpm,mm)) return APP_BASELINE40_ACCEL_MM_S2/(1.0f+APP_RIGHT40_FORWARD_RATIO);
+#endif
     return MotionTrial40Allowed(direction,rpm,mm) ? APP_BASELINE40_ACCEL_MM_S2 : APP_DISTANCE_SCURVE_ACCEL_MM_S2;
 }
 static __inline float MotionDistanceJerk(uint32_t direction,uint32_t rpm,float mm)
@@ -21,6 +25,10 @@ static __inline float MotionDistanceJerk(uint32_t direction,uint32_t rpm,float m
 #if APP_LEFT40_DRIFT_TRIM_ENABLE
     if (direction==1U && rpm==APP_BASELINE40_LEFT_RPM &&
         MotionTrial40Allowed(direction,rpm,mm)) return APP_BASELINE40_JERK_MM_S3/(1.0f+APP_LEFT40_DRIFT_RATIO);
+#endif
+#if APP_RIGHT40_FORWARD_TRIM_ENABLE
+    if (direction==2U && rpm==APP_BASELINE40_LEFT_RPM &&
+        MotionTrial40Allowed(direction,rpm,mm)) return APP_BASELINE40_JERK_MM_S3/(1.0f+APP_RIGHT40_FORWARD_RATIO);
 #endif
     return MotionTrial40Allowed(direction,rpm,mm) ? APP_BASELINE40_JERK_MM_S3 : APP_DISTANCE_SCURVE_JERK_MM_S3;
 }

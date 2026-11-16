@@ -83,6 +83,8 @@ uint32_t Chassis_TranslationProfileCommands(uint32_t mode, uint32_t base_rpm,
 #if APP_BASELINE40_ACTIVE
 uint32_t Chassis_Left40DriftCommands(uint32_t base_rpm,float correction_rpm,
     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+uint32_t Chassis_Right40ForwardCommands(uint32_t base_rpm,float correction_rpm,
+    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
 /* PLAN8-only budget/mix: integer 0.1RPM, heading first, no forward scaling. */
 uint32_t Chassis_Baseline40Budget(uint32_t base_rpm, float heading_rpm,
     int32_t *heading_deci, int32_t *lateral_limit_deci, float *mm_s_per_deci);

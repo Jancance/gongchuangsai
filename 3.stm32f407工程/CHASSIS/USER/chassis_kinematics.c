@@ -283,6 +283,18 @@ uint32_t Chassis_Left40DriftCommands(uint32_t base_rpm,float correction_rpm,
     logical.rpm[2]=-b-t-h;logical.rpm[3]=b-t+h;
     return Chassis_EncodeEmm(&logical,APP_BASELINE40_LEFT_RPM+6U,commands);
 }
+uint32_t Chassis_Right40ForwardCommands(uint32_t base_rpm,float correction_rpm,
+    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+{
+    ChassisWheelSpeeds logical;float h,b,t;
+    Chassis_ClearMotorCommands(commands);
+    if (!commands || base_rpm>APP_BASELINE40_LEFT_RPM ||
+        !Chassis_ProfileCorrectionRpm(base_rpm,correction_rpm,&h)) return 0U;
+    b=(float)base_rpm;t=APP_RIGHT40_FORWARD_RATIO*b;
+    logical.rpm[0]=-b+t-h;logical.rpm[1]=b+t+h;
+    logical.rpm[2]=b+t-h;logical.rpm[3]=-b+t+h;
+    return Chassis_EncodeEmm(&logical,APP_BASELINE40_LEFT_RPM+4U,commands);
+}
 uint32_t Chassis_Baseline40Budget(uint32_t base_rpm, float heading_rpm,
     int32_t *heading_deci, int32_t *lateral_limit_deci, float *mm_s_per_deci)
 {

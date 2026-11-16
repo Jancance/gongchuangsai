@@ -1,0 +1,36 @@
+{
+  "hardware_accessed": false,
+  "software_model_only": true,
+  "cases": {
+    "right_on": {
+      "assertions": 208124,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "right_off": {
+      "assertions": 208124,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "inactive": {
+      "assertions": 8295,
+      "failed_line": 0,
+      "status": "PASS"
+    }
+  },
+  "source_sha256": {
+    "app_entry.c": "755a02b5df2b4198896276f48d75cc5bf6206db877d3c94a712ab3e280b63f8d",
+    "app_entry.h": "92b494d3ad8adec8c4ee985e708e105962e382f3a1059a2ee19408168835b542",
+    "chassis_kinematics.c": "9f009f558c6c82607dda9319e8abba96c2b3536343a91d3ffaef5dc2073f76aa",
+    "app_fusion_capture.c": "1bf13ce0b0a4cb6f61bb69e3a69bd760270c30a57b51d2c3cee0fe61ab18f9bb",
+    "motion_trial20.h": "91df1f345fce9467406ba2fc870e1184b20ce0fe88ab737bebbcacea55b5f697",
+    "motion_trial40.h": "aaf77f81f2997b208cd596b7a98644fad4b7b54e11acf522c5995b8a45392625",
+    "app_serial_runtime.c": "6a2d57a45cea8b386d20455873de4be817eb08e9d5374c5273c7e80f365a4ee0",
+    "app_config.h": "6eb8534458f8afe7e7f23ff7464e0d4c8a6fb113dfee50301f3d6ff0ac76cf5e",
+    "chassis_auto_test.c": "29eb62638f58d0f7bcc2e9690660a4238050f9b63743964ce0657c11d9cff8c9",
+    "chassis_kinematics.h": "7a6f763a665691b0b7db04efdcd4fa014b1bb31438d810acaf05300a90e9ce89",
+    "motion_profile.c": "5e3b205b42f9824fa76e334f7c23a65162fdfe69a18e454a64f46fc26777af59"
+  },
+  "fixture_sha256": "ee75a2ed10e3c1a7117d86ba51f2f734904e8962de99514b7b1696c509526b5e",
+  "fixture_scope": "Actual prepare and precritical validation only; real right selector condition plus actual AppDebugPlan40Allowed; no RTOS backend"
+}
