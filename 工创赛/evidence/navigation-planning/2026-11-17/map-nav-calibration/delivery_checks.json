@@ -1,0 +1,42 @@
+{
+  "time": "2026-11-17T19:56:29.842601+08:00",
+  "base_commit": "555086e2b0361945cf02bf07cab556d528d39dc5",
+  "local_only": true,
+  "hardware_accessed": false,
+  "review": "PASS_WITH_LIMITATIONS",
+  "actual_c_cases": {
+    "map_cal": {
+      "assertions": 627,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "map_cal_reference": {
+      "assertions": 627,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "map_cal_legacy": {
+      "assertions": 627,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "map_raw": {
+      "assertions": 349,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "map_off": {
+      "assertions": 4,
+      "failed_line": 0,
+      "status": "PASS"
+    }
+  },
+  "frozen_axf": {
+    "integrated_on": "82010a29789f5d3d0e7f484418b1b18c70fc9233f1e9030dc14de2e516cbb3cb",
+    "integrated_off": "85ad6c279f3fa9dfcdb605a3acabbe08dbcc4a1e766b5d8879596e37255147c1",
+    "map_off": "e3840bb578cb6de39418dd4338ce2fddc30d0e11f92e7e21c417cb8e9c6265f9",
+    "baseline_on": "2ff770a79ee2b0cc7e4d21db72637c1065fd7f3992c105f9430d40c81275199e"
+  },
+  "selected_file_count": 117,
+  "excluded": "Only generated .o/.pyc/__pycache__; original unrelated dirty not staged."
+}

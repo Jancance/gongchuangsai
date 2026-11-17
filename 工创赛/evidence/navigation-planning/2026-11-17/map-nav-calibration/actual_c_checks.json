@@ -1,0 +1,42 @@
+{
+  "hardware_accessed": false,
+  "software_only": true,
+  "actual_odometry_integrator": true,
+  "stubbed": "RTOS critical/tick, heading/cache/power providers and MotionGetState; real AppOdometry_Step and real ChassisOdometry_* and kinematics",
+  "cases": {
+    "map_cal": {
+      "assertions": 627,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "map_cal_reference": {
+      "assertions": 627,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "map_cal_legacy": {
+      "assertions": 627,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "map_raw": {
+      "assertions": 349,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "map_off": {
+      "assertions": 4,
+      "failed_line": 0,
+      "status": "PASS"
+    }
+  },
+  "source_sha256": {
+    "app_odometry.c": "9ab3f2b7dd307be356dfb7825ab320704e7cf7118d79a2362c37e358881888e2",
+    "app_odometry.h": "a02dc8aa4c367107f77b16131508c5e77520a69b862775b71f24bffa48c8d0cd",
+    "app_config.h": "2070531ab2bea306fd69174566905a55c93f2e25eadde6d363c1c693f5b9ff20",
+    "chassis_odometry.c": "963f5a4b58d22df734f7fe8061a408423e90936b8e4931b0e46a25d66f59e17a",
+    "chassis_kinematics.c": "9f009f558c6c82607dda9319e8abba96c2b3536343a91d3ffaef5dc2073f76aa",
+    "route_heading_reference.h": "b2c536225fcaae8943fc3032d614c41048fa8468e86ef92c361c4aacbe7ff8a7",
+    "app_motion_runtime.c": "02a046ce73411eec8fb003c93fc8694351c59552e06c166ce507064ea0f8b45a"
+  }
+}

@@ -72,6 +72,20 @@ static uint32_t s_motion_turn_max_rpm = 5U;
 #endif
 static RouteHeadingReference s_route_heading_reference;
 static float s_route_heading_target;
+#if APP_CONTINUOUS_MAP_ENABLE
+static RouteHeadingContinuation s_route_heading_continuation;
+static uint32_t App_RouteHeadingBegin(RouteHeadingReference *reference,float yaw)
+{
+    return RouteHeading_BeginContinued(reference,&s_route_heading_continuation,
+        AppOdometry_MapTrackingRun(),yaw);
+}
+static void App_RouteHeadingCompleted(void)
+{
+    RouteHeading_Complete(&s_route_heading_continuation,
+        AppOdometry_MapTrackingRun(),s_route_heading_target);
+}
+static void App_RouteHeadingDirectCompleted(void);
+#endif
 static uint32_t s_route_heading_turn_active;
 volatile float g_route_heading_targets[8], g_route_heading_start_yaw[8];
 #if APP_TEST_MODE == 3U
@@ -122,6 +136,17 @@ static AppOdometryInputs s_odometry_inputs = {
 };
 #endif
 static uint32_t s_combined_turn, s_combined_mode;
+#if APP_CONTINUOUS_MAP_ENABLE
+static void App_RouteHeadingDirectCompleted(void)
+{
+    ChassisAutoStatus status;(void)ChassisAuto_ReadStatus(&status);
+    if(s_motion_session_open && MotionGetState()==MOTION_DONE && !status.active &&
+       status.result==1U && !status.cause && status.rotation_stop_mask==15U) {
+        if(s_combined_turn) s_route_heading_target=g_heading_exec_target_deg;
+        App_RouteHeadingCompleted();
+    }
+}
+#endif
 static uint32_t s_combined_begin_ms, s_combined_stage_ms, s_combined_gap_ms;
 static volatile uint32_t s_combined_end_ms; /* 终态时刻保留供本地诊断。 */
 #define App_TestTranslationMode() (s_combined_mode)
@@ -351,6 +376,10 @@ static uint32_t App_MoveSubmit(uint32_t direction, uint32_t rpm, uint32_t run_ms
 {
     ForwardHoldDebug empty = {0};
     uint32_t accepted = 0U;
+#if APP_CONTINUOUS_MAP_ENABLE
+    RouteHeadingReference direct_reference={0};AppHeadingSource heading;
+    float direct_target=0.0f;uint32_t direct_ready=1U;
+#endif
     if(APP_BASELINE40_ACTIVE && !AppDebugPlan40Allowed(g_debug_plan_id,direction,rpm,distance_mm)) return 0U;
     if(route_speed!=0.0f) {
         if(!APP_POSITION_DIAGNOSTIC || !s_motion_list_submit || g_debug_plan_id!=DEBUG_PLAN_DEFAULT ||
@@ -367,17 +396,35 @@ static uint32_t App_MoveSubmit(uint32_t direction, uint32_t rpm, uint32_t run_ms
     else if (direction > MOVE_RIGHT || rpm < MOTION_MOVE_MIN_RPM ||
         rpm > MOTION_MOVE_MAX_RPM || !run_ms || run_ms > MOTION_MOVE_MAX_MS) return 0U;
     taskENTER_CRITICAL();
+#if APP_CONTINUOUS_MAP_ENABLE
+    if(!s_motion_list_submit) {
+        App_RouteHeadingDirectCompleted();
+        (void)App_HeadingSourceRead(&heading);
+        direct_ready=App_RouteHeadingBegin(&direct_reference,heading.yaw_deg) &&
+            RouteHeading_Target(&direct_reference,0.0f,&direct_target);
+    }
+#endif
     if (!g_forward_hold.trip &&
+#if APP_CONTINUOUS_MAP_ENABLE
+        direct_ready &&
+#endif
         (g_forward_hold.phase == HR_IDLE || g_forward_hold.phase == HR_DONE) &&
         App_MotionAccept())
     {
+#if APP_CONTINUOUS_MAP_ENABLE
+        if(!s_motion_list_submit) {
+            s_route_heading_reference=direct_reference;s_route_heading_target=direct_target;
+            s_route_heading_turn_active=0U;
+        }
+#endif
         s_combined_turn = 0U; s_combined_mode = direction;
         s_combined_base_rpm = rpm; s_combined_run_ms = run_ms; s_combined_distance_mm = distance_mm;
         s_combined_reference_mm_s=route_speed;
         empty.motion_mode = direction; g_forward_hold = empty;
         HWT101_DiagnosticArm(); g_motion_fault_diag_valid = 0U;
         g_forward_hold_trace_count = 0U; g_forward_hold.request = 1U;
-        s_motion_has_action = 1U; accepted = 1U;
+        s_motion_has_action = 1U;
+        AppOdometry_MapActionAccepted(direction,rpm,distance_mm,route_speed);accepted = 1U;
     }
     taskEXIT_CRITICAL();
     return accepted;
@@ -406,6 +453,7 @@ uint32_t TurnStart(uint32_t direction, float angle_deg, uint32_t max_rpm)
         App_MotionAccept())
     {
         HWT101_DiagnosticArm();g_motion_fault_diag_valid=0U;
+        if(!s_motion_list_submit) s_route_heading_turn_active=0U;
         s_combined_turn = 1U; s_motion_turn_max_rpm = max_rpm;
         /* 转向不能继承前一平移段的动态距离、速度与截止。 */
         s_combined_distance_mm=s_combined_reference_mm_s=0.0f;
@@ -414,7 +462,8 @@ uint32_t TurnStart(uint32_t direction, float angle_deg, uint32_t max_rpm)
         memset((void *)&g_heading_stop_trace, 0, sizeof(g_heading_stop_trace));
         g_heading_exec_phase = HR_IDLE; g_heading_exec_state = HS_IDLE;
         g_heading_exec_relative_deg = (direction == TURN_CCW) ? angle_deg : -angle_deg;
-        g_heading_exec_request = 1U; s_motion_has_action = 1U; accepted = 1U;
+        g_heading_exec_request = 1U; s_motion_has_action = 1U;
+        AppOdometry_MapActionAccepted(4U,0U,0.0f,0.0f);accepted = 1U;
     }
     taskEXIT_CRITICAL();
     return accepted;
@@ -455,6 +504,7 @@ static uint32_t App_PerimeterTurnStart(uint32_t direction, float angle_deg, uint
         App_MotionAccept())
     {
         HWT101_DiagnosticArm();g_motion_fault_diag_valid=0U;
+        if(!s_motion_list_submit) s_route_heading_turn_active=0U;
         s_combined_turn = 1U; s_motion_turn_max_rpm = max_rpm;
         /* 转向不能继承前一平移段的动态距离、速度与截止。 */
         s_combined_distance_mm=s_combined_reference_mm_s=0.0f;
@@ -463,7 +513,8 @@ static uint32_t App_PerimeterTurnStart(uint32_t direction, float angle_deg, uint
         memset((void *)&g_heading_stop_trace, 0, sizeof(g_heading_stop_trace));
         g_heading_exec_phase = HR_IDLE; g_heading_exec_state = HS_IDLE;
         g_heading_exec_relative_deg = (direction == TURN_CCW) ? angle_deg : -angle_deg;
-        g_heading_exec_request = 1U; s_motion_has_action = 1U; accepted = 1U;
+        g_heading_exec_request = 1U; s_motion_has_action = 1U;
+        AppOdometry_MapActionAccepted(4U,0U,0.0f,0.0f);accepted = 1U;
     }
     taskEXIT_CRITICAL();
     return accepted;
@@ -631,6 +682,11 @@ void App_CombinedTestStep(void)
             taskEXIT_CRITICAL();
             if (s_combined_turn) App_HeadingRuntimeStep(&s_heading_runtime_inputs);
             else App_ForwardHoldStep(&s_translation_runtime_inputs);
+#if APP_CONTINUOUS_MAP_ENABLE
+            taskENTER_CRITICAL();
+            App_RouteHeadingDirectCompleted();
+            taskEXIT_CRITICAL();
+#endif
             return;
         }
         if (MotionGetState() == MOTION_FAULT || MotionGetState() == MOTION_CANCELLED)
@@ -652,7 +708,11 @@ void App_CombinedTestStep(void)
             (g_translation_hold_selftest != 1U) || (g_motion_plan_valid != 1U) ||
             (g_forward_hold.phase != HR_IDLE) || (g_heading_exec_phase != HR_IDLE))
         { App_CombinedTestStop(3U); taskEXIT_CRITICAL(); return; }
+#if APP_CONTINUOUS_MAP_ENABLE
+        if(!App_RouteHeadingBegin(&s_route_heading_reference,heading.yaw_deg))
+#else
         if(!RouteHeading_Init(&s_route_heading_reference,heading.yaw_deg))
+#endif
         { App_CombinedTestStop(3U);taskEXIT_CRITICAL();return; }
         s_combined_powered_segment = 0U;
         s_combined_begin_ms = s_combined_stage_ms = now;
@@ -737,6 +797,9 @@ void App_CombinedTestStep(void)
                 (App_Baseline40KeepVm() ? (power.active==1U && !status.cut_vm) :
                  (!g_vm_test_request && (!power.active || StartupAxes_Holding()))))
             {
+#if APP_CONTINUOUS_MAP_ENABLE
+                App_RouteHeadingCompleted();
+#endif
                 index = g_combined_test.index;
                 g_combined_test.phase[index] = phase;
                 g_combined_test.session[index] = status.session;

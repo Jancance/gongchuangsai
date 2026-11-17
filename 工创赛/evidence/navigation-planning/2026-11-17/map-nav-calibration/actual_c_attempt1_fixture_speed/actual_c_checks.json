@@ -1,0 +1,22 @@
+{
+  "hardware_accessed": false,
+  "software_only": true,
+  "actual_odometry_integrator": true,
+  "stubbed": "RTOS critical/tick, heading/cache/power providers and MotionGetState; real AppOdometry_Step and real ChassisOdometry_* and kinematics",
+  "cases": {
+    "map_cal": {
+      "assertions": 108,
+      "failed_line": 162,
+      "status": "FAIL"
+    }
+  },
+  "source_sha256": {
+    "app_odometry.c": "f59fec34cc811dece479cdc2c04f5e0b41da4e0dfecde193208a332d5e43e4c4",
+    "app_odometry.h": "f84c9283a827419c70f7c8472a3ac833be1088e75947dc2f3b3dfdaf17c230ab",
+    "app_config.h": "2070531ab2bea306fd69174566905a55c93f2e25eadde6d363c1c693f5b9ff20",
+    "chassis_odometry.c": "963f5a4b58d22df734f7fe8061a408423e90936b8e4931b0e46a25d66f59e17a",
+    "chassis_kinematics.c": "9f009f558c6c82607dda9319e8abba96c2b3536343a91d3ffaef5dc2073f76aa",
+    "route_heading_reference.h": "b2c536225fcaae8943fc3032d614c41048fa8468e86ef92c361c4aacbe7ff8a7",
+    "app_motion_runtime.c": "03145bd005409d1b1119478962fb15fb70561202f23f61abac6b58b89bf31377"
+  }
+}

@@ -6,6 +6,12 @@
 #if APP_CONTINUOUS_MAP_ENABLE > 1U
 #error Continuous_map_enable_invalid
 #endif
+#ifndef APP_MAP_NAV_RESIDUAL_ENABLE
+#define APP_MAP_NAV_RESIDUAL_ENABLE 0U
+#endif
+#if APP_MAP_NAV_RESIDUAL_ENABLE > 1U || (APP_MAP_NAV_RESIDUAL_ENABLE && !APP_CONTINUOUS_MAP_ENABLE)
+#error Map_nav_residual_requires_continuous_map
+#endif
 #ifndef APP_BASELINE40_ENABLE
 #define APP_BASELINE40_ENABLE 0U
 #endif
