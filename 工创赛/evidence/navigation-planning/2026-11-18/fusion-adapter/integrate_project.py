@@ -1,7 +1,13 @@
 from pathlib import Path
 import json,hashlib,xml.etree.ElementTree as ET
 R=Path.cwd();E=Path(__file__).resolve().parent;P=R/'3.stm32f407工程/gongxun-f407.uvprojx';U=P.parent/'CHASSIS/USER'
-assert json.loads((E/'matlab_summary.json').read_text('utf8'))['status']=='PASS'
+gate=json.loads((E/'preimplementation_gate.json').read_text('utf8'))
+assert gate['status']=='PASS' and gate['released_for_c'] is True
+assert hashlib.sha256((E/gate['matlab_script']).read_bytes()).hexdigest()==gate['matlab_script_sha256']
+receipt=json.loads((E/gate['matlab_receipt']).read_text('utf8'))
+assert receipt['returncode']==0 and receipt['script_sha256']==gate['matlab_script_sha256']
+assert not any(receipt[k] for k in ['product_adapter_c_exists_before','product_adapter_h_exists_before','product_adapter_c_exists_after','product_adapter_h_exists_after'])
+assert hashlib.sha256((E/gate['independent_preimplementation_review']).read_bytes()).hexdigest()==gate['independent_preimplementation_review_sha256']
 assert (U/'fusion_adapter.c').exists() and (U/'fusion_adapter.h').exists()
 original=P.read_bytes();before=E/'before';before.mkdir(exist_ok=True)
 if not (before/P.name).exists():(before/P.name).write_bytes(original)

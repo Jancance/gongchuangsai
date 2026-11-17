@@ -1,0 +1,26 @@
+{
+  "status": "FAIL",
+  "failed_line": 160,
+  "assertions": 907,
+  "matlab_vectors": 120,
+  "source_sha256": {
+    "fusion_adapter.c": "bd94ea3e23abe8d54168b998174620b41e38f9ae44e9eed623e4a4a878fee708",
+    "fusion_adapter.h": "9e344b6d37c10f8b0c69b09d0b552cae0ad677c2a45234fdd7f05c3ca9d8849d",
+    "fusion_reference.c": "07a9439f0435cb8ce35fc045b0a74f17e07e0362549336859760ae5921d02fb2",
+    "fusion_reference.h": "8e0d855ae91a5ae6bc856aaf6af2300cd24ccdf8d91d251294087466fa0ab961",
+    "app_odometry.h": "a02dc8aa4c367107f77b16131508c5e77520a69b862775b71f24bffa48c8d0cd",
+    "chassis_odometry.h": "ca7cbf0fe3620c5f2d7c9fbaa04b2c940e7b60d0f55a2b7292cc025d1a3dc211",
+    "chassis_kinematics.c": "9f009f558c6c82607dda9319e8abba96c2b3536343a91d3ffaef5dc2073f76aa",
+    "chassis_kinematics.h": "7a6f763a665691b0b7db04efdcd4fa014b1bb31438d810acaf05300a90e9ce89"
+  },
+  "sources_unchanged_during_run": true,
+  "hardware_accessed": false,
+  "execution": "Actual ARMCC Cortex-M3 soft-float machine code in Unicorn; real AppMapPose header; no platform stubs",
+  "sizes": {
+    "adapter_state": 172,
+    "adapter_input": 168,
+    "adapter_report": 92,
+    "map": 128,
+    "observation": 76
+  }
+}
