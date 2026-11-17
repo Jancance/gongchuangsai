@@ -148,8 +148,12 @@ static uint32_t s_route_trial;
 static uint32_t s_distance_mode, s_distance_reached, s_distance_fault_reason;
 static uint32_t s_translation_applied_base;
 static float s_distance_target_mm, s_distance_progress_mm;
+#if !APP_DISTANCE_SCURVE_ACTIVE
+#define AUTO_DISTANCE_GOAL_MM s_distance_target_mm
+#endif
 #if APP_DISTANCE_SCURVE_ACTIVE
 static MotionProfile s_distance_profile;
+#define AUTO_DISTANCE_GOAL_MM (s_profile_active?s_distance_profile.distance_mm:s_distance_target_mm)
 static MotionProfileSample s_distance_reference;
 static uint32_t s_profile_active, s_profile_done;
 static float s_profile_mm_per_rpm_s;
@@ -651,7 +655,7 @@ static void Auto_DistanceCheckLocked(TickType_t now)
     }
     if (!Chassis_CalibrateDistanceMm(s_translation_mode,mean,&mean) ||
         mean < -5.0f || mean < s_distance_progress_mm-5.0f ||
-        mean > s_distance_target_mm+50.0f)
+        mean > AUTO_DISTANCE_GOAL_MM+50.0f)
     { Auto_DistanceFaultLocked(5U); return; }
     s_alignment_seen=1U; s_alignment_ms=common_ms;
     s_distance_progress_mm = mean;
@@ -665,12 +669,12 @@ static void Auto_DistanceCheckLocked(TickType_t now)
         if (!result) { Auto_DistanceFaultLocked(8U); return; }
         s_profile_done = (result == MOTION_PROFILE_DONE);
 #if APP_BASELINE40_ACTIVE
-        if(elapsed>=s_distance_profile.boundary_s[4] && mean>=s_distance_target_mm-120.0f)
+        if(elapsed>=s_distance_profile.boundary_s[4] && mean>=s_distance_profile.distance_mm-120.0f)
             Auto_TailSnapshotRecordLocked(0U,now);
 #endif
         /* 到实际编码目标优先停；参考结束不能冒充实际到距。 */
-        if (mean >= s_distance_target_mm ||
-            (s_profile_done && mean >= s_distance_target_mm-APP_DISTANCE_SCURVE_ARRIVAL_MM))
+        if (mean >= s_distance_profile.distance_mm ||
+            (s_profile_done && mean >= s_distance_profile.distance_mm-APP_DISTANCE_SCURVE_ARRIVAL_MM))
         {
 #if APP_BASELINE40_ACTIVE
             Auto_TailSnapshotRecordLocked(2U,now);
@@ -746,10 +750,10 @@ static void Auto_CheckWheelSpeedLocked(uint32_t i,TickType_t now)
 #if APP_DISTANCE_SCURVE_ACTIVE
                 endpoint_window=s_forward_hold && s_distance_mode && s_route_trial && s_profile_active &&
                     !s_finish_requested && !s_stop_due && !s_distance_reached &&
-                    s_translation_base_rpm<=2U && s_distance_target_mm>=100.0f &&
-                    s_distance_progress_mm>=s_distance_target_mm-10.0f &&
-                    s_distance_progress_mm<=s_distance_target_mm &&
-                    s_distance_reference.position_mm>=s_distance_target_mm*0.5f &&
+                    s_translation_base_rpm<=2U && AUTO_DISTANCE_GOAL_MM>=100.0f &&
+                    s_distance_progress_mm>=AUTO_DISTANCE_GOAL_MM-10.0f &&
+                    s_distance_progress_mm<=AUTO_DISTANCE_GOAL_MM &&
+                    s_distance_reference.position_mm>=AUTO_DISTANCE_GOAL_MM*0.5f &&
                     s_distance_reference.acceleration_mm_s2<=0.0f;
 #endif
                 reason=DirectionGuard_Check(&s_direction_guard[i],(uint32_t)now*portTICK_PERIOD_MS,
@@ -1827,6 +1831,23 @@ uint32_t ChassisAuto_ReadStatus(ChassisAutoStatus *status)
 
 /* 只改原有执行器的命令向量；失能/使能/零速核验和停止保护共用。 */
 /* 仅作局部数学计算，无CAN/VM副作用；调用者必须退出外层临界区。 */
+#if APP_DISTANCE_SCURVE_ACTIVE
+static float Auto_ControlTargetMm(uint32_t mode,uint32_t rpm,float mm,float route_speed)
+{
+#if APP_CONTROL_DISTANCE_RATIO_ENABLE
+    if (route_speed==0.0f && mm==2100.0f &&
+        AppDebugPlan40Allowed(g_debug_plan_id,mode,rpm,mm)) {
+        if(mode==0U) return mm*APP_FORWARD_CONTROL_DISTANCE_RATIO;
+        if(mode==1U && APP_LEFT40_DRIFT_TRIM_ENABLE) return mm*APP_LEFT_CONTROL_DISTANCE_RATIO;
+        if(mode==2U && APP_RIGHT40_FORWARD_TRIM_ENABLE) return mm*APP_RIGHT_CONTROL_DISTANCE_RATIO;
+        if(mode==3U) return mm*APP_BACKWARD_CONTROL_DISTANCE_RATIO;
+    }
+#else
+    (void)mode;(void)rpm;(void)route_speed;
+#endif
+    return mm;
+}
+#endif
 static uint32_t Auto_PrepareTranslationEx(uint32_t motion_mode, uint32_t base_rpm,
     uint32_t run_ms, float distance_mm,float route_speed,ChassisAutoPreparedTranslation *prepared)
 {
@@ -1871,7 +1892,7 @@ static uint32_t Auto_PrepareTranslationEx(uint32_t motion_mode, uint32_t base_rp
             uint32_t expected_rpm,expected_ms;
             if(!MotionRoute_Build(motion_mode,distance_mm,route_speed,&prepared->profile,&expected_rpm,&expected_ms) ||
                 expected_rpm!=base_rpm || expected_ms!=run_ms) return 0U;
-        } else if(!MotionProfile_Prepare(&prepared->profile,distance_mm,&limits)) return 0U;
+        } else if(!MotionProfile_Prepare(&prepared->profile,Auto_ControlTargetMm(motion_mode,base_rpm,distance_mm,route_speed),&limits)) return 0U;
         if (
             prepared->profile.duration_s*1000.0f + APP_DISTANCE_SCURVE_FINAL_WAIT_MS >= (float)run_ms ||
             !Chassis_TranslationProfileCommands(motion_mode,0U,0,prepared->commands[2])) return 0U;
@@ -1939,7 +1960,7 @@ uint32_t ChassisAuto_BeginPreparedTranslation(const ChassisAutoPreparedTranslati
             return 0U;
     }
     if (prepared->distance_mm > 0.0f &&
-        (prepared->profile.valid != 1U || prepared->profile.distance_mm != prepared->distance_mm ||
+        (prepared->profile.valid != 1U || prepared->profile.distance_mm != Auto_ControlTargetMm(prepared->motion_mode,prepared->base_rpm,prepared->distance_mm,prepared->route_reference_mm_s) ||
          !(prepared->profile.duration_s > 0.0f) ||
          !(prepared->profile.duration_s*1000.0f + APP_DISTANCE_SCURVE_FINAL_WAIT_MS < (float)prepared->run_ms))) return 0U;
 #endif
