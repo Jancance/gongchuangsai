@@ -9,6 +9,158 @@
 #include "safety.h"
 #include "can.h"
 #include <string.h>
+#if APP_CONTINUOUS_MAP_ENABLE
+#include "app_can_diagnostics.h"
+#endif
+
+#if APP_CONTINUOUS_MAP_ENABLE
+static ChassisOdometry s_map_odometry;
+static AppMapPose s_map_pose,s_map_published;
+static uint32_t s_map_run,s_map_start,s_map_begin,s_map_gap_run;
+static uint32_t s_map_sign[4],s_map_raw[4],s_map_power_epoch;
+static void AppOdometry_MapGap(uint32_t reason)
+{
+    s_map_pose.state=APP_MAP_GAP;
+    s_map_odometry.status.valid=0U;
+    s_map_odometry.status.continuity_lost=1U;
+    s_map_odometry.status.reasons|=ODOM_GAP|reason;
+}
+#endif
+void AppOdometry_RequestMapRun(uint32_t run_id,uint32_t start_id)
+{
+#if APP_CONTINUOUS_MAP_ENABLE
+    taskENTER_CRITICAL();
+    if(run_id && (!s_map_run || (int32_t)(run_id-s_map_run)>0)) {
+        s_map_run=run_id;s_map_start=start_id;s_map_gap_run=0U;
+        s_map_begin=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
+    }
+    taskEXIT_CRITICAL();
+#else
+    (void)run_id;(void)start_id;
+#endif
+}
+void AppOdometry_ReadMap(AppMapPose *snapshot)
+{
+    uint32_t now=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
+#if APP_CONTINUOUS_MAP_ENABLE
+    uint32_t i;
+    taskENTER_CRITICAL();
+    now=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
+    *snapshot=s_map_published;
+    if(s_map_run!=snapshot->run_id) {
+        memset(snapshot,0,sizeof(*snapshot));
+        snapshot->run_id=s_map_run;snapshot->start_id=s_map_start;
+        snapshot->begin_ms=s_map_begin;snapshot->pose.age_ms=0xFFFFFFFFU;
+        snapshot->state=(s_map_start==1U || s_map_start==2U)?APP_MAP_WAIT_BASELINE:APP_MAP_NO_START;
+        snapshot->pose.reasons=(snapshot->state==APP_MAP_NO_START)?APP_MAP_NO_START_REASON:ODOM_WAITING;
+    }
+    snapshot->source=APP_MAP_RAW_WHEEL_HWT;snapshot->map_version=VEHICLE_MAP_VERSION;
+    if(snapshot->based) snapshot->pose.age_ms=now-snapshot->pose.sample_ms;
+    if(snapshot->state==APP_MAP_TRACKING) {
+        uint32_t stale=now-snapshot->angle_ms>=ODOM_YAW_MAX_AGE_MS;
+        for(i=0U;i<4U;i++) if(now-snapshot->wheel_ms[i]>=ODOM_WHEEL_MAX_AGE_MS) stale=1U;
+        if(stale || s_map_gap_run==snapshot->run_id) {
+            s_map_gap_run=snapshot->run_id;
+            snapshot->state=APP_MAP_GAP;snapshot->pose.valid=0U;
+            snapshot->pose.continuity_lost=1U;snapshot->pose.reasons|=ODOM_GAP|ODOM_STALE;
+        }
+    }
+    taskEXIT_CRITICAL();
+#else
+    memset(snapshot,0,sizeof(*snapshot));snapshot->pose.age_ms=0xFFFFFFFFU;
+    snapshot->pose.reasons=ODOM_WAITING;
+#endif
+    snapshot->now_ms=now;
+}
+#if APP_CONTINUOUS_MAP_ENABLE
+static void AppOdometry_MapStep(const AppHeadingSource *source,
+    const ChassisOdometrySamples *backend,uint32_t now)
+{
+    ChassisOdometrySamples diagnostic;
+    PowerCommandStatus power;
+    uint32_t i,run,start,begin,gap;
+    taskENTER_CRITICAL();run=s_map_run;start=s_map_start;begin=s_map_begin;gap=s_map_gap_run;taskEXIT_CRITICAL();
+    if(run!=s_map_pose.run_id) {
+        ChassisOdometry_Init(&s_map_odometry);
+        memset(&s_map_pose,0,sizeof(s_map_pose));
+        memset(s_map_sign,0,sizeof(s_map_sign));memset(s_map_raw,0,sizeof(s_map_raw));
+        s_map_power_epoch=0U;
+        s_map_pose.run_id=run;s_map_pose.start_id=start;s_map_pose.begin_ms=begin;
+        s_map_pose.state=(start==1U || start==2U)?APP_MAP_WAIT_BASELINE:APP_MAP_NO_START;
+        if(s_map_pose.state==APP_MAP_NO_START) s_map_odometry.status.reasons=APP_MAP_NO_START_REASON;
+    }
+    if(run && gap==run) AppOdometry_MapGap(ODOM_STALE);
+    if(!run || s_map_pose.state==APP_MAP_NO_START || s_map_pose.state==APP_MAP_GAP) goto publish;
+    Power_ReadCommandStatus(&power);
+    if(g_safety_fault || g_rtos_fault || g_can_ctrl_fault_latched ||
+       (s_map_odometry.based && (!power.active || power.enable_count!=s_map_power_epoch))) {
+        AppOdometry_MapGap(APP_MAP_FAULT);goto publish;
+    }
+    if(!s_map_odometry.based && (g_chassis_auto_active || g_wheel_test_active)) {
+        AppOdometry_MapGap(APP_MAP_NO_BASELINE);goto publish;
+    }
+    if(!s_map_odometry.configured) {
+        if(!power.active || !source->healthy || (int32_t)(source->angle_ms-begin)<0 ||
+           App_HeadingFrameAge(source,now,1U)>=ODOM_YAW_MAX_AGE_MS) goto publish;
+        if(!ChassisOdometry_SetPose(&s_map_odometry,
+            start==1U?FIELD_START1_X_MM:FIELD_START2_X_MM,
+            start==1U?FIELD_START1_Y_MM:FIELD_START2_Y_MM,90.0f,source->yaw_deg)) goto publish;
+        s_map_power_epoch=power.enable_count;
+    }
+    AppCanDiagnostics_ReadPositionSamples(&diagnostic);
+    for(i=0U;i<4U;i++) {
+        const ChassisOdometrySamples *chosen=0;
+        uint32_t j;
+        for(j=0U;j<2U;j++) {
+            const ChassisOdometrySamples *candidate=j?&diagnostic:backend;
+            uint32_t ms=candidate->ms[i];
+            if(!(candidate->mask&(1UL<<i)) || (int32_t)(ms-begin)<0) continue;
+            if((s_map_odometry.raw_mask&(1UL<<i)) && (int32_t)(ms-s_map_pose.wheel_ms[i])<0) continue;
+            if(candidate->sign[i]>1U || (int32_t)(ms-now)>0) {
+                AppOdometry_MapGap(APP_MAP_BAD_SOURCE);goto publish;
+            }
+            if(!chosen || (int32_t)(ms-chosen->ms[i])>0) chosen=candidate;
+            else if(ms==chosen->ms[i] && (candidate->sign[i]!=chosen->sign[i] || candidate->raw[i]!=chosen->raw[i])) {
+                AppOdometry_MapGap(APP_MAP_BAD_SOURCE);goto publish;
+            }
+        }
+        if(chosen) {
+            uint32_t ms=chosen->ms[i];
+            if(s_map_odometry.raw_mask&(1UL<<i)) {
+                if((int32_t)(ms-s_map_pose.wheel_ms[i])<0) continue;
+                if(ms==s_map_pose.wheel_ms[i] && (chosen->sign[i]!=s_map_sign[i] || chosen->raw[i]!=s_map_raw[i])) {
+                    AppOdometry_MapGap(APP_MAP_BAD_SOURCE);goto publish;
+                }
+            }
+            ChassisOdometry_Wheel(&s_map_odometry,i,chosen->sign[i],chosen->raw[i],ms);
+            s_map_pose.wheel_ms[i]=ms;s_map_sign[i]=chosen->sign[i];s_map_raw[i]=chosen->raw[i];
+        }
+    }
+    if(source->healthy && (int32_t)(source->angle_ms-begin)>=0 &&
+       App_HeadingFrameAge(source,now,1U)<ODOM_YAW_MAX_AGE_MS) {
+        if(!s_map_odometry.yaw.count || (int32_t)(source->angle_ms-s_map_pose.angle_ms)>=0) {
+            ChassisOdometry_Yaw(&s_map_odometry,source->yaw_deg,source->angle_ms);
+            s_map_pose.angle_ms=source->angle_ms;
+        }
+    } else if(s_map_odometry.based) AppOdometry_MapGap(ODOM_STALE);
+    if(s_map_pose.state!=APP_MAP_GAP) {
+        ChassisOdometry_Update(&s_map_odometry,now);
+        if(s_map_odometry.status.continuity_lost || s_map_odometry.rejected) AppOdometry_MapGap(0U);
+        else if(s_map_odometry.based && s_map_odometry.status.valid) s_map_pose.state=APP_MAP_TRACKING;
+    }
+publish:
+    taskENTER_CRITICAL();
+    if(run && s_map_gap_run==run) {
+        if(s_map_published.run_id==run) s_map_odometry.status=s_map_published.pose;
+        AppOdometry_MapGap(ODOM_STALE);
+    }
+    s_map_pose.pose=s_map_odometry.status;s_map_pose.based=s_map_odometry.based;
+    s_map_pose.pose.age_ms=s_map_pose.based?now-s_map_pose.pose.sample_ms:0xFFFFFFFFU;
+    s_map_pose.source=APP_MAP_RAW_WHEEL_HWT;s_map_pose.map_version=VEHICLE_MAP_VERSION;
+    s_map_pose.now_ms=now;s_map_published=s_map_pose;
+    taskEXIT_CRITICAL();
+}
+#endif
 #if APP_NAV_RESIDUAL_ACTIVE
 #include "app_motion_runtime.h"
 #include "app_entry.h"
@@ -102,6 +254,11 @@ void AppOdometry_Init(void)
 #endif
 #endif
     ChassisOdometry_Init(&s_odometry);
+#if APP_CONTINUOUS_MAP_ENABLE
+    ChassisOdometry_Init(&s_map_odometry);memset(&s_map_pose,0,sizeof(s_map_pose));
+    s_map_pose.pose=s_map_odometry.status;s_map_published=s_map_pose;
+    s_map_run=s_map_start=s_map_begin=s_map_gap_run=0U;
+#endif
 }
 
 void AppOdometry_Step(const AppOdometryInputs *inputs)
@@ -162,6 +319,9 @@ void AppOdometry_Step(const AppOdometryInputs *inputs)
         }
     }
     ChassisAuto_ReadOdometrySamples(&samples);
+#if APP_CONTINUOUS_MAP_ENABLE
+    AppOdometry_MapStep(&source,&samples,now);
+#endif
     if(source.healthy && App_HeadingFrameAge(&source,now,1U)<ODOM_YAW_MAX_AGE_MS)
         ChassisOdometry_Yaw(&s_odometry,source.yaw_deg,source.angle_ms);
     else ChassisOdometry_Invalidate(&s_odometry);

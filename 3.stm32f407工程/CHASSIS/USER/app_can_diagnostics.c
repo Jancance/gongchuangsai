@@ -350,6 +350,18 @@ void App_CanFeedbackStep(void)
 }
 
 /* 手动查询占用总线时，依然每轮计算反馈年龄并撤销过期数据 */
+void AppCanDiagnostics_ReadPositionSamples(ChassisOdometrySamples *samples)
+{
+    uint32_t i;
+    samples->mask=0U;
+    for(i=0U;i<4U;i++) {
+        samples->sign[i]=g_can_feedback_position_sign[i];
+        samples->raw[i]=g_can_feedback_position_raw[i];
+        samples->ms[i]=(uint32_t)g_can_feedback_position_tick[i]*portTICK_PERIOD_MS;
+        if(g_can_feedback_position_result[i]==1U) samples->mask|=1UL<<i;
+    }
+}
+
 void App_CanFeedbackRefresh(void)
 {
     TickType_t now = xTaskGetTickCount();

@@ -142,6 +142,9 @@ static void VehicleMission_Service(void)
         s_vehicle_zone=RadarZoneSwitch_Lock();if(s_vehicle_zone<1 || s_vehicle_zone>2)return;
         g_vehicle_stage=VEHICLE_RUN_ALL?1U:VEHICLE_TEST_STAGE;
         g_vehicle_run_id++;if(!g_vehicle_run_id)g_vehicle_run_id=1U;
+#if APP_CONTINUOUS_MAP_ENABLE
+        AppOdometry_RequestMapRun(g_vehicle_run_id,g_vehicle_stage==1U?s_vehicle_zone:0U);
+#endif
         s_vehicle_start=s_vehicle_stage_start=now;g_vehicle_stage_mask=0U;
         g_vehicle_scan_bypassed=VEHICLE_SCAN_BYPASS;s_vehicle_code_valid=s_vehicle_display_done=0U;
         s_vehicle_scan_baseline=g_saoma_accept_count;memset(s_vehicle_task_code,0,16);
@@ -168,6 +171,12 @@ static void VehicleMission_Service(void)
             if(g_vehicle_state==2U)g_stage1_stop_requested=1U;
         }
     if(g_vehicle_state==1U && StartupAxes_Holding()) {
+#if APP_CONTINUOUS_MAP_ENABLE
+        if(g_vehicle_stage==1U) {
+            AppMapPose map;AppOdometry_ReadMap(&map);
+            if(map.run_id!=g_vehicle_run_id || map.state!=APP_MAP_TRACKING || !map.based || !map.pose.valid) return;
+        }
+#endif
         if(!VehicleMission_Load(VEHICLE_RUN_ALL?1U:VEHICLE_TEST_STAGE)){VehicleMission_Fail(7U);return;}
         if(g_vehicle_stage==1U && s_vehicle_code_valid && !g_vehicle_scan_bypassed)g_stage1_stop_requested=1U;
     }

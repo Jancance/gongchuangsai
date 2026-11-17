@@ -1,5 +1,11 @@
 #ifndef APP_CONFIG_H
 #define APP_CONFIG_H
+#ifndef APP_CONTINUOUS_MAP_ENABLE
+#define APP_CONTINUOUS_MAP_ENABLE 0U
+#endif
+#if APP_CONTINUOUS_MAP_ENABLE > 1U
+#error Continuous_map_enable_invalid
+#endif
 #ifndef APP_BASELINE40_ENABLE
 #define APP_BASELINE40_ENABLE 0U
 #endif
@@ -292,6 +298,9 @@
 #error Heading_session_mode_must_be_exclusive
 #endif
 
+#if APP_CONTINUOUS_MAP_ENABLE && (!APP_POSITION_DIAGNOSTIC || !APP_HEADING_SESSION_TEST || APP_TEST_MODE != 3U)
+#error Continuous_map_requires_existing_odometry_owner
+#endif
 #endif
 
 /* Offline experiment. Not a vehicle-ready firmware or persistent motor configuration. */

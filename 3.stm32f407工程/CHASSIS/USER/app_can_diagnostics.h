@@ -4,6 +4,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "can.h"
+#include "chassis_auto_test.h"
 
 #define CAN_POLL_VALID_MS 1000U
 
@@ -27,6 +28,8 @@ extern volatile TickType_t g_can_feedback_position_tick[4];
 extern volatile uint32_t g_can_feedback_speed_valid_mask;
 extern volatile uint32_t g_can_feedback_position_valid_mask;
 
+/* Copy successful source samples, independently of the safety valid mask. */
+void AppCanDiagnostics_ReadPositionSamples(ChassisOdometrySamples *samples);
 void App_CanPollRefresh(void);
 void App_CanFeedbackStep(void);
 void App_CanFeedbackRefresh(void);

@@ -83,6 +83,9 @@ static void App_Stage1Service(void)
         s_serial_start_permit=0U;g_combined_test.request=0U;
         g_serial_motion_state=2U;g_serial_motion_result=2U;g_serial_motion_accepted++;
         g_stage1_run_id++;if(!g_stage1_run_id)g_stage1_run_id=1U;
+#if APP_CONTINUOUS_MAP_ENABLE
+        AppOdometry_RequestMapRun(g_stage1_run_id,VEHICLE_STAGE1_ZONE);
+#endif
         g_stage1_cause=g_stage1_scan_valid=g_stage2_ready=g_stage2_run_id=0U;
         g_stage1_display_attempts=s_stage1_display_done=0U;
         memset(g_stage1_task_code,0,sizeof(g_stage1_task_code));
@@ -94,9 +97,23 @@ static void App_Stage1Service(void)
         taskEXIT_CRITICAL();
     }
     if(g_stage1_state==7U) {
+#if APP_CONTINUOUS_MAP_ENABLE
+        if(g_safety_fault || g_rtos_fault || g_can_ctrl_fault_latched || g_serial_motion_link_lost) {
+            MotionStop();App_Stage1Fail(5U,now);return;
+        }
+        if(g_combined_test.state>=4U) {App_Stage1Fail(2U,now);return;}
+        /* Bound only the new first-baseline preparation wait by the existing move budget. */
+        if((uint32_t)(now-s_stage1_begin_ms)>=VEHICLE_STAGE1_MOVE_TIMEOUT_MS) {
+            StartupAxes_Cancel();App_Stage1Fail(6U,now);return;
+        }
+#endif
         if(g_startup_axes_state==5U || g_startup_axes_state==6U || g_startup_axes_state==7U || g_startup_axes_state==8U)
         {App_Stage1Fail(9U,now);return;}
         if(StartupAxes_Holding()) {
+#if APP_CONTINUOUS_MAP_ENABLE
+            AppMapPose map;AppOdometry_ReadMap(&map);
+            if(map.run_id!=g_stage1_run_id || map.state!=APP_MAP_TRACKING || !map.based || !map.pose.valid) return;
+#endif
             if(!App_SerialIdleReady(now)){App_Stage1Fail(9U,now);return;}
             s_serial_start_permit=1U;g_combined_test.request=1U;
             g_serial_motion_state=2U;g_serial_motion_result=2U;

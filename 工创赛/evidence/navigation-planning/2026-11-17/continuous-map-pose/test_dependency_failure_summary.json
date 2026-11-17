@@ -1,0 +1,6 @@
+{
+  "hardware_accessed": false,
+  "stage": "first map_on_nav link before test helper extraction",
+  "diagnostic": "Error: L6218E: Undefined symbol AppDebugPlan40Allowed (referred from map_on_nav_app_odometry.o).",
+  "resolution": "Test now extracts actual AppDebugPlan40Allowed from app_entry.c and includes motion_trial20.h. Product unchanged for this test dependency."
+}

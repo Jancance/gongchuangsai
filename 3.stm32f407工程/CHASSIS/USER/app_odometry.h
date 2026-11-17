@@ -4,6 +4,25 @@
 #include "chassis_odometry.h"
 #include "route_heading_reference.h"
 
+#define APP_MAP_OFF 0U
+#define APP_MAP_WAIT_BASELINE 1U
+#define APP_MAP_TRACKING 2U
+#define APP_MAP_GAP 3U
+#define APP_MAP_NO_START 4U
+#define APP_MAP_NO_START_REASON 16U
+#define APP_MAP_NO_BASELINE 32U
+#define APP_MAP_FAULT 64U
+#define APP_MAP_BAD_SOURCE 128U
+#define APP_MAP_RAW_WHEEL_HWT 1U
+typedef struct {
+    ChassisOdometryStatus pose;
+    uint32_t run_id,start_id,map_version,begin_ms,now_ms,state,based;
+    uint32_t source,calibration_scope,nav_applied,wheel_ms[4],angle_ms;
+} AppMapPose;
+/* TaskA submits only a genuinely new round; CAN owns the map context. */
+void AppOdometry_RequestMapRun(uint32_t run_id,uint32_t start_id);
+void AppOdometry_ReadMap(AppMapPose *snapshot);
+
 #if APP_TEST_MODE == 3U
 typedef struct {uint32_t captured,tick_ms;ChassisOdometryStatus pose;} PerimeterRecord;
 extern volatile PerimeterRecord g_perimeter_records[9];
