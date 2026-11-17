@@ -1,0 +1,37 @@
+{
+  "hardware_accessed": false,
+  "software_model_only": true,
+  "cases": {
+    "nav_on": {
+      "assertions": 4744,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "nav_off": {
+      "assertions": 4744,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "left_only": {
+      "assertions": 4744,
+      "failed_line": 0,
+      "status": "PASS"
+    }
+  },
+  "source_sha256": {
+    "app_entry.c": "755a02b5df2b4198896276f48d75cc5bf6206db877d3c94a712ab3e280b63f8d",
+    "app_entry.h": "92b494d3ad8adec8c4ee985e708e105962e382f3a1059a2ee19408168835b542",
+    "chassis_kinematics.c": "9f009f558c6c82607dda9319e8abba96c2b3536343a91d3ffaef5dc2073f76aa",
+    "app_fusion_capture.c": "1bf13ce0b0a4cb6f61bb69e3a69bd760270c30a57b51d2c3cee0fe61ab18f9bb",
+    "motion_trial20.h": "91df1f345fce9467406ba2fc870e1184b20ce0fe88ab737bebbcacea55b5f697",
+    "motion_trial40.h": "aaf77f81f2997b208cd596b7a98644fad4b7b54e11acf522c5995b8a45392625",
+    "app_serial_runtime.c": "6a2d57a45cea8b386d20455873de4be817eb08e9d5374c5273c7e80f365a4ee0",
+    "app_config.h": "a3c055ddcecde32690723b24f0075a84d6ee295ec9119261834780b7d268ce83",
+    "app_odometry.c": "85428b64c391f41daa66f8fe8dd8a963d57d62cd0f1393cf6a6f75eed1523767",
+    "app_odometry.h": "bfdd78e9ab9e52ad5ead220f7c1a6fe6878e186f9b085ab1c51207c2340c6a05",
+    "app_icm_observer.c": "4db507517933936d9452e9ee9be61639325facf9a4e122dee0a6845018095217",
+    "app_motion_runtime.h": "308d04adfbf5d2664850eafed8138135b20fe3b4f3ecf373f0f87367d1468982"
+  },
+  "fixture_sha256": "0c36c9d7934a51f5e82879244b67cda10aaebbc8a8f31bfdf7ded40c66dacac4",
+  "stubs": "Raw odometry producer/clock/RTOS critical/power/status only; actual app_odometry, app_entry and full ICM observer Step compiled"
+}
