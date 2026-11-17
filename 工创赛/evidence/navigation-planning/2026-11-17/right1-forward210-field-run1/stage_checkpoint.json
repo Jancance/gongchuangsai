@@ -1,0 +1,77 @@
+{
+  "status": "INITIAL_FORWARD210_GROUP3_COMPLETE",
+  "candidate_sha256": "3043c4a98aed1b04eb0c80fd4b2ea819b2c70b52a2c0dbe60613a969bca48ad3",
+  "downloads": 0,
+  "resets": 3,
+  "START": 3,
+  "trials": [
+    {
+      "trial": 1,
+      "measurement": {
+        "user_text": "右偏2.5cm前进多走0.5cm再测一次",
+        "forward_mm": 2105.0,
+        "right_mm": 25.0,
+        "measurement_uncertainty_mm": null,
+        "next_trial_authorized": true,
+        "next_origin_confirmation_pending": true
+      },
+      "commands": {
+        "PLAN8": 1,
+        "ARM": 1,
+        "START": 1,
+        "KEEP": 44
+      },
+      "raw_count": 2026,
+      "raw_sha256": {
+        "bank_a": "09dd7c11188a9c3ff85e57e47d5bbdd4a1506ecd8fa8c98afda2042b19178981",
+        "bank_b": "a05bade87167236c38d36742cbc155cd8272f75e6d9fe6e0f6afbee5fc7b22f8"
+      },
+      "source_drops": 0
+    },
+    {
+      "trial": 2,
+      "measurement": {
+        "user_text": "左偏0.5cm前进210cm，再测一次，已经放好",
+        "forward_mm": 2100.0,
+        "right_mm": -5.0,
+        "measurement_uncertainty_mm": null
+      },
+      "commands": {
+        "PLAN8": 1,
+        "ARM": 1,
+        "START": 1,
+        "KEEP": 43
+      },
+      "raw_count": 2025,
+      "raw_sha256": {
+        "bank_a": "547e0ac4d41d83922e0672d1aaa047d10be234295226424780178526059ce6f9",
+        "bank_b": "714ee462124f4bd5783ed9fa499074948a150a3e62b23d9bceb19cbccfdb0232"
+      },
+      "source_drops": 0
+    },
+    {
+      "trial": 3,
+      "measurement": {
+        "user_text": "右偏1.5cm，多走1.25cm再测一次已经放好",
+        "forward_mm": 2112.5,
+        "right_mm": 15.0,
+        "measurement_uncertainty_mm": null
+      },
+      "commands": {
+        "PLAN8": 1,
+        "ARM": 1,
+        "START": 1,
+        "KEEP": 44
+      },
+      "raw_count": 2025,
+      "raw_sha256": {
+        "bank_a": "43dd8c5f485ccfb775e386824da8a4a931d1068907cf7a6268c93e1d163ac4fc",
+        "bank_b": "b3ee1ed1624a0d3cca8a0dee7e0226f62e52bf9dd8bfca0cbb00b57fa37d1ef5"
+      },
+      "source_drops": 0
+    }
+  ],
+  "retain_all_trials": true,
+  "user_additional_fourth_trial_authorized": true,
+  "not_final_fit_or_ground_precision": true
+}
