@@ -196,6 +196,24 @@ void AppOdometry_Step(const AppOdometryInputs *inputs)
         } else {
             navigation_x-=sn*correction;navigation_y+=cs*correction;
         }
+#if APP_MAIN_NAV_RESIDUAL_ENABLE
+        {
+            float main_coefficient=APP_LEFT_MAIN_NAV_COEFFICIENT;
+            if(s_navigation_left_scope==2U) main_coefficient=APP_RIGHT_MAIN_NAV_COEFFICIENT;
+            else if(s_navigation_left_scope==3U) main_coefficient=APP_FORWARD_MAIN_NAV_COEFFICIENT;
+            else if(s_navigation_left_scope==4U) main_coefficient=APP_BACKWARD_MAIN_NAV_COEFFICIENT;
+            correction=APP_LEFT_NAV_RESIDUAL_WEIGHT*main_coefficient*((distance>0.0f)?distance:0.0f);
+            if(s_navigation_left_scope==1U) {
+                navigation_x-=sn*correction;navigation_y+=cs*correction;
+            } else if(s_navigation_left_scope==2U) {
+                navigation_x+=sn*correction;navigation_y-=cs*correction;
+            } else if(s_navigation_left_scope==3U) {
+                navigation_x+=cs*correction;navigation_y+=sn*correction;
+            } else {
+                navigation_x-=cs*correction;navigation_y-=sn*correction;
+            }
+        }
+#endif
     }
 #endif
     taskENTER_CRITICAL();

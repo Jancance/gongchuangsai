@@ -1,0 +1,35 @@
+{
+  "formula": "new_request=desired*old_request/measured; proportional hypothesis only, not stopping-offset identification",
+  "directions": {
+    "left": {
+      "target_mm": 2100,
+      "measured_mean_mm": 2099,
+      "ideal_request_multiplier": 1.0004764173415912,
+      "ideal_next_request_mm": 2101.000476417342,
+      "implemented": false
+    },
+    "right": {
+      "target_mm": 2100,
+      "measured_mean_mm": 2099.6666666666665,
+      "ideal_request_multiplier": 1.0001587553579934,
+      "ideal_next_request_mm": 2100.333386251786,
+      "implemented": false
+    },
+    "forward": {
+      "target_mm": 2100,
+      "measured_mean_mm": 2108.3333333333335,
+      "ideal_request_multiplier": 0.9960474308300394,
+      "ideal_next_request_mm": 2091.699604743083,
+      "implemented": false
+    },
+    "backward": {
+      "target_mm": 2100,
+      "measured_mean_mm": 2103,
+      "ideal_request_multiplier": 0.9985734664764622,
+      "ideal_next_request_mm": 2097.0042796005705,
+      "implemented": false
+    }
+  },
+  "product_control_changed": false,
+  "new_trial_verified": false
+}
