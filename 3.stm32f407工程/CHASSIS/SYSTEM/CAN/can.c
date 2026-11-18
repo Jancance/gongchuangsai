@@ -246,6 +246,30 @@ static uint32_t CAN1_NowMs(void)
     return (uint32_t)xTaskGetTickCount() * portTICK_PERIOD_MS;
 }
 
+/* 清理FIFO后，在同一临界区检查剩余帧和绝对时限，再提交邮箱。 */
+static uint32_t CAN1_SubmitWindow(CanTxMsg *tx, uint32_t slot_ms,
+                                  uint8_t *mailbox, uint32_t *request_ms)
+{
+    uint32_t now_ms;
+    taskENTER_CRITICAL();
+    if (CAN_MessagePending(CAN1, CAN_FIFO0))
+    {
+        taskEXIT_CRITICAL();
+        return CAN1_TIMING_WINDOW;
+    }
+    now_ms = CAN1_NowMs();
+    if (now_ms-slot_ms > CAN1_NAV_ADMISSION_MS)
+    {
+        taskEXIT_CRITICAL();
+        return CAN1_TIMING_WINDOW;
+    }
+    *mailbox = CAN_Transmit(CAN1, tx);
+    taskEXIT_CRITICAL();
+    if (*mailbox == CAN_TxStatus_NoMailBox) return 4U;
+    *request_ms = now_ms;
+    return 1U;
+}
+
 static uint32_t CAN1_ExchangeSingleWindow(uint8_t address,
                                     const uint8_t *request,
                                     uint8_t request_length,
@@ -307,26 +331,9 @@ static uint32_t CAN1_ExchangeSingleWindow(uint8_t address,
     if (s_can_ctrl_trace_active) g_can_ctrl_trace_phase = 2U;
     if (receipt)
     {
-        uint32_t now_ms;
-        taskENTER_CRITICAL();
-        if (CAN_MessagePending(CAN1, CAN_FIFO0))
-        {
-            taskEXIT_CRITICAL();
-            return CAN1_TIMING_WINDOW;
-        }
-        now_ms = CAN1_NowMs();
-        if (now_ms-slot_ms > CAN1_NAV_ADMISSION_MS)
-        {
-            taskEXIT_CRITICAL();
-            return CAN1_TIMING_WINDOW;
-        }
-        mailbox = CAN_Transmit(CAN1, &tx);
-        if (mailbox != CAN_TxStatus_NoMailBox)
-        {
-            receipt->tx_ms = now_ms;
-            receipt->mailbox_accepted = 1U;
-        }
-        taskEXIT_CRITICAL();
+        result = CAN1_SubmitWindow(&tx, slot_ms, &mailbox, &receipt->tx_ms);
+        if (result != 1U) return result;
+        receipt->mailbox_accepted = 1U;
     }
     else mailbox = CAN_Transmit(CAN1, &tx);
     if (mailbox == CAN_TxStatus_NoMailBox)
@@ -463,6 +470,30 @@ uint32_t CAN1_ReadStatus(uint8_t address, CanRxMsg *reply)
     }
     return result;
 }
+uint32_t CAN1_ReadStatusBounded(uint8_t address, uint32_t slot_ms,
+                                CanRxMsg *reply, uint32_t *reply_ms)
+{
+    const uint8_t request[2] = {0x3AU, 0x6BU};
+    CAN1_EmmSpeedReceipt receipt = {0};
+    uint32_t result;
+
+    if (reply_ms) *reply_ms = 0U;
+    if (!reply || !reply_ms) return 7U;
+    memset(reply, 0, sizeof(*reply));
+    if (address < 1U || address > 4U) return 7U;
+    if (CAN1_NowMs()-slot_ms > CAN1_NAV_ADMISSION_MS) return CAN1_TIMING_WINDOW;
+
+    result = CAN1_ExchangeSingleWindow(address, request, 2U, 3U, reply, slot_ms, &receipt);
+    if (result == 1U)
+    {
+        taskENTER_CRITICAL();
+        if (CAN1_NowMs()-slot_ms > CAN1_NAV_COMPLETION_MS) result=CAN1_TIMING_WINDOW;
+        else *reply_ms = receipt.reply_ms;
+        taskEXIT_CRITICAL();
+    }
+    return result;
+}
+
 /* Emm实时转速为整数RPM，输入缩放不影响反馈单位。 */
 uint32_t CAN1_ReadSpeed(uint8_t address, CanRxMsg *reply, float *rpm)
 {
@@ -655,51 +686,87 @@ uint32_t CAN1_SetEmmSpeedRawBounded(uint8_t address,uint8_t direction,uint16_t s
 
 /* 复用速度采样时隙：仅一条读取请求，有界接收五包系统状态回复。 */
 static uint32_t CAN1_ReadEmmSystemSnapshotImpl(uint8_t address, CanRxMsg *reply,
-                                                float *rpm, CAN1_EmmSystemFeedback *feedback)
+                                                float *rpm, CAN1_EmmSystemFeedback *feedback,
+                                                uint8_t bounded, uint32_t slot_ms)
 {
     CanTxMsg tx;CanRxMsg rx;ChassisSystemSnapshot sample={0};
     TickType_t start;uint32_t result=5U;uint8_t packet=0U,length=0U,i,offset,mailbox,status;
     uint8_t data[30]={0};ZdtEmmSystemData decoded;
-    TickType_t request_tick = 0U, receive_tick = 0U;
+    uint32_t request_ms = 0U, receive_ms = 0U, elapsed_ms;
     if (feedback) memset(feedback, 0, sizeof(*feedback));
     if(address<1U || address>4U || !reply || !rpm)return 7U;
     *rpm=0.0f;memset(reply,0,sizeof(*reply));
+    if (bounded && (!s_can1_normal_ready || CAN1_NowMs()-slot_ms > CAN1_NAV_ADMISSION_MS))
+        return CAN1_TIMING_WINDOW;
     if(!s_can1_normal_ready){result=CAN1_InitMode(CAN_Mode_Normal);if(result!=1U)goto finished;s_can1_normal_ready=1U;}
     for(i=0U;i<3U && CAN_MessagePending(CAN1,CAN_FIFO0);i++){CAN_Receive(CAN1,CAN_FIFO0,&rx);StartupHome_Capture(&rx);}
     memset(&tx,0,sizeof(tx));tx.ExtId=(uint32_t)address<<8;tx.IDE=CAN_Id_Extended;tx.RTR=CAN_RTR_Data;
     tx.DLC=3U;tx.Data[0]=0x43U;tx.Data[1]=0x7AU;tx.Data[2]=0x6BU;
-    if (feedback) request_tick = xTaskGetTickCount();
-    mailbox=CAN_Transmit(CAN1,&tx);if(mailbox==CAN_TxStatus_NoMailBox){result=4U;goto finished;}
+    if (bounded)
+    {
+        result = CAN1_SubmitWindow(&tx, slot_ms, &mailbox, &request_ms);
+        if (result != 1U) goto finished;
+    }
+    else
+    {
+        if (feedback) request_ms = CAN1_NowMs();
+        mailbox=CAN_Transmit(CAN1,&tx);if(mailbox==CAN_TxStatus_NoMailBox){result=4U;goto finished;}
+    }
     start=xTaskGetTickCount();
     do {
+        if (bounded) elapsed_ms = CAN1_NowMs()-slot_ms;
         status=CAN_TransmitStatus(CAN1,mailbox);
+        if (bounded && status == CAN_TxStatus_Pending && elapsed_ms >= CAN1_NAV_COMPLETION_MS)
+        {
+            CAN_CancelTransmit(CAN1, mailbox);
+            goto timing_window;
+        }
         if(status==CAN_TxStatus_Failed || (TickType_t)(xTaskGetTickCount()-start)>=pdMS_TO_TICKS(CAN1_SINGLE_TX_WAIT_MS)){
             CAN_CancelTransmit(CAN1,mailbox);result=4U;goto finished;}
     }while(status!=CAN_TxStatus_Ok);
     start=xTaskGetTickCount();result=5U;
     while((TickType_t)(xTaskGetTickCount()-start)<pdMS_TO_TICKS(CAN1_SINGLE_REPLY_WAIT_MS)){
-        if(!CAN_MessagePending(CAN1,CAN_FIFO0))continue;
+        if (bounded)
+        {
+            elapsed_ms = CAN1_NowMs()-slot_ms;
+            if (elapsed_ms > CAN1_NAV_COMPLETION_MS) goto timing_window;
+        }
+        if(!CAN_MessagePending(CAN1,CAN_FIFO0))
+        {
+            if (bounded && elapsed_ms >= CAN1_NAV_COMPLETION_MS) goto timing_window;
+            continue;
+        }
         CAN_Receive(CAN1,CAN_FIFO0,&rx);
-        if (feedback) receive_tick = xTaskGetTickCount();
+        if (feedback) receive_ms = CAN1_NowMs();
         StartupHome_Capture(&rx);
+        if (bounded && receive_ms-slot_ms > CAN1_NAV_COMPLETION_MS) goto timing_window;
         if(rx.IDE!=CAN_Id_Extended || rx.RTR!=CAN_RTR_Data || (rx.ExtId>>8)!=address)continue;
-        if(rx.DLC<2U || rx.DLC>8U || rx.Data[0]!=0x43U)continue;
+        if(rx.DLC==0U || rx.Data[0]!=0x43U)continue;
+        if (!bounded && (rx.DLC<2U || rx.DLC>8U)) continue;
         *reply=rx;
         if((rx.ExtId&0xFFU)!=packet){result=6U;break;}
+        /* 30个载荷字节，续帧重复功能码：前四帧8字节，末帧2字节。 */
+        if (bounded && (packet>=5U || rx.DLC!=(packet<4U ? 8U : 2U)))
+        {
+            result=6U;
+            break;
+        }
         offset=packet?1U:0U;
         if((uint32_t)length+rx.DLC-offset>30U){result=6U;break;}
         for(i=offset;i<rx.DLC;i++)data[length++]=rx.Data[i];
         packet++;
         if(length==30U){
-            if(!ZdtEmm_DecodeSystem(data,length,&decoded)){result=6U;break;}
+            uint8_t valid = ZdtEmm_DecodeSystem(data,length,&decoded);
+            if (bounded && CAN1_NowMs()-slot_ms > CAN1_NAV_COMPLETION_MS) goto timing_window;
+            if(!valid){result=6U;break;}
             sample.speed_decirpm=decoded.speed_decirpm;
             sample.position_deci_deg=decoded.position_deci_deg;sample.position_sign=decoded.position_sign;
             sample.phase_ma=decoded.phase_ma;sample.bus_mv=decoded.bus_mv;
             sample.home_flags=decoded.home_flags;sample.motor_flags=decoded.motor_flags;
             if (feedback)
             {
-                feedback->request_ms = (uint32_t)request_tick * portTICK_PERIOD_MS;
-                feedback->reply_ms = (uint32_t)receive_tick * portTICK_PERIOD_MS;
+                feedback->request_ms = request_ms;
+                feedback->reply_ms = receive_ms;
                 feedback->position_counts = decoded.position_counts;
                 feedback->speed_decirpm = decoded.speed_decirpm;
                 feedback->position_sign = decoded.position_sign;
@@ -711,14 +778,17 @@ static uint32_t CAN1_ReadEmmSystemSnapshotImpl(uint8_t address, CanRxMsg *reply,
             *rpm=(float)sample.speed_decirpm*0.1f;result=1U;break;
         }
     }
+    goto finished;
+timing_window:
+    result = CAN1_TIMING_WINDOW;
 finished:
     ChassisLoad_RecordSnapshot(address,result,&sample,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
-    if(result!=1U)CAN1_ResetSession();return result;
+    if(result!=1U && !bounded)CAN1_ResetSession();return result;
 }
 
 uint32_t CAN1_ReadEmmSystemSnapshot(uint8_t address, CanRxMsg *reply, float *rpm)
 {
-    return CAN1_ReadEmmSystemSnapshotImpl(address, reply, rpm, NULL);
+    return CAN1_ReadEmmSystemSnapshotImpl(address, reply, rpm, NULL, 0U, 0U);
 }
 
 uint32_t CAN1_ReadEmmSystemFeedback(uint8_t address, CanRxMsg *reply,
@@ -726,7 +796,27 @@ uint32_t CAN1_ReadEmmSystemFeedback(uint8_t address, CanRxMsg *reply,
 {
     float rpm;
     if (!feedback) return 7U;
-    return CAN1_ReadEmmSystemSnapshotImpl(address, reply, &rpm, feedback);
+    return CAN1_ReadEmmSystemSnapshotImpl(address, reply, &rpm, feedback, 0U, 0U);
+}
+
+uint32_t CAN1_ReadEmmSystemFeedbackBounded(uint8_t address, uint32_t slot_ms,
+                                          CanRxMsg *reply, CAN1_EmmSystemFeedback *feedback)
+{
+    CAN1_EmmSystemFeedback decoded;
+    uint32_t result;
+    float rpm;
+    if (!feedback) return 7U;
+    memset(feedback, 0, sizeof(*feedback));
+    result=CAN1_ReadEmmSystemSnapshotImpl(address, reply, &rpm, &decoded, 1U, slot_ms);
+    if (result == 1U)
+    {
+        /* 诊断记录也占用本槽时间，发布有效数据前复查截止时刻。 */
+        taskENTER_CRITICAL();
+        if (CAN1_NowMs()-slot_ms > CAN1_NAV_COMPLETION_MS) result=CAN1_TIMING_WINDOW;
+        else *feedback = decoded;
+        taskEXIT_CRITICAL();
+    }
+    return result;
 }
 
 /* 启动并行伸缩专用节点6，不扩展四轮控制接口；唯一CAN任务调用。 */
