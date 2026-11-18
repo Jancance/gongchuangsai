@@ -568,17 +568,21 @@ uint32_t CAN1_StageEmmSpeedRaw(uint8_t address,uint8_t direction,uint16_t speed_
 { return CAN1_EmmSpeed(address,direction,speed_raw,acceleration,1U,reply); }
 
 /* 复用速度采样时隙：仅一条读取请求，有界接收五包系统状态回复。 */
-uint32_t CAN1_ReadEmmSystemSnapshot(uint8_t address,CanRxMsg *reply,float *rpm)
+static uint32_t CAN1_ReadEmmSystemSnapshotImpl(uint8_t address, CanRxMsg *reply,
+                                                float *rpm, CAN1_EmmSystemFeedback *feedback)
 {
     CanTxMsg tx;CanRxMsg rx;ChassisSystemSnapshot sample={0};
     TickType_t start;uint32_t result=5U;uint8_t packet=0U,length=0U,i,offset,mailbox,status;
     uint8_t data[30]={0};ZdtEmmSystemData decoded;
+    TickType_t request_tick = 0U, receive_tick = 0U;
+    if (feedback) memset(feedback, 0, sizeof(*feedback));
     if(address<1U || address>4U || !reply || !rpm)return 7U;
     *rpm=0.0f;memset(reply,0,sizeof(*reply));
     if(!s_can1_normal_ready){result=CAN1_InitMode(CAN_Mode_Normal);if(result!=1U)goto finished;s_can1_normal_ready=1U;}
     for(i=0U;i<3U && CAN_MessagePending(CAN1,CAN_FIFO0);i++){CAN_Receive(CAN1,CAN_FIFO0,&rx);StartupHome_Capture(&rx);}
     memset(&tx,0,sizeof(tx));tx.ExtId=(uint32_t)address<<8;tx.IDE=CAN_Id_Extended;tx.RTR=CAN_RTR_Data;
     tx.DLC=3U;tx.Data[0]=0x43U;tx.Data[1]=0x7AU;tx.Data[2]=0x6BU;
+    if (feedback) request_tick = xTaskGetTickCount();
     mailbox=CAN_Transmit(CAN1,&tx);if(mailbox==CAN_TxStatus_NoMailBox){result=4U;goto finished;}
     start=xTaskGetTickCount();
     do {
@@ -589,7 +593,9 @@ uint32_t CAN1_ReadEmmSystemSnapshot(uint8_t address,CanRxMsg *reply,float *rpm)
     start=xTaskGetTickCount();result=5U;
     while((TickType_t)(xTaskGetTickCount()-start)<pdMS_TO_TICKS(CAN1_SINGLE_REPLY_WAIT_MS)){
         if(!CAN_MessagePending(CAN1,CAN_FIFO0))continue;
-        CAN_Receive(CAN1,CAN_FIFO0,&rx);StartupHome_Capture(&rx);
+        CAN_Receive(CAN1,CAN_FIFO0,&rx);
+        if (feedback) receive_tick = xTaskGetTickCount();
+        StartupHome_Capture(&rx);
         if(rx.IDE!=CAN_Id_Extended || rx.RTR!=CAN_RTR_Data || (rx.ExtId>>8)!=address)continue;
         if(rx.DLC<2U || rx.DLC>8U || rx.Data[0]!=0x43U)continue;
         *reply=rx;
@@ -604,12 +610,37 @@ uint32_t CAN1_ReadEmmSystemSnapshot(uint8_t address,CanRxMsg *reply,float *rpm)
             sample.position_deci_deg=decoded.position_deci_deg;sample.position_sign=decoded.position_sign;
             sample.phase_ma=decoded.phase_ma;sample.bus_mv=decoded.bus_mv;
             sample.home_flags=decoded.home_flags;sample.motor_flags=decoded.motor_flags;
+            if (feedback)
+            {
+                feedback->request_ms = (uint32_t)request_tick * portTICK_PERIOD_MS;
+                feedback->reply_ms = (uint32_t)receive_tick * portTICK_PERIOD_MS;
+                feedback->position_counts = decoded.position_counts;
+                feedback->speed_decirpm = decoded.speed_decirpm;
+                feedback->position_sign = decoded.position_sign;
+                feedback->motor_flags = decoded.motor_flags;
+                feedback->home_flags = decoded.home_flags;
+                feedback->address = address;
+                feedback->valid = 1U;
+            }
             *rpm=(float)sample.speed_decirpm*0.1f;result=1U;break;
         }
     }
 finished:
     ChassisLoad_RecordSnapshot(address,result,&sample,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
     if(result!=1U)CAN1_ResetSession();return result;
+}
+
+uint32_t CAN1_ReadEmmSystemSnapshot(uint8_t address, CanRxMsg *reply, float *rpm)
+{
+    return CAN1_ReadEmmSystemSnapshotImpl(address, reply, rpm, NULL);
+}
+
+uint32_t CAN1_ReadEmmSystemFeedback(uint8_t address, CanRxMsg *reply,
+                                   CAN1_EmmSystemFeedback *feedback)
+{
+    float rpm;
+    if (!feedback) return 7U;
+    return CAN1_ReadEmmSystemSnapshotImpl(address, reply, &rpm, feedback);
 }
 
 /* 启动并行伸缩专用节点6，不扩展四轮控制接口；唯一CAN任务调用。 */

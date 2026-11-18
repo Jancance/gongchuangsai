@@ -15,6 +15,15 @@ uint32_t CAN1_ReadVersion(uint8_t address, CanRxMsg *reply);
 uint32_t CAN1_ReadStatus(uint8_t address, CanRxMsg *reply);
 void CAN1_ResetSession(void);
 uint32_t CAN1_ReadEmmSystemSnapshot(uint8_t address, CanRxMsg *reply, float *rpm);
+typedef struct
+{
+    uint32_t request_ms, reply_ms;
+    uint32_t position_counts;
+    int32_t speed_decirpm;
+    uint8_t position_sign, motor_flags, home_flags, address, valid;
+} CAN1_EmmSystemFeedback;
+uint32_t CAN1_ReadEmmSystemFeedback(uint8_t address, CanRxMsg *reply,
+                                    CAN1_EmmSystemFeedback *feedback);
 /* 返回物理RPM的float；Emm反馈为整数RPM，不除10。 */
 uint32_t CAN1_ReadSpeed(uint8_t address, CanRxMsg *reply, float *rpm);
 /* 返回符号及Emm原生65536计数/圈，不做二次缩放。 */

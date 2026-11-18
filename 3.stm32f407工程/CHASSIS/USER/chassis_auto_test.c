@@ -1584,6 +1584,12 @@ void ChassisAuto_CanStep(void)
         (g_chassis_auto_state == state))
     {
         g_chassis_auto_last_address = index + 1U; g_chassis_auto_io_result = result;
+        if (state == CHASSIS_AUTO_STOP && result == 1U && s_finish_requested &&
+            (TickType_t)(xTaskGetTickCount() - s_finish_tick) >= pdMS_TO_TICKS(CHASSIS_AUTO_STOP_MS))
+        {
+            Auto_CutLocked(6U);
+            taskEXIT_CRITICAL(); return;
+        }
         if (state == CHASSIS_AUTO_START)
             Auto_BatchReplyLocked(session, index, result, xTaskGetTickCount());
         if (result != 1U)
