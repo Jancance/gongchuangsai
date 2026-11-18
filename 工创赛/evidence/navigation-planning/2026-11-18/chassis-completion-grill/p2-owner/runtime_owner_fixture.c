@@ -11,6 +11,7 @@ volatile uint32_t checks, failures, first_failure;
 static uint32_t enable_mask, normal, warm_reads, sends, stops, stop_delay, drift, drift_samples, epoch;
 static uint32_t fault_mode, fault_address, status_reads, feedback_reads;
 static uint32_t fail_status, fail_status_address, status_protect, attempted_status;
+static uint32_t fail_wheel, attempted_wheel;
 static uint32_t slot, phase;
 
 static void check(uint32_t condition,uint32_t line)
@@ -52,6 +53,12 @@ uint32_t CAN1_ReadEmmSystemFeedbackBounded(uint8_t address,uint32_t expected,Can
     (void)reply;
     CHECK(normal && !test_depth && phase<=5U && (phase&1U) && expected==slot);
     feedback_reads++;
+    attempted_wheel=address;
+    if (fail_wheel) {
+        fail_wheel--;
+        test_tick+=6U;
+        return CAN1_TIMING_WINDOW;
+    }
     *f=(CAN1_EmmSystemFeedback){test_tick,test_tick+2U,600U+address,0,0U,0U,0U,address,1U};
     test_tick+=2U;
     if (drift && address==3U && g_chassis_auto_state==CHASSIS_AUTO_SETTLE) {
@@ -126,6 +133,7 @@ static void setup(uint32_t initial)
     enable_mask=normal=warm_reads=sends=stops=stop_delay=drift=drift_samples=0U;
     fault_mode=fault_address=status_reads=feedback_reads=0U;
     fail_status=fail_status_address=status_protect=attempted_status=g_can_ctrl_fault_latched=0U;
+    fail_wheel=attempted_wheel=0U;
     epoch=1U; phase=0U; slot=test_tick=initial;
     g_vm_test_request=0U;
     g_safety_ready=g_can_guard_ready=1U;
@@ -165,7 +173,39 @@ void test_entry(void)
     for (n=0U;n<190U && g_chassis_auto_active;n++) step();
     ChassisAuto_Zone2Read(&s);
     CHECK(stops==4U && s.wheel_quiet && s.result==1U && s.stop_ack_ms);
-    CHECK(ChassisAuto_ReleaseCompleted(1U) && ChassisAuto_Zone2Begin(3U,1U));
+    CHECK(!ChassisAuto_Zone2ReleaseCompleted(4U,1U));
+    CHECK(!ChassisAuto_Zone2ReleaseCompleted(3U,0U));
+    epoch++;
+    CHECK(!ChassisAuto_Zone2ReleaseCompleted(3U,1U));
+    epoch--;
+    CHECK(ChassisAuto_Zone2ReleaseCompleted(3U,1U));
+    CHECK(g_vm_test_request && !ChassisAuto_Zone2ReleaseCompleted(3U,1U));
+    CHECK(ChassisAuto_Zone2Begin(3U,1U));
+    ChassisAuto_Zone2Read(&s);
+    CHECK(s.session==2U && s.power_epoch==1U && !s.ack_generation);
+    CHECK(!ChassisAuto_Zone2SubmitAt(3U,1U,1U,s.next_batch_ms,zero));
+
+    setup(1500U);
+    while (phase) step();
+    ChassisAuto_Zone2Read(&s);
+    CHECK(s.next_batch_ms==slot && s.ready);
+    CHECK(!ChassisAuto_Zone2ReleaseCompleted(3U,1U));
+    CHECK(!ChassisAuto_Zone2SubmitAt(3U,1U,1U,s.next_batch_ms-80U,zero));
+    CHECK(!ChassisAuto_Zone2SubmitAt(3U,1U,1U,s.next_batch_ms+80U,zero));
+    CHECK(!ChassisAuto_Zone2SubmitAt(3U,1U,2U,s.next_batch_ms,zero));
+    test_tick=slot;
+    CHECK(!ChassisAuto_Zone2SubmitAt(3U,1U,1U,s.next_batch_ms,zero));
+    test_tick=slot-1U;
+    CHECK(ChassisAuto_Zone2SubmitAt(3U,1U,1U,s.next_batch_ms,zero));
+    for (n=0U;n<7U;n++) step();
+    ChassisAuto_Zone2Read(&s);
+    CHECK(s.ack_generation==1U && s.ack_mask==15U && sends==4U);
+
+    setup(1600U);
+    s_nav.report.next_batch_ms=0U;
+    test_tick=0U-1U;
+    CHECK(ChassisAuto_Zone2SubmitAt(3U,1U,1U,0U,zero));
+    CHECK(s_nav.pending && !s_nav.batch_due_ms);
 
     setup(2000U);
     command(1U,0U,1U);
@@ -174,6 +214,7 @@ void test_entry(void)
     for (n=0U;n<225U && g_chassis_auto_active;n++) step();
     ChassisAuto_Zone2Read(&s);
     CHECK(stops==4U && !s.wheel_quiet && s.result==2U && s.cause==7U);
+    CHECK(!ChassisAuto_Zone2ReleaseCompleted(3U,1U));
 
     setup(3000U);
     command(1U,0U,1U);
@@ -240,6 +281,44 @@ void test_entry(void)
     ChassisAuto_Zone2Read(&s);
     CHECK(s.ack_generation==5U && s.result==2U && s.cause==3U);
     CHECK(s.status_misses[missed]==2U && s.status_miss_streak[missed]==2U);
+
+    setup(8600U);
+    command(1U,0U,1U);
+    while ((phase!=1U) && g_chassis_auto_active) {
+        if (phase==0U) CHECK(ChassisAuto_Zone2Submit(3U,1U,2U,zero));
+        step();
+    }
+    ChassisAuto_Zone2Read(&previous);
+    fail_wheel=1U;
+    step();
+    missed=attempted_wheel-1U;
+    ChassisAuto_Zone2Read(&s);
+    CHECK(s_nav.wheel_retry && s.wheel_misses[missed]==1U);
+    CHECK(s.wheel_ms[missed]==previous.wheel_ms[missed]);
+    step();
+    step();
+    ChassisAuto_Zone2Read(&s);
+    CHECK(attempted_wheel==missed+1U && Auto_NavNewer(s.wheel_ms[missed],previous.wheel_ms[missed]));
+    while (phase) step();
+    for (n=3U;n<6U;n++) command(n,0U,1U);
+    ChassisAuto_Zone2Read(&s);
+    CHECK(!stops && s.ack_generation==5U && s.feedback_ready && !s_nav.wheel_retry);
+
+    setup(8800U);
+    command(1U,0U,1U);
+    while ((phase!=1U) && g_chassis_auto_active) {
+        if (phase==0U) CHECK(ChassisAuto_Zone2Submit(3U,1U,2U,zero));
+        step();
+    }
+    fail_wheel=2U;
+    step();
+    missed=attempted_wheel-1U;
+    step();
+    step();
+    CHECK(attempted_wheel==missed+1U && !s_nav.wheel_retry);
+    for (n=0U;n<16U && g_chassis_auto_active;n++) step();
+    ChassisAuto_Zone2Read(&s);
+    CHECK(s.wheel_misses[missed]==2U && stops==4U && s.cause==3U);
 
     setup(9000U);
     command(1U,0U,1U);

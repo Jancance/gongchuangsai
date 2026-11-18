@@ -257,6 +257,11 @@ uint32_t ChassisAuto_Zone2Disarm(void);
 uint32_t ChassisAuto_Zone2Begin(uint32_t run_id,uint32_t expected_session);
 uint32_t ChassisAuto_Zone2Submit(uint32_t run_id,uint32_t session,uint32_t generation,
     const ChassisMotorCommand commands[4]);
+/* batch_ms must still name the owner's next future phase-zero slot. */
+uint32_t ChassisAuto_Zone2SubmitAt(uint32_t run_id,uint32_t session,uint32_t generation,
+    uint32_t batch_ms,const ChassisMotorCommand commands[4]);
+/* Release a clean stopped leg and retain the same scan and VM epoch. */
+uint32_t ChassisAuto_Zone2ReleaseCompleted(uint32_t run_id,uint32_t session);
 void ChassisAuto_Zone2Read(ChassisZone2CanStatus *snapshot);
 void ChassisAuto_Zone2CanStep(uint32_t slot_ms,uint32_t phase);
 void ChassisAuto_Zone2SafetyReport(void);
