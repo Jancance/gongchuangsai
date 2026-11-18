@@ -1,4 +1,4 @@
-function result=validate_first_leg_continuous(p4file, p3file, certificate, output)
+function [result,reference]=validate_first_leg_continuous(p4file, p3file, certificate, output)
 % Replay the whole frozen first leg using a single clock and wheel history.
 p4 = jsondecode(fileread(p4file));
 p3 = jsondecode(fileread(p3file));
@@ -32,6 +32,7 @@ for i=1:3
 end
 edges = [0 cumsum([sum(profiles(1,1:3)),turnTime(1),sum(profiles(2,1:3)),...
     turnTime(2),sum(profiles(3,1:3))])];
+reference = @position;
 [slot,wheel] = ndgrid((-2:round(edges(end)/H)+2)*H,0:3);
 slot = slot(:)+wheel(:)*.020;
 wheel = wheel(:)+1;

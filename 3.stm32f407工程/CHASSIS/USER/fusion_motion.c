@@ -7,6 +7,10 @@
 #define MOTION_MAX_MS 8000U
 #define MOTION_MAX_DT_MS 200U
 #define MOTION_PI 3.14159265358979323846f
+#define FEEDBACK_DT_S (FUSION_MOTION_FEEDBACK_PERIOD_MS * 0.001f)
+#define FEEDBACK_RAD_PER_DEG (MOTION_PI / 180.0f)
+#define FEEDBACK_POSITION_CAP 12.0f
+#define FEEDBACK_YAW_CAP (3.0f * FEEDBACK_RAD_PER_DEG)
 
 const FusionMotionLimits g_fusion_motion_limits = {
     400.0f,150.0f,300.0f,MOTION_PI/2.0f,MOTION_PI,8.0f*MOTION_PI,
@@ -43,6 +47,78 @@ static uint32_t limits_valid(const FusionMotionLimits *l)
 static float norm_xy(FusionMotionVector v)
 {
     return sqrtf(v.x*v.x+v.y*v.y);
+}
+
+static uint32_t wheel_speeds(FusionMotionVector v,ChassisWheelSpeeds *wheels);
+
+/* Used for both the position correction limit and the circular slew limit. */
+static void limit_xy(FusionMotionVector *v,float limit)
+{
+    const float n=norm_xy(*v);
+    if(n>limit) {
+        v->x*=limit/n;
+        v->y*=limit/n;
+    }
+}
+
+static float limit_signed(float v,float limit)
+{
+    return fmaxf(-limit,fminf(v,limit));
+}
+
+uint32_t FusionMotion_FeedbackBatch(const FusionMotionFeedbackInput *input,FusionMotionFeedbackBatch *out)
+{
+    FusionMotionFeedbackBatch batch={0};
+    FusionMotionVector error,target,step={0};
+    ChassisWheelSpeeds rpm={{0}};
+    float cos_yaw,sin_yaw;
+    uint32_t i;
+    if(!input || !out || !vector_valid(input->reference) || !vector_valid(input->measured) ||
+        !vector_valid(input->committed) || norm_xy(input->committed)>FEEDBACK_POSITION_CAP+1e-5f ||
+        fabsf(input->committed.yaw)>FEEDBACK_YAW_CAP+1e-7f) return 0U;
+
+    error.x=input->reference.x-input->measured.x;
+    error.y=input->reference.y-input->measured.y;
+    error.yaw=input->reference.yaw-input->measured.yaw;
+    if(!vector_valid(error) || !finite(norm_xy(error))) return 0U;
+    error.yaw=atan2f(sinf(error.yaw),cosf(error.yaw));
+    target.x=1.4f*error.x;
+    target.y=1.4f*error.y;
+    target.yaw=limit_signed(2.2f*error.yaw,FEEDBACK_YAW_CAP);
+    if(!finite(norm_xy(target))) return 0U;
+    limit_xy(&target,FEEDBACK_POSITION_CAP);
+    step.x=target.x-input->committed.x;
+    step.y=target.y-input->committed.y;
+    limit_xy(&step,28.0f*FEEDBACK_DT_S);
+    batch.correction.x=input->committed.x+step.x;
+    batch.correction.y=input->committed.y+step.y;
+    batch.correction.yaw=input->committed.yaw+
+        limit_signed(target.yaw-input->committed.yaw,10.0f*FEEDBACK_RAD_PER_DEG*FEEDBACK_DT_S);
+    batch.finish_requested=input->reference_complete && input->capture_complete && norm_xy(error)<=2.5f &&
+        fabsf(error.yaw)<=0.10f*FEEDBACK_RAD_PER_DEG;
+
+    if(!batch.finish_requested) {
+        cos_yaw=cosf(input->measured.yaw);
+        sin_yaw=sinf(input->measured.yaw);
+        for(i=0U;i<CHASSIS_WHEEL_COUNT;i++) {
+            const float x=(input->slot_to[i].x-input->slot_from[i].x)/FEEDBACK_DT_S+batch.correction.x;
+            const float y=(input->slot_to[i].y-input->slot_from[i].y)/FEEDBACK_DT_S+batch.correction.y;
+            const FusionMotionVector body={
+                x*cos_yaw+y*sin_yaw, -x*sin_yaw+y*cos_yaw, batch.correction.yaw
+            };
+            ChassisWheelSpeeds slot;
+            if(!wheel_speeds(body,&slot)) return 0U;
+            rpm.rpm[i]=slot.rpm[i];
+        }
+    }
+    if(!Chassis_EncodeEmm(&rpm,(uint16_t)g_fusion_motion_limits.wheel_rpm,batch.commands)) return 0U;
+    for(i=0U;i<CHASSIS_WHEEL_COUNT;i++) {
+        const float magnitude=(float)batch.commands[i].speed_raw/10.0f;
+        batch.wheels.rpm[i]=batch.commands[i].direction==g_chassis_forward_direction[i] ?
+            magnitude : -magnitude;
+    }
+    *out=batch;
+    return 1U;
 }
 
 static FusionMotionVector difference(FusionMotionVector a,FusionMotionVector b,float multiplier)

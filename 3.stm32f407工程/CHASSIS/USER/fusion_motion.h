@@ -62,4 +62,26 @@ FusionMotionReason FusionMotion_Reserve(FusionMotionVector q,FusionMotionVector 
  * complete, timely delivery before advancing command state. */
 FusionMotionDecision FusionMotion_Propose(FusionMotionVector q,FusionMotionVector a,FusionMotionVector target,
     const FusionMotionRequest *request,const FusionMotionLimits *limits,FusionMotionProposal *out);
+
+#define FUSION_MOTION_FEEDBACK_PERIOD_MS 80U
+
+typedef struct { float x,y; } FusionMotionPoint;
+typedef struct {
+    FusionMotionVector reference,measured; /* Same capture time, field mm and rad. */
+    FusionMotionVector committed; /* Last ACK-committed correction, field mm/s and rad/s. */
+    /* Each LR/RR/LF/RF slot uses its own reference displacement over 80 ms. */
+    FusionMotionPoint slot_from[CHASSIS_WHEEL_COUNT],slot_to[CHASSIS_WHEEL_COUNT];
+    uint32_t reference_complete; /* Nominal duration reached at preparation time. */
+    uint32_t capture_complete; /* Nominal duration reached at pose capture time. */
+} FusionMotionFeedbackInput;
+typedef struct {
+    FusionMotionVector correction; /* Candidate, commit only after a timely complete ACK. */
+    ChassisWheelSpeeds wheels; /* Signed logical RPM, rounded to 0.1 RPM. */
+    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT];
+    uint32_t finish_requested; /* Zero batch request. Caller verifies physical stop. */
+} FusionMotionFeedbackBatch;
+
+/* Computes an 80 ms batch from an already validated reference and fresh pose.
+ * Returns 0 on invalid inputs or unrepresentable commands, with out untouched. */
+uint32_t FusionMotion_FeedbackBatch(const FusionMotionFeedbackInput *input,FusionMotionFeedbackBatch *out);
 #endif
