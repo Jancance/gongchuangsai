@@ -2,6 +2,7 @@
 #include "stm32f4xx.h"
 #include "zdt_emm_config.h"
 #include "app_entry_config.h"
+#include "app_config.h"
 volatile uint32_t g_radar_lift_interval_us=RADAR_LIFT_INTERVAL_US;
 volatile uint32_t g_radar_lift_enable=0U,g_radar_lift_request=0U;
 volatile uint32_t g_radar_lift_steps=32U,g_radar_lift_direction=0U;
@@ -174,6 +175,9 @@ static void service_owner(uint32_t now_ms,uint32_t safe_idle)
     uint32_t request_direction=queued?pending_direction:g_radar_lift_direction;
     pending_interval=0U;pending_long=0U;last_service=now_ms;safe_service=safe_idle;
     g_radar_lift_request=0U;
+#if APP_ZONE2_NAV_ENABLE
+    if (request==1U && (!long_request || !claimed)) request=0U;
+#endif
 #if APP_IS_DEBUG && !APP_MOTOR_OFFLINE_ONLY
     {
         uint32_t was_moving=g_radar_lift_state==1U;

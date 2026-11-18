@@ -14,6 +14,9 @@
 #include "radar_zone_switch.h"
 #include "radar_lift.h"
 #include "radar_servo.h"
+#if APP_ZONE2_NAV_ENABLE
+#include "app_zone2.h"
+#endif
 #include "Key.h"
 #include "hwt101.h"
 #include "safety.h"
@@ -266,7 +269,16 @@ void App_HwtTurnSafety(void)
 
 void AppInput_KeyStep(void)
 {
-#if APP_BASELINE40_ACTIVE
+#if APP_ZONE2_NAV_ENABLE
+    uint32_t now=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
+    RadarZoneSwitch_Service(now);
+    RadarLift_Service(now,!g_vm_test_request && !g_chassis_auto_active && !g_safety_fault &&
+        !g_rtos_fault && !g_can_ctrl_fault_latched);
+    if (Key_GetEvent()!=0U) {
+        g_start_key_count++;
+        AppZone2_RequestStart();
+    }
+#elif APP_BASELINE40_ACTIVE
     if (Key_GetEvent()!=0U) {
         g_start_key_count++;
         taskENTER_CRITICAL();g_combined_test.request=2U;taskEXIT_CRITICAL();

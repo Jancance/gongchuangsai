@@ -627,7 +627,7 @@ void App_CombinedTestSafety(void)
         else if (g_vm_test_request != 1U || g_can_guard_ready != 1U)
             App_CombinedTestStop(3U);
     }
-    else { g_vm_test_request = 0U; }
+    else if (!APP_ZONE2_NAV_ENABLE) { g_vm_test_request = 0U; }
     taskEXIT_CRITICAL();
 }
 static uint32_t App_Baseline40KeepVm(void)

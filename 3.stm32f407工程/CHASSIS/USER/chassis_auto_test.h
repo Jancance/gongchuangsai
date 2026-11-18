@@ -238,4 +238,27 @@ typedef struct {
     uint32_t ack_ms[4],sample_ms[4],age_ms[4];
 } ChassisWheelLog;
 uint32_t ChassisAuto_ReadWheelLog(ChassisWheelLog *snapshot);
+#if APP_ZONE2_NAV_ENABLE
+typedef struct {
+    uint32_t run_id, session, power_epoch, state, result, cause, ready;
+    uint32_t ack_generation, attempt_generation, possible_mask, ack_mask;
+    uint32_t stop_ack_ms, wheel_quiet, position_mask, status_mask;
+    uint32_t zero_ack_ms, zero_confirmed, feedback_ready, next_batch_ms;
+    uint32_t wheel_ms[4], position_sign[4], position_counts[4], status_ms[4];
+    uint32_t tx_ms[4], reply_ms[4], tx_complete_mask;
+    uint32_t wheel_misses[4], status_misses[4];
+    uint32_t status_miss_streak[4];
+    int32_t wheel_decirpm[4];
+} ChassisZone2CanStatus;
+
+/* Sole CAN task. The startup/leg scheduler reads copies and submits once per generation. */
+uint32_t ChassisAuto_Zone2Prime(uint32_t run_id);
+uint32_t ChassisAuto_Zone2Disarm(void);
+uint32_t ChassisAuto_Zone2Begin(uint32_t run_id,uint32_t expected_session);
+uint32_t ChassisAuto_Zone2Submit(uint32_t run_id,uint32_t session,uint32_t generation,
+    const ChassisMotorCommand commands[4]);
+void ChassisAuto_Zone2Read(ChassisZone2CanStatus *snapshot);
+void ChassisAuto_Zone2CanStep(uint32_t slot_ms,uint32_t phase);
+void ChassisAuto_Zone2SafetyReport(void);
+#endif
 #endif

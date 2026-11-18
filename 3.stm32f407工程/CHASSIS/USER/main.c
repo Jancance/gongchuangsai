@@ -147,17 +147,40 @@ int main(void)
 #if APP_BASELINE40_ACTIVE && ICM45686_SAMPLE_ONLY
 #error Baseline40_cannot_use_sample_only
 #endif
+#if APP_ZONE2_NAV_ENABLE && ICM45686_SAMPLE_ONLY
+#error Zone2_nav_requires_explicit_ICM45686_SAMPLE_ONLY_0
+#endif
 #if !ICM45686_SAMPLE_ONLY
 static void App_CanTask(void *argument)
 {
+#if APP_ZONE2_NAV_ENABLE
+    const TickType_t period=pdMS_TO_TICKS(10U);
+    TickType_t slot;
+    uint32_t phase=0U;
+#endif
     (void)argument;
     AppChassis_CanInit();
+#if APP_ZONE2_NAV_ENABLE
+    slot=xTaskGetTickCount();
+#endif
     while (1)
     {
         g_can_task_count++;
+#if APP_ZONE2_NAV_ENABLE
+        TickType_t missed=(xTaskGetTickCount()-slot)/period;
+        slot+=missed*period;
+        phase=(phase+missed)%8U;
+        AppChassis_Zone2CanStep((uint32_t)slot*portTICK_PERIOD_MS,phase);
+        phase=(phase+1U)%8U;
+#else
         AppChassis_CanStep();
+#endif
         g_can_task_stack_words = uxTaskGetStackHighWaterMark(NULL);
+#if APP_ZONE2_NAV_ENABLE
+        vTaskDelayUntil(&slot,period);
+#else
         vTaskDelay(pdMS_TO_TICKS(APP_UART_LINK_TEST ? 50U : (APP_HEADING_SESSION_TEST ? 10U : 50U)));
+#endif
     }
 }
 
@@ -191,24 +214,24 @@ static void App_TestTaskA(void *argument)
     /* FreeRTOS运行后才开启接收中断 */
     if (APP_IS_DEBUG) USART1_EnableReceive();
     /* 启动时只请求发送一次基础平台就绪信息 */
-    if (!APP_BASELINE40_ACTIVE) SAOMA_EnableReceive();
+    if (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE) SAOMA_EnableReceive();
     HWT101_EnableReceive();
     g_serial_send_ok = App_DebugSendString("F407 FreeRTOS READY\r\n");
     /* 已验收的基础平台就绪后，只请求一次提示音 */
     Buzzer_Start(APP_INIT_BEEP_COUNT);
         /* 一次性虚拟角度自检，不驱动小车。 */
-    App_HeadingDryRun();
-#if APP_SERIAL_MOTION_CONTROL
+    if (!APP_ZONE2_NAV_ENABLE) App_HeadingDryRun();
+#if APP_SERIAL_MOTION_CONTROL && !APP_ZONE2_NAV_ENABLE
     AppSerial_Init();
 #endif
-#if APP_HEADING_SESSION_TEST && APP_FORWARD_HOLD_TEST
+#if APP_HEADING_SESSION_TEST && APP_FORWARD_HOLD_TEST && !APP_ZONE2_NAV_ENABLE
     /* 只运行数学自检，失败禁止平移启动，默认不发动作。 */
     g_translation_hold_selftest = Chassis_TranslationHoldSelfTest() ? 1U : 2U;
 #if APP_TEST_MODE == 3U
     AppMotion_LoadDefaultPlan();
 #endif
 #endif
-    if (!APP_BASELINE40_ACTIVE) AppMotion_InitStage1Plan();
+    if (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE) AppMotion_InitStage1Plan();
     while (1)
     {
         g_test_count_a++;
@@ -223,8 +246,8 @@ static void App_TestTaskA(void *argument)
         App_HeadingLiveStep();
         #endif
         /* 一轮最多处理64字节；只有任务A交接并更新屏幕 */
-        if (!APP_BASELINE40_ACTIVE) SAOMA_Update();
-        if(APP_BASELINE40_ACTIVE) { /* Dedicated chassis branch; no mission dispatch. */ }
+        if (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE) SAOMA_Update();
+        if(APP_BASELINE40_ACTIVE || APP_ZONE2_NAV_ENABLE) { /* Dedicated chassis branch; no mission dispatch. */ }
         else if(VEHICLE_INTEGRATED_ENABLE){AppMotion_MissionService();AppMotion_MissionTelemetry();}
         else if(VEHICLE_STAGE1_ENABLE)
         {
@@ -236,8 +259,8 @@ static void App_TestTaskA(void *argument)
             AppInput_ScanDisplay(screen_start_tick);
         }
 
-        if (!APP_BASELINE40_ACTIVE) App_StartGateUpdate();
-#if APP_SERIAL_MOTION_CONTROL
+        if (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE) App_StartGateUpdate();
+#if APP_SERIAL_MOTION_CONTROL && !APP_ZONE2_NAV_ENABLE
         AppSerial_Telemetry();
 #endif
         g_test_tick = xTaskGetTickCount();
@@ -284,7 +307,7 @@ static void App_UartRxTask(void *argument)
             g_serial_rx_last = data;
 #if APP_UART_LINK_TEST
             App_UartLinkByte(data);
-#elif APP_SERIAL_MOTION_CONTROL
+#elif APP_SERIAL_MOTION_CONTROL && !APP_ZONE2_NAV_ENABLE
             App_SerialMotionByte(data);
 #endif
         }
@@ -344,9 +367,11 @@ volatile uint32_t g_radar_app_scan_result = 0U;
 #if !APP_BASELINE40_ACTIVE
 static void App_RadarTask(void *argument)
 {
+#if !APP_ZONE2_NAV_ENABLE
     uint32_t calibration_attempted = 0U;
     uint32_t scan_attempted = 0U;
     RadarObserverStatus radar_status;
+#endif
     /* 用户2026-11-11临时授权measured=1，仅供校准和路径观察；
      * 自动扫描下行和回升均用4200半步；等待时间为工程选择，非实测。 */
     const RadarZone2Config cfg = {
@@ -360,6 +385,7 @@ static void App_RadarTask(void *argument)
         if (g_radar_app_config_result == 1U)
         {
             RadarObserver_Service();
+#if !APP_ZONE2_NAV_ENABLE
             RadarObserver_GetStatus(&radar_status);
             if (radar_status.stage != 99U && radar_status.error == 0U)
             {
@@ -380,6 +406,7 @@ static void App_RadarTask(void *argument)
                     g_radar_app_scan_result = RadarObserver_StartZone2(0, 24, true) ? 1U : 2U;
                 }
             }
+#endif
         }
         vTaskDelay(pdMS_TO_TICKS(2U));
     }
@@ -456,12 +483,12 @@ int main(void)
     /* 初始化PE2，默认关闭VM允许请求 */
     Power_Init();
 #if !APP_BASELINE40_ACTIVE
-    StartupPose_Init();
+    if (!APP_ZONE2_NAV_ENABLE) StartupPose_Init();
     RadarZoneSwitch_Init();
     (void)RadarServo_Init();
 #endif
     Safety_Init();
-    if (!APP_BASELINE40_ACTIVE) SAOMA_Init();
+    if (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE) SAOMA_Init();
     HWT101_Init();
     g_watchdog_init_result = Watchdog_Init();
     configASSERT(g_watchdog_init_result == 1U);

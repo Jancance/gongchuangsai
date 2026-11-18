@@ -1,4 +1,5 @@
 #include "zone2_nav_schedule.h"
+#include <math.h>
 #include <string.h>
 
 static Zone2NavContext context_of(const RadarObserverMapIdentity *id)
@@ -109,9 +110,13 @@ Zone2SchedulePhase Zone2NavSchedule_Poll(Zone2NavSchedule *s,const FusionObserva
         s->phase=ZONE2_SCHEDULE_POSE;
     }
     if(!fresh_pose(s,pose,now_ms)) return s->phase;
+    if(!(fabsf(remainderf(pose->heading_deg-leg.start_heading_deg,360.0f))<=
+        s->geometry.config.heading_budget_deg)) return s->phase;
     if(!Zone2NavPath_Station(leg.goal,&s->geometry.terminal)) return fail(s,ZONE2_NAV_TERMINAL);
     s->geometry.actual=pose->position;
-    s->geometry.config.start_heading_deg=pose->heading_deg;
+    /* Plan the nominal turn and swept envelope from the stage heading.
+     * Keep the measured position and check its heading against that envelope. */
+    s->geometry.config.start_heading_deg=leg.start_heading_deg;
     s->geometry.config.goal_heading_deg=leg.goal_heading_deg;
     /* The observer publishes only the accepted path transaction, including its wire sequence. */
     request=(Zone2NavRequest){s->map.context,s->leg+1U,reply->path.request_sequence,

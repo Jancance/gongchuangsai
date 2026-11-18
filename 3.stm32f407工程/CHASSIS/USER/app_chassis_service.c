@@ -18,6 +18,9 @@
 #include "safety.h"
 #include "motion_control.h"
 #include "chassis_auto_test.h"
+#if APP_ZONE2_NAV_ENABLE
+#include "app_zone2.h"
+#endif
 
 extern volatile uint32_t g_vm_test_request;
 
@@ -163,6 +166,21 @@ void AppChassis_CanStep(void)
 #endif
 #endif
 }
+
+#if APP_ZONE2_NAV_ENABLE
+void AppChassis_Zone2CanStep(uint32_t slot_ms,uint32_t phase)
+{
+    if (g_can_test_result==1U) {
+        if (!(phase&1U) && (g_chassis_auto_state==CHASSIS_AUTO_START ||
+            g_chassis_auto_state==CHASSIS_AUTO_RUN) && !AppZone2_CanPermit(slot_ms))
+            (void)ChassisAuto_RequestStop();
+        ChassisAuto_Zone2CanStep(slot_ms,phase);
+    }
+    ChassisAuto_Zone2SafetyReport();
+    AppMotion_StepOdometry();
+    AppZone2_Step();
+}
+#endif
 
 void AppChassis_SafetyCheck(void)
 {
