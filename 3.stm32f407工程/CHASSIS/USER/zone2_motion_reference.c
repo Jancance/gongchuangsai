@@ -260,7 +260,7 @@ static uint32_t add_turn(const FusionPlan *p,Zone2MotionReference *r,FusionPoint
     if(fabsf(fabsf(turn)-90.0f)>=.001f ||
        !clear_hull(&p->input,&point,1U,(FusionPoint){radius,radius},TRACK_MM+.5f)) return 0U;
     span.kind=SPAN_TURN;
-    span.duration_ms=3200U;
+    span.duration_ms=2080U;
     span.data.turn.center=point;
     span.data.turn.start_rad=heading*DEG_TO_RAD;
     span.data.turn.delta_rad=turn*DEG_TO_RAD;

@@ -1,0 +1,34 @@
+{
+  "base": "cf1e0ed4222d9b46188d73a77acac97031b622bf",
+  "defines": [
+    "ICM45686_SAMPLE_ONLY=0",
+    "APP_CONTINUOUS_MAP_ENABLE=1",
+    "APP_MAP_NAV_RESIDUAL_ENABLE=1",
+    "APP_ZONE2_NAV_ENABLE=1",
+    "APP_ZONE2_NAV_MOTION_ENABLE=1"
+  ],
+  "inputs_sha256": {
+    "3.stm32f407工程/CHASSIS/USER/zone2_motion_reference.c": "d8073aacfa645efed8c3199e7e2e55f02ca228958664f64bd0799843ad224590",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "4fac9354e4ea9c0c0f50c1d912e55a585d80daa8b0c62c73ab3a856c08cef84a"
+  },
+  "targets": {
+    "Vehicle_Integrated": {
+      "passed": true,
+      "exit_code": 0,
+      "compiled": {
+        "app_zone2.c": true,
+        "zone2_motion_reference.c": true,
+        "main.c": true
+      }
+    },
+    "Vehicle_Offline": {
+      "passed": true,
+      "exit_code": 0,
+      "compiled": {
+        "app_zone2.c": true,
+        "zone2_motion_reference.c": true,
+        "main.c": true
+      }
+    }
+  }
+}
