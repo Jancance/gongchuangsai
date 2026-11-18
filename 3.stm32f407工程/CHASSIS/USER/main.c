@@ -348,9 +348,9 @@ static void App_RadarTask(void *argument)
     uint32_t scan_attempted = 0U;
     RadarObserverStatus radar_status;
     /* 用户2026-11-11临时授权measured=1，仅供校准和路径观察；
-     * 8559约70mm为单样本比例候选，未双向标定；等待时间为工程选择，非实测。 */
+     * 自动扫描下行和回升均用4200半步；等待时间为工程选择，非实测。 */
     const RadarZone2Config cfg = {
-        1U, 1U, 8559U, 1000U, 500U, 1000U, 60000U, 1U
+        1U, 1U, 4200U, 1000U, 500U, 1000U, 60000U, 1U
     };
 
     (void)argument;

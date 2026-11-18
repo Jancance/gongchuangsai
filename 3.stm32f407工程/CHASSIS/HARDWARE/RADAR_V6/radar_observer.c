@@ -193,7 +193,10 @@ static void service_owner(void)
                 if(!RadarLift_Release(lift_sequence)){fail(2U);break;}
                 if(mechanism){g_radar_mechanism_result=4U;stage(8U);}else stage(3U);
             }
-            else {if(RadarServo_SetAngle(2U,180.0f)!=1U){fail(2U);break;}stage(6U);}
+            else {
+                if(!mechanism && !calibrating && !RadarLift_Release(lift_sequence)){fail(2U);break;}
+                if(RadarServo_SetAngle(2U,180.0f)!=1U){fail(2U);break;}stage(6U);
+            }
         }break;
     case 3U:
         if((uint32_t)(t-entered)>=config.settle_ms) {
@@ -207,7 +210,7 @@ static void service_owner(void)
         }break;
     case 6U:
         if((uint32_t)(t-entered)>= (mechanism?mechanism_wait:config.stow_ms)) {
-            if(!RadarLift_Release(lift_sequence)){fail(2U);break;}
+            if((mechanism || calibrating) && !RadarLift_Release(lift_sequence)){fail(2U);break;}
             if(mechanism){g_radar_mechanism_result=4U;stage(8U);break;}
             if(calibrating){stage(8U);break;}
             if(!status.map_valid || RadarClient_RequestPlanPath(request_start,request_goal)!=RADAR_CLIENT_REQUEST_ACCEPTED){fail(3U);break;}stage(7U);
