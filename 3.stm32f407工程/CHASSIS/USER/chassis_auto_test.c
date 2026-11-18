@@ -1294,12 +1294,23 @@ static void Auto_Monitor(uint32_t session)
 {
     uint32_t cursor = s_monitor_cursor, i = cursor / 2U, result;
     uint32_t is_speed = cursor & 1U;
-    float rpm = 0;
+    CAN1_EmmSystemFeedback feedback;
     CanRxMsg reply = {0};
 #if APP_POSITION_DIAGNOSTIC
+    PowerCommandStatus power_before;
+    uint32_t position_eligible=0U;
     if (Auto_PositionMonitor(session)) return;
+    if (is_speed)
+    {
+        taskENTER_CRITICAL();
+        Power_ReadCommandStatus(&power_before);
+        position_eligible=(session==g_chassis_auto_session && g_chassis_auto_active &&
+            !s_mode && s_vm_requested && power_before.active &&
+            !g_chassis_auto_cut_vm && Auto_BaseHealthy());
+        taskEXIT_CRITICAL();
+    }
 #endif
-    if (is_speed) result = CAN1_ReadEmmSystemSnapshot((uint8_t)(i + 1U), &reply, &rpm);
+    if (is_speed) result = CAN1_ReadEmmSystemFeedback((uint8_t)(i + 1U), &reply, &feedback);
     else result = CAN1_ReadStatus((uint8_t)(i + 1U), &reply);
     taskENTER_CRITICAL();
     if ((session == g_chassis_auto_session) && g_chassis_auto_active)
@@ -1313,13 +1324,26 @@ static void Auto_Monitor(uint32_t session)
         }
         else if (is_speed)
         {
-            g_chassis_auto_driver_rpm[i] = rpm;
+            g_chassis_auto_driver_rpm[i] = (float)feedback.speed_decirpm * 0.1f;
             s_speed_tick[i] = xTaskGetTickCount(); s_speed_valid |= 1UL << i;
             /* Validate each fresh sample immediately, including while a batch
              * is being sent; RUN-only polling could miss a short reversal. */
             Auto_CheckWheelSpeedLocked(i,s_speed_tick[i]);
             if(!g_chassis_auto_active) { taskEXIT_CRITICAL();return; }
 #if APP_POSITION_DIAGNOSTIC
+            if (position_eligible && feedback.valid && feedback.address==i+1U &&
+                !s_mode && s_vm_requested && !g_chassis_auto_cut_vm && Auto_BaseHealthy())
+            {
+                PowerCommandStatus power_after;
+                uint32_t now_ms=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
+                Power_ReadCommandStatus(&power_after);
+                if (power_after.active && power_after.enable_count==power_before.enable_count &&
+                    (int32_t)(feedback.reply_ms-feedback.request_ms)>=0 &&
+                    (int32_t)(now_ms-feedback.reply_ms)>=0 &&
+                    (!(s_odometry_samples.mask&(1UL<<i)) ||
+                     (int32_t)(feedback.reply_ms-s_odometry_samples.ms[i])>0))
+                    Auto_OdometrySample(i,1U,feedback.position_sign,feedback.position_counts,feedback.reply_ms);
+            }
             s_position_due = i + 1U;
 #endif
         }
