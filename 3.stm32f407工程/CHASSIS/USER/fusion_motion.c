@@ -104,7 +104,8 @@ uint32_t FusionMotion_FeedbackBatch(const FusionMotionFeedbackInput *input,Fusio
             const float x=(input->slot_to[i].x-input->slot_from[i].x)/FEEDBACK_DT_S+batch.correction.x;
             const float y=(input->slot_to[i].y-input->slot_from[i].y)/FEEDBACK_DT_S+batch.correction.y;
             const FusionMotionVector body={
-                x*cos_yaw+y*sin_yaw, -x*sin_yaw+y*cos_yaw, batch.correction.yaw
+                x*cos_yaw+y*sin_yaw, -x*sin_yaw+y*cos_yaw,
+                input->slot_yaw_delta[i]/FEEDBACK_DT_S+batch.correction.yaw
             };
             ChassisWheelSpeeds slot;
             if(!wheel_speeds(body,&slot)) return 0U;

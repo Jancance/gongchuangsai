@@ -71,6 +71,7 @@ typedef struct {
     FusionMotionVector committed; /* Last ACK-committed correction, field mm/s and rad/s. */
     /* Each LR/RR/LF/RF slot uses its own reference displacement over 80 ms. */
     FusionMotionPoint slot_from[CHASSIS_WHEEL_COUNT],slot_to[CHASSIS_WHEEL_COUNT];
+    float slot_yaw_delta[CHASSIS_WHEEL_COUNT]; /* Signed reference radians over the slot. */
     uint32_t reference_complete; /* Nominal duration reached at preparation time. */
     uint32_t capture_complete; /* Nominal duration reached at pose capture time. */
 } FusionMotionFeedbackInput;

@@ -1,0 +1,374 @@
+#include "owner_peer.c"
+#undef CHECK
+#include "radar_peer.c"
+#undef CHECK
+#include "app_zone2.c"
+#include "app_chassis_service.h"
+
+#define CHECK(condition) check((condition),__LINE__)
+
+volatile unsigned replay_assertions,replay_case,replay_detail;
+volatile float replay_actual,replay_expected;
+volatile uint32_t chain_stop_legs,chain_path_requests,chain_reuses,chain_fault;
+volatile uint32_t chain_cause,chain_reference,chain_backend,chain_sends,chain_nonzero;
+volatile uint32_t chain_shadow,chain_map_state,chain_map_reasons,chain_map_updates;
+volatile uint32_t chain_path_error,chain_stop_frames,chain_runtime_ms;
+volatile uint32_t chain_arrival_ms[8],chain_plan_ms[8],chain_plan_sections[8];
+volatile uint32_t chain_track_ms[8],chain_tracking_checks,chain_edge_checks;
+volatile uint32_t chain_worst_leg,chain_worst_section,chain_worst_span,chain_worst_ms;
+volatile uint32_t chain_recovery_ms,chain_recovery_stops,chain_recovery_quiet;
+volatile uint32_t chain_truth_samples,chain_truth_contacts,chain_first_contact_ms;
+volatile uint32_t chain_robust_contacts;
+volatile uint32_t chain_one_miss,chain_one_miss_ms,chain_owner_miss;
+volatile uint32_t chain_partial,chain_f6_possible,chain_f6_tx,chain_f6_ack;
+volatile float chain_x,chain_y,chain_heading;
+volatile float chain_max_error_mm,chain_max_heading_deg,chain_edge_error_mm;
+volatile float chain_worst_ref_x,chain_worst_ref_y;
+volatile float chain_truth_x,chain_truth_y,chain_truth_yaw,chain_truth_clearance;
+volatile float chain_robust_clearance;
+volatile float g_radar_servo_angle_deg[2]={0.0f,180.0f};
+volatile uint32_t g_radar_servo_state=1U,g_radar_zone_selected=2U;
+volatile uint32_t g_can_test_result=1U,g_radar_lift_request,g_radar_lift_phase_bits,g_radar_lift_direction;
+static uint32_t locked_zone, handled_measure, handled_path, handled_hello;
+static AppHeadingSource hwt;
+static float plant_yaw,plant_rate;
+static double truth_x=150.0,truth_y=150.0,truth_heading=1.57079632679489661923;
+static double driver_counts[4]={1000.0,1000.0,1000.0,1000.0};
+static int32_t driver_decirpm[4];
+static uint32_t plant_ms;
+static const uint32_t idle_motion;
+static const RouteHeadingReference route_heading;
+static const AppOdometryInputs odometry_inputs={&g_vm_test_request,&idle_motion,&idle_motion,
+    &idle_motion,&route_heading,&idle_motion};
+
+typedef struct { uint8_t start,goal,count,nodes[2]; } PeerPath;
+static const PeerPath wire_paths[]={
+    {0,2,1,{2}}, {2,14,2,{4,14}}, {14,10,1,{10}}, {10,22,2,{12,22}},
+    {22,14,2,{12,14}}, {22,0,2,{2,0}}
+};
+
+uint32_t RadarZoneSwitch_Lock(void) { return locked_zone=g_radar_zone_selected; }
+void RadarZoneSwitch_Unlock(void) { locked_zone=0U; }
+uint32_t App_HeadingSourceRead(AppHeadingSource *out) { *out=hwt; return 1U; }
+void AppCanDiagnostics_ReadPositionSamples(ChassisOdometrySamples *samples)
+{ *samples=(ChassisOdometrySamples){0}; }
+void AppMotion_StepOdometry(void) { AppOdometry_Step(&odometry_inputs); }
+#include "can_service_entry.c"
+
+/* Distance along at least one separating axis for an oriented chassis and a square. */
+static double yellow_clearance(double dx,double dy,double c,double s,double half_l,double half_w)
+{
+    const double half_zone=225.0,ac=fabs(c),as=fabs(s);
+    double field_axes=fmax(fabs(dx)-(half_l*ac+half_w*as+half_zone),
+        fabs(dy)-(half_l*as+half_w*ac+half_zone));
+    double body_axes=fmax(fabs(c*dx+s*dy)-(half_l+half_zone*(ac+as)),
+        fabs(-s*dx+c*dy)-(half_w+half_zone*(ac+as)));
+    return fmax(field_axes,body_axes);
+}
+
+static void truth_step(uint32_t now,uint32_t dt)
+{
+    static const double zone_center[]={775.0,1625.0};
+    const double conversion=3.14159265358979323846*(double)g_chassis_geometry.wheel_diameter_mm/2400.0;
+    const double a=(double)driver_decirpm[0],b=-(double)driver_decirpm[1];
+    const double c=(double)driver_decirpm[2],d=-(double)driver_decirpm[3];
+    const double forward=(a+b+c+d)*conversion*(double)CHASSIS_FORWARD_DISTANCE_SCALE;
+    const double left=(a-b-c+d)*conversion;
+    const double arm=((double)g_chassis_geometry.track_width_mm+g_chassis_geometry.wheelbase_mm)*0.5;
+    const double omega=(-a+b-c+d)*conversion/arm;
+    const double span=0.001*(double)dt;
+    const double half=0.5*omega*span;
+    const double mid=truth_heading+half;
+    const double half_span=0.5*span;
+    const double vx=forward*cos(mid)-left*sin(mid);
+    const double vy=forward*sin(mid)+left*cos(mid);
+    const double h_l=0.5*(double)VEHICLE_BODY_LENGTH_MM,h_w=0.5*(double)VEHICLE_BODY_WIDTH_MM;
+    const double bound=(hypot(forward,left)+hypot(h_l,h_w)*fabs(omega))*half_span;
+    const double quarter=0.5*half;
+    const double sinc_half=fabs(quarter)<1e-9 ? 1.0 : sin(quarter)/quarter;
+    const double middle_x=truth_x+(forward*cos(mid-quarter)-left*sin(mid-quarter))*half_span*sinc_half;
+    const double middle_y=truth_y+(forward*sin(mid-quarter)+left*cos(mid-quarter))*half_span*sinc_half;
+    const double cs=cos(mid),sn=sin(mid),ac=fabs(cs),as=fabs(sn);
+    const double ext_x=ac*h_l+as*h_w,ext_y=as*h_l+ac*h_w;
+    const double sinc=fabs(half)<1e-9 ? 1.0 : sin(half)/half;
+    double gap=fmin(fmin(middle_x,2400.0-middle_x)-ext_x,
+        fmin(middle_y,2400.0-middle_y)-ext_y);
+    uint32_t i,j;
+    for (i=0U;i<2U;i++) for (j=0U;j<2U;j++)
+        gap=fmin(gap,yellow_clearance(middle_x-zone_center[i],middle_y-zone_center[j],cs,sn,h_l,h_w));
+    gap-=bound;
+    if (!chain_truth_samples || gap<chain_truth_clearance) chain_truth_clearance=(float)gap;
+    if (gap<=0.0) {
+        if (!chain_truth_contacts) chain_first_contact_ms=now-1000U;
+        chain_truth_contacts++;
+    }
+    gap-=(double)s_config.position_budget_mm+0.01745329251994329577*
+        (double)s_config.heading_budget_deg*hypot(h_l,h_w);
+    if (!chain_truth_samples || gap<chain_robust_clearance) chain_robust_clearance=(float)gap;
+    chain_robust_contacts+=gap<=0.0;
+    chain_truth_samples++;
+    truth_x+=vx*span*sinc;
+    truth_y+=vy*span*sinc;
+    truth_heading+=2.0*half;
+}
+
+/* Ideal wheel encoders and simulated HWT; no target position enters the plant. */
+static void advance_plant(uint32_t now)
+{
+    ChassisWheelSpeeds logical;
+    ChassisBodyVelocity body;
+    float rpm[4];
+    const uint32_t dt=now-plant_ms;
+    uint32_t i;
+    if (!dt) return;
+    truth_step(now,dt);
+    for (i=0U;i<4U;i++) {
+        rpm[i]=0.1f*(float)driver_decirpm[i];
+        driver_counts[i]+=(double)driver_decirpm[i]*(double)dt*(65536.0/600000.0);
+    }
+    CHECK(Chassis_DriverFeedbackToLogical(rpm,15U,&logical));
+    CHECK(Chassis_Forward(&g_chassis_geometry,&logical,&body));
+    plant_rate=body.wz_rad_s*57.2957795f;
+    plant_yaw+=plant_rate*0.001f*(float)dt;
+    if (plant_yaw>180.0f) plant_yaw-=360.0f;
+    if (plant_yaw<=-180.0f) plant_yaw+=360.0f;
+    plant_ms=now;
+}
+
+static uint32_t plant_command(uint8_t address,uint8_t dir,uint16_t raw)
+{
+    advance_plant(test_tick);
+    driver_decirpm[address-1U]=dir ? -(int32_t)raw : (int32_t)raw;
+    chain_nonzero+=raw!=0U;
+    return 1U;
+}
+
+static void plant_feedback(uint8_t address,CAN1_EmmSystemFeedback *f)
+{
+    double n;
+    advance_plant(test_tick);
+    n=driver_counts[address-1U];
+    f->position_sign=n<0.0;
+    f->position_counts=(uint32_t)(fabs(n)+0.5);
+    f->speed_decirpm=driver_decirpm[address-1U];
+}
+
+static uint32_t drop_one_reply(uint8_t address,uint32_t command)
+{
+    if (CHAIN_MISS_COMMAND!=command || chain_one_miss || !chain_nonzero || address!=3U) return 0U;
+    chain_one_miss=1U;
+    chain_one_miss_ms=test_tick-1000U;
+    return 1U;
+}
+
+static uint32_t drop_moving_ack(uint8_t address,uint8_t dir,uint16_t raw,CAN1_EmmSpeedReceipt *receipt)
+{
+    if (!CHAIN_DROP_F6 || chain_partial || address!=3U || !raw) return 0U;
+    chain_partial=1U;
+    receipt->ack_valid=0U;
+    (void)plant_command(address,dir,raw);
+    return 1U;
+}
+
+static void drive_radar_peer(void)
+{
+    uint32_t before=command_count[LINK_CMD_PLAN_PATH];
+    const uint8_t grid[5]={44,0,0,0,0};
+    RadarObserver_Service();
+    if (!CHAIN_DROP_LINK && command_count[LINK_CMD_HELLO]!=handled_hello) {
+        handled_hello=command_count[LINK_CMD_HELLO];
+        enqueue_hello(2U);
+    }
+    if (lift.state==1U) leg_complete();
+    if (command_count[LINK_CMD_SINGLE_MEASURE]!=handled_measure) {
+        handled_measure++;
+        enqueue_ack(LINK_CMD_SINGLE_MEASURE);
+        queue(1U,LINK_EVT_OBSTACLE_GRID,grid,sizeof(grid));
+        queue(1U,LINK_EVT_STATUS,locked,sizeof(locked));
+    }
+    if (command_count[LINK_CMD_PLAN_PATH]!=handled_path) {
+        uint16_t seq=command_sequence[LINK_CMD_PLAN_PATH];
+        uint8_t result[8]={0};
+        if (handled_path>=sizeof(wire_paths)/sizeof(wire_paths[0])) {
+            CHECK(0U);
+            return;
+        }
+        const PeerPath *p=&wire_paths[handled_path++];
+        CHECK(path_start==p->start && path_goal==p->goal);
+        result[0]=(uint8_t)seq; result[1]=(uint8_t)(seq>>8);
+        result[3]=p->start; result[4]=p->goal; result[5]=p->count;
+        result[6]=p->nodes[0]; result[7]=p->nodes[1];
+        enqueue_ack(LINK_CMD_PLAN_PATH);
+        queue(1U,LINK_EVT_PATH_RESULT,result,6U+p->count);
+    }
+    CHECK(command_count[LINK_CMD_PLAN_PATH]<=before+1U);
+    g_radar_servo_angle_deg[1]=(float)servo_angle;
+}
+
+static void run_slot(void)
+{
+    test_tick=slot;
+    tick=slot;
+    advance_plant(slot);
+    hwt.sequence++;
+    hwt.sample_ms=hwt.angle_ms=hwt.rate_ms=slot;
+    hwt.yaw_deg=plant_yaw; hwt.rate_dps=plant_rate;
+    hwt.healthy=1U; hwt.valid_mask=3U;
+    drive_radar_peer();
+    ChassisAuto_SafetyUpdate(g_vm_test_request);
+    AppChassis_Zone2CanStep(slot,phase);
+    if (CHAIN_MISS_COMMAND && chain_one_miss && !chain_owner_miss) {
+        ChassisZone2CanStatus report;
+        ChassisAuto_Zone2Read(&report);
+        chain_owner_miss=CHAIN_MISS_COMMAND==0x43U ? report.wheel_misses[2] : report.status_misses[2];
+    }
+    CHECK(!test_depth);
+    slot+=10U;
+    phase=(phase+1U)%8U;
+}
+
+#if APP_ZONE2_NAV_MOTION_ENABLE
+static void observe_track(void)
+{
+    AppMapPose map;
+    FusionMotionVector ref;
+    float err,heading,edge;
+    const uint32_t leg=s_schedule.leg;
+    uint32_t span_index,elapsed;
+    chain_plan_ms[leg]=s_trajectory.duration_ms;
+    chain_plan_sections[leg]=s_trajectory.section_count;
+    if (g_zone2_phase!=ZONE2_TRACK && g_zone2_phase!=ZONE2_SECTION_ZERO) return;
+    if (!chain_track_ms[leg]) chain_track_ms[leg]=s_section_ms-1000U;
+    AppOdometry_ReadMap(&map);
+    if (!map.pose.valid || !Zone2MotionReference_Sample(&s_trajectory,s_section,
+        (int32_t)(map.pose.sample_ms-s_section_ms),&ref)) return;
+    err=hypotf(map.pose.x_mm-ref.x,map.pose.y_mm-ref.y);
+    heading=fabsf(remainderf(map.pose.heading_deg-ref.yaw*57.2957795f,360.0f));
+    edge=fminf(fminf(ref.x,FIELD_SIZE_MM-ref.x),fminf(ref.y,FIELD_SIZE_MM-ref.y));
+    chain_tracking_checks++;
+    if (err>chain_max_error_mm) {
+        const Zone2MotionSection *section=&s_trajectory.sections[s_section];
+        chain_max_error_mm=err;
+        chain_worst_leg=leg+1U;
+        chain_worst_section=s_section;
+        chain_worst_ms=map.pose.sample_ms-1000U;
+        chain_worst_ref_x=ref.x; chain_worst_ref_y=ref.y;
+        elapsed=map.pose.sample_ms-s_section_ms;
+        if ((int32_t)elapsed<0) elapsed=0U;
+        for (span_index=0U;span_index+1U<section->span_count;span_index++) {
+            const Zone2MotionSpan *span=&s_trajectory.spans[section->first_span+span_index];
+            if (elapsed<span->duration_ms) break;
+            elapsed-=span->duration_ms;
+        }
+        chain_worst_span=s_trajectory.spans[section->first_span+span_index].kind;
+    }
+    chain_max_heading_deg=fmaxf(chain_max_heading_deg,heading);
+    if (edge<=155.0f) {
+        chain_edge_checks++;
+        chain_edge_error_mm=fmaxf(chain_edge_error_mm,err);
+    }
+}
+#endif
+
+unsigned test_entry(void)
+{
+    AppMapPose map;
+    ChassisZone2CanStatus can;
+    uint32_t i,last_leg=0U,last_path=0U,pose_captured=0U;
+    ChassisAuto_Init();
+    AppOdometry_Init();
+    g_safety_ready=g_can_guard_ready=1U;
+    epoch=1U;
+    slot=test_tick=tick=plant_ms=1000U;
+    servo_angle=180U;
+    CHECK(RadarObserver_Configure(&config));
+    RadarObserver_Service();
+    handshake();
+    handled_hello=command_count[LINK_CMD_HELLO];
+    AppZone2_RequestStart();
+    for (i=0U;i<18020U && g_zone2_phase!=ZONE2_FAILED;i++) {
+        run_slot();
+#if APP_ZONE2_NAV_MOTION_ENABLE
+        if (s_schedule.leg<8U && s_schedule.phase==ZONE2_SCHEDULE_ACTIVE) observe_track();
+#endif
+        if (s_schedule.leg!=last_leg) {
+            CHECK(s_schedule.leg==last_leg+1U);
+            CHECK(stops==4U*s_schedule.leg);
+            chain_reuses+=(handled_path==last_path);
+            last_path=handled_path;
+            last_leg=s_schedule.leg;
+            if (last_leg<=8U) chain_arrival_ms[last_leg-1U]=slot-1000U;
+            AppOdometry_ReadMap(&map);
+            pose_captured=1U;
+        }
+        if (s_schedule.phase==ZONE2_SCHEDULE_DONE) break;
+#if !APP_ZONE2_NAV_MOTION_ENABLE
+        if (g_zone2_phase==ZONE2_SHADOW_DONE) break;
+#endif
+    }
+    if (!pose_captured || s_schedule.phase!=ZONE2_SCHEDULE_DONE) AppOdometry_ReadMap(&map);
+    ChassisAuto_Zone2Read(&can);
+    chain_stop_legs=s_schedule.leg;
+    chain_path_requests=handled_path;
+    chain_fault=g_zone2_fault;
+    chain_cause=can.cause;
+    chain_reference=g_zone2_reference_status;
+    chain_path_error=g_zone2_path_error;
+    chain_f6_possible=can.possible_mask;chain_f6_tx=can.tx_complete_mask;chain_f6_ack=can.ack_mask;
+    chain_stop_frames=stops;
+    chain_runtime_ms=slot-1000U;
+    chain_backend=can.state;
+    chain_sends=sends;
+    chain_shadow=(s_schedule.phase!=ZONE2_SCHEDULE_DONE && g_zone2_fault==0U);
+    chain_map_state=map.state;
+    chain_map_reasons=map.pose.reasons;
+    chain_map_updates=map.pose.updates;
+    chain_x=map.pose.x_mm;chain_y=map.pose.y_mm;chain_heading=map.pose.heading_deg;
+    chain_truth_x=(float)truth_x;chain_truth_y=(float)truth_y;
+    chain_truth_yaw=(float)(truth_heading*57.2957795130823208768);
+    if (CHAIN_DROP_LINK || CHAIN_DROP_F6) {
+        uint32_t old_sends=sends;
+        CHECK(g_zone2_phase==ZONE2_FAILED && s_schedule.leg==0U && handled_path==1U && chain_nonzero);
+        if (CHAIN_DROP_LINK) {
+            CHECK(g_zone2_fault==ZONE2_FAULT_PATH && g_zone2_path_error==ZONE2_NAV_STALE_MAP);
+        } else {
+            CHECK(chain_partial && g_zone2_fault==ZONE2_FAULT_BACKEND && can.cause==4U &&
+                can.possible_mask==7U && can.tx_complete_mask==7U && can.ack_mask==3U);
+        }
+        for (i=0U;i<220U;i++) {
+            run_slot();
+            ChassisAuto_Zone2Read(&can);
+            if (can.wheel_quiet) chain_recovery_quiet=1U;
+            if (!g_chassis_auto_active && !g_vm_test_request) break;
+        }
+        chain_recovery_ms=slot-1000U;
+        chain_recovery_stops=stops;
+        CHECK(stops==4U && sends==old_sends &&
+            !g_chassis_auto_active && !g_vm_test_request && !locked_zone);
+    }
+    CHECK(!audit_failures);
+    CHECK(command_count[LINK_CMD_SINGLE_MEASURE]==1U);
+    CHECK(chain_one_miss==(CHAIN_MISS_COMMAND!=0U) && chain_owner_miss==(CHAIN_MISS_COMMAND!=0U));
+#if !CHAIN_DROP_LINK && !CHAIN_DROP_F6
+    CHECK(!g_zone2_fault && !g_vm_test_request && !locked_zone);
+#if APP_ZONE2_NAV_MOTION_ENABLE
+    CHECK(s_schedule.phase==ZONE2_SCHEDULE_DONE);
+    CHECK(chain_stop_legs==8U && handled_path==6U && chain_reuses==2U && stops==32U);
+    CHECK(chain_nonzero && map.pose.updates>100U && fabsf(chain_x-150.0f)<=15.0f &&
+        fabsf(chain_y-150.0f)<=15.0f && fabsf(chain_heading-90.0f)<=1.0f);
+    CHECK(chain_truth_samples>100U && !chain_truth_contacts && chain_truth_clearance>0.0f);
+    CHECK(Zone2NavPath_InsideReturn((FusionPoint){chain_truth_x,chain_truth_y},chain_truth_yaw,
+        s_config.position_budget_mm,s_config.heading_budget_deg,1U));
+#else
+    CHECK(g_zone2_phase==ZONE2_SHADOW_DONE && g_zone2_stop_pose_ms);
+    CHECK(handled_path==1U && stops==4U && !chain_nonzero && map.pose.updates);
+#endif
+#endif
+    replay_assertions=checks+audit_checks;
+    replay_case=g_zone2_phase;
+    replay_detail=s_schedule.phase;
+    replay_actual=(float)g_zone2_fault;
+    replay_expected=CHAIN_DROP_LINK ? (float)ZONE2_FAULT_PATH :
+        (CHAIN_DROP_F6 ? (float)ZONE2_FAULT_BACKEND : 0.0f);
+    return first_failure;
+}

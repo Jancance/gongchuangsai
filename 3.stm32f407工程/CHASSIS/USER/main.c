@@ -522,7 +522,7 @@ int main(void)
     
     /* CAN栈384字，优先级3；监督仍为4 */
     g_can_task_create = xTaskCreate(App_CanTask, "CanPoll",
-                                      384U, NULL, 3U, NULL);
+                                      (APP_ZONE2_NAV_MOTION_ENABLE ? 1024U : 384U), NULL, 3U, NULL);
     configASSERT(g_can_task_create == pdPASS);
     /* 启动后由任务运行 */
     /* 雷达仅本次校准/扫描/路径观察；上电自动运行一次，不接底盘。 */

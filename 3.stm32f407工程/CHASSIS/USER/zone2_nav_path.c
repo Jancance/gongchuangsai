@@ -133,7 +133,8 @@ static Zone2NavPathResult convert(const Zone2NavMap *map,const Zone2NavRequest *
     if(!append(in,g->actual)) return ZONE2_NAV_CAPACITY;
     if(q->start!=q->goal) {
         if(!FieldMap_CellCenter(q->start,&center)) return ZONE2_NAV_FORMAT;
-        if(!append(in,(FusionPoint){center.x_mm,center.y_mm})) return ZONE2_NAV_CAPACITY;
+        if(hypotf(g->actual.x_mm-center.x_mm,g->actual.y_mm-center.y_mm)>=.01f &&
+           !append(in,(FusionPoint){center.x_mm,center.y_mm})) return ZONE2_NAV_CAPACITY;
         for(i=0U;i<path->waypoint_count;i++) {
             Zone2NavPathResult result;
             if(!FieldMap_CellCenter(path->waypoints[i],&next)) return ZONE2_NAV_FORMAT;
