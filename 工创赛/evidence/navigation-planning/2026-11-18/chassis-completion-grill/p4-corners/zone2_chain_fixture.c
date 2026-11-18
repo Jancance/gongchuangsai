@@ -18,6 +18,7 @@ volatile uint32_t chain_shadow,chain_map_state,chain_map_reasons,chain_map_updat
 volatile uint32_t chain_path_error,chain_stop_frames,chain_runtime_ms;
 volatile uint32_t chain_start_ms,chain_scoring_budget_end_ms,chain_outcome_ms;
 volatile uint32_t chain_post_budget_nonzero;
+volatile uint32_t chain_command_hash=2166136261U;
 volatile uint32_t chain_scan_stage_ms[8],chain_scan_tx_ms,chain_scan_result_ms,chain_scan_ready_ms,chain_lift_leg_ms;
 volatile uint32_t chain_arrival_ms[8],chain_plan_ms[8],chain_plan_sections[8];
 volatile uint32_t chain_track_ms[8],chain_tracking_checks,chain_edge_checks;
@@ -165,6 +166,8 @@ static uint32_t plant_command(uint8_t address,uint8_t dir,uint16_t raw)
 {
     advance_plant(test_tick);
     driver_decirpm[address-1U]=dir ? -(int32_t)raw : (int32_t)raw;
+    chain_command_hash=(chain_command_hash^test_tick)*16777619U;
+    chain_command_hash=(chain_command_hash^((uint32_t)address<<24)^((uint32_t)dir<<16)^raw)*16777619U;
     chain_nonzero+=raw!=0U;
     chain_post_budget_nonzero+=raw!=0U && test_tick-s_begin_ms>CHAIN_SCORING_BUDGET_MS;
     return 1U;

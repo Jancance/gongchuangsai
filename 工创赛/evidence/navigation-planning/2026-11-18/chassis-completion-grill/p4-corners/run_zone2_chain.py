@@ -4,6 +4,7 @@ import json
 import re
 import runpy
 import shutil
+import struct
 import tempfile
 from pathlib import Path
 
@@ -11,6 +12,43 @@ HERE = Path(__file__).resolve().parent
 COMMON = runpy.run_path(str(HERE.parent / "p1-motion/run_p1_arm_replay.py"))
 ROOT, PROJECT, SOURCE, ARM = (COMMON[k] for k in ("ROOT", "PROJECT", "SOURCE", "ARM"))
 run, short, sha = (COMMON[k] for k in ("run", "short_path", "sha"))
+TRACE_HEADER = struct.Struct("<5I")
+TRACE_ROW = struct.Struct("<IIhhhBB")
+TRACE_CAPACITY = 2048
+
+
+def check_pose_trace(blob, report):
+    magic, count, state, fault, flags = TRACE_HEADER.unpack_from(blob)
+    rows = list(TRACE_ROW.iter_unpack(blob[TRACE_HEADER.size:]))
+    checks = {
+        "header": magic == 0x3154325A and count == len(rows) and 3 <= count <= TRACE_CAPACITY,
+        "frozen": state == 2 and fault == report["fault"] and flags == 0,
+    }
+    if not checks["header"]:
+        return {"checks": checks, "count": count}
+    start, last = rows[0], rows[-1]
+    checks.update(
+        initial=start[0] == 0 and start[1:5] == (0, 0, 0, 0) and start[5] in (1, 2) and start[6] == 0,
+        periodic=all(100 <= b[0] - a[0] <= 112 for a, b in zip(rows[:-2], rows[1:-1])),
+        terminal=(
+            last[0] in range(rows[-2][0], report["outcome_ms"] - report["start_ms"] + 1)
+            and report["outcome_ms"] - report["start_ms"] - last[0] < 10
+            and last[5] == report["case"] and last[5] in (7, 10)
+            and last[6] & 0x20 and last[6] & 0x0F == report["stop_legs"]
+            and not any(row[6] & 0x20 for row in rows[:-1])
+        ),
+        valid_middle=any(row[6] & 0x10 and row[1] and 0 < row[2] < 24000 and
+                         0 < row[3] < 24000 for row in rows[1:-1]),
+        samples=all(phase <= 10 and not meta & 0xC0 and (meta & 0x0F) <= 8 and
+                    -18000 <= yaw <= 18000 and
+                    (source > 0 if meta & 0x10 else (x, y, yaw) == (0, 0, 0))
+                    for _, source, x, y, yaw, phase, meta in rows),
+    )
+    if not fault:
+        checks["return_pose"] = bool(last[6] & 0x10 and abs(last[2] - 1500) <= 50 and
+                                     abs(last[3] - 1500) <= 50 and abs(last[4] - 9000) <= 100)
+    return {"checks": checks, "count": count, "bytes": len(blob), "state": state, "fault": fault,
+            "flags": flags, "initial": start, "terminal": last}
 
 
 def replace_once(src, old, new):
@@ -86,10 +124,13 @@ def main():
     mode.add_argument("--one-miss", dest="miss_command", action="store_const", const=0x43, default=0)
     mode.add_argument("--one-status-miss", dest="miss_command", action="store_const", const=0x3A)
     parser.add_argument("--startup-timing", type=int, metavar="SCAN_RESULT_DELAY_MS")
+    parser.add_argument("--pose-trace", action="store_true", help="verify and export the frozen STM32 pose trace")
     parser.add_argument("--require-post-budget-motion", action="store_true",
                         help="require a nonzero wheel command after the 180-second scoring budget and full completion")
     parser.add_argument("--receipt", type=Path)
     args = parser.parse_args()
+    if args.pose_trace and args.shadow:
+        parser.error("--pose-trace requires active motion")
     if args.startup_timing is not None and not 0 <= args.startup_timing <= 8000:
         parser.error("startup scan result delay must be 0 through 8000 ms")
     if args.startup_timing is not None and (args.shadow or args.drop_radar or args.drop_f6 or args.occupied_bad_path):
@@ -113,7 +154,7 @@ def main():
     service = SOURCE / "app_chassis_service.c"
     main_source = SOURCE / "main.c"
     inputs = [Path(__file__), fixture, owner_peer, radar_peer, radar_registers, kernel_runner, service, *units,
-              SOURCE / "app_zone2.c", SOURCE / "chassis_auto_test.c", main_source]
+              SOURCE / "app_zone2.c", SOURCE / "app_config.h", SOURCE / "chassis_auto_test.c", main_source]
     hashes = {p.name: sha(p) for p in inputs}
     build_peers(out, owner_peer, radar_peer, main_source)
     registers = out / "radar_registers"
@@ -148,6 +189,7 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
             "-DSTM32F40_41xxx", "-DUSE_STDPERIPH_DRIVER", "-DAPP_MOTOR_OFFLINE_ONLY=0",
             "-DZDT_EMM_SETTINGS_CONFIRMED=1", "-DAPP_CONTINUOUS_MAP_ENABLE=1","-DAPP_ZONE2_NAV_ENABLE=1",
             f"-DAPP_ZONE2_NAV_MOTION_ENABLE={int(not args.shadow)}",
+            f"-DAPP_ZONE2_POSE_TRACE_ENABLE={int(args.pose_trace)}",
             f"-DCHAIN_DROP_LINK={int(args.drop_radar)}", f"-DCHAIN_DROP_F6={int(args.drop_f6)}",
             f"-DCHAIN_OCCUPIED_DETOUR={int(args.occupied_detour)}",
             f"-DCHAIN_OCCUPIED_BAD_PATH={int(args.occupied_bad_path)}",
@@ -176,7 +218,7 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
                       "recovery_ms", "recovery_stops", "recovery_quiet", "truth_samples", "truth_contacts",
                       "first_contact_ms", "robust_contacts", "one_miss", "one_miss_ms", "owner_miss",
                       "partial", "f6_possible", "f6_tx", "f6_ack", "start_ms", "scoring_budget_end_ms",
-                      "post_budget_nonzero",
+                      "post_budget_nonzero", "command_hash",
                       "occupied_intervals", "occupied_contacts", "detour_witness",
                       "occupied_reject_nonzero_after_first_stop",
                       "outcome_ms", "scan_tx_ms", "scan_result_ms", "scan_ready_ms", "lift_leg_ms")
@@ -188,6 +230,17 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
                 **{name: read("chain_" + name, "<8I")
                    for name in ("arrival_ms", "plan_ms", "plan_sections", "track_ms", "scan_stage_ms")},
                 failed_line=""")
+    trace_extract = r"""    trace_match = re.search(r"\bg_zone2_pose_trace\s+(0x[0-9a-fA-F]+)", symbols)
+    trace_blob = None
+    if trace_match and POSE_TRACE_ENABLED:
+        trace_addr = int(trace_match[1], 16)
+        trace_header = bytes(machine.mem_read(trace_addr, TRACE_HEADER.size))
+        count = TRACE_HEADER.unpack(trace_header)[1]
+        trace_blob = trace_header
+        if count <= TRACE_CAPACITY:
+            trace_blob = bytes(machine.mem_read(trace_addr, TRACE_HEADER.size + count * TRACE_ROW.size))
+    return dict(trace_symbol_present=bool(trace_match), _trace_blob=trace_blob,"""
+    kernel = replace_once(kernel, "    return dict(**{name:", trace_extract + "\n                **{name:")
     read_chain = r"""match = re.search(r"\b" + name + r"\s+(0x[0-9a-fA-F]+)", symbols)
         if not match and name in SHADOW_OMITTED:
             return (0,) * 8 if fmt == "<8I" else 0
@@ -218,9 +271,22 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
         omitted_nonfault.update("chain_" + name for name in ("scan_stage_ms", "scan_tx_ms",
                                "scan_result_ms", "scan_ready_ms", "lift_leg_ms"))
     runtime = {"__file__": str(kernel_runner), "__name__": "__chain_emulator__",
+               "POSE_TRACE_ENABLED": args.pose_trace, "TRACE_HEADER": TRACE_HEADER,
+               "TRACE_ROW": TRACE_ROW, "TRACE_CAPACITY": TRACE_CAPACITY,
                "SHADOW_OMITTED": omitted_nonfault | ({"chain_" + name for name in omitted} if args.shadow else set())}
     exec(compile(kernel, str(kernel_runner), "exec"), runtime)
     result = runtime["execute"](out)
+    trace_blob = result.pop("_trace_blob")
+    trace_result = {"checks": {"symbol_presence": result["trace_symbol_present"] == args.pose_trace}}
+    if trace_blob is not None:
+        trace_file = out / "pose_trace.bin"
+        trace_file.write_bytes(trace_blob)
+        decoded = check_pose_trace(trace_blob, result)
+        trace_result.update(**{key: value for key, value in decoded.items() if key != "checks"},
+                            file=trace_file.name, sha256=sha(trace_file))
+        trace_result["checks"].update(decoded["checks"])
+    trace_result["passed"] = all(trace_result["checks"].values())
+    result["pose_trace"] = trace_result
     result.update(hardware_accessed=False, motion_enabled=not args.shadow, radar_drop_test=args.drop_radar,
                   f6_ack_drop_test=args.drop_f6,
                   occupied_grid_mode=("detour" if args.occupied_detour else
@@ -241,7 +307,7 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
         with (HERE / args.receipt).open("x", encoding="utf-8") as report:
             report.write(raw)
     print(raw)
-    return int(bool(result["failed_line"]))
+    return int(bool(result["failed_line"]) or not trace_result["passed"])
 
 
 if __name__ == "__main__":

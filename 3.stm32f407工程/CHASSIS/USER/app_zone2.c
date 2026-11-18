@@ -20,6 +20,9 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include <math.h>
+#if APP_ZONE2_POSE_TRACE_ENABLE
+#include <stddef.h>
+#endif
 
 #define ZONE2_RUN_ID 1U
 #define ZONE2_START_ID 2U
@@ -68,6 +71,81 @@ volatile Zone2Phase g_zone2_phase;
 volatile Zone2Fault g_zone2_fault;
 volatile Zone2NavPathResult g_zone2_path_error;
 volatile uint32_t g_zone2_reference_status, g_zone2_stop_pose_ms;
+
+#if APP_ZONE2_POSE_TRACE_ENABLE
+#define ZONE2_TRACE_CAPACITY 2048U
+#define ZONE2_TRACE_PERIOD_MS 100U
+#define ZONE2_TRACE_MAGIC 0x3154325AU
+#define ZONE2_TRACE_CAPTURE 1U
+#define ZONE2_TRACE_FROZEN 2U
+#define ZONE2_TRACE_DROPPED 1U
+#define ZONE2_TRACE_VALID 0x10U
+#define ZONE2_TRACE_TERMINAL 0x20U
+
+typedef struct {
+    uint32_t elapsed_ms, source_ms;
+    int16_t x_decimm, y_decimm, yaw_centideg;
+    uint8_t phase, meta;
+} Zone2PoseTraceRecord;
+
+typedef struct {
+    uint32_t magic, count, state, fault, flags;
+    Zone2PoseTraceRecord records[ZONE2_TRACE_CAPACITY];
+} Zone2PoseTrace;
+
+typedef char Zone2PoseTraceLayout[
+    sizeof(Zone2PoseTraceRecord)==16U && offsetof(Zone2PoseTrace,records)==20U &&
+    sizeof(Zone2PoseTrace)==32788U ? 1 : -1];
+
+volatile Zone2PoseTrace g_zone2_pose_trace __attribute__((section(".bss.zone2_pose_trace"),zero_init));
+
+static struct {
+    uint32_t source_ms, valid;
+    float x_mm, y_mm, heading_deg;
+} s_trace_pose;
+static uint32_t s_trace_last_ms;
+
+static void trace_capture(uint32_t now,uint32_t terminal)
+{
+    Zone2PoseTraceRecord record={0};
+    uint32_t count=g_zone2_pose_trace.count;
+    float x, y, yaw;
+
+    if (!terminal) {
+        if (count && now-s_trace_last_ms<ZONE2_TRACE_PERIOD_MS) return;
+        /* Reserve the final record for DONE or FAILED. */
+        if (count>=ZONE2_TRACE_CAPACITY-1U) {
+            g_zone2_pose_trace.flags|=ZONE2_TRACE_DROPPED;
+            return;
+        }
+        s_trace_last_ms=now;
+    }
+    record.elapsed_ms=now-s_begin_ms;
+    record.source_ms=s_trace_pose.source_ms;
+    record.phase=(uint8_t)g_zone2_phase;
+    record.meta=(uint8_t)(g_zone2_completed_legs&0x0FU);
+    if (s_trace_pose.valid && isfinite(s_trace_pose.x_mm) &&
+        isfinite(s_trace_pose.y_mm) && isfinite(s_trace_pose.heading_deg)) {
+        x=roundf(s_trace_pose.x_mm*10.0f);
+        y=roundf(s_trace_pose.y_mm*10.0f);
+        yaw=roundf(remainderf(s_trace_pose.heading_deg,360.0f)*100.0f);
+        if (x>=-32768.0f && x<=32767.0f && y>=-32768.0f && y<=32767.0f &&
+            yaw>=-18000.0f && yaw<=18000.0f) {
+            record.x_decimm=(int16_t)x;
+            record.y_decimm=(int16_t)y;
+            record.yaw_centideg=(int16_t)yaw;
+            record.meta|=ZONE2_TRACE_VALID;
+        }
+    }
+    if (terminal) record.meta|=ZONE2_TRACE_TERMINAL;
+    g_zone2_pose_trace.records[count]=record;
+    g_zone2_pose_trace.count=count+1U;
+    if (terminal) {
+        g_zone2_pose_trace.fault=(uint32_t)g_zone2_fault;
+        g_zone2_pose_trace.state=ZONE2_TRACE_FROZEN;
+    }
+}
+#endif
 
 static uint32_t now_ms(void)
 {
@@ -145,9 +223,13 @@ static uint32_t observation(const ChassisZone2CanStatus *can,uint32_t now,
     ChassisWheelSpeeds wheels;
     ChassisBodyVelocity body;
     float driver_rpm[4], c, s;
-    uint32_t i;
+    uint32_t i, source_ready;
 
-    if (!sources(can,&now,&map,heading)) return 0U;
+    source_ready=sources(can,&now,&map,heading);
+#if APP_ZONE2_POSE_TRACE_ENABLE
+    s_trace_pose.source_ms=map.pose.sample_ms;
+#endif
+    if (!source_ready) return 0U;
     for (i=0U;i<4U;i++) driver_rpm[i]=0.1f*(float)can->wheel_decirpm[i];
     if (!Chassis_DriverFeedbackToLogical(driver_rpm,can->position_mask,&wheels) ||
         !Chassis_Forward(&g_chassis_geometry,&wheels,&body)) return 0U;
@@ -166,6 +248,12 @@ static uint32_t observation(const ChassisZone2CanStatus *can,uint32_t now,
     o->now_ms=now;
     o->valid=1U;
     o->feedback_source=FUSION_MEASURED_FEEDBACK;
+#if APP_ZONE2_POSE_TRACE_ENABLE
+    s_trace_pose.x_mm=o->position.x_mm;
+    s_trace_pose.y_mm=o->position.y_mm;
+    s_trace_pose.heading_deg=o->heading_deg;
+    s_trace_pose.valid=1U;
+#endif
     return 1U;
 }
 
@@ -309,7 +397,11 @@ uint32_t AppZone2_CanPermit(uint32_t slot_ms)
     return can.session==s_session && sources(&can,&now,&map,&heading);
 }
 
+#if APP_ZONE2_POSE_TRACE_ENABLE
+static void zone2_step(void)
+#else
 void AppZone2_Step(void)
+#endif
 {
     ChassisZone2CanStatus can;
     ChassisAutoStatus backend;
@@ -329,6 +421,13 @@ void AppZone2_Step(void)
             g_zone2_phase=ZONE2_WAIT_READY;
         }
         taskEXIT_CRITICAL();
+#if APP_ZONE2_POSE_TRACE_ENABLE
+        if (g_zone2_phase==ZONE2_WAIT_READY && !g_zone2_pose_trace.state) {
+            g_zone2_pose_trace.magic=ZONE2_TRACE_MAGIC;
+            trace_capture(s_begin_ms,0U);
+            g_zone2_pose_trace.state=ZONE2_TRACE_CAPTURE;
+        }
+#endif
     }
     if (g_zone2_phase==ZONE2_FAILED) {
         if (s_primed && !g_chassis_auto_active) {
@@ -520,4 +619,19 @@ void AppZone2_Step(void)
         }
     }
 }
+
+#if APP_ZONE2_POSE_TRACE_ENABLE
+void AppZone2_Step(void)
+{
+    uint32_t terminal;
+
+    s_trace_pose.source_ms=0U;
+    s_trace_pose.valid=0U;
+    zone2_step();
+    if (g_zone2_pose_trace.state==ZONE2_TRACE_CAPTURE) {
+        terminal=g_zone2_phase==ZONE2_DONE || g_zone2_phase==ZONE2_FAILED;
+        trace_capture(now_ms(),terminal);
+    }
+}
+#endif
 #endif

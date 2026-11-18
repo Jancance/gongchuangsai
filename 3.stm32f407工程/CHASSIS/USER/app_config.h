@@ -12,6 +12,12 @@
 #if APP_ZONE2_NAV_MOTION_ENABLE > 1U || (APP_ZONE2_NAV_MOTION_ENABLE && !APP_ZONE2_NAV_ENABLE)
 #error Zone2_nav_motion_requires_navigation
 #endif
+#ifndef APP_ZONE2_POSE_TRACE_ENABLE
+#define APP_ZONE2_POSE_TRACE_ENABLE 0U
+#endif
+#if APP_ZONE2_POSE_TRACE_ENABLE > 1U || (APP_ZONE2_POSE_TRACE_ENABLE && !APP_ZONE2_NAV_MOTION_ENABLE)
+#error Zone2_pose_trace_requires_navigation_motion
+#endif
 #ifndef APP_CONTINUOUS_MAP_ENABLE
 #define APP_CONTINUOUS_MAP_ENABLE 0U
 #endif

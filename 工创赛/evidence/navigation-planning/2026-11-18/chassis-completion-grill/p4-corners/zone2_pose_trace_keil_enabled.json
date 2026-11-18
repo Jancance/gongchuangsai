@@ -1,0 +1,36 @@
+{
+  "base": "a8ce7dd262e1eb2335b0b2f85203290523f6767d",
+  "defines": [
+    "ICM45686_SAMPLE_ONLY=0",
+    "APP_CONTINUOUS_MAP_ENABLE=1",
+    "APP_MAP_NAV_RESIDUAL_ENABLE=1",
+    "APP_ZONE2_NAV_ENABLE=1",
+    "APP_ZONE2_NAV_MOTION_ENABLE=1",
+    "APP_ZONE2_POSE_TRACE_ENABLE=1"
+  ],
+  "inputs_sha256": {
+    "3.stm32f407工程/CHASSIS/USER/app_config.h": "6683e1ca122703cb05e24c5499eb91b57c16c1129b8dc9d4640f238154cf731d",
+    "3.stm32f407工程/CHASSIS/USER/app_zone2.c": "e82177776a04b4d92db1dd6c29c087ca5324f93505d6ef20c0f75d04218f58c7",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "4fac9354e4ea9c0c0f50c1d912e55a585d80daa8b0c62c73ab3a856c08cef84a"
+  },
+  "targets": {
+    "Vehicle_Integrated": {
+      "passed": true,
+      "exit_code": 0,
+      "compiled": {
+        "app_zone2.c": true,
+        "zone2_motion_reference.c": true,
+        "main.c": true
+      }
+    },
+    "Vehicle_Offline": {
+      "passed": true,
+      "exit_code": 0,
+      "compiled": {
+        "app_zone2.c": true,
+        "zone2_motion_reference.c": true,
+        "main.c": true
+      }
+    }
+  }
+}
