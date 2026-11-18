@@ -15,6 +15,20 @@ uint32_t CAN1_ReadVersion(uint8_t address, CanRxMsg *reply);
 uint32_t CAN1_ReadStatus(uint8_t address, CanRxMsg *reply);
 void CAN1_ResetSession(void);
 uint32_t CAN1_ReadEmmSystemSnapshot(uint8_t address, CanRxMsg *reply, float *rpm);
+#define CAN1_NAV_ADMISSION_MS 2U
+#define CAN1_NAV_COMPLETION_MS 6U
+#define CAN1_TIMING_WINDOW 10U
+typedef struct
+{
+    uint32_t tx_ms, reply_ms;
+    uint8_t mailbox_accepted, tx_complete, ack_valid;
+} CAN1_EmmSpeedReceipt;
+/* Single CAN1 owner only. tx_ms timestamps software mailbox submission.
+ * Same-address delayed F6 ACKs have no sequence. The owner must start from
+ * a drained session and must not retry an ambiguous transaction in that run. */
+uint32_t CAN1_SetEmmSpeedRawBounded(uint8_t address, uint8_t direction, uint16_t speed_raw,
+                                   uint16_t acceleration, uint32_t slot_ms, CanRxMsg *reply,
+                                   CAN1_EmmSpeedReceipt *receipt);
 typedef struct
 {
     uint32_t request_ms, reply_ms;
