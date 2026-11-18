@@ -1,4 +1,4 @@
-function report=validate_eight_leg_reference(output,speed)
+function report=validate_eight_leg_reference(output,speed,occupiedDetour)
 % Conditional offline model of time-indexed reference from copied P3 points.
 folder=fileparts(mfilename('fullpath'));
 data=jsondecode(fileread(fullfile(folder,'..','p3-path','p3_path_vectors.json')));
@@ -14,6 +14,13 @@ L.speed=speed;
 L.minExit=12*(L.H+36*L.H/2)+L.track;
 assert(data.passed && isequal(data.body_mm(:),2*L.half(:)));
 assert(data.position_error_mm==L.pos && data.heading_error_deg==rad2deg(L.yaw));
+if nargin>=3 && occupiedDetour
+    assert(ismember(double(occupiedDetour),[1 5 7]));
+    occupied=max(5,double(occupiedDetour));
+    report=verify_occupied_detour(data,L,occupied);
+    write_report(output,report);
+    return;
+end
 for i=1:numel(data.legs)
     leg=data.legs(i);
     rows(i)=simulate_leg(leg,L,true); %#ok<AGROW>
@@ -48,13 +55,104 @@ report=struct('version',version,'passed',true,'model_only',true,'deployment_allo
     'uniform_tracking_refused',unavailable,'navigation_time_s',sum([rows.time_s]),...
     'stop_only_time_s',sum([stopped.time_s]),'assumptions',L);
 if nargin>0
-    fid=fopen(output,'w');
-    assert(fid>=0);
-    fprintf(fid,'%s\n',jsonencode(report));
-    fclose(fid);
+    write_report(output,report);
 end
 fprintf('EIGHT_LEG_REFERENCE_PASS %.2f s vs %.2f s all-stop, excluding scan/handling/physical settle\n',...
     report.navigation_time_s,report.stop_only_time_s);
+end
+
+function write_report(output,report)
+fid=fopen(output,'w');
+assert(fid>=0);
+fprintf(fid,'%s\n',jsonencode(report));
+fclose(fid);
+end
+
+function report=verify_occupied_detour(data,L,occupied)
+cellSize=data.cell_size_mm;
+lo=grid_xy(occupied)*cellSize;
+occupiedBox=[lo lo+cellSize];
+if occupied==5
+    changedLeg=2;
+    waypoints=[12 14];
+    before=[2 3 4 5 14];
+    after=[2 7 12 13 14];
+    assert(isequal(occupiedBox,[1920 480 2400 960]));
+else
+    changedLeg=8;
+    waypoints=[20 0];
+    before=[22 17 12 7 2 1 0];
+    after=[22 21 20 19 10 9 0];
+    assert(isequal(occupiedBox,[960 480 1440 960]));
+end
+L.box=[L.box;occupiedBox];
+original=data.legs(changedLeg);
+oldCells=expand_grid(original.from,original.waypoints);
+assert(isequal(oldCells,before));
+assert(any(oldCells==occupied));
+assert(~simulate_leg(original,L,true).available);
+replies={data.legs.waypoints};
+replies{changedLeg}=waypoints;
+detour=expand_grid(original.from,waypoints);
+assert(isequal(detour,after));
+for i=1:numel(data.legs)
+    leg=data.legs(i);
+    cells{i}=expand_grid(leg.from,replies{i}); %#ok<AGROW>
+    assert(cells{i}(end)==leg.to && ~any(cells{i}==occupied));
+    if i==changedLeg
+        nodes=grid_xy([leg.from replies{i}])*cellSize+cellSize/2;
+        leg.points_mm=unique([leg.points_mm(1,:);nodes;leg.points_mm(end,:)],'rows','stable');
+        assert(isequal(leg.points_mm(end,:),original.points_mm(end,:)));
+    else
+        assert(isequal(cells{i},leg.cells(:)'));
+    end
+    if i>1
+        assert(leg.from==data.legs(i-1).to);
+        assert(abs(wrap(leg.headings.start-data.legs(i-1).headings.terminal))<1e-8);
+    end
+    rows(i)=simulate_leg(leg,L,true); %#ok<AGROW>
+    assert(rows(i).available && rows(i).clearance_mm>0);
+    fprintf('Occupied leg %d: %.2f s, clearance %.3f mm\n',i,rows(i).time_s,rows(i).clearance_mm);
+end
+assert(numel(rows)==8 && data.legs(end).to==data.legs(1).from);
+assert(isequal([data.legs.cache_hit],logical([0 0 0 0 0 1 1 0])));
+% The inflated body is in contact with the occupied box but the center is outside it.
+ex=body_extent(original.headings.hold,L)+L.track;
+touch=[mean(occupiedBox([1 3])) occupiedBox(2)-ex(2)];
+on=sweep(touch,ex,L,0);
+clear=sweep(touch-[0 .1],ex,L,0);
+assert(on<=1e-9 && clear>.09);
+report=struct('version',version,'passed',true,'model_only',true,'deployment_allowed',false,...
+    'occupied_grid_id',occupied,'occupied_box_mm',occupiedBox,'old_cells',oldCells,...
+    'old_route_rejected',true,'modified_leg',changedLeg,'new_waypoints',waypoints,'new_cells',detour,...
+    'all_wire_waypoints',{replies},'all_expanded_cells',{cells},...
+    'contact_margin_mm',on,'just_clear_margin_mm',clear,...
+    'navigation_time_s',sum([rows.time_s]),'legs',rows,'assumptions',L);
+fprintf('ZONE2_OCCUPIED_DETOUR_PASS 8 legs, %.2f s, original path rejected\n',report.navigation_time_s);
+end
+
+function xy=grid_xy(ids)
+y=floor(ids(:)/5);
+x=mod(ids(:),5);
+odd=mod(y,2)==1;
+x(odd)=4-x(odd);
+xy=[x y];
+end
+
+function cells=expand_grid(start,waypoints)
+cells=start;
+from=grid_xy(start);
+for id=waypoints(:)'
+    to=grid_xy(id);
+    d=to-from;
+    assert(nnz(d)==1);
+    for k=1:sum(abs(d))
+        from=from+sign(d);
+        col=from(1);
+        if mod(from(2),2), col=4-col; end
+        cells(end+1)=5*from(2)+col; %#ok<AGROW>
+    end
+end
 end
 
 function row=simulate_leg(leg,L,blendEnabled)

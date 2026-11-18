@@ -8,6 +8,7 @@
 #define CHECK(condition) check((condition),__LINE__)
 #define CHAIN_SCORING_BUDGET_MS 180000U
 #define CHAIN_MAX_SLOTS 21000U
+#define CHAIN_OCCUPIED_GRID (CHAIN_OCCUPIED_DETOUR || CHAIN_OCCUPIED_BAD_PATH)
 
 volatile unsigned replay_assertions,replay_case,replay_detail;
 volatile float replay_actual,replay_expected;
@@ -26,11 +27,14 @@ volatile uint32_t chain_truth_samples,chain_truth_contacts,chain_first_contact_m
 volatile uint32_t chain_robust_contacts;
 volatile uint32_t chain_one_miss,chain_one_miss_ms,chain_owner_miss;
 volatile uint32_t chain_partial,chain_f6_possible,chain_f6_tx,chain_f6_ack;
+volatile uint32_t chain_occupied_intervals,chain_occupied_contacts,chain_detour_witness;
+volatile uint32_t chain_occupied_reject_nonzero_after_first_stop;
 volatile float chain_x,chain_y,chain_heading;
 volatile float chain_max_error_mm,chain_max_heading_deg,chain_edge_error_mm;
 volatile float chain_worst_ref_x,chain_worst_ref_y;
 volatile float chain_truth_x,chain_truth_y,chain_truth_yaw,chain_truth_clearance;
 volatile float chain_robust_clearance;
+volatile float chain_occupied_clearance,chain_detour_witness_x,chain_detour_witness_y;
 volatile float g_radar_servo_angle_deg[2]={0.0f,180.0f};
 volatile uint32_t g_radar_servo_state=1U,g_radar_zone_selected=2U;
 volatile uint32_t g_can_test_result=1U,g_radar_lift_request,g_radar_lift_phase_bits,g_radar_lift_direction;
@@ -52,6 +56,7 @@ static const PeerPath wire_paths[]={
     {0,2,1,{2}}, {2,14,2,{4,14}}, {14,10,1,{10}}, {10,22,2,{12,22}},
     {22,14,2,{12,14}}, {22,0,2,{2,0}}
 };
+static const PeerPath detour_path={2,14,2,{12,14}};
 
 uint32_t RadarZoneSwitch_Lock(void) { return locked_zone=g_radar_zone_selected; }
 void RadarZoneSwitch_Unlock(void) { locked_zone=0U; }
@@ -62,13 +67,13 @@ void AppMotion_StepOdometry(void) { AppOdometry_Step(&odometry_inputs); }
 #include "can_service_entry.c"
 
 /* Distance along at least one separating axis for an oriented chassis and a square. */
-static double yellow_clearance(double dx,double dy,double c,double s,double half_l,double half_w)
+static double box_clearance(double dx,double dy,double c,double s,double half_l,double half_w,double box_half)
 {
-    const double half_zone=225.0,ac=fabs(c),as=fabs(s);
-    double field_axes=fmax(fabs(dx)-(half_l*ac+half_w*as+half_zone),
-        fabs(dy)-(half_l*as+half_w*ac+half_zone));
-    double body_axes=fmax(fabs(c*dx+s*dy)-(half_l+half_zone*(ac+as)),
-        fabs(-s*dx+c*dy)-(half_w+half_zone*(ac+as)));
+    const double ac=fabs(c),as=fabs(s);
+    double field_axes=fmax(fabs(dx)-(half_l*ac+half_w*as+box_half),
+        fabs(dy)-(half_l*as+half_w*ac+box_half));
+    double body_axes=fmax(fabs(c*dx+s*dy)-(half_l+box_half*(ac+as)),
+        fabs(-s*dx+c*dy)-(half_w+box_half*(ac+as)));
     return fmax(field_axes,body_axes);
 }
 
@@ -101,7 +106,22 @@ static void truth_step(uint32_t now,uint32_t dt)
         fmin(middle_y,2400.0-middle_y)-ext_y);
     uint32_t i,j;
     for (i=0U;i<2U;i++) for (j=0U;j<2U;j++)
-        gap=fmin(gap,yellow_clearance(middle_x-zone_center[i],middle_y-zone_center[j],cs,sn,h_l,h_w));
+        gap=fmin(gap,box_clearance(middle_x-zone_center[i],middle_y-zone_center[j],cs,sn,h_l,h_w,225.0));
+    if (CHAIN_OCCUPIED_GRID) {
+        const double occupied_gap=box_clearance(middle_x-2160.0,middle_y-720.0,cs,sn,h_l,h_w,240.0)-bound;
+        if (!chain_occupied_intervals || occupied_gap<chain_occupied_clearance)
+            chain_occupied_clearance=(float)occupied_gap;
+        chain_occupied_intervals++;
+        chain_occupied_contacts+=occupied_gap<=0.0;
+        gap=fmin(gap,occupied_gap+bound);
+    }
+    if (CHAIN_OCCUPIED_DETOUR && s_schedule.leg==1U && fabs(middle_x-1200.0)<15.0 &&
+        fabs(middle_y-900.0)<10.0 && (!chain_detour_witness ||
+        fabs(middle_y-900.0)<fabs((double)chain_detour_witness_y-900.0))) {
+        chain_detour_witness=1U;
+        chain_detour_witness_x=(float)middle_x;
+        chain_detour_witness_y=(float)middle_y;
+    }
     gap-=bound;
     if (!chain_truth_samples || gap<chain_truth_clearance) chain_truth_clearance=(float)gap;
     if (gap<=0.0) {
@@ -180,7 +200,7 @@ static uint32_t drop_moving_ack(uint8_t address,uint8_t dir,uint16_t raw,CAN1_Em
 static void drive_radar_peer(void)
 {
     uint32_t before=command_count[LINK_CMD_PLAN_PATH];
-    const uint8_t grid[5]={44,0,0,0,0};
+    const uint8_t grid[6]={44,0,0,0,CHAIN_OCCUPIED_GRID ? 1U : 0U,5};
     if (CHAIN_STARTUP_TIMING && lift.state==1U && tick-lift_started_ms>=chain_lift_leg_ms) {
         lift.state=2U;
         lift.done=config.steps;
@@ -205,7 +225,7 @@ static void drive_radar_peer(void)
     }
     if (scan_reply_pending && (!CHAIN_STARTUP_TIMING ||
         tick-1000U-chain_scan_tx_ms>=CHAIN_SCAN_DELAY_MS)) {
-        queue(1U,LINK_EVT_OBSTACLE_GRID,grid,sizeof(grid));
+        queue(1U,LINK_EVT_OBSTACLE_GRID,grid,5U+grid[4]);
         queue(1U,LINK_EVT_STATUS,locked,sizeof(locked));
         if (CHAIN_STARTUP_TIMING) chain_scan_result_ms=tick-1000U;
         scan_reply_pending=0U;
@@ -217,7 +237,8 @@ static void drive_radar_peer(void)
             CHECK(0U);
             return;
         }
-        const PeerPath *p=&wire_paths[handled_path++];
+        const PeerPath *p=CHAIN_OCCUPIED_DETOUR && handled_path==1U ? &detour_path : &wire_paths[handled_path];
+        handled_path++;
         CHECK(path_start==p->start && path_goal==p->goal);
         result[0]=(uint8_t)seq; result[1]=(uint8_t)(seq>>8);
         result[3]=p->start; result[4]=p->goal; result[5]=p->count;
@@ -306,6 +327,7 @@ unsigned test_entry(void)
     AppMapPose map;
     ChassisZone2CanStatus can;
     uint32_t i,last_leg=0U,last_path=0U,pose_captured=0U;
+    uint32_t nonzero_at_first_stop=0U;
     ChassisAuto_Init();
     AppOdometry_Init();
     g_safety_ready=g_can_guard_ready=1U;
@@ -332,6 +354,7 @@ unsigned test_entry(void)
             chain_reuses+=(handled_path==last_path);
             last_path=handled_path;
             last_leg=s_schedule.leg;
+            if (CHAIN_OCCUPIED_BAD_PATH && last_leg==1U) nonzero_at_first_stop=chain_nonzero;
             if (last_leg<=8U) chain_arrival_ms[last_leg-1U]=slot-1000U;
             AppOdometry_ReadMap(&map);
             pose_captured=1U;
@@ -384,10 +407,25 @@ unsigned test_entry(void)
         CHECK(stops==4U && sends==old_sends &&
             !g_chassis_auto_active && !g_vm_test_request && !locked_zone);
     }
+#if CHAIN_OCCUPIED_BAD_PATH
+    CHECK(g_zone2_phase==ZONE2_FAILED && g_zone2_fault==ZONE2_FAULT_PATH &&
+        g_zone2_path_error==ZONE2_NAV_OCCUPIED && chain_stop_legs==1U &&
+        handled_path==2U && stops==4U && nonzero_at_first_stop);
+    for (i=0U;i<220U;i++) run_slot();
+    chain_occupied_reject_nonzero_after_first_stop=chain_nonzero-nonzero_at_first_stop;
+    CHECK(!chain_occupied_reject_nonzero_after_first_stop && stops==4U &&
+        !g_chassis_auto_active && !g_vm_test_request && !locked_zone);
+#endif
     CHECK(!audit_failures);
     CHECK(command_count[LINK_CMD_SINGLE_MEASURE]==1U);
     CHECK(chain_one_miss==(CHAIN_MISS_COMMAND!=0U) && chain_owner_miss==(CHAIN_MISS_COMMAND!=0U));
-#if !CHAIN_DROP_LINK && !CHAIN_DROP_F6
+#if CHAIN_OCCUPIED_GRID
+    CHECK(chain_occupied_intervals && !chain_occupied_contacts && chain_occupied_clearance>0.0f);
+#endif
+#if CHAIN_OCCUPIED_DETOUR
+    CHECK(chain_detour_witness);
+#endif
+#if !CHAIN_DROP_LINK && !CHAIN_DROP_F6 && !CHAIN_OCCUPIED_BAD_PATH
 #if CHAIN_STARTUP_TIMING
     CHECK(chain_lift_leg_ms>=3079U && chain_scan_stage_ms[0] && chain_scan_tx_ms &&
         chain_scan_result_ms-chain_scan_tx_ms>=CHAIN_SCAN_DELAY_MS &&
@@ -417,7 +455,7 @@ unsigned test_entry(void)
     replay_case=g_zone2_phase;
     replay_detail=s_schedule.phase;
     replay_actual=(float)g_zone2_fault;
-    replay_expected=CHAIN_DROP_LINK ? (float)ZONE2_FAULT_PATH :
+    replay_expected=(CHAIN_DROP_LINK || CHAIN_OCCUPIED_BAD_PATH) ? (float)ZONE2_FAULT_PATH :
         (CHAIN_DROP_F6 ? (float)ZONE2_FAULT_BACKEND : 0.0f);
     return first_failure;
 }

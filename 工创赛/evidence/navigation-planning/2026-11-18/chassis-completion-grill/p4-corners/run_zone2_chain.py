@@ -81,6 +81,8 @@ def main():
     mode.add_argument("--shadow", action="store_true")
     mode.add_argument("--drop-radar", action="store_true")
     mode.add_argument("--drop-f6", action="store_true")
+    mode.add_argument("--occupied-detour", action="store_true")
+    mode.add_argument("--occupied-bad-path", action="store_true")
     mode.add_argument("--one-miss", dest="miss_command", action="store_const", const=0x43, default=0)
     mode.add_argument("--one-status-miss", dest="miss_command", action="store_const", const=0x3A)
     parser.add_argument("--startup-timing", type=int, metavar="SCAN_RESULT_DELAY_MS")
@@ -90,8 +92,8 @@ def main():
     args = parser.parse_args()
     if args.startup_timing is not None and not 0 <= args.startup_timing <= 8000:
         parser.error("startup scan result delay must be 0 through 8000 ms")
-    if args.startup_timing is not None and (args.shadow or args.drop_radar or args.drop_f6):
-        parser.error("--startup-timing may only be combined with a single 0x43 or 0x3A miss")
+    if args.startup_timing is not None and (args.shadow or args.drop_radar or args.drop_f6 or args.occupied_bad_path):
+        parser.error("--startup-timing requires a course completion scenario")
     if args.require_post_budget_motion and args.startup_timing is None:
         parser.error("--require-post-budget-motion requires --startup-timing")
     fw = PROJECT / "CHASSIS"
@@ -147,6 +149,8 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
             "-DZDT_EMM_SETTINGS_CONFIRMED=1", "-DAPP_CONTINUOUS_MAP_ENABLE=1","-DAPP_ZONE2_NAV_ENABLE=1",
             f"-DAPP_ZONE2_NAV_MOTION_ENABLE={int(not args.shadow)}",
             f"-DCHAIN_DROP_LINK={int(args.drop_radar)}", f"-DCHAIN_DROP_F6={int(args.drop_f6)}",
+            f"-DCHAIN_OCCUPIED_DETOUR={int(args.occupied_detour)}",
+            f"-DCHAIN_OCCUPIED_BAD_PATH={int(args.occupied_bad_path)}",
             f"-DCHAIN_MISS_COMMAND={args.miss_command}",
             f"-DCHAIN_STARTUP_TIMING={int(args.startup_timing is not None)}",
             f"-DCHAIN_REQUIRE_POST_BUDGET_MOTION={int(args.require_post_budget_motion)}",
@@ -173,10 +177,12 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
                       "first_contact_ms", "robust_contacts", "one_miss", "one_miss_ms", "owner_miss",
                       "partial", "f6_possible", "f6_tx", "f6_ack", "start_ms", "scoring_budget_end_ms",
                       "post_budget_nonzero",
+                      "occupied_intervals", "occupied_contacts", "detour_witness",
+                      "occupied_reject_nonzero_after_first_stop",
                       "outcome_ms", "scan_tx_ms", "scan_result_ms", "scan_ready_ms", "lift_leg_ms")
     chain_floats = ("x", "y", "heading", "max_error_mm", "max_heading_deg", "edge_error_mm",
                     "worst_ref_x", "worst_ref_y", "truth_x", "truth_y", "truth_yaw", "truth_clearance",
-                    "robust_clearance")
+                    "robust_clearance", "occupied_clearance", "detour_witness_x", "detour_witness_y")
     return dict(**{name: read("chain_" + name, "<I") for name in chain_integers},
                 **{name: read("chain_" + name, "<f") for name in chain_floats},
                 **{name: read("chain_" + name, "<8I")
@@ -202,6 +208,12 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
         omitted_nonfault.add("chain_one_miss_ms")
     if not args.drop_f6:
         omitted_nonfault.add("chain_partial")
+    if not (args.occupied_detour or args.occupied_bad_path):
+        omitted_nonfault.update(("chain_occupied_intervals", "chain_occupied_contacts", "chain_occupied_clearance"))
+    if not args.occupied_detour:
+        omitted_nonfault.update(("chain_detour_witness", "chain_detour_witness_x", "chain_detour_witness_y"))
+    if not args.occupied_bad_path:
+        omitted_nonfault.add("chain_occupied_reject_nonzero_after_first_stop")
     if args.startup_timing is None:
         omitted_nonfault.update("chain_" + name for name in ("scan_stage_ms", "scan_tx_ms",
                                "scan_result_ms", "scan_ready_ms", "lift_leg_ms"))
@@ -211,6 +223,8 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
     result = runtime["execute"](out)
     result.update(hardware_accessed=False, motion_enabled=not args.shadow, radar_drop_test=args.drop_radar,
                   f6_ack_drop_test=args.drop_f6,
+                  occupied_grid_mode=("detour" if args.occupied_detour else
+                                      "bad_path" if args.occupied_bad_path else None),
                   startup_scan_result_delay_ms=args.startup_timing,
                   require_post_budget_motion=args.require_post_budget_motion,
                   scoring_margin_ms=result["scoring_budget_end_ms"] - result["outcome_ms"],
