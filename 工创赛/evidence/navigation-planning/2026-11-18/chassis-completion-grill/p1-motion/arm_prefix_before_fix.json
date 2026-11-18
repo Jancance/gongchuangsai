@@ -1,0 +1,34 @@
+{
+  "hardware_accessed": false,
+  "cpu": "Cortex-M4.fp.sp",
+  "matlab_input_dir": "attempt6",
+  "matlab_vectors": 22,
+  "trajectory_samples": {
+    "straight": 401,
+    "diagonal": 567,
+    "short": 100
+  },
+  "input_sha256": {
+    "p1_arm_replay.c": "90a1f00c822a414297193bc2fb202605896572bd9d41993f97b9be056c90c567",
+    "run_p1_arm_replay.py": "45f928fb7d81b0fe0d231aabfe0407bf75fdbe760eba1d0800c2e14fec455ebf",
+    "p1_kernel_vectors.json": "77386fcb562c8709f9c91ebb52123cf2bdb02bb7a2f9c57089cef3a2aa727e8b",
+    "p1_kernel_summary.json": "4a3a996efc555b2c74127c67f01a8e685f352c3d1201dffec9e91045ef1010fb",
+    "p1_retained_trajectories.json": "aeee417e09877282c33eb27a7ae6ad75f1799029288536c58e7f076db6f4681e",
+    "fusion_motion.c": "c98f807f7ca2e4c1d2401653ef453bbbcbcfec2d82bde8c8cc197fc6b1f96b97",
+    "chassis_kinematics.c": "9f009f558c6c82607dda9319e8abba96c2b3536343a91d3ffaef5dc2073f76aa",
+    "fusion_motion.h": "c4c3dfdc048a0cbe953a96766595e4dae45557fcdf97a0bd0e160fb12cc7152a",
+    "chassis_kinematics.h": "7a6f763a665691b0b7db04efdcd4fa014b1bb31438d810acaf05300a90e9ce89",
+    "app_config.h": "2070531ab2bea306fd69174566905a55c93f2e25eadde6d363c1c693f5b9ff20"
+  },
+  "working_directory": "\u5de5\u521b\u8d5b/tmp/p1_arm_replay_3tepsv24",
+  "failed_line": 191,
+  "assertions": 2326,
+  "case": 105,
+  "detail": 4,
+  "actual": 1.0,
+  "expected": 1.0,
+  "emulator": "Unicorn 2.1.4 with Cortex-M4 CPU and FPU enabled",
+  "axf_sha256": "a18b78e698e3db7832e7dca22e97f261839d7a11bf9ad21ccef3bc31baa614ed",
+  "failed_expression": "CHECK(FusionMotion_Propose(zero, zero, target, &r, limits, &out) == FUSION_MOTION_BRAKE);",
+  "status": "FAIL"
+}
