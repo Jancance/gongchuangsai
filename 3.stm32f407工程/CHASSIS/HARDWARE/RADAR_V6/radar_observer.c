@@ -11,7 +11,13 @@
 static RadarZone2Config config,pending_config;
 static RadarObserverStatus status,published_status;
 static RadarObserverPath published_path;
+static RadarObserverMap nav_map,published_map;
+static RadarObserverPathReply nav_reply,published_reply;
+static uint32_t scan_run,scan_layout,map_generation,link_generation;
+static uint8_t link_ready,published_ready,lift_claimed,scan_only;
+enum { CMD_SCAN=5U,CMD_PATH=6U };
 static volatile uint8_t owner_busy;
+static volatile uint8_t stop_pending;
 static RadarObserverPath path;
 static volatile uint8_t command,configure_pending,cancel_pending;
 /* 独立机构单次邮箱：先填等待/预算，最后写request=1下或2上；0默认不动作。 */
@@ -41,19 +47,44 @@ bool RadarObserver_FourTurnCandidate(uint32_t half_steps_per_turn,RadarFourTurnC
     candidate->nominal_leg_ms=(uint32_t)(((uint64_t)candidate->steps*RADAR_LIFT_INTERVAL_US+999U)/1000U);
     candidate->estimated=1U;candidate->measured=0U;return true;
 }
-static void invalidate(void) { status.map_valid=0U;status.path_valid=0U;status.calibration_complete=0U; }
+static void invalidate(void)
+{
+    status.map_valid=0U;status.path_valid=0U;status.calibration_complete=0U;
+    nav_map.valid=0U;
+}
+static bool same_map(const RadarObserverMapIdentity *a,const RadarObserverMapIdentity *b)
+{
+    return a->run_id==b->run_id && a->map_generation==b->map_generation &&
+        a->layout_id==b->layout_id && a->link_generation==b->link_generation &&
+        a->scan_sequence==b->scan_sequence && a->start_id==b->start_id &&
+        a->node_id==b->node_id && a->zone==b->zone;
+}
 static void on_state(const radar_client_state_t *s)
 {
-    if (!s->ready || s->selected_zone!=2U) invalidate();
+    bool ready=s->ready && s->connected && s->selected_zone==2U && s->node_id==config.node_id;
+    if(ready && !link_ready)link_generation++;
+    if(!ready && link_ready && !mechanism && status.stage>0U && status.stage<8U && !status.error)
+        status.error=5U;
+    link_ready=ready;
+    stop_pending=s->operation==RADAR_CLIENT_OPERATION_STOP;
+    if(!ready)invalidate();
 }
 static void on_error(const radar_client_error_t *e)
 {
     (void)e;invalidate();
-    if(!mechanism && status.stage>0U && status.stage<8U) status.error=3U;
+    if(!mechanism && status.stage>0U && status.stage<8U && !status.error)status.error=3U;
 }
 static void on_grid(const radar_client_grid_result_t *g)
 {
-    if(status.stage==4U && !calibrating) { scan_sequence=g->scan_sequence;grid_done=1U; }
+    uint8_t i;uint32_t mask=0U;
+    if(status.stage!=4U || calibrating || grid_done)return;
+    if(g->count>RADAR_CLIENT_MAX_GRID_IDS){status.error=3U;return;}
+    for(i=0U;i<g->count;i++) {
+        if(g->grid_ids[i]>24U){status.error=3U;return;}
+        mask|=1UL<<g->grid_ids[i];
+    }
+    nav_map.occupied_mask=mask;
+    scan_sequence=g->scan_sequence;grid_done=1U;
 }
 static void on_calibration(const radar_client_calibration_t *c)
 {
@@ -61,7 +92,15 @@ static void on_calibration(const radar_client_calibration_t *c)
 }
 static void on_path(const radar_client_path_result_t *p)
 {
-    if(status.stage!=7U || !status.map_valid) return;
+    if(status.stage!=7U || !status.map_valid || path_done)return;
+    if(nav_map.valid) {
+        /* Client has matched the PLAN_PATH wire sequence and ACK. */
+        if(p->start!=request_start || p->goal!=request_goal || p->status!=0U ||
+           p->waypoint_count>RADAR_CLIENT_MAX_WAYPOINTS ||
+           (p->waypoint_count?p->waypoints[p->waypoint_count-1U]!=p->goal:p->start!=p->goal))return;
+        nav_reply.identity=nav_map.identity;
+        nav_reply.path=*p;
+    }
     path.scan_sequence=scan_sequence;path.request_sequence=p->request_sequence;
     path.start=p->start;path.goal=p->goal;path.status=p->status;
     path.waypoint_count=p->waypoint_count;memcpy(path.waypoints,p->waypoints,p->waypoint_count);
@@ -86,7 +125,7 @@ bool RadarObserver_Configure(const RadarZone2Config *c)
 {
     uint32_t key;bool ok=false;if(!configured(c))return false;
     key=RadarUartPort_EnterCritical();
-    if(!configure_pending && !command && !owner_busy && !g_radar_mechanism_request) {
+    if(!configure_pending && !command && !owner_busy && !g_radar_mechanism_request && !cancel_pending && !stop_pending) {
         pending_config=*c;configure_pending=1U;ok=true;
     }
     RadarUartPort_ExitCritical(key);return ok;
@@ -94,7 +133,7 @@ bool RadarObserver_Configure(const RadarZone2Config *c)
 static bool submit(uint8_t kind,uint8_t start,uint8_t goal)
 {
     uint32_t key=RadarUartPort_EnterCritical();bool ok=false;
-    if(initialized && !configure_pending && !command && !owner_busy && !g_radar_mechanism_request) {
+    if(initialized && !configure_pending && !command && !owner_busy && !g_radar_mechanism_request && !cancel_pending && !stop_pending) {
         request_start=start;request_goal=goal;owner_busy=1U;command=kind;ok=true;
     }
     RadarUartPort_ExitCritical(key);return ok;
@@ -102,33 +141,96 @@ static bool submit(uint8_t kind,uint8_t start,uint8_t goal)
 bool RadarObserver_StartZone2(uint8_t start,uint8_t goal,bool reference)
 { return reference && start<=24U && goal<=24U && submit(1U,start,goal); }
 bool RadarCalibration_StartZone2(void) { return submit(2U,0U,0U); }
-void RadarObserver_Cancel(void) { cancel_pending=1U; }
+void RadarObserver_Cancel(void)
+{
+    uint32_t key=RadarUartPort_EnterCritical();
+    cancel_pending=1U;
+    published_map.valid=0U;
+    RadarUartPort_ExitCritical(key);
+}
+static bool scan_ready(void)
+{
+    return published_ready && !configure_pending && !command && !owner_busy &&
+        !g_radar_mechanism_request && !cancel_pending;
+}
+bool RadarObserver_IsScanReady(void)
+{
+    uint32_t key=RadarUartPort_EnterCritical();bool ready=scan_ready();
+    RadarUartPort_ExitCritical(key);return ready;
+}
+bool RadarObserver_StartScan(uint32_t run_id,uint8_t start_id,uint32_t layout_id)
+{
+    uint32_t key;bool ok=false;
+    if(!run_id || start_id!=2U || !layout_id)return false;
+    key=RadarUartPort_EnterCritical();
+    if(scan_ready() && run_id!=scan_run) {
+        scan_run=run_id;scan_layout=layout_id;owner_busy=1U;command=CMD_SCAN;
+        published_map.valid=0U;ok=true;
+    }
+    RadarUartPort_ExitCritical(key);return ok;
+}
+bool RadarObserver_GetMap(uint32_t run_id,RadarObserverMap *out)
+{
+    uint32_t key;bool ok;
+    if(!out)return false;
+    key=RadarUartPort_EnterCritical();
+    ok=published_map.valid && published_map.identity.run_id==run_id &&
+        !configure_pending && (!command || command==CMD_PATH) && !cancel_pending;
+    if(ok)*out=published_map;
+    RadarUartPort_ExitCritical(key);return ok;
+}
+bool RadarObserver_RequestPath(const RadarObserverMapIdentity *expected,uint8_t start,uint8_t goal)
+{
+    uint32_t key;bool ok=false;
+    if(!expected || start>24U || goal>24U)return false;
+    key=RadarUartPort_EnterCritical();
+    if(scan_ready() && published_map.valid && same_map(expected,&published_map.identity)) {
+        request_start=start;request_goal=goal;owner_busy=1U;command=CMD_PATH;
+        published_reply.status.path_valid=0U;ok=true;
+    }
+    RadarUartPort_ExitCritical(key);return ok;
+}
+bool RadarObserver_GetPathReply(const RadarObserverMapIdentity *expected,uint8_t start,uint8_t goal,RadarObserverPathReply *out)
+{
+    uint32_t key;bool ok;
+    if(!expected || !out)return false;
+    key=RadarUartPort_EnterCritical();
+    ok=published_map.valid && published_reply.status.path_valid && !configure_pending &&
+        !command && !cancel_pending && same_map(expected,&published_reply.identity) &&
+        published_reply.path.start==start && published_reply.path.goal==goal;
+    if(ok)*out=published_reply;
+    RadarUartPort_ExitCritical(key);return ok;
+}
 bool RadarObserver_GetPath(RadarObserverPath *p)
 {
     bool valid;uint32_t key;if(!p)return false;key=RadarUartPort_EnterCritical();
-    valid=published_status.path_valid!=0U;if(valid)*p=published_path;RadarUartPort_ExitCritical(key);return valid;
+    valid=published_status.path_valid!=0U && !command && !cancel_pending;
+    if(valid)*p=published_path;RadarUartPort_ExitCritical(key);return valid;
 }
 void RadarObserver_GetStatus(RadarObserverStatus *s)
 { uint32_t key;if(!s)return;key=RadarUartPort_EnterCritical();*s=published_status;RadarUartPort_ExitCritical(key); }
 static void stage(uint32_t value) { status.stage=value;entered=now(); }
 static void fail(uint32_t error)
 {
-    status.error=error;invalidate();stage(99U);RadarLift_Cancel();
+    if(!status.error)status.error=error;
+    invalidate();stage(99U);
+    if(lift_claimed)RadarLift_Cancel();
     if(mechanism)g_radar_mechanism_result=3U;
     if(initialized && !mechanism)(void)RadarClient_RequestStop();
 }
 /* 单一雷达任务服务入口，测试也执行此实际代码；不调用底盘接口。 */
 static void service_owner(void)
 {
-    uint8_t cmd;uint32_t key,t=now();radar_client_state_t client;RadarLiftSnapshot lift;
+    uint8_t cmd;bool maintenance,cancel;uint32_t key,t=now();radar_client_state_t client;RadarLiftSnapshot lift;
     key=RadarUartPort_EnterCritical();
     if(configure_pending) {
-        config=pending_config;configure_pending=0U;initialized=0U;invalidate();
+        config=pending_config;configure_pending=0U;initialized=0U;link_ready=0U;
+        published_ready=0U;published_map.valid=0U;invalidate();
     }
     cmd=command;command=0U;
     if(g_radar_mechanism_request) {
         uint32_t request=g_radar_mechanism_request;g_radar_mechanism_request=0U;
-        if(!owner_busy && !cmd && !configure_pending && request<=2U &&
+        if(!owner_busy && !cmd && !configure_pending && !stop_pending && request<=2U &&
            g_radar_mechanism_wait_ms>0U && g_radar_mechanism_wait_ms<0x80000000U &&
            g_radar_mechanism_interval_us>=733U && g_radar_mechanism_interval_us<=4000U &&
            g_radar_mechanism_budget_ms>=(uint32_t)(((uint64_t)8559U*g_radar_mechanism_interval_us+999U)/1000U) &&
@@ -139,26 +241,38 @@ static void service_owner(void)
         } else g_radar_mechanism_result=2U;
     }
     RadarUartPort_ExitCritical(key);
-    if(cmd<3U && !mechanism && configured(&config) && !initialized) {
+    maintenance=cmd==3U || cmd==4U;
+    if(!maintenance && !mechanism && configured(&config) && !initialized) {
         radar_client_callbacks_t cb;memset(&cb,0,sizeof(cb));
         cb.state=on_state;cb.error=on_error;cb.grid=on_grid;cb.path=on_path;cb.calibration=on_calibration;
         configure_uart();RadarClient_Init(&cb,config.node_id);
         (void)RadarClient_RequestSelectZone(2U);initialized=1U;
     }
-    if(initialized && !mechanism && cmd<3U)RadarClient_Poll();
-    if(cancel_pending) {
-        cancel_pending=0U;command=0U;
-        if(cmd){mechanism=cmd>=3U;status.sequence++;invalidate();fail(4U);}
-        else if(status.stage>0U && status.stage<8U)fail(4U);
+    if(initialized && !mechanism && !maintenance)RadarClient_Poll();
+    key=RadarUartPort_EnterCritical();
+    cancel=cancel_pending;
+    if(cancel) { owner_busy=1U;cancel_pending=0U;command=0U; }
+    RadarUartPort_ExitCritical(key);
+    if(cancel) {
+        if(cmd){mechanism=maintenance;status.sequence++;status.error=0U;fail(4U);}
+        else if((status.stage>0U && status.stage<8U) || (scan_only && status.stage==8U))fail(4U);
         return;
     }
-    if(cmd) {
+    if(cmd==CMD_PATH) {
+        status.sequence++;status.error=0U;status.path_valid=0U;path_done=0U;
+        if(!nav_map.valid || !link_ready ||
+           RadarClient_RequestPlanPath(request_start,request_goal)!=RADAR_CLIENT_REQUEST_ACCEPTED){fail(3U);return;}
+        stage(7U);
+    }
+    if(cmd && cmd!=CMD_PATH) {
         invalidate();status.sequence++;status.error=0U;status.calibration_complete=0U;
-        mechanism=cmd>=3U;
+        mechanism=maintenance;
         if((!mechanism && (!configured(&config) || !RadarClient_IsReady() || RadarClient_IsBusy())) ||
+           (cmd==CMD_SCAN && !link_ready) ||
            !RadarLift_SafeIdle(t) || !RadarLift_Claim()) {
             status.error=1U;if(mechanism)g_radar_mechanism_result=3U;stage(99U);return;
         }
+        lift_claimed=1U;scan_only=cmd==CMD_SCAN;
         calibrating=cmd==2U;grid_done=calibration_done=path_done=0U;
         leg_steps=mechanism?8559U:config.steps;
         leg_direction=mechanism?1U:config.down_direction;
@@ -174,9 +288,10 @@ static void service_owner(void)
         }
     }
     if(status.stage==0U || status.stage>=8U)return;
+    t=now();
     if(!mechanism)RadarClient_GetState(&client);
     if(status.error){fail(status.error);return;}
-    if((!mechanism && (!client.ready || client.selected_zone!=2U)) || !RadarLift_SafeIdle(t) ||
+    if((!mechanism && (!client.ready || client.selected_zone!=2U)) || (lift_claimed && !RadarLift_SafeIdle(t)) ||
        (uint32_t)(t-entered)>(mechanism?mechanism_budget:config.stage_timeout_ms)) { fail(5U);return; }
     switch(status.stage) {
     case 1U:
@@ -204,7 +319,8 @@ static void service_owner(void)
         }break;
     case 4U:
         if((calibrating?calibration_done:grid_done) && !RadarClient_IsBusy()) {
-            if(!calibrating)status.map_valid=1U;else status.calibration_complete=1U;
+            if(calibrating)status.calibration_complete=1U;
+            else if(!scan_only)status.map_valid=1U;
             g_radar_lift_interval_us=RADAR_LIFT_INTERVAL_US;
             if(!RadarLift_Enable(t) || !RadarLift_BeginBounded(leg_steps,leg_direction^1U,leg_budget,&lift_sequence)){fail(2U);break;}stage(5U);
         }break;
@@ -213,6 +329,18 @@ static void service_owner(void)
             if((mechanism || calibrating) && !RadarLift_Release(lift_sequence)){fail(2U);break;}
             if(mechanism){g_radar_mechanism_result=4U;stage(8U);break;}
             if(calibrating){stage(8U);break;}
+            status.map_valid=1U;
+            if(scan_only) {
+                nav_map.identity.run_id=scan_run;
+                nav_map.identity.map_generation=++map_generation;
+                nav_map.identity.layout_id=scan_layout;
+                nav_map.identity.link_generation=link_generation;
+                nav_map.identity.scan_sequence=scan_sequence;
+                nav_map.identity.start_id=2U;
+                nav_map.identity.node_id=config.node_id;
+                nav_map.identity.zone=2U;
+                nav_map.valid=1U;stage(8U);break;
+            }
             if(!status.map_valid || RadarClient_RequestPlanPath(request_start,request_goal)!=RADAR_CLIENT_REQUEST_ACCEPTED){fail(3U);break;}stage(7U);
         }break;
     case 7U:if(path_done && !RadarClient_IsBusy()){status.path_valid=1U;stage(8U);}break;
@@ -222,7 +350,14 @@ static void service_owner(void)
 void RadarObserver_Service(void)
 {
     uint32_t key;service_owner();key=RadarUartPort_EnterCritical();
+    if(!command && (status.stage==0U || status.stage>=8U)) {
+        if(lift_claimed)RadarLift_Unclaim();
+        lift_claimed=0U;owner_busy=0U;mechanism=0U;
+    }
+    if(cancel_pending && scan_only)invalidate();
+    published_ready=initialized && link_ready && !RadarClient_IsBusy();
     published_status=status;if(status.path_valid)published_path=path;
-    if(!command && (status.stage==0U || status.stage>=8U)){if(owner_busy)RadarLift_Unclaim();owner_busy=0U;mechanism=0U;}
+    nav_map.status=nav_reply.status=status;
+    published_map=nav_map;published_reply=nav_reply;
     RadarUartPort_ExitCritical(key);
 }

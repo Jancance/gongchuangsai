@@ -30,6 +30,21 @@ typedef struct {
     uint32_t sequence,stage,error;
     uint8_t map_valid,path_valid,calibration_complete;
 } RadarObserverStatus;
+typedef struct {
+    uint32_t run_id,map_generation,layout_id,link_generation,scan_sequence;
+    uint8_t start_id,node_id,zone;
+} RadarObserverMapIdentity;
+typedef struct {
+    RadarObserverMapIdentity identity;
+    uint32_t occupied_mask;
+    uint8_t valid;
+    RadarObserverStatus status;
+} RadarObserverMap;
+typedef struct {
+    RadarObserverMapIdentity identity;
+    radar_client_path_result_t path;
+    RadarObserverStatus status;
+} RadarObserverPathReply;
 /* Watch/SWD独立机构邮箱，无node/measured依赖，不初始化雷达；8559为70mm单样本比例候选。
  * request 0默认关闭，1下(45→等待→dir1→释放)，2上(dir0→180→等待→释放)。
  * 先填正值wait_ms/budget_ms及interval_us=733..4000(默认733)，最后写request；一次消费并锁存。
@@ -42,6 +57,13 @@ void RadarObserver_Service(void);
  * manual_stowed_reference=true表示本次已由人工恢复固定收拢起点。 */
 bool RadarObserver_Configure(const RadarZone2Config *config);
 bool RadarObserver_StartZone2(uint8_t start,uint8_t goal,bool manual_stowed_reference);
+/* 区2导航调用方负责锁存PC13、收拢基准及run_id唯一性；握手就绪后仅入队一次。 */
+bool RadarObserver_IsScanReady(void);
+bool RadarObserver_StartScan(uint32_t run_id,uint8_t start_id,uint32_t layout_id);
+/* 两个读接口仅在结果匹配时写入调用方对象，状态与结果同次发布。 */
+bool RadarObserver_GetMap(uint32_t run_id,RadarObserverMap *map);
+bool RadarObserver_RequestPath(const RadarObserverMapIdentity *expected,uint8_t start,uint8_t goal);
+bool RadarObserver_GetPathReply(const RadarObserverMapIdentity *expected,uint8_t start,uint8_t goal,RadarObserverPathReply *reply);
 /* 调用本函数也表示人工已恢复固定收拢起点。必须显式配置、握手选区就绪；
  * 同一任务展开下降并停稳后仅请求一次校准，不自动重试写Flash，不是每场门禁。 */
 bool RadarCalibration_StartZone2(void);

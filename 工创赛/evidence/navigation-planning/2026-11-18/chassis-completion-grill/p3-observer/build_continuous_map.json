@@ -1,0 +1,34 @@
+{
+  "base": "985366c04c3a4121bb3c15f29b542ece25414d90",
+  "defines": [
+    "ICM45686_SAMPLE_ONLY=0",
+    "APP_CONTINUOUS_MAP_ENABLE=1",
+    "APP_MAP_NAV_RESIDUAL_ENABLE=1"
+  ],
+  "inputs_sha256": {
+    "3.stm32f407工程/CHASSIS/HARDWARE/RADAR_V6/radar_client.c": "7f2ce1b5517307b147976e28d1fa31e7a4f8f7091f38b673ec18baa5e9b2b473",
+    "3.stm32f407工程/CHASSIS/HARDWARE/RADAR_V6/radar_observer.c": "ea729355ff9773679a59aa82b9667ce9ae82727c2ecd372ed247a5dc831ed134",
+    "3.stm32f407工程/CHASSIS/HARDWARE/RADAR_V6/radar_observer.h": "6b354067c9bc9c58dd5001cbb8d8598caf4d67aa4758171bd4ffa0ad25cb646e",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "07922f70c7392b3da92f0d728343364ced5f2e27e16f03e356495d1558be506f"
+  },
+  "targets": {
+    "Vehicle_Integrated": {
+      "passed": true,
+      "exit_code": 0,
+      "compiled": {
+        "radar_observer.c": true,
+        "radar_client.c": true,
+        "zone2_nav_path.c": true
+      }
+    },
+    "Vehicle_Offline": {
+      "passed": true,
+      "exit_code": 0,
+      "compiled": {
+        "radar_observer.c": true,
+        "radar_client.c": true,
+        "zone2_nav_path.c": true
+      }
+    }
+  }
+}

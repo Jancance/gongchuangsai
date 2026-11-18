@@ -30,6 +30,7 @@
 
 typedef struct {
     uint16_t length;
+    uint16_t sequence;
     uint8_t data[LINK_MAX_ENCODED_FRAME];
 } client_tx_frame_t;
 
@@ -42,6 +43,7 @@ typedef struct {
  */
 typedef struct {
     bool active;
+    bool tx_started;
     bool internal;
     bool ack_ok;
     bool hello_seen;
@@ -201,6 +203,11 @@ static void clear_transaction(void)
     memset(&transaction, 0, sizeof(transaction));
 }
 
+static bool transaction_receiving(void)
+{
+    return transaction.active && transaction.tx_started;
+}
+
 static void drop_link(radar_client_error_kind_t reason, uint16_t detail)
 {
     /*
@@ -262,6 +269,7 @@ static bool queue_encoded(uint8_t node_id, uint8_t type,
         return false;
     }
     frame->length = (uint16_t)length;
+    frame->sequence = sequence;
     if (urgent) urgent_pending = true;
     if (sequence_out != NULL) *sequence_out = sequence;
     return true;
@@ -299,6 +307,15 @@ static void service_tx(void)
 
     if (RadarUartPort_StartTransmit(frame->data, frame->length)) {
         tx_busy = true;
+        if (transaction.active && frame->sequence == transaction.request_sequence) {
+            transaction.tx_started = true;
+            /* Start scan result pairing at the wire transmission boundary. */
+            if (transaction.operation == RADAR_CLIENT_OPERATION_SCAN_ONCE ||
+                transaction.operation == RADAR_CLIENT_OPERATION_GRID_SCAN) {
+                pending_grid_valid = false;
+                pending_result_valid = false;
+            }
+        }
     } else {
         report_error(RADAR_CLIENT_ERROR_UART, transaction.operation, 0U, 1U);
         uart_error_pending = true;
@@ -414,7 +431,7 @@ static void maybe_publish_obstacles(void)
     for (index = 0U; index < pending_result.obstacle_count; ++index)
         pending_result.obstacles[index].grid_id = pending_grid.grid_ids[index];
     if (callbacks.obstacles != NULL) callbacks.obstacles(&pending_result);
-    if (transaction.active &&
+    if (transaction_receiving() &&
         transaction.operation == RADAR_CLIENT_OPERATION_SCAN_ONCE) {
         transaction.result_seen = true;
 
@@ -456,7 +473,7 @@ static void handle_hello(const link_message_t *message)
     }
 
     /* SET_NODE_ID成功后第一帧HELLO来自新ID，是唯一允许的跨ID事件。 */
-    if (transaction.active &&
+    if (transaction_receiving() &&
         transaction.operation == RADAR_CLIENT_OPERATION_SET_NODE_ID &&
         message->node_id == transaction.requested_node_id) {
         current_node_id = transaction.requested_node_id;
@@ -470,7 +487,7 @@ static void handle_hello(const link_message_t *message)
     } else {
         state.connected = true;
         state.running = hello.running;
-        if (transaction.active &&
+        if (transaction_receiving() &&
             (transaction.operation == RADAR_CLIENT_OPERATION_SAVE_POSE ||
              transaction.operation == RADAR_CLIENT_OPERATION_RESET_CALIBRATION) &&
             hello.pose.zone == transaction.requested_zone) {
@@ -481,7 +498,7 @@ static void handle_hello(const link_message_t *message)
         /* HELLO中的zone是本次上电会话区域，source_zone不能替代它。 */
         if (zone_valid(hello.pose.zone)) {
             state.selected_zone = hello.pose.zone;
-            if (transaction.active &&
+            if (transaction_receiving() &&
                 transaction.operation == RADAR_CLIENT_OPERATION_SELECT_ZONE &&
                 hello.pose.zone == transaction.requested_zone) {
                 transaction.hello_seen = true;
@@ -528,7 +545,7 @@ static void handle_ack(const link_message_t *message)
     command = message->payload[0];
     result = message->payload[1];
 
-    if (!transaction.active || command != transaction.command) return;
+    if (!transaction_receiving() || command != transaction.command) return;
     if (result != 0U) {
         radar_client_operation_t operation = transaction.operation;
         bool select_failed = operation == RADAR_CLIENT_OPERATION_SELECT_ZONE;
@@ -605,7 +622,7 @@ static void handle_status(const link_message_t *message)
                      LINK_EVT_STATUS, message->payload_length);
         return;
     }
-    if (transaction.active && (transaction.operation == RADAR_CLIENT_OPERATION_GRID_SCAN ||
+    if (transaction_receiving() && (transaction.operation == RADAR_CLIENT_OPERATION_GRID_SCAN ||
         transaction.operation == RADAR_CLIENT_OPERATION_SCAN_ONCE))
         transaction.locked_seen = p[0]==4U && p[2]==0U && p[3]==14U && p[4]==0U;
     state.status = p[0];
@@ -614,7 +631,7 @@ static void handle_status(const link_message_t *message)
     state.frame_count = p[3];
     state.overflow = p[4] != 0U;
 
-    if (transaction.active && p[0] == 4U && p[2] == 0U && p[3] == 14U && p[4] == 0U) {
+    if (transaction_receiving() && p[0] == 4U && p[2] == 0U && p[3] == 14U && p[4] == 0U) {
         transaction.locked_seen = true;
         if (transaction.operation == RADAR_CLIENT_OPERATION_SCAN_ONCE &&
             transaction.ack_ok && transaction.grid_seen &&
@@ -645,19 +662,19 @@ static void handle_grid(const link_message_t *message)
     for (index = 0U; index < count; ++index) {
         if (p[5U + index] > 24U &&
             p[5U + index] != RADAR_CLIENT_GRID_OUTSIDE) goto bad;
-        if (transaction.active &&
+        if (transaction_receiving() &&
             transaction.operation == RADAR_CLIENT_OPERATION_GRID_SCAN &&
             p[5U + index] == RADAR_CLIENT_GRID_OUTSIDE) goto bad;
         result.grid_ids[index] = p[5U + index];
     }
 
     /* GRID_SCAN直接回调；SCAN_ONCE还会等待同序号RESULT进行组合。 */
-    if (transaction.active && transaction.operation == RADAR_CLIENT_OPERATION_GRID_SCAN &&
+    if (transaction_receiving() && transaction.operation == RADAR_CLIENT_OPERATION_GRID_SCAN &&
         last_grid_seen && (int32_t)(result.scan_sequence-last_grid_sequence)<=0) return;
     pending_grid = result;
     pending_grid_valid = true;
 
-    if (transaction.active &&
+    if (transaction_receiving() &&
         transaction.operation == RADAR_CLIENT_OPERATION_GRID_SCAN) {
         last_grid_seen = true; last_grid_sequence = result.scan_sequence;
         transaction.grid_seen = true;
@@ -831,19 +848,13 @@ static void handle_calibration(const link_message_t *message)
     result.residual_mm = p[13];
     result.pair_distance_error_mm = p[14];
     if (!zone_valid(result.pose.zone)) goto bad;
-    if (transaction.active &&
-        transaction.operation == RADAR_CLIENT_OPERATION_CALIBRATE &&
-        result.pose.zone != transaction.requested_zone)
-        goto bad;
-    if (!transaction.active || transaction.operation != RADAR_CLIENT_OPERATION_CALIBRATE) return;
+    if (!transaction_receiving() || transaction.operation != RADAR_CLIENT_OPERATION_CALIBRATE) return;
+    if (result.pose.zone != transaction.requested_zone) goto bad;
     if (transaction.result_seen) return;
     pending_calibration = result;
-    if (transaction.active &&
-        transaction.operation == RADAR_CLIENT_OPERATION_CALIBRATE) {
-        transaction.result_seen = true;
-        if (transaction.ack_ok && transaction.persisted_seen)
-            finish_transaction(true);
-    }
+    transaction.result_seen = true;
+    if (transaction.ack_ok && transaction.persisted_seen)
+        finish_transaction(true);
     return;
 bad:
     report_error(RADAR_CLIENT_ERROR_BAD_EVENT, transaction.operation,
@@ -883,7 +894,7 @@ static void handle_persisted(const link_message_t *message)
      * source_zone只表示最近修改的位姿槽，绝不能当作当前工作区域。
      */
     if (callbacks.persisted != NULL) callbacks.persisted(&result);
-    if (transaction.active) {
+    if (transaction_receiving()) {
         if (transaction.operation == RADAR_CLIENT_OPERATION_READ_STATE) {
             transaction.persisted_seen = true;
             if (transaction.ack_ok) finish_transaction(true);
@@ -932,19 +943,15 @@ static void handle_path(const link_message_t *message)
         if (p[6U + index] > 24U) goto bad;
         result.waypoints[index] = p[6U + index];
     }
-    if (!transaction.active || transaction.operation != RADAR_CLIENT_OPERATION_PLAN_PATH ||
+    if (!transaction_receiving() || transaction.operation != RADAR_CLIENT_OPERATION_PLAN_PATH ||
         result.request_sequence != transaction.request_sequence) return;
     if (result.status != 0U || result.start != transaction.requested_start ||
         result.goal != transaction.requested_goal ||
         (result.waypoint_count == 0U && result.start != result.goal) ||
         (result.waypoint_count != 0U && result.waypoints[result.waypoint_count-1U] != result.goal)) goto bad;
     pending_path = result;
-    if (transaction.active &&
-        transaction.operation == RADAR_CLIENT_OPERATION_PLAN_PATH &&
-        result.request_sequence == transaction.request_sequence) {
-        transaction.result_seen = true;
-        if (transaction.ack_ok) finish_transaction(true);
-    }
+    transaction.result_seen = true;
+    if (transaction.ack_ok) finish_transaction(true);
     return;
 bad:
     report_error(RADAR_CLIENT_ERROR_BAD_EVENT, transaction.operation,
@@ -970,7 +977,7 @@ static void handle_error_event(const link_message_t *message)
         state.link_state = RADAR_CLIENT_LINK_NEED_ZONE;
         next_zone_retry_ms = RadarUartPort_GetTick() + CLIENT_ZONE_RETRY_MS;
         notify_state();
-    } else if (transaction.active && transaction.operation != RADAR_CLIENT_OPERATION_CONNECT) {
+    } else if (transaction_receiving() && transaction.operation != RADAR_CLIENT_OPERATION_CONNECT) {
         clear_transaction();
         notify_state();
     }
@@ -985,7 +992,7 @@ static void handle_error_event(const link_message_t *message)
  */
 static void on_message(const link_message_t *message, void *context)
 {
-    bool accepted_new_node = transaction.active &&
+    bool accepted_new_node = transaction_receiving() &&
                              transaction.operation ==
                                  RADAR_CLIENT_OPERATION_SET_NODE_ID &&
                              message->node_id == transaction.requested_node_id &&
@@ -1237,11 +1244,14 @@ radar_client_request_result_t RadarClient_RequestStop(void)
 {
     uint16_t sequence;
     if (!state.connected) return RADAR_CLIENT_REQUEST_NOT_READY;
+    if (urgent_pending) return RADAR_CLIENT_REQUEST_BUSY;
 
     /* STOP取消旧事务、清空普通待发帧，并通过urgent槽抢占下一次发送。 */
     clear_transaction();
     clear_results();
-    tx_tail = tx_head;
+    /* Preserve the regular frame still owned by the TX DMA. */
+    tx_head = (tx_busy && !tx_active_urgent) ?
+        (uint8_t)((tx_tail + 1U) % CLIENT_TX_QUEUE_DEPTH) : tx_tail;
     point_cloud_enabled = false;
     if (!queue_encoded(current_node_id, LINK_CMD_STOP, NULL, 0U,
                        true, &sequence))
