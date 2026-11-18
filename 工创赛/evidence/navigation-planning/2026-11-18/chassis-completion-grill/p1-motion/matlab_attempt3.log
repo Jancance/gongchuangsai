@@ -1,0 +1,6 @@
+{错误使用 assert
+条件输入参数必须为标量逻辑值。
+
+出错 validate_p1 (line 162)
+    assert(max(abs(traj(:,2:4)),[],1)==abs(cruise));
+} 
