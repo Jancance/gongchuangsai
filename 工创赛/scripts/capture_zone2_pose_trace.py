@@ -8,17 +8,21 @@ from pathlib import Path
 import sys
 
 from decode_zone2_pose_trace import CAPACITY, HEADER, MAGIC, ROW, decode, locate
+import decode_zone2_route_trace as route_trace
 
 
-def image_flash(image, address, size):
+def image_flash(image, regions):
     from elftools.elf.elffile import ELFFile
 
     elf = ELFFile(BytesIO(image))
     table = elf.get_section_by_name(".symtab")
-    symbols = [(symbol["st_value"], symbol["st_size"]) for symbol in table.iter_symbols()
-               if symbol.name == "g_zone2_pose_trace"] if table is not None else []
-    if symbols != [(address, size)]:
-        raise ValueError("AXF and MAP disagree on the trace address or size")
+    expected = sorted((region["symbol"], int(region["address"], 16), region["size_bytes"])
+                      for region in regions)
+    symbols = sorted((symbol.name, symbol["st_value"], symbol["st_size"])
+                     for symbol in table.iter_symbols()
+                     if symbol.name in ("g_zone2_pose_trace", route_trace.SYMBOL)) if table is not None else []
+    if symbols != expected:
+        raise ValueError("AXF and MAP disagree on the trace objects")
     segments = [(segment["p_paddr"], segment.data()) for segment in elf.iter_segments()
                 if segment["p_type"] == "PT_LOAD" and segment["p_filesz"]]
     if not segments or any(
@@ -39,6 +43,16 @@ def verify_flash(target, segments):
     return compared
 
 
+def read_pair(target, address, size, running_state, output, stem):
+    first = bytes(target.read_memory_block8(address, size))
+    (output / f"{stem}-read1.bin").write_bytes(first)
+    second = bytes(target.read_memory_block8(address, size))
+    (output / f"{stem}-read2.bin").write_bytes(second)
+    if len(first) != size or first != second or target.get_state() != running_state:
+        raise ValueError(f"Frozen {stem} or target state changed during read")
+    return first
+
+
 def read_frozen(target, address, running_state, output):
     if target.get_state() != running_state:
         raise ValueError("Target core is not running")
@@ -47,13 +61,10 @@ def read_frozen(target, address, running_state, output):
     if magic != MAGIC or state != 2 or not 1 <= count <= CAPACITY:
         raise ValueError("No frozen Z2T1 trace at the address in this build's map")
     size = HEADER.size + ROW.size * count
-    first = bytes(target.read_memory_block8(address, size))
-    (output / "pose-trace-read1.bin").write_bytes(first)
-    second = bytes(target.read_memory_block8(address, size))
-    (output / "pose-trace-read2.bin").write_bytes(second)
-    if first != second or first[:HEADER.size] != header or target.get_state() != running_state:
-        raise ValueError("Frozen trace or target state changed during read")
-    return decode(first)[1]
+    blob = read_pair(target, address, size, running_state, output, "pose-trace")
+    if blob[:HEADER.size] != header:
+        raise ValueError("Pose trace header changed during read")
+    return decode(blob)[1]
 
 
 def main():
@@ -63,7 +74,9 @@ def main():
     parser.add_argument("--out", type=Path, required=True, help="New directory for this run's raw evidence")
     args = parser.parse_args()
 
-    region = locate(args.axf.with_suffix(".map"))
+    map_path = args.axf.with_suffix(".map")
+    region = locate(map_path)
+    route_region = route_trace.locate(map_path, required=False)
     address = int(region["address"], 16)
     image = args.axf.read_bytes()
     candidate_sha256 = hashlib.sha256(image).hexdigest()
@@ -75,7 +88,8 @@ def main():
     from pyocd.target.pack.pack_target import PackTargets
     from source_stage2_readonly_sync_probe_20261105 import synchronous_interface
 
-    segments = image_flash(image, address, region["size_bytes"])
+    regions = [region, route_region] if route_region else [region]
+    segments = image_flash(image, regions)
     args.out.mkdir()
     PackTargets.populate_targets_from_pack("D:/keil/Arm/Packs/Keil/STM32F4xx_DFP/1.0.8")
     probes = [probe for probe in ConnectHelper.get_all_connected_probes(blocking=False)
@@ -97,6 +111,12 @@ def main():
             raise ValueError("Target core is not running")
         flash_bytes_verified = verify_flash(target, segments)
         summary = read_frozen(target, address, Target.State.RUNNING, args.out)
+        if route_region:
+            route_blob = read_pair(target, int(route_region["address"], 16), route_region["size_bytes"],
+                                   Target.State.RUNNING, args.out, "route-trace")
+            route = route_trace.decode(route_blob, summary)
+            (args.out / "route-trace.json").write_text(json.dumps(route, indent=2) + "\n", encoding="utf-8")
+            summary["route_trace"] = dict(**route_region, trace_sha256=route["trace_sha256"])
     receipt = dict(summary, **region, candidate_sha256=candidate_sha256,
                    flash_bytes_verified=flash_bytes_verified,
                    probe_uid=args.probe, matching_second_read=True)

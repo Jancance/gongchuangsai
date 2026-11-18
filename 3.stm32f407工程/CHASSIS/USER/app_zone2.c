@@ -424,6 +424,7 @@ void AppZone2_Step(void)
 #if APP_ZONE2_POSE_TRACE_ENABLE
         if (g_zone2_phase==ZONE2_WAIT_READY && !g_zone2_pose_trace.state) {
             g_zone2_pose_trace.magic=ZONE2_TRACE_MAGIC;
+            Zone2NavSchedule_TraceStart(s_begin_ms);
             trace_capture(s_begin_ms,0U);
             g_zone2_pose_trace.state=ZONE2_TRACE_CAPTURE;
         }
@@ -623,14 +624,17 @@ void AppZone2_Step(void)
 #if APP_ZONE2_POSE_TRACE_ENABLE
 void AppZone2_Step(void)
 {
-    uint32_t terminal;
+    uint32_t now,terminal;
 
     s_trace_pose.source_ms=0U;
     s_trace_pose.valid=0U;
     zone2_step();
     if (g_zone2_pose_trace.state==ZONE2_TRACE_CAPTURE) {
         terminal=g_zone2_phase==ZONE2_DONE || g_zone2_phase==ZONE2_FAILED;
-        trace_capture(now_ms(),terminal);
+        now=now_ms();
+        trace_capture(now,terminal);
+        if (terminal) Zone2NavSchedule_TraceFreeze(&s_schedule,now,(uint32_t)g_zone2_fault,
+            (uint32_t)g_zone2_path_error,(uint8_t)g_zone2_phase);
     }
 }
 #endif

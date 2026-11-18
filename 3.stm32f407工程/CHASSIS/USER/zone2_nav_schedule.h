@@ -39,4 +39,11 @@ bool Zone2NavSchedule_Arrive(Zone2NavSchedule *s,uint32_t session,bool station_a
     const FusionObservation *pose,uint32_t now_ms);
 void Zone2NavSchedule_Abort(Zone2NavSchedule *s);
 
+#if APP_ZONE2_POSE_TRACE_ENABLE
+/* The navigation task starts and freezes route and pose diagnostics on the same clock. */
+void Zone2NavSchedule_TraceStart(uint32_t now_ms);
+void Zone2NavSchedule_TraceFreeze(const Zone2NavSchedule *s,uint32_t now_ms,
+    uint32_t fault,uint32_t path_error,uint8_t final_phase);
+#endif
+
 #endif

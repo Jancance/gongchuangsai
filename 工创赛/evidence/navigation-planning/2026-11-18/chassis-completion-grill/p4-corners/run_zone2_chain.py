@@ -5,6 +5,7 @@ import re
 import runpy
 import shutil
 import struct
+import sys
 import tempfile
 from pathlib import Path
 
@@ -12,6 +13,10 @@ HERE = Path(__file__).resolve().parent
 COMMON = runpy.run_path(str(HERE.parent / "p1-motion/run_p1_arm_replay.py"))
 ROOT, PROJECT, SOURCE, ARM = (COMMON[k] for k in ("ROOT", "PROJECT", "SOURCE", "ARM"))
 run, short, sha = (COMMON[k] for k in ("run", "short_path", "sha"))
+sys.path.insert(0, str(ROOT / "工创赛/scripts"))
+import decode_zone2_route_trace as route_trace
+import decode_zone2_pose_trace as pose_trace
+
 TRACE_HEADER = struct.Struct("<5I")
 TRACE_ROW = struct.Struct("<IIhhhBB")
 TRACE_CAPACITY = 2048
@@ -49,6 +54,35 @@ def check_pose_trace(blob, report):
                                      abs(last[3] - 1500) <= 50 and abs(last[4] - 9000) <= 100)
     return {"checks": checks, "count": count, "bytes": len(blob), "state": state, "fault": fault,
             "flags": flags, "initial": start, "terminal": last}
+
+
+def check_route_trace(blob, pose_blob, report, args):
+    try:
+        summary = route_trace.decode(blob, pose_trace.decode(pose_blob)[1])
+    except ValueError as error:
+        return {"passed": False, "error": str(error)}
+    occupied = args.occupied_detour or args.occupied_bad_path
+    wire = ([2], [12, 14] if args.occupied_detour else [4, 14],
+            [10], [12, 22], [12, 14], [10], [12, 22], [2, 0])
+    rows = summary["legs"]
+    live_count = sum(row["source_leg"] == row["leg"] for row in rows)
+    checks = {
+        "terminal": (summary["elapsed_ms"] == report["outcome_ms"] - report["start_ms"] and
+                     summary["completed_legs"] == report["stop_legs"] and
+                     summary["path_error"] == report["path_error"] and summary["fault"] == report["fault"]),
+        "grid": (summary["grid"] is not None and summary["grid"]["scan_sequence"] == 44 and
+                 summary["grid"]["occupied_ids"] == ([5] if occupied else [])),
+        "paths": live_count == report["path_requests"] and
+                 all(row["path"]["waypoints"] == wire[row["leg"] - 1] for row in rows),
+        "arrivals": all(0 <= report["arrival_ms"][row["leg"] - 1] - row["arrive_elapsed_ms"] <= 10
+                        for row in rows if "arrive_elapsed_ms" in row),
+    }
+    if args.occupied_bad_path:
+        checks["rejected_leg"] = (len(rows) == 2 and "arrive_elapsed_ms" in rows[0] and
+                                  "begin_elapsed_ms" not in rows[1])
+    if not report["fault"]:
+        checks["complete"] = (len(rows) == 8 and live_count == 6 and summary["completed_legs"] == 8)
+    return {**summary, "checks": checks, "passed": all(checks.values())}
 
 
 def replace_once(src, old, new):
@@ -154,7 +188,8 @@ def main():
     service = SOURCE / "app_chassis_service.c"
     main_source = SOURCE / "main.c"
     inputs = [Path(__file__), fixture, owner_peer, radar_peer, radar_registers, kernel_runner, service, *units,
-              SOURCE / "app_zone2.c", SOURCE / "app_config.h", SOURCE / "chassis_auto_test.c", main_source]
+              SOURCE / "app_zone2.c", SOURCE / "app_config.h", SOURCE / "chassis_auto_test.c", main_source,
+              Path(route_trace.__file__), Path(pose_trace.__file__)]
     hashes = {p.name: sha(p) for p in inputs}
     build_peers(out, owner_peer, radar_peer, main_source)
     registers = out / "radar_registers"
@@ -239,7 +274,9 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
         trace_blob = trace_header
         if count <= TRACE_CAPACITY:
             trace_blob = bytes(machine.mem_read(trace_addr, TRACE_HEADER.size + count * TRACE_ROW.size))
-    return dict(trace_symbol_present=bool(trace_match), _trace_blob=trace_blob,"""
+    route_match = re.search(r"\bg_zone2_route_trace\s+(0x[0-9a-fA-F]+)", symbols)
+    route_blob = bytes(machine.mem_read(int(route_match[1], 16), ROUTE_SIZE)) if route_match else None
+    return dict(trace_symbol_present=bool(trace_match), _trace_blob=trace_blob, _route_blob=route_blob,"""
     kernel = replace_once(kernel, "    return dict(**{name:", trace_extract + "\n                **{name:")
     read_chain = r"""match = re.search(r"\b" + name + r"\s+(0x[0-9a-fA-F]+)", symbols)
         if not match and name in SHADOW_OMITTED:
@@ -273,10 +310,12 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
     runtime = {"__file__": str(kernel_runner), "__name__": "__chain_emulator__",
                "POSE_TRACE_ENABLED": args.pose_trace, "TRACE_HEADER": TRACE_HEADER,
                "TRACE_ROW": TRACE_ROW, "TRACE_CAPACITY": TRACE_CAPACITY,
+               "ROUTE_SIZE": route_trace.SIZE,
                "SHADOW_OMITTED": omitted_nonfault | ({"chain_" + name for name in omitted} if args.shadow else set())}
     exec(compile(kernel, str(kernel_runner), "exec"), runtime)
     result = runtime["execute"](out)
     trace_blob = result.pop("_trace_blob")
+    route_blob = result.pop("_route_blob")
     trace_result = {"checks": {"symbol_presence": result["trace_symbol_present"] == args.pose_trace}}
     if trace_blob is not None:
         trace_file = out / "pose_trace.bin"
@@ -287,6 +326,11 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
         trace_result["checks"].update(decoded["checks"])
     trace_result["passed"] = all(trace_result["checks"].values())
     result["pose_trace"] = trace_result
+    route_result = {"symbol_present": route_blob is not None, "passed": not args.pose_trace and route_blob is None}
+    if args.pose_trace and route_blob is not None and trace_blob is not None:
+        (out / "route_trace.bin").write_bytes(route_blob)
+        route_result.update(check_route_trace(route_blob, trace_blob, result, args))
+    result["route_trace"] = route_result
     result.update(hardware_accessed=False, motion_enabled=not args.shadow, radar_drop_test=args.drop_radar,
                   f6_ack_drop_test=args.drop_f6,
                   occupied_grid_mode=("detour" if args.occupied_detour else
@@ -307,7 +351,7 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
         with (HERE / args.receipt).open("x", encoding="utf-8") as report:
             report.write(raw)
     print(raw)
-    return int(bool(result["failed_line"]) or not trace_result["passed"])
+    return int(bool(result["failed_line"]) or not trace_result["passed"] or not route_result["passed"])
 
 
 if __name__ == "__main__":

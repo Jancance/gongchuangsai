@@ -26,21 +26,27 @@ COLUMNS = (
 
 
 def locate(map_path):
+    return locate_trace(map_path, "g_zone2_pose_trace", "app_zone2", TRACE_SIZE)
+
+
+def locate_trace(map_path, symbol, module, expected_size, required=True):
     matches = re.findall(
-        r"^\s*g_zone2_pose_trace\s+(0x[0-9a-fA-F]+)\s+Data\s+(\d+)\s+app_zone2\.o\(",
+        rf"^\s*{re.escape(symbol)}\s+(0x[0-9a-fA-F]+)\s+Data\s+(\d+)\s+{re.escape(module)}\.o\(",
         map_path.read_text(encoding="ascii", errors="replace"),
         flags=re.MULTILINE,
     )
+    if not matches and not required:
+        return None
     if len(matches) != 1:
-        raise ValueError("Expected exactly one Zone 2 trace symbol in the Keil map")
+        raise ValueError(f"Expected exactly one {symbol} in the Keil map")
     address, size = (int(matches[0][0], 16), int(matches[0][1]))
-    if size != TRACE_SIZE or not any(
+    if size != expected_size or not any(
         start <= address and address + size <= end
         for start, end in ((0x10000000, 0x10010000), (0x20000000, 0x20020000))
     ):
         raise ValueError("Zone 2 trace symbol size or address does not match the firmware ABI")
     return {
-        "symbol": "g_zone2_pose_trace", "address": f"0x{address:08x}",
+        "symbol": symbol, "address": f"0x{address:08x}",
         "size_bytes": size, "end_exclusive": f"0x{address + size:08x}",
     }
 
@@ -87,6 +93,7 @@ def decode(blob):
         "records": count, "valid_pose_records": sum(row[4] for row in rows),
         "periodic_overflow": bool(flags & 1), "terminal_phase": final[2],
         "completed_legs": final[3], "fault": fault, "elapsed_ms": final[0],
+        "terminal_source_ms": final[1],
         "trace_sha256": hashlib.sha256(blob).hexdigest(),
     }
     return rows, summary
