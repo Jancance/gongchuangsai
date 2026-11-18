@@ -1,6 +1,7 @@
 """ARM replay of the zone-2 application, navigation, CAN owner, radar and map."""
 import argparse
 import json
+import re
 import runpy
 import shutil
 import tempfile
@@ -18,7 +19,7 @@ def replace_once(src, old, new):
     return src.replace(old, new)
 
 
-def build_peers(out, owner, radar):
+def build_peers(out, owner, radar, main_source):
     can_source = owner.read_text(encoding="utf-8").split("static void step(void)", 1)[0]
     can_source = replace_once(can_source, "static uint32_t slot, phase;",
         """static uint32_t slot, phase;
@@ -52,7 +53,24 @@ static uint32_t drop_moving_ack(uint8_t address,uint8_t dir,uint16_t raw,CAN1_Em
     first = uart_source.index("uint32_t xTaskGetTickCount")
     last = uart_source.index("uint32_t RadarServo_SetAngle", first)
     uart_source = uart_source[:first] + uart_source[last:]
-    uart_source = replace_once(uart_source, "config = {7,0,8,", "config = {1,0,8,")
+    radar_task = main_source.read_bytes().split(b"static void App_RadarTask(", 1)[1].split(b"\n}\r", 1)[0]
+    config = re.search(rb"const RadarZone2Config cfg\s*=\s*\{([\dU,\s]+)\};", radar_task)
+    period = re.search(rb"vTaskDelay\(pdMS_TO_TICKS\((\d+U)\)\);", radar_task)
+    if not config or not period:
+        raise ValueError("Cannot read production radar task timing")
+    uart_source = replace_once(uart_source,
+        "static const RadarZone2Config config = {7,0,8,5,5,5,1000,1};",
+        f"""#define CHAIN_RADAR_PERIOD_MS {period[1].decode("ascii")}
+static const RadarZone2Config config = {{
+#if CHAIN_STARTUP_TIMING
+    {config[1].decode("ascii").strip()}
+#else
+    1,0,8,5,5,5,1000,1
+#endif
+}};
+static uint32_t lift_started_ms;""")
+    uart_source = replace_once(uart_source, "    CHECK(count == 8 && dir <= 1 && budget > 0);",
+        "    CHECK(count == config.steps && dir <= 1 && budget > 0);\n    lift_started_ms=tick;")
     uart_source = uart_source.replace("queue(7,", "queue(1,")
     (out / "radar_peer.c").write_text(uart_source, encoding="ascii")
 
@@ -65,8 +83,17 @@ def main():
     mode.add_argument("--drop-f6", action="store_true")
     mode.add_argument("--one-miss", dest="miss_command", action="store_const", const=0x43, default=0)
     mode.add_argument("--one-status-miss", dest="miss_command", action="store_const", const=0x3A)
+    parser.add_argument("--startup-timing", type=int, metavar="SCAN_RESULT_DELAY_MS")
+    parser.add_argument("--require-post-budget-motion", action="store_true",
+                        help="require a nonzero wheel command after the 180-second scoring budget and full completion")
     parser.add_argument("--receipt", type=Path)
     args = parser.parse_args()
+    if args.startup_timing is not None and not 0 <= args.startup_timing <= 8000:
+        parser.error("startup scan result delay must be 0 through 8000 ms")
+    if args.startup_timing is not None and (args.shadow or args.drop_radar or args.drop_f6):
+        parser.error("--startup-timing may only be combined with a single 0x43 or 0x3A miss")
+    if args.require_post_budget_motion and args.startup_timing is None:
+        parser.error("--require-post-budget-motion requires --startup-timing")
     fw = PROJECT / "CHASSIS"
     radar = fw / "HARDWARE/RADAR_V6"
     out = Path(tempfile.mkdtemp(prefix="zone2_chain_", dir=ROOT / "工创赛/tmp"))
@@ -82,10 +109,11 @@ def main():
     units += [radar / f"{name}.c" for name in ("radar_observer", "radar_client", "link_protocol")]
     kernel_runner = HERE.parent / "p1-motion/run_p1_arm_replay.py"
     service = SOURCE / "app_chassis_service.c"
+    main_source = SOURCE / "main.c"
     inputs = [Path(__file__), fixture, owner_peer, radar_peer, radar_registers, kernel_runner, service, *units,
-              SOURCE / "app_zone2.c", SOURCE / "chassis_auto_test.c"]
+              SOURCE / "app_zone2.c", SOURCE / "chassis_auto_test.c", main_source]
     hashes = {p.name: sha(p) for p in inputs}
-    build_peers(out, owner_peer, radar_peer)
+    build_peers(out, owner_peer, radar_peer, main_source)
     registers = out / "radar_registers"
     registers.mkdir()
     shutil.copyfile(radar_registers, registers / "stm32f4xx.h")
@@ -119,7 +147,10 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
             "-DZDT_EMM_SETTINGS_CONFIRMED=1", "-DAPP_CONTINUOUS_MAP_ENABLE=1","-DAPP_ZONE2_NAV_ENABLE=1",
             f"-DAPP_ZONE2_NAV_MOTION_ENABLE={int(not args.shadow)}",
             f"-DCHAIN_DROP_LINK={int(args.drop_radar)}", f"-DCHAIN_DROP_F6={int(args.drop_f6)}",
-            f"-DCHAIN_MISS_COMMAND={args.miss_command}"]
+            f"-DCHAIN_MISS_COMMAND={args.miss_command}",
+            f"-DCHAIN_STARTUP_TIMING={int(args.startup_timing is not None)}",
+            f"-DCHAIN_REQUIRE_POST_BUDGET_MOTION={int(args.require_post_budget_motion)}",
+            f"-DCHAIN_SCAN_DELAY_MS={args.startup_timing or 0}"]
     opts.extend("-I" + short(fw / p) for p in ("CORE", "USER", "StdPeriph_Driver/inc", "SYSTEM/CAN",
                 "SYSTEM/SAFETY", "HARDWARE/POWER", "HARDWARE/RADAR_V6", "HARDWARE/RADAR_SERVO"))
     objects = []
@@ -140,14 +171,16 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
                       "worst_leg", "worst_section", "worst_span", "worst_ms",
                       "recovery_ms", "recovery_stops", "recovery_quiet", "truth_samples", "truth_contacts",
                       "first_contact_ms", "robust_contacts", "one_miss", "one_miss_ms", "owner_miss",
-                      "partial", "f6_possible", "f6_tx", "f6_ack")
+                      "partial", "f6_possible", "f6_tx", "f6_ack", "start_ms", "scoring_budget_end_ms",
+                      "post_budget_nonzero",
+                      "outcome_ms", "scan_tx_ms", "scan_result_ms", "scan_ready_ms", "lift_leg_ms")
     chain_floats = ("x", "y", "heading", "max_error_mm", "max_heading_deg", "edge_error_mm",
                     "worst_ref_x", "worst_ref_y", "truth_x", "truth_y", "truth_yaw", "truth_clearance",
                     "robust_clearance")
     return dict(**{name: read("chain_" + name, "<I") for name in chain_integers},
                 **{name: read("chain_" + name, "<f") for name in chain_floats},
                 **{name: read("chain_" + name, "<8I")
-                   for name in ("arrival_ms", "plan_ms", "plan_sections", "track_ms")},
+                   for name in ("arrival_ms", "plan_ms", "plan_sections", "track_ms", "scan_stage_ms")},
                 failed_line=""")
     read_chain = r"""match = re.search(r"\b" + name + r"\s+(0x[0-9a-fA-F]+)", symbols)
         if not match and name in SHADOW_OMITTED:
@@ -169,12 +202,19 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
         omitted_nonfault.add("chain_one_miss_ms")
     if not args.drop_f6:
         omitted_nonfault.add("chain_partial")
+    if args.startup_timing is None:
+        omitted_nonfault.update("chain_" + name for name in ("scan_stage_ms", "scan_tx_ms",
+                               "scan_result_ms", "scan_ready_ms", "lift_leg_ms"))
     runtime = {"__file__": str(kernel_runner), "__name__": "__chain_emulator__",
                "SHADOW_OMITTED": omitted_nonfault | ({"chain_" + name for name in omitted} if args.shadow else set())}
     exec(compile(kernel, str(kernel_runner), "exec"), runtime)
     result = runtime["execute"](out)
     result.update(hardware_accessed=False, motion_enabled=not args.shadow, radar_drop_test=args.drop_radar,
                   f6_ack_drop_test=args.drop_f6,
+                  startup_scan_result_delay_ms=args.startup_timing,
+                  require_post_budget_motion=args.require_post_budget_motion,
+                  scoring_margin_ms=result["scoring_budget_end_ms"] - result["outcome_ms"],
+                  course_completed=result["stop_legs"] == 8 and result["fault"] == 0,
                   injected_missing_reply=f"0x{args.miss_command:02X}" if args.miss_command else None,
                   input_sha256=hashes, axf_sha256=sha(out / "unit.axf"))
     if result["failed_line"]:

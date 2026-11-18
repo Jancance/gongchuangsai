@@ -6,6 +6,8 @@
 #include "app_chassis_service.h"
 
 #define CHECK(condition) check((condition),__LINE__)
+#define CHAIN_SCORING_BUDGET_MS 180000U
+#define CHAIN_MAX_SLOTS 21000U
 
 volatile unsigned replay_assertions,replay_case,replay_detail;
 volatile float replay_actual,replay_expected;
@@ -13,6 +15,9 @@ volatile uint32_t chain_stop_legs,chain_path_requests,chain_reuses,chain_fault;
 volatile uint32_t chain_cause,chain_reference,chain_backend,chain_sends,chain_nonzero;
 volatile uint32_t chain_shadow,chain_map_state,chain_map_reasons,chain_map_updates;
 volatile uint32_t chain_path_error,chain_stop_frames,chain_runtime_ms;
+volatile uint32_t chain_start_ms,chain_scoring_budget_end_ms,chain_outcome_ms;
+volatile uint32_t chain_post_budget_nonzero;
+volatile uint32_t chain_scan_stage_ms[8],chain_scan_tx_ms,chain_scan_result_ms,chain_scan_ready_ms,chain_lift_leg_ms;
 volatile uint32_t chain_arrival_ms[8],chain_plan_ms[8],chain_plan_sections[8];
 volatile uint32_t chain_track_ms[8],chain_tracking_checks,chain_edge_checks;
 volatile uint32_t chain_worst_leg,chain_worst_section,chain_worst_span,chain_worst_ms;
@@ -30,6 +35,7 @@ volatile float g_radar_servo_angle_deg[2]={0.0f,180.0f};
 volatile uint32_t g_radar_servo_state=1U,g_radar_zone_selected=2U;
 volatile uint32_t g_can_test_result=1U,g_radar_lift_request,g_radar_lift_phase_bits,g_radar_lift_direction;
 static uint32_t locked_zone, handled_measure, handled_path, handled_hello;
+static uint32_t next_radar_ms,scan_reply_pending;
 static AppHeadingSource hwt;
 static float plant_yaw,plant_rate;
 static double truth_x=150.0,truth_y=150.0,truth_heading=1.57079632679489661923;
@@ -140,6 +146,7 @@ static uint32_t plant_command(uint8_t address,uint8_t dir,uint16_t raw)
     advance_plant(test_tick);
     driver_decirpm[address-1U]=dir ? -(int32_t)raw : (int32_t)raw;
     chain_nonzero+=raw!=0U;
+    chain_post_budget_nonzero+=raw!=0U && test_tick-s_begin_ms>CHAIN_SCORING_BUDGET_MS;
     return 1U;
 }
 
@@ -174,17 +181,34 @@ static void drive_radar_peer(void)
 {
     uint32_t before=command_count[LINK_CMD_PLAN_PATH];
     const uint8_t grid[5]={44,0,0,0,0};
+    if (CHAIN_STARTUP_TIMING && lift.state==1U && tick-lift_started_ms>=chain_lift_leg_ms) {
+        lift.state=2U;
+        lift.done=config.steps;
+    }
     RadarObserver_Service();
+    if (CHAIN_STARTUP_TIMING) {
+        const uint32_t current=stage();
+        if (current>=1U && current<=8U && !chain_scan_stage_ms[current-1U])
+            chain_scan_stage_ms[current-1U]=tick-1000U;
+        if (current==8U && !chain_scan_ready_ms) chain_scan_ready_ms=tick-1000U;
+    }
     if (!CHAIN_DROP_LINK && command_count[LINK_CMD_HELLO]!=handled_hello) {
         handled_hello=command_count[LINK_CMD_HELLO];
         enqueue_hello(2U);
     }
-    if (lift.state==1U) leg_complete();
+    if (!CHAIN_STARTUP_TIMING && lift.state==1U) leg_complete();
     if (command_count[LINK_CMD_SINGLE_MEASURE]!=handled_measure) {
         handled_measure++;
         enqueue_ack(LINK_CMD_SINGLE_MEASURE);
+        if (CHAIN_STARTUP_TIMING) chain_scan_tx_ms=tick-1000U;
+        scan_reply_pending=1U;
+    }
+    if (scan_reply_pending && (!CHAIN_STARTUP_TIMING ||
+        tick-1000U-chain_scan_tx_ms>=CHAIN_SCAN_DELAY_MS)) {
         queue(1U,LINK_EVT_OBSTACLE_GRID,grid,sizeof(grid));
         queue(1U,LINK_EVT_STATUS,locked,sizeof(locked));
+        if (CHAIN_STARTUP_TIMING) chain_scan_result_ms=tick-1000U;
+        scan_reply_pending=0U;
     }
     if (command_count[LINK_CMD_PLAN_PATH]!=handled_path) {
         uint16_t seq=command_sequence[LINK_CMD_PLAN_PATH];
@@ -207,6 +231,13 @@ static void drive_radar_peer(void)
 
 static void run_slot(void)
 {
+    if (CHAIN_STARTUP_TIMING) {
+        /* Equal ticks give CAN precedence. UART transmissions and IRQs are simulated. */
+        for (;next_radar_ms<slot;next_radar_ms+=CHAIN_RADAR_PERIOD_MS) {
+            tick=test_tick=next_radar_ms;
+            drive_radar_peer();
+        }
+    }
     test_tick=slot;
     tick=slot;
     advance_plant(slot);
@@ -214,7 +245,7 @@ static void run_slot(void)
     hwt.sample_ms=hwt.angle_ms=hwt.rate_ms=slot;
     hwt.yaw_deg=plant_yaw; hwt.rate_dps=plant_rate;
     hwt.healthy=1U; hwt.valid_mask=3U;
-    drive_radar_peer();
+    if (!CHAIN_STARTUP_TIMING) drive_radar_peer();
     ChassisAuto_SafetyUpdate(g_vm_test_request);
     AppChassis_Zone2CanStep(slot,phase);
     if (CHAIN_MISS_COMMAND && chain_one_miss && !chain_owner_miss) {
@@ -280,13 +311,17 @@ unsigned test_entry(void)
     g_safety_ready=g_can_guard_ready=1U;
     epoch=1U;
     slot=test_tick=tick=plant_ms=1000U;
+    if (CHAIN_STARTUP_TIMING) {
+        next_radar_ms=slot;
+        chain_lift_leg_ms=(config.steps*RADAR_LIFT_INTERVAL_US+999U)/1000U;
+    }
     servo_angle=180U;
     CHECK(RadarObserver_Configure(&config));
     RadarObserver_Service();
     handshake();
     handled_hello=command_count[LINK_CMD_HELLO];
     AppZone2_RequestStart();
-    for (i=0U;i<18020U && g_zone2_phase!=ZONE2_FAILED;i++) {
+    for (i=0U;i<CHAIN_MAX_SLOTS && g_zone2_phase!=ZONE2_FAILED;i++) {
         run_slot();
 #if APP_ZONE2_NAV_MOTION_ENABLE
         if (s_schedule.leg<8U && s_schedule.phase==ZONE2_SCHEDULE_ACTIVE) observe_track();
@@ -317,6 +352,9 @@ unsigned test_entry(void)
     chain_f6_possible=can.possible_mask;chain_f6_tx=can.tx_complete_mask;chain_f6_ack=can.ack_mask;
     chain_stop_frames=stops;
     chain_runtime_ms=slot-1000U;
+    chain_start_ms=s_begin_ms-1000U;
+    chain_scoring_budget_end_ms=chain_start_ms+CHAIN_SCORING_BUDGET_MS;
+    chain_outcome_ms=test_tick-1000U;
     chain_backend=can.state;
     chain_sends=sends;
     chain_shadow=(s_schedule.phase!=ZONE2_SCHEDULE_DONE && g_zone2_fault==0U);
@@ -350,6 +388,11 @@ unsigned test_entry(void)
     CHECK(command_count[LINK_CMD_SINGLE_MEASURE]==1U);
     CHECK(chain_one_miss==(CHAIN_MISS_COMMAND!=0U) && chain_owner_miss==(CHAIN_MISS_COMMAND!=0U));
 #if !CHAIN_DROP_LINK && !CHAIN_DROP_F6
+#if CHAIN_STARTUP_TIMING
+    CHECK(chain_lift_leg_ms>=3079U && chain_scan_stage_ms[0] && chain_scan_tx_ms &&
+        chain_scan_result_ms-chain_scan_tx_ms>=CHAIN_SCAN_DELAY_MS &&
+        chain_scan_ready_ms>chain_scan_result_ms);
+#endif
     CHECK(!g_zone2_fault && !g_vm_test_request && !locked_zone);
 #if APP_ZONE2_NAV_MOTION_ENABLE
     CHECK(s_schedule.phase==ZONE2_SCHEDULE_DONE);
@@ -362,6 +405,12 @@ unsigned test_entry(void)
 #else
     CHECK(g_zone2_phase==ZONE2_SHADOW_DONE && g_zone2_stop_pose_ms);
     CHECK(handled_path==1U && stops==4U && !chain_nonzero && map.pose.updates);
+#endif
+#if CHAIN_STARTUP_TIMING
+    CHECK(g_zone2_phase==ZONE2_DONE);
+#endif
+#if CHAIN_REQUIRE_POST_BUDGET_MOTION
+    CHECK(chain_outcome_ms>chain_scoring_budget_end_ms && chain_post_budget_nonzero);
 #endif
 #endif
     replay_assertions=checks+audit_checks;

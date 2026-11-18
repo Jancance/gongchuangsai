@@ -24,7 +24,6 @@
 #define ZONE2_RUN_ID 1U
 #define ZONE2_START_ID 2U
 #define ZONE2_WAIT_READY_MS 15000U
-#define ZONE2_RUN_MS 180000U
 #define ZONE2_POSE_MS 160U
 #define ZONE2_DEG_TO_RAD 0.01745329251994329577f
 #define ZONE2_SECTION_SETTLE_MS 2000U
@@ -305,8 +304,7 @@ uint32_t AppZone2_CanPermit(uint32_t slot_ms)
     uint32_t now=now_ms();
     (void)slot_ms;
     if ((g_zone2_phase!=ZONE2_ZERO && g_zone2_phase!=ZONE2_TRACK &&
-        g_zone2_phase!=ZONE2_SECTION_ZERO) || !healthy() || !current_map() ||
-        now-s_begin_ms>=ZONE2_RUN_MS) return 0U;
+        g_zone2_phase!=ZONE2_SECTION_ZERO) || !healthy() || !current_map()) return 0U;
     ChassisAuto_Zone2Read(&can);
     return can.session==s_session && sources(&can,&now,&map,&heading);
 }
@@ -342,10 +340,6 @@ void AppZone2_Step(void)
     if (g_zone2_phase==ZONE2_IDLE || g_zone2_phase==ZONE2_SHADOW_DONE || g_zone2_phase==ZONE2_DONE) return;
     if (!healthy()) {
         fail(ZONE2_FAULT_HEALTH);
-        return;
-    }
-    if (now-s_begin_ms>=ZONE2_RUN_MS) {
-        fail(ZONE2_FAULT_DEADLINE);
         return;
     }
     if (g_zone2_phase==ZONE2_WAIT_READY) {
