@@ -9,7 +9,7 @@ static __inline uint32_t MotionTrial20Allowed(uint32_t direction, uint32_t rpm, 
     return APP_SPEED20_TRIAL_ACTIVE && direction==0U && rpm==APP_SPEED20_TRIAL_RPM &&
         mm==APP_SPEED20_TRIAL_MM;
 }
-#define MOTION_PROFILE_BASE_CEILING ((APP_SPEED20_TRIAL_ACTIVE || APP_ROUTE_SPEED_TRIAL_ACTIVE) ? APP_SPEED20_TRIAL_RPM : 15U)
+#define MOTION_PROFILE_BASE_CEILING (APP_ROUTE_SPEED_TRIAL_ACTIVE ? ROUTE_TRIAL_MAX_RPM : (APP_SPEED20_TRIAL_ACTIVE ? APP_SPEED20_TRIAL_RPM : 15U))
 static __inline uint32_t MotionDistanceFeedbackLimit(uint32_t direction,uint32_t rpm,float mm)
 {
     if (MotionTrial20Allowed(direction,rpm,mm)) return APP_SPEED20_FEEDBACK_RPM;

@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-18T22:16:07.746879",
+  "region": "rough_machining",
+  "mode": "fixed_chassis_manual_ring_teach",
+  "firmware_sha256": "4d66d7efc48bf1658916c56382268f8e1ec414b5c10eae660cfea879849c5935",
+  "height": {
+    "purpose": "pick material from rough-machining ring back to vehicle carrier",
+    "command_depth_from_home_pulses": 63400.0,
+    "observed_depth_pulses": 63400.80078125,
+    "pulses_per_mm": 400.0,
+    "user_reported_empty_gripper_ground_clearance_mm": 50.0,
+    "ground_clearance_method": "user confirmed after 87mm measured clearance then 37mm descent",
+    "user_accepted": true,
+    "evidence": "evidence\\integration\\2026-11-18\\stage3-resume\\stage3-live-20261118-221415.json",
+    "hardware_references_must_be_rebuilt_after_boot": true
+  },
+  "observation_angle_deg": 180.55,
+  "vehicle_carrier_pick_yaw_deg": 37.0,
+  "ring_points": {
+    "1": {
+      "status": "awaiting_user_placement_and_extension_measurement",
+      "dm_yaw_deg": null,
+      "extension_mm": null,
+      "angle_evidence": null
+    },
+    "2": {
+      "status": "awaiting_user_placement_and_extension_measurement",
+      "dm_yaw_deg": null,
+      "extension_mm": null,
+      "angle_evidence": null
+    },
+    "3": {
+      "status": "awaiting_user_placement_and_extension_measurement",
+      "dm_yaw_deg": null,
+      "extension_mm": null,
+      "angle_evidence": null
+    }
+  },
+  "current_ring": 1,
+  "chassis_hold_confirmed": true,
+  "live_firmware_config_written": false
+}

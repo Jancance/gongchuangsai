@@ -31,6 +31,7 @@ volatile uint32_t g_saoma_rx_errors = 0U;
 volatile uint32_t g_saoma_accept_count = 0U;
 volatile uint32_t g_saoma_reject_count = 0U;
 volatile uint32_t g_saoma_last_result = 0U;
+volatile uint32_t g_saoma_locked = 0U;
 
 void SAOMA_Init(void)
 {
@@ -64,6 +65,7 @@ void SAOMA_Init(void)
 /* 调度运行后，由任务A开启接收 */
 void SAOMA_EnableReceive(void)
 {
+    g_saoma_locked = 0U;   /* 新一次运行重新允许扫码 */
     configASSERT(s_queue != NULL);
     (void)UART5->SR;
     (void)UART5->DR;
@@ -136,11 +138,28 @@ static void SAOMA_Finish(void)
     s_active = 0U;
 }
 
+/* 只允许一次：锁码后关接收、清队列，避免重复帧触发第二次上屏 */
+void SAOMA_DisableReceive(void)
+{
+    if (s_queue == NULL) return;
+    taskENTER_CRITICAL();
+    USART_ITConfig(UART5, USART_IT_RXNE, DISABLE);
+    (void)xQueueReset(s_queue);
+    s_length = 0U;
+    s_bad = 0U;
+    s_active = 0U;
+    SAOMA_DataReady = 0U;
+    g_saoma_locked = 1U;
+    taskEXIT_CRITICAL();
+}
+
+
 void SAOMA_Update(void)
 {
     SaomaByte item;
     uint32_t n;
     TickType_t gap = pdMS_TO_TICKS(SAOMA_GAP_MS);
+    if (g_saoma_locked != 0U) { SAOMA_DataReady = 0U; return; }
     /* 丢字节后清掉不完整队列，直到结束符/新间隔再重新收帧 */
     if (s_seen_errors != g_saoma_rx_errors)
     {

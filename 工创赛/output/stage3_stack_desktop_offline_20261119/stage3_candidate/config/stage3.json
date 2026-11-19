@@ -1,0 +1,29 @@
+{
+  "format_version": 1,
+  "region": "stage3",
+  "geometry": {
+    "outer_diameter_mm": 95.0,
+    "center_spacing_mm": 150.0,
+    "line_offset_mm": 75.0,
+    "source": "Official 竞赛命题与运行.pdf p5 图3/表3, p6 图5; see manual-dimensions/README.md",
+    "classification": {
+      "outer_diameter_mm": "E formula from R material maximum diameter50 and table3: outer boundary of ring6 is95",
+      "center_spacing_mm": "E symmetric equal-spacing inference from R ring1-to3 span300",
+      "line_offset_mm": "E symmetric inference from R area height150; ONLY actual rectangular long boundaries"
+    },
+    "edge_definition": "95 is outer boundary; outermost black stroke center is93.5 at1.5mm line width; confirm selected contour before scale acceptance"
+  },
+  "camera": {
+    "width": null,
+    "height": null,
+    "undistort": false,
+    "calibration_file": null
+  },
+  "pose_contract": "DM180, extension0, liftTop; MCU state2 only",
+  "reference": null,
+  "image_to_station_affine": null,
+  "chassis_image_to_motion": null,
+  "search_calibration": null,
+  "calibration_verified": false,
+  "verification_evidence": null
+}

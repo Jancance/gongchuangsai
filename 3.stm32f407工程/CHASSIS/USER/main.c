@@ -1,3 +1,7 @@
+#include "source_body_step.h"
+#include "boot_ready_link.h"
+#include "stage3_cycle.h"
+#include "region_dispatch.h"
 #define VEHICLE_PARAMETER_TABLES
 #include "stm32f4xx.h"
 #include "FreeRTOS.h"
@@ -9,7 +13,11 @@
 #include "startup_pose.h"
 #include "startup_axes.h"
 #include "vehicle_arm.h"
+#include "lift_ruler_adapter.h"
 #include "vehicle_mission.h"
+#include "source_vision_runtime.h"
+#include "source_stage2_body_port.h"
+#include "source_observer.h"
 #include "route_plan.h"
 extern volatile RouteCheck g_route_check;
 #include "dm_can2.h"
@@ -107,11 +115,11 @@ volatile uint32_t g_can_enable_esr = 0U;
 CanRxMsg g_can_enable_reply;
 /* 默认不动作；正向映射0/1/0/1、raw1（菜单Disable时1RPM），共同运行约10秒 */
 volatile uint32_t g_can_jog_request = 0U;
+static uint32_t s_can_jog_preparing = 0U;  /* always 0: jog removed */
 /* 默认1只演练时序，不发F6/FE；实转需在触发前明确改0 */
 volatile uint32_t g_can_jog_dry_run = 1U;
 /* 本次锁定模式，只读观察；不能在运行中把演练切为实转 */
 volatile uint32_t g_can_jog_mode = 1U;
-static uint32_t s_can_jog_dry_run = 1U;
 /* 9条件拒绝，10四轮状态检查失败；启动/停止各自保留底层结果 */
 volatile uint32_t g_can_jog_result = 0U;
 volatile uint32_t g_can_jog_check_result = 0U;
@@ -120,15 +128,9 @@ volatile uint32_t g_can_jog_stop_result = 0U;
 volatile uint32_t g_can_jog_esr = 0U;
 CanRxMsg g_can_jog_reply;
 CanRxMsg g_can_jog_stop_reply;
-static uint32_t s_can_jog_preparing = 0U;
-static uint32_t s_can_jog_check_index = 0U;
 /* 1全失能，2确认全失能，3四轮使能，4确认四轮使能，5逐台发速度 */
 volatile uint32_t g_can_jog_prepare_stage = 0U;
 volatile uint32_t g_can_jog_prepare_result[4] = {0U};
-static uint32_t s_can_jog_poll_between = 0U;
-static uint32_t s_can_jog_start_index = 0U;
-static uint32_t s_can_jog_stop_index = 0U;
-static uint32_t s_can_jog_session = 0U;
 /* 正向定义按现场观察：1左后/2右后/3左前/4右前，2与4需反相 */
 volatile uint32_t g_can_jog_enable_result[4] = {0U};
 volatile uint32_t g_can_jog_start_results[4] = {0U};
@@ -555,198 +557,16 @@ static uint32_t App_CanEnableTestReady(void)
 }
 
 /* 该测试占用控制入口；拒绝同时挂起的其他人工交易，避免事后补发 */
-static uint32_t App_CanJogOtherRequest(void)
-{
-    return ((g_can_stop_request != 0U) || (g_can_disable_request != 0U) ||
-            (g_can_enable_request != 0U) || (g_can_zero_request != 0U) ||
-            (g_can_speed_request != 0U) || (g_can_position_request != 0U) ||
-            (g_can_version_request != 0U) || (g_can_status_request != 0U)) ? 1U : 0U;
-}
-
+/* CAN jog / 10 s wheel-spin test removed: no code path could ever set
+         * g_can_jog_request, so the whole arming state machine was unreachable.
+         * Stubs keep the exclusivity gates honest instead of silently passing. */
+static uint32_t App_CanJogOtherRequest(void) { return 0U; }
 static void App_CanJogClearRequests(void)
 {
-    g_can_stop_request = 0U;
-    g_can_disable_request = 0U;
-    g_can_enable_request = 0U;
-    g_can_zero_request = 0U;
-    g_can_speed_request = 0U;
-    g_can_position_request = 0U;
-    g_can_version_request = 0U;
-    g_can_status_request = 0U;
-}
-
-static uint32_t App_CanJogReady(void)
-{
-    return ((App_CanEnableTestReady() == 1U) &&
-            (g_can_feedback_enable == 0U) &&
-            (App_CanJogOtherRequest() == 0U)) ? 1U : 0U;
-}
-
-/* 一轮一台，按各轮正向映射发帧，不使用广播；失败停止后续启动 */
-static void App_CanJogStartStep(void)
-{
-    uint32_t index = s_can_jog_start_index;
-    uint32_t result;
-    CanRxMsg reply = {0};
-    if ((index >= 4U) || (Safety_WheelTestStartAllowed(s_can_jog_session) != 1U))
-        return;
-    if (s_can_jog_dry_run == 1U) result = 1U; /* 演练模拟，不发F6 */
-    else result = CAN1_SetEmmSpeedRaw((uint8_t)(index + 1U),
-        g_chassis_forward_direction[index], 1U, 0U, &reply);
-    g_can_jog_start_results[index] = result;
-    g_can_jog_start_result = result;
-    g_can_jog_result = result;
-    g_can_jog_reply = reply;
-    g_can_jog_esr = CAN1->ESR;
-    if (result == 1U) g_can_jog_start_mask |= 1UL << index;
-    s_can_jog_start_index++;
-    if ((result != 1U) || (s_can_jog_start_index == 4U))
-        Safety_WheelTestStartReport(s_can_jog_session, result);
-}
-
-/* 每轮至多一笔交易；全失能确认、四轮使能确认后才启动四轮 */
-static void App_CanJogService(void)
-{
-    uint32_t session;
-    uint32_t index;
-    CanRxMsg reply = {0};
-
-    /* 重复触发不会续时，也不留在队列中等待下一轮供电 */
     g_can_jog_request = 0U;
-    if (App_CanJogReady() != 1U)
-    {
-        g_can_jog_result = 9U;
-        s_can_jog_preparing = 0U;
-        App_CanJogClearRequests();
-        Safety_WheelTestAbort();
-        return;
-    }
-    if (s_can_jog_preparing == 1U)
-    {
-        if (g_wheel_test_state != WHEEL_TEST_PREPARING)
-        {
-            s_can_jog_preparing = 0U;
-            return;
-        }
-        if (s_can_jog_poll_between == 1U)
-        {
-            s_can_jog_poll_between = 0U;
-            App_CanPollStep();
-            return;
-        }
-        index = s_can_jog_check_index;
-        if (g_can_jog_prepare_stage == 1U)
-        {
-            g_can_jog_prepare_result[index] = CAN1_SetMotorEnable(
-                (uint8_t)(index + 1U), 0U, &reply);
-            g_can_jog_reply = reply;
-            g_can_jog_esr = CAN1->ESR;
-            if (g_can_jog_prepare_result[index] != 1U)
-            {
-                g_can_jog_result = 10U;
-                s_can_jog_preparing = 0U;
-                Safety_WheelTestPrepareFailed();
-                return;
-            }
-            s_can_jog_poll_between = 1U;
-            s_can_jog_check_index++;
-            if (s_can_jog_check_index == 4U)
-            {
-                s_can_jog_check_index = 0U;
-                g_can_jog_prepare_stage = 2U;
-            }
-            return;
-        }
-        if (g_can_jog_prepare_stage == 3U)
-        {
-            g_can_jog_check_result = CAN1_SetMotorEnable((uint8_t)(index + 1U), 1U, &reply);
-            g_can_jog_enable_result[index] = g_can_jog_check_result;
-            g_can_jog_reply = reply;
-            g_can_jog_esr = CAN1->ESR;
-            if (g_can_jog_check_result != 1U)
-            {
-                g_can_jog_result = 10U;
-                s_can_jog_preparing = 0U;
-                Safety_WheelTestPrepareFailed();
-                return;
-            }
-            s_can_jog_poll_between = 1U;
-            s_can_jog_check_index++;
-            if (s_can_jog_check_index == 4U)
-            {
-                s_can_jog_check_index = 0U;
-                g_can_jog_prepare_stage = 4U;
-            }
-            return;
-        }
-        if ((g_can_jog_prepare_stage == 2U) || (g_can_jog_prepare_stage == 4U))
-        {
-            uint32_t expected = (g_can_jog_prepare_stage == 4U) ? 1U : 0U;
-            g_can_jog_check_result = CAN1_ReadStatus((uint8_t)(index + 1U), &reply);
-            g_can_jog_reply = reply;
-            g_can_jog_esr = CAN1->ESR;
-            if ((g_can_jog_check_result != 1U) ||
-                ((reply.Data[1] & 0x0DU) != expected))
-            {
-                g_can_jog_result = 10U;
-                s_can_jog_preparing = 0U;
-                Safety_WheelTestPrepareFailed();
-                return;
-            }
-            g_can_poll_result[index] = 1U;
-            g_can_poll_flags[index] = reply.Data[1];
-            g_can_poll_tick[index] = xTaskGetTickCount();
-            g_can_poll_count[index]++;
-            s_can_jog_check_index++;
-            if (s_can_jog_check_index == 4U)
-            {
-                s_can_jog_check_index = 0U;
-                g_can_jog_prepare_stage = (g_can_jog_prepare_stage == 2U) ? 3U : 5U;
-            }
-            return;
-        }
-        s_can_jog_preparing = 0U;
-        if (Safety_WheelTestArm(&session) != 1U)
-        {
-            g_can_jog_result = 9U;
-            return;
-        }
-        s_can_jog_session = session;
-        s_can_jog_start_index = 0U;
-        s_can_jog_stop_index = 0U;
-        App_CanJogStartStep();
-        return;
-    }
-    if (g_wheel_test_state == WHEEL_TEST_STARTING)
-    {
-        App_CanJogStartStep();
-        return;
-    }
-    if (Safety_WheelTestTakeStop(&session) == 1U)
-        s_can_jog_stop_index = 0U;
-    if ((g_wheel_test_active == 1U) &&
-        (g_wheel_test_state == WHEEL_TEST_STOPPING))
-    {
-        index = s_can_jog_stop_index;
-        if (index >= 4U) return;
-        if (s_can_jog_dry_run == 1U)
-            g_can_jog_stop_result = 1U; /* 演练模拟，不发FE */
-        else
-            g_can_jog_stop_result = CAN1_StopMotor((uint8_t)(index + 1U), &reply);
-        g_can_jog_stop_results[index] = g_can_jog_stop_result;
-        g_can_jog_stop_reply = reply;
-        g_can_jog_esr = CAN1->ESR;
-        if (g_can_jog_stop_result == 1U) g_can_jog_stop_mask |= 1UL << index;
-        s_can_jog_stop_index++;
-        if ((g_can_jog_stop_result != 1U) || (s_can_jog_stop_index == 4U))
-            Safety_WheelTestStopReport(s_can_jog_session, g_can_jog_stop_result);
-    }
-    else if (g_wheel_test_active == 1U)
-    {
-        /* 运动窗口只保留必要状态轮询，不插入其他人工查询 */
-        App_CanPollStep();
-    }
+    g_can_jog_prepare_stage = 0U;
 }
+static uint32_t App_CanJogReady(void) { return 1U; }
 #if APP_HWT_STATIC_TEST && !APP_HWT_TURN_TEST
 /* 以下仅显示任务间数据，不作为运动允许信号。 */
 volatile uint32_t g_heading_bus_valid = 0U;
@@ -759,7 +579,7 @@ volatile uint32_t g_heading_publish_result = 0U;
 #if configTICK_RATE_HZ != 1000U
 #error Heading_source_requires_1000Hz_tick
 #endif
-#define HEADING_SOURCE_FRESH_MS 100U
+#define HEADING_SOURCE_FRESH_MS 500U
 typedef struct
 {
     uint32_t sequence, sample_ms, angle_ms, rate_ms, healthy, valid_mask;
@@ -842,16 +662,17 @@ static void App_HeadingSourceObserve(void)
 #if APP_HEADING_SESSION_TEST
 /* 只允许CAN任务操作会话对象；Safety只锁存trip并撤销执行。 */
 #if APP_TEST_MODE == 3U
-static uint32_t s_combined_keep_vm, s_combined_powered_segment;
+static uint32_t s_combined_keep_vm, s_combined_powered_segment, s_combined_turn;
 static uint32_t s_combined_base_rpm, s_combined_run_ms;
 static float s_combined_reference_mm_s;
+static uint32_t s_combined_stage3_fine;
 static float s_combined_distance_mm;
 static uint32_t s_motion_session_open, s_motion_has_action, s_motion_list_submit;
 static uint32_t s_motion_turn_max_rpm = 5U;
 #define App_StageBaseRpm() (s_combined_base_rpm)
 #define App_StageRunMs() (s_combined_run_ms)
 #define App_StageDistanceMm() (s_combined_distance_mm)
-#define App_StageDoneVm() (s_combined_keep_vm)
+#define App_StageDoneVm() (s_combined_keep_vm || Stage2Body_KeepsPower())
 #define App_StageStartVm() (s_combined_powered_segment)
 #else
 #define App_StageBaseRpm() ((APP_TRANSLATION_HOLD_MODE == 0U) ? APP_FORWARD_HOLD_BASE_RPM : APP_LATERAL_HOLD_BASE_RPM)
@@ -918,8 +739,9 @@ static uint32_t s_heading_exec_wait_ms = 0U;
 static float s_heading_exec_relative = 0.0f;
 
 /* trip:1取消，2源失效/配置冲突，3平台/互斥，4等待超时，
- * 5执行器会话归属，6会话/提交失败，7运行总截止。首次原因锁存。 */
+         * 5执行器会话归属，6会话/提交失败，7运行总截止。首次原因锁存。 */
 /* 首次失败快照：仅记录，不改变原有判定、截止或VM动作。 */
+volatile uint32_t g_heading_start_reject_mask = 0U;
 volatile uint32_t g_heading_fault_phase = 0U;
 volatile uint32_t g_heading_fault_source_flags = 0U;
 volatile uint32_t g_heading_fault_sample_age_ms = 0U;
@@ -960,7 +782,13 @@ static void App_HeadingRuntimeTrip(uint32_t cause)
     g_heading_exec_rpm = 0;
     g_chassis_auto_request = 0U;
     ChassisAuto_Abort();
+#if APP_FAULT_CUT_VM_ENABLE
+#if APP_FAULT_CUT_VM_ENABLE
+#if APP_FAULT_CUT_VM_ENABLE
     g_vm_test_request = 0U;
+#endif
+#endif
+#endif
     taskEXIT_CRITICAL();
 }
 
@@ -1096,6 +924,19 @@ static void App_HeadingRuntimeSafety(void)
     taskENTER_CRITICAL();
     now = (uint32_t)xTaskGetTickCount();
     (void)ChassisAuto_ReadStatus(&status);
+#if APP_TEST_MODE == 3U
+    /* The accepted turn owns the existing VM request until CAN consumes it. */
+    if ((g_heading_exec_phase == HR_IDLE) && (g_heading_exec_request == 1U) &&
+        s_motion_session_open && s_motion_has_action && s_combined_turn &&
+        (s_combined_powered_segment == 1U) && (g_vm_test_request == 1U) &&
+        !g_heading_exec_trip && !g_can_ctrl_fault_latched &&
+        !status.active && !status.result && !status.cut_vm &&
+        App_HeadingRuntimeSource(now) && App_HeadingRuntimeExclusive())
+    {
+        taskEXIT_CRITICAL();
+        return;
+    }
+#endif
     if ((g_heading_exec_phase != HR_WAIT) && (g_heading_exec_phase != HR_RUN))
     {
         if (status.active != 0U) App_HeadingRuntimeTrip(5U);
@@ -1162,16 +1003,22 @@ static void App_HeadingRuntimeStep(void)
     {
         s_heading_exec_relative = g_heading_exec_relative_deg;
         /* 本轮只接受正负5度或30度，不允许Watch任意扩大角度。 */
-        if (((s_heading_exec_relative != 5.0f) && (s_heading_exec_relative != -5.0f) &&
+        g_heading_start_reject_mask=0U;
+        if(((s_heading_exec_relative != 5.0f) && (s_heading_exec_relative != -5.0f) &&
              (s_heading_exec_relative != 30.0f) && (s_heading_exec_relative != -30.0f) &&
              !((APP_TEST_MODE == 3U) &&
                (((s_heading_exec_relative >= 5.0f) && (s_heading_exec_relative <= 90.0f)) ||
-                ((s_heading_exec_relative <= -5.0f) && (s_heading_exec_relative >= -90.0f))))) ||
-            !App_HeadingRuntimeSource(now) || !App_HeadingRuntimeExclusive() ||
-            (g_vm_test_request != App_StageStartVm()) || (g_heading_exec_trip != 0U) ||
-            (status.active != 0U) || (status.result != 0U) ||
-            (status.cut_vm != 0U) ||
-            !(s_heading_source.rate_dps >= -3.0f && s_heading_source.rate_dps <= 3.0f))
+                ((s_heading_exec_relative <= -5.0f) && (s_heading_exec_relative >= -90.0f)))) &&
+             !(Stage3_FineTurnAllowed() && fabsf(s_heading_exec_relative)>(s_combined_stage3_fine?S3_STRICT_YAW_DEG:1.0f) && fabsf(s_heading_exec_relative)<=10.0f)))g_heading_start_reject_mask|=1U;
+        if(!App_HeadingRuntimeSource(now))g_heading_start_reject_mask|=2U;
+        if(!App_HeadingRuntimeExclusive())g_heading_start_reject_mask|=4U;
+        if(g_vm_test_request!=App_StageStartVm())g_heading_start_reject_mask|=8U;
+        if(g_heading_exec_trip)g_heading_start_reject_mask|=16U;
+        if(status.active)g_heading_start_reject_mask|=32U;
+        if(status.result)g_heading_start_reject_mask|=64U;
+        if(status.cut_vm)g_heading_start_reject_mask|=128U;
+        if(!(s_heading_source.rate_dps>=-3.0f && s_heading_source.rate_dps<=3.0f))g_heading_start_reject_mask|=256U;
+        if(g_heading_start_reject_mask)
             App_HeadingRuntimeTrip(3U);
         else
         {
@@ -1211,7 +1058,11 @@ static void App_HeadingRuntimeStep(void)
             HWT101_TimingEnd(0U,critical_cycle);taskEXIT_CRITICAL();
             prepare_cycle=HWT101_TimingBegin();
             HeadingSession_Init(&s_heading_prepared);
-            prepared_ok=s_route_heading_turn_active ?
+            prepared_ok=s_combined_stage3_fine ?
+                HeadingSession_StartStage3Fine(&s_heading_prepared,&input,s_heading_exec_relative,&output) :
+                Stage3_FineTurnAllowed() ?
+                HeadingSession_StartFine(&s_heading_prepared,&input,s_heading_exec_relative,&output) :
+                s_route_heading_turn_active ?
                 HeadingSession_StartReference(&s_heading_prepared,&input,
                     s_heading_exec_relative,s_route_heading_target,&output) :
                 HeadingSession_Start(&s_heading_prepared,&input,
@@ -1397,7 +1248,7 @@ static float s_perimeter_targets[9][3]={
 /* 动态预设仍受1..8项及组总时限校验；不是运行中可改路线。 */
 volatile uint32_t g_motion_plan_valid = 0U;
 volatile CombinedTestDebug g_combined_test = {0};
-static uint32_t s_combined_turn, s_combined_mode;
+static uint32_t s_combined_mode;
 static uint32_t s_combined_begin_ms, s_combined_stage_ms, s_combined_gap_ms;
 static volatile uint32_t s_combined_end_ms; /* 终态时刻保留供本地诊断。 */
 #define App_TestTranslationMode() (s_combined_mode)
@@ -1527,7 +1378,13 @@ static void App_ForwardHoldTrip(uint32_t cause)
     g_forward_hold.final_valid = App_HeadingRuntimeSource((uint32_t)xTaskGetTickCount());
     g_chassis_auto_request = 0U;
     ChassisAuto_Abort();
+#if APP_FAULT_CUT_VM_ENABLE
+#if APP_FAULT_CUT_VM_ENABLE
+#if APP_FAULT_CUT_VM_ENABLE
     g_vm_test_request = 0U;
+#endif
+#endif
+#endif
     taskEXIT_CRITICAL();
 }
 
@@ -1590,6 +1447,7 @@ static void App_ForwardHoldSafety(void)
 }
 
 /* 仅CAN任务执行；本模式清除旧转角请求，避免误触发原地转动。 */
+static uint32_t SBS_CancelQueuedReplay(void);
 static void App_ForwardHoldStep(void)
 {
     ChassisAutoStatus status;
@@ -1600,7 +1458,7 @@ static void App_ForwardHoldStep(void)
 #else
     ChassisAutoPreparedTranslation prepared;
 #endif
-    uint32_t prepared_ok, expected_session, mode, base_rpm, run_ms;
+    uint32_t prepared_ok, expected_session, mode, base_rpm, run_ms,stage3_fine;
     float route_speed;
     float distance_mm;
     float correction = 0;
@@ -1610,11 +1468,13 @@ static void App_ForwardHoldStep(void)
     critical_cycle = HWT101_TimingBegin();
     now = (uint32_t)xTaskGetTickCount();
     request = g_forward_hold.request;
+    if (request == 1U && g_forward_hold.phase == HR_IDLE && SBS_CancelQueuedReplay())
+    { HWT101_TimingEnd(0U, critical_cycle); taskEXIT_CRITICAL(); return; }
     g_forward_hold.request = 0U;
     g_heading_exec_request = 0U;
     (void)ChassisAuto_ReadStatus(&status);
     if (g_forward_hold.phase >= HR_DONE)
-    { g_vm_test_request = (g_forward_hold.phase == HR_DONE) ? App_StageDoneVm() : 0U; HWT101_TimingEnd(0U, critical_cycle); taskEXIT_CRITICAL(); return; }
+    { g_vm_test_request = (g_forward_hold.phase == HR_DONE) ? App_StageDoneVm() : (SourceBodyStep_KeepsPower()?1U:0U); HWT101_TimingEnd(0U, critical_cycle); taskEXIT_CRITICAL(); return; }
     if ((request == 2U) && (g_forward_hold.phase != HR_IDLE)) App_ForwardHoldTrip(1U);
     if ((request == 1U) && (g_forward_hold.phase == HR_IDLE))
     {
@@ -1647,14 +1507,18 @@ static void App_ForwardHoldStep(void)
         mode = App_TestTranslationMode(); base_rpm = App_StageBaseRpm();
         run_ms = App_StageRunMs(); distance_mm = App_StageDistanceMm();
 #if APP_TEST_MODE == 3U
-        route_speed=s_combined_reference_mm_s;
+        route_speed=s_combined_reference_mm_s;stage3_fine=s_combined_stage3_fine;
 #else
-        route_speed=0.0f;
+        route_speed=0.0f;stage3_fine=0U;
 #endif
         (void)ChassisAuto_ReadStatus(&status); expected_session = status.session;
         HWT101_TimingEnd(0U, critical_cycle); taskEXIT_CRITICAL();
-        prepared_ok = route_speed!=0.0f ?
-            ChassisAuto_PrepareRouteTranslation(mode,base_rpm,run_ms,distance_mm,route_speed,&prepared) :
+        prepared_ok = stage3_fine ?
+            ChassisAuto_PrepareStage3FineTranslation(mode,base_rpm,run_ms,distance_mm,route_speed,&prepared) :
+            route_speed!=0.0f ?
+            ((!SourceBodyStep_WheelWindow() && VEHICLE_STAGE1_BLEND_ENABLE && g_vehicle_stage==1U && (g_vehicle_scan_search_state!=1U && g_vehicle_scan_search_state!=2U)) ?
+            ChassisAuto_PrepareRouteBlend(mode,base_rpm,run_ms,distance_mm,route_speed,&prepared) :
+            ChassisAuto_PrepareRouteTranslation(mode,base_rpm,run_ms,distance_mm,route_speed,&prepared)) :
             ChassisAuto_PrepareTranslation(mode,base_rpm,run_ms,distance_mm,&prepared);
         taskENTER_CRITICAL();
         critical_cycle = HWT101_TimingBegin();
@@ -1668,7 +1532,7 @@ static void App_ForwardHoldStep(void)
             mode != App_TestTranslationMode() || base_rpm != App_StageBaseRpm() ||
             run_ms != App_StageRunMs() || distance_mm != App_StageDistanceMm()
 #if APP_TEST_MODE == 3U
-            || route_speed!=s_combined_reference_mm_s
+            || route_speed!=s_combined_reference_mm_s || stage3_fine!=s_combined_stage3_fine
 #endif
             )
         {
@@ -1686,8 +1550,11 @@ static void App_ForwardHoldStep(void)
             App_ForwardHoldTrip(6U);
             HWT101_TimingEnd(0U,critical_cycle);taskEXIT_CRITICAL();return;
         }
+        if (SBS_CancelQueuedReplay())
+        { HWT101_TimingEnd(0U, critical_cycle); taskEXIT_CRITICAL(); return; }
         begin_cycle = HWT101_TimingBegin();
-        accepted = ChassisAuto_BeginPreparedTranslation(&prepared,expected_session);
+        accepted = (!SourceBodyStep_WheelWindow() && VEHICLE_STAGE1_BLEND_ENABLE && g_vehicle_stage==1U && (g_vehicle_scan_search_state!=1U && g_vehicle_scan_search_state!=2U)) ?
+            ChassisAuto_BeginPreparedBlend(&prepared,expected_session) : ChassisAuto_BeginPreparedTranslation(&prepared,expected_session);
         HWT101_TimingEnd(1U, begin_cycle);
         if (accepted != 1U) App_ForwardHoldTrip(5U);
         else
@@ -1810,8 +1677,8 @@ static void App_ForwardHoldStep(void)
 
 #if APP_TEST_MODE == 3U
 /* 独立组合测试，唯一CAN任务每轮调用一次，不阻塞、不增加任务。
- * 固定顺序：前进8秒、左移8秒、相对转向+90度、前进8秒。
- * 段间停车核验后保持VM，额外间隔由统一参数配置；仅整组完成或异常断VM。 */
+         * 固定顺序：前进8秒、左移8秒、相对转向+90度、前进8秒。
+         * 段间停车核验后保持VM，额外间隔由统一参数配置；仅整组完成或异常断VM。 */
 /* 只校验编译期表；不发硬件命令，不清故障。总时限保持120秒。 */
 static uint32_t App_MotionPlanValid(void)
 {
@@ -1912,8 +1779,8 @@ static uint32_t App_MotionAccept(void)
     (void)ChassisAuto_ReadStatus(&status); Power_ReadCommandStatus(&power);
     if (!s_motion_session_open)
     {
-        if (s_motion_has_action || g_vm_test_request || (power.active && !StartupAxes_Holding()) ||
-            !ChassisAuto_BeginSequence()) return 0U;
+        if (s_motion_has_action || (g_vm_test_request && !Stage2Body_KeepsPower()) || (power.active && !StartupAxes_Holding()) ||
+            !(SourceBodyStep_WheelWindow()?ChassisAuto_BeginHeldSequence():ChassisAuto_BeginSequence())) return 0U;
 #if APP_SERIAL_MOTION_CONTROL
         s_motion_timing_count = s_motion_timing_cursor = 0U;
 #endif
@@ -1921,6 +1788,9 @@ static uint32_t App_MotionAccept(void)
         if (!s_motion_list_submit) s_combined_begin_ms = (uint32_t)xTaskGetTickCount();
         /* 在同一临界区发布首段VM请求，避免Safety把新组当作断电重置。 */
         g_vm_test_request = 1U;
+        /* 联合机构已持VM时不再等待上电；同批发布后端请求，避免先提交后被旧0拒绝。
+         * 仅同步本次已通过准入的请求，不写健康标志，不清故障，不在此发CAN。 */
+        ChassisAuto_SafetyUpdate(g_vm_test_request);
         s_combined_powered_segment = 1U;
     }
     else
@@ -1935,13 +1805,14 @@ static uint32_t App_MotionAccept(void)
     return 1U;
 #endif
 }
-static uint32_t App_MoveSubmit(uint32_t direction, uint32_t rpm, uint32_t run_ms, float distance_mm,float route_speed)
+static uint32_t App_MoveSubmitOwned(uint32_t direction, uint32_t rpm, uint32_t run_ms,
+    float distance_mm,float route_speed,uint32_t replay,uint32_t stage3_fine)
 {
     ForwardHoldDebug empty = {0};
     uint32_t accepted = 0U;
     if(route_speed!=0.0f) {
         if(!APP_POSITION_DIAGNOSTIC || !s_motion_list_submit || g_debug_plan_id!=DEBUG_PLAN_DEFAULT ||
-            !MotionRoute_ShapeAllowed(direction,rpm,run_ms,distance_mm,route_speed) ||
+            !MotionRoute_ShapeAllowedScoped(direction,rpm,run_ms,distance_mm,route_speed,stage3_fine) ||
             !Chassis_DistanceSelfTest()) return 0U;
     }
     else if (distance_mm!=0.0f)
@@ -1953,21 +1824,30 @@ static uint32_t App_MoveSubmit(uint32_t direction, uint32_t rpm, uint32_t run_ms
     else if (direction > MOVE_RIGHT || rpm < MOTION_MOVE_MIN_RPM ||
         rpm > MOTION_MOVE_MAX_RPM || !run_ms || run_ms > MOTION_MOVE_MAX_MS) return 0U;
     taskENTER_CRITICAL();
-    if (!g_forward_hold.trip &&
+    if ((!replay || (Stage3_ReplayBodyQueueOwned() && !Stage3_ReplayStopPending())) &&
+        !g_forward_hold.trip &&
         (g_forward_hold.phase == HR_IDLE || g_forward_hold.phase == HR_DONE) &&
         App_MotionAccept())
     {
         s_combined_turn = 0U; s_combined_mode = direction;
         s_combined_base_rpm = rpm; s_combined_run_ms = run_ms; s_combined_distance_mm = distance_mm;
-        s_combined_reference_mm_s=route_speed;
+        s_combined_reference_mm_s=route_speed;s_combined_stage3_fine=stage3_fine;
         empty.motion_mode = direction; g_forward_hold = empty;
         HWT101_DiagnosticArm(); g_motion_fault_diag_valid = 0U;
+        if (replay)
+        {
+            g_source_body_step_submitted = 1U;
+            g_source_body_step_state = 2U;
+        }
         g_forward_hold_trace_count = 0U; g_forward_hold.request = 1U;
         s_motion_has_action = 1U; accepted = 1U;
     }
     taskEXIT_CRITICAL();
     return accepted;
 }
+static uint32_t App_MoveSubmit(uint32_t direction, uint32_t rpm, uint32_t run_ms,
+    float distance_mm,float route_speed)
+{return App_MoveSubmitOwned(direction,rpm,run_ms,distance_mm,route_speed,0U,0U);}
 uint32_t MoveStart(uint32_t direction, uint32_t rpm, uint32_t run_ms)
 { return App_MoveSubmit(direction,rpm,run_ms,0.0f,0.0f); }
 uint32_t MoveDistanceStart(uint32_t direction, uint32_t max_rpm, float distance_cm)
@@ -1977,10 +1857,11 @@ uint32_t MoveDistanceStart(uint32_t direction, uint32_t max_rpm, float distance_
 }
 uint32_t MoveForwardDistanceStart(uint32_t max_rpm, float distance_cm)
 { return MoveDistanceStart(MOVE_FORWARD,max_rpm,distance_cm); }
-uint32_t TurnStart(uint32_t direction, float angle_deg, uint32_t max_rpm)
+static uint32_t App_TurnStartScoped(uint32_t direction,float angle_deg,uint32_t max_rpm,uint32_t stage3_fine)
 {
     uint32_t accepted = 0U;
-    if (direction > TURN_CCW || !(angle_deg >= MOTION_TURN_MIN_DEG && angle_deg <= MOTION_TURN_MAX_DEG) ||
+    if (direction > TURN_CCW || !((angle_deg >= MOTION_TURN_MIN_DEG && angle_deg <= MOTION_TURN_MAX_DEG) ||
+        (Stage3_FineTurnAllowed() && angle_deg>(stage3_fine?S3_STRICT_YAW_DEG:1.0f) && angle_deg<=10.0f)) ||
         max_rpm < 1U || (max_rpm > MOTION_TURN_MAX_RPM &&
             !(APP_TURN_BRAKE_TRIAL_ACTIVE && s_motion_list_submit &&
               MOTION_ACTION_COUNT==1U && g_debug_plan_id==DEBUG_PLAN_DEFAULT &&
@@ -1991,7 +1872,7 @@ uint32_t TurnStart(uint32_t direction, float angle_deg, uint32_t max_rpm)
         App_MotionAccept())
     {
         HWT101_DiagnosticArm();g_motion_fault_diag_valid=0U;
-        s_combined_turn = 1U; s_motion_turn_max_rpm = max_rpm;
+        s_combined_turn = 1U; s_motion_turn_max_rpm = max_rpm;s_combined_stage3_fine=stage3_fine;
         /* 转向不能继承前一平移段的动态距离、速度与截止。 */
         s_combined_distance_mm=s_combined_reference_mm_s=0.0f;
         s_combined_base_rpm=s_combined_run_ms=0U;
@@ -2004,6 +1885,8 @@ uint32_t TurnStart(uint32_t direction, float angle_deg, uint32_t max_rpm)
     taskEXIT_CRITICAL();
     return accepted;
 }
+uint32_t TurnStart(uint32_t direction,float angle_deg,uint32_t max_rpm)
+{return App_TurnStartScoped(direction,angle_deg,max_rpm,0U);}
 uint32_t MotionFinish(void)
 {
     ChassisAutoStatus status;
@@ -2016,7 +1899,7 @@ uint32_t MotionFinish(void)
     {
         s_combined_end_ms = (uint32_t)xTaskGetTickCount();
         s_motion_session_open = s_combined_keep_vm = 0U;
-        g_vm_test_request = 0U; accepted = 1U;
+        if(!Stage2Body_KeepsPower())g_vm_test_request = 0U; accepted = 1U;
     }
     taskEXIT_CRITICAL();
     return accepted;
@@ -2036,7 +1919,7 @@ static uint32_t App_PerimeterTurnStart(uint32_t direction, float angle_deg, uint
         App_MotionAccept())
     {
         HWT101_DiagnosticArm();g_motion_fault_diag_valid=0U;
-        s_combined_turn = 1U; s_motion_turn_max_rpm = max_rpm;
+        s_combined_turn = 1U; s_motion_turn_max_rpm = max_rpm;s_combined_stage3_fine=0U;
         /* 转向不能继承前一平移段的动态距离、速度与截止。 */
         s_combined_distance_mm=s_combined_reference_mm_s=0.0f;
         s_combined_base_rpm=s_combined_run_ms=0U;
@@ -2083,9 +1966,14 @@ static uint32_t App_CombinedLoadAction(uint32_t index)
 
 static void App_CombinedTestStop(uint32_t cause)
 {
-    /* STOP是幂等的；已完成/失败不覆盖首因，不清原单段trip。 */
+    /* STOP is idempotent; the first cause wins and trip flags stay latched. */
     if (g_combined_test.state >= 3U)
-    { g_vm_test_request = 0U; Power_Disable(); return; }
+    {
+#if APP_FAULT_CUT_VM_ENABLE
+        g_vm_test_request = 0U; Power_Disable();
+#endif
+        return;
+    }
     s_motion_session_open = s_combined_keep_vm = 0U;
     s_combined_end_ms = (uint32_t)xTaskGetTickCount();
     g_combined_test.cause = cause;
@@ -2095,8 +1983,18 @@ static void App_CombinedTestStop(uint32_t cause)
     if (s_combined_turn) App_HeadingRuntimeTrip(1U);
     else App_ForwardHoldTrip(1U);
     ChassisAuto_Abort();
+#if APP_FAULT_CUT_VM_ENABLE
     g_vm_test_request = 0U;
     Power_Disable();
+#else
+    /* Fault keeps VM on so the drivers keep braking; a deliberate cancel with
+     * nothing latched may still power the car down. */
+    if ((g_forward_hold.trip == 0U) && (g_heading_exec_trip == 0U) &&
+        (g_chassis_auto_cause == 0U))
+    {
+        g_vm_test_request = 0U;
+    }
+#endif
 }
 /* 独立安全任务也检查整组取消与时限，防止CAN任务等待时漏掉取消。 */
 void MotionStop(void)
@@ -2142,7 +2040,9 @@ static void App_CombinedTestSafety(void)
         else if (g_vm_test_request != 1U || g_can_guard_ready != 1U)
             App_CombinedTestStop(3U);
     }
-    else { g_vm_test_request = 0U; }
+    else if (!Stage2Body_KeepsPower() && !g_lift_ruler_controller.vm_request && (g_combined_test.cause == 0U) && (g_forward_hold.trip == 0U) &&
+             (g_heading_exec_trip == 0U))
+    { g_vm_test_request = 0U; }
     taskEXIT_CRITICAL();
 }
 static void App_CombinedTestStep(void)
@@ -2198,12 +2098,12 @@ static void App_CombinedTestStep(void)
         s_serial_start_permit = 0U;
         (void)ChassisAuto_ReadStatus(&status); Power_ReadCommandStatus(&power);
         if (status.active || status.result || status.cut_vm || (power.active && !StartupAxes_Holding()) ||
-            g_vm_test_request || !App_HeadingRuntimeSource(now) ||
+            (g_vm_test_request && !Stage2Body_KeepsPower()) || !App_HeadingRuntimeSource(now) ||
             !App_HeadingRuntimeExclusive() || g_can_ctrl_fault_latched ||
             (g_translation_hold_selftest != 1U) || (g_motion_plan_valid != 1U) ||
             (g_forward_hold.phase != HR_IDLE) || (g_heading_exec_phase != HR_IDLE))
         { App_CombinedTestStop(3U); taskEXIT_CRITICAL(); return; }
-        if(!RouteHeading_Init(&s_route_heading_reference,s_heading_source.yaw_deg))
+        if(!RouteHeading_Ensure(&s_route_heading_reference,s_heading_source.yaw_deg,VEHICLE_INTEGRATED_ENABLE?1U:0U))
         { App_CombinedTestStop(3U);taskEXIT_CRITICAL();return; }
         s_combined_powered_segment = 0U;
         s_combined_begin_ms = s_combined_stage_ms = now;
@@ -2216,7 +2116,7 @@ static void App_CombinedTestStep(void)
     { App_CombinedTestStop(4U); taskEXIT_CRITICAL(); return; }
     if (g_combined_test.state >= 3U)
     { g_forward_hold.request = g_heading_exec_request = 0U;
-      g_vm_test_request = 0U; taskEXIT_CRITICAL(); return; }
+      if(!SourceBodyStep_KeepsPower())g_vm_test_request = 0U; taskEXIT_CRITICAL(); return; }
     if (g_combined_test.state == 2U)
     {
         /* 段间取得码后直接释放已停稳会话，不再装载下一段。 */
@@ -2282,7 +2182,8 @@ static void App_CombinedTestStep(void)
             /* 等安全任务确实发出关闭命令，不把VM请求0当作PE2已关。 */
             if ((!g_stage1_stop_requested && (g_combined_test.index + 1U) < MOTION_ACTION_COUNT) ?
                 ((g_vm_test_request == 1U) && (power.active == 1U) && !status.cut_vm) :
-                (!g_vm_test_request && (!power.active || StartupAxes_Holding())))
+                ((!g_vm_test_request && (!power.active || StartupAxes_Holding())) ||
+                 (Stage2Body_KeepsPower() && g_vm_test_request==1U && power.active==1U && !status.cut_vm)))
             {
                 index = g_combined_test.index;
                 g_combined_test.phase[index] = phase;
@@ -2344,29 +2245,31 @@ static uint32_t App_SerialUInt(const char **text, uint32_t *out)
     if (*p != ',') return 0U;
     *text = p + 1; *out = n; return 1U;
 }
-static uint32_t App_SerialIdleReady(uint32_t now)
+/* 位掩码只细分原有准入条件，不放宽任何门槛。 */
+static uint32_t App_SerialIdleBlocked(uint32_t now)
 {
 #if APP_MOTOR_OFFLINE_ONLY
-    (void)now;return 0U;
+    (void)now;return 1U;
 #else
-    ChassisAutoStatus status;
-    PowerCommandStatus power;
-    if(!CAN1_EmmSettingsConfirmed())return 0U;
-    (void)ChassisAuto_ReadStatus(&status);
-    Power_ReadCommandStatus(&power);
+    ChassisAutoStatus status;PowerCommandStatus power;uint32_t mask=0U;
+    if(!CAN1_EmmSettingsConfirmed())mask|=1U;
+    (void)ChassisAuto_ReadStatus(&status);Power_ReadCommandStatus(&power);
 #if APP_TEST_MODE == 3U
-    if ((g_combined_test.state != 0U) || (g_combined_test.request != 0U) ||
-        (g_motion_plan_valid != 1U)) return 0U;
+    if(g_combined_test.state || g_combined_test.request || g_motion_plan_valid!=1U)mask|=2U;
 #endif
-    return ((g_forward_hold.phase == HR_IDLE) && (g_forward_hold.request == 0U) &&
-        (g_vm_test_request == 0U) && ((power.active == 0U) || StartupAxes_Holding()) &&
-        (status.active == 0U) && (status.result == 0U) && (status.cut_vm == 0U) &&
-        (g_translation_hold_selftest == 1U) && (s_serial_proto_ok == 1U) &&
-        App_HeadingRuntimeSource(now) && App_HeadingRuntimeExclusive() &&
-        (g_can_ctrl_fault_latched == 0U) &&
-        (s_heading_source.rate_dps >= -3.0f && s_heading_source.rate_dps <= 3.0f)) ? 1U : 0U;
+    if(g_forward_hold.phase!=HR_IDLE || g_forward_hold.request || (g_vm_test_request && !Stage2Body_KeepsPower()) ||
+       (power.active && !StartupAxes_Holding()))mask|=4U;
+    if(status.active || status.result || status.cut_vm)mask|=8U;
+    if(g_translation_hold_selftest!=1U || s_serial_proto_ok!=1U)mask|=16U;
+    if(!App_HeadingRuntimeSource(now))mask|=32U;
+    if(!App_HeadingRuntimeExclusive())mask|=64U;
+    if(g_can_ctrl_fault_latched)mask|=128U;
+    if(!(s_heading_source.rate_dps>=-3.0f && s_heading_source.rate_dps<=3.0f))mask|=256U;
+    return mask;
 #endif
 }
+static uint32_t App_SerialIdleReady(uint32_t now)
+{return App_SerialIdleBlocked(now)==0U;}
 /* 调用者持锁；只容忍成功终态的晚到KEEP，不续期、不重新发车。 */
 static uint32_t App_SerialCompletedStopped(void)
 {
@@ -2672,7 +2575,7 @@ static void App_SerialMotionSafety(void)
     taskEXIT_CRITICAL();
 }
 /* 当前状态优先：忙时下一轮重试，只有排队成功才推进100ms周期。
- * 历史诊断不得在状态已到期时抢占单缓冲；不改变主机超时或运动保护。 */
+         * 历史诊断不得在状态已到期时抢占单缓冲；不改变主机超时或运动保护。 */
 #define APP_SERIAL_STATUS_PERIOD_MS 100U
 static uint32_t App_SerialStatusDue(uint32_t now)
 {
@@ -2694,15 +2597,25 @@ static void App_SerialStatusSend(const char *frame, uint32_t now)
 /* PE2是带方向的完整历史起止记录，按索引只排队成功发送一次；不当作实时有效位。 */
 static void App_PositionEndpointTelemetry(void)
 {
-    static uint32_t index;
+    static uint32_t last_session, session_seen;
     static char frame[512];
     ChassisPositionEndpoints endpoint;
-    uint32_t i, used, phase;
+    uint32_t i, used, phase, index, found=0U;
     int count;
     uint16_t crc;
     if (!App_SerialDiagnosticWindow((uint32_t)xTaskGetTickCount(), 40U)) return;
-    if (!ChassisAuto_ReadPositionEndpoints(index, &endpoint)) return;
-    if (endpoint.outcome == 2U) { index++; return; }
+    /* Getter is logical oldest->newest even after physical ring wrap. */
+    for(index=0U;index<CHASSIS_POSITION_ENDPOINT_CAPACITY;index++)
+    {
+        uint32_t delta;
+        if(!ChassisAuto_ReadPositionEndpoints(index,&endpoint)) break;
+        delta=endpoint.session-last_session;
+        if(!session_seen || (delta>0U && delta<0x80000000U)){found=1U;break;}
+    }
+    if(!found) return;
+    if (endpoint.outcome == 2U || (endpoint.outcome == 1U &&
+        (endpoint.start_mask != 15U || endpoint.end_mask != 15U)))
+    { last_session=endpoint.session;session_seen=1U;return; }
     if (endpoint.outcome != 1U || endpoint.start_mask != 15U || endpoint.end_mask != 15U) return;
     count = snprintf(frame, sizeof(frame), "PE3,%lu,%lu,%lu,%lu,%lu,%lu,%lu,",
         (unsigned long)xTaskGetTickCount(), (unsigned long)endpoint.session,
@@ -2724,7 +2637,7 @@ static void App_PositionEndpointTelemetry(void)
     crc = App_SerialCrc(frame, used);
     count = snprintf(frame + used, sizeof(frame) - used, "%04X\r\n", crc);
     if (count < 0 || (uint32_t)count >= sizeof(frame) - used) return;
-    if (App_DebugSendString(frame) == 1U) index++;
+    if (App_DebugSendString(frame) == 1U) {last_session=endpoint.session;session_seen=1U;}
 }
 
 #if APP_HEADING_SESSION_TEST
@@ -2772,7 +2685,9 @@ static void App_OdometryTelemetry(void)
 }
 #endif
 /* PM1与TM1错开至少40ms，静态缓冲不叠加TaskA栈；忙时丢诊断帧。 */
-#include "stage1_runtime.inc"
+/* Legacy ST1/SC1 stage-1 state machine deleted; only this flag is still
+         * referenced by vehicle_mission.inc. */
+volatile uint32_t g_stage2_ready = 0U;
 /* WF1：补齐系统辨识需要的应答目标/真实轮速/样本时刻；低优先级观察帧。 */
 static void App_WheelLogTelemetry(void)
 {
@@ -3250,7 +3165,7 @@ float MotionRpmToCmPerSec(float rpm)
 static ChassisOdometry s_odometry;
 volatile ChassisOdometryStatus g_chassis_odometry;
 /* 调试Watch：先填三个目标，最后写request=1；仅VM关闭且无运动时受理。
- * result:1接受，2条件不足；CAN任务消费一次，不等待条件后自动执行。 */
+         * result:1接受，2条件不足；CAN任务消费一次，不等待条件后自动执行。 */
 #if APP_IS_DEBUG
 volatile uint32_t g_odometry_pose_request=0U, g_odometry_pose_result=0U;
 volatile float g_odometry_pose_x_mm=0.0f, g_odometry_pose_y_mm=0.0f;
@@ -3326,6 +3241,88 @@ static void App_ComboIdlePoll(void)
     }
 }
 
+/* 单件完整接口由vehicle_arm.c提供，旧伸缩单项入口不再编译。 */
+/* BEGIN WHEEL DIAG SNAP：只复制现有 CAN 任务缓存。 */
+extern volatile uint32_t g_wheel_diag_epoch,g_wheel_diag_run;
+extern volatile uint32_t g_wheel_diag_ready_valid,g_wheel_diag_ready_tick,g_low_wheel_hold_ready;
+extern volatile uint32_t g_stage3_placed_count,g_stage3_recovered_count;
+typedef struct {
+    uint32_t poll_result,poll_flags,poll_tick,poll_count;
+    uint32_t position_result,position_sign,position_raw,position_tick;
+} WheelDiagCache;
+typedef struct {
+    uint32_t epoch,run,observed_event_tick,sample_tick,placed,recovered,hold_ready;
+    uint32_t poll_enable,poll_valid_mask,poll_published_mask,poll_after_event_mask;
+    uint32_t position_enable,position_valid_mask,position_published_mask,position_after_event_mask;
+    WheelDiagCache wheel[4];
+} WheelDiagSnapshot;
+volatile WheelDiagSnapshot g_wheel_diag_snapshot[3];
+volatile uint32_t g_wheel_diag_snapshot_mask;
+static uint32_t s_wheel_diag_epoch,s_wheel_diag_seen_incomplete;
+
+static void App_WheelDiagCapture(uint32_t slot,uint32_t event_tick)
+{
+    volatile WheelDiagSnapshot *snap=&g_wheel_diag_snapshot[slot];
+    uint32_t i,poll_valid=0U,position_valid=0U,poll_after=0U,position_after=0U;
+    TickType_t now=xTaskGetTickCount();
+    TickType_t event_age=(TickType_t)(now-(TickType_t)event_tick);
+    snap->epoch=g_wheel_diag_epoch;snap->run=g_wheel_diag_run;
+    snap->observed_event_tick=event_tick;snap->sample_tick=(uint32_t)now;
+    snap->placed=g_stage3_placed_count;snap->recovered=g_stage3_recovered_count;
+    snap->hold_ready=g_low_wheel_hold_ready;
+    snap->poll_enable=g_can_poll_enable;snap->poll_published_mask=g_can_poll_valid_mask;
+    snap->position_enable=g_can_feedback_enable;
+    snap->position_published_mask=g_can_feedback_position_valid_mask;
+    for(i=0U;i<4U;i++) {
+        volatile WheelDiagCache *wheel=&snap->wheel[i];
+        TickType_t poll_age,position_age;
+        wheel->poll_result=g_can_poll_result[i];wheel->poll_flags=g_can_poll_flags[i];
+        wheel->poll_tick=(uint32_t)g_can_poll_tick[i];wheel->poll_count=g_can_poll_count[i];
+        wheel->position_result=g_can_feedback_position_result[i];
+        wheel->position_sign=g_can_feedback_position_sign[i];
+        wheel->position_raw=g_can_feedback_position_raw[i];
+        wheel->position_tick=(uint32_t)g_can_feedback_position_tick[i];
+        poll_age=(TickType_t)(now-(TickType_t)wheel->poll_tick);
+        position_age=(TickType_t)(now-(TickType_t)wheel->position_tick);
+        /* 航向模式不一定刷新原掩码。沿用原时效条件，只标注证据。 */
+        if(snap->poll_enable==1U && s_can_poll_active==1U && g_safety_ready==1U &&
+           (g_vm_test_request==1U || g_startup_axes_vm_request) && wheel->poll_result==1U &&
+           poll_age<=pdMS_TO_TICKS(CAN_POLL_VALID_MS)) {
+            poll_valid|=1UL<<i;
+            if(poll_age<event_age)poll_after|=1UL<<i;
+        }
+        if(snap->position_enable==1U && snap->poll_enable==1U && g_safety_ready==1U &&
+           g_vm_test_request==1U && wheel->position_result==1U &&
+           position_age<=pdMS_TO_TICKS(CAN_FEEDBACK_VALID_MS)) {
+            position_valid|=1UL<<i;
+            if(position_age<event_age)position_after|=1UL<<i;
+        }
+    }
+    snap->poll_valid_mask=poll_valid;snap->position_valid_mask=position_valid;
+    snap->poll_after_event_mask=poll_after;snap->position_after_event_mask=position_after;
+    g_wheel_diag_snapshot_mask|=1UL<<slot;
+}
+
+static void App_WheelDiagObserve(void)
+{
+    if(s_wheel_diag_epoch!=g_wheel_diag_epoch) {
+        s_wheel_diag_epoch=g_wheel_diag_epoch;
+        g_wheel_diag_snapshot_mask=0U;
+        s_wheel_diag_seen_incomplete=0U;
+    }
+    if(g_wheel_diag_ready_valid && !(g_wheel_diag_snapshot_mask&1U))
+        App_WheelDiagCapture(0U,g_wheel_diag_ready_tick);
+    if(!(g_wheel_diag_snapshot_mask&1U) || !g_wheel_diag_run ||
+       g_stage3_run!=g_wheel_diag_run || g_stage3_locked_run!=g_wheel_diag_run)return;
+    if(g_stage3_placed_count<3U)s_wheel_diag_seen_incomplete=1U;
+    if(s_wheel_diag_seen_incomplete && g_stage3_placed_count==3U && !(g_wheel_diag_snapshot_mask&2U))
+        App_WheelDiagCapture(1U,(uint32_t)xTaskGetTickCount());
+    if((g_wheel_diag_snapshot_mask&2U) && !(g_wheel_diag_snapshot_mask&4U) &&
+       g_stage3_recovered_count==3U && g_stage3_state==6U)
+        App_WheelDiagCapture(2U,(uint32_t)xTaskGetTickCount());
+}
+/* END WHEEL DIAG SNAP */
+
 static void App_CanTask(void *argument)
 {
     (void)argument;
@@ -3336,6 +3333,7 @@ static void App_CanTask(void *argument)
     while (1)
     {
         g_can_task_count++;
+        if(VEHICLE_INTEGRATED_ENABLE && !VEHICLE_LIFT_RULER_ONLY)Vision_Poll();
         if (APP_UART_LINK_TEST != 0U)
         {
             g_vm_test_request = 0U;
@@ -3350,11 +3348,49 @@ static void App_CanTask(void *argument)
 #endif
         #if APP_HEADING_SESSION_TEST
                 #if APP_TEST_MODE == 3U
-                StartupAxes_Service(g_safety_ready && g_can_test_result==1U,g_can_guard_ready);
-                if(StartupAxes_Holding())DM_CAN2_ModuleService(1U,0U);
-                if(VehicleArm_Busy() || g_vehicle_arm_stop_pending)VehicleArm_Service();
-                if(StartupAxes_Holding())DM_CAN2_ModuleService(1U,0U);
-                if(!VehicleArm_Busy() && (!VEHICLE_INTEGRATED_ENABLE || StartupAxes_Holding()) && g_startup_axes_state!=1U && g_startup_axes_state!=2U && g_startup_axes_state!=3U) App_CombinedTestStep();
+                if(VEHICLE_LIFT_RULER_ONLY){
+#if !APP_MOTOR_OFFLINE_ONLY
+                 DM_CAN2_ModuleService(g_safety_ready && !g_safety_fault && !g_rtos_fault && g_vm_test_request,0U);
+#endif
+                 /* DM参数读取/回复窗口内禁止同轮再发CAN1帧：CAN1与CAN2共享过滤器域，
+                  * 任何CAN1重初始化都会冻结CAN2接收，导致4310只读必定失败。 */
+                 if(!(g_dm_can2_read_request || (g_dm_can2_state>=1U && g_dm_can2_state<=3U)))LiftRuler_DebugService();
+                 Integration10_Service();
+                }
+                else {
+                /* 2026-11-08: extension axis: no wheel-guard dependency (see safety.c note). */
+                StartupAxes_Service(g_safety_ready && g_can_test_result==1U,1U);
+                /* 2026-11-08: DM service must run whenever the extension axis is
+                 * holding; the extension-home-only profile is the one that builds
+                 * that hold, so gating on !VEHICLE_EXTENSION_HOME_ONLY made the 4310
+                 * unreadable in exactly the configuration we need it in. */
+                /* 2026-11-08: allow a read-only 4310 pass whenever the board is safely powered,
+     * not only after IT2 has built the extension hold. DM_CAN2_Service does nothing
+     * unless a read_request is pending, so this cannot move any axis. */
+                /* 2026-11-08: a 4310 read must not be hostage to the wheel guard. A stalled wheel
+     * (status 0x0D on node4) latches CAN_PROTECT 0x40 and forces safety_ready=0, which
+     * used to stop DM_CAN2_ModuleService entirely. The service only touches CAN2 and
+     * only transmits when a read_request is pending, so it is safe to run regardless. */
+                if(!VEHICLE_LIFT_RULER_ONLY)DM_CAN2_ModuleService(1U,0U);
+                if(!VEHICLE_DM_STARTUP_ONLY && !VEHICLE_STARTUP_GROUP_ONLY && (VehicleArm_Busy() || g_vehicle_arm_stop_pending))VehicleArm_Service();
+                /* 2026-11-08: DM service must run whenever the extension axis is
+                 * holding; the extension-home-only profile is the one that builds
+                 * that hold, so gating on !VEHICLE_EXTENSION_HOME_ONLY made the 4310
+                 * unreadable in exactly the configuration we need it in. */
+                /* 2026-11-08: allow a read-only 4310 pass whenever the board is safely powered,
+     * not only after IT2 has built the extension hold. DM_CAN2_Service does nothing
+     * unless a read_request is pending, so this cannot move any axis. */
+                /* 2026-11-08: a 4310 read must not be hostage to the wheel guard. A stalled wheel
+     * (status 0x0D on node4) latches CAN_PROTECT 0x40 and forces safety_ready=0, which
+     * used to stop DM_CAN2_ModuleService entirely. The service only touches CAN2 and
+     * only transmits when a read_request is pending, so it is safe to run regardless. */
+                if(!VEHICLE_LIFT_RULER_ONLY)DM_CAN2_ModuleService(1U,0U);
+                if(!VEHICLE_DM_STARTUP_ONLY && !VEHICLE_STARTUP_GROUP_ONLY && (!VehicleArm_Busy() || VehicleArm_SourceParallelAllowsBody() || Stage2Body_Owns()) && (!VEHICLE_INTEGRATED_ENABLE || StartupAxes_Holding()) && g_startup_axes_state!=1U && g_startup_axes_state!=2U && g_startup_axes_state!=3U) App_CombinedTestStep();
+                 /* 2026-11-07 integration: 整车profile也要服务升降标尺控制器与IT请求，
+                  * 否则VSP的顶部参考(SingleTeach_TopDeg)永远建不起来，stage2无法启动。 */
+                 if(!(g_dm_can2_read_request || (g_dm_can2_state>=1U && g_dm_can2_state<=3U)))LiftRuler_DebugService();
+                 Integration10_Service();
+                }
 #else
                 if (APP_FORWARD_HOLD_TEST != 0U) App_ForwardHoldStep();
                 else App_HeadingRuntimeStep();
@@ -3380,8 +3416,37 @@ static void App_CanTask(void *argument)
         /* 自动停止优先，每轮只执行一笔CAN交易 */
         #if APP_HEADING_SESSION_TEST
                 if (g_chassis_auto_active == 0U) {
-                    App_ComboIdlePoll();
-                    if(StartupAxes_Holding())DM_CAN2_ModuleService(1U,0U);
+                    /* 参数事务期间不启动可重置CAN1共享资源的普通轮询。
+                     * 下方已有停止帧分派仍无条件保留。 */
+                    if(!(g_dm_can2_read_request || (g_dm_can2_state>=1U && g_dm_can2_state<=3U)))App_ComboIdlePoll();
+                    /* 2026-11-08: DM service must run whenever the extension axis is
+                 * holding; the extension-home-only profile is the one that builds
+                 * that hold, so gating on !VEHICLE_EXTENSION_HOME_ONLY made the 4310
+                 * unreadable in exactly the configuration we need it in. */
+                /* 2026-11-08: allow a read-only 4310 pass whenever the board is safely powered,
+     * not only after IT2 has built the extension hold. DM_CAN2_Service does nothing
+     * unless a read_request is pending, so this cannot move any axis. */
+                /* 2026-11-08: a 4310 read must not be hostage to the wheel guard. A stalled wheel
+     * (status 0x0D on node4) latches CAN_PROTECT 0x40 and forces safety_ready=0, which
+     * used to stop DM_CAN2_ModuleService entirely. The service only touches CAN2 and
+     * only transmits when a read_request is pending, so it is safe to run regardless. */
+                if(!VEHICLE_LIFT_RULER_ONLY)DM_CAN2_ModuleService(1U,0U);
+                /* Fault stop-frame dispatch. The legacy chain below only runs
+                 * when APP_HEADING_SESSION_TEST==0, so in this build nothing
+                 * ever sent the per-driver stop frame. One CAN transaction per
+                 * loop; VM stays on so the drivers keep holding position. */
+                if ((g_motion_auto_stop_state == MOTION_STOP_PENDING) &&
+                    (g_chassis_auto_active == 0U) && (g_vm_test_request == 1U))
+                {
+                    uint8_t stop_addr;
+                    uint32_t stop_session;
+                    if (Safety_MotionStopTake(&stop_addr, &stop_session) == 1U)
+                    {
+                        uint32_t stop_result = CAN1_StopMotor(stop_addr, &g_motion_auto_stop_reply);
+                        g_motion_auto_stop_esr = CAN1->ESR;
+                        Safety_MotionStopReport(stop_addr, stop_session, stop_result);
+                    }
+                }
                 }
         #endif
                 if (APP_HEADING_SESSION_TEST == 0U)
@@ -3411,48 +3476,6 @@ static void App_CanTask(void *argument)
                 (g_chassis_auto_dry_run <= 1U))
                 (void)ChassisAuto_Begin(g_chassis_auto_dry_run);
             else g_chassis_auto_result = 9U;
-        }
-        else if ((s_can_jog_preparing == 1U) || (g_wheel_test_active == 1U))
-        {
-            App_CanJogService();
-        }
-        else if (g_can_jog_request == 1U)
-        {
-            CanRxMsg empty_reply = {0};
-            g_can_jog_request = 0U;
-            g_can_jog_result = 0U;
-            g_can_jog_check_result = 0U;
-            g_can_jog_start_result = 0U;
-            g_can_jog_stop_result = 0U;
-            g_can_jog_reply = empty_reply;
-            g_can_jog_stop_reply = empty_reply;
-            if ((App_CanJogReady() == 1U) && (g_wheel_test_active == 0U) &&
-                (g_wheel_test_cut_vm == 0U) && (g_can_jog_dry_run <= 1U))
-            {
-                s_can_jog_dry_run = g_can_jog_dry_run;
-                g_can_jog_mode = s_can_jog_dry_run;
-                if (Safety_WheelTestPrepare() == 1U)
-                {
-                    uint32_t i;
-                    for (i = 0U; i < 4U; i++)
-                    {
-                        g_can_jog_prepare_result[i] = 0U;
-                        g_can_jog_enable_result[i] = 0U;
-                        g_can_jog_start_results[i] = 0U;
-                        g_can_jog_stop_results[i] = 0U;
-                    }
-                    g_can_jog_start_mask = 0U;
-                    g_can_jog_stop_mask = 0U;
-                    s_can_jog_start_index = 0U;
-                    s_can_jog_stop_index = 0U;
-                    s_can_jog_check_index = 0U;
-                    s_can_jog_poll_between = 0U;
-                    g_can_jog_prepare_stage = 1U;
-                    s_can_jog_preparing = 1U;
-                }
-                else g_can_jog_result = 9U;
-            }
-            else g_can_jog_result = 9U;
         }
         else if ((g_motion_auto_stop_state == MOTION_STOP_PENDING) &&
             (g_motion_diag_hold_stop_service != 1U))
@@ -3775,6 +3798,7 @@ static void App_CanTask(void *argument)
 #if APP_POSITION_DIAGNOSTIC && APP_HEADING_SESSION_TEST
         App_OdometryStep();
 #endif
+        App_WheelDiagObserve();
         g_can_task_stack_words = uxTaskGetStackHighWaterMark(NULL);
         vTaskDelay(pdMS_TO_TICKS(APP_UART_LINK_TEST ? 50U : (APP_HEADING_SESSION_TEST ? 10U : 50U)));
     }
@@ -3962,18 +3986,21 @@ static void App_HeadingLiveStep(void)
 
 #if VEHICLE_INTEGRATED_ENABLE
 #include "vehicle_mission.inc"
+#include "source_body_step.inc"
 #endif
 /* 任务A：每100毫秒计数一次 */
 /* 独立串口测试任务：替代业务任务A，不执行扫码显示或运动门控。 */
+#include "boot_ready_link.inc"
 static void App_UartLinkTestTask(void *argument)
 {
     (void)argument;
     if (APP_IS_DEBUG) USART1_EnableReceive();
     HWT101_EnableReceive();
-    Buzzer_Start(APP_INIT_BEEP_COUNT);
+    g_boot_app_selftests_skipped=1U;g_boot_app_init_done=1U;
     while (1)
     {
         HWT101_Update();
+        BootReady_BeepStep();
         Buzzer_Update();
         g_test_count_a++;
         g_test_tick = xTaskGetTickCount();
@@ -3997,7 +4024,7 @@ static void App_TestTaskA(void *argument)
     HWT101_EnableReceive();
     g_serial_send_ok = App_DebugSendString("F407 FreeRTOS READY\r\n");
     /* 已验收的基础平台就绪后，只请求一次提示音 */
-    Buzzer_Start(APP_INIT_BEEP_COUNT);
+    /* Boot cue is submitted only after software ready + real Pi echo. */
         /* 一次性虚拟角度自检，不驱动小车。 */
     App_HeadingDryRun();
 #if APP_SERIAL_MOTION_CONTROL
@@ -4015,10 +4042,16 @@ static void App_TestTaskA(void *argument)
     }
 #endif
 #endif
-    if(!VEHICLE_INTEGRATED_ENABLE && VEHICLE_STAGE1_ENABLE && !FieldMap_Stage1(&s_stage1_plan))
-        {g_stage1_state=4U;g_stage1_cause=10U;}
+    g_boot_app_init_done=g_heading_dry_result==1U;
+#if APP_SERIAL_MOTION_CONTROL
+    if(s_serial_proto_ok!=1U)g_boot_app_init_done=0U;
+#endif
+#if APP_HEADING_SESSION_TEST && APP_FORWARD_HOLD_TEST
+    if(g_translation_hold_selftest!=1U)g_boot_app_init_done=0U;
+#endif
     while (1)
     {
+        BootReady_BeepStep();
         g_test_count_a++;
         
         /* 每100毫秒更新响停状态 */
@@ -4031,12 +4064,12 @@ static void App_TestTaskA(void *argument)
         App_HeadingLiveStep();
         #endif
         /* 一轮最多处理64字节；只有任务A交接并更新屏幕 */
+        if(SOURCE_MCU_CYCLE_ENABLE)RegionDispatch_ScanService();
         SAOMA_Update();
-        if(VEHICLE_INTEGRATED_ENABLE){VehicleMission_Service();VehicleMission_Telemetry();}
-        else if(VEHICLE_STAGE1_ENABLE)
-        {
-            App_Stage1Service();
-            App_Stage1Display((TickType_t)(xTaskGetTickCount()-screen_start_tick)>=pdMS_TO_TICKS(1000U));
+        if(VEHICLE_INTEGRATED_ENABLE){
+            SourceBodyStep_Service((uint32_t)xTaskGetTickCount());
+            if(VEHICLE_FULL_RUN_ENTRY_ENABLE)VehicleMission_Service();
+            VehicleMission_Telemetry();
         }
         else
         {
@@ -4067,8 +4100,6 @@ static void App_TestTaskA(void *argument)
 #if APP_SERIAL_MOTION_CONTROL
         /* 先尝试当前状态；诊断只用成功状态之后的空档。 */
         App_SerialMotionTelemetry();
-        if(!VEHICLE_INTEGRATED_ENABLE)App_Stage1Telemetry();
-        if(!VEHICLE_INTEGRATED_ENABLE)App_Stage1CodeTelemetry();
         if(!VEHICLE_INTEGRATED_ENABLE)App_RuntimeRouteTelemetry();
 #if APP_POSITION_DIAGNOSTIC
         App_PositionEndpointTelemetry();
@@ -4266,7 +4297,7 @@ static void App_UartRxTask(void *argument)
 /* 每1毫秒扫描，只记录启动按键事件 */
 #if APP_CHASSIS_KEY_TEST_ENABLE && !APP_HWT_STATIC_TEST
 /* 0等按键、2等CAN就绪、3测试中、4完成、5取消/失败。
- * 本开发固件每次上电仅一次；再次按键不会重启，复位后才允许重测。 */
+         * 本开发固件每次上电仅一次；再次按键不会重启，复位后才允许重测。 */
 volatile uint32_t g_chassis_key_state = 0U;
 volatile uint32_t g_chassis_key_cause = 0U; /* 1取消、2门控、3就绪超时、4执行失败、5HWT条件 */
 static TickType_t s_chassis_key_tick = 0U;
@@ -4415,26 +4446,21 @@ static void App_KeyTask(void *argument)
     while (1)
     {
         RadarZoneSwitch_Service((uint32_t)(xTaskGetTickCount()*portTICK_PERIOD_MS));
-        RadarLift_Service((uint32_t)(xTaskGetTickCount()*portTICK_PERIOD_MS),
+        if(!VEHICLE_LIFT_RULER_ONLY) RadarLift_Service((uint32_t)(xTaskGetTickCount()*portTICK_PERIOD_MS),
             (g_vm_test_request==0U && g_chassis_auto_active==0U &&
              g_safety_fault==0U && g_rtos_fault==0U && g_can_ctrl_fault_latched==0U)?1U:0U);
-        RadarServo_DebugService((g_vm_test_request==0U && g_chassis_auto_active==0U &&
+        if(!VEHICLE_LIFT_RULER_ONLY) RadarServo_DebugService((g_vm_test_request==0U && g_chassis_auto_active==0U &&
             g_safety_fault==0U && g_rtos_fault==0U && g_can_ctrl_fault_latched==0U)?1U:0U);
 /* Armed servo test consumes PC13 without starting the chassis. */
-        if(VEHICLE_INTEGRATED_ENABLE)
-        {if(Key_GetEvent()!=0U){taskENTER_CRITICAL();g_vehicle_key=1U;taskEXIT_CRITICAL();}}
-        else if (VEHICLE_STAGE1_ENABLE)
-        {
-            if(Key_GetEvent()!=0U) {
-                g_start_key_count++;taskENTER_CRITICAL();
-                if(g_stage1_state==1U || g_stage1_state==2U || g_stage1_state==6U || g_stage1_state==7U) {
-                    g_stage1_key_request=2U;
-                    if(g_stage1_state==7U) StartupAxes_Cancel();
-                    else if(g_stage1_state==1U || g_stage1_state==6U) g_combined_test.request=2U;
-                } else g_stage1_key_request=1U;
-                taskEXIT_CRITICAL();
+        if(VEHICLE_REGION_BENCH_KEY_ENABLE)
+        {if(Key_GetEvent()!=0U){g_start_key_count++;RegionDispatch_KeyEvent();}}
+        else if(VEHICLE_INTEGRATED_ENABLE)
+        {if(Key_GetEvent()!=0U){
+            g_start_key_count++;
+            if(!RegionDispatch_StopActive()){
+                taskENTER_CRITICAL();g_vehicle_key=1U;taskEXIT_CRITICAL();
             }
-        }
+        }}
         else if (g_radar_servo_key_test_enable != 0U)
         {
             if (Key_GetEvent() != 0U)
@@ -4545,9 +4571,13 @@ if (APP_UART_LINK_TEST != 0U)
 #endif
 #if APP_HEADING_SESSION_TEST
         #if APP_TEST_MODE == 3U
+        if(VEHICLE_LIFT_RULER_ONLY){LiftRuler_DebugSafety();StartupAxes_Safety(!g_rtos_fault && !g_safety_fault && !g_can_ctrl_fault_latched);}
+        else {
+        LiftRuler_DebugSafety();
         StartupAxes_Safety(!g_rtos_fault && !g_safety_fault && !g_can_ctrl_fault_latched);
         if(g_startup_axes_state==5U && (g_combined_test.state==1U || g_combined_test.state==2U)) MotionStop();
         App_CombinedTestSafety();
+        }
 #else
         if (APP_FORWARD_HOLD_TEST != 0U) App_ForwardHoldSafety();
         else App_HeadingRuntimeSafety();
@@ -4558,7 +4588,14 @@ if (APP_UART_LINK_TEST != 0U)
         App_HwtTurnSafety();
 #endif
         }
+#if VEHICLE_LIFT_RULER_ONLY
+        /* 隔离升降profile：can.c 在该profile对地址1-4直接拒绝(9)，四轮节点永远不就绪。
+         * 若仍把VM交给四轮CAN守卫，VM保持3s后必报0x20(CAN_DATA)并锁存，整段任务无法执行。
+         * 该profile不允许四轮运动，故此处不武装四轮守卫；整车profile(0)行为不变。 */
+        Safety_Update(0U, g_can_test_result);
+#else
         Safety_Update(g_vm_test_request, g_can_test_result);
+#endif
         g_safety_stack_words = uxTaskGetStackHighWaterMark(NULL);
         vTaskDelay(pdMS_TO_TICKS(20U));
     }
@@ -4575,6 +4612,8 @@ int main(void)
     Buzzer_Init();
     /* 初始化调试串口，本轮仅发送 */
     USART1_Config();
+    if(VEHICLE_INTEGRATED_ENABLE || VEHICLE_LIFT_RULER_ONLY)USART6_VisionConfig();
+    SourceObserver_Init(NULL);
     /* 调度前初始化启动按键 */
     /* UART4仅初始化，实际发送放到任务A */
     Screen_Init();
@@ -4622,6 +4661,7 @@ int main(void)
                                       384U, NULL, 3U, NULL);
     configASSERT(g_can_task_create == pdPASS);
     /* 启动后由任务运行 */
+    g_boot_main_init_done=1U;
     vTaskStartScheduler();
 
     /* 调度器异常返回时记录并停止 */

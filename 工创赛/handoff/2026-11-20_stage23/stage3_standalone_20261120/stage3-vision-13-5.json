@@ -1,0 +1,87 @@
+{
+  "format_version": 1,
+  "region": "stage3",
+  "geometry": {
+    "outer_diameter_mm": 95.0,
+    "center_spacing_mm": 150.0,
+    "line_offset_mm": 75.0,
+    "source": "Official \u7ade\u8d5b\u547d\u9898\u4e0e\u8fd0\u884c.pdf p5 \u56fe3/\u88683, p6 \u56fe5; see manual-dimensions/README.md",
+    "classification": {
+      "outer_diameter_mm": "E formula from R material maximum diameter50 and table3: outer boundary of ring6 is95",
+      "center_spacing_mm": "E symmetric equal-spacing inference from R ring1-to3 span300",
+      "line_offset_mm": "E symmetric inference from R area height150; ONLY actual rectangular long boundaries"
+    },
+    "edge_definition": "95 is outer boundary; outermost black stroke center is93.5 at1.5mm line width; confirm selected contour before scale acceptance"
+  },
+  "camera": {
+    "width": 1920,
+    "height": 1080,
+    "undistort": false,
+    "calibration_file": null
+  },
+  "pose_contract": "DM180, extension0, liftTop; MCU state2 only",
+  "reference": null,
+  "image_to_station_affine": null,
+  "chassis_image_to_motion": null,
+  "search_calibration": null,
+  "calibration_verified": false,
+  "verification_evidence": null,
+  "observation_mode": "cyqm_ring_station",
+  "ring_row_alignment": {
+    "enabled": true,
+    "target_center_px": [
+      992.9757080078125,
+      553.7538970947265
+    ],
+    "target_row_yaw_deg": 0,
+    "target_confirmed_by_user": true,
+    "response_measured_on_vehicle": true,
+    "response_pixel_per_right_forward_ccw": [
+      [
+        0.136083984375,
+        2.4842529296875,
+        7.3781890869140625
+      ],
+      [
+        2.89210205078125,
+        -0.0543548583984375,
+        0.58551025390625
+      ],
+      [
+        0.004547685273412006,
+        -0.004578951260242148,
+        0.5592142975863156
+      ]
+    ],
+    "nominal_image_to_station_affine": [
+      [
+        0.36365066919609434,
+        -0.011578404580947572
+      ],
+      [
+        0.01168540192970625,
+        0.35188959352492266
+      ]
+    ],
+    "measurement_scope": "Measured command response, nominal metric residual; physical placement unverified",
+    "matlab_evidence_sha256": "28a4beb71259f53749fab5f9e6e4debd75ae9fa1fda50dda08c29aeb52917307",
+    "response_evidence_sha256": "9b152968de3fcafffa8789d370621a14e69b2795d66c64ccbb877e7a1d99a764",
+    "physical_placement_verified": false,
+    "yaw_reference": "vehicle_edge",
+    "vehicle_edge_roi_xyxy": [
+      790,
+      951,
+      1071,
+      970
+    ],
+    "integrated_compensation": {
+      "forward_mm": 13,
+      "right_mm": 5,
+      "reference_center_px": [
+        960,
+        540
+      ],
+      "post_alignment_replay": false
+    }
+  }
+}

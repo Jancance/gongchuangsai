@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "description": "视觉组统一调参。null等待现场示教，不造高度，不自动启用硬件。",
+  "tuning": {
+    "dm_deg_s": 300.0,
+    "extension_rpm": 106.0,
+    "lift_rpm": 1846.4,
+    "stepper_accel_rpm_s": 45055.0,
+    "gripper_open_deg": 210.0,
+    "gripper_close_deg": 140.0,
+    "gripper_preclose_deg": 160.0,
+    "preclose_ascent_fraction": 0.5,
+    "release_wait_ms": 50,
+    "stack_height_mm": 60.0,
+    "manual_index_interval_ms": 2000,
+    "action_timeout_ms": 30000,
+    "observation_max_age_ms": 1000,
+    "source_pick_exit_budget_ms": null,
+    "alignment_pixel_tolerance": 4.0,
+    "alignment_position_tolerance_mm": 2.0,
+    "alignment_yaw_tolerance_deg": 1.0,
+    "recommended_body_step_mm": 20.0,
+    "carrier_angles_deg": {"1": 0.0, "2": 120.0, "3": 240.0}
+  },
+  "physical_limits": {
+    "description": "实测/执行器能力，不能与工程推荐值混淆；只在此处更新，不散落main。",
+    "yaw_min_deg": 0.0,
+    "yaw_max_deg": 360.0,
+    "extension_max_mm": 170.0,
+    "lift_descent_max_mm": null
+  },
+  "carrier": {
+    "pick_pose": {"yaw_deg": 37.0, "extension_mm": 0.0, "pick_depth_mm": null},
+    "place_pose": {"yaw_deg": 37.0, "extension_mm": 0.0, "place_depth_mm": null},
+    "note": "37°沿用当前pzq放料工位命令，反向取料及各下降量仍待实物示教，不标为已验。"
+  },
+  "zones": {
+    "source": {
+      "observe_pose": {"yaw_deg": 180.0, "extension_mm": 65.0},
+      "return_to_observe_each_item": true,
+      "native_source_pick_pulses": 118800,
+      "native_carrier_place_pulses": 7200,
+      "note": "原pzq原生动作参数保留，不将虚拟脉冲冒充新区域mm高度。"
+    },
+    "rough": {
+      "observe_pose": {"yaw_deg": 180.0, "extension_mm": 0.0},
+      "positions": {
+        "1": null,
+        "2": {"yaw_deg": 180.0, "extension_mm": 0.0, "place_depth_mm": null, "recover_depth_mm": null},
+        "3": null
+      },
+      "pixel_to_body_mm": null,
+      "pixel_to_body_verified": false,
+      "ring_position_ids_left_to_right": [1, 2, 3],
+      "camera_mirrored_verified": false,
+      "desired_line_angle_deg": 0.0
+    },
+    "storage": {
+      "observe_pose": {"yaw_deg": 180.0, "extension_mm": 0.0},
+      "positions": {"1": null, "2": null, "3": null},
+      "pixel_to_body_mm": null,
+      "pixel_to_body_verified": false,
+      "ring_position_ids_left_to_right": [1, 2, 3],
+      "camera_mirrored_verified": false,
+      "desired_line_angle_deg": 0.0,
+      "note": "复用动作模块，独立保存本区几何/高度，不自动套粗加工参数。"
+    }
+  }
+}

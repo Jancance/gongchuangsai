@@ -1,0 +1,6 @@
+PASS lower: immutable XYZ, fresh 8000p gate, STOP boundaries and DM queue, all-axis completion, stale DM recovery after Z done, X=0 cache ACK and legacy compatibility
+PASS empty handoff: Z then real DM CAN TX confirmation then X, independent axis completion, send failure, STOP and X rejection
+PASS carry/place: 2000p actual rise, DM TX and feedback, Z stop before handoff, stale yaw, post-cache origins unchanged or drift at 10ms, STOP and combined completion
+PASS origin fix: actual incident frames, endpoint window, X=0 tighter endpoint, health and zero speed
+PASS carry rise rate: actual 0x2710 rise, 0x4820 placement and recovery, unchanged X rate and rise acceleration, strict admission by command kind
+PASS carry settle: moving polls wait, both zero checks precede fresh origins; at-zero drift blocks broadcast, unchanged origin permits it; flags, timeout and TX failure remain distinct

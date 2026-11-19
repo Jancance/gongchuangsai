@@ -1,3 +1,4 @@
+#include "../../CHASSIS/USER/source_prepare_math.h"
 #include "dm_can2.h"
 #include "dm_can2_startup_plan.h"
 #include "FreeRTOS.h"
@@ -7,19 +8,38 @@
 volatile uint32_t g_dm_jog_request = 0U;
 volatile uint32_t g_dm_jog_first_fault=0U;
 volatile uint32_t g_dm_startup_go=0U;
+volatile int32_t g_dm_startup_raw_mdeg=0,g_dm_startup_work_mdeg=0;
 volatile uint32_t g_dm_integrated_owner=0U;
-/* åªä¾›äººå·¥çœ‹æŠ¤ç©ºè½½è°ƒè¯•ï¼›ä¸Šç”µé»˜è®¤ä¸å…è®¸ç‚¹ä½è¿åŠ¨ã€‚ */
+volatile uint32_t g_dm_source_smooth=0U,g_dm_source_go=0U;
+volatile uint32_t g_dm_parallel_group_active=0U,g_dm_parallel_group_go=0U;
+volatile uint32_t g_dm_stage2_sync=0U;
+volatile uint32_t g_dm_initial_observe=0U;
+volatile float g_dm_source_accel_deg_s2=90.0f;
+static uint32_t s_source_smooth;
+static float s_source_duration;
+
+/* Ö»¹©ÈË¹¤¿´»¤¿ÕÔØµ÷ÊÔ£»ÉÏµçÄ¬ÈÏ²»ÔÊĞíµãÎ»ÔË¶¯¡£ */
 volatile uint32_t g_dm_point_enable = 0U;
 volatile float g_dm_posvel_speed_deg_s = DM_CAN2_POSVEL_SPEED_DEG_S;
 volatile float g_dm_posvel_latched_speed_deg_s = 0.0F;
 volatile uint32_t g_dm_mode_change_state = 0U;
 volatile uint32_t g_dm_posvel_holding = 0U;
+/* ³£Ê¹ÄÜÖ±¸ÄÄ¿±ê£º³É¹¦´ÎÊıÓë»ØÍË´ÎÊı£¬½ö¹©¹Û²â¡£ */
+volatile uint32_t g_dm_fast_retarget_count = 0U;
+volatile uint32_t g_dm_fast_retarget_refused = 0U;
 static uint32_t s_queued_request = 0U;
+extern uint32_t VehicleArm_Stage3EmptyHandoffActive(void);
+extern uint32_t VehicleArm_Stage3CarryActive(void);
+volatile uint32_t g_dm_stage3_carry_target_feedback;
+extern uint32_t VehicleArm_Stage3EmptyTargetPosted(float goal);
+extern uint32_t VehicleArm_Stage3GroupStopPending(void);
+volatile uint32_t g_dm_stage3_empty_target_sent;
+static uint32_t s_stage3_empty_target_pending;
 static uint32_t s_mode_pending = 0U, s_mode_attempted = 0U;
 static TickType_t s_mode_tick;
 static float s_speed;
 volatile float g_dm_pick_target_deg = 177.833679F;
-/* ç”¨æˆ·æ˜ç¡®å­˜åœ¨åå·®ï¼šä»…ä½œç²—è°ƒåˆå€¼ï¼Œåç»­å¯ç‹¬ç«‹è°ƒæ•´ï¼Œä¸å½“æœ€ç»ˆæ”¾æ–™æ ‡å®šã€‚ */
+/* ÓÃ»§Ã÷È·´æÔÚÆ«²î£º½ö×÷´Öµ÷³õÖµ£¬ºóĞø¿É¶ÀÁ¢µ÷Õû£¬²»µ±×îÖÕ·ÅÁÏ±ê¶¨¡£ */
 volatile float g_dm_place_target_deg = 33.8401489F;
 volatile float g_dm_point_latched_deg = 0.0F;
 volatile uint32_t g_dm_jog_state = 0U;
@@ -42,6 +62,17 @@ static uint32_t s_enable_possible = 0U, s_settled = 0U, s_clean_done = 0U;
 static uint8_t s_mailbox = CAN_TxStatus_NoMailBox;
 static int32_t s_sign = 1;
 static uint32_t s_point_mode = 0U;
+/* ³£Ê¹ÄÜÖ±¸ÄÄ¿±êÓÃµÄÌİĞÎ²Î¿¼¹ì¼££¬±ÜÃâÎ»ÖÃËÙ¶ÈÄ£Ê½Ä©¶ËÖ¸ÊıÅÀĞĞ¡£ */
+static uint32_t s_fast_traj = 0U;
+static float s_fast_dur = 0.0F;
+/* Ö»½ÓÊÜÔ´Çø×¼±¸µÄĞÂÄ¿±êÅÅ¶Ó¡¢ÇÒÒÑ¶ÀÁ¢È·ÈÏÊ§ÄÜµÄÕı³£¹ı¶É¡£ */
+uint32_t DM_CAN2_SourceTransitionPending(void)
+{
+ return ((g_dm_source_smooth && !g_dm_source_go) || (g_dm_parallel_group_active && !g_dm_parallel_group_go)) && g_dm_integrated_owner &&
+    (s_queued_request==4U || s_queued_request==5U) &&
+    g_dm_jog_state==8U && g_dm_jog_result==2U && g_dm_jog_stop_result==1U && !s_enable_possible;
+}
+
 static float s_point_goal;
 static float DM_CAN2_DisplayRelativeDeg(float raw_deg);
 static float s_pmax, s_vmax, s_tmax, s_start, s_target, s_reference;
@@ -61,6 +92,7 @@ static uint32_t JogSend(CanTxMsg *tx, TickType_t now)
     for (i = 0U; i < 3U && CAN_MessagePending(CAN2, CAN_FIFO0); i++)
         CAN_Receive(CAN2, CAN_FIFO0, &discard);
     CAN_ClearFlag(CAN2, CAN_FLAG_FOV0);
+    s_stage3_empty_target_pending=0U;
     s_mailbox = CAN_Transmit(CAN2, tx);
     if (s_mailbox > 2U) return 0U;
     s_pending = 1U;
@@ -70,17 +102,34 @@ static uint32_t JogSend(CanTxMsg *tx, TickType_t now)
     return 1U;
 }
 
+static void JogStop(uint32_t reason, TickType_t now);
+
+static uint32_t JogSendReference(CanTxMsg *tx,TickType_t now,float reference)
+{
+    if((VehicleArm_Stage3EmptyHandoffActive() || VehicleArm_Stage3CarryActive()) &&
+       VehicleArm_Stage3GroupStopPending())
+    {JogStop(2U,now);return 1U;}
+    if(!JogSend(tx,now))return 0U;
+    /* Ô¤ÖÃ¡¢Ê¹ÄÜÓë±£³Öµ±Ç°Î»ÖÃ¾ù²»ËãÊ×»ØÊÕ»·µÄÕæÊµĞı×ªÄ¿±ê¡£ */
+    if(VehicleArm_Stage3EmptyTargetPosted(s_point_goal) &&
+       (g_dm_jog_state==4U || g_dm_jog_state==5U) &&
+       reference==s_target)s_stage3_empty_target_pending=1U;
+    return 1U;
+}
+
 static void JogStop(uint32_t reason, TickType_t now)
 {
     CanTxMsg tx;
+    if(reason>2U)g_dm_initial_observe=0U;
     if (s_pending && s_mailbox <= 2U) CAN_CancelTransmit(CAN2, s_mailbox);
+    s_stage3_empty_target_pending=0U;
     s_pending = 0U;
     s_mode_pending = 0U;
     g_dm_posvel_holding = 0U;
     DM_CAN2_CancelRead();
     if(reason>2U && !g_dm_jog_first_fault)g_dm_jog_first_fault=reason;
     g_dm_jog_result = reason;
-    if (!s_enable_possible)
+    if (!s_enable_possible && g_dm_can2_motor_state==0U)
     { g_dm_jog_state = 8U; return; }
     g_dm_jog_state = 6U;
     g_dm_jog_stop_result = 0U;
@@ -89,7 +138,7 @@ static void JogStop(uint32_t reason, TickType_t now)
     { g_dm_jog_stop_result = 2U; g_dm_jog_state = 8U; }
 }
 
-/* è¿”å›0ç»§ç»­ç­‰ã€1æ”¶åˆ°æ–°çŠ¶æ€ã€5å‘é€å¤±è´¥ã€6å›å¤è¶…æ—¶ã€‚ */
+/* ·µ»Ø0¼ÌĞøµÈ¡¢1ÊÕµ½ĞÂ×´Ì¬¡¢5·¢ËÍÊ§°Ü¡¢6»Ø¸´³¬Ê±¡£ */
 static uint32_t JogPoll(TickType_t now)
 {
     uint32_t status, i;
@@ -97,7 +146,14 @@ static uint32_t JogPoll(TickType_t now)
     if (!s_tx_done)
     {
         status = CAN_TransmitStatus(CAN2, s_mailbox);
-        if (status == CAN_TxStatus_Ok) s_tx_done = 1U;
+        if (status == CAN_TxStatus_Ok)
+        {
+            s_tx_done = 1U;
+            if(s_stage3_empty_target_pending &&
+               (VehicleArm_Stage3EmptyHandoffActive() || VehicleArm_Stage3CarryActive()))
+                g_dm_stage3_empty_target_sent=1U;
+            s_stage3_empty_target_pending=0U;
+        }
         else if (status == CAN_TxStatus_Failed ||
                  (TickType_t)(now - s_step) >= pdMS_TO_TICKS(30U)) return 5U;
     }
@@ -122,6 +178,9 @@ static uint32_t JogPoll(TickType_t now)
         g_dm_can2_torque_raw = s_feedback.torque_raw;
         g_dm_can2_feedback_valid = 1U;
         g_dm_can2_feedback_tick = (uint32_t)now;
+        if(VehicleArm_Stage3CarryActive() && g_dm_stage3_empty_target_sent &&
+           VehicleArm_Stage3EmptyTargetPosted(s_point_goal) && s_feedback.motor_state==1U)
+            g_dm_stage3_carry_target_feedback=1U;
         g_dm_jog_current_deg = g_dm_can2_position_deg;
         return 1U;
     }
@@ -135,8 +194,8 @@ static uint32_t JogWithinLimits(void)
     float high = (s_start > s_target ? s_start : s_target) + 2.0F * JOG_RAD_PER_DEG;
     g_dm_jog_tracking_error_deg = (s_reference - s_feedback.position_rad) * JOG_DEG_PER_RAD;
     if (s_feedback.motor_state > 1U) return 7U;
-    /* ä½ç½®é€Ÿåº¦æ¨¡å¼ç›´æ¥å‘æœ€ç»ˆç›®æ ‡ï¼Œä¸èƒ½å†å¥—MITå‚è€ƒè·Ÿéš8åº¦åˆ¤åœã€‚
-     * ç”¨æˆ·æŒ‡å®šå‚è€ƒé€Ÿåº¦300åº¦/ç§’ï¼Œä¸æ²¿ç”¨æ—§ä½é€Ÿ0.5rad/sé˜ˆå€¼ã€‚ */
+    /* Î»ÖÃËÙ¶ÈÄ£Ê½Ö±½Ó·¢×îÖÕÄ¿±ê£¬²»ÄÜÔÙÌ×MIT²Î¿¼¸úËæ8¶ÈÅĞÍ£¡£
+     * ÓÃ»§Ö¸¶¨²Î¿¼ËÙ¶È300¶È/Ãë£¬²»ÑØÓÃ¾ÉµÍËÙ0.5rad/sãĞÖµ¡£ */
     if (s_feedback.position_rad < low || s_feedback.position_rad > high) return 8U;
     return 0U;
 }
@@ -146,10 +205,10 @@ static void JogReference(float reference, TickType_t now)
     CanTxMsg tx;
     s_reference = reference;
     g_dm_jog_reference_deg = reference * JOG_DEG_PER_RAD;
-    if (!DM_CAN2_BuildPosVel(reference, s_speed, &tx) || !JogSend(&tx, now)) JogStop(5U, now);
+    if (!DM_CAN2_BuildPosVel(reference, s_speed, &tx) || !JogSendReference(&tx,now,reference)) JogStop(5U, now);
 }
 
-/* åˆ°ä½åä¿æŒä½¿èƒ½å¹¶å‘¨æœŸé‡å‘ç›®æ ‡ï¼Œå‚è€ƒTower_taskï¼›å…¶ä»–è½´å¯é¡ºåºå·¥ä½œã€‚ */
+/* µ½Î»ºó±£³ÖÊ¹ÄÜ²¢ÖÜÆÚÖØ·¢Ä¿±ê£¬²Î¿¼Tower_task£»ÆäËûÖá¿ÉË³Ğò¹¤×÷¡£ */
 static void JogHoldingService(uint32_t ready, TickType_t now)
 {
     uint32_t reply, reason;
@@ -166,24 +225,140 @@ static void JogHoldingService(uint32_t ready, TickType_t now)
     JogReference(s_target, now);
 }
 
+/* ¹éÒ»»¯ÌİĞÎÎ»ÖÃ±ÈÀı£º0..1 ÄÚ 20% ¼ÓËÙ¡¢60% ÔÈËÙ¡¢20% ¼õËÙ¡£
+ * ·åÖµËÙ¶ÈÑÏ¸ñµÈÓÚ 1/(dur-ta)=1.25*Æ½¾ùËÙ¶È£¬Òò´Ë dur È¡ 1.25*|¦¤|/v Ê±·åÖµ¼´ÎªÏŞËÙ¡£ */
+static float JogTrajFrac(float elapsed, float dur)
+{
+    float ta, va, f;
+    if (!(dur > 0.01F)) return 1.0F;
+    ta = dur * 0.2F;
+    va = 1.0F / (dur - ta);
+    if (elapsed <= 0.0F) return 0.0F;
+    if (elapsed < ta) f = 0.5F * va * elapsed * elapsed;
+    else if (elapsed < dur - ta) f = 0.5F * va * ta * ta + va * (elapsed - ta);
+    else if (elapsed < dur) f = 1.0F - 0.5F * va * (dur - elapsed) * (dur - elapsed);
+    else f = 1.0F;
+    if (f < 0.0F) f = 0.0F;
+    if (f > 1.0F) f = 1.0F;
+    return f;
+}
+/* ³£Ê¹ÄÜÖ±¸ÄÄ¿±ê£ºµç»úÒÑÔÚÎ»ÖÃËÙ¶ÈÄ£Ê½ÇÒ±£³ÖÊ¹ÄÜÊ±£¬Ö±½ÓÓÃ×îĞÂ·´À¡ÖØËãÄ¿±ê²¢ÏÂ·¢µ¥Ö¡£¬
+ * Ê¡µôÃ¿´ÎµãÎ»Ç°µÄÊ§ÄÜ0xFD / µÈĞÂÏÊ¶Á»Ø / Ô¤ÖÃ / Ê¹ÄÜ0xFC ËÄ²½¡£
+ * ÈÎÒ»Ğ£Ñé²»Í¨¹ı·µ»Ø0£¬µ÷ÓÃ·½»ØÍËµ½Ô­Ê§ÄÜ-Ê¹ÄÜË³Ğò£¬²»Ìø¹ıÈÎºÎÔ­ÓĞĞ£Ñé¡£ */
+/* Only the exact first180/65 owner may use the user-approved -5 start.
+ * Later commands retain -2; raw range, direction and motion checks stay intact. */
+static uint32_t JogPointStartAllowed(float work, float goal)
+{
+    float lower=-2.0F;
+    if(g_dm_initial_observe && g_dm_stage2_sync && g_dm_parallel_group_active &&
+       !g_dm_parallel_group_go && goal==180.0F)lower=SOURCE_INITIAL_DM_START_MIN_DEG;
+    return work>=lower && work<=(g_dm_parallel_group_active?272.0F:182.0F);
+}
+static uint32_t JogFastRetarget(uint32_t request, TickType_t now)
+{
+    CanTxMsg tx;
+    float goal, current_work_deg, delta_deg;
+    if (g_dm_point_enable != 1U) { g_dm_fast_retarget_refused++; return 0U; }
+    if (!(g_dm_posvel_speed_deg_s > 0.0F && g_dm_posvel_speed_deg_s <= DM_CAN2_POSVEL_SPEED_DEG_S))
+    { g_dm_fast_retarget_refused++; return 0U; }
+    if (!g_dm_can2_feedback_valid ||
+        (TickType_t)(now - (TickType_t)g_dm_can2_feedback_tick) > pdMS_TO_TICKS(100U))
+    { g_dm_fast_retarget_refused++; return 0U; }
+    if (g_dm_can2_state != 4U || g_dm_can2_result != 1U ||
+        g_dm_can2_ctrl_mode != DM_CAN2_MODE || g_dm_can2_motor_state != 1U)
+    { g_dm_fast_retarget_refused++; return 0U; }
+    if (CAN2->ESR & CAN_ESR_BOFF) { g_dm_fast_retarget_refused++; return 0U; }
+    if (JogAbs(g_dm_can2_velocity_rad_s) > 0.5F) { g_dm_fast_retarget_refused++; return 0U; }
+    goal = request == 6U ? 0.0F : (request == 4U ? g_dm_pick_target_deg : g_dm_place_target_deg);
+    if (!(goal >= 0.0F && goal <= (g_dm_parallel_group_active ? 270.0F : 180.0F)))
+    { g_dm_fast_retarget_refused++; return 0U; }
+    s_pmax = g_dm_can2_pmax;
+    current_work_deg = DM_CAN2_DisplayRelativeDeg(g_dm_can2_position_rad * JOG_DEG_PER_RAD);
+    delta_deg = goal - current_work_deg;
+    if (!JogPointStartAllowed(current_work_deg,goal))
+    { g_dm_fast_retarget_refused++; return 0U; }
+    if (request == 4U && delta_deg < -0.1F) { g_dm_fast_retarget_refused++; return 0U; }
+    if (request == 5U && delta_deg > 0.1F) { g_dm_fast_retarget_refused++; return 0U; }
+    s_start = g_dm_can2_position_rad;
+    s_target = s_start + delta_deg * JOG_RAD_PER_DEG;
+    if (!(s_start > -s_pmax && s_start < s_pmax && s_target > -s_pmax && s_target < s_pmax))
+    { g_dm_fast_retarget_refused++; return 0U; }
+    g_dm_posvel_latched_speed_deg_s = g_dm_posvel_speed_deg_s;
+    s_speed = g_dm_posvel_latched_speed_deg_s * JOG_RAD_PER_DEG;
+    s_point_mode = request;
+    s_point_goal = goal;
+    g_dm_point_latched_deg = goal;
+    s_source_smooth = 0U;
+    /* ÌİĞÎ²Î¿¼£º·åÖµËÙ¶È±ØĞëÁô³ö¸ú×ÙÓàÁ¿¡£
+     * ·åÖµ = ¦¤/(dur*0.8)£¬È¡·åÖµ=0.7*ÏŞËÙ -> dur = ¦¤/(0.56*v)£»´ËÊ±µç»úÄÜ¸úÉÏ£¬Ä©¶ËÎŞ´óÎó²î¿ÉÅÀ¡£
+     * Ê×°æÈ¡·åÖµ=ÏŞËÙ(300¡ã/s)Ê±µç»ú×·²»ÉÏ£¬ÖÍºó¸ü´ó·´¶ø¸üÂı(1646->1927ms)£¬¹Ê¸ÄÎª0.7ÏŞËÙ¡£ */
+    /* Êµ²â£ºÎ»ÖÃËÙ¶ÈÄ£Ê½µÄÓĞĞ§±ÈÀıÔöÒæ Kp¡Ö5/s(¦Ó¡Ö200ms)£¬ÈÎºÎ²Î¿¼Ğ±ÆÂ¶¼×·²»ÉÏ¡ª¡ª
+     * ·åÖµ=ÏŞËÙÊ± 1646->1927ms£¬·åÖµ=0.7ÏŞËÙÊ± 1646->2083ms£¬¾ù¸üÂı¡£
+     * Ö±½ÓÏÂ·¢×îÖÕÄ¿±ê¶Ô¸Ã¿ØÖÆÆ÷ÒÑÊÇ×îÓÅ(´øËÙ¶ÈÏŞ·ùµÄbang-bang)£¬¹Ê½ûÓÃÌİĞÎ¡£
+     * ÒªÕæÕıÏûµôÄ©¶ËÅÀĞĞÖ»ÄÜ»» MIT Ä£Ê½´ø kp/kd¡£ */
+    s_fast_dur = 0.0F;
+    s_fast_traj = 0U;
+    s_reference = s_start;
+    g_dm_jog_reference_deg = s_start * JOG_DEG_PER_RAD;
+    g_dm_jog_start_deg = s_start * JOG_DEG_PER_RAD;
+    g_dm_jog_current_deg = g_dm_jog_start_deg;
+    g_dm_jog_target_deg = s_target * JOG_DEG_PER_RAD;
+    g_dm_jog_tracking_error_deg = 0.0F;
+    g_dm_jog_result = 0U;
+    g_dm_jog_stop_result = 0U;
+    g_dm_jog_elapsed_ms = 0U;
+    g_dm_jog_first_fault = 0U;
+    s_settled = 0U;
+    s_pending = 0U;
+    s_enable_possible = 0U;
+    g_dm_posvel_holding = 0U;
+    s_move_started = now;
+    s_last_service = now;
+    g_dm_jog_state = 4U;
+    g_dm_fast_retarget_count++;
+    /* Stage2 caches the real goal; existing state3 holds the current position. */
+    if(g_dm_stage2_sync && g_dm_parallel_group_active && !g_dm_parallel_group_go){
+        s_enable_possible=1U;g_dm_jog_state=3U;JogReference(s_start,now);return 1U;
+    }
+    if (!DM_CAN2_BuildPosVel(s_target, s_speed, &tx) || !JogSendReference(&tx,now,s_target))
+    { JogStop(5U, now); return 1U; }
+    return 1U;
+}
 static void JogService(uint32_t ready, uint32_t busy)
 {
     TickType_t now = xTaskGetTickCount();
     uint32_t request = g_dm_jog_request, reply, reason;
+    uint32_t loaded_stop = VehicleArm_Stage3GroupStopPending();
     float current_work_deg, delta_deg;
     CanTxMsg tx;
     g_dm_jog_request = 0U;
-    if (request == 3U) s_queued_request = 0U;
+    /* CAN2 ÏÈÓÚ»ØÊÕ×éÔËĞĞ£»STOP ÏÈÇåÄ¿±ê£¬ÔÙ½øÈëÔ­Í£»úÁ÷³Ì¡£ */
+    if (loaded_stop)
+    {
+        if (g_dm_jog_state == 6U) {s_queued_request = 0U;request = 0U;}
+        else if (request == 4U || request == 5U || s_queued_request || DM_CAN2_JogIsBusy())
+            request = 3U;
+    }
+    if (request == 3U) {s_queued_request = 0U;g_dm_initial_observe=0U;}
     if (request == 0U && s_queued_request && !DM_CAN2_JogIsBusy() && !s_enable_possible)
     { request = s_queued_request; s_queued_request = 0U; }
-    if (request == 3U && (DM_CAN2_JogIsBusy() || s_enable_possible))
-    { s_clean_done = 0U; JogStop(2U, now); return; }
+    if (request == 3U && (loaded_stop || DM_CAN2_JogIsBusy() || s_enable_possible || g_dm_posvel_holding || g_dm_can2_motor_state==1U))
+    {
+        s_clean_done = 0U; JogStop(2U, now);
+        /* ÈôÄ¿±êÎ´·¢ËÍ£¬Ô­ STOP ¿ÉÖ±½Ó½áÊø£»ÈÔÒªÇóµ±Ç°ÕæÊµÊ§ÄÜ·´À¡¡£ */
+        if (loaded_stop && !s_enable_possible && g_dm_jog_state==8U &&
+            g_dm_can2_feedback_valid && g_dm_can2_motor_state==0U &&
+            (TickType_t)(now-g_dm_can2_feedback_tick)<pdMS_TO_TICKS(100U))g_dm_jog_stop_result=1U;
+        return;
+    }
     if (g_dm_posvel_holding)
     {
         if (request == 1U || request == 2U || request == 4U || request == 5U || request == 6U)
         {
             if (!ready || busy) { g_dm_jog_result = 3U; return; }
-            /* æ–°ç›®æ ‡æ²¿ç”¨å…ˆå¤±èƒ½/è¯»å½“å‰ä½ç½®/é¢„ç½®/ä½¿èƒ½é¡ºåºï¼Œä¸åœ¨å¸¦ç”µçŠ¶æ€åˆ‡æ¨¡å¼ã€‚ */
+            /* ĞÂÄ¿±êÑØÓÃÏÈÊ§ÄÜ/¶Áµ±Ç°Î»ÖÃ/Ô¤ÖÃ/Ê¹ÄÜË³Ğò£¬²»ÔÚ´øµç×´Ì¬ÇĞÄ£Ê½¡£ */
+            /* ³£Ê¹ÄÜÖ±¸ÄÄ¿±êÓÅÏÈ£»Ìõ¼ş²»Âú×ã²ÅÍË»ØÔ­Ê§ÄÜ/Ê¹ÄÜË³Ğò¡£ */
+            if ((request == 4U || request == 5U || request == 6U) && JogFastRetarget(request, now)) return;
             s_queued_request = request; JogStop(2U, now); return;
         }
         JogHoldingService(ready, now); return;
@@ -199,13 +374,14 @@ static void JogService(uint32_t ready, uint32_t busy)
         g_dm_posvel_latched_speed_deg_s = g_dm_posvel_speed_deg_s;
         s_speed = g_dm_posvel_latched_speed_deg_s * JOG_RAD_PER_DEG;
         s_point_mode = (request == 4U || request == 5U || request == 6U) ? request : 0U;
+        s_source_smooth=(g_dm_source_smooth && (request==4U || request==5U))?1U:0U;
         if (s_point_mode)
         {
             if (g_dm_point_enable != 1U)
             { g_dm_jog_state = 8U; g_dm_jog_result = 3U; return; }
             s_point_goal = request == 6U ? 0.0F : (request == 4U ? g_dm_pick_target_deg : g_dm_place_target_deg);
-            /* 0åˆ°180åº¦ä»…ä¸ºæœ¬è½®è°ƒè¯•å€™é€‰åŒºï¼Œä¸æ˜¯å®æµ‹å®‰å…¨æœºæ¢°é™ä½ã€‚å«NaN/Infæ‹’ç»ã€‚ */
-            if (!(s_point_goal >= 0.0F && s_point_goal <= 180.0F))
+            /* 0µ½180¶È½öÎª±¾ÂÖµ÷ÊÔºòÑ¡Çø£¬²»ÊÇÊµ²â°²È«»úĞµÏŞÎ»¡£º¬NaN/Inf¾Ü¾ø¡£ */
+            if (!(s_point_goal >= 0.0F && s_point_goal <= (g_dm_parallel_group_active?270.0F:180.0F)))
             { g_dm_jog_state = 8U; g_dm_jog_result = 13U; return; }
             g_dm_point_latched_deg = s_point_goal;
         }
@@ -225,12 +401,12 @@ static void JogService(uint32_t ready, uint32_t busy)
         g_dm_can2_read_request = 2U;
         return;
     }
-    /* å¿™æ—¶æ–°å¯åŠ¨è¯·æ±‚ç›´æ¥æ¶ˆè´¹ï¼Œä¸æ’é˜Ÿã€ä¸å»¶é•¿åŠ¨ä½œæ—¶é—´ï¼›ç‚¹ä½å‚æ•°å·²é”å­˜ã€‚ */
+    /* Ã¦Ê±ĞÂÆô¶¯ÇëÇóÖ±½ÓÏû·Ñ£¬²»ÅÅ¶Ó¡¢²»ÑÓ³¤¶¯×÷Ê±¼ä£»µãÎ»²ÎÊıÒÑËø´æ¡£ */
     if (g_dm_jog_state != 6U)
     {
         if (!ready || busy || (s_point_mode && g_dm_point_enable != 1U))
         { JogStop(3U, now); return; }
-        /* ç”¨æˆ·æŒ‡å®šï¼šåŠ¨ä½œ/åˆ°ä½ç­‰å¾…ä¸è®¾æ€»æœŸé™ï¼Œæ˜¾å¼åœæ­¢ä»å¯ä¸­æ­¢ã€‚ */
+        /* ÓÃ»§Ö¸¶¨£º¶¯×÷/µ½Î»µÈ´ı²»Éè×ÜÆÚÏŞ£¬ÏÔÊ½Í£Ö¹ÈÔ¿ÉÖĞÖ¹¡£ */
         if (g_dm_jog_state > 1U &&
             (TickType_t)(now - s_last_service) > pdMS_TO_TICKS((s_point_mode==6U || g_dm_integrated_owner)?100U:50U))
         { JogStop(12U, now); return; }
@@ -278,7 +454,7 @@ static void JogService(uint32_t ready, uint32_t busy)
         if (g_dm_can2_ctrl_mode != DM_CAN2_MODE)
         {
             if (s_mode_attempted) { g_dm_mode_change_state = 4U; JogStop(15U, now); return; }
-            /* å½“å‰æ–°é²œçŠ¶æ€å·²ç¡®è®¤å¤±èƒ½ä¸”é›¶é€Ÿï¼Œåªåˆ‡RAMæ¨¡å¼ï¼Œä¸ä¿å­˜Flash/é›¶ç‚¹ã€‚ */
+            /* µ±Ç°ĞÂÏÊ×´Ì¬ÒÑÈ·ÈÏÊ§ÄÜÇÒÁãËÙ£¬Ö»ÇĞRAMÄ£Ê½£¬²»±£´æFlash/Áãµã¡£ */
             s_mode_attempted = 1U; g_dm_mode_change_state = 1U;
             DM_CAN2_CancelRead();
             if (!DM_CAN2_BuildMode2(&tx) || !JogSend(&tx, now)) { JogStop(5U, now); return; }
@@ -291,20 +467,22 @@ static void JogService(uint32_t ready, uint32_t busy)
         s_start = g_dm_can2_position_rad;
         if (s_point_mode)
         {
-            /* ä»æœ¬æ¬¡æ–°é²œåŸå§‹åé¦ˆé€‰åŒä¸€å·¥ä½œåˆ†æ”¯ï¼Œæ²¿æœ¬è½®äººå·¥ç¡®è®¤çš„åŠåœˆåŒºåŸŸè®¡ç®—ã€‚
-             * ä¸èƒ½ç”¨ä¿å­˜çš„rawè§’ç›´æ¥ä¸‹å‘ï¼Œä¹Ÿä¸èƒ½æ®æ­¤æ¨æ–­æ‰ç”µè½¬è½´åçš„çº¿æŸåœˆæ•°ã€‚
-             * èµ·ç‚¹ç•™2åº¦è°ƒè¯•ä½™é‡ï¼Œ4ä»…é€†æ—¶é’ˆ/è¿‘åŒç‚¹ï¼Œ5ä»…é¡ºæ—¶é’ˆ/è¿‘åŒç‚¹ã€‚ */
+            /* ´Ó±¾´ÎĞÂÏÊÔ­Ê¼·´À¡Ñ¡Í¬Ò»¹¤×÷·ÖÖ§£¬ÑØ±¾ÂÖÈË¹¤È·ÈÏµÄ°ëÈ¦ÇøÓò¼ÆËã¡£
+             * ²»ÄÜÓÃ±£´æµÄraw½ÇÖ±½ÓÏÂ·¢£¬Ò²²»ÄÜ¾İ´ËÍÆ¶Ïµôµç×ªÖáºóµÄÏßÊøÈ¦Êı¡£
+             * ÆğµãÁô2¶Èµ÷ÊÔÓàÁ¿£¬4½öÄæÊ±Õë/½üÍ¬µã£¬5½öË³Ê±Õë/½üÍ¬µã¡£ */
             if(s_point_mode==6U)
             {
-                /* è¯·æ±‚6åªç”±æŒ‰é”®å¯åŠ¨æµç¨‹å‘èµ·ï¼Œé€†æ—¶é’ˆåˆ°æ˜¾ç¤ºé›¶ï¼Œä¸èµ°æ—§é¡ºæ—¶é’ˆæ”¾æ–™è·¯å¾„ã€‚ */
-                if(!DM_CAN2_StartupCcwDelta(s_start*JOG_DEG_PER_RAD,DM_CAN2_LEFT_ZERO_DEG,&delta_deg))
+                /* ÇëÇó6Ö»ÓÉ°´¼üÆô¶¯Á÷³Ì·¢Æğ£¬ÄæÊ±Õëµ½ÏÔÊ¾Áã£¬²»×ß¾ÉË³Ê±Õë·ÅÁÏÂ·¾¶¡£ */
+                {float raw=s_start*JOG_DEG_PER_RAD;float work=fmodf(raw-DM_CAN2_LEFT_ZERO_DEG,360.0f);if(work<0)work+=360;
+                 g_dm_startup_raw_mdeg=(int32_t)(raw*1000.0f);g_dm_startup_work_mdeg=(int32_t)(work*1000.0f);}
+                if(!DM_CAN2_StartupCwDelta(s_start*JOG_DEG_PER_RAD,DM_CAN2_LEFT_ZERO_DEG,&delta_deg))
                 {JogStop(14U,now);return;}
             }
             else
             {
             current_work_deg = DM_CAN2_DisplayRelativeDeg(s_start * JOG_DEG_PER_RAD);
             delta_deg = s_point_goal - current_work_deg;
-            if (!(current_work_deg >= -2.0F && current_work_deg <= 182.0F) ||
+            if (!JogPointStartAllowed(current_work_deg,s_point_goal) ||
                 (s_point_mode == 4U && delta_deg < -0.1F) ||
                 (s_point_mode == 5U && delta_deg > 0.1F))
             { JogStop(14U, now); return; }
@@ -314,10 +492,15 @@ static void JogService(uint32_t ready, uint32_t busy)
         else s_target = s_start + (float)s_sign * DM_CAN2_JOG_DEG * JOG_RAD_PER_DEG;
         if (!(s_start > -s_pmax && s_start < s_pmax && s_target > -s_pmax && s_target < s_pmax))
         { JogStop(11U, now); return; }
+        if(s_source_smooth){
+            s_source_duration=SourcePrep_Duration((s_target-s_start)*JOG_DEG_PER_RAD,
+                g_dm_posvel_latched_speed_deg_s,g_dm_source_accel_deg_s2);
+            if(!(s_source_duration>0)){JogStop(13U,now);return;}
+        }
         g_dm_jog_start_deg = s_start * JOG_DEG_PER_RAD;
         g_dm_jog_target_deg = s_target * JOG_DEG_PER_RAD;
         g_dm_jog_current_deg = g_dm_jog_start_deg;
-        /* å…ˆé¢„ç½®æ–°è¯»åˆ°çš„å½“å‰ä½ç½®ï¼Œå†ä½¿èƒ½ï¼›ä¸å‘é€0åº¦ç›®æ ‡ã€‚ */
+        /* ÏÈÔ¤ÖÃĞÂ¶Áµ½µÄµ±Ç°Î»ÖÃ£¬ÔÙÊ¹ÄÜ£»²»·¢ËÍ0¶ÈÄ¿±ê¡£ */
         s_enable_possible = 1U;
         g_dm_jog_state = 2U;
         s_reference = s_start;
@@ -339,6 +522,7 @@ static void JogService(uint32_t ready, uint32_t busy)
         else if (reply >= 5U || (TickType_t)(now - s_step) > pdMS_TO_TICKS(200U))
         {
             if (s_pending && s_mailbox <= 2U) CAN_CancelTransmit(CAN2, s_mailbox);
+    s_stage3_empty_target_pending=0U;
             s_pending = 0U;
             g_dm_jog_stop_result = 2U;
             if (g_dm_jog_result == 1U) g_dm_jog_result = (reply == 5U) ? 5U : 6U;
@@ -363,6 +547,8 @@ static void JogService(uint32_t ready, uint32_t busy)
     {
         if (s_feedback.motor_state != 1U) { JogStop(7U, now); return; }
         if(s_point_mode==6U && !g_dm_startup_go){JogReference(s_start,now);return;}
+        if(s_source_smooth && !g_dm_source_go){JogReference(s_start,now);return;}
+        if(g_dm_parallel_group_active && !g_dm_parallel_group_go){JogReference(s_start,now);return;}
         s_move_started = now;
         g_dm_jog_state = 4U;
     }
@@ -372,18 +558,27 @@ static void JogService(uint32_t ready, uint32_t busy)
         if (JogAbs(s_target - s_feedback.position_rad) <= 3.0F * JOG_RAD_PER_DEG &&
             JogAbs(s_feedback.velocity_rad_s) <= 0.035F) s_settled++;
         else s_settled = 0U;
-        if (s_settled >= 15U)
+        if (s_settled >= 15U && (!s_source_smooth || (float)g_dm_jog_elapsed_ms*.001f>=s_source_duration))
         {
-            /* å®Œæˆå¹¶ä¿æŒï¼ŒçŠ¶æ€7ä¸å†ä»£è¡¨å¤±èƒ½ï¼›åœæ­¢å›å¤å•ç‹¬ç”±request3å–å¾—ã€‚ */
+            /* Íê³É²¢±£³Ö£¬×´Ì¬7²»ÔÙ´ú±íÊ§ÄÜ£»Í£Ö¹»Ø¸´µ¥¶ÀÓÉrequest3È¡µÃ¡£ */
             g_dm_jog_state = 7U; g_dm_jog_result = 1U;
             g_dm_posvel_holding = 1U; JogReference(s_target, now); return;
         }
-        /* ä¸å‚è€ƒä»£ç ä¸€è‡´æŒç»­å‘æœ€ç»ˆä½ç½®å’Œé€Ÿåº¦ä¸Šé™ï¼Œæœªåˆ°ä½æŒç»­ç­‰å¾…ã€‚ */
-        JogReference(s_target, now);
+        /* Êµ²â£º°ÑÔË¶¯ÖĞµÄÉèµãÖØ·¢½µµ½ 24ms£¨ÎŞÂÛÊÇ·ñÏŞÖÆÔÚÉı½µÔË¶¯ÆÚ¼ä£©¶¼»áÈÃ DM µãÎ»ÎŞ·¨ÊÕÁ²/
+         * SPF ×é³¬Ê±£¬¹Ê»Ö¸´ 12ms Ô­½ÚÅÄ£¬²»ÔÙ×ö·ÖÆµ¡£ */
+        if(s_fast_traj){
+            float el=(float)g_dm_jog_elapsed_ms*.001f;
+            if(el<s_fast_dur){JogReference(s_start+(s_target-s_start)*JogTrajFrac(el,s_fast_dur),now);return;}
+            s_fast_traj=0U;
+        }
+        if(s_source_smooth){
+            float ratio=(float)g_dm_jog_elapsed_ms*.001f/s_source_duration;
+            JogReference(s_start+(s_target-s_start)*SourcePrep_Smooth(ratio),now);
+        }else JogReference(s_target,now);
     }
 }
 
-/* åŒåœˆå·¥ä½œåˆ†æ”¯ï¼šæ˜¾ç¤ºä½¿ç”¨ï¼›äººå·¥å‡†å…¥çš„ç‚¹ä½è°ƒè¯•å†ç»“åˆæ–°é²œåŸå§‹è§’åŠèŒƒå›´/æ–¹å‘æ£€æŸ¥ä½¿ç”¨ã€‚ */
+/* Í¬È¦¹¤×÷·ÖÖ§£ºÏÔÊ¾Ê¹ÓÃ£»ÈË¹¤×¼ÈëµÄµãÎ»µ÷ÊÔÔÙ½áºÏĞÂÏÊÔ­Ê¼½Ç¼°·¶Î§/·½Ïò¼ì²éÊ¹ÓÃ¡£ */
 static float DM_CAN2_DisplayRelativeDeg(float raw_deg)
 {
     float relative = fmodf(raw_deg - DM_CAN2_LEFT_ZERO_DEG + 90.0F, 360.0F);
@@ -397,7 +592,7 @@ void DM_CAN2_ModuleService(uint32_t ready, uint32_t busy)
         g_dm_can2_read_request = 0U;
     else DM_CAN2_Service(ready, busy);
     JogService(ready, busy);
-    /* ä¸åªè¯»/è¯•è½¬çš„æœ€æ–°åé¦ˆç»Ÿä¸€æ›´æ–°ï¼›ä»…æ˜¾ç¤ºï¼Œä¸è¿›å…¥è¿åŠ¨ç›®æ ‡æˆ–é™å¹…ã€‚ */
+    /* ÓëÖ»¶Á/ÊÔ×ªµÄ×îĞÂ·´À¡Í³Ò»¸üĞÂ£»½öÏÔÊ¾£¬²»½øÈëÔË¶¯Ä¿±ê»òÏŞ·ù¡£ */
     if (g_dm_can2_feedback_valid == 1U)
         g_dm_can2_logical_position_deg = DM_CAN2_DisplayRelativeDeg(g_dm_can2_position_deg);
     else

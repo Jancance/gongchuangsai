@@ -15,5 +15,6 @@ uint32_t FieldMap_Park(uint32_t id,FieldPoint *point);
 uint32_t FieldMap_Stage1(FieldStage1Plan *plan);
 /* 只作当前静态图的轴向扫掠检查，不代表动态障碍/完整赛道验收。 */
 uint32_t FieldMap_AxisClear(FieldPoint a,FieldPoint b,float half_mm);
+uint32_t FieldMap_SweptBoxClear(FieldPoint a,FieldPoint b,float half_mm);
 uint32_t FieldMap_TaskCodeValid(const char *code);
 #endif

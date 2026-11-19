@@ -1,0 +1,32 @@
+{
+  "p1_p2_blockers": 0,
+  "review_scope": "Independent narrow review of PC13 standalone intake and frozen Stage3 preset; no hardware actions.",
+  "source_freeze_confirmed": true,
+  "source_inventory_count": 2053,
+  "changed_source_sha256": {
+    "CHASSIS/USER/stage3_cycle.inc": "4ca9212a5f14b7a080f9ef46438e652da63333cb69b61968d5dd57697ed3b9d5",
+    "USER/vehicle_parameters.h": "a6fd15c856a112505a9ca54449f492d9a8c5f4ed1b877a5ebe79229e53709e1b"
+  },
+  "parent_manifest_sha256": "54c6b2c93d943a3bd9692087a47e7d3e6307e26a87934960297e8d9e4daf48b7",
+  "rebuilt_axf_sha256": {
+    "Vehicle_LiftRuler": "b93a54262649fe603f2d810227f87f7e64f012dc82976cf50685b8725b89e772",
+    "Vehicle_LiftRuler_Offline": "6b236402bae43734dc68c8f55a7e44dcfbe84e5a42006975ba5756de6caafcbc"
+  },
+  "build_log_sha256": {
+    "Vehicle_LiftRuler": "0c780ec28f5cafd19999de61a93e242644c47c7aaa6fde9b24059236f490eade",
+    "Vehicle_LiftRuler_Offline": "272a79b5058f17dff63ff2772349d6f52aa8bdf3a41524cc0a01f6cee90cdb22"
+  },
+  "fixture_log_sha256": "72866714db10aabb5cd028d9688a214baf5a55681002f2306e5035f231418ab0",
+  "profiles_unchanged_sha256": {
+    "place-only": "fe0ceabba138aca9366c1bee476d488f64de6cb58f2436b0082ebae9e68b80d4",
+    "recover": "31d1e5b40114b115baad4de220f8f6d9c3d2ea81995da802ef57b65a1b90e0ec"
+  },
+  "model_report_sha256": "caf30a569513647303240ab0c8cac963c1456623294b0e2ca7f50e38f05621a0",
+  "pi_startup_evidence_sha256": "31c504ebaf0e154c4b7b9094a5e9502e27912743c22a37d68c0d1ac4bc7818c1",
+  "findings": [
+    "Existing PC13 dispatcher and debounce are unchanged. A button event in idle or completed submits request 1; active stages submit 9; fault and pending STOP are preserved. Invalid preset or existing platform admission rejects before starting. Cold boot initializes no Stage3 motion request.",
+    "Cold-start mode 1 configuration includes exact slots and colors [2,1,5], ring order [2,1,3], carrier/observation, placement and recovery depths, and nonzero task ID with batch 1. Float32 values match the locked profile.",
+    "The motion flow from post-admission dispatch onward is byte-for-byte unchanged, including 2 mm/1 degree alignment, X/Z handoff 40 mm before DM, the tray-release dwell, and final zero. Pi evidence confirms one camera and one serial owner and existing forward 13/right 5 compensation."
+  ],
+  "physical_acceptance": false
+}

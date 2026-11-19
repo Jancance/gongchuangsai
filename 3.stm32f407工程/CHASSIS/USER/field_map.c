@@ -21,14 +21,13 @@ uint32_t FieldMap_Park(uint32_t id,FieldPoint *p)
     else if(id==22U) {p->x_mm=FIELD_STORAGE_X_MM;p->y_mm=FIELD_STORAGE_Y_MM;}
     return inside(*p);
 }
-uint32_t FieldMap_AxisClear(FieldPoint a,FieldPoint b,float half)
+uint32_t FieldMap_SweptBoxClear(FieldPoint a,FieldPoint b,float half)
 {
     float lo_x,hi_x,lo_y,hi_y;uint32_t i,j;
     /* 四块黄色区：450mm方形，中央十字通道400mm；只是名义尺寸。 */
     static const float lows[2]={550.0f,1400.0f};
     static const float highs[2]={1000.0f,1850.0f};
-    if(!inside(a) || !inside(b) || !(half>0.0f && half<=150.0f) ||
-        (a.x_mm!=b.x_mm && a.y_mm!=b.y_mm)) return 0U;
+    if(!inside(a) || !inside(b) || !(half>0.0f && half<=150.0f)) return 0U;
     lo_x=(a.x_mm<b.x_mm?a.x_mm:b.x_mm)-half;
     hi_x=(a.x_mm>b.x_mm?a.x_mm:b.x_mm)+half;
     lo_y=(a.y_mm<b.y_mm?a.y_mm:b.y_mm)-half;
@@ -38,6 +37,8 @@ uint32_t FieldMap_AxisClear(FieldPoint a,FieldPoint b,float half)
         if(lo_x<=highs[i] && hi_x>=lows[i] && lo_y<=highs[j] && hi_y>=lows[j]) return 0U;
     return 1U;
 }
+uint32_t FieldMap_AxisClear(FieldPoint a,FieldPoint b,float half)
+{return (a.x_mm==b.x_mm || a.y_mm==b.y_mm) && FieldMap_SweptBoxClear(a,b,half);}
 static uint32_t hash_word(uint32_t hash,uint32_t word)
 { uint32_t i;for(i=0U;i<4U;i++){hash^=(word>>(8U*i))&255U;hash*=16777619U;}return hash; }
 uint32_t FieldMap_Stage1(FieldStage1Plan *p)

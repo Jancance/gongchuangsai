@@ -34,4 +34,8 @@ uint32_t CAN1_SetEmmSpeedRaw(uint8_t address, uint8_t direction,
                              CanRxMsg *reply);
 uint32_t CAN1_StageEmmSpeedRaw(uint8_t address,uint8_t direction,uint16_t speed_raw,
     uint16_t acceleration,CanRxMsg *reply);
+uint32_t CAN1_ReadExtensionConfiguration(uint8_t out[36]);
+uint32_t CAN1_ApplyExtensionClog3000(uint8_t before[36],uint8_t after[36],uint32_t *ack);
+uint32_t CAN1_HoldWheelCurrentPosition(uint8_t address,CanRxMsg *reply);
+uint32_t CAN1_StartQueuedSourceAxes(void);
 #endif

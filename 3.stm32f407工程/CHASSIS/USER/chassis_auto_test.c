@@ -1,8 +1,10 @@
+#include "source_body_step.h"
 #include "chassis_auto_test.h"
 #include "startup_axes.h"
 #include "chassis_direction_guard.h"
 #include "zdt_emm_protocol.h"
 #include "motion_distance_limits.h"
+#include "stage1_blend.h"
 #include "chassis_kinematics.h"
 #include "can.h"
 #include "safety.h"
@@ -50,7 +52,7 @@ static void Auto_OdometrySample(uint32_t wheel,uint32_t result,uint32_t sign,uin
 static TickType_t s_position_tick[4];
 static uint32_t s_position_valid, s_position_due;
 static ChassisPositionEndpoints s_endpoints[CHASSIS_POSITION_ENDPOINT_CAPACITY];
-static uint32_t s_endpoint_count, s_endpoint_index;
+static uint32_t s_endpoint_count, s_endpoint_index, s_endpoint_head;
 /* 有界历史仅供同一时刻的位置比较，不外推，不延长400ms时效。 */
 #define AUTO_POSITION_HISTORY 16U
 typedef struct { uint32_t ms; float mm; } AutoPositionPoint;
@@ -97,6 +99,13 @@ static uint32_t Auto_PositionAt(uint32_t wheel, uint32_t ms, float *mm)
     }
     return 0U;
 }
+/* Diagnostic history must never exhaust motion admission. Only terminal records
+ * may be recycled; the active encoder reference keeps its physical slot. */
+static uint32_t Auto_EndpointAvailable(void)
+{
+    if(s_endpoint_count < CHASSIS_POSITION_ENDPOINT_CAPACITY) return 1U;
+    return s_endpoints[s_endpoint_head].outcome==1U || s_endpoints[s_endpoint_head].outcome==2U;
+}
 static void Auto_PositionReset(uint32_t session)
 {
     ChassisPositionSnapshot empty = {0};
@@ -106,20 +115,36 @@ static void Auto_PositionReset(uint32_t session)
     s_left_trim_tick=s_left_trim_valid=s_left_trim_rpm=0U;s_left_trim_mm=0.0f;
     for(i=0U;i<4U;i++) s_position_trim_mm[i]=0.0f;
     for (i=0U;i<4U;i++) s_position_history_count[i]=s_position_history_head[i]=0U;
-    if (session == 0U) s_endpoint_count = 0U;
+    if (session == 0U) s_endpoint_count = s_endpoint_head = 0U;
     s_endpoint_index = CHASSIS_POSITION_ENDPOINT_CAPACITY;
-    if (session && s_endpoint_count < CHASSIS_POSITION_ENDPOINT_CAPACITY)
+    if (session && Auto_EndpointAvailable())
     {
         ChassisPositionEndpoints endpoint = {0};
+        uint32_t slot;
         endpoint.session = session;
         endpoint.translation_mode = 4U; /* 3表示非平移/尚未指定。 */
-        s_endpoint_index = s_endpoint_count++;
-        s_endpoints[s_endpoint_index] = endpoint;
+        if(s_endpoint_count < CHASSIS_POSITION_ENDPOINT_CAPACITY)
+        {
+            slot=(s_endpoint_head+s_endpoint_count)%CHASSIS_POSITION_ENDPOINT_CAPACITY;
+            s_endpoint_count++;
+        }
+        else
+        {
+            slot=s_endpoint_head;
+            s_endpoint_head=(s_endpoint_head+1U)%CHASSIS_POSITION_ENDPOINT_CAPACITY;
+        }
+        s_endpoint_index=slot;
+        s_endpoints[slot] = endpoint;
     }
     s_position_valid = s_position_due = 0U;
     for (i = 0U; i < 4U; i++) s_position_tick[i] = 0U;
 }
 #endif
+volatile uint32_t g_stage1_blend_active=0U;
+volatile float g_stage1_forward_mm=0.0f,g_stage1_lateral_mm=0.0f;
+static Stage1Blend s_blend;
+static float s_blend_x_rpm,s_blend_y_rpm;
+static uint32_t s_blend_dirty;
 static uint32_t s_vm_requested, s_used, s_mode;
 static uint32_t s_motor_index, s_monitor_cursor, s_monitor_between;
 static uint32_t s_status_valid, s_speed_valid, s_run_started, s_stop_due;
@@ -137,7 +162,7 @@ static uint32_t s_turn_brake_trial;
 static uint32_t s_forward_hold = 0U;
 static uint32_t s_translation_mode = 0U;
 static uint32_t s_translation_base_rpm, s_translation_run_ms;
-static uint32_t s_route_trial;
+static uint32_t s_route_trial,s_distance_stage3_fine;
 static uint32_t s_distance_mode, s_distance_reached, s_distance_fault_reason;
 static uint32_t s_translation_applied_base;
 static float s_distance_target_mm, s_distance_progress_mm;
@@ -315,7 +340,9 @@ static void Auto_CutDetailLocked(uint32_t cause, uint32_t detail, uint32_t io, u
 #endif
     Auto_BatchEndLocked(2U, xTaskGetTickCount());
     g_chassis_auto_active = 0U;
+#if APP_FAULT_CUT_VM_ENABLE
     g_chassis_auto_cut_vm = 1U;
+#endif
     g_chassis_auto_state = CHASSIS_AUTO_FAULT;
     g_chassis_auto_cause = cause;
     g_chassis_auto_result = 2U;
@@ -432,7 +459,7 @@ static void Auto_DistanceFaultLocked(uint32_t reason)
 static void Auto_DistanceCheckLocked(TickType_t now)
 {
     uint32_t i, rpm;
-    float mean, spread, low=0.0f, high=0.0f;
+    float mean, spread, low=0.0f, high=0.0f,aligned[4],forward_raw=0.0f,forward_mm=0.0f;
     uint32_t common_ms=0U, oldest_age=0U;
     ChassisPositionEndpoints *base;
     if (!s_distance_mode || s_finish_requested || s_stop_due ||
@@ -465,7 +492,7 @@ static void Auto_DistanceCheckLocked(TickType_t now)
             if (s_position.sign[i]) current = -current;
             change = current - old; if (change < 0) change = -change;
             /* 60RPM等效上限加量化余量：仅跳变诊断，原30RPM保护不变。 */
-            if (dt > 2000U || change > (int64_t)dt * (s_route_trial ? ((ROUTE_TRIAL_FEEDBACK_RPM+30U)*65536U+59999U)/60000U :
+            if (dt > 2000U || change > (int64_t)dt * (s_route_trial ? (((g_stage1_blend_active?VEHICLE_STAGE1_BLEND_FEEDBACK_RPM:ROUTE_TRIAL_FEEDBACK_RPM)+30U)*65536U+59999U)/60000U :
                     MotionDistanceJumpCountsPerMs(s_translation_mode,s_distance_max_rpm,s_distance_target_mm)) + 512)
             { Auto_DistanceFaultLocked(4U); return; }
             {
@@ -478,7 +505,7 @@ static void Auto_DistanceCheckLocked(TickType_t now)
                 mm=(float)(current-start)*3.14159265358979323846f*g_chassis_geometry.wheel_diameter_mm/65536.0f;
                 if (g_chassis_forward_direction[i]) mm=-mm;
                 mm*=projection[s_translation_mode][i];
-                if(s_route_trial && s_translation_mode==1U && APP_LEFT_TRIM_ACTIVE)
+                if(!g_stage1_blend_active && s_route_trial && s_translation_mode==1U && APP_LEFT_TRIM_ACTIVE)
                     mm-=((i==0U || i==3U)?1.0f:-1.0f)*s_position_trim_mm[i];
                 Auto_PositionRemember(i,ms,mm);
             }
@@ -506,15 +533,44 @@ static void Auto_DistanceCheckLocked(TickType_t now)
         }
         if (!i || mm<low) low=mm;
         if (!i || mm>high) high=mm;
-        mean+=mm*0.25f;
+        aligned[i]=mm;mean+=mm*0.25f;
     }
     spread=high-low;
-    if (!Chassis_CalibrateDistanceMm(s_translation_mode,mean,&mean) ||
-        mean < -5.0f || spread > 50.0f || mean < s_distance_progress_mm-5.0f ||
-        mean > s_distance_target_mm+50.0f)
-    { Auto_DistanceFaultLocked(5U); return; }
+    if(g_stage1_blend_active){
+        Stage1Blend_Project(s_translation_mode,aligned,&mean,&forward_raw,&spread);
+        if(!Chassis_CalibrateDistanceMm(0U,forward_raw,&forward_mm)){Auto_DistanceFaultLocked(5U);return;}
+    }
+
+    {
+        /* A two-axis blend is not a single-axis move: wheel slip makes the
+         * projected travel dip and the 4-wheel spread grow. Keep the strict
+         * band for single-axis legs and a wider one while blending. */
+        float back = g_stage1_blend_active ? VEHICLE_STAGE1_BLEND_BACK_MM : 5.0f;
+        float over = g_stage1_blend_active ? VEHICLE_STAGE1_BLEND_OVER_MM : 50.0f;
+        float spread_max = g_stage1_blend_active ? VEHICLE_STAGE1_BLEND_SPREAD_MM : 50.0f;
+        if (!Chassis_CalibrateDistanceMm(s_translation_mode,mean,&mean) ||
+            mean < -back || spread > spread_max ||
+            mean < s_distance_progress_mm-back || mean > s_distance_target_mm+over)
+        { Auto_DistanceFaultLocked(5U); return; }
+    }
     s_alignment_seen=1U; s_alignment_ms=common_ms;
     s_distance_progress_mm = mean;
+    if(g_stage1_blend_active){
+        float elapsed=(float)(TickType_t)(now-s_run_tick)*portTICK_PERIOD_MS*.001f;
+        float observed=(float)(int32_t)(common_ms-(uint32_t)s_run_tick*portTICK_PERIOD_MS)*.001f;
+        float xr=0,yr=0;uint32_t result;
+        if(observed<0)observed=0;
+        result=Stage1Blend_Step(&s_blend,elapsed,observed,mean,forward_mm,(uint32_t)now*portTICK_PERIOD_MS,&xr,&yr);
+        g_stage1_forward_mm=forward_mm;g_stage1_lateral_mm=mean;
+        if(result>=2U){Auto_DistanceFaultLocked(result==3U?9U:7U);return;}
+        if(result==1U){s_distance_reached=1U;s_finish_requested=s_stop_due=1U;s_finish_tick=now;return;}
+        if(xr!=s_blend_x_rpm || yr!=s_blend_y_rpm){s_blend_dirty=1U;Auto_BatchChangedLocked(now,3U);}
+        s_blend_x_rpm=xr;s_blend_y_rpm=yr;
+        s_translation_base_rpm=(uint32_t)(fabsf(xr)+.5f);
+        (void)MotionProfile_Sample(&s_blend.x,elapsed,&s_distance_reference);
+        s_profile_done=elapsed>=s_blend.duration;return;
+    }
+
 #if APP_DISTANCE_SCURVE_ACTIVE
     if (s_profile_active)
     {
@@ -526,7 +582,7 @@ static void Auto_DistanceCheckLocked(TickType_t now)
         s_profile_done = (result == MOTION_PROFILE_DONE);
         /* 到实际编码目标优先停；参考结束不能冒充实际到距。 */
         if (mean >= s_distance_target_mm ||
-            (s_profile_done && mean >= s_distance_target_mm-APP_DISTANCE_SCURVE_ARRIVAL_MM))
+            (s_profile_done && mean >= s_distance_target_mm-(s_distance_stage3_fine?S3_STRICT_TRANSLATE_ARRIVAL_MM:APP_DISTANCE_SCURVE_ARRIVAL_MM)))
         {
             s_distance_reached = 1U; s_finish_requested = s_stop_due = 1U;
             s_finish_tick = now; return;
@@ -552,6 +608,8 @@ static void Auto_DistanceCheckLocked(TickType_t now)
         if (!(ref_rpm >= -0.001f && ref_rpm <= (float)s_distance_max_rpm+0.001f))
         { Auto_DistanceFaultLocked(8U); return; }
         rpm = (ref_rpm <= 0.0f) ? 0U : (uint32_t)(ref_rpm+0.5f);
+        if(s_distance_stage3_fine && !rpm && ref_rpm>0.0f &&
+           mean<s_distance_target_mm-S3_STRICT_TRANSLATE_ARRIVAL_MM)rpm=1U;
         if (rpm > s_distance_max_rpm) rpm = s_distance_max_rpm;
         if (rpm != s_translation_base_rpm) Auto_BatchChangedLocked(now,3U);
         s_translation_base_rpm = rpm;
@@ -587,26 +645,19 @@ static void Auto_CheckWheelSpeedLocked(uint32_t i,TickType_t now)
                 speed_limit=s_route_trial ? ROUTE_TRIAL_FEEDBACK_RPM :
                     MotionDistanceFeedbackLimit(s_translation_mode,s_distance_max_rpm,s_distance_target_mm);
 #endif
+            if(g_stage1_blend_active)speed_limit=VEHICLE_STAGE1_BLEND_FEEDBACK_RPM;
             if (s_turn_brake_trial) speed_limit=APP_TURN_BRAKE_FEEDBACK_RPM;
             TickType_t direction_age = ((s_heading_session == 1U) && (s_forward_hold == 0U)) ?
                 (TickType_t)(now - s_heading_update_tick) : run_age;
-            /* 不把1RPM量化为0误判为停转；只拒绝明显超速和新采到的反向 */
+            /* Keep magnitude limit; feedback sign alone never trips. */
             if (!(raw >= -(float)speed_limit && raw <= (float)speed_limit))
             { Auto_CutDetailLocked(8U,9U,0U,i+1U); return; }
             if ((direction_age >= pdMS_TO_TICKS(500U)) &&
                 ((TickType_t)(now-s_speed_tick[i]) <= direction_age-pdMS_TO_TICKS(500U))) {
-                uint32_t endpoint_window=0U,reason;
-#if APP_DISTANCE_SCURVE_ACTIVE
-                endpoint_window=s_forward_hold && s_distance_mode && s_route_trial && s_profile_active &&
-                    !s_finish_requested && !s_stop_due && !s_distance_reached &&
-                    s_translation_base_rpm<=2U && s_distance_target_mm>=100.0f &&
-                    s_distance_progress_mm>=s_distance_target_mm-10.0f &&
-                    s_distance_progress_mm<=s_distance_target_mm &&
-                    s_distance_reference.position_mm>=s_distance_target_mm*0.5f &&
-                    s_distance_reference.acceleration_mm_s2<=0.0f;
-#endif
+                uint32_t reason;
+                /* Reverse feedback sign is not a fault (user decision). */
                 reason=DirectionGuard_Check(&s_direction_guard[i],(uint32_t)now*portTICK_PERIOD_MS,
-                    (uint32_t)s_speed_tick[i]*portTICK_PERIOD_MS,ZdtEmm_RpmDeci(raw),endpoint_window);
+                    (uint32_t)s_speed_tick[i]*portTICK_PERIOD_MS);
                 if(reason) { Auto_CutDetailLocked(8U,reason,0U,i+1U); return; }
             }
 }
@@ -650,12 +701,6 @@ static void Auto_CheckLocked(TickType_t now)
         (g_chassis_auto_stop_mask[g_chassis_auto_segment] != 0x0FU))
     { Auto_CutLocked(6U); return; }
     if (!s_run_started || (state == CHASSIS_AUTO_SETTLE)) return;
-    /* Pending low-speed reverse remains bounded even while a new batch sends.
-     * STOP has its independent, shorter 500ms stop-ACK deadline. */
-    if(state==CHASSIS_AUTO_START || state==CHASSIS_AUTO_RUN) {
-        for(i=0U;i<4U;i++)if(DirectionGuard_Expired(&s_direction_guard[i],(uint32_t)now*portTICK_PERIOD_MS))
-        { Auto_CutDetailLocked(8U,DIRECTION_PERSISTENT,0U,i+1U);return; }
-    }
     run_age = (TickType_t)(now - s_run_tick);
     run_limit = pdMS_TO_TICKS((s_forward_hold == 1U) ?
         (s_translation_run_ms + 1000U) :
@@ -687,6 +732,7 @@ void ChassisAuto_Init(void)
     uint32_t i;
     ChassisAutoFaultDiagnostic empty_fault = {0};
     g_chassis_auto_fault_diagnostic = empty_fault; s_fault_diagnostic_valid = 0U;
+    g_stage1_blend_active=0U;s_blend_dirty=0U;
     g_chassis_auto_request = 0U;
     g_chassis_auto_dry_run = g_chassis_auto_mode = 1U;
     g_chassis_auto_state = CHASSIS_AUTO_IDLE;
@@ -708,7 +754,7 @@ void ChassisAuto_Init(void)
     s_finish_tick = 0U;
     s_heading_session = 0U;
     s_turn_brake_trial = 0U;
-    s_forward_hold = 0U;s_route_trial=0U; s_distance_mode = s_distance_reached = s_distance_fault_reason = 0U;
+    s_forward_hold = 0U;s_route_trial=s_distance_stage3_fine=0U; s_distance_mode = s_distance_reached = s_distance_fault_reason = 0U;
     s_translation_mode = 0U;
     s_heading_initial_rpm = s_heading_pending_rpm = s_heading_applied_rpm = 0;
     s_heading_update_tick = 0U;
@@ -754,6 +800,9 @@ static uint32_t Auto_BeginPreparedBasicLocked(uint32_t dry_run,
     const ChassisMotorCommand *commands)
 {
     uint32_t i, j, accepted = 0U;
+#if APP_POSITION_DIAGNOSTIC
+    if(!Auto_EndpointAvailable()) return 0U;
+#endif
     if ((dry_run <= 1U) && s_vm_requested && !s_used && !g_chassis_auto_active &&
         !g_chassis_auto_cut_vm && Auto_BaseHealthy())
     {
@@ -763,6 +812,7 @@ static uint32_t Auto_BeginPreparedBasicLocked(uint32_t dry_run,
         g_chassis_auto_fault_diagnostic = empty_fault; s_fault_diagnostic_valid = 0U;
         s_used = 1U; s_mode = dry_run; g_chassis_auto_mode = dry_run;
         g_chassis_auto_session++;
+        if(!g_chassis_auto_session)g_chassis_auto_session=1U;
         for(i=0U;i<4U;i++)DirectionGuard_Reset(&s_direction_guard[i]);
         Auto_BatchChangedLocked(xTaskGetTickCount(), 0U);
 #if APP_POSITION_DIAGNOSTIC
@@ -779,7 +829,7 @@ static uint32_t Auto_BeginPreparedBasicLocked(uint32_t dry_run,
         s_profile_active = s_profile_done = 0U;
         s_profile_follow_rpm = s_profile_follow_rate = 0.0f; s_profile_follow_tick = 0U;
 #endif
-        s_forward_hold = 0U;s_route_trial=0U; s_distance_mode = s_distance_reached = s_distance_fault_reason = 0U;
+        s_forward_hold = 0U;s_route_trial=s_distance_stage3_fine=0U; s_distance_mode = s_distance_reached = s_distance_fault_reason = 0U;
         s_translation_mode = 0U;
         s_heading_initial_rpm = s_heading_pending_rpm = s_heading_applied_rpm = 0;
         s_heading_update_tick = 0U;
@@ -869,6 +919,24 @@ uint32_t ChassisAuto_RearmCompleted(uint32_t expected_session)
     }
     taskEXIT_CRITICAL();return accepted;
 }
+
+/* Explicit mechanism-held commissioning entry; original normal entry unchanged.
+ * Real wheel guard, power and original backend preparation are still required.
+ * No fault/result/status is cleared here. No CAN frame or Power_Disable call. */
+uint32_t ChassisAuto_BeginHeldSequence(void)
+{
+ uint32_t accepted=0U;PowerCommandStatus power;
+ taskENTER_CRITICAL();Power_ReadCommandStatus(&power);
+ if(SourceBodyStep_WheelWindow() && StartupAxes_Holding() && power.active==1U &&
+    !s_sequence_hold && !s_used && Auto_BaseHealthy() &&
+    !g_chassis_auto_active && !g_chassis_auto_cut_vm && !g_chassis_auto_result &&
+    !g_chassis_auto_cause && !g_can_ctrl_fault_latched &&
+    g_chassis_auto_state==CHASSIS_AUTO_IDLE) {
+  s_vm_requested=1U;s_sequence_hold=1U;s_sequence_continue=0U;accepted=1U;
+ }
+ taskEXIT_CRITICAL();return accepted;
+}
+
 uint32_t ChassisAuto_BeginSequence(void)
 {
     uint32_t accepted = 0U;
@@ -977,7 +1045,7 @@ uint32_t ChassisAuto_ReadPositionEndpoints(uint32_t index, ChassisPositionEndpoi
     taskENTER_CRITICAL();
     if (index >= s_endpoint_count)
     { taskEXIT_CRITICAL(); return 0U; }
-    *record = s_endpoints[index];
+    *record = s_endpoints[(s_endpoint_head+index)%CHASSIS_POSITION_ENDPOINT_CAPACITY];
     taskEXIT_CRITICAL(); return 1U;
 #else
     (void)index;
@@ -1039,7 +1107,7 @@ static uint32_t Auto_PositionMonitor(uint32_t session)
         {
             s_position.sign[i] = sign; s_position.raw[i] = raw;
             s_position_tick[i] = xTaskGetTickCount();
-            if(s_route_trial && s_translation_mode==1U && APP_LEFT_TRIM_ACTIVE)
+            if(!g_stage1_blend_active && s_route_trial && s_translation_mode==1U && APP_LEFT_TRIM_ACTIVE)
             {
                 Auto_LeftTrimAdvance((uint32_t)s_position_tick[i]*portTICK_PERIOD_MS);
                 s_position_trim_mm[i]=s_left_trim_mm;
@@ -1049,7 +1117,9 @@ static uint32_t Auto_PositionMonitor(uint32_t session)
         else
         {
             s_position_valid &= ~(1UL << i);
-            Auto_CutDetailLocked(3U,5U,result,i+1U); /* 新增查询失败也停止，不掩盖通信异常。 */
+            /* 单次位置查询失败只丢这一轮样本，不立即 abort：下一轮会重读，
+             * 由 Auto_DistanceCheckLocked 的 400ms 过期/500ms 无位置兜底，
+             * 避免偶发的 CAN 应答抖动把整车判成故障。 */
         }
     }
     taskEXIT_CRITICAL();
@@ -1090,7 +1160,12 @@ void ChassisAuto_OdometryPoll(void)
     taskENTER_CRITICAL();Power_ReadCommandStatus(&power);
     if(session==g_chassis_auto_session && !g_chassis_auto_active && s_vm_requested && power.active && Auto_BaseHealthy()) {
         Auto_OdometrySample(i,result,sign,raw,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);
-        if(result!=1U) {g_chassis_auto_cut_vm=1U;g_chassis_auto_cause=3U;}
+        if(result!=1U) {
+#if APP_FAULT_CUT_VM_ENABLE
+            g_chassis_auto_cut_vm=1U;
+#endif
+            g_chassis_auto_cause=3U;
+        }
     }
     taskEXIT_CRITICAL();
 }
@@ -1179,7 +1254,7 @@ static void Auto_Monitor(uint32_t session)
 /* 仅CAN任务调用：一轮至多一笔有界交易，不在临界区内等待 */
 void ChassisAuto_CanStep(void)
 {
-    uint32_t state, session, index, result, expected, i;
+    uint32_t state, session, index, result, expected, i,commands_ok;
     float effective_heading;
     TickType_t now;
     CanRxMsg reply = {0};
@@ -1200,9 +1275,10 @@ void ChassisAuto_CanStep(void)
          ((state == CHASSIS_AUTO_START) && (s_motor_index == 0U) &&
           (s_monitor_between == 0U))) &&
         ((effective_heading != s_heading_applied_rpm) ||
-         (s_distance_mode && s_translation_base_rpm != s_translation_applied_base)))
+         (s_distance_mode && s_translation_base_rpm != s_translation_applied_base) || (g_stage1_blend_active && s_blend_dirty)))
     {
-        if (((s_forward_hold == 1U) ?
+        if(g_stage1_blend_active)commands_ok=Stage1Blend_Commands(s_translation_mode,s_blend_x_rpm,s_blend_y_rpm,effective_heading,s_commands[2]);
+        else commands_ok=((s_forward_hold == 1U) ?
 #if APP_DISTANCE_SCURVE_ACTIVE
             (s_profile_active ? ((s_route_trial && s_translation_mode==1U && APP_LEFT_TRIM_ACTIVE) ?
                 Chassis_LeftTrimCommands(s_translation_base_rpm,effective_heading,s_commands[2]) :
@@ -1214,12 +1290,14 @@ void ChassisAuto_CanStep(void)
             )
 #endif
             : (s_turn_brake_trial ? Chassis_TurnBrakeCommands(effective_heading, s_commands[2]) :
-                Chassis_HeadingCommands(effective_heading, s_commands[2]))) != 1U)
+                Chassis_HeadingCommands(effective_heading, s_commands[2])));
+        if(commands_ok!=1U)
         {
             Auto_CutLocked(8U);
             taskEXIT_CRITICAL();
             return;
         }
+        s_blend_dirty=0U;
         s_heading_applied_rpm = effective_heading;
         s_translation_applied_base = s_translation_base_rpm;
         s_heading_update_tick = now;
@@ -1285,7 +1363,9 @@ void ChassisAuto_CanStep(void)
     if (state == CHASSIS_AUTO_SETTLE)
     {
         if (Auto_AllSpeedSinceLocked(now) && Auto_ZeroSpeedLocked() &&
-            ((TickType_t)(now - s_phase_tick) >= pdMS_TO_TICKS(CHASSIS_AUTO_GAP_MS)))
+            (SourceBodyStep_FastAlignmentWindow() ?
+             (g_chassis_auto_stop_mask[g_chassis_auto_segment] == 0x0FU) :
+             ((TickType_t)(now - s_phase_tick) >= pdMS_TO_TICKS(CHASSIS_AUTO_GAP_MS))))
         {
             if ((s_finish_requested != 0U) || (g_chassis_auto_segment == 2U))
             {
@@ -1297,7 +1377,7 @@ void ChassisAuto_CanStep(void)
                 if (!g_chassis_auto_active || g_chassis_auto_session != session ||
                     g_chassis_auto_state != CHASSIS_AUTO_SETTLE)
                 { taskEXIT_CRITICAL(); return; }
-                if (s_endpoint_index < s_endpoint_count && s_heading_session)
+                if (s_endpoint_index < s_endpoint_count)
                     s_endpoints[s_endpoint_index].outcome = 1U;
 #endif
                 g_chassis_auto_state = CHASSIS_AUTO_DONE;
@@ -1496,7 +1576,7 @@ uint32_t ChassisAuto_BeginPreparedHeading(const ChassisAutoPreparedHeading *p,
         accepted=Auto_BeginPreparedBasicLocked(p->dry_run,&p->commands[0][0]);
     if(accepted) {
         g_chassis_auto_segment=2U;s_heading_session=1U;
-        s_forward_hold=0U;s_route_trial=0U;
+        s_forward_hold=0U;s_route_trial=s_distance_stage3_fine=0U;
         s_distance_mode=s_distance_reached=s_distance_fault_reason=0U;s_translation_mode=0U;
         s_turn_brake_trial=p->trial_sign ? 1U : 0U;
         s_heading_initial_rpm=p->trial_sign ? p->trial_sign : p->command_rpm;
@@ -1514,8 +1594,6 @@ static uint32_t Auto_BeginHeading(uint32_t dry_run,float command_rpm,int32_t tri
 }
 uint32_t ChassisAuto_BeginHeading(uint32_t dry_run, float command_rpm)
 { return Auto_BeginHeading(dry_run,command_rpm,0); }
-uint32_t ChassisAuto_BeginTurnBrake(int32_t direction)
-{ return Auto_BeginHeading(0U,0,direction); }
 /* 仅提交下一组轮速；CAN任务在整组边界取用，不在这里发帧。 */
 uint32_t ChassisAuto_UpdateHeading(float command_rpm)
 {
@@ -1597,11 +1675,11 @@ uint32_t ChassisAuto_ReadStatus(ChassisAutoStatus *status)
 /* 只改原有执行器的命令向量；失能/使能/零速核验和停止保护共用。 */
 /* 仅作局部数学计算，无CAN/VM副作用；调用者必须退出外层临界区。 */
 static uint32_t Auto_PrepareTranslationEx(uint32_t motion_mode, uint32_t base_rpm,
-    uint32_t run_ms, float distance_mm,float route_speed,ChassisAutoPreparedTranslation *prepared)
+    uint32_t run_ms, float distance_mm,float route_speed,ChassisAutoPreparedTranslation *prepared,uint32_t stage3_fine)
 {
     if (!prepared) return 0U;
-    prepared->valid = 0U;prepared->route_reference_mm_s=0.0f;
-    if(route_speed!=0.0f && !MotionRoute_ShapeAllowed(motion_mode,base_rpm,run_ms,distance_mm,route_speed)) return 0U;
+    prepared->valid = 0U;prepared->route_reference_mm_s=0.0f;prepared->stage3_fine=stage3_fine;
+    if(route_speed!=0.0f && !MotionRoute_ShapeAllowedScoped(motion_mode,base_rpm,run_ms,distance_mm,route_speed,stage3_fine)) return 0U;
     if (__get_BASEPRI() || __get_PRIMASK() || motion_mode > 3U ||
         base_rpm < 3U || (base_rpm > 15U && route_speed==0.0f && !MotionTrial20Allowed(motion_mode,base_rpm,distance_mm))) return 0U;
     if (distance_mm != 0.0f)
@@ -1638,7 +1716,7 @@ static uint32_t Auto_PrepareTranslationEx(uint32_t motion_mode, uint32_t base_rp
                 APP_DISTANCE_SCURVE_FOLLOW_OMEGA*APP_DISTANCE_SCURVE_FOLLOW_OMEGA;
         if(route_speed!=0.0f) {
             uint32_t expected_rpm,expected_ms;
-            if(!MotionRoute_Build(motion_mode,distance_mm,route_speed,&prepared->profile,&expected_rpm,&expected_ms) ||
+            if(!MotionRoute_BuildScoped(motion_mode,distance_mm,route_speed,&prepared->profile,&expected_rpm,&expected_ms,stage3_fine) ||
                 expected_rpm!=base_rpm || expected_ms!=run_ms) return 0U;
         } else if(!MotionProfile_Prepare(&prepared->profile,distance_mm,&limits)) return 0U;
         if (
@@ -1654,20 +1732,26 @@ static uint32_t Auto_PrepareTranslationEx(uint32_t motion_mode, uint32_t base_rp
 }
 uint32_t ChassisAuto_PrepareTranslation(uint32_t mode,uint32_t rpm,uint32_t run_ms,
     float mm,ChassisAutoPreparedTranslation *prepared)
-{ return Auto_PrepareTranslationEx(mode,rpm,run_ms,mm,0.0f,prepared); }
+{ return Auto_PrepareTranslationEx(mode,rpm,run_ms,mm,0.0f,prepared,0U); }
 uint32_t ChassisAuto_PrepareRouteTranslation(uint32_t mode,uint32_t rpm,uint32_t run_ms,
     float mm,float speed,ChassisAutoPreparedTranslation *prepared)
 {
     if(!(speed>0.0f)) { if(prepared) prepared->valid=0U;return 0U; }
-    return Auto_PrepareTranslationEx(mode,rpm,run_ms,mm,speed,prepared);
+    return Auto_PrepareTranslationEx(mode,rpm,run_ms,mm,speed,prepared,0U);
+}
+uint32_t ChassisAuto_PrepareStage3FineTranslation(uint32_t mode,uint32_t rpm,uint32_t run_ms,
+    float mm,float speed,ChassisAutoPreparedTranslation *prepared)
+{
+    if(!(speed>0.0f)) {if(prepared)prepared->valid=0U;return 0U;}
+    return Auto_PrepareTranslationEx(mode,rpm,run_ms,mm,speed,prepared,1U);
 }
 uint32_t ChassisAuto_BeginPreparedTranslation(const ChassisAutoPreparedTranslation *prepared,
     uint32_t expected_session)
 {
     uint32_t accepted = 0U;
     if(prepared && prepared->route_reference_mm_s!=0.0f &&
-        !MotionRoute_ShapeAllowed(prepared->motion_mode,prepared->base_rpm,prepared->run_ms,
-            prepared->distance_mm,prepared->route_reference_mm_s)) return 0U;
+        !MotionRoute_ShapeAllowedScoped(prepared->motion_mode,prepared->base_rpm,prepared->run_ms,
+            prepared->distance_mm,prepared->route_reference_mm_s,prepared->stage3_fine)) return 0U;
     if (!prepared || prepared->valid != 1U || prepared->motion_mode > 3U ||
         prepared->base_rpm < 3U || (prepared->base_rpm > 15U && prepared->route_reference_mm_s==0.0f &&
             !MotionTrial20Allowed(prepared->motion_mode,prepared->base_rpm,prepared->distance_mm))) return 0U;
@@ -1688,7 +1772,7 @@ uint32_t ChassisAuto_BeginPreparedTranslation(const ChassisAutoPreparedTranslati
         float factor;
         MotionProfileLimits route_limits;uint32_t route_rpm;
         if(prepared->route_reference_mm_s!=0.0f) {
-            if(!MotionRoute_Limits(prepared->motion_mode,prepared->distance_mm,prepared->route_reference_mm_s,&route_limits,&route_rpm) ||
+            if(!MotionRoute_LimitsScoped(prepared->motion_mode,prepared->distance_mm,prepared->route_reference_mm_s,&route_limits,&route_rpm,prepared->stage3_fine) ||
                 prepared->base_rpm!=route_rpm || prepared->run_ms!=MotionRoute_Deadline(prepared->profile.duration_s) ||
                 prepared->profile.limits.speed!=route_limits.speed ||
                 prepared->profile.limits.acceleration!=route_limits.acceleration ||
@@ -1716,7 +1800,7 @@ uint32_t ChassisAuto_BeginPreparedTranslation(const ChassisAutoPreparedTranslati
         !g_chassis_auto_active && !g_chassis_auto_cut_vm)
     {
 #if APP_POSITION_DIAGNOSTIC
-        if (prepared->distance_mm > 0.0f && s_endpoint_count >= CHASSIS_POSITION_ENDPOINT_CAPACITY)
+        if (prepared->distance_mm > 0.0f && !Auto_EndpointAvailable())
         { taskEXIT_CRITICAL(); return 0U; }
 #endif
         accepted = Auto_BeginPreparedBasicLocked(0U, &prepared->commands[0][0]);
@@ -1724,9 +1808,10 @@ uint32_t ChassisAuto_BeginPreparedTranslation(const ChassisAutoPreparedTranslati
         {
             g_chassis_auto_segment = 2U;
             s_heading_session = s_forward_hold = 1U;
+            g_stage1_blend_active=0U;s_blend_dirty=0U;
             s_translation_mode = prepared->motion_mode;
             s_translation_base_rpm = s_translation_applied_base = prepared->base_rpm;
-            s_translation_run_ms = prepared->run_ms;s_route_trial=prepared->route_reference_mm_s!=0.0f;
+            s_translation_run_ms = prepared->run_ms;s_route_trial=prepared->route_reference_mm_s!=0.0f;s_distance_stage3_fine=s_route_trial && prepared->stage3_fine;
             s_heading_initial_rpm = s_heading_pending_rpm = s_heading_applied_rpm = 0;
             s_heading_update_tick = s_heading_command_tick = xTaskGetTickCount();
 #if APP_POSITION_DIAGNOSTIC
@@ -1761,6 +1846,40 @@ uint32_t ChassisAuto_BeginPreparedTranslation(const ChassisAutoPreparedTranslati
     }
     taskEXIT_CRITICAL();
     return accepted;
+}
+
+/* Translate the explicit blend action deadline to the unchanged single-axis
+ * preparation contract, before the atomic blend commit. Never weaken ordinary
+ * route deadline validation or silently accept arbitrary caller timeouts. */
+uint32_t ChassisAuto_PrepareRouteBlend(uint32_t mode,uint32_t rpm,uint32_t run_ms,
+    float mm,float speed,ChassisAutoPreparedTranslation *prepared)
+{
+    static Stage1Blend blend;static MotionProfile primary;
+    uint32_t expected_rpm,primary_ms,blend_ms;
+    if(prepared)prepared->valid=0U;
+    if(!prepared || !Stage1Blend_Build(mode,mm,speed,&blend) ||
+       !MotionRoute_Build(mode,mm,speed,&primary,&expected_rpm,&primary_ms))return 0U;
+    blend_ms=(uint32_t)(blend.duration*1000)+VEHICLE_STAGE1_FINAL_WAIT_MS+2000U;
+    /* +-20 ms instead of exact equality: two independent float->ms
+     * roundings must not silently reject an otherwise valid blend. */
+    if(rpm!=expected_rpm || run_ms+20U<blend_ms || run_ms>blend_ms+20U)return 0U;
+    return ChassisAuto_PrepareRouteTranslation(mode,rpm,primary_ms,mm,speed,prepared);
+}
+
+/* Prepared and committed by the same CAN owner; no CAN I/O in this wrapper. */
+uint32_t ChassisAuto_BeginPreparedBlend(const ChassisAutoPreparedTranslation *p,uint32_t session)
+{
+    static Stage1Blend planned;uint32_t accepted;
+    if(!p || !Stage1Blend_Build(p->motion_mode,p->distance_mm,p->route_reference_mm_s,&planned))return 0U;
+    taskENTER_CRITICAL();
+    accepted=ChassisAuto_BeginPreparedTranslation(p,session);
+    if(accepted){
+        s_blend=planned;g_stage1_blend_active=1U;s_blend_x_rpm=s_blend_y_rpm=0;s_blend_dirty=0U;
+        g_stage1_forward_mm=g_stage1_lateral_mm=0;
+        s_distance_profile=planned.x;
+        s_translation_run_ms=(uint32_t)(planned.duration*1000)+VEHICLE_STAGE1_FINAL_WAIT_MS+2000U;
+    }
+    taskEXIT_CRITICAL();return accepted;
 }
 
 static uint32_t Auto_BeginTranslation(uint32_t dry_run, uint32_t motion_mode,
@@ -1807,7 +1926,7 @@ uint32_t ChassisAuto_BeginTranslationDistance(uint32_t motion_mode, uint32_t max
     if (!MotionDistanceAllowed(motion_mode,max_rpm,target_mm) ||
         !Chassis_DistanceSelfTest()) return 0U;
     taskENTER_CRITICAL();
-    if (s_endpoint_count >= CHASSIS_POSITION_ENDPOINT_CAPACITY)
+    if (!Auto_EndpointAvailable())
     { taskEXIT_CRITICAL(); return 0U; }
     accepted = Auto_BeginTranslation(0U,motion_mode,max_rpm,MotionDistanceRunMs(target_mm),MotionDistanceRunMs(target_mm));
     if (accepted)
@@ -1869,4 +1988,21 @@ uint32_t ChassisAuto_ReadWheelLog(ChassisWheelLog *snapshot)
             snapshot->speed_valid_mask|=1UL<<i;
     }
     taskEXIT_CRITICAL();return 1U;
+}
+
+/* Reuse only an actual successful held wheel sequence. No fault/cancel reset,
+ * no counter zero, no CAN motion and no VM disable. */
+uint32_t ChassisAuto_CloseHeldCompleted(uint32_t session)
+{
+ uint32_t accepted=0U;PowerCommandStatus power;
+ taskENTER_CRITICAL();Power_ReadCommandStatus(&power);
+ if(s_sequence_hold && session==g_chassis_auto_session && s_vm_requested && s_used &&
+    !g_chassis_auto_active && !g_chassis_auto_cut_vm && power.active==1U && Auto_BaseHealthy() &&
+    g_chassis_auto_state==CHASSIS_AUTO_DONE && g_chassis_auto_result==1U &&
+    !g_chassis_auto_cause && g_chassis_auto_stop_mask[2]==15U && Auto_ZeroSpeedLocked() &&
+    !g_can_ctrl_fault_latched){
+  s_sequence_hold=s_sequence_continue=s_used=s_vm_requested=0U;
+  g_chassis_auto_state=CHASSIS_AUTO_IDLE;g_chassis_auto_result=0U;accepted=1U;
+ }
+ taskEXIT_CRITICAL();return accepted;
 }

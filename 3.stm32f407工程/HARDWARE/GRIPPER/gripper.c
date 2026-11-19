@@ -11,14 +11,14 @@ static uint8_t s_running = 0U;
 static void Gripper_PinMode(GPIOMode_TypeDef mode)
 {
     GPIO_InitTypeDef gpio;
-    GPIO_ResetBits(GPIOA, GPIO_Pin_0);
+    GPIO_ResetBits(GPIOB, GPIO_Pin_9);
     GPIO_StructInit(&gpio);
-    gpio.GPIO_Pin = GPIO_Pin_0;
+    gpio.GPIO_Pin = GPIO_Pin_9;
     gpio.GPIO_Mode = mode;
     gpio.GPIO_OType = GPIO_OType_PP;
     gpio.GPIO_Speed = GPIO_Speed_2MHz;
     gpio.GPIO_PuPd = GPIO_PuPd_DOWN;
-    GPIO_Init(GPIOA, &gpio);
+    GPIO_Init(GPIOB, &gpio);
 }
 
 void Gripper_Init(void)
@@ -28,10 +28,10 @@ void Gripper_Init(void)
     TIM_OCInitTypeDef channel;
     uint32_t timer_hz;
 
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
     Gripper_PinMode(GPIO_Mode_OUT);
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-    TIM_DeInit(TIM2);
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+    /* PB9/CH4 shares TIM4 20ms with PB6/CH1 and PB7/CH2. No timer reset. */
     s_ready = 0U;
     s_running = 0U;
     RCC_GetClocksFreq(&clocks);
@@ -53,16 +53,16 @@ void Gripper_Init(void)
     timer.TIM_Period = JIAZHUA_PERIOD_US - 1U;
     timer.TIM_CounterMode = TIM_CounterMode_Up;
     timer.TIM_ClockDivision = TIM_CKD_DIV1;
-    TIM_TimeBaseInit(TIM2, &timer);
+    TIM_TimeBaseInit(TIM4, &timer);
     TIM_OCStructInit(&channel);
     channel.TIM_OCMode = TIM_OCMode_PWM1;
     channel.TIM_OutputState = TIM_OutputState_Enable;
     channel.TIM_OCPolarity = TIM_OCPolarity_High;
     channel.TIM_Pulse = 0U;
-    TIM_OC1Init(TIM2, &channel);
-    TIM_OC1PreloadConfig(TIM2, TIM_OCPreload_Enable);
-    TIM_ARRPreloadConfig(TIM2, ENABLE);
-    GPIO_PinAFConfig(GPIOA, GPIO_PinSource0, GPIO_AF_TIM2);
+    TIM_OC4Init(TIM4, &channel);
+    TIM_OC4PreloadConfig(TIM4, TIM_OCPreload_Enable);
+    TIM_ARRPreloadConfig(TIM4, ENABLE);
+    GPIO_PinAFConfig(GPIOB, GPIO_PinSource9, GPIO_AF_TIM4);
     /* 默认不输出位置脉冲，显式调用jiazhua后才开始。 */
     s_ready = 1U;
 }
@@ -80,11 +80,14 @@ uint8_t jiazhua(float angle_deg)
     pulse_us = JIAZHUA_PULSE_MIN_US + (uint32_t)(
         angle_deg * (float)(JIAZHUA_PULSE_MAX_US - JIAZHUA_PULSE_MIN_US)
         / JIAZHUA_ANGLE_MAX_DEG + 0.5f);
-    TIM_SetCompare1(TIM2, pulse_us);
+    TIM_SetCompare4(TIM4, pulse_us);
+    TIM_ClearFlag(TIM4, TIM_FLAG_Update);
     if (s_running == 0U)
     {
-        TIM_GenerateEvent(TIM2, TIM_EventSource_Update);
-        TIM_Cmd(TIM2, ENABLE);
+        if ((TIM4->CR1 & TIM_CR1_CEN) == 0U)
+            TIM_GenerateEvent(TIM4, TIM_EventSource_Update);
+        TIM_CCxCmd(TIM4, TIM_Channel_4, TIM_CCx_Enable);
+        TIM_Cmd(TIM4, ENABLE);
         Gripper_PinMode(GPIO_Mode_AF);
         s_running = 1U;
     }
@@ -97,8 +100,11 @@ void Gripper_Stop(void)
     if (s_ready != 0U)
     {
         Gripper_PinMode(GPIO_Mode_OUT);
-        TIM_Cmd(TIM2, DISABLE);
-        TIM_SetCompare1(TIM2, 0U);
+        TIM_CCxCmd(TIM4, TIM_Channel_4, TIM_CCx_Disable);
+        TIM_SetCompare4(TIM4, 0U);
         s_running = 0U;
     }
 }
+
+uint8_t Gripper_PulseApplied(void)
+{ return s_running && TIM_GetFlagStatus(TIM4, TIM_FLAG_Update) != RESET; }

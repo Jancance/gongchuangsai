@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "mode": "fixed_chassis_manual_ring_teach",
+  "reference": "2026-11-19 11 mm forward, 5 mm right replay stop, then in-place controller recovery",
+  "placement": {
+    "release_method": "release above field surface",
+    "target_material_bottom_clearance_mm": 2.0,
+    "release_depth_requires_loaded_clearance_verification": true,
+    "ring_2_trial_reference": {
+      "observed_touchdown_command_result_pulses": 61595.02378472222,
+      "pulses_per_mm": 400.0,
+      "estimated_release_depth_pulses": 60795.02378472222,
+      "status": "estimate_from_operator_gap_and_lift_feedback",
+      "evidence": "tmp/stage3_ring2_replay_forward11_20261119/stage3-live-20261119-062904.json"
+    }
+  },
+  "ring_points": {
+    "1": {
+      "status": "measured_awaiting_replay",
+      "dm_yaw_deg": 224.48699951171875,
+      "raw_dm_yaw_deg": -135.52392578125,
+      "extension_mm": 43.0,
+      "extension_source": "user measurement from full retraction zero",
+      "lift_depth_pulses": 61002.22274305556,
+      "angle_read_cycle": 8,
+      "run": 1,
+      "pose": 3,
+      "evidence": "tmp/stage3_ring2_replay_forward11_20261119/stage3-live-20261119-070547.json"
+    },
+    "3": {
+      "status": "measured_awaiting_replay",
+      "dm_yaw_deg": 139.5509033203125,
+      "raw_dm_yaw_deg": -220.46002197265625,
+      "extension_mm": 68.5,
+      "extension_source": "user measurement from full retraction zero",
+      "lift_depth_pulses": 61002.22274305556,
+      "requested_extra_descent_mm": 5.0,
+      "candidate_release_depth_pulses": 63002.22274305556,
+      "angle_read_cycle": 9,
+      "run": 1,
+      "pose": 3,
+      "evidence": "tmp/stage3_ring2_replay_forward11_20261119/stage3-live-20261119-071026.json"
+    }
+  }
+}

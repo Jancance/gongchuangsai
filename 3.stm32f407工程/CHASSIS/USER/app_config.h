@@ -3,11 +3,26 @@
 #include "../../USER/vehicle_parameters.h"
 #include "zdt_emm_config.h"
 #include "app_entry_config.h"
+
+/* 2026-11-07 integration: the LiftRuler node5 controller must stay serviceable in the
+ * full-vehicle profile, because VSP stage2 execution derives its top reference from it
+ * (SingleTeach_TopDeg = g_lift_ruler_controller.top_position_raw/top_scale). */
+#define LIFT_RULER_SERVICE_ENABLED (VEHICLE_LIFT_RULER_ONLY || VEHICLE_INTEGRATED_ENABLE)
 #if VEHICLE_INTEGRATED_ENABLE && APP_IS_COMPETITION
 #error Integrated_field_debug_is_not_verified_competition_profile
 #endif
-#define APP_PERIMETER_TRIAL_ACTIVE 1U
+/* removed: APP_PERIMETER_TRIAL_ACTIVE was never referenced */
 #define APP_PERIMETER_GROUP_MS 300000U
+/* User decision 2026-11-04: NO protection may cut VM. 0 = a latched fault
+ * stops the wheels (stop frame to all four drivers) but keeps VM on, so the
+ * drivers keep braking and the car never loses power mid-run.
+ * 1 = legacy behaviour (fault -> Power_Disable). */
+#ifndef APP_FAULT_CUT_VM_ENABLE
+#define APP_FAULT_CUT_VM_ENABLE 0U
+#endif
+#if APP_FAULT_CUT_VM_ENABLE > 1U
+#error Fault_cut_vm_enable_invalid
+#endif
 #include "route_config.h"
 /* Explicit single-turn debug candidate. Ordinary rotation remains capped at5RPM. */
 #ifndef APP_TURN_BRAKE_TRIAL_ENABLE
@@ -18,13 +33,13 @@
 #endif
 #define APP_TURN_BRAKE_TRIAL_ACTIVE (APP_TURN_BRAKE_TRIAL_ENABLE && APP_ROUTE_USE_CUSTOM && APP_IS_DEBUG && (APP_TEST_MODE == 3U))
 #ifndef APP_TURN_BRAKE_TRIAL_DPS
-#define APP_TURN_BRAKE_TRIAL_DPS 30U
+#define APP_TURN_BRAKE_TRIAL_DPS VEHICLE_CHASSIS_TURN_DEG_S
 #endif
-#if APP_TURN_BRAKE_TRIAL_DPS != 15U && APP_TURN_BRAKE_TRIAL_DPS != 30U
+#if APP_TURN_BRAKE_TRIAL_DPS != 15U && APP_TURN_BRAKE_TRIAL_DPS != 30U && APP_TURN_BRAKE_TRIAL_DPS != 60U
 #error Turn_brake_trial_speed_invalid
 #endif
-#define APP_TURN_BRAKE_MAX_RPM ((APP_TURN_BRAKE_TRIAL_DPS == 30U) ? 27U : 13U)
-#define APP_TURN_BRAKE_FEEDBACK_RPM ((APP_TURN_BRAKE_TRIAL_DPS == 30U) ? 40U : 30U)
+#define APP_TURN_BRAKE_MAX_RPM ((APP_TURN_BRAKE_TRIAL_DPS == 60U) ? 54U : ((APP_TURN_BRAKE_TRIAL_DPS == 30U) ? 27U : 13U))
+#define APP_TURN_BRAKE_FEEDBACK_RPM ((APP_TURN_BRAKE_TRIAL_DPS == 60U) ? 80U : ((APP_TURN_BRAKE_TRIAL_DPS == 30U) ? 40U : 30U))
 
 /* 低速距离S曲线候选，默认关闭；仅调试mode3，仍不超过15RPM。
  * 下列数值为软件候选，未做载物/刹车实测，不作为提速许可。 */
@@ -49,8 +64,14 @@
 #define APP_LEFT_TRIM_ACTIVE (APP_LEFT_TRIM_ENABLE && APP_ROUTE_SPEED_TRIAL_ACTIVE)
 #define APP_LEFT_DISTANCE_SCALE 0.99761905f
 #define APP_LEFT_BACKWARD_RATIO 0.01670644f
+#if APP_ROUTE_SPEED_TRIAL_ACTIVE
+/* 仅路线曲线采用集中工程候选；旧非路线入口维持原限值。 */
+#define APP_DISTANCE_SCURVE_ACCEL_MM_S2 VEHICLE_ROUTE_ACCEL_MM_S2
+#define APP_DISTANCE_SCURVE_JERK_MM_S3 VEHICLE_ROUTE_JERK_MM_S3
+#else
 #define APP_DISTANCE_SCURVE_ACCEL_MM_S2 40.0f
 #define APP_DISTANCE_SCURVE_JERK_MM_S3 80.0f
+#endif
 #define APP_DISTANCE_SCURVE_TRACK_MM 50.0f
 #define APP_DISTANCE_SCURVE_ARRIVAL_MM 2.0f
 #define APP_DISTANCE_SCURVE_FINAL_WAIT_MS 2000U

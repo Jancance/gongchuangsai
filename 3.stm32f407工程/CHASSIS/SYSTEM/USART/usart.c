@@ -163,3 +163,84 @@ uint8_t USART1_WaitByte(uint8_t *data, uint32_t timeout_ms)
     return (xQueueReceive(g_rx_queue, data,
                           pdMS_TO_TICKS(timeout_ms)) == pdPASS) ? 1U : 0U;
 }
+
+
+/* Stage2 mainline: dedicated PC6/PC7 USART6, owned by Vision_Poll only.
+ * USART1 and its existing UartRx task remain independent. */
+static QueueHandle_t s_vision_rx_queue = NULL;
+static uint8_t s_vision_tx[256];
+static volatile uint16_t s_vision_tx_len = 0U, s_vision_tx_pos = 0U;
+volatile uint32_t g_uart6_rx_errors = 0U;
+
+void USART6_VisionConfig(void)
+{
+    GPIO_InitTypeDef gpio;
+    USART_InitTypeDef serial;
+    NVIC_InitTypeDef irq;
+    s_vision_rx_queue = xQueueCreate(128U, sizeof(uint8_t));
+    configASSERT(s_vision_rx_queue != NULL);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART6, ENABLE);
+    GPIO_StructInit(&gpio);
+    gpio.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
+    gpio.GPIO_Mode = GPIO_Mode_AF;
+    gpio.GPIO_OType = GPIO_OType_PP;
+    gpio.GPIO_Speed = GPIO_Speed_50MHz;
+    gpio.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    GPIO_PinAFConfig(GPIOC, GPIO_PinSource6, GPIO_AF_USART6);
+    GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_USART6);
+    GPIO_Init(GPIOC, &gpio);
+    USART_StructInit(&serial);
+    serial.USART_BaudRate = 115200U;
+    serial.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
+    USART_Init(USART6, &serial);
+    USART_ITConfig(USART6, USART_IT_RXNE, DISABLE);
+    USART_ITConfig(USART6, USART_IT_TXE, DISABLE);
+    irq.NVIC_IRQChannel = USART6_IRQn;
+    irq.NVIC_IRQChannelPreemptionPriority = 6U;
+    irq.NVIC_IRQChannelSubPriority = 0U;
+    irq.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&irq);
+    USART_Cmd(USART6, ENABLE);
+}
+
+void USART6_VisionEnableReceive(void)
+{
+    (void)USART6->SR;
+    (void)USART6->DR;
+    USART_ITConfig(USART6, USART_IT_RXNE, ENABLE);
+}
+
+uint8_t USART6_VisionReadByte(uint8_t *data)
+{
+    if(data == NULL || s_vision_rx_queue == NULL)return 0U;
+    return xQueueReceive(s_vision_rx_queue, data, 0U)==pdPASS ? 1U : 0U;
+}
+
+uint8_t USART6_VisionSend(const uint8_t *data, uint16_t length)
+{
+    uint16_t i;
+    if(data==NULL || !length || length>sizeof(s_vision_tx) || s_vision_tx_len)return 0U;
+    for(i=0U;i<length;i++)s_vision_tx[i]=data[i];
+    s_vision_tx_pos=0U;s_vision_tx_len=length;
+    USART_ITConfig(USART6, USART_IT_TXE, ENABLE);
+    return 1U;
+}
+
+void USART6_IRQHandler(void)
+{
+    BaseType_t wake = pdFALSE;
+    uint32_t status = USART6->SR;
+    uint8_t data;
+    if(status & (USART_SR_RXNE|USART_SR_ORE|USART_SR_NE|USART_SR_FE|USART_SR_PE)){
+        data=(uint8_t)USART_ReceiveData(USART6);
+        if(status & (USART_SR_ORE|USART_SR_NE|USART_SR_FE|USART_SR_PE))g_uart6_rx_errors++;
+        else if(s_vision_rx_queue==NULL || xQueueSendFromISR(s_vision_rx_queue,&data,&wake)!=pdPASS)
+            g_uart6_rx_errors++;
+    }
+    if(USART_GetITStatus(USART6,USART_IT_TXE)!=RESET){
+        if(s_vision_tx_pos<s_vision_tx_len)USART_SendData(USART6,s_vision_tx[s_vision_tx_pos++]);
+        else{USART_ITConfig(USART6,USART_IT_TXE,DISABLE);s_vision_tx_pos=s_vision_tx_len=0U;}
+    }
+    portEND_SWITCHING_ISR(wake);
+}

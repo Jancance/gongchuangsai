@@ -1,3 +1,18 @@
+# 工创赛当前工程（2026-11-20）
+
+当前代码以根目录 `3.stm32f407工程/` 为准，Keil入口 `gongxun-f407.uvprojx`，目标 **Vehicle_LiftRuler**。本机正式路径 `D:/新建文件夹4/工创赛/代码/stm32/3.stm32f407工程`；现场参数在 `USER/vehicle_parameters.h`。固件由用户自行烧录。
+
+- [原料区、粗加工区、码垛模块调用与交接](工创赛/docs/STAGE23_MODULE_HANDOFF_20261120.md)
+- [当前进度与验证说明](工创赛/docs/STAGE23_CURRENT_PROGRESS_20261120.md)
+- [本轮数据和历史证据索引](工创赛/handoff/2026-11-20_stage23/README.md)
+- [规则与工程基线](工创赛/docs/competition_requirements_2027.md)
+
+三个区域模块已整理成异步接口，码垛放置高度比对应粗加工点少下降60mm，三放不回收，最后收臂回0度。PC13保留给整车调度层；本次不串入全图路线，不把源码和离线通过当作整图已运行。Pi仍有跨区自动切换与码垛实物视觉的联调项。
+
+以下为历史交付说明；其中“根工程保留旧底盘版”等说法已由2026-11-20版本替代，历史候选保留供追溯。
+
+---
+
 # 工创赛整车整合工程
 
 > pzq完整工程和当前累计完成资料已推送main，主要成果提交`b9e9f3f`已远端核对。见[交付回执](工创赛/docs/PZQ_GITHUB_PUBLICATION_2026-11-09.md)；底盘同学先读[接续交接](工创赛/docs/PZQ_CHASSIS_TEAM_HANDOFF_2026-11-09.md)。

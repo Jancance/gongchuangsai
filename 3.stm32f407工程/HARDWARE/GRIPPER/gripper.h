@@ -6,5 +6,6 @@
 void Gripper_Init(void);
 uint8_t jiazhua(float angle_deg);
 void Gripper_Stop(void);
+uint8_t Gripper_PulseApplied(void);
 
 #endif

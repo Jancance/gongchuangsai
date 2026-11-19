@@ -2,17 +2,21 @@
 #define DM_CAN2_STARTUP_PLAN_H
 #include <stdint.h>
 #include <math.h>
-/* 新鲜原始角与既有显示基准换算；不设置电机零点，不恢复多圈机械参考。
- * 人工约180度出发，经逆时针正向半圈到同圈360度（显示0）。
- * 已在零位容差内不额外绕一整圈，其他起始姿态拒绝。 */
-static uint32_t DM_CAN2_StartupCcwDelta(float raw_deg,float zero_deg,float *delta_deg)
+#ifndef VEHICLE_DM_LEFTUP_SHORT_RETURN
+#define VEHICLE_DM_LEFTUP_SHORT_RETURN 0U
+#endif
+/* Clockwise return in the established 0..190 degree branch. Optional
+ * measured left-up branch is bounded to 330..357 (3..30 degrees to zero). */
+static uint32_t DM_CAN2_StartupReturnDelta(float raw_deg,float zero_deg,uint32_t leftup,float *delta_deg)
 {
-    float work;
-    if(!delta_deg || !(raw_deg>=-720.0f && raw_deg<=720.0f) ||
-       !(zero_deg>=-720.0f && zero_deg<=720.0f))return 0U;
-    work=fmodf(raw_deg-zero_deg,360.0f);if(work<0.0f)work+=360.0f;
-    if(work<=3.0f || work>=357.0f){*delta_deg=0.0f;return 1U;}
-    if(!(work>=170.0f && work<=190.0f))return 0U;
-    *delta_deg=360.0f-work;return 1U;
+ float work;
+ if(!delta_deg || !(raw_deg>=-720 && raw_deg<=720) || !(zero_deg>=-720 && zero_deg<=720))return 0;
+ work=fmodf(raw_deg-zero_deg,360);if(work<0)work+=360;
+ if(work<=3 || work>=357){*delta_deg=0;return 1;}
+ if(work<=190){*delta_deg=-work;return 1;}
+ if(leftup && work>=330){*delta_deg=360-work;return 1;}
+ return 0;
 }
+static uint32_t DM_CAN2_StartupCwDelta(float raw_deg,float zero_deg,float *delta_deg)
+{return DM_CAN2_StartupReturnDelta(raw_deg,zero_deg,VEHICLE_DM_LEFTUP_SHORT_RETURN,delta_deg);}
 #endif

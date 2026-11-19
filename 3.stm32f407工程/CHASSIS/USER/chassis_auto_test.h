@@ -92,6 +92,7 @@ typedef struct
 {
     uint32_t valid, motion_mode, base_rpm, run_ms;
     float distance_mm, route_reference_mm_s;
+    uint32_t stage3_fine;
 #if APP_DISTANCE_SCURVE_ACTIVE
     MotionProfile profile;
 #endif
@@ -99,16 +100,23 @@ typedef struct
 } ChassisAutoPreparedTranslation;
 uint32_t ChassisAuto_PrepareTranslation(uint32_t motion_mode, uint32_t base_rpm,
     uint32_t run_ms, float distance_mm, ChassisAutoPreparedTranslation *prepared);
+uint32_t ChassisAuto_PrepareStage3FineTranslation(uint32_t mode,uint32_t rpm,uint32_t run_ms,
+    float mm,float speed,ChassisAutoPreparedTranslation *prepared);
 uint32_t ChassisAuto_PrepareRouteTranslation(uint32_t motion_mode,uint32_t base_rpm,
     uint32_t run_ms,float distance_mm,float reference_mm_s,ChassisAutoPreparedTranslation *prepared);
 uint32_t ChassisAuto_BeginPreparedTranslation(const ChassisAutoPreparedTranslation *prepared,
     uint32_t expected_session);
+uint32_t ChassisAuto_PrepareRouteBlend(uint32_t mode,uint32_t rpm,uint32_t run_ms,float mm,float speed,ChassisAutoPreparedTranslation *prepared);
+uint32_t ChassisAuto_BeginPreparedBlend(const ChassisAutoPreparedTranslation *prepared,uint32_t expected_session);
+extern volatile uint32_t g_stage1_blend_active;
+extern volatile float g_stage1_forward_mm,g_stage1_lateral_mm;
 void ChassisAuto_Init(void);
 uint32_t ChassisAuto_Begin(uint32_t dry_run);
 void ChassisAuto_CanStep(void);
 void ChassisAuto_Abort(void);
 #if APP_TEST_MODE == 3U
 uint32_t ChassisAuto_BeginSequence(void);
+uint32_t ChassisAuto_BeginHeldSequence(void);
 uint32_t ChassisAuto_RearmCompleted(uint32_t expected_session);
 void ChassisAuto_ReportIdleSpeed(uint32_t index,float rpm,uint32_t tick);
 uint32_t ChassisAuto_ReleaseCompleted(uint32_t session);
@@ -141,7 +149,8 @@ uint32_t ChassisAuto_UpdateHeading(float command_rpm);
 /* Safety任务独立调用，不发送/等待CAN */
 void ChassisAuto_SafetyUpdate(uint32_t vm_request);
 /* TaskA到CAN任务的纯数据交接；1有效，0无效/过期。 */
-#define CHASSIS_HEADING_MAILBOX_MAX_AGE_MS 100U
+#include "heading_controller.h"
+#define CHASSIS_HEADING_MAILBOX_MAX_AGE_MS HEADING_HOLD_SOURCE_TIMEOUT_MS
 typedef struct
 {
     float command_rpm;
@@ -196,7 +205,6 @@ typedef struct
     uint32_t end_sign[4], end_raw[4], end_ms[4];
 } ChassisPositionEndpoints;
 uint32_t ChassisAuto_ReadPositionEndpoints(uint32_t index, ChassisPositionEndpoints *record);
-uint32_t ChassisAuto_BeginTurnBrake(int32_t direction);
 /* 四轮只读实验快照：RPM为带符号0.1RPM，时间为uint32毫秒。
  * 反馈为各轮异步CAN最近样本；ack仅表示命令收到应答，不表示到速。
  * mask无效时仍保留旧数值用于追溯，分析时必须检查mask/active/dry_run。
@@ -207,4 +215,5 @@ typedef struct {
     uint32_t ack_ms[4],sample_ms[4],age_ms[4];
 } ChassisWheelLog;
 uint32_t ChassisAuto_ReadWheelLog(ChassisWheelLog *snapshot);
+uint32_t ChassisAuto_CloseHeldCompleted(uint32_t session);
 #endif

@@ -40,12 +40,12 @@ static __inline uint32_t TurnBrake_Step(TurnBrake *s,uint32_t now,float yaw,floa
     remaining=s->angle-s->feedback_angle;
     ahead=remaining-s->lookahead_s*(s->feedback_rate>0.0f?s->feedback_rate:0.0f);
     distance=ahead>0.25f?ahead-0.25f:0.0f;
-    envelope=sqrtf(144.0f+30.0f*distance)-12.0f;
+    envelope=sqrtf(144.0f+2.0f*VEHICLE_TURN_ACCEL_DEG_S2*distance)-12.0f;
     want=envelope;
     if(want>2.0f*distance)want=2.0f*distance;
     if(want>s->speed_limit)want=s->speed_limit;
-    desired=TurnBrake_Clip((want-s->speed)*5.0f,15.0f);
-    s->acceleration+=TurnBrake_Clip(desired-s->acceleration,60.0f*dt);
+    desired=TurnBrake_Clip((want-s->speed)*5.0f,VEHICLE_TURN_ACCEL_DEG_S2);
+    s->acceleration+=TurnBrake_Clip(desired-s->acceleration,VEHICLE_TURN_JERK_DEG_S3*dt);
     s->speed+=s->acceleration*dt;
     if(s->speed<0.0f){s->speed=0.0f;s->acceleration=0.0f;}
     if(s->speed>s->speed_limit){s->speed=s->speed_limit;s->acceleration=0.0f;}

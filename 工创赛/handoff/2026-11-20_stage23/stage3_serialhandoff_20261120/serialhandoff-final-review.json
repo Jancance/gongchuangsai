@@ -1,0 +1,31 @@
+{
+  "p1_p2_blockers": 0,
+  "review_scope": "Independent narrow review of the serial Z then X then DM transaction and the X-near-zero correction; no hardware actions.",
+  "source_freeze_confirmed": true,
+  "source_inventory_count": 2053,
+  "changed_source_sha256": {
+    "CHASSIS/USER/source_parallel_flow.c": "7ed51ce85b175380c3a87ffb6719aa23b55567775588ffde4fbd3ad4b6c232d7",
+    "CHASSIS/USER/vehicle_source_parallel.inc": "8a4571a37e09531de7048e8a2a9adac9488b5238fb4a9784f5146820759e4721"
+  },
+  "parent_manifest_sha256": "943f6f51010097038fb2a0bdd23e3239203b33005a125b5063ffeb40e573ebf2",
+  "rebuilt_axf_sha256": {
+    "Vehicle_LiftRuler": "18ccd05e40af41066c0045da99e30268663369b6427193486463f7baa98f5de0",
+    "Vehicle_LiftRuler_Offline": "fdef6b01f681498cb3ca97f791a6c7fc4bad3351fc3586895a6fe2c363bae06b"
+  },
+  "build_log_sha256": {
+    "Vehicle_LiftRuler": "dad89ac4cf73cbc3f9c6267a40e550130cdec52367d56eda5f397239c70bbce5",
+    "Vehicle_LiftRuler_Offline": "46bec0e4fd32352251a6b25592779081772e6eb016a4cb115f5896e5c7a591d1"
+  },
+  "fixture_log_sha256": "80bf1f24aa1b88479d7c43666eb69d99ce04127250e26ec08bb8d1df5be632ba",
+  "profiles_unchanged_sha256": {
+    "place-only": "fe0ceabba138aca9366c1bee476d488f64de6cb58f2436b0082ebae9e68b80d4",
+    "recover": "31d1e5b40114b115baad4de220f8f6d9c3d2ea81995da802ef57b65a1b90e0ec"
+  },
+  "model_report_sha256": "a7cf019f7017e865118c174dd25781e4749f40070cc9c8feb0a29222c8331700",
+  "findings": [
+    "Closed prior finding: during EMPTY_HANDOFF, the STOP check precedes use of the existing 0.2-degree X near-goal threshold. If no movement frame is needed, ordinary polling still checks the actual X position and zero speed before marking X DONE.",
+    "Initially only Z prepares and starts. Real Z DONE enables X prepare; both real X and Z DONE enable DM prepare. The EMPTY transaction cannot enter queued two-axis broadcast.",
+    "The original transaction owner, timeout, STOP/ACK, and definite drive rejection remain. Only two source files changed; the preset, PC13, placement PWM dwell, 40mm target, 2mm/1deg alignment, and final zero remain unchanged."
+  ],
+  "physical_acceptance": false
+}

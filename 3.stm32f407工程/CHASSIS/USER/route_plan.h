@@ -57,7 +57,7 @@ static __inline uint32_t RoutePlan_Convert(const RouteRow *rows, uint32_t count,
             factor=6.0f*geometry->wheel_diameter_mm/(geometry->track_width_mm+geometry->wheelbase_mm);
             minimum=1.0f; maximum=5.0f;
             if(APP_TURN_BRAKE_TRIAL_ACTIVE && (count>=1U && count<=MOTION_ACTION_CAPACITY) &&
-               (row->amount==90.0f || row->amount==-90.0f)) maximum=(APP_TURN_BRAKE_TRIAL_DPS==30U)?27.2f:13.6f;
+               (row->amount==90.0f || row->amount==-90.0f)) maximum=(float)APP_TURN_BRAKE_TRIAL_DPS/factor;
         } else if (row->kind>=MOTION_FORWARD_DISTANCE && row->kind<=MOTION_BACKWARD_DISTANCE) {
             #if APP_ROUTE_SPEED_TRIAL_ACTIVE
             {

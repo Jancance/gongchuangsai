@@ -1,0 +1,3 @@
+PASS first two releases complete their 100 ms dwell and go to the next item without zeroing
+PASS final release waits 100 ms, submits DM-only 0, then timestamps only the matching DONE
+PASS either release or DM rejection follows the existing failure path without completion timing

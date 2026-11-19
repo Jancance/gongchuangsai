@@ -1,0 +1,29 @@
+{
+  "p1_p2_blockers": 0,
+  "review_scope": "Independent final review of finalzero firmware source, dual Keil images, fixture, and host/runner default manifest paths and angle decoding.",
+  "source_freeze_confirmed": true,
+  "source_inventory_count": 2053,
+  "changed_source_sha256": {
+    "CHASSIS/USER/stage3_cycle.inc": "d5643efedda08678e5c3fe94c74aa9d3604517c82dd98e045b60fadbd6b9e143"
+  },
+  "parent_manifest_sha256": "8618e5b5d8b28e6f069f3497837854881740696df24f92c51a21c55cc879cbfa",
+  "rebuilt_axf_sha256": {
+    "Vehicle_LiftRuler": "033b2c30910189dcdc5f4f3c56e43be3a60d9e02a0de1952dfac14e335be5189",
+    "Vehicle_LiftRuler_Offline": "8bc5a5315491de58afce2c2b7b2d00d24e86b4437cad44306228da6946429591"
+  },
+  "build_log_sha256": {
+    "Vehicle_LiftRuler": "9107f3c406ee2fff7191982f7aaa32b7447edf5f1ae639e55dc98ac1cb7ce8cb",
+    "Vehicle_LiftRuler_Offline": "ac16d9fe2cf6eff5b751a45540f2c91eca4274a06d42acc1527832d98b6e5e31"
+  },
+  "fixture_log_sha256": "2cd61c5d44365030ddadc891948d57235caa2db9eac97f1d09cebe1379d99051",
+  "host_sha256": "001c9e76e374ede41716a0fb9e1eedc2c0c06934bf5c2ff054c5793ea34e0f4e",
+  "runner_sha256": "43bb822505eab0dbf5355f56a6edc3ed9821580c3e6d4f2ee71f59601696a76e",
+  "expected_manifest": "stage3-anticipatory-finalzero-compatible.json",
+  "manifest_binding": "Both hosts use the finalzero default. The manifest is generated downstream using these independent source/build hashes.",
+  "findings": [
+    "The mode-1 final tray release uses the existing 100 ms PWM-success dwell. Phase 31 submits a DM-only logical 0 degree request. Only a matching IT3 DONE advances to phase 32, which timestamps completion and publishes state 6.",
+    "The existing IT3/SPF owner retains the referenced lift and extension admission, fresh settled DM feedback, and fault/STOP/timeout handling. Mode 0 and mode 2 paths are unchanged.",
+    "The cycle runner observes final logical feedback as an IEEE-754 float and watches state 6 before reporting recovery completion."
+  ],
+  "physical_acceptance": false
+}
