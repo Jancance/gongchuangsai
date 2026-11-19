@@ -16,7 +16,11 @@ typedef struct {
     uint32_t duration_ms,kind,ramp_ms;
     union {
         FusionPoint control[6];
-        struct { FusionPoint from,to; float entry,cruise,exit; } line;
+        struct {
+            FusionPoint from,to;
+            float entry,cruise,exit;
+            float rise_s,fall_s;
+        } line;
         struct { FusionPoint center; float start_rad,delta_rad; } turn;
     } data;
 } Zone2MotionSpan;

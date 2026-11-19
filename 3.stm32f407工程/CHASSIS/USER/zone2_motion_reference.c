@@ -9,12 +9,14 @@
 #define REF_SPEED 250.0f
 #define REF_ACCEL 120.0f
 #define REF_JERK 240.0f
+#define LONG_LINE_SPEED 400.0f
+#define LONG_LINE_MIN_MM 780.0f
 #define TRACK_MM 2.0f
 #define EDGE_TRACK_MM 1.0f
 #define EDGE_LENGTH_MM 5.0f
 #define CORNER_MIN_EXIT_MM (12.0f*(REF_BATCH_S+36.0f*REF_BATCH_S/2.0f)+TRACK_MM)
 
-enum { SPAN_LINE, SPAN_BLEND, SPAN_TURN };
+enum { SPAN_LINE, SPAN_BLEND, SPAN_TURN, SPAN_S_LINE };
 typedef struct { float trim,speed; uint32_t duration_ms; } Corner;
 
 static FusionPoint add_scaled(FusionPoint p,FusionPoint d,float s)
@@ -169,6 +171,59 @@ static uint32_t fit_line(float length,float initial,float final,float cap,Zone2M
     return best!=0U;
 }
 
+static float s_ramp_time(float change)
+{
+    const float limit=REF_ACCEL/REF_JERK;
+    if(change<=REF_ACCEL*limit) return 2.0f*sqrtf(change/REF_JERK);
+    return change/REF_ACCEL+limit;
+}
+
+static float s_ramp_distance(float entry,float exit,float peak,float *rise,float *fall)
+{
+    *rise=s_ramp_time(peak-entry);
+    *fall=s_ramp_time(peak-exit);
+    return .5f*((entry+peak)*(*rise)+(exit+peak)*(*fall));
+}
+
+static void fit_long_line(FusionPoint d,float length,float cap,Zone2MotionSpan *span)
+{
+    const float entry=span->data.line.entry,exit=span->data.line.exit;
+    const float minimum=fmaxf(entry,exit);
+    float lo=minimum,hi=fminf(cap,LONG_LINE_SPEED),peak,rise,fall,dist,seconds;
+    uint32_t i,batches;
+    if(length<LONG_LINE_MIN_MM || fminf(fabsf(d.x_mm),fabsf(d.y_mm))>1.0e-6f ||
+       hi<=minimum || s_ramp_distance(entry,exit,lo,&rise,&fall)>length) return;
+
+    /* Find the fastest feasible peak, then refit it to a whole number of batches. */
+    if(s_ramp_distance(entry,exit,hi,&rise,&fall)<=length) lo=hi;
+    else for(i=0U;i<24U;i++) {
+        peak=.5f*(lo+hi);
+        if(s_ramp_distance(entry,exit,peak,&rise,&fall)<=length) lo=peak;
+        else hi=peak;
+    }
+    dist=s_ramp_distance(entry,exit,lo,&rise,&fall);
+    if(lo<=0.0f) return;
+    batches=(uint32_t)ceilf((rise+fall+(length-dist)/lo)/REF_BATCH_S);
+    if(batches*REF_BATCH_MS>=span->duration_ms) return;
+    seconds=(float)(batches*REF_BATCH_MS)*.001f;
+    hi=lo;
+    lo=minimum;
+    for(i=0U;i<24U;i++) {
+        peak=.5f*(lo+hi);
+        dist=s_ramp_distance(entry,exit,peak,&rise,&fall);
+        if(dist+peak*(seconds-rise-fall)<length) lo=peak;
+        else hi=peak;
+    }
+    peak=.5f*(lo+hi);
+    dist=s_ramp_distance(entry,exit,peak,&rise,&fall);
+    if(seconds<rise+fall || fabsf(dist+peak*(seconds-rise-fall)-length)>.005f) return;
+    span->kind=SPAN_S_LINE;
+    span->duration_ms=batches*REF_BATCH_MS;
+    span->data.line.cruise=peak;
+    span->data.line.rise_s=rise;
+    span->data.line.fall_s=fall;
+}
+
 static void corner_controls(const FusionPlan *p,uint32_t node,float trim,FusionPoint control[6])
 {
     FusionPoint c=p->input.points[node],a=direction(p,node-1U),b=direction(p,node);
@@ -299,8 +354,9 @@ uint32_t Zone2MotionReference_Prepare(const FusionPlan *p,Zone2MotionReference *
             FusionPoint u=direction(p,i);
             FusionPoint a=add_scaled(in->points[i],u,corners[i].trim);
             FusionPoint b=add_scaled(in->points[i+1U],u,-corners[i+1U].trim);
-            float cap=fminf(in->speed_mm_s[i],REF_SPEED);
-            if(!fit_line(norm(delta(a,b)),corners[i].speed,corners[i+1U].speed,cap,&span)) {
+            FusionPoint d=delta(a,b);
+            float length=norm(d),cap=fminf(in->speed_mm_s[i],REF_SPEED);
+            if(!fit_line(length,corners[i].speed,corners[i+1U].speed,cap,&span)) {
                 drop=corners[i+1U].duration_ms?i+1U:i;
                 if(!corners[drop].duration_ms) {
                     r->section_count=0U;
@@ -308,6 +364,7 @@ uint32_t Zone2MotionReference_Prepare(const FusionPlan *p,Zone2MotionReference *
                 }
                 break;
             }
+            fit_long_line(d,length,in->speed_mm_s[i],&span);
             span.data.line.from=a;
             span.data.line.to=b;
             push_span(r,&span);
@@ -337,6 +394,15 @@ static float ramp_area(float u)
     return u*u*u*(1.0f-.5f*u);
 }
 
+static float s_ramp_area(float time,float duration,float from,float to)
+{
+    const float t=fminf(fmaxf(time,0.0f),duration);
+    const float b=fminf(REF_ACCEL/REF_JERK,.5f*duration);
+    const float x=fmaxf(0.0f,t-b),y=fmaxf(0.0f,t-(duration-b));
+    const float jerk=copysignf(REF_JERK,to-from);
+    return from*t+jerk*(t*t*t-x*x*x-y*y*y)/6.0f;
+}
+
 static FusionPoint sample_span(const Zone2MotionSpan *span,float t,float *heading)
 {
     float end=(float)span->duration_ms*.001f;
@@ -355,6 +421,15 @@ static FusionPoint sample_span(const Zone2MotionSpan *span,float t,float *headin
     }
     if(t<=0.0f) return span->data.line.from;
     if(t>=end) return span->data.line.to;
+    if(span->kind==SPAN_S_LINE) {
+        const float entry=span->data.line.entry,cruise=span->data.line.cruise,exit=span->data.line.exit;
+        const float rise=span->data.line.rise_s,fall=span->data.line.fall_s;
+        const float cruise_s=end-rise-fall;
+        FusionPoint d=delta(span->data.line.from,span->data.line.to);
+        float s=s_ramp_area(t,rise,entry,cruise)+cruise*fminf(cruise_s,fmaxf(0.0f,t-rise))
+            +s_ramp_area(t-rise-cruise_s,fall,cruise,exit);
+        return add_scaled(span->data.line.from,d,s/norm(d));
+    }
     {
         FusionPoint d=delta(span->data.line.from,span->data.line.to);
         float b=(float)span->ramp_ms*.001f,f=end-2.0f*b;

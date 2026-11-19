@@ -118,8 +118,8 @@ static Zone2NavPathResult convert(const Zone2NavMap *map,const Zone2NavRequest *
     const radar_client_path_result_t *path,const Zone2NavGeometry *g,Zone2NavRoute *route)
 {
     FusionInput *in=&route->reference;
-    FieldPoint center,next;
-    uint32_t i;
+    FieldPoint center,next,first;
+    uint32_t i,skip_start_center;
     if(q->start>=ZONE2_GRID_CELLS || q->goal>=ZONE2_GRID_CELLS || path->waypoint_count>RADAR_CLIENT_MAX_WAYPOINTS)
         return ZONE2_NAV_FORMAT;
     for(i=0U;i<path->waypoint_count;i++) {
@@ -133,13 +133,22 @@ static Zone2NavPathResult convert(const Zone2NavMap *map,const Zone2NavRequest *
     if(!append(in,g->actual)) return ZONE2_NAV_CAPACITY;
     if(q->start!=q->goal) {
         if(!FieldMap_CellCenter(q->start,&center)) return ZONE2_NAV_FORMAT;
-        if(hypotf(g->actual.x_mm-center.x_mm,g->actual.y_mm-center.y_mm)>=.01f &&
+        /* Leave the scan station directly along a northbound PATH. */
+        skip_start_center=q->start==2U && q->goal==14U &&
+            FieldMap_CellCenter(path->waypoints[0],&first) &&
+            first.x_mm==center.x_mm && first.y_mm>g->actual.y_mm &&
+            g->actual.y_mm>center.y_mm && fabsf(g->actual.x_mm-center.x_mm)<=1.0f;
+        if(!skip_start_center && hypotf(g->actual.x_mm-center.x_mm,g->actual.y_mm-center.y_mm)>=.01f &&
            !append(in,(FusionPoint){center.x_mm,center.y_mm})) return ZONE2_NAV_CAPACITY;
         for(i=0U;i<path->waypoint_count;i++) {
             Zone2NavPathResult result;
             if(!FieldMap_CellCenter(path->waypoints[i],&next)) return ZONE2_NAV_FORMAT;
             result=check_span(center,next,map->occupied_mask,&route->visited_mask);
             if(result!=ZONE2_NAV_OK) return result;
+            /* Stop at the scan station before reaching its cell center. */
+            if(q->start==0U && q->goal==2U && i+1U==path->waypoint_count &&
+               center.x_mm==next.x_mm && g->terminal.x_mm==next.x_mm &&
+               g->terminal.y_mm>next.y_mm && g->terminal.y_mm<center.y_mm) break;
             if(!append(in,(FusionPoint){next.x_mm,next.y_mm})) return ZONE2_NAV_CAPACITY;
             center=next;
         }
