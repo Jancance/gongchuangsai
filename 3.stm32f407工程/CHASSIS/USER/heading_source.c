@@ -1,5 +1,6 @@
 #include "heading_source.h"
 #include "app_config.h"
+#include "chassis_odometry.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "hwt101.h"
@@ -8,7 +9,7 @@
 #if configTICK_RATE_HZ != 1000U
 #error Heading_source_requires_1000Hz_tick
 #endif
-#define HEADING_SOURCE_FRESH_MS 100U
+#define HEADING_SOURCE_FRESH_MS ODOM_YAW_MAX_AGE_MS
 
 static AppHeadingSource s_heading_source = {0};
 static uint32_t s_heading_source_ready = 0U;

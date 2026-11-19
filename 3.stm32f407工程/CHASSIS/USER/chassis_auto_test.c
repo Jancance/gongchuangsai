@@ -772,6 +772,12 @@ static void Auto_CheckWheelSpeedLocked(uint32_t i,TickType_t now)
 #define ZONE2_STATUS_ONE_MISS_MS 650U
 #define ZONE2_SLOT_MS 10U
 #define ZONE2_FULL_MASK 15U
+#if APP_ZONE2_NAV_MOTION_ENABLE
+#define ZONE2_STOP_QUIET_MS 300U
+#define ZONE2_WHEEL_QUIET_COUNTS 64U
+#else
+#define ZONE2_STOP_QUIET_MS CHASSIS_AUTO_GAP_MS
+#endif
 typedef struct {
     ChassisZone2CanStatus report;
     ChassisMotorCommand commands[4];
@@ -796,7 +802,11 @@ static void Auto_CheckLocked(TickType_t now)
         ((TickType_t)(now - s_heading_command_tick) >=
          pdMS_TO_TICKS(CHASSIS_HEADING_MAILBOX_MAX_AGE_MS)))
     { Auto_CutDetailLocked(3U,1U,0U,0U); return; }
-    if ((TickType_t)(now - s_total_tick) >= pdMS_TO_TICKS((s_distance_mode && s_translation_run_ms>30000U) ? 75000U : CHASSIS_AUTO_TOTAL_MS))
+    if (
+#if APP_ZONE2_NAV_MOTION_ENABLE
+        !(s_nav.report.run_id && s_nav.report.session==g_chassis_auto_session) &&
+#endif
+        (TickType_t)(now - s_total_tick) >= pdMS_TO_TICKS((s_distance_mode && s_translation_run_ms>30000U) ? 75000U : CHASSIS_AUTO_TOTAL_MS))
     { Auto_CutLocked(6U); return; }
     if (state <= CHASSIS_AUTO_VERIFY_ON)
     {
@@ -826,13 +836,6 @@ static void Auto_CheckLocked(TickType_t now)
     if (s_nav.report.run_id && state>=CHASSIS_AUTO_START && state<=CHASSIS_AUTO_SETTLE)
     {
         /* Safety still enforces link/VM health, settlement and the original STOP deadline. */
-        if ((state==CHASSIS_AUTO_START || state==CHASSIS_AUTO_RUN) && !s_stop_due) {
-            for (i=0U;i<4U;i++) if (DirectionGuard_Expired(&s_direction_guard[i],
-                (uint32_t)now*portTICK_PERIOD_MS)) {
-                Auto_CutDetailLocked(8U,DIRECTION_PERSISTENT,0U,i+1U);
-                return;
-            }
-        }
         if (s_run_started && !s_stop_due && state<=CHASSIS_AUTO_RUN &&
             (uint32_t)now*portTICK_PERIOD_MS-s_nav.batch_start_ms > 160U)
         {
@@ -1809,6 +1812,12 @@ static uint32_t Auto_NavQuiet(uint32_t now,uint32_t anchor,uint32_t dwell)
     return 1U;
 }
 
+static uint32_t Auto_NavStopQuiet(uint32_t now)
+{
+    return !s_nav.stop_failure && g_chassis_auto_stop_mask[g_chassis_auto_segment]==ZONE2_FULL_MASK &&
+        Auto_NavQuiet(now,s_nav.report.stop_ack_ms,ZONE2_STOP_QUIET_MS);
+}
+
 static void Auto_NavFaultLocked(uint32_t cause,uint32_t io,uint32_t address,TickType_t now)
 {
     if (!s_nav.stop_failure) {
@@ -1880,7 +1889,7 @@ uint32_t ChassisAuto_Zone2ReleaseCompleted(uint32_t run_id,uint32_t session)
     if (run_id && run_id==s_nav.report.run_id && session==s_nav.report.session &&
         g_vm_test_request && power.active && power.enable_count==s_nav.report.power_epoch &&
         !s_nav.stop_failure && Auto_NavFeedbackReady(Auto_NavNow()) &&
-        Auto_NavQuiet(Auto_NavNow(),s_nav.report.stop_ack_ms,CHASSIS_AUTO_GAP_MS))
+        Auto_NavStopQuiet(Auto_NavNow()))
         accepted=ChassisAuto_ReleaseCompleted(session);
     taskEXIT_CRITICAL();
     return accepted;
@@ -1953,13 +1962,12 @@ void ChassisAuto_Zone2Read(ChassisZone2CanStatus *snapshot)
         snapshot->zero_confirmed=s_nav.committed_zero && !s_stop_due &&
             Auto_NavQuiet(now,s_nav.report.zero_ack_ms,1U);
         snapshot->wheel_quiet=(snapshot->state==CHASSIS_AUTO_SETTLE || snapshot->state==CHASSIS_AUTO_DONE) &&
-            !s_nav.stop_failure && Auto_NavQuiet(now,s_nav.report.stop_ack_ms,CHASSIS_AUTO_GAP_MS);
+            Auto_NavStopQuiet(now);
     }
     taskEXIT_CRITICAL();
 }
 
-/* Each wheel has a fixed signed encoder anchor for the dwell. One count allows
- * quantization jitter. Walking counts or a missed interval restart the dwell. */
+/* Each wheel keeps its first quiet sample as the anchor until a gap or drift restarts the dwell. */
 static void Auto_NavRememberWheel(uint32_t i,const CAN1_EmmSystemFeedback *f)
 {
     uint32_t bit=1UL<<i;
@@ -1970,8 +1978,14 @@ static void Auto_NavRememberWheel(uint32_t i,const CAN1_EmmSystemFeedback *f)
         uint32_t count=f->position_counts, fixed=s_nav.quiet_count[i];
         uint32_t span=count>=fixed ? count-fixed : fixed-count;
         uint32_t opposite=count && fixed && f->position_sign!=s_nav.quiet_sign[i];
-        if (!(s_nav.quiet_seen&bit) || f->reply_ms-s_nav.report.wheel_ms[i]>ZONE2_WHEEL_AGE_MS ||
-            span>1U || opposite) {
+#if APP_ZONE2_NAV_MOTION_ENABLE
+        /* Use the same wheel tolerance before motion, at section joins and after STOP. */
+        uint64_t signed_span=opposite ? (uint64_t)count+fixed : span;
+        uint32_t drift=signed_span>ZONE2_WHEEL_QUIET_COUNTS;
+#else
+        uint32_t drift=span>1U || opposite;
+#endif
+        if (!(s_nav.quiet_seen&bit) || f->reply_ms-s_nav.report.wheel_ms[i]>ZONE2_WHEEL_AGE_MS || drift) {
             s_nav.quiet_ms[i]=f->reply_ms;
             s_nav.quiet_count[i]=count;
             s_nav.quiet_sign[i]=f->position_sign;
@@ -2039,18 +2053,14 @@ static void Auto_NavMonitor(uint32_t slot,uint32_t phase,uint32_t session,uint32
             g_can_poll_tick[i]=s_status_tick[i]; g_can_poll_count[i]++;
             if (g_chassis_auto_active && (s_status[i]&0x0CU)) Auto_CutLocked(2U);
         } else {
-            uint32_t reason=0U;
             s_nav.feedback_cursor=(i+1U)%4U;
             s_nav.wheel_renewed_mask|=bit;
             if (s_nav.wheel_renewed_mask==ZONE2_FULL_MASK) s_nav.wheel_retry=0U;
             Auto_NavRememberWheel(i,&feedback);
             if (g_chassis_auto_active && g_chassis_auto_state<=CHASSIS_AUTO_RUN && !s_stop_due) {
                 float limit=g_fusion_motion_limits.wheel_rpm*10.0f+5.0f;
-                if ((float)feedback.speed_decirpm < -limit || (float)feedback.speed_decirpm > limit) reason=9U;
-                else if (s_direction_guard[i].valid && Auto_NavNewer(feedback.request_ms,s_direction_guard[i].ack_ms))
-                    reason=DirectionGuard_Check(&s_direction_guard[i],Auto_NavNow(),
-                        feedback.reply_ms,feedback.speed_decirpm,0U);
-                if (reason) Auto_CutDetailLocked(8U,reason,result,i+1U);
+                if ((float)feedback.speed_decirpm < -limit || (float)feedback.speed_decirpm > limit)
+                    Auto_CutDetailLocked(8U,9U,result,i+1U);
             }
         }
     }
@@ -2127,8 +2137,7 @@ static void Auto_NavSend(uint32_t slot,uint32_t index,uint32_t run,uint32_t sess
         if (g_chassis_auto_active && !s_stop_due && g_chassis_auto_session==session &&
             s_vm_requested && power.active && power.enable_count==epoch) {
             if (result!=1U || !receipt.mailbox_accepted || !receipt.tx_complete || !receipt.ack_valid ||
-                receipt.tx_ms-slot>CAN1_NAV_ADMISSION_MS || receipt.reply_ms-slot>CAN1_NAV_COMPLETION_MS ||
-                Auto_NavNow()-slot>CAN1_NAV_COMPLETION_MS) {
+                receipt.tx_ms-slot>CAN1_NAV_ADMISSION_MS || receipt.reply_ms-slot>CAN1_NAV_COMPLETION_MS) {
                 Auto_NavFaultLocked(4U,result,index+1U,xTaskGetTickCount());
             } else {
                 s_nav.report.ack_mask|=bit;
@@ -2210,6 +2219,7 @@ void ChassisAuto_Zone2CanStep(uint32_t slot_ms,uint32_t phase)
     if ((state==CHASSIS_AUTO_START || state==CHASSIS_AUTO_RUN) && s_stop_due) {
         if (!s_nav.committed_zero && !s_nav.stop_failure)
             Auto_NavFaultLocked(5U,0U,0U,now);
+        s_nav.quiet_seen=0U;
         Auto_EnterLocked(CHASSIS_AUTO_STOP,now);
         state=CHASSIS_AUTO_STOP;
     }
@@ -2230,7 +2240,7 @@ void ChassisAuto_Zone2CanStep(uint32_t slot_ms,uint32_t phase)
         if (s_nav.stop_failure)
             Auto_CutDetailLocked(s_nav.stop_failure,6U,s_nav.stop_failure_io,s_nav.stop_failure_address);
         else if (Auto_AllSpeedSinceLocked(now) && Auto_ZeroSpeedLocked() &&
-            Auto_NavQuiet(now_ms,s_nav.report.stop_ack_ms,CHASSIS_AUTO_GAP_MS)) {
+            Auto_NavStopQuiet(now_ms)) {
             g_chassis_auto_state=CHASSIS_AUTO_DONE;
             g_chassis_auto_result=1U; g_chassis_auto_cause=0U;
             g_chassis_auto_active=0U;

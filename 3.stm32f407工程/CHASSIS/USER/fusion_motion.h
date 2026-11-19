@@ -2,6 +2,10 @@
 #define FUSION_MOTION_H
 #include "chassis_kinematics.h"
 
+#define FUSION_MOTION_HEADING_TOLERANCE_DEG 0.2f
+/* Allow single-precision error when converting headings to radians. */
+#define FUSION_MOTION_HEADING_ROUNDOFF_DEG 0.00005f
+
 /* Pure math. x/y use mm and yaw uses rad with the corresponding time powers.
  * Caller supplies current applied-command boundary, timing/error envelopes,
  * and safe space in the initial body frame. No CAN, STOP acknowledgement or

@@ -58,6 +58,7 @@ static const PeerPath wire_paths[]={
     {22,14,2,{12,14}}, {22,0,2,{2,0}}
 };
 static const PeerPath detour_path={2,14,2,{12,14}};
+static const double yellow_center[]={775.0,1625.0};
 
 uint32_t RadarZoneSwitch_Lock(void) { return locked_zone=g_radar_zone_selected; }
 void RadarZoneSwitch_Unlock(void) { locked_zone=0U; }
@@ -78,9 +79,84 @@ static double box_clearance(double dx,double dy,double c,double s,double half_l,
     return fmax(field_axes,body_axes);
 }
 
+#if CHAIN_INTERVAL_CLEARANCE
+enum { WALL_X_MIN, WALL_X_MAX, WALL_Y_MIN, WALL_Y_MAX, YELLOW_FIRST, CELL_5=8, FEATURE_COUNT };
+
+volatile struct {
+    double minimum_mm[FEATURE_COUNT];
+    double final_return_mm;
+    uint32_t count,nonpositive,worst_feature,start_ms,end_ms,phase,leg_index;
+} chain_interval_clearance;
+
+static const double half_pi=1.57079632679489661923;
+static const double rad_per_degree=0.01745329251994329577;
+static const double clearance_roundoff_mm=1e-9;
+
+static double interval_support(double angle,double half_angle,double h_l,double h_w)
+{
+    const double peak=atan2(h_w,h_l);
+    const double pi=2.0*half_pi;
+    if (fabs(remainder(angle-peak,pi))<=half_angle || fabs(remainder(angle+peak,pi))<=half_angle)
+        return hypot(h_l,h_w);
+    const double lo=angle-half_angle,hi=angle+half_angle;
+    return fmax(h_l*fabs(cos(lo))+h_w*fabs(sin(lo)),h_l*fabs(cos(hi))+h_w*fabs(sin(hi)));
+}
+
+/* Max gap on four fixed separating axes, with the same error bound on each axis. */
+static double interval_box_gap(double dx,double dy,double c,double s,double half_side,const double ext[4])
+{
+    const double body_box_extent=half_side*(fabs(c)+fabs(s));
+    return fmax(fmax(fabs(dx)-half_side-ext[0],fabs(dy)-half_side-ext[1]),
+        fmax(fabs(c*dx+s*dy)-body_box_extent-ext[2],fabs(-s*dx+c*dy)-body_box_extent-ext[3]));
+}
+
+static void interval_clearance_step(uint32_t now,uint32_t dt,double x,double y,double heading,
+    double c,double s,double center_travel,double yaw_travel,double h_l,double h_w)
+{
+    const double angle=yaw_travel+rad_per_degree*(double)s_config.heading_budget_deg;
+    const double center=center_travel+(double)s_config.position_budget_mm+clearance_roundoff_mm;
+    const double ext[4]={interval_support(heading,angle,h_l,h_w)+center,
+        interval_support(heading-half_pi,angle,h_l,h_w)+center,
+        interval_support(0.0,angle,h_l,h_w)+center,interval_support(-half_pi,angle,h_l,h_w)+center};
+    const uint32_t features=CHAIN_OCCUPIED_GRID ? FEATURE_COUNT : CELL_5;
+    double gap[FEATURE_COUNT];
+    uint32_t i,j,worst=0U;
+    gap[WALL_X_MIN]=x-ext[0];
+    gap[WALL_X_MAX]=2400.0-x-ext[0];
+    gap[WALL_Y_MIN]=y-ext[1];
+    gap[WALL_Y_MAX]=2400.0-y-ext[1];
+    for (i=0U;i<2U;i++) for (j=0U;j<2U;j++)
+        gap[YELLOW_FIRST+2U*i+j]=interval_box_gap(x-yellow_center[i],y-yellow_center[j],c,s,225.0,ext);
+    if (CHAIN_OCCUPIED_GRID) gap[CELL_5]=interval_box_gap(x-2160.0,y-720.0,c,s,240.0,ext);
+    for (i=1U;i<features;i++) if (gap[i]<gap[worst]) worst=i;
+    if (!chain_interval_clearance.count ||
+        gap[worst]<chain_interval_clearance.minimum_mm[chain_interval_clearance.worst_feature]) {
+        chain_interval_clearance.worst_feature=worst;
+        chain_interval_clearance.start_ms=now-dt-1000U;
+        chain_interval_clearance.end_ms=now-1000U;
+        chain_interval_clearance.phase=g_zone2_phase;
+        chain_interval_clearance.leg_index=s_schedule.leg;
+    }
+    for (i=0U;i<features;i++)
+        if (!chain_interval_clearance.count || gap[i]<chain_interval_clearance.minimum_mm[i])
+            chain_interval_clearance.minimum_mm[i]=gap[i];
+    chain_interval_clearance.nonpositive+=gap[worst]<=0.0;
+    chain_interval_clearance.count++;
+}
+
+static double final_return_clearance(void)
+{
+    const double angle=rad_per_degree*(double)s_config.heading_budget_deg;
+    const double center=(double)s_config.position_budget_mm+clearance_roundoff_mm;
+    const double h_l=0.5*(double)VEHICLE_BODY_LENGTH_MM,h_w=0.5*(double)VEHICLE_BODY_WIDTH_MM;
+    const double ext_x=interval_support(truth_heading,angle,h_l,h_w)+center;
+    const double ext_y=interval_support(truth_heading-half_pi,angle,h_l,h_w)+center;
+    return fmin(fmin(truth_x,300.0-truth_x)-ext_x,fmin(truth_y,300.0-truth_y)-ext_y);
+}
+#endif
+
 static void truth_step(uint32_t now,uint32_t dt)
 {
-    static const double zone_center[]={775.0,1625.0};
     const double conversion=3.14159265358979323846*(double)g_chassis_geometry.wheel_diameter_mm/2400.0;
     const double a=(double)driver_decirpm[0],b=-(double)driver_decirpm[1];
     const double c=(double)driver_decirpm[2],d=-(double)driver_decirpm[3];
@@ -107,7 +183,7 @@ static void truth_step(uint32_t now,uint32_t dt)
         fmin(middle_y,2400.0-middle_y)-ext_y);
     uint32_t i,j;
     for (i=0U;i<2U;i++) for (j=0U;j<2U;j++)
-        gap=fmin(gap,box_clearance(middle_x-zone_center[i],middle_y-zone_center[j],cs,sn,h_l,h_w,225.0));
+        gap=fmin(gap,box_clearance(middle_x-yellow_center[i],middle_y-yellow_center[j],cs,sn,h_l,h_w,225.0));
     if (CHAIN_OCCUPIED_GRID) {
         const double occupied_gap=box_clearance(middle_x-2160.0,middle_y-720.0,cs,sn,h_l,h_w,240.0)-bound;
         if (!chain_occupied_intervals || occupied_gap<chain_occupied_clearance)
@@ -133,6 +209,10 @@ static void truth_step(uint32_t now,uint32_t dt)
         (double)s_config.heading_budget_deg*hypot(h_l,h_w);
     if (!chain_truth_samples || gap<chain_robust_clearance) chain_robust_clearance=(float)gap;
     chain_robust_contacts+=gap<=0.0;
+#if CHAIN_INTERVAL_CLEARANCE
+    interval_clearance_step(now,dt,middle_x,middle_y,mid,cs,sn,
+        hypot(forward,left)*half_span,fabs(half),h_l,h_w);
+#endif
     chain_truth_samples++;
     truth_x+=vx*span*sinc;
     truth_y+=vy*span*sinc;
@@ -390,6 +470,10 @@ unsigned test_entry(void)
     chain_x=map.pose.x_mm;chain_y=map.pose.y_mm;chain_heading=map.pose.heading_deg;
     chain_truth_x=(float)truth_x;chain_truth_y=(float)truth_y;
     chain_truth_yaw=(float)(truth_heading*57.2957795130823208768);
+#if CHAIN_INTERVAL_CLEARANCE
+    if (s_schedule.phase==ZONE2_SCHEDULE_DONE && s_schedule.leg==8U && !g_zone2_fault)
+        chain_interval_clearance.final_return_mm=final_return_clearance();
+#endif
     if (CHAIN_DROP_LINK || CHAIN_DROP_F6) {
         uint32_t old_sends=sends;
         CHECK(g_zone2_phase==ZONE2_FAILED && s_schedule.leg==0U && handled_path==1U && chain_nonzero);

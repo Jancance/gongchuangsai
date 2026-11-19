@@ -72,7 +72,7 @@ uint32_t FusionMotion_FeedbackBatch(const FusionMotionFeedbackInput *input,Fusio
     FusionMotionVector error,target,step={0};
     ChassisWheelSpeeds rpm={{0}};
     float cos_yaw,sin_yaw;
-    uint32_t i;
+    uint32_t i,heading_in_band;
     if(!input || !out || !vector_valid(input->reference) || !vector_valid(input->measured) ||
         !vector_valid(input->committed) || norm_xy(input->committed)>FEEDBACK_POSITION_CAP+1e-5f ||
         fabsf(input->committed.yaw)>FEEDBACK_YAW_CAP+1e-7f) return 0U;
@@ -82,6 +82,8 @@ uint32_t FusionMotion_FeedbackBatch(const FusionMotionFeedbackInput *input,Fusio
     error.yaw=input->reference.yaw-input->measured.yaw;
     if(!vector_valid(error) || !finite(norm_xy(error))) return 0U;
     error.yaw=atan2f(sinf(error.yaw),cosf(error.yaw));
+    heading_in_band=fabsf(error.yaw)<=
+        (FUSION_MOTION_HEADING_TOLERANCE_DEG+FUSION_MOTION_HEADING_ROUNDOFF_DEG)*FEEDBACK_RAD_PER_DEG;
     target.x=1.4f*error.x;
     target.y=1.4f*error.y;
     target.yaw=limit_signed(2.2f*error.yaw,FEEDBACK_YAW_CAP);
@@ -92,10 +94,10 @@ uint32_t FusionMotion_FeedbackBatch(const FusionMotionFeedbackInput *input,Fusio
     limit_xy(&step,28.0f*FEEDBACK_DT_S);
     batch.correction.x=input->committed.x+step.x;
     batch.correction.y=input->committed.y+step.y;
-    batch.correction.yaw=input->committed.yaw+
+    batch.correction.yaw=heading_in_band ? 0.0f : input->committed.yaw+
         limit_signed(target.yaw-input->committed.yaw,10.0f*FEEDBACK_RAD_PER_DEG*FEEDBACK_DT_S);
     batch.finish_requested=input->reference_complete && input->capture_complete && norm_xy(error)<=2.5f &&
-        fabsf(error.yaw)<=0.10f*FEEDBACK_RAD_PER_DEG;
+        heading_in_band;
 
     if(!batch.finish_requested) {
         cos_yaw=cosf(input->measured.yaw);

@@ -191,7 +191,8 @@ Zone2SchedulePhase Zone2NavSchedule_Poll(Zone2NavSchedule *s,const FusionObserva
 #endif
             s->phase=ZONE2_SCHEDULE_POSE;
         } else {
-            if(!RadarObserver_RequestPath(&s->map_identity,leg.start,leg.goal)) return fail(s,ZONE2_NAV_STATUS);
+            /* A busy observer can accept the same request on a later poll. */
+            if(!RadarObserver_RequestPath(&s->map_identity,leg.start,leg.goal)) return s->phase;
             s->phase=ZONE2_SCHEDULE_REPLY;
             return s->phase;
         }

@@ -159,6 +159,8 @@ def main():
     mode.add_argument("--one-status-miss", dest="miss_command", action="store_const", const=0x3A)
     parser.add_argument("--startup-timing", type=int, metavar="SCAN_RESULT_DELAY_MS")
     parser.add_argument("--pose-trace", action="store_true", help="verify and export the frozen STM32 pose trace")
+    parser.add_argument("--interval-clearance", action="store_true",
+                        help="report fixed-axis lower clearance bounds over all simulated truth intervals")
     parser.add_argument("--require-post-budget-motion", action="store_true",
                         help="require a nonzero wheel command after the 180-second scoring budget and full completion")
     parser.add_argument("--receipt", type=Path)
@@ -228,6 +230,7 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
             f"-DCHAIN_DROP_LINK={int(args.drop_radar)}", f"-DCHAIN_DROP_F6={int(args.drop_f6)}",
             f"-DCHAIN_OCCUPIED_DETOUR={int(args.occupied_detour)}",
             f"-DCHAIN_OCCUPIED_BAD_PATH={int(args.occupied_bad_path)}",
+            f"-DCHAIN_INTERVAL_CLEARANCE={int(args.interval_clearance)}",
             f"-DCHAIN_MISS_COMMAND={args.miss_command}",
             f"-DCHAIN_STARTUP_TIMING={int(args.startup_timing is not None)}",
             f"-DCHAIN_REQUIRE_POST_BUDGET_MOTION={int(args.require_post_budget_motion)}",
@@ -276,7 +279,8 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
             trace_blob = bytes(machine.mem_read(trace_addr, TRACE_HEADER.size + count * TRACE_ROW.size))
     route_match = re.search(r"\bg_zone2_route_trace\s+(0x[0-9a-fA-F]+)", symbols)
     route_blob = bytes(machine.mem_read(int(route_match[1], 16), ROUTE_SIZE)) if route_match else None
-    return dict(trace_symbol_present=bool(trace_match), _trace_blob=trace_blob, _route_blob=route_blob,"""
+    return dict(trace_symbol_present=bool(trace_match), _trace_blob=trace_blob, _route_blob=route_blob,
+                _interval_values=read("chain_interval_clearance", "<10d7I") if INTERVAL_CLEARANCE else None,"""
     kernel = replace_once(kernel, "    return dict(**{name:", trace_extract + "\n                **{name:")
     read_chain = r"""match = re.search(r"\b" + name + r"\s+(0x[0-9a-fA-F]+)", symbols)
         if not match and name in SHADOW_OMITTED:
@@ -284,7 +288,7 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
         if not match:
             raise ValueError(f"Missing replay symbol: {name}")
         values = struct.unpack(fmt, machine.mem_read(int(match[1], 16), struct.calcsize(fmt)))
-        return values if fmt == "<8I" else values[0]"""
+        return values if len(values) != 1 else values[0]"""
     kernel = replace_once(kernel, r"""address = int(re.search(r"\b" + name + r"\s+(0x[0-9a-fA-F]+)", symbols)[1], 16)
         return struct.unpack(fmt, machine.mem_read(address, 4))[0]""", read_chain)
     omitted = ("track_ms", "tracking_checks", "edge_checks", "worst_leg", "worst_section",
@@ -311,11 +315,13 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
                "POSE_TRACE_ENABLED": args.pose_trace, "TRACE_HEADER": TRACE_HEADER,
                "TRACE_ROW": TRACE_ROW, "TRACE_CAPACITY": TRACE_CAPACITY,
                "ROUTE_SIZE": route_trace.SIZE,
+               "INTERVAL_CLEARANCE": args.interval_clearance,
                "SHADOW_OMITTED": omitted_nonfault | ({"chain_" + name for name in omitted} if args.shadow else set())}
     exec(compile(kernel, str(kernel_runner), "exec"), runtime)
     result = runtime["execute"](out)
     trace_blob = result.pop("_trace_blob")
     route_blob = result.pop("_route_blob")
+    interval_values = result.pop("_interval_values")
     trace_result = {"checks": {"symbol_presence": result["trace_symbol_present"] == args.pose_trace}}
     if trace_blob is not None:
         trace_file = out / "pose_trace.bin"
@@ -341,6 +347,24 @@ static __inline void vTaskDelay(TickType_t ticks) { test_tick+=ticks; }
                   course_completed=result["stop_legs"] == 8 and result["fault"] == 0,
                   injected_missing_reply=f"0x{args.miss_command:02X}" if args.miss_command else None,
                   input_sha256=hashes, axf_sha256=sha(out / "unit.axf"))
+    if interval_values is not None:
+        labels = ["wall_x_min", "wall_x_max", "wall_y_min", "wall_y_max",
+                  "yellow_x775_y775", "yellow_x775_y1625", "yellow_x1625_y775", "yellow_x1625_y1625"]
+        if result["occupied_grid_mode"]:
+            labels.append("occupied_cell_5")
+        final_margin, count, nonpositive, feature, start_ms, end_ms, phase, leg_index = interval_values[9:]
+        if count != result["truth_samples"]:
+            raise RuntimeError("Interval clearance did not cover every simulated truth interval")
+        result["interval_clearance"] = {
+            "interval_count": count,
+            "nonpositive_interval_count": nonpositive,
+            "minimum_by_feature_mm": dict(zip(labels, interval_values)) if count else {},
+            "minimum_mm": interval_values[feature] if count else None,
+            "worst_interval": {"feature": labels[feature], "start_ms": start_ms, "end_ms": end_ms,
+                               "end_phase_code": phase, "end_leg_index": leg_index} if count else None,
+        }
+        if result["course_completed"]:
+            result["interval_clearance"]["final_return_zone_minimum_mm"] = final_margin
     if result["failed_line"]:
         result["failed_expression"] = fixture.read_text().splitlines()[result["failed_line"]-1].strip()
     if hashes != {p.name: sha(p) for p in inputs}:

@@ -5,12 +5,12 @@ typedef struct {
     uint8_t node_id,down_direction;
     /* 填实测总半步数，1..65535仅软件范围；不代表机械可用行程。 */
     uint16_t steps;
-    /* 单程实测耗时加服务余量：stage_timeout须>ceil(steps*733us/1000)+250且<2^31。 */
+    /* 单程实测耗时加服务余量：stage_timeout须>ceil(steps*RADAR_LIFT_INTERVAL_US/1000)+250且<2^31。 */
     uint32_t deploy_ms,settle_ms,stow_ms,stage_timeout_ms;
     /* 节点ID必须实物确认；方向、半步数和等待时间均须实测，不设部署默认值。 */
     uint8_t measured;
 } RadarZone2Config;
-/* 估算命令数及733us基线名义耗时，未经实测；不能代替实际四圈/高度测量，无默认H。 */
+/* 估算命令数及RADAR_LIFT_INTERVAL_US基线名义耗时，未经实测；不能代替实际四圈/高度测量，无默认H。 */
 typedef struct {
     uint16_t steps;
     uint32_t nominal_leg_ms;
@@ -29,6 +29,7 @@ typedef struct {
      * 阶段完成只表示开环输出与估计时间完成，不是机械高度/到位反馈。 */
     uint32_t sequence,stage,error;
     uint8_t map_valid,path_valid,calibration_complete;
+    uint8_t recovered; /* 故障后完成回升和收拢的开环输出。 */
 } RadarObserverStatus;
 typedef struct {
     uint32_t run_id,map_generation,layout_id,link_generation,scan_sequence;
@@ -47,7 +48,7 @@ typedef struct {
 } RadarObserverPathReply;
 /* Watch/SWD独立机构邮箱，无node/measured依赖，不初始化雷达；8559为70mm单样本比例候选。
  * request 0默认关闭，1下(45→等待→dir1→释放)，2上(dir0→180→等待→释放)。
- * 先填正值wait_ms/budget_ms及interval_us=733..4000(默认733)，最后写request；一次消费并锁存。
+ * 先填正值wait_ms/budget_ms及interval_us=733..4000(默认977)，最后写request；一次消费并锁存。
  * result 1接受/2参数或忙拒绝/3失败保相/4正常完成释放；状态仍读observer快照。 */
 extern volatile uint32_t g_radar_mechanism_request,g_radar_mechanism_wait_ms;
 extern volatile uint32_t g_radar_mechanism_budget_ms,g_radar_mechanism_interval_us,g_radar_mechanism_result;

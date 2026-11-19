@@ -23,6 +23,7 @@
 #define CLIENT_HEARTBEAT_MS 500U
 #define CLIENT_ACK_TIMEOUT_MS 1500U
 #define CLIENT_OPERATION_TIMEOUT_MS 8000U
+#define CLIENT_GRID_PROGRESS_GRACE_MS 2000U
 #define CLIENT_LINK_TIMEOUT_MS 5000U
 #define CLIENT_UART_RETRY_MS 100U
 #define CLIENT_ZONE_RETRY_MS 500U
@@ -56,6 +57,7 @@ typedef struct {
     uint8_t requested_node_id;
     uint8_t requested_value;
     uint8_t requested_start, requested_goal;
+    uint8_t grid_progress_frames;
     uint16_t request_sequence;
     uint32_t deadline_ms;
     radar_client_operation_t operation;
@@ -91,6 +93,13 @@ static bool startup_read_pending;
 static client_transaction_t transaction;
 static radar_client_callbacks_t callbacks;
 static radar_client_state_t state;
+
+typedef struct {
+    uint16_t sequence;
+    uint8_t timed_out, tx_started, ack_ok, status_seen, frame_count;
+    uint8_t grid_seen, locked_seen, status, running, overflow;
+} RadarGridScanTimeout;
+volatile RadarGridScanTimeout g_radar_grid_timeout;
 
 /* GRID和RESULT是两条独立事件，按scan_sequence配对后才发布障碍结果。 */
 static radar_client_grid_result_t pending_grid;
@@ -565,9 +574,11 @@ static void handle_ack(const link_message_t *message)
      * ACK仅表示命令被接受。扫描、校准、路径、选区和Flash类操作必须继续
      * 等待各自的最终事件；下面的switch集中定义每类事务的完成条件。
      */
+    if (!transaction.ack_ok || transaction.operation != RADAR_CLIENT_OPERATION_GRID_SCAN) {
+        uint32_t now_ms = RadarUartPort_GetTick();
+        transaction.deadline_ms = now_ms + CLIENT_OPERATION_TIMEOUT_MS;
+    }
     transaction.ack_ok = true;
-    transaction.deadline_ms = RadarUartPort_GetTick() +
-                              CLIENT_OPERATION_TIMEOUT_MS;
 
     switch (transaction.operation) {
     case RADAR_CLIENT_OPERATION_SELECT_ZONE:
@@ -623,8 +634,21 @@ static void handle_status(const link_message_t *message)
         return;
     }
     if (transaction_receiving() && (transaction.operation == RADAR_CLIENT_OPERATION_GRID_SCAN ||
-        transaction.operation == RADAR_CLIENT_OPERATION_SCAN_ONCE))
+        transaction.operation == RADAR_CLIENT_OPERATION_SCAN_ONCE)) {
         transaction.locked_seen = p[0]==4U && p[2]==0U && p[3]==14U && p[4]==0U;
+        if (transaction.operation == RADAR_CLIENT_OPERATION_GRID_SCAN) {
+            g_radar_grid_timeout.status_seen = 1U;
+            if (transaction.ack_ok && p[4] == 0U && p[3] <= 14U &&
+                p[3] > transaction.grid_progress_frames && (p[2] || transaction.locked_seen)) {
+                uint32_t now_ms = RadarUartPort_GetTick();
+                uint32_t next_deadline = now_ms + CLIENT_GRID_PROGRESS_GRACE_MS;
+                transaction.grid_progress_frames = p[3];
+                if (!time_reached(now_ms, transaction.deadline_ms) &&
+                    time_reached(next_deadline, transaction.deadline_ms))
+                    transaction.deadline_ms = next_deadline;
+            }
+        }
+    }
     state.status = p[0];
     state.mode = p[1];
     state.running = p[2] != 0U;
@@ -1090,6 +1114,20 @@ static void service_transaction_timeout(uint32_t now_ms)
         return;
     operation = transaction.operation;
     command = transaction.command;
+    if (operation == RADAR_CLIENT_OPERATION_GRID_SCAN) {
+        g_radar_grid_timeout.sequence = transaction.request_sequence;
+        g_radar_grid_timeout.tx_started = transaction.tx_started;
+        g_radar_grid_timeout.ack_ok = transaction.ack_ok;
+        g_radar_grid_timeout.grid_seen = transaction.grid_seen;
+        g_radar_grid_timeout.locked_seen = transaction.locked_seen;
+        if (g_radar_grid_timeout.status_seen) {
+            g_radar_grid_timeout.status = state.status;
+            g_radar_grid_timeout.running = state.running;
+            g_radar_grid_timeout.frame_count = state.frame_count;
+            g_radar_grid_timeout.overflow = state.overflow;
+        }
+        g_radar_grid_timeout.timed_out = 1U;
+    }
     /* 超时只终止本事务；选区超时会回到NEED_ZONE等待重试。 */
     clear_transaction();
     if (operation == RADAR_CLIENT_OPERATION_SELECT_ZONE) {
@@ -1235,9 +1273,13 @@ radar_client_request_result_t RadarClient_RequestScanOnce(void)
 
 radar_client_request_result_t RadarClient_RequestGridScan(void)
 {
+    radar_client_request_result_t result;
     clear_results();
-    return request_ready_command(LINK_CMD_SINGLE_MEASURE, NULL, 0U,
-                                 RADAR_CLIENT_OPERATION_GRID_SCAN);
+    result = request_ready_command(LINK_CMD_SINGLE_MEASURE, NULL, 0U,
+                                   RADAR_CLIENT_OPERATION_GRID_SCAN);
+    if (result == RADAR_CLIENT_REQUEST_ACCEPTED)
+        g_radar_grid_timeout = (RadarGridScanTimeout){0};
+    return result;
 }
 
 radar_client_request_result_t RadarClient_RequestStop(void)

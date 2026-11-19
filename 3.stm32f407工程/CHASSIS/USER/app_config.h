@@ -38,6 +38,12 @@
 #endif
 #define APP_BASELINE40_ACTIVE (APP_BASELINE40_ENABLE && APP_IS_DEBUG && (APP_TEST_MODE == 3U))
 #include "../../USER/vehicle_parameters.h"
+#ifndef APP_ZONE2_RADAR_CALIBRATION_TEST
+#define APP_ZONE2_RADAR_CALIBRATION_TEST 0U
+#endif
+#if APP_ZONE2_RADAR_CALIBRATION_TEST > 1U || (APP_ZONE2_RADAR_CALIBRATION_TEST && !APP_ZONE2_NAV_ENABLE)
+#error Zone2_radar_calibration_test_requires_navigation
+#endif
 #include "zdt_emm_config.h"
 #include "app_entry_config.h"
 #if VEHICLE_INTEGRATED_ENABLE && APP_IS_COMPETITION

@@ -1,4 +1,5 @@
 #include "radar_observer.h"
+#include "app_config.h"
 #include "radar_uart_port.h"
 #include "radar_servo.h"
 #include "radar_servo_config.h"
@@ -15,6 +16,9 @@ static RadarObserverMap nav_map,published_map;
 static RadarObserverPathReply nav_reply,published_reply;
 static uint32_t scan_run,scan_layout,map_generation,link_generation;
 static uint8_t link_ready,published_ready,lift_claimed,scan_only;
+#if APP_ZONE2_NAV_MOTION_ENABLE && !APP_ZONE2_RADAR_CALIBRATION_TEST
+static uint8_t idle_bad_event_ignored;
+#endif
 enum { CMD_SCAN=5U,CMD_PATH=6U };
 static volatile uint8_t owner_busy;
 static volatile uint8_t stop_pending;
@@ -24,11 +28,20 @@ static volatile uint8_t command,configure_pending,cancel_pending;
 volatile uint32_t g_radar_mechanism_request=0U,g_radar_mechanism_wait_ms=0U;
 volatile uint32_t g_radar_mechanism_budget_ms=0U,g_radar_mechanism_interval_us=RADAR_LIFT_INTERVAL_US;
 volatile uint32_t g_radar_mechanism_result=0U;
+/* Zone 2 GRID_SCAN diagnostics, retained until the next scan. */
+volatile int32_t g_radar_scan_submit_result=-1;
+volatile radar_client_error_t g_radar_scan_first_error;
 static uint8_t request_start,request_goal,calibrating,initialized,mechanism;
 static uint32_t mechanism_wait,mechanism_budget,mechanism_interval;
 static uint32_t leg_steps,leg_direction,leg_budget,leg_wait;
 static uint32_t entered,lift_sequence,scan_sequence;
 static uint8_t grid_done,calibration_done,path_done;
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+/* Keep the first calibration error through recovery for debugger readback. */
+volatile int32_t g_radar_calibration_submit_result=-1;
+volatile radar_client_error_t g_radar_calibration_first_error;
+static uint8_t recovering;
+#endif
 static uint32_t now(void) { return (uint32_t)(xTaskGetTickCount()*portTICK_PERIOD_MS); }
 static bool configured(const RadarZone2Config *c)
 {
@@ -71,7 +84,22 @@ static void on_state(const radar_client_state_t *s)
 }
 static void on_error(const radar_client_error_t *e)
 {
-    (void)e;invalidate();
+#if APP_ZONE2_NAV_MOTION_ENABLE && !APP_ZONE2_RADAR_CALIBRATION_TEST
+    if(scan_only && nav_map.valid && published_map.valid && status.stage==8U &&
+       !owner_busy && link_ready && !idle_bad_event_ignored &&
+       e->kind==RADAR_CLIENT_ERROR_BAD_EVENT && e->operation==RADAR_CLIENT_OPERATION_NONE) {
+        idle_bad_event_ignored=1U;
+        return;
+    }
+#endif
+    if(scan_only && status.stage>0U && status.stage<7U && !g_radar_scan_first_error.kind)
+        g_radar_scan_first_error=*e;
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+    if(calibrating && !recovering && status.stage>0U && status.stage<=4U &&
+       !g_radar_calibration_first_error.kind)
+        g_radar_calibration_first_error=*e;
+#endif
+    invalidate();
     if(!mechanism && status.stage>0U && status.stage<8U && !status.error)status.error=3U;
 }
 static void on_grid(const radar_client_grid_result_t *g)
@@ -210,14 +238,46 @@ bool RadarObserver_GetPath(RadarObserverPath *p)
 void RadarObserver_GetStatus(RadarObserverStatus *s)
 { uint32_t key;if(!s)return;key=RadarUartPort_EnterCritical();*s=published_status;RadarUartPort_ExitCritical(key); }
 static void stage(uint32_t value) { status.stage=value;entered=now(); }
+static bool begin_up(uint32_t t)
+{
+    g_radar_lift_interval_us=RADAR_LIFT_INTERVAL_US;
+    if(!RadarLift_Enable(t) || !RadarLift_BeginBounded(leg_steps,leg_direction^1U,leg_budget,&lift_sequence))
+        return false;
+    stage(5U);return true;
+}
 static void fail(uint32_t error)
 {
     if(!status.error)status.error=error;
     invalidate();stage(99U);
     if(lift_claimed)RadarLift_Cancel();
     if(mechanism)g_radar_mechanism_result=3U;
-    if(initialized && !mechanism)(void)RadarClient_RequestStop();
+    if(initialized && !mechanism
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+       && !recovering
+#endif
+      )(void)RadarClient_RequestStop();
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+    recovering=0U;status.recovered=0U;
+#endif
 }
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+static bool recover_radar_fault(uint32_t t,uint32_t error)
+{
+    RadarLiftSnapshot lift;
+    if(mechanism || (!calibrating && !scan_only) || !lift_claimed ||
+       status.stage<3U || status.stage>6U)return false;
+    if(!status.error)status.error=error;
+    if(status.stage<=4U) {
+        RadarLift_GetSnapshot(&lift);
+        if(lift.sequence!=lift_sequence || lift.state!=2U || lift.result!=1U || lift.done!=leg_steps ||
+           !begin_up(t))return false;
+    }
+    recovering=1U;
+    invalidate();
+    (void)RadarClient_RequestStop();
+    return true;
+}
+#endif
 /* 单一雷达任务服务入口，测试也执行此实际代码；不调用底盘接口。 */
 static void service_owner(void)
 {
@@ -226,6 +286,9 @@ static void service_owner(void)
     if(configure_pending) {
         config=pending_config;configure_pending=0U;initialized=0U;link_ready=0U;
         published_ready=0U;published_map.valid=0U;invalidate();
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+        recovering=0U;status.recovered=0U;
+#endif
     }
     cmd=command;command=0U;
     if(g_radar_mechanism_request) {
@@ -254,6 +317,9 @@ static void service_owner(void)
     if(cancel) { owner_busy=1U;cancel_pending=0U;command=0U; }
     RadarUartPort_ExitCritical(key);
     if(cancel) {
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+        status.recovered=0U;
+#endif
         if(cmd){mechanism=maintenance;status.sequence++;status.error=0U;fail(4U);}
         else if((status.stage>0U && status.stage<8U) || (scan_only && status.stage==8U))fail(4U);
         return;
@@ -265,7 +331,18 @@ static void service_owner(void)
         stage(7U);
     }
     if(cmd && cmd!=CMD_PATH) {
+        if(cmd==CMD_SCAN) {
+            g_radar_scan_submit_result=-1;
+            g_radar_scan_first_error=(radar_client_error_t){(radar_client_error_kind_t)0, RADAR_CLIENT_OPERATION_NONE, 0U, 0U};
+        }
         invalidate();status.sequence++;status.error=0U;status.calibration_complete=0U;
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+        recovering=0U;status.recovered=0U;
+        if(cmd==2U) {
+            g_radar_calibration_submit_result=-1;
+            g_radar_calibration_first_error=(radar_client_error_t){(radar_client_error_kind_t)0, RADAR_CLIENT_OPERATION_NONE, 0U, 0U};
+        }
+#endif
         mechanism=maintenance;
         if((!mechanism && (!configured(&config) || !RadarClient_IsReady() || RadarClient_IsBusy())) ||
            (cmd==CMD_SCAN && !link_ready) ||
@@ -278,7 +355,7 @@ static void service_owner(void)
         leg_direction=mechanism?1U:config.down_direction;
         leg_budget=mechanism?mechanism_budget:config.stage_timeout_ms-250U;
         leg_wait=mechanism?mechanism_wait:config.deploy_ms;
-        /* 扫描配置按733us名义基线准入；机构邮箱按本次档位。 */
+        /* 扫描配置按RADAR_LIFT_INTERVAL_US名义基线准入；机构邮箱按本次档位。 */
         g_radar_lift_interval_us=mechanism?mechanism_interval:RADAR_LIFT_INTERVAL_US;
         if(cmd==4U) {
             if(!RadarLift_Enable(t) || !RadarLift_BeginBounded(leg_steps,0U,leg_budget,&lift_sequence)){fail(2U);return;}
@@ -290,9 +367,22 @@ static void service_owner(void)
     if(status.stage==0U || status.stage>=8U)return;
     t=now();
     if(!mechanism)RadarClient_GetState(&client);
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+    if(!mechanism && (calibrating || scan_only)) {
+        bool timed_out=(uint32_t)(t-entered)>config.stage_timeout_ms;
+        if(!RadarLift_SafeIdle(t) || (timed_out && (status.stage<3U || status.stage>4U))) {fail(5U);return;}
+        if(!recovering && (status.error || !client.ready || client.selected_zone!=2U || timed_out)) {
+            uint32_t error=status.error?status.error:5U;
+            if(!recover_radar_fault(t,error)){fail(error);return;}
+            t=now();
+        }
+    } else
+#endif
+    {
     if(status.error){fail(status.error);return;}
     if((!mechanism && (!client.ready || client.selected_zone!=2U)) || (lift_claimed && !RadarLift_SafeIdle(t)) ||
        (uint32_t)(t-entered)>(mechanism?mechanism_budget:config.stage_timeout_ms)) { fail(5U);return; }
+    }
     switch(status.stage) {
     case 1U:
         if((uint32_t)(t-entered)>=leg_wait) {
@@ -315,18 +405,36 @@ static void service_owner(void)
         }break;
     case 3U:
         if((uint32_t)(t-entered)>=config.settle_ms) {
-            if((calibrating?RadarClient_RequestCalibrate(2U):RadarClient_RequestGridScan())!=RADAR_CLIENT_REQUEST_ACCEPTED){fail(3U);break;}stage(4U);
+            radar_client_request_result_t result=calibrating?RadarClient_RequestCalibrate(2U):RadarClient_RequestGridScan();
+            if(scan_only)g_radar_scan_submit_result=result;
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+            if(calibrating)g_radar_calibration_submit_result=result;
+#endif
+            if(result!=RADAR_CLIENT_REQUEST_ACCEPTED){
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+                if(recover_radar_fault(t,3U))break;
+#endif
+                fail(3U);break;
+            }stage(4U);
         }break;
     case 4U:
         if((calibrating?calibration_done:grid_done) && !RadarClient_IsBusy()) {
             if(calibrating)status.calibration_complete=1U;
             else if(!scan_only)status.map_valid=1U;
-            g_radar_lift_interval_us=RADAR_LIFT_INTERVAL_US;
-            if(!RadarLift_Enable(t) || !RadarLift_BeginBounded(leg_steps,leg_direction^1U,leg_budget,&lift_sequence)){fail(2U);break;}stage(5U);
+            if(!begin_up(t)){fail(2U);break;}
         }break;
     case 6U:
         if((uint32_t)(t-entered)>= (mechanism?mechanism_wait:config.stow_ms)) {
             if((mechanism || calibrating) && !RadarLift_Release(lift_sequence)){fail(2U);break;}
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+            if(recovering) {
+                RadarLift_GetSnapshot(&lift);
+                if(lift.sequence!=lift_sequence || lift.state!=2U || lift.result!=1U || lift.done!=leg_steps){
+                    fail(2U);break;
+                }
+                recovering=0U;status.recovered=1U;stage(99U);break;
+            }
+#endif
             if(mechanism){g_radar_mechanism_result=4U;stage(8U);break;}
             if(calibrating){stage(8U);break;}
             status.map_valid=1U;
@@ -339,6 +447,9 @@ static void service_owner(void)
                 nav_map.identity.start_id=2U;
                 nav_map.identity.node_id=config.node_id;
                 nav_map.identity.zone=2U;
+#if APP_ZONE2_NAV_MOTION_ENABLE && !APP_ZONE2_RADAR_CALIBRATION_TEST
+                idle_bad_event_ignored=0U;
+#endif
                 nav_map.valid=1U;stage(8U);break;
             }
             if(!status.map_valid || RadarClient_RequestPlanPath(request_start,request_goal)!=RADAR_CLIENT_REQUEST_ACCEPTED){fail(3U);break;}stage(7U);

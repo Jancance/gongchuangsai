@@ -20,6 +20,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include <math.h>
+#include <float.h>
 #if APP_ZONE2_POSE_TRACE_ENABLE
 #include <stddef.h>
 #endif
@@ -29,7 +30,10 @@
 #define ZONE2_WAIT_READY_MS 15000U
 #define ZONE2_POSE_MS 160U
 #define ZONE2_DEG_TO_RAD 0.01745329251994329577f
-#define ZONE2_SECTION_SETTLE_MS 2000U
+#define ZONE2_SECTION_PROGRESS_MS 2000U
+#define ZONE2_SECTION_PROGRESS_STEP 0.2f
+#define ZONE2_SECTION_POSITION_MM 2.5f
+#define ZONE2_SECTION_HEADING_DEG (FUSION_MOTION_HEADING_TOLERANCE_DEG+FUSION_MOTION_HEADING_ROUNDOFF_DEG)
 
 typedef enum {
     ZONE2_IDLE, ZONE2_WAIT_READY, ZONE2_SCAN, ZONE2_PREPARE,
@@ -61,6 +65,8 @@ static Zone2NavSchedule s_schedule;
 static Zone2MotionReference s_trajectory;
 static FusionMotionVector s_correction, s_proposed;
 static uint32_t s_section, s_section_ms, s_generation, s_station_stop, s_prepare_ms;
+static uint32_t s_section_progress_started, s_section_progress_ms, s_section_sample_ms;
+static float s_section_checkpoint;
 volatile uint32_t g_zone2_completed_legs;
 #else
 static FusionState s_reference;
@@ -269,9 +275,34 @@ static uint32_t quiet_since(const FusionObservation *pose,const AppHeadingSource
 static void start_section(uint32_t batch_ms)
 {
     s_section_ms=batch_ms;
+    s_section_progress_started=0U;
     s_generation=0U;
     s_correction=(FusionMotionVector){0};
     g_zone2_phase=ZONE2_TRACK;
+}
+
+static uint32_t section_error(const FusionObservation *pose,const FusionMotionVector *endpoint,float *error)
+{
+    float position=hypotf(pose->position.x_mm-endpoint->x,pose->position.y_mm-endpoint->y);
+    float heading=pose->heading_deg-endpoint->yaw/ZONE2_DEG_TO_RAD;
+    float yaw;
+    if (!(position<=FLT_MAX && heading>=-FLT_MAX && heading<=FLT_MAX)) return 0U;
+    yaw=fabsf(remainderf(heading,360.0f));
+    *error=fmaxf(position/ZONE2_SECTION_POSITION_MM,yaw/ZONE2_SECTION_HEADING_DEG);
+    return 1U;
+}
+
+static uint32_t section_stalled(const FusionObservation *pose,float error)
+{
+    if (!s_section_progress_started || newer(pose->sample_ms,s_section_sample_ms)) {
+        if (!s_section_progress_started || s_section_checkpoint-error>=ZONE2_SECTION_PROGRESS_STEP) {
+            s_section_checkpoint=error;
+            s_section_progress_ms=pose->now_ms;
+        }
+        s_section_sample_ms=pose->sample_ms;
+        s_section_progress_started=1U;
+    }
+    return pose->now_ms-s_section_progress_ms>=ZONE2_SECTION_PROGRESS_MS;
 }
 
 static uint32_t submit_zero(const ChassisZone2CanStatus *can)
@@ -298,8 +329,7 @@ static void motion_batch(const ChassisZone2CanStatus *can,const FusionObservatio
         s_correction=s_proposed;
         s_generation=0U;
     }
-    if (next>end+(int32_t)ZONE2_SECTION_SETTLE_MS ||
-        !Zone2MotionReference_Sample(&s_trajectory,s_section,sample,&in.reference)) {
+    if (!Zone2MotionReference_Sample(&s_trajectory,s_section,sample,&in.reference)) {
         fail(ZONE2_FAULT_REFERENCE);
         return;
     }
@@ -478,13 +508,8 @@ void AppZone2_Step(void)
         g_zone2_phase=ZONE2_PREPARE;
         return;
     }
-#if APP_ZONE2_NAV_MOTION_ENABLE
-    if (g_zone2_phase==ZONE2_PREPARE && now-s_prepare_ms>=ZONE2_WAIT_READY_MS) {
-        fail(ZONE2_FAULT_DEADLINE);
-        return;
-    }
-#endif
-    if (g_zone2_phase==ZONE2_PREPARE && observed && schedule_phase==ZONE2_SCHEDULE_READY) {
+    if (g_zone2_phase==ZONE2_PREPARE && observed && schedule_phase==ZONE2_SCHEDULE_READY &&
+        g_can_guard_ready==1U) {
         pose.identity=s_schedule.plan.input.identity;
 #if APP_ZONE2_NAV_MOTION_ENABLE
         if (!Zone2MotionReference_Prepare(&s_schedule.plan,&s_trajectory)) {
@@ -516,6 +541,12 @@ void AppZone2_Step(void)
         g_zone2_phase=ZONE2_ZERO;
         return;
     }
+#if APP_ZONE2_NAV_MOTION_ENABLE
+    if (g_zone2_phase==ZONE2_PREPARE && now-s_prepare_ms>=ZONE2_WAIT_READY_MS) {
+        fail(ZONE2_FAULT_DEADLINE);
+        return;
+    }
+#endif
     if (g_zone2_phase!=ZONE2_ZERO && g_zone2_phase!=ZONE2_STOP &&
         g_zone2_phase!=ZONE2_TRACK && g_zone2_phase!=ZONE2_SECTION_ZERO) return;
     if (can.session!=s_session || can.power_epoch!=s_power_epoch ||
@@ -532,25 +563,45 @@ void AppZone2_Step(void)
 #if APP_ZONE2_NAV_MOTION_ENABLE
     if (can.ready && (g_zone2_phase==ZONE2_ZERO || g_zone2_phase==ZONE2_TRACK ||
         g_zone2_phase==ZONE2_SECTION_ZERO)) {
+        float endpoint_error=0.0f;
+        uint32_t stalled=0U,endpoint_ready=0U,station_ready=0U;
         if (!observed) {
             fail(ZONE2_FAULT_SOURCE);
             return;
         }
-        if (g_zone2_phase!=ZONE2_TRACK && can.ack_generation && can.ack_mask==0x0FU &&
-            can.zero_confirmed && quiet_since(&pose,&heading,can.zero_ack_ms)) {
-            if (g_zone2_phase==ZONE2_SECTION_ZERO) {
+        if (g_zone2_phase!=ZONE2_ZERO) {
+            int32_t duration=(int32_t)s_trajectory.sections[s_section].duration_ms;
+            if ((int32_t)(pose.sample_ms-s_section_ms)>=duration) {
                 FusionMotionVector endpoint;
+                if (!Zone2MotionReference_Sample(&s_trajectory,s_section,duration,&endpoint) ||
+                    !section_error(&pose,&endpoint,&endpoint_error)) {
+                    fail(ZONE2_FAULT_REFERENCE);
+                    return;
+                }
+                endpoint_ready=1U;
+                station_ready=g_zone2_phase==ZONE2_SECTION_ZERO &&
+                    s_trajectory.sections[s_section].terminal && endpoint_error<=1.0f;
+                /* Inside the endpoint band, wait at zero for standstill evidence. */
+                if (endpoint_error<=1.0f) s_section_progress_started=0U;
+                else stalled=section_stalled(&pose,endpoint_error);
+            } else if (s_section_progress_started) {
+                stalled=pose.now_ms-s_section_progress_ms>=ZONE2_SECTION_PROGRESS_MS;
+            }
+        }
+        /* A station STOP has its own measured standstill check after the STOP ACK. */
+        if ((g_zone2_phase==ZONE2_ZERO || endpoint_ready) && g_zone2_phase!=ZONE2_TRACK &&
+             can.ack_generation && can.ack_mask==0x0FU && can.tx_complete_mask==0x0FU &&
+             (station_ready || (can.zero_confirmed && quiet_since(&pose,&heading,can.zero_ack_ms)))) {
+            if (g_zone2_phase==ZONE2_SECTION_ZERO) {
                 if (can.ack_generation!=s_generation) {
                     fail(ZONE2_FAULT_BACKEND);
                     return;
                 }
-                if (!Zone2MotionReference_Sample(&s_trajectory,s_section,
-                    (int32_t)s_trajectory.sections[s_section].duration_ms,&endpoint)) {
-                    fail(ZONE2_FAULT_REFERENCE);
-                    return;
-                }
-                if (hypotf(pose.position.x_mm-endpoint.x,pose.position.y_mm-endpoint.y)>2.5f ||
-                    fabsf(remainderf(pose.heading_deg-endpoint.yaw/ZONE2_DEG_TO_RAD,360.0f))>.10f) {
+                if (endpoint_error>1.0f) {
+                    if (stalled) {
+                        fail(ZONE2_FAULT_DEADLINE);
+                        return;
+                    }
                     s_generation=0U;
                     s_correction=(FusionMotionVector){0};
                     g_zone2_phase=ZONE2_TRACK;
@@ -570,12 +621,12 @@ void AppZone2_Step(void)
                 s_section++;
             }
             start_section(can.next_batch_ms);
+            stalled=0U;
         }
-        if (g_zone2_phase==ZONE2_TRACK) {
-            motion_batch(&can,&pose);
-        } else if (g_zone2_phase==ZONE2_SECTION_ZERO &&
-            now-s_section_ms>s_trajectory.sections[s_section].duration_ms+ZONE2_SECTION_SETTLE_MS) {
+        if (stalled) {
             fail(ZONE2_FAULT_DEADLINE);
+        } else if (g_zone2_phase==ZONE2_TRACK) {
+            motion_batch(&can,&pose);
         } else if (!submit_zero(&can)) {
             fail(ZONE2_FAULT_BACKEND);
         } else if (g_zone2_phase==ZONE2_SECTION_ZERO) {
@@ -603,9 +654,7 @@ void AppZone2_Step(void)
     }
 #endif
     if (g_zone2_phase==ZONE2_STOP) {
-        if (now-s_stop_ms>=CHASSIS_AUTO_STOP_MS+CHASSIS_AUTO_SETTLE_MS) {
-            fail(ZONE2_FAULT_DEADLINE);
-        } else if (can.state==CHASSIS_AUTO_DONE && can.result==1U &&
+        if (can.state==CHASSIS_AUTO_DONE && can.result==1U &&
             can.ack_generation && can.wheel_quiet && current_map() &&
             observed && quiet_since(&pose,&heading,can.stop_ack_ms)) {
 #if APP_ZONE2_NAV_MOTION_ENABLE
@@ -617,6 +666,8 @@ void AppZone2_Step(void)
             RadarZoneSwitch_Unlock();
             g_zone2_phase=ZONE2_SHADOW_DONE;
 #endif
+        } else if (now-s_stop_ms>=CHASSIS_AUTO_STOP_MS+CHASSIS_AUTO_SETTLE_MS) {
+            fail(ZONE2_FAULT_DEADLINE);
         }
     }
 }

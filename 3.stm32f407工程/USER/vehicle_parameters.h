@@ -1,6 +1,7 @@
 #ifndef VEHICLE_PARAMETERS_H
 #define VEHICLE_PARAMETERS_H
 #include <stdint.h>
+//#define APP_ZONE2_RADAR_CALIBRATION_TEST 1U
 /* ================= 现场只改这一个文件，保存→Rebuild→Download =================
  * 调参单位：底盘距离cm、平移cm/s；机械臂Z为旧3200脉冲/圈的虚拟脉冲，
  * 伸缩mm仅沿用32脉冲/mm粗标；DM/舵机为角度deg、DM速度deg/s。

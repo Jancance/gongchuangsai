@@ -28,6 +28,9 @@ extern volatile uint32_t g_vm_test_request;
 
 /* 启动按键事件数 */
 volatile uint32_t g_start_key_count = 0U;
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+volatile uint32_t g_zone2_radar_calibration_requested = 0U;
+#endif
 /* 本步只显示实际扫码结果，不自动显示固定任务码 */
 volatile uint32_t g_scan_display_result = 0U;
 volatile uint32_t g_scan_display_count = 0U;
@@ -276,7 +279,11 @@ void AppInput_KeyStep(void)
         !g_rtos_fault && !g_can_ctrl_fault_latched);
     if (Key_GetEvent()!=0U) {
         g_start_key_count++;
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+        g_zone2_radar_calibration_requested = 1U;
+#else
         AppZone2_RequestStart();
+#endif
     }
 #elif APP_BASELINE40_ACTIVE
     if (Key_GetEvent()!=0U) {
