@@ -1,0 +1,63 @@
+{
+  "baseline": "1f272dd8cae82bea606f4f779573ecf5e22d4cf1",
+  "before_reused": "main-C2c frozen final Rebuild; raw baseline main/project match its source SHA, other firmware protected by before manifest",
+  "before_evidence": "工创赛/evidence/navigation-planning/2026-11-10/main-c2c/build_summary.json",
+  "before_evidence_sha256": "ac808049ea930839a73a746edb8249d58427acd0c2c951c5724c7c3b8e6ab6fb",
+  "final_source_sha256": {
+    "3.stm32f407工程/CHASSIS/USER/main.c": "0fcf589ec3abe70afc49d262275489f0e0eb64e74c35af38e9cafbcb541af807",
+    "3.stm32f407工程/CHASSIS/USER/app_serial_runtime.c": "e2d15d8dab98cf06b534fab807e574d491304db1e474a74616bbc6337a77c1d2",
+    "3.stm32f407工程/CHASSIS/USER/app_serial_runtime.h": "3db4681b05e47130d7d21fee880448f1b69c4ba5aa1d553c69e275301f5a5625",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "c1aa59669e95e24d10eb29ba894b650d7bb4a34d8baea4aa003d47eaba2df5f3"
+  },
+  "commands": [
+    "python 工创赛/tmp/build_main_d.py final",
+    "python 工创赛/scripts/check_serial_runtime_extraction_20261110.py"
+  ],
+  "targets": {
+    "Vehicle_Integrated": {
+      "before": {
+        "Code": 126392,
+        "RO": 6740,
+        "RW": 3340,
+        "ZI": 118908
+      },
+      "after": {
+        "Code": 126408,
+        "RO": 6740,
+        "RW": 3340,
+        "ZI": 118908
+      },
+      "errors": 0,
+      "warnings": 0,
+      "log_sha256": "bfe0c4bab6a33469f1d3102edc28206fde4a058604219522c20bb496815bdfa3",
+      "artifact_sha256": {
+        "工创赛/tmp/serial_runtime_main_d/final/Vehicle_Integrated.axf": "2f5922d3ab9667380724b1001a48149f116d0ad527745cf1b1e83e650ed9c4e6",
+        "工创赛/tmp/serial_runtime_main_d/final/Vehicle_Integrated.map": "37630a9be2dc60c8cd0175290a935f39eca64190304e1da0cce4fece394c648b"
+      }
+    },
+    "Vehicle_Offline": {
+      "before": {
+        "Code": 115564,
+        "RO": 6732,
+        "RW": 3160,
+        "ZI": 118796
+      },
+      "after": {
+        "Code": 115580,
+        "RO": 6732,
+        "RW": 3160,
+        "ZI": 118800
+      },
+      "errors": 0,
+      "warnings": 0,
+      "log_sha256": "983b6a80ff78fc0458fdabe1a2411fb8d4f0d8e379b647445c9f1a5bb525e636",
+      "artifact_sha256": {
+        "工创赛/tmp/serial_runtime_main_d/final/Vehicle_Offline.axf": "80ad2a45a1b8ac03d3d11b42c4d46226e9f93af0eb74d53f22a8d02a5976b188",
+        "工创赛/tmp/serial_runtime_main_d/final/Vehicle_Offline.map": "23a399114196ca11246d008f68ce347832987fe07c7b082e354130379ce776f0"
+      }
+    }
+  },
+  "hardware_accessed": false,
+  "build_driver_sha256": "e45ebbac7ae36c20a5dd10809f6a1d97626dc92fca8b202a6f585ba530b76b2c",
+  "build_project_sha256": "f6fbfa0d4d067a9f51a852a10ae58bf43392c5128c6680b6691df959cf9c29b0"
+}

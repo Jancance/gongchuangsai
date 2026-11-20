@@ -1,0 +1,121 @@
+{
+  "started_at": "2026-11-16T12:39:50.647756+08:00",
+  "axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\lateral-field-run1-build-20261116\\left210_40\\Vehicle_Integrated.axf",
+  "axf_sha256": "0d5e2b752c92db9094393723b42411cbf02dbdc2f3950ac4c4ca6847fe73242f",
+  "expected_session": 1,
+  "probe_uid": "6afaae24",
+  "symbols": {
+    "g_fusion_capture_b": [
+      268464896,
+      33600
+    ],
+    "g_chassis_auto_active": [
+      536871092,
+      4
+    ],
+    "g_chassis_auto_session": [
+      536871100,
+      4
+    ],
+    "g_chassis_auto_tail_snapshots": [
+      536948504,
+      176
+    ],
+    "g_fusion_capture_a": [
+      536965888,
+      34020
+    ]
+  },
+  "accepted": true,
+  "hardware_accessed": true,
+  "reset_requested": false,
+  "halt_requested": false,
+  "resume_requested": false,
+  "target_memory_writes": 0,
+  "flash_programmed": false,
+  "automatic_retry": false,
+  "header": {
+    "magic": 826491462,
+    "version": 1,
+    "size_a": 34020,
+    "size_b": 33600,
+    "state": 2,
+    "reason": 1,
+    "session": 1,
+    "trigger_ms": 222104,
+    "stop_ms": 230188,
+    "freeze_ms": 231766,
+    "pre_count": 100,
+    "pre_head": 4,
+    "post_count": 1932,
+    "raw_count": 2032,
+    "wheel_count": 341,
+    "hwt_count": 194,
+    "od_count": 78,
+    "wheel_dropped": 0,
+    "hwt_dropped": 0,
+    "od_dropped": 0,
+    "quality": 0,
+    "first_sample_sequence": 44305,
+    "last_sample_sequence": 46336,
+    "first_edge_sequence": 44305,
+    "last_edge_sequence": 46336,
+    "trigger_skipped": 0,
+    "final_skipped": 0,
+    "trigger_races": 0,
+    "final_races": 0,
+    "trigger_errors": 0,
+    "final_errors": 0,
+    "accel_config": 56,
+    "gyro_config": 40,
+    "whoami": 233,
+    "max_read_lag_cycles": 320683,
+    "max_read_duration_cycles": 20347,
+    "max_step_cycles": 6558,
+    "reference_set_ms": 220452,
+    "origin_x_mm": 2100.0,
+    "origin_y_mm": 2100.0,
+    "path_heading_deg": -90.0,
+    "heading_offset_deg": -89.45068359375,
+    "first_ms": 221608,
+    "last_ms": 231763,
+    "last_raw_state": 2,
+    "last_raw_error": 0,
+    "system_core_clock": 168000000,
+    "frozen": true,
+    "truncated": false,
+    "tail_completed": true,
+    "anchor_valid": true,
+    "reference_changed": false,
+    "terminal_seen": true,
+    "first_terminal_receiver_ms": 231266,
+    "terminal_tail_completed": true,
+    "stop_time_semantics": "first STOP/FAULT/CANCEL/DONE receiver time; not physical standstill",
+    "terminal_time_semantics": "first DONE/FAULT/CANCEL receiver time; not physical standstill"
+  },
+  "tail": {
+    "schema_valid": false,
+    "session_match": false,
+    "version": null,
+    "session": null,
+    "valid_mask": null,
+    "complete": false,
+    "sha256": "86d2cf5b090f43ee54d8f7c1dcf746a853951191457ff6dac96269a9d24860b9",
+    "stable_double_read": true,
+    "note": "Independent forward-compensation tail diagnostic; PLAN9 may leave it uncollected/all-zero. Complete RAW validation is separate. Not ground stopping distance"
+  },
+  "flash_checks": [
+    {
+      "section": "PT_LOAD_0",
+      "address": 134217728,
+      "size": 115340,
+      "sha256": "ddc6dd63e925ec44921290f726359bb12377b78736916a1927dfd572dd2680f5"
+    }
+  ],
+  "raw_sha256": {
+    "bank_a": "f02da759a794ff153f142e60802d2377a35121f1fd6faed6da93818476b4ff4c",
+    "bank_b": "ff9dfcb45751ac9443021b47b86b1f15d1c00554190ab0a4d065f2db63657604"
+  },
+  "stable_double_read": true,
+  "finished_at": "2026-11-16T12:39:56.271198+08:00"
+}

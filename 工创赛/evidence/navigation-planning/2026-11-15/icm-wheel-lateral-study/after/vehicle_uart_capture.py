@@ -1,0 +1,533 @@
+"""USART1只读采集/离线重放：不发送启动、心跳、调参或停止命令。
+
+原始字节是证据，解析表是派生结果。现场阶段标签不能替代固件阶段确认。
+"""
+from __future__ import annotations
+
+import argparse
+import base64
+import binascii
+import csv
+from datetime import datetime, timezone
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import time
+
+import p1_serial_motion as protocol
+
+ROOT = Path(__file__).resolve().parents[1]
+ACTUAL_FIRMWARE = Path('D:/Desktop/工创赛/3.stm32f407工程')
+PARSERS = [getattr(protocol, name) for name in (
+    "parse_telemetry", "parse_fault_telemetry", "parse_batch_telemetry",
+    "parse_timing_telemetry", "parse_perimeter_checkpoint",
+    "parse_odometry_telemetry", "parse_position_telemetry", "parse_position_endpoints",
+)]
+MAX_LINE = 4096
+WHEEL_FIELDS = ["seq", "tick_ms", "session", "active", "state", "dry_run",
+                "speed_valid_mask", "ack_valid_mask", "telemetry_dropped"] + [
+    f"wheel{wheel}_{field}" for wheel in range(1, 5) for field in
+    ("acknowledged_decirpm", "measured_decirpm", "ack_ms", "sample_ms", "age_ms")
+]
+STAGE_FIELDS = ["seq", "tick_ms", "stage_id", "run_id", "stage_state", "zone",
+                "action_index", "actions_completed", "action_count", "start_x_mm", "start_y_mm",
+                "stop_x_mm", "stop_y_mm", "config_id", "scan_valid", "cause", "elapsed_ms",
+                "backend_session", "denied", "telemetry_dropped", "nominal_scan_gap_deci_mm"]
+MISSION_FIELDS = ["seq", "tick_ms", "run_id", "stage", "state", "cause", "startup_state",
+                  "startup_cause", "arm_row", "item", "arm_state", "arm_cause",
+                  "reference_feedback_mask", "extension_motor_millideg", "lift_motor_millideg"]
+
+
+GRID_ROUTE_FIELDS = ["seq", "tick_ms", "run_id", "layout_version", "source",
+                     "start_cell", "goal_cell", "waypoint_count", "action_index",
+                     "alignment_state", "position_executor_enabled", "goal_x_mm", "goal_y_mm"]
+
+
+EXTENSION_DIAG_FIELDS = ["seq", "tick_ms", "run_id", "first_reason", "command", "exchange_result",
+                         "reply_flags", "service_gap_ms", "home_phase", "first_tick_ms"]
+EXTENSION_HOLD_FIELDS = ["hold_enable_count", "hold_samples", "hold_confirmed", "hold_ready_tick_ms", "hold_delta_mdeg"]
+SOURCE_PREP_FIELDS = ["seq", "tick_ms", "run_id", "state", "cause", "done_mask", "release_ms", "elapsed_ms", "segment", "extension_milli_mm", "grip_mdeg"]
+
+
+ICM_FIELDS = ['seq', 'tick_ms', 'publication_sequence', 'sample_sequence', 'state', 'last_error', 'failed_reg', 'whoami', 'accel_config', 'gyro_config', 'big_endian', 'edge_sequence', 'edge_cycle', 'read_start_cycle', 'read_end_cycle', 'sample_tick_ms', 'age_ms', 'fresh', 'transfer_errors', 'skipped_edges', 'read_races', 'telemetry_dropped', 'sample_gap', 'dwt_hz', 'accel_x_raw', 'accel_y_raw', 'accel_z_raw', 'gyro_x_raw', 'gyro_y_raw', 'gyro_z_raw', 'temperature_raw']
+BASELINE40_FIELDS = ["seq", "tick_ms", "plan_id", "base_rpm", "distance_mm", "reference_mm_s",
+                     "acceleration_mm_s2", "jerk_mm_s3", "feedback_limit_rpm", "run_ms"]
+
+ICM_OBSERVER_FIELDS = ["seq", "tick_ms", "format_version", "publication_sequence", "session",
+    "valid", "reasons", "flags", "estimate_ms", "sample_sequence", "reference_ms", "t0_ms", "t1_ms",
+    "wheel_age_ms", "hwt_age_ms", "cal_samples", "history_samples", "gaps",
+    "wheel_f_milli_mm", "wheel_r_milli_mm", "position_f_milli_mm", "position_r_milli_mm",
+    "velocity_f_milli_mm_s", "velocity_r_milli_mm_s", "accel_f_milli_mm_s2", "accel_r_milli_mm_s2",
+    "telemetry_dropped"]
+
+
+def parse_icm_observer(line: bytes):
+    if not line.startswith(b"IO1,"):
+        return None
+    body, sep, checksum = line.rstrip(b"\r\n").rpartition(b",")
+    if not sep or len(checksum) != 4 or binascii.crc_hqx(body+b",", 0xffff) != int(checksum, 16):
+        raise ValueError("IO1 CRC mismatch")
+    values = list(map(int, body.split(b",")[1:]))
+    if len(values) != len(ICM_OBSERVER_FIELDS):
+        raise ValueError("IO1 field count")
+    for i, value in enumerate(values):
+        if not (-(2**31) <= value < 2**31 if 18 <= i < 26 else 0 <= value <= 0xffffffff):
+            raise ValueError("IO1 integer range")
+    r = dict(zip(ICM_OBSERVER_FIELDS, values))
+    if (r['format_version'] != 1 or r['valid'] > 1 or r['flags'] & ~63 or
+            r['reasons'] & ~511 or r['cal_samples'] > 200 or r['history_samples'] > 128):
+        raise ValueError("IO1 version/flags/count")
+    invalid = -(2**31)
+    groups = [(bool(r['flags'] & 2), values[18:20]), (bool(r['valid']), values[20:24]),
+              (bool(r['flags'] & 32), values[24:26])]
+    if any(not enabled and any(v != invalid for v in group) for enabled, group in groups):
+        raise ValueError("IO1 invalid values need sentinel")
+    if r['valid'] and (r['reasons'] or r['flags'] & 35 != 35 or r['wheel_age_ms'] > 200 or
+                       r['hwt_age_ms'] >= 100 or not 1 <= ((r['t1_ms']-r['t0_ms']) & 0xffffffff) <= 250 or
+                       ((r['estimate_ms']-r['t1_ms']) & 0xffffffff) != r['wheel_age_ms'] or
+                       any(v == invalid for v in values[18:26])):
+        raise ValueError("IO1 validity/window")
+    return r
+
+def parse_baseline40(line: bytes):
+    if not line.startswith((b"IR1,", b"BF1,")):
+        return None
+    body, sep, checksum = line.rstrip(b"\r\n").rpartition(b",")
+    if not sep or len(checksum) != 4 or binascii.crc_hqx(body+b",", 0xffff) != int(checksum, 16):
+        raise ValueError("baseline40 CRC mismatch")
+    raw = line.startswith(b"IR1,")
+    fields = ICM_FIELDS if raw else BASELINE40_FIELDS
+    values = list(map(int, body.split(b",")[1:]))
+    if len(values) != len(fields):
+        raise ValueError("baseline40 field count")
+    result = dict(zip(fields, values))
+    for key, value in result.items():
+        if raw and key.endswith("_raw"):
+            if not -32768 <= value <= 32767:
+                raise ValueError("IR1 signed raw range")
+        elif not 0 <= value <= 0xffffffff:
+            raise ValueError("baseline40 uint32 range")
+    if raw:
+        if result["publication_sequence"] & 1 or not result["sample_sequence"] or result["state"] > 3 or result["fresh"] > 1 or result["big_endian"] > 1:
+            raise ValueError("IR1 state/publication")
+        if ((result["tick_ms"]-result["sample_tick_ms"]) & 0xffffffff) != result["age_ms"]:
+            raise ValueError("IR1 sample time/age mismatch")
+        if result["fresh"] and result["age_ms"] > 20:
+            raise ValueError("IR1 stale marked fresh")
+        if not result["dwt_hz"]:
+            raise ValueError("IR1 missing cycle timebase")
+    elif values[2:] != [8, 100, 2100, 400, 150, 300, 130, 12779]:
+        raise ValueError("BF1 configuration mismatch")
+    return result
+
+
+def parse_straight_test(line: bytes):
+    if not line.startswith(b"LT1,"):
+        return None
+    body, sep, checksum = line.rstrip(b"\r\n").rpartition(b",")
+    if not sep or len(checksum)!=4 or binascii.crc_hqx(body+b",",0xffff)!=int(checksum,16):
+        raise ValueError("LT1 CRC mismatch")
+    fields=["seq","tick_ms","run_id","state","cause","distance_milli_mm","reference_mm_s","progress_scale_ppm"]
+    values=list(map(int,body.split(b",")[1:]))
+    if len(values)!=len(fields) or any(not 0<=v<=0xffffffff for v in values):
+        raise ValueError("LT1 field/range")
+    result=dict(zip(fields,values))
+    if result['state']>7 or not 0<result['distance_milli_mm']<=2100000 or not 0<result['reference_mm_s']<=400:
+        raise ValueError("LT1 state/config")
+    return result
+
+
+def parse_source_preparation(line: bytes):
+    if not line.startswith(b"SP1,"):
+        return None
+    body, sep, checksum = line.rstrip(b"\r\n").rpartition(b",")
+    if not sep or len(checksum) != 4 or binascii.crc_hqx(body+b",", 0xffff) != int(checksum,16):
+        raise ValueError("SP1 CRC mismatch")
+    values = list(map(int, body.split(b",")[1:]))
+    if len(values) != len(SOURCE_PREP_FIELDS):
+        raise ValueError("SP1 field count")
+    result = dict(zip(SOURCE_PREP_FIELDS, values))
+    for key, value in result.items():
+        if key in ("extension_milli_mm", "grip_mdeg"):
+            if not -(2**31) <= value < 2**31:
+                raise ValueError("SP1 signed range")
+        elif not 0 <= value <= 0xffffffff:
+            raise ValueError("SP1 uint32 range")
+    if result['state'] > 4 or result['done_mask'] > 7 or result['segment'] > 2:
+        raise ValueError("SP1 state range")
+    return result
+
+
+def parse_extension_diag(line: bytes):
+    if not line.startswith((b"EX1,", b"EX2,", b"EX3,")):
+        return None
+    body, separator, checksum = line.rstrip(b"\r\n").rpartition(b",")
+    if not separator or len(checksum) != 4 or binascii.crc_hqx(body + b",", 0xffff) != int(checksum, 16):
+        raise ValueError("EX1 CRC mismatch")
+    values = body.split(b",")[1:]
+    fields = EXTENSION_DIAG_FIELDS + (EXTENSION_HOLD_FIELDS if line.startswith((b"EX2,", b"EX3,")) else [])
+    if line.startswith(b"EX3,"):
+        fields += ["first_step", "last_speed_sign", "last_speed_rpm"]
+    if len(values) != len(fields):
+        raise ValueError("EX1 field count")
+    result = dict(zip(fields, map(int, values)))
+    if any(not 0 <= value <= 0xffffffff for value in result.values()):
+        raise ValueError("EX1 uint32 range")
+    if (result["first_reason"] > 8 or result["command"] > 255 or
+            result["reply_flags"] not in range(256) and result["reply_flags"] != 0xffffffff):
+        raise ValueError("EX1 diagnostic range")
+    if "hold_confirmed" in result and (result["hold_confirmed"] > 1 or result["hold_samples"] > 5 or result["hold_enable_count"] > 1):
+        raise ValueError("EX2 hold proof range")
+    return result
+
+
+def parse_grid_route(line: bytes):
+    if not line.startswith((b"VG2,", b"VG3,", b"VG4,")):
+        return None
+    body, separator, checksum = line.rstrip(b"\r\n").rpartition(b",")
+    if not separator or len(checksum) != 4 or binascii.crc_hqx(body + b",", 0xffff) != int(checksum, 16):
+        raise ValueError("VG2 CRC mismatch")
+    values = body.split(b",")[1:]
+    fields = GRID_ROUTE_FIELDS + (["handoff_x_milli_mm", "handoff_y_milli_mm", "handoff_valid"] if line.startswith((b"VG3,", b"VG4,")) else [])
+    if line.startswith(b"VG4,"):
+        fields += ["route_phase", "leg_target_x_mm", "leg_target_y_mm"]
+    if len(values) != len(fields):
+        raise ValueError("VG2 field count")
+    result = dict(zip(fields, map(int, values)))
+    if any(not 0 <= value <= 0xffffffff for value in result.values()):
+        raise ValueError("VG2 uint32 range")
+    if (result["source"] not in (1, 2) or result["start_cell"] > 24 or result["goal_cell"] > 24 or
+            not 1 <= result["waypoint_count"] <= 8 or result["action_index"] >= 8 or
+            result["alignment_state"] not in (0, 1, 3) or result["position_executor_enabled"] > 1 or
+            result["goal_x_mm"] >= 2400 or result["goal_y_mm"] >= 2400):
+        raise ValueError("VG2 state/geometry")
+    if line.startswith(b"VG4,") and (result["route_phase"] > 4 or
+            result["leg_target_x_mm"] >= 2400 or result["leg_target_y_mm"] >= 2400):
+        raise ValueError("VG4 route phase/target")
+    return result
+
+
+def parse_mission(line: bytes):
+    if not line.startswith((b"VM1,", b"VM2,")):
+        return None
+    body, separator, checksum = line.rstrip(b"\r\n").rpartition(b",")
+    if not separator or len(checksum) != 4 or binascii.crc_hqx(body + b",", 0xffff) != int(checksum, 16):
+        raise ValueError("VM1 CRC mismatch")
+    values = body.decode("ascii").split(",")[1:]
+    fields = MISSION_FIELDS + (["queue_state", "queue_stage", "queue_first_mask", "queue_last_mask", "queue_wait_ms", "queue_attempts"] if line.startswith(b"VM2,") else [])
+    if len(values) != len(fields):
+        raise ValueError("VM1 field count")
+    result = dict(zip(fields, map(int, values)))
+    for field, value in result.items():
+        if field.endswith("millideg"):
+            if not -(2**31) <= value < 2**31:
+                raise ValueError("VM1 angle range")
+        elif not 0 <= value <= 0xffffffff:
+            raise ValueError("VM1 uint32 range")
+    if (not 1 <= result["stage"] <= 8 or result["state"] > 7 or
+            result["startup_state"] > 8 or result["arm_row"] >= 32 or result["item"] > 3 or
+            result["arm_state"] > 3 or result["reference_feedback_mask"] > 3):
+        raise ValueError("VM1 state range")
+    return result
+
+
+def parse_stage(line: bytes):
+    code_frame = line.startswith(b"SC1,")
+    if not code_frame and not line.startswith(b"ST1,"):
+        return None
+    body, separator, checksum = line.rstrip(b"\r\n").rpartition(b",")
+    if not separator or len(checksum) != 4 or binascii.crc_hqx(body + b",", 0xffff) != int(checksum, 16):
+        raise ValueError("stage CRC mismatch")
+    values = body.decode("ascii").split(",")[1:]
+    fields = ["seq", "tick_ms", "stage_id", "run_id", "config_id", "task_code"] if code_frame else STAGE_FIELDS
+    if len(values) != len(fields):
+        raise ValueError("stage field count")
+    result = {key: value if key == "task_code" else int(value) for key, value in zip(fields, values)}
+    if any(not 0 <= value <= 0xffffffff for key, value in result.items() if key != "task_code"):
+        raise ValueError("stage uint32 range")
+    if result["stage_id"] != 1:
+        raise ValueError("unsupported stage schema")
+    if code_frame:
+        groups = result["task_code"].split("+")
+        if (len(groups) != 4 or any(len(g) != 3 for g in groups) or
+                any(set(g) - set("123456") or len(set(g)) != 3 for g in groups) or
+                set(groups[1]) != set("123") or set(groups[3]) != set("123") or
+                set(groups[0]) != set(groups[2]) or not result["run_id"]):
+            raise ValueError("invalid stage task code")
+    elif (result["stage_state"] > 7 or result["zone"] != 1 or result["scan_valid"] > 1 or
+          result["action_count"] > 8 or result["actions_completed"] > result["action_count"] or
+          any(result[name] >= 2400 for name in ("start_x_mm", "start_y_mm", "stop_x_mm", "stop_y_mm"))):
+        raise ValueError("stage state/geometry")
+    return result
+
+
+def parse_wheel(line: bytes):
+    if not line.startswith(b"WF1,"):
+        return None
+    body, separator, checksum = line.rstrip(b"\r\n").rpartition(b",")
+    if not separator or len(checksum) != 4 or binascii.crc_hqx(body + b",", 0xffff) != int(checksum, 16):
+        raise ValueError("WF1 CRC mismatch")
+    values = [int(value) for value in body.split(b",")[1:]]
+    if len(values) != len(WHEEL_FIELDS):
+        raise ValueError("WF1 field count")
+    result = dict(zip(WHEEL_FIELDS, values))
+    for key, value in result.items():
+        if key.endswith("decirpm"):
+            if not -(2**31) <= value < 2**31:
+                raise ValueError("WF1 RPM range")
+        elif not 0 <= value <= 0xffffffff:
+            raise ValueError("WF1 uint32 range")
+    if result["active"] > 1 or result["dry_run"] > 1 or result["speed_valid_mask"] > 15 or result["ack_valid_mask"] > 15:
+        raise ValueError("WF1 flags")
+    if result["dry_run"] and (result["speed_valid_mask"] or result["ack_valid_mask"]):
+        raise ValueError("WF1 simulated values cannot be marked real")
+    for wheel in range(1, 5):
+        age = (result["tick_ms"] - result[f"wheel{wheel}_sample_ms"]) & 0xffffffff
+        if age != result[f"wheel{wheel}_age_ms"]:
+            raise ValueError("WF1 sample time/age mismatch")
+    return result
+
+
+def decode(line: bytes) -> tuple[str, dict]:
+    """CRC正确与物理动作成功是不同概念；不推测缺失的反馈。"""
+    for parser in [parse_icm_observer, parse_baseline40, parse_straight_test, parse_source_preparation, parse_extension_diag, parse_grid_route, parse_mission, parse_stage, parse_wheel, *PARSERS]:
+        result = parser(line)
+        if result is not None:
+            return line.split(b",", 1)[0].decode("ascii"), result
+    body = line.rstrip(b"\r\n")
+    prefix, separator, checksum = body.rpartition(b",")
+    # 保留新增协议，先做CRC核验；未知字段只编号，不猜测单位/意义。
+    tag_bytes = body.split(b",", 1)[0]
+    if (separator and len(checksum) == 4 and re.fullmatch(rb"[A-Z][A-Z0-9]{1,7}", tag_bytes)
+            and tag_bytes.endswith((b"1", b"2"))):
+        if binascii.crc_hqx(prefix + b",", 0xFFFF) != int(checksum, 16):
+            raise ValueError("unknown_protocol_crc_mismatch")
+        tag, *values = prefix.decode("ascii").split(",")
+        return tag, {f"field_{i}": value for i, value in enumerate(values)}
+    return "TEXT", {"text": body.decode("ascii", errors="replace")}
+
+
+class Capture:
+    """有界分帧；CRC错误、截断、重复、时钟倒退、序号缺口全部留记录。"""
+    def __init__(self, out: Path, stage: int):
+        out.mkdir(parents=True, exist_ok=False)
+        self.out, self.stage = out, stage
+        self.raw = (out / "uart1.raw").open("wb")
+        self.events = (out / "frames.jsonl").open("w", encoding="utf8", newline="\n")
+        self.pending = bytearray()
+        self.discarding = False
+        self.offset = 0
+        self.total_bytes = 0
+        self.rows = self.errors = self.unknown = 0
+        self.gaps = self.duplicates = self.reorders = self.clock_rewinds = 0
+        self.stage_records = self.stage_mismatches = 0
+        self.last_seq = self.last_tick = None
+        self.tables = {}
+        self.started_ns = time.monotonic_ns()
+        self.last_flush = time.monotonic()
+
+    def emit(self, line: bytes, now_ns: int, error: str | None = None):
+        tag, data = "ERROR", {}
+        try:
+            if error:
+                raise ValueError(error)
+            tag, data = decode(line)
+        except (ValueError, UnicodeError, OverflowError) as exc:
+            error = str(exc)
+            self.errors += 1
+        row = {
+            "host_utc": datetime.now(timezone.utc).isoformat(),
+            "host_monotonic_ns": now_ns,
+            "host_elapsed_ns": now_ns - self.started_ns,
+            "raw_offset": self.offset,
+            "raw_length": len(line),
+            "operator_stage_label": self.stage,
+            "firmware_stage_confirmed": False,
+            "tag": tag, "error": error,
+        }
+        if not error and tag in ("ST1", "SC1", "VM1", "VM2"):
+            firmware_stage = data["stage"] if tag in ("VM1", "VM2") else data["stage_id"]
+            row["firmware_stage_id"] = firmware_stage
+            row["firmware_stage_confirmed"] = self.stage in (0, firmware_stage)
+            row["stage_label_mismatch"] = self.stage not in (0, firmware_stage)
+            self.stage_records += 1
+            self.stage_mismatches += int(row["stage_label_mismatch"])
+        # 只对TM1使用其明确规定的seq/tick；其它帧不能拿批次号当全局序号。
+        if tag == "TM1":
+            seq, tick = data["seq"], data["tick_ms"]
+            if self.last_tick is not None and ((tick - self.last_tick) & 0xFFFFFFFF) >= 0x80000000:
+                row["clock_rewind"] = True
+                self.clock_rewinds += 1
+                # 这里只能确认时钟倒退，不能单凭它断言主控发生复位。
+                self.last_seq = self.last_tick = None
+            if self.last_seq is not None:
+                delta = (seq - self.last_seq) & 0xFFFFFFFF
+                if delta == 0:
+                    row["duplicate"] = True
+                    self.duplicates += 1
+                elif delta >= 0x80000000:
+                    row["out_of_order"] = True
+                    self.reorders += 1
+                else:
+                    row["sequence_gap"] = delta - 1
+                    self.gaps += delta - 1
+            if not row.get("out_of_order") and not row.get("duplicate"):
+                self.last_seq, self.last_tick = seq, tick
+        if tag == "IR1":
+            previous = getattr(self, "last_icm_sample", None)
+            if previous is not None:
+                delta = (data["sample_sequence"] - previous) & 0xffffffff
+                row["sample_duplicate"] = delta == 0
+                row["sample_out_of_order"] = delta >= 0x80000000
+                row["sample_sequence_gap"] = delta-1 if 0 < delta < 0x80000000 else 0
+            if previous is None or 0 < ((data["sample_sequence"]-previous) & 0xffffffff) < 0x80000000:
+                self.last_icm_sample = data["sample_sequence"]
+        if tag != "TEXT" and tag != "ERROR" and any(k.startswith("field_") for k in data):
+            self.unknown += 1
+        row["data"] = data
+        if error:
+            row["raw_base64"] = base64.b64encode(line).decode("ascii")
+        self.events.write(json.dumps(row, ensure_ascii=False) + "\n")
+        self.offset += len(line)
+        self.rows += 1
+        if not error:
+            # 同一协议不同版本字段分表，防止旧/新列错位。
+            fields = list(data)
+            schema = hashlib.sha256(",".join(fields).encode()).hexdigest()[:8]
+            key = tag, schema
+            if key not in self.tables:
+                stream = (self.out / f"{tag}_{schema}.csv").open("w", encoding="utf-8-sig", newline="")
+                writer = csv.DictWriter(stream, fieldnames=[
+                    "host_utc", "host_monotonic_ns", "raw_offset", "operator_stage_label",
+                    "sequence_gap", "duplicate", "out_of_order", "clock_rewind",
+                    "sample_duplicate", "sample_out_of_order", "sample_sequence_gap", *fields,
+                ])
+                writer.writeheader()
+                self.tables[key] = stream, writer
+            self.tables[key][1].writerow({
+                "host_utc": row["host_utc"], "host_monotonic_ns": now_ns,
+                "raw_offset": row["raw_offset"], "operator_stage_label": self.stage,
+                "sequence_gap": row.get("sequence_gap", 0), "duplicate": row.get("duplicate", False),
+                "out_of_order": row.get("out_of_order", False), "clock_rewind": row.get("clock_rewind", False),
+                "sample_duplicate": row.get("sample_duplicate", False),
+                "sample_out_of_order": row.get("sample_out_of_order", False),
+                "sample_sequence_gap": row.get("sample_sequence_gap", 0), **data,
+            })
+
+    def feed(self, chunk: bytes):
+        self.raw.write(chunk)
+        self.total_bytes += len(chunk)
+        now_ns = time.monotonic_ns()
+        # 原始文件保留全部字节；过长行按块报告，内存不会无限增长。
+        for byte in chunk:
+            self.pending.append(byte)
+            if byte == 10:
+                self.emit(bytes(self.pending), now_ns, "oversize_continuation" if self.discarding else None)
+                self.pending.clear()
+                self.discarding = False
+            elif len(self.pending) >= MAX_LINE:
+                self.emit(bytes(self.pending), now_ns, "oversize_frame")
+                self.pending.clear()
+                self.discarding = True
+        if time.monotonic() - self.last_flush >= 1:
+            self.flush()
+
+    def flush(self):
+        self.raw.flush()
+        os.fsync(self.raw.fileno())
+        self.events.flush()
+        for stream, _ in self.tables.values():
+            stream.flush()
+        self.last_flush = time.monotonic()
+
+    def close(self, reason: str):
+        if self.pending:
+            self.emit(bytes(self.pending), time.monotonic_ns(), "truncated_at_capture_end")
+            self.pending.clear()
+        self.flush()
+        self.raw.close()
+        self.events.close()
+        for stream, _ in self.tables.values():
+            stream.close()
+        with (self.out / "uart1.raw").open("rb") as stream:
+            raw_hash = hashlib.file_digest(stream, "sha256").hexdigest()
+        summary = {
+            "reason": reason, "raw_bytes": self.total_bytes, "records": self.rows,
+            "invalid_records": self.errors, "unknown_crc_valid_frames": self.unknown,
+            "tm1_sequence_missing": self.gaps, "tm1_duplicates": self.duplicates,
+            "tm1_out_of_order": self.reorders, "tm1_clock_rewinds": self.clock_rewinds,
+            "serial_commands_sent": 0, "operator_stage_label": self.stage,
+            "firmware_stage_confirmed": self.stage_records > 0 and self.stage_mismatches == 0,
+            "firmware_stage_records": self.stage_records,
+            "stage_label_mismatches": self.stage_mismatches,
+            "raw_sha256": raw_hash,
+        }
+        (self.out / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf8")
+        return summary
+
+
+def source_manifest():
+    """记录本地构建来源；不把本地源码哈希冒充板上固件身份。"""
+    fw = ACTUAL_FIRMWARE
+    files = sorted(p for folder in ("USER", "HARDWARE", "SYSTEM", "CHASSIS")
+                   for p in (fw / folder).rglob("*") if p.suffix.lower() in (".c", ".h", ".inc"))
+    files += sorted(fw.glob("*.uvprojx"))
+    hashes = {str(p.relative_to(fw)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
+    try:
+        commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, stderr=subprocess.DEVNULL).strip()
+    except (OSError, subprocess.CalledProcessError):
+        commit = None
+    return {"workspace_git_head": commit, "firmware_source_directory": str(fw), "local_files_sha256": hashes,
+            "source_set_sha256": hashlib.sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest(),
+            "matches_running_firmware": "unverified"}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--port", help="无线接收模块的COM口；只读，不发任何命令")
+    source.add_argument("--replay", type=Path, help="离线重放已保存的uart1.raw")
+    parser.add_argument("--stage", type=int, choices=range(0, 9), required=True,
+                        help="1~8为单段；0记录整场并采用固件VM1实际阶段标签")
+    parser.add_argument("--baud", type=int, default=115200)
+    parser.add_argument("--seconds", type=float, default=0, help="0表示一直记录，Ctrl+C结束")
+    parser.add_argument("--out", type=Path)
+    args = parser.parse_args()
+    if args.seconds < 0 or args.baud <= 0:
+        parser.error("seconds必须非负，baud必须为正")
+    out = args.out or ROOT / "evidence/vehicle-stage" / datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+    capture = Capture(out, args.stage)
+    reason = "finished"
+    try:
+        manifest = {"stage_label_source": "operator_argument", "stage": args.stage,
+                    "port": args.port, "baud": args.baud, "replay": str(args.replay) if args.replay else None,
+                    "read_only": True, **source_manifest()}
+        (out / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf8")
+        if args.replay:
+            with args.replay.open("rb") as stream:
+                while chunk := stream.read(8192):
+                    capture.feed(chunk)
+        else:
+            import serial  # 离线重放不需要安装pyserial。
+            with serial.Serial(port=None, baudrate=args.baud, timeout=0.2) as stream:
+                stream.dtr = False
+                stream.rts = False
+                stream.port = args.port
+                stream.open()
+                started = time.monotonic()
+                while not args.seconds or time.monotonic() - started < args.seconds:
+                    capture.feed(stream.read(max(1, min(8192, stream.in_waiting))))
+    except KeyboardInterrupt:
+        reason = "operator_stopped_capture"
+    except Exception as exc:
+        reason = f"capture_error:{type(exc).__name__}:{exc}"
+        raise
+    finally:
+        print(json.dumps({"output": str(out), **capture.close(reason)}, ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    main()

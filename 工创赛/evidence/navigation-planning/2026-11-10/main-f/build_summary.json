@@ -1,0 +1,82 @@
+{
+  "baseline": "d4d23490dfe74023c7043f209200fc29a6b60a75",
+  "before_reused": "Main-E final Rebuild; raw main/project/debug owner SHA verified against E report. E product unchanged at d4d2349 except deletion of unused legacy offline entry.",
+  "before_evidence": "工创赛/evidence/navigation-planning/2026-11-10/main-e/build_summary.json",
+  "before_evidence_sha256": "852ce93717fe6bddcbaa9d666a899cba6445cda623987a30a054ac1a65165cb9",
+  "final_source_sha256": {
+    "3.stm32f407工程/gongxun-f407.uvprojx": "049c9a77d890bb85302ed7b8b899b43f1e1424e1c52066852f8b0381697deb3a",
+    "3.stm32f407工程/CHASSIS/USER/main.c": "53c62966d172c9a6b5e30fae65b32674329f74c671048c71bbf31c132ed5a230",
+    "3.stm32f407工程/CHASSIS/USER/app_input_runtime.c": "902d6a63a91b65bfdcb29188faa5f4907ae7f132670e8358301354c1053991c8",
+    "3.stm32f407工程/CHASSIS/USER/app_input_runtime.h": "9dc145d776398cdf136b4a2e5440887398720db9e72a4c6ded7f0c7fcbefbf5b",
+    "3.stm32f407工程/CHASSIS/USER/app_chassis_service.c": "b39607ef259020ccbdb53a4ed8a3f5c44b0523f82d52b56ad3f71de32de896f6",
+    "3.stm32f407工程/CHASSIS/USER/app_chassis_service.h": "982ca8de49b980aa859f01c1d86469204638f49c37c1ffd72a6dad09216b4f33"
+  },
+  "targets": {
+    "Vehicle_Integrated": {
+      "before": {
+        "Code": 126408,
+        "RO": 6740,
+        "RW": 3340,
+        "ZI": 118908
+      },
+      "after": {
+        "Code": 126444,
+        "RO": 6740,
+        "RW": 3340,
+        "ZI": 118916
+      },
+      "errors": 0,
+      "warnings": 0,
+      "command": [
+        "D:\\Keil_v5\\UV4\\UV4.exe",
+        "-r",
+        "D:\\Desktop\\工创赛\\工创赛\\tmp\\input_chassis_main_f\\build_final_Vehicle_Integrated.uvprojx",
+        "-t",
+        "Vehicle_Integrated",
+        "-o",
+        "D:\\Desktop\\工创赛\\工创赛\\evidence\\navigation-planning\\2026-11-10\\main-f\\final_Vehicle_Integrated.log"
+      ],
+      "log_sha256": "0e1af771144adf5639e3e114ac0b102883a55611b44f40255e563f287f8908c2",
+      "artifact_sha256": {
+        "工创赛/tmp/input_chassis_main_f/final/Vehicle_Integrated/Vehicle_Integrated.axf": "0ab09f58f7b94a5fb7e88389b7f5ff1f64ba3172e4173c0c57c163f5554c6d25",
+        "工创赛/tmp/input_chassis_main_f/final/Vehicle_Integrated/Vehicle_Integrated.map": "a2259c719f5a1260271b2b4b173d4eea9fffe4a3e06c2a2928db2e6cae5efd43"
+      }
+    },
+    "Vehicle_Offline": {
+      "before": {
+        "Code": 115580,
+        "RO": 6732,
+        "RW": 3160,
+        "ZI": 118808
+      },
+      "after": {
+        "Code": 115616,
+        "RO": 6732,
+        "RW": 3160,
+        "ZI": 118800
+      },
+      "errors": 0,
+      "warnings": 0,
+      "command": [
+        "D:\\Keil_v5\\UV4\\UV4.exe",
+        "-r",
+        "D:\\Desktop\\工创赛\\工创赛\\tmp\\input_chassis_main_f\\build_final_Vehicle_Offline.uvprojx",
+        "-t",
+        "Vehicle_Offline",
+        "-o",
+        "D:\\Desktop\\工创赛\\工创赛\\evidence\\navigation-planning\\2026-11-10\\main-f\\final_Vehicle_Offline.log"
+      ],
+      "log_sha256": "c2f64aacfdfd9ed0056b112840cfaa805ed1f463f88b92355684b4a5f8e868c6",
+      "artifact_sha256": {
+        "工创赛/tmp/input_chassis_main_f/final/Vehicle_Offline/Vehicle_Offline.axf": "3f86ac0a47a13091226e3fce319028652ac0997d770fb00ec7f5d7ab1b593de6",
+        "工创赛/tmp/input_chassis_main_f/final/Vehicle_Offline/Vehicle_Offline.map": "94fb844bed58336af91039a4936ee92c1339502ec8631bd2c713a7f8199b001b"
+      }
+    }
+  },
+  "build_driver_sha256": "24bb8d806315af8a8143b84af21de672d9892496b267c9058137eddff6b41fe8",
+  "build_projects_sha256": {
+    "工创赛/tmp/input_chassis_main_f/build_final_Vehicle_Integrated.uvprojx": "0ab2f116326cca3094e31f5b642e0c41469e41713d53dbab8e8ecdacd6098b52",
+    "工创赛/tmp/input_chassis_main_f/build_final_Vehicle_Offline.uvprojx": "32191bc82c83d0baa68318d80c2b6163c62bfed5ecbfd35462741bbab1edbb0f"
+  },
+  "hardware_accessed": false
+}

@@ -1,0 +1,43 @@
+{
+  "status": "KEEP_TIMEOUT_DURING_POWER_WAIT_NO_TURN_BACKEND",
+  "recorded_at": "2026-11-17T03:08:04.900545+08:00",
+  "installed_sha256": "f9f2086e8a2cf29a5aa2e36d23ba6d5efcbd248032b5decd78a4c543f67226e9",
+  "download_attempts": 1,
+  "explicit_resets": 1,
+  "TX": {
+    "PLAN20": 1,
+    "ARM": 1,
+    "START": 1,
+    "KEEP": 8,
+    "STOP": 1
+  },
+  "client_status": "ack_timeout",
+  "client_returncode": 2,
+  "START_accepted": true,
+  "action_load_tick_ms": 4851,
+  "first_cancel_tick_ms": 5853,
+  "elapsed_to_cancel_ms": 1002,
+  "reason": "No subsequent valid KEEP reached parser before existing1000ms guard; later host STOP was not first cause",
+  "last_valid_observed_VM_request": 0,
+  "last_valid_observed_PE2_low": true,
+  "last_reported_wheels": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "backend_session": 0,
+  "backend_begin_count": 0,
+  "rotation_accuracy_measured": false,
+  "physical_peak_rate_measured": false,
+  "HWT_source_healthy_at_cancel": true,
+  "MCU_tasks_continued": true,
+  "UART_recovered_in_passive_monitor": true,
+  "external_bilateral_communication_loss_is_inference": true,
+  "radio_or_power_or_PC_root_cause_known": false,
+  "last_small_probe_read_failed_before_attachment": true,
+  "planning_analysis_model": "GPT-6.1-sol xhigh",
+  "independent_analysis_model": "GPT-6.1-sol high",
+  "user_requested_keepalive_relaxation": true,
+  "new_turn_authorized": false
+}

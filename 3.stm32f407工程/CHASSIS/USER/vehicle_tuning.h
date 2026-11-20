@@ -3,7 +3,9 @@
 /* 整车现场调参入口。单位写在名称和注释中；修改后编译下载。
  * 当前只实现第一阶段：启停区1前进后左移到扫码点；不自动进入第二阶段。
  * 地图按用户图暂作均分估算，不声称与未来雷达真实布局完全一致。 */
+#ifndef VEHICLE_STAGE1_ENABLE
 #define VEHICLE_STAGE1_ENABLE 1U
+#endif
 #include "../../USER/vehicle_parameters.h"
 #ifndef VEHICLE_SCAN_BYPASS
 #define VEHICLE_SCAN_BYPASS 1U
@@ -21,7 +23,7 @@
  * 先前进15cm再左移105cm，不旋转；扫码点为两区中点沿+Y前移150mm。
  * 修改前进距离改FORWARD_CM；修改左移距离可调整SCAN_X_MM。
  * 默认扫码停车点(1200,300)mm；原两区中点(1200,150)只作几何参考。 */
-#define VEHICLE_STAGE1_FORWARD_CM VEHICLE_STAGE1_FORWARD_DISTANCE_CM
+#define VEHICLE_STAGE1_FORWARD_CM 15.0f
 #define FIELD_SCAN_X_MM ((FIELD_START1_X_MM+FIELD_START2_X_MM)*0.5f)
 #define FIELD_SCAN_Y_MM (FIELD_START1_Y_MM+VEHICLE_STAGE1_FORWARD_CM*10.0f)
 /* 三个工位默认取格中心，后续现场在此独立修改停车坐标。 */

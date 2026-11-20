@@ -1,0 +1,259 @@
+{
+  "ok": true,
+  "baseline": "3676d2dacd4889d7439663eeb691c061be387acb",
+  "raw_functions": 21,
+  "original_global_declarations": 77,
+  "original_global_definitions": 76,
+  "owned_symbols": 37,
+  "literal_preserving_tokens": true,
+  "main_lines_before": 1121,
+  "main_lines_after": 809,
+  "targets": [
+    {
+      "target": "Vehicle_Integrated",
+      "preprocessed_functions": 82,
+      "assert_line_deltas": [
+        -312,
+        -312,
+        -312,
+        -312,
+        -312,
+        -312,
+        -312,
+        -312
+      ],
+      "watch_map_owners": {
+        "g_heading_dry_case": "app_debug_runtime.o(.data)",
+        "g_heading_dry_ccw": "app_debug_runtime.o(.bss)",
+        "g_heading_dry_cross_error": "app_debug_runtime.o(.data)",
+        "g_heading_dry_cw": "app_debug_runtime.o(.bss)",
+        "g_heading_dry_result": "app_debug_runtime.o(.data)"
+      },
+      "map_sha256": "ba405d9a045648c1dc25099be50c3d80894489d4994a1336fd1225dfb6ad8153"
+    },
+    {
+      "target": "Vehicle_Offline",
+      "preprocessed_functions": 82,
+      "assert_line_deltas": [
+        -312,
+        -312,
+        -312,
+        -312,
+        -312,
+        -312,
+        -312,
+        -312
+      ],
+      "watch_map_owners": {
+        "g_heading_dry_case": "app_debug_runtime.o(.data)",
+        "g_heading_dry_ccw": "app_debug_runtime.o(.bss)",
+        "g_heading_dry_cross_error": "app_debug_runtime.o(.data)",
+        "g_heading_dry_cw": "app_debug_runtime.o(.bss)",
+        "g_heading_dry_result": "app_debug_runtime.o(.data)"
+      },
+      "map_sha256": "687a50233cd58f87f5ff9f5e7fb966a28d9bc48f10ea1305b85d3fc57bf33574"
+    }
+  ],
+  "arm": [
+    {
+      "target": "Vehicle_Integrated",
+      "fixture": false,
+      "cases": 2,
+      "assertions": 46,
+      "uart_cases": 0,
+      "heading_cases": 0,
+      "priority_cases": 0,
+      "send_attempts": 0,
+      "send_failures": 0,
+      "publish_calls": 0,
+      "observe_calls": 0,
+      "read_calls": 0,
+      "initialized_rw_bytes": 112,
+      "nonzero_initialized_bytes": 6,
+      "zeroed_nobits_bytes": 8296,
+      "loader": "SHF_ALLOC PROGBITS at execution address; explicitly zero NOBITS after poisoning RAM",
+      "initial_values": {
+        "send_ok": 1,
+        "bus_valid": 1,
+        "cases": 0,
+        "assertions": 0,
+        "dry": 0,
+        "old_dry": 0,
+        "config_pointer": 134221452,
+        "config_address": 134221452
+      },
+      "loaded_sections": [
+        {
+          "type": "PROGBITS",
+          "execution_address": "0x8000000",
+          "size": 3756,
+          "writable": false
+        },
+        {
+          "type": "PROGBITS",
+          "execution_address": "0x20000000",
+          "size": 112,
+          "writable": true
+        },
+        {
+          "type": "NOBITS",
+          "execution_address": "0x20000070",
+          "size": 8296,
+          "writable": true
+        }
+      ],
+      "artifact_sha256": {
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Integrated/commands.json": "373a2f97b4c5cd796e4f9dbdc89c216d5d8674f808eb81d46a2e9e393bb2e020",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Integrated/heading.o": "d4ddfef0453f95c9e759bd2eeba675006363c9991f695f36358506a54697968d",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Integrated/kinematics.o": "64b7f7afaa299c5182398d398d8e34f2ba5272d236e75b08aa0c590c6a6828fd",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Integrated/symbols.txt": "6fc158a0639acf567932df19cda053a85d22f70a3a74ed2b7ef82ea3b27d040a",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Integrated/unit.axf": "bb14d533470c74fb153e3bd8c486c950ca330c45225f9c89b79081f2a937cf7c",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Integrated/unit.c": "8c7ca8f9ac59e07f13590db8babf0517b7a2cbe88964a89e3df96553cf825250",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Integrated/unit.o": "dcd944fd79dd4e3e32f357a9ff91108b2f49aad8fdebd04739b08ce28827498d",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Integrated/unit.sct": "ee7ea3299165414be96f25ed46eb47369d20b75aa800532a94061384cab8f177"
+      },
+      "controller_sha256": "06e0af899342e7ba66a82ba14c18cfd60e1c08ba5c3c351a9948abf6f9627b21",
+      "kinematics_sha256": "977f0c1c50c42be1fa6b7084ee730b01ded30395e020037119868c1302849c1f"
+    },
+    {
+      "target": "Integrated compiler options + isolated UART/static preview fixture",
+      "fixture": true,
+      "cases": 124,
+      "assertions": 6040,
+      "uart_cases": 32,
+      "heading_cases": 42,
+      "priority_cases": 15,
+      "send_attempts": 90,
+      "send_failures": 6,
+      "publish_calls": 80,
+      "observe_calls": 4,
+      "read_calls": 4,
+      "initialized_rw_bytes": 420,
+      "nonzero_initialized_bytes": 8,
+      "zeroed_nobits_bytes": 8712,
+      "loader": "SHF_ALLOC PROGBITS at execution address; explicitly zero NOBITS after poisoning RAM",
+      "initial_values": {
+        "send_ok": 1,
+        "bus_valid": 1,
+        "cases": 0,
+        "assertions": 0,
+        "dry": 0,
+        "old_dry": 0,
+        "config_pointer": 134231776,
+        "config_address": 134231776,
+        "bus_stop": 1,
+        "old_bus_stop": 1,
+        "used": 0,
+        "pending": 0
+      },
+      "loaded_sections": [
+        {
+          "type": "PROGBITS",
+          "execution_address": "0x8000000",
+          "size": 14144,
+          "writable": false
+        },
+        {
+          "type": "PROGBITS",
+          "execution_address": "0x20000000",
+          "size": 420,
+          "writable": true
+        },
+        {
+          "type": "NOBITS",
+          "execution_address": "0x200001a4",
+          "size": 8712,
+          "writable": true
+        }
+      ],
+      "artifact_sha256": {
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Integrated_debug_fixture/commands.json": "25d91862be25541d23ef172d6668069e49559f5e77bb4836dd9b5afeb5a9ff4b",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Integrated_debug_fixture/heading.o": "d4ddfef0453f95c9e759bd2eeba675006363c9991f695f36358506a54697968d",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Integrated_debug_fixture/kinematics.o": "64b7f7afaa299c5182398d398d8e34f2ba5272d236e75b08aa0c590c6a6828fd",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Integrated_debug_fixture/symbols.txt": "26b7a61074450dad72a1c4c684e2a7f4ee74658873a9684846b89aab54a1bccd",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Integrated_debug_fixture/unit.axf": "657ec17c9945b053ee48c7ba55fc93698df700bdc5577c34583b1004af891807",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Integrated_debug_fixture/unit.c": "37a243c8f3f07dbd0ee71fc29cdb42b64bee3231c227fb7f467c9c6ddd6a9deb",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Integrated_debug_fixture/unit.o": "bc9e62a89003d2d1178553ec4b270567c1dc00838f9f2960e326535a3ee90152",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Integrated_debug_fixture/unit.sct": "ee7ea3299165414be96f25ed46eb47369d20b75aa800532a94061384cab8f177"
+      },
+      "controller_sha256": "06e0af899342e7ba66a82ba14c18cfd60e1c08ba5c3c351a9948abf6f9627b21",
+      "kinematics_sha256": "977f0c1c50c42be1fa6b7084ee730b01ded30395e020037119868c1302849c1f"
+    },
+    {
+      "target": "Vehicle_Offline",
+      "fixture": false,
+      "cases": 2,
+      "assertions": 46,
+      "uart_cases": 0,
+      "heading_cases": 0,
+      "priority_cases": 0,
+      "send_attempts": 0,
+      "send_failures": 0,
+      "publish_calls": 0,
+      "observe_calls": 0,
+      "read_calls": 0,
+      "initialized_rw_bytes": 112,
+      "nonzero_initialized_bytes": 6,
+      "zeroed_nobits_bytes": 8296,
+      "loader": "SHF_ALLOC PROGBITS at execution address; explicitly zero NOBITS after poisoning RAM",
+      "initial_values": {
+        "send_ok": 1,
+        "bus_valid": 1,
+        "cases": 0,
+        "assertions": 0,
+        "dry": 0,
+        "old_dry": 0,
+        "config_pointer": 134221452,
+        "config_address": 134221452
+      },
+      "loaded_sections": [
+        {
+          "type": "PROGBITS",
+          "execution_address": "0x8000000",
+          "size": 3756,
+          "writable": false
+        },
+        {
+          "type": "PROGBITS",
+          "execution_address": "0x20000000",
+          "size": 112,
+          "writable": true
+        },
+        {
+          "type": "NOBITS",
+          "execution_address": "0x20000070",
+          "size": 8296,
+          "writable": true
+        }
+      ],
+      "artifact_sha256": {
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Offline/commands.json": "49b13d38760b9405199931fb947a868147bb7868ee4ed6e8e85f448dc7ef1336",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Offline/heading.o": "e7bd329dcea62afadb7502499222cdbd04f4c2016fd9a5c5d5421c17d29fb4b0",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Offline/kinematics.o": "be06ba7467b699891a0a3eb5fd229e2ae797c36f55df2d31c05dafa59463f719",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Offline/symbols.txt": "436977a03e7d645150564f7367e7a63c1897f7447f4ef98269785e27afa0f2d7",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Offline/unit.axf": "c5883495d55f04a4d8e24981ebc37956f7087f567a1388a15987c97be20bef45",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Offline/unit.c": "8c7ca8f9ac59e07f13590db8babf0517b7a2cbe88964a89e3df96553cf825250",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Offline/unit.o": "5ba873bf9cb268a2ddf9ca5c19813e3d5cbc7294d161d6845775a948f08b9e04",
+        "工创赛/tmp/debug_runtime_main_e/unit_Vehicle_Offline/unit.sct": "ee7ea3299165414be96f25ed46eb47369d20b75aa800532a94061384cab8f177"
+      },
+      "controller_sha256": "06e0af899342e7ba66a82ba14c18cfd60e1c08ba5c3c351a9948abf6f9627b21",
+      "kinematics_sha256": "977f0c1c50c42be1fa6b7084ee730b01ded30395e020037119868c1302849c1f"
+    }
+  ],
+  "protected_existing_files": 10394,
+  "protected_manifest_sha256": "4d9cd008cd51cdc59adb94c890b86b4881fb0d976ea4925575ea147ddfc34c45",
+  "inc_bytes_unchanged": true,
+  "source_sha256": {
+    "3.stm32f407工程/CHASSIS/USER/main.c": "8bda4e64419177851ba46bb261661a1a19db040510a6037d3691b4433aafea42",
+    "3.stm32f407工程/CHASSIS/USER/app_debug_runtime.c": "b796acdd61d5ace3bf3981b4d5dca67ae5c2cdb176c217357ba627e2382b329f",
+    "3.stm32f407工程/CHASSIS/USER/app_debug_runtime.h": "bbd07ab82c966fa0dae789233c9ad94388ab9343fe9cffc856572d11f05a689a",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "cfc78d3681d237797fb84d427d5bc1804d9bcd2ddda99a822fd79e764435c6fd"
+  },
+  "script_sha256": {
+    "工创赛/scripts/check_debug_runtime_extraction_20261110.py": "d233e3b379e99a5d6be270392e226af72061f246cea946afdcdc7d3f974be957",
+    "工创赛/scripts/check_debug_runtime_arm_20261110.py": "d0d934c4e8b219f799c6cac0bd7b62709a9c1651b827160d57382efd0c54dd42",
+    "工创赛/scripts/build_debug_runtime_20261110.py": "379b321a8258af9d8b601d36d29dc4f02f53da0ec26a8696e8a31cfc1fd8ed58"
+  },
+  "hardware_accessed": false,
+  "limits": "Actual mode3 Integrated/Offline: dry self-test active; UART/static preview excluded by original macros. Separate extracted-C fixture enables those dormant bodies and supplies missing historical value.valid_mask input only in harness. Does not repair or validate a complete legacy profile. Actual controller and kinematics; controlled clock/publish/read/UART stubs. No MATLAB dynamics, RTOS scheduling/stack, physical bus or vehicle validation."
+}

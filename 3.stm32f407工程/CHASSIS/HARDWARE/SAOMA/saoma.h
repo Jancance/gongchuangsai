@@ -12,9 +12,6 @@ extern volatile uint32_t g_saoma_reject_count;
 extern volatile uint32_t g_saoma_last_result;
 void SAOMA_Init(void);
 void SAOMA_EnableReceive(void);
-/* 锁码后关闭 UART5 接收：本次运行只认第一个合法码，后续帧不再入队。 */
-void SAOMA_DisableReceive(void);
-extern volatile uint32_t g_saoma_locked;
 void SAOMA_Update(void);
 /* 本次合法帧首/末字节的真实UART接收时刻，单位毫秒，不是解析/显示时刻。 */
 extern volatile uint32_t g_saoma_frame_start_ms,g_saoma_frame_end_ms;

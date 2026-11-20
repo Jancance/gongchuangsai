@@ -1,0 +1,148 @@
+{
+  "stage": "main-F",
+  "baseline": "d4d23490dfe74023c7043f209200fc29a6b60a75",
+  "self_review": "passed; separate independent high review pending",
+  "scope": "Input gate/pending/revision, scan-display branch, key/HWT state moved into app_input_runtime. CAN init/one-round and Safety check moved into app_chassis_service. Same tasks remain in main. No app_tasks or large include replacement.",
+  "source_sha256": {
+    "3.stm32f407工程/CHASSIS/USER/main.c": "53c62966d172c9a6b5e30fae65b32674329f74c671048c71bbf31c132ed5a230",
+    "3.stm32f407工程/CHASSIS/USER/app_input_runtime.c": "902d6a63a91b65bfdcb29188faa5f4907ae7f132670e8358301354c1053991c8",
+    "3.stm32f407工程/CHASSIS/USER/app_input_runtime.h": "9dc145d776398cdf136b4a2e5440887398720db9e72a4c6ded7f0c7fcbefbf5b",
+    "3.stm32f407工程/CHASSIS/USER/app_chassis_service.c": "b39607ef259020ccbdb53a4ed8a3f5c44b0523f82d52b56ad3f71de32de896f6",
+    "3.stm32f407工程/CHASSIS/USER/app_chassis_service.h": "982ca8de49b980aa859f01c1d86469204638f49c37c1ffd72a6dad09216b4f33",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "049c9a77d890bb85302ed7b8b899b43f1e1424e1c52066852f8b0381697deb3a"
+  },
+  "script_sha256": {
+    "工创赛/scripts/check_input_chassis_extraction_20261110.py": "9d810d7a885e44d6e2593c14533a7a823a256e95ec24d61226f9f9eeabb724b2",
+    "工创赛/scripts/check_input_chassis_arm_20261110.py": "83218951c08f3232a76ef193470fb8f1fc183c7154099314a8eebc42cf20fbc2",
+    "工创赛/scripts/build_input_chassis_20261110.py": "24bb8d806315af8a8143b84af21de672d9892496b267c9058137eddff6b41fe8",
+    "工创赛/scripts/check_debug_runtime_extraction_20261110.py": "d233e3b379e99a5d6be270392e226af72061f246cea946afdcdc7d3f974be957"
+  },
+  "checks": {
+    "raw_functions": 15,
+    "original_definitions": 46,
+    "original_extern_declarations": 1,
+    "actual_preprocessed_functions": [
+      81,
+      81
+    ],
+    "input_owner_symbols": 21,
+    "protected_raw_sha_files": 10395,
+    "two_inc_unchanged": true,
+    "project_exact_additions_only": true,
+    "active_project_before_after_stable": true,
+    "new_source_GBK_CRLF_EOF_and_trailing_whitespace_checked": true,
+    "initializer_and_xTaskCreate_parameters_token_equal": true,
+    "identity_bindings_checked": 74
+  },
+  "remaining_main_acceptance": {
+    "before_lines": 809,
+    "after_lines": 348,
+    "functions_line_counts": {
+      "App_CanTask": 12,
+      "App_UartLinkTestTask": 20,
+      "App_TestTaskA": 67,
+      "App_TestTaskB": 14,
+      "App_UartRxTask": 30,
+      "App_KeyTask": 19,
+      "App_SafetyTask": 12,
+      "main": 68
+    },
+    "assessment": "main contains only task wrappers, original TaskA initialization and short service dispatch, hardware initialization and task creation. TaskA retains the original start-tick read as its first statement, mission/stage1 dispatch and precise conditional current-tick reads. UART receive retains WaitByte, original conditional dispatch, stack sampling and Safety_Report; CAN/Key/Safety retain counters, sample timing and delays. No line-count target was used."
+  },
+  "mechanical_safety_boundaries": "CAN preserves StartupAxes_Service -> conditional DM -> VehicleArm_Service -> conditional DM -> original short-circuit CombinedStep admission. Holding/Busy and volatile reads remain at original positions. Poll/feedback refresh precedes real sampled-tick reports; odometry remains last inside the round before stack/delay. SafetyCheck returns to original Safety_Update(vm, can) in main. No new stop/gate/latch or changed parameter.",
+  "dynamic": {
+    "actual": [
+      {
+        "target": "Vehicle_Integrated",
+        "cases": 597,
+        "assertions": 13677
+      },
+      {
+        "target": "Vehicle_Offline",
+        "cases": 597,
+        "assertions": 13677
+      }
+    ],
+    "fixtures": [
+      {
+        "profile": "ordinary",
+        "cases": 603,
+        "assertions": 13745,
+        "legacy_cases": 2
+      },
+      {
+        "profile": "competition",
+        "cases": 603,
+        "assertions": 13745,
+        "legacy_cases": 2
+      },
+      {
+        "profile": "heading",
+        "cases": 597,
+        "assertions": 13549,
+        "legacy_cases": 0
+      },
+      {
+        "profile": "stage1",
+        "cases": 597,
+        "assertions": 13677,
+        "legacy_cases": 0
+      },
+      {
+        "profile": "hwt_turn",
+        "cases": 622,
+        "assertions": 19164,
+        "legacy_cases": 21
+      },
+      {
+        "profile": "chassis_key",
+        "cases": 619,
+        "assertions": 15354,
+        "legacy_cases": 20
+      },
+      {
+        "profile": "uart_static",
+        "cases": 597,
+        "assertions": 13615,
+        "legacy_cases": 0
+      }
+    ],
+    "coverage": "Gate same/mismatched revision and failures; scan delay and suppression; key consumption exactly once; actual and dormant original dispatch branches; backend callback state mutations to verify repeated reads and short-circuit order; actual sampled tick arrays after refresh; CAN failures and stop paths; Safety_Update last; legacy key/HWT start/cancel/timeout/wrap checks. Complete original/new external traces, sent bytes, critical depth, owner and shared states compared.",
+    "initialization": "SHF_ALLOC PROGBITS at execution addresses; NOBITS explicitly zeroed after poisoning RAM. Nonzero clock/test flags and pointer checked; every active original/new owner initializer verified byte-zero before any test invocation. Separate artifacts for all 9 units; result.json excluded from its own hash."
+  },
+  "build": {
+    "before": "Reuse E final successful two-target images; source identity matches through d4d2349. The intervening authorized deletion removed only unused legacy offline entry and is not restored.",
+    "final": "Both actual targets final Rebuild 0 errors/0 warnings; outputs per target isolated. Final source identities bound after localized comment placement cleanup.",
+    "size_changes": "Declared data unchanged: old main RW148/ZI16 = new main104/0 + input40/16 + chassis4/0. Integrated ZI +8 is object alignment padding4->12; library remains4. Offline ZI -8 is object padding9->5 and library4->0. Code +36 from owner call boundaries.",
+    "first_build_correction": "First Integrated attempt exposed missing direct vehicle_tuning.h include for original VEHICLE_STAGE1_ENABLE macro; added the required header, no macro or logic change. Initial log kept in tmp/input_chassis_main_f/missing_tuning_include_first_build.log."
+  },
+  "commands": [
+    "python 工创赛/scripts/build_input_chassis_20261110.py (2 final real Rebuilds)",
+    "python 工创赛/scripts/check_input_chassis_extraction_20261110.py (8 real-target preprocessor calls; 9 narrow paired ARM units)",
+    "git -c core.whitespace=cr-at-eol diff --check on changed tracked products; direct byte whitespace checks on 4 new files",
+    "Final source/scripts/temporary build project/logs/artifacts identity verification"
+  ],
+  "report_sha256": {
+    "build_summary.json": "4c7ff3ddcfb9e1bb9b039d96858a6bdbe24ede93230d11f409243728a5f2feff",
+    "input_chassis_check.json": "00d9553562bd9a8db71586788882889a90c8c9734748b9d673d6e10b710a058b"
+  },
+  "requirements_checked": {
+    "R": [
+      "RUN-01",
+      "RUN-02",
+      "FIELD-06",
+      "PWR-01",
+      "MECH-01",
+      "MECH-02"
+    ],
+    "E": [
+      "LOC-03",
+      "LOC-05",
+      "MOT-02",
+      "RUN-06",
+      "SRC-04"
+    ],
+    "Q": "QR-04/FIELD-05/OBS-03 remain pending technical clarification; no rule changes."
+  },
+  "limits": "Actual source with controlled external-service stubs, not a complete RTOS or hardware execution. Isolated legacy fixtures override only test macros after includes; they do not repair/validate full historical profiles or missing legacy runtime inputs. Pure responsibility move has no applicable MATLAB dynamics simulation. No flash, hardware, serial/JLink, GitHub sync/push, history cleanup, root handoff edit or git add/commit by implementation agent."
+}

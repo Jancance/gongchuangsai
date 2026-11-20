@@ -20,7 +20,7 @@ import time
 import p1_serial_motion as protocol
 
 ROOT = Path(__file__).resolve().parents[1]
-ACTUAL_FIRMWARE = Path('D:/新建文件夹4/工创赛/代码/stm32/3.stm32f407工程')
+ACTUAL_FIRMWARE = Path('D:/Desktop/工创赛/3.stm32f407工程')
 PARSERS = [getattr(protocol, name) for name in (
     "parse_telemetry", "parse_fault_telemetry", "parse_batch_telemetry",
     "parse_timing_telemetry", "parse_perimeter_checkpoint",
@@ -50,6 +50,84 @@ EXTENSION_DIAG_FIELDS = ["seq", "tick_ms", "run_id", "first_reason", "command", 
                          "reply_flags", "service_gap_ms", "home_phase", "first_tick_ms"]
 EXTENSION_HOLD_FIELDS = ["hold_enable_count", "hold_samples", "hold_confirmed", "hold_ready_tick_ms", "hold_delta_mdeg"]
 SOURCE_PREP_FIELDS = ["seq", "tick_ms", "run_id", "state", "cause", "done_mask", "release_ms", "elapsed_ms", "segment", "extension_milli_mm", "grip_mdeg"]
+
+
+ICM_FIELDS = ['seq', 'tick_ms', 'publication_sequence', 'sample_sequence', 'state', 'last_error', 'failed_reg', 'whoami', 'accel_config', 'gyro_config', 'big_endian', 'edge_sequence', 'edge_cycle', 'read_start_cycle', 'read_end_cycle', 'sample_tick_ms', 'age_ms', 'fresh', 'transfer_errors', 'skipped_edges', 'read_races', 'telemetry_dropped', 'sample_gap', 'dwt_hz', 'accel_x_raw', 'accel_y_raw', 'accel_z_raw', 'gyro_x_raw', 'gyro_y_raw', 'gyro_z_raw', 'temperature_raw']
+BASELINE40_FIELDS = ["seq", "tick_ms", "plan_id", "base_rpm", "distance_mm", "reference_mm_s",
+                     "acceleration_mm_s2", "jerk_mm_s3", "feedback_limit_rpm", "run_ms"]
+
+ICM_OBSERVER_FIELDS = ["seq", "tick_ms", "format_version", "publication_sequence", "session",
+    "valid", "reasons", "flags", "estimate_ms", "sample_sequence", "reference_ms", "t0_ms", "t1_ms",
+    "wheel_age_ms", "hwt_age_ms", "cal_samples", "history_samples", "gaps",
+    "wheel_f_milli_mm", "wheel_r_milli_mm", "position_f_milli_mm", "position_r_milli_mm",
+    "velocity_f_milli_mm_s", "velocity_r_milli_mm_s", "accel_f_milli_mm_s2", "accel_r_milli_mm_s2",
+    "telemetry_dropped"]
+
+
+def parse_icm_observer(line: bytes):
+    if not line.startswith(b"IO1,"):
+        return None
+    body, sep, checksum = line.rstrip(b"\r\n").rpartition(b",")
+    if not sep or len(checksum) != 4 or binascii.crc_hqx(body+b",", 0xffff) != int(checksum, 16):
+        raise ValueError("IO1 CRC mismatch")
+    values = list(map(int, body.split(b",")[1:]))
+    if len(values) != len(ICM_OBSERVER_FIELDS):
+        raise ValueError("IO1 field count")
+    for i, value in enumerate(values):
+        if not (-(2**31) <= value < 2**31 if 18 <= i < 26 else 0 <= value <= 0xffffffff):
+            raise ValueError("IO1 integer range")
+    r = dict(zip(ICM_OBSERVER_FIELDS, values))
+    if (r['format_version'] != 1 or r['valid'] > 1 or r['flags'] & ~63 or
+            r['reasons'] & ~511 or r['cal_samples'] > 200 or r['history_samples'] > 128):
+        raise ValueError("IO1 version/flags/count")
+    invalid = -(2**31)
+    groups = [(bool(r['flags'] & 2), values[18:20]), (bool(r['valid']), values[20:24]),
+              (bool(r['flags'] & 32), values[24:26])]
+    if any(not enabled and any(v != invalid for v in group) for enabled, group in groups):
+        raise ValueError("IO1 invalid values need sentinel")
+    if r['valid'] and (r['reasons'] or r['flags'] & 35 != 35 or r['wheel_age_ms'] > 200 or
+                       r['hwt_age_ms'] >= 100 or not 1 <= ((r['t1_ms']-r['t0_ms']) & 0xffffffff) <= 250 or
+                       ((r['estimate_ms']-r['t1_ms']) & 0xffffffff) != r['wheel_age_ms'] or
+                       any(v == invalid for v in values[18:26])):
+        raise ValueError("IO1 validity/window")
+    return r
+
+def parse_baseline40(line: bytes):
+    if not line.startswith((b"IR1,", b"BF1,")):
+        return None
+    body, sep, checksum = line.rstrip(b"\r\n").rpartition(b",")
+    if not sep or len(checksum) != 4 or binascii.crc_hqx(body+b",", 0xffff) != int(checksum, 16):
+        raise ValueError("baseline40 CRC mismatch")
+    raw = line.startswith(b"IR1,")
+    fields = ICM_FIELDS if raw else BASELINE40_FIELDS
+    values = list(map(int, body.split(b",")[1:]))
+    if len(values) != len(fields):
+        raise ValueError("baseline40 field count")
+    result = dict(zip(fields, values))
+    for key, value in result.items():
+        if raw and key.endswith("_raw"):
+            if not -32768 <= value <= 32767:
+                raise ValueError("IR1 signed raw range")
+        elif not 0 <= value <= 0xffffffff:
+            raise ValueError("baseline40 uint32 range")
+    if raw:
+        if result["publication_sequence"] & 1 or not result["sample_sequence"] or result["state"] > 3 or result["fresh"] > 1 or result["big_endian"] > 1:
+            raise ValueError("IR1 state/publication")
+        if ((result["tick_ms"]-result["sample_tick_ms"]) & 0xffffffff) != result["age_ms"]:
+            raise ValueError("IR1 sample time/age mismatch")
+        if result["fresh"] and result["age_ms"] > 20:
+            raise ValueError("IR1 stale marked fresh")
+        if not result["dwt_hz"]:
+            raise ValueError("IR1 missing cycle timebase")
+    else:
+        preset = protocol.STRAIGHT_CAPTURE_PLANS.get(result["plan_id"])
+        expected = [8, 100, 2100, 400, 150, 300, 130, 12779]
+        if preset is not None:
+            _, rpm, distance = preset
+            expected[:3] = [result["plan_id"], rpm, distance]
+        if values[2:] != expected:
+            raise ValueError("BF1 configuration mismatch")
+    return result
 
 
 def parse_straight_test(line: bytes):
@@ -221,7 +299,7 @@ def parse_wheel(line: bytes):
 
 def decode(line: bytes) -> tuple[str, dict]:
     """CRC正确与物理动作成功是不同概念；不推测缺失的反馈。"""
-    for parser in [parse_straight_test, parse_source_preparation, parse_extension_diag, parse_grid_route, parse_mission, parse_stage, parse_wheel, *PARSERS]:
+    for parser in [parse_icm_observer, parse_baseline40, parse_straight_test, parse_source_preparation, parse_extension_diag, parse_grid_route, parse_mission, parse_stage, parse_wheel, *PARSERS]:
         result = parser(line)
         if result is not None:
             return line.split(b",", 1)[0].decode("ascii"), result
@@ -304,6 +382,15 @@ class Capture:
                     self.gaps += delta - 1
             if not row.get("out_of_order") and not row.get("duplicate"):
                 self.last_seq, self.last_tick = seq, tick
+        if tag == "IR1":
+            previous = getattr(self, "last_icm_sample", None)
+            if previous is not None:
+                delta = (data["sample_sequence"] - previous) & 0xffffffff
+                row["sample_duplicate"] = delta == 0
+                row["sample_out_of_order"] = delta >= 0x80000000
+                row["sample_sequence_gap"] = delta-1 if 0 < delta < 0x80000000 else 0
+            if previous is None or 0 < ((data["sample_sequence"]-previous) & 0xffffffff) < 0x80000000:
+                self.last_icm_sample = data["sample_sequence"]
         if tag != "TEXT" and tag != "ERROR" and any(k.startswith("field_") for k in data):
             self.unknown += 1
         row["data"] = data
@@ -321,7 +408,8 @@ class Capture:
                 stream = (self.out / f"{tag}_{schema}.csv").open("w", encoding="utf-8-sig", newline="")
                 writer = csv.DictWriter(stream, fieldnames=[
                     "host_utc", "host_monotonic_ns", "raw_offset", "operator_stage_label",
-                    "sequence_gap", "duplicate", "out_of_order", "clock_rewind", *fields,
+                    "sequence_gap", "duplicate", "out_of_order", "clock_rewind",
+                    "sample_duplicate", "sample_out_of_order", "sample_sequence_gap", *fields,
                 ])
                 writer.writeheader()
                 self.tables[key] = stream, writer
@@ -329,7 +417,10 @@ class Capture:
                 "host_utc": row["host_utc"], "host_monotonic_ns": now_ns,
                 "raw_offset": row["raw_offset"], "operator_stage_label": self.stage,
                 "sequence_gap": row.get("sequence_gap", 0), "duplicate": row.get("duplicate", False),
-                "out_of_order": row.get("out_of_order", False), "clock_rewind": row.get("clock_rewind", False), **data,
+                "out_of_order": row.get("out_of_order", False), "clock_rewind": row.get("clock_rewind", False),
+                "sample_duplicate": row.get("sample_duplicate", False),
+                "sample_out_of_order": row.get("sample_out_of_order", False),
+                "sample_sequence_gap": row.get("sample_sequence_gap", 0), **data,
             })
 
     def feed(self, chunk: bytes):

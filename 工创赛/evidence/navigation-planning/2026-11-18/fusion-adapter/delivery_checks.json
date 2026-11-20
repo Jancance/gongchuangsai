@@ -1,0 +1,73 @@
+{
+  "time": "2026-11-18T01:55:58.662812+08:00",
+  "status": "PASS",
+  "source_sha256": {
+    "fusion_adapter.c": "33dcb51411f0fd9cc76ba977187a5d8f9f6aa19a20ad55a7fcf5e6733cc371b9",
+    "fusion_adapter.h": "9e344b6d37c10f8b0c69b09d0b552cae0ad677c2a45234fdd7f05c3ca9d8849d"
+  },
+  "matlab_initial_checks": 740,
+  "matlab_numeric_checks": 946,
+  "main_arm_assertions": 2529,
+  "independent_arm_assertions": 2114,
+  "vectors_each": 120,
+  "maps": {
+    "integrated": {
+      "compiled": true,
+      "unused_adapter_removed": true,
+      "axf_sha256": "f7a7b2e4d690678f8197d14f5c0229d3004307da034a7f8a0aaf79fad1798672",
+      "size": "Program Size: Code=144588 RO-data=6892 RW-data=3612 ZI-data=124004"
+    },
+    "offline": {
+      "compiled": true,
+      "unused_adapter_removed": true,
+      "axf_sha256": "8d3ed833ffb421ce2fd873859a65eb1fe73b14211bf8741f0931449008d86473",
+      "size": "Program Size: Code=132780 RO-data=6884 RW-data=3416 ZI-data=123896"
+    }
+  },
+  "runtime_caller_files": [],
+  "protected_sources_unchanged": {
+    "3.stm32f407工程/CHASSIS/USER/app_odometry.c": true,
+    "3.stm32f407工程/CHASSIS/USER/app_odometry.h": true,
+    "3.stm32f407工程/CHASSIS/USER/fusion_reference.c": true,
+    "3.stm32f407工程/CHASSIS/USER/fusion_reference.h": true,
+    "3.stm32f407工程/CHASSIS/USER/chassis_auto_test.c": true,
+    "3.stm32f407工程/CHASSIS/USER/heading_source.c": true,
+    "3.stm32f407工程/CHASSIS/USER/chassis_kinematics.c": true,
+    "3.stm32f407工程/CHASSIS/USER/heading_source.h": true,
+    "3.stm32f407工程/CHASSIS/USER/chassis_auto_test.h": true,
+    "3.stm32f407工程/CHASSIS/USER/runtime_route.c": true,
+    "3.stm32f407工程/CHASSIS/USER/runtime_route.h": true
+  },
+  "original_dirty_unchanged": {
+    "3.stm32f407工程/gongxun-f407.uvguix.lenovo": true,
+    "3.stm32f407工程/gongxun-f407.uvoptx": true,
+    "工创赛/docs/RADAR_F407_PLAN_2026-10-29.md": true,
+    "工创赛/scripts/p1_serial_motion.py": true,
+    "工创赛/scripts/vehicle_uart_capture.py": true,
+    "底盘定位与路径规划_2026-11-09.md": true
+  },
+  "handoff": {
+    "长期记忆.md": {
+      "before_sha256": "5050e694811b3458956d26a37d6f7ae8ed365ff3fc64c5ae18545c207a917627",
+      "prior_bytes_preserved_as_suffix": true,
+      "prefix_bytes": 2173,
+      "line_endings": "CRLF"
+    },
+    "P1电控组交接_2026-10-15.md": {
+      "before_sha256": "8d293b6f855736a9cb67f5488d0df7884d29271b49d23524f26839bccf53184d",
+      "prior_bytes_preserved_as_suffix": true,
+      "prefix_bytes": 2173,
+      "line_endings": "CRLF"
+    }
+  },
+  "hardware_accessed": false,
+  "fetch_push_performed": false,
+  "stage_temporary_objects_excluded": true,
+  "raw_evidence_whitespace_preserved": true,
+  "report_sha256": {
+    "REPORT.md": "2a566dac5909b38c53d3f92d588e4ac59f38f3a5a125b4df6bd9b302d13e8429",
+    "COMPONENT_REPORT.md": "af2015548e49d4af3f7a8d7ba4be3491bd131d931839442554093df7525fd818",
+    "NUMERIC_PRECONDITION_REPORT.md": "8fd28b9cb8c99c56ae9772d3eb8f12ba69800d4ec330326fcfc99a0089192d39",
+    "INDEPENDENT_REVIEW.md": "770c64fc8609005a6d5e8459c8a4f9f0ed4a1976c2dde0bde98ea66d06f849ee"
+  }
+}

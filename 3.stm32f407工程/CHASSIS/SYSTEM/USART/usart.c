@@ -164,7 +164,7 @@ uint8_t USART1_WaitByte(uint8_t *data, uint32_t timeout_ms)
                           pdMS_TO_TICKS(timeout_ms)) == pdPASS) ? 1U : 0U;
 }
 
-
+#if APP_ZONE2_MISSION_ENABLE
 /* Stage2 mainline: dedicated PC6/PC7 USART6, owned by Vision_Poll only.
  * USART1 and its existing UartRx task remain independent. */
 static QueueHandle_t s_vision_rx_queue = NULL;
@@ -244,3 +244,4 @@ void USART6_IRQHandler(void)
     }
     portEND_SWITCHING_ISR(wake);
 }
+#endif

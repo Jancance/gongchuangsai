@@ -1,0 +1,71 @@
+"""Numerical cross-check and report for saved four-direction evidence; no hardware."""
+import hashlib,json,statistics
+from pathlib import Path
+import numpy as np
+O=Path(__file__).resolve().parent;R=O.parents[4]
+def read(p):return json.loads(p.read_text('utf-8-sig'))
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+S=read(O/'summary.json');C=read(O/'contexts.json');P=read(O/'parameters.json')
+assert S['status']=='PASS_WITH_LIMITATIONS' and len(S['runs'])==len(C)==22
+for name,value in read(O/'input_sha256.json').items():assert sha(R/name)==value,name
+for name,value in read(O/'original_dirty_sha256.json').items():assert sha(R/name)==value,name
+maxerr=0;checks=[]
+for c,r in zip(C,S['runs']):
+ assert c['name']==r['name']
+ d=read(Path(c['decoded']));tr=d['header']['trigger_ms'];q=np.genfromtxt(O/(c['name']+'_series.csv'),delimiter=',',names=True)['source_s'];pos=[]
+ for j in range(4):
+  a=[w for w in d['wheel'] if w['source']=='position' and w['valid'] and w['wheel']==j]
+  vals={w['source_ms']:w['value']*(1-2*w['sign']) for w in a};ts=sorted(vals)
+  assert q[0]>=(ts[0]-tr)/1000-1e-9 and q[-1]<=(ts[-1]-tr)/1000+1e-9
+  pos.append(np.interp(q,(np.array(ts)-tr)/1000,[vals[t] for t in ts])*P['motor_forward_sign'][j]*np.pi*P['wheel_diameter_mm']/P['counts_per_rev'])
+ vals={w['angle_ms']:w['yaw_deg'] for w in d['hwt'] if w['healthy'] and w['valid_mask']&1};ts=sorted(vals)
+ yaw=np.interp(q,(np.array(ts)-tr)/1000,np.unwrap(np.deg2rad([vals[t] for t in ts])))
+ dw=np.diff(np.array(pos).T,axis=0);f=dw.mean(axis=1)*P['forward_scale'];l=(dw[:,0]-dw[:,1]-dw[:,2]+dw[:,3])/4
+ angle=(yaw[1:]+yaw[:-1])/2-np.deg2rad(d['header']['path_heading_deg']-d['header']['heading_offset_deg']);half=np.diff(yaw)/2
+ si=np.sinc(half/np.pi);fl=np.array([np.sum(si*(f*np.cos(angle)-l*np.sin(angle))),np.sum(si*(f*np.sin(angle)+l*np.cos(angle)))])
+ axis,sign={'forward':(0,1),'backward':(0,-1),'left':(1,1),'right':(1,-1)}[c['direction']]
+ err=abs(sign*fl[axis]-r['model_end_main_mm']);maxerr=max(maxerr,err);assert err<1e-7,(c['name'],err)
+ root=Path(c['decoded']).parent
+ for stem in ['bank_a','bank_b','tail']:
+  assert (root/(stem+'_read1.bin')).read_bytes()==(root/(stem+'_read2.bin')).read_bytes(),(c['name'],stem)
+ assert abs(r['extended']['main_mm']-r['model_end_main_mm'])<1e-4
+ checks.append(c['name'])
+V=dict(status='PASS',trials=checks,input_hashes_verified=len(read(O/'input_sha256.json')),original_dirty_files_unchanged=6,stable_binary_pairs_verified=66,matlab_vs_numpy_max_main_error_mm=maxerr,progress_reconstruction_max_error_mm=max(abs(r['progress_reconstruction_error_mm']) for r in S['runs']),matlab_is_primary=True,python_crosscheck_is_not_matlab_replacement=True)
+(O/'verification.json').write_text(json.dumps(V,indent=2),encoding='utf-8')
+lines=['# 四向150/30 cm既有数据完整位移分析','', '日期：2026-11-17。基线本地提交5c08f72d；只读原始记录、MATLAB R2020a实际运行，无硬件操作、参数修改、fetch/push。','',
+'## 结论','',
+'主方向实际位移优先：当前右150两趟尺量1500/1502 mm已接近目标；前150平均多8.33 mm、后150多11.88 mm、左150多11.67 mm。30 cm样本较少且速度工况不同，不能由两个距离唯一确定通用比例或固定提前量。当前不改PID、轮径或倍率。','',
+'22趟冻结progress均能按STOP前已收到的四轮位置、最老源时刻插值和原方向比例重现，最大差见verification.json（小于0.01 mm）。这个共同源时刻比采集任务首次观察STOP早109–164 ms。150 cm模型在STOP时通常已比冻结值多约6–11 mm，STOP之后仅再增加约1.7–2.4 mm；30 cm后段约0.47–0.81 mm。应优先研究“到达判定使用旧共同时间，而车辆仍在前进”的时序影响，而不是直接把冻结到末窗之差当物理滑行或全部归咎比例。','',
+'上述年龄由软件接收时间确定，不等于已测驱动内部采样延迟；模型增量不是地面真值，尚不能证明实际超距全部由此造成。','',
+'## 主方向统计（mm）','',
+'|方向/目标|有效n|尺量均值|尺量−目标均值|尺量极差|完整模型均值|模型−尺量均值|','|---|---:|---:|---:|---:|---:|---:|']
+for dr,cn in [('forward','前'),('backward','后'),('left','左'),('right','右')]:
+ for target in [1500,300]:
+  a=[r for r in S['runs'] if r['primary'] and r['direction']==dr and r['target_mm']==target]
+  mean=lambda key:statistics.mean(r[key] for r in a)
+  lines.append(f"|{cn}{target} {'（旧版）' if dr=='right' and target==300 else ''}|{len(a)}|{mean('ground_main_mm'):.2f}|{mean('ground_error_mm'):+.2f}|{max(r['ground_main_mm'] for r in a)-min(r['ground_main_mm'] for r in a):.2f}|{mean('model_end_main_mm'):.2f}|{mean('model_minus_ground_main_mm'):+.2f}|")
+lines += ['', '右150主要参考仅run4/5（6b4c42de版）；旧版3f8fe3bf右150三趟尺量均1500 mm，单列历史不合并。右30三趟也是旧版；除旧版右向6趟外，其余16趟均为6b4c42de。表中极差为重复观测差，不是置信区间；n=1极差0不代表重复性已验证。前30首趟“刚刚好”的300/0解释、后150更正和左150第三趟方向更正沿用原记录，不补造毫米测量精度。', '',
+'后/左150尺量极差12.5 mm，但模型极差仅约1.94/2.78 mm；前30尺量相差10 mm而模型仅约0.50 mm。说明轮模型的可重复性不能等同真实位移可重复性。没有同步地面轨迹和尺量不确定度，不能据此分清滑移、载荷/地面变化或测量散布，更不能擅自认定起点摆歪。', '',
+'## 口径和一致性检查', '',
+'1. F前/L左为正，主方向按各自符号投影；横向运动的旁偏为F，纵向运动的旁偏为L。轮径77 mm、65536计数/圈、motor sign [1,-1,1,-1]；前后1.0218254只应用一次，左右不套纵向或旧route倍率。',
+'2. 四轮position按source_ms同窗插值；HWT按angle_ms解缠并用中点/sinc旋转，5 ms网格仅为积分网格，不宣称原始轮位置有200 Hz。禁止源外推；RAW/HWT/轮合法共同末窗逐趟记录。',
+'3. 共同末窗在串口DONE前44–143 ms。补入PM1逐轮合法位和PE3端点后，末窗位移差小于0.0001 mm，说明现有已保存位置没有补出额外可观测尾程；这不证明剩余物理位移为零。PE3仍是不同轮异步末点平均，不能当同步地面终点。',
+'4. 22趟OD仅使用valid、reasons0、continuity_lost0记录，在相同source时间比较；OD主向与轮/HWT回放的差均小于0.01 mm。它们共享轮/HWT，不是独立地面定位证据；末尾invalid/冻结XY不拿来充最终坐标。',
+'5. 主方向中HWT旋转相对于车体积分的改变量全部小于0.13 mm，当前约5–15 mm的主距差不支持仅靠调航向解决。此结论不表示旁偏或航向控制已经通过。',
+'6. RAW序列连续、quality/三个源drop均0；22趟各三组二进制双读一致，共66对；139项输入哈希和原6个dirty文件字节不变。串口telemetry_dropped不同于RAW源drop，本报告不声称串口零丢帧。初次前150 VERIFY_ON失败无有效运动捕获，排除于22有效趟，原故障证据保留。', '',
+'## 逐趟证据（主距mm，年龄ms）', '',
+'|目录|尺量|冻结progress|progress年龄|模型@STOP|模型末窗|末窗−尺量|STOP后模型增量|', '|---|---:|---:|---:|---:|---:|---:|---:|']
+for r in S['runs']:
+ lines.append(f"|{r['name']}|{r['ground_main_mm']:.2f}|{r['frozen_progress_mm']:.3f}|{r['progress_age_at_STOP_ms']:.0f}|{r['model_STOP_main_mm']:.3f}|{r['model_end_main_mm']:.3f}|{r['model_minus_ground_main_mm']:+.3f}|{r['model_STOP_to_end_main_mm']:.3f}|")
+lines += ['', '## 旁偏（暂不调参）', '',
+'当前右150尺量后15/0 mm，模型却为前5.66/5.99 mm，方向不一致；左150尺量后20/15/10 mm，模型约后30 mm。已有2%左后trim和前进专用横偏保持。说明轮/HWT模型旁向仍有地面失配，不能直接拿模型旁偏作新的实车补偿。前150实尺右5/0/15 mm，模型右约2.11/0.33/1.74 mm；后150尺量右0/15/17.5/10 mm，模型右约17.91/14.61/17.25/17.09 mm。旁偏和主距独立评价。', '',
+'## 建议下一步与未闭环', '',
+'- E：下一软件阶段先在本机MATLAB检验“同源时间progress与当前参考时间到达判断”的有限时延补偿候选，区分参考曲线前馈、测量龄期与最终位置误差；用全部22趟做回放敏感性检查，明确反事实闭环只能基于模型假设。尚未实现、未授权硬件测试。不要先对四方向统一改比例或套固定提前毫米数。',
+'- E：当前右150实际主距保持，前/后/左150存在正超距；即使候选减少模型超程，也必须防止把当前已准的右向改成实际欠距。长短程工况不同，不用两点强拟合比例+偏置。',
+'- 开放：尺量不确定度、同步地面轨迹、后/左30重复性、当前组合版右30等价性、前30散布、使能非零反馈原因、真实滑移与动态IMU融合、旋转及比赛通用入口。现阶段不自动补测，不宣告比赛精度通过。', '',
+'## 规则核对与可复现入口', '',
+'已读取工创赛/docs/competition_requirements_2027.md：R RUN-01/PWR-01/MECH-01/02（自主运行、单电源、初始包络与出发后展开）；本步仅离线分析，不改变其条款，也不验收实物。E LOC-02/03/05/07、MOT-02/04、RUN-06（相对定位/时间源/失效/验证与状态边界），本报告分析与建议均为E。Q FIELD-05/OBS-03/QR-04继续待技术答疑确认，未有新官方资料或冲突。', '',
+'从仓库根运行prepare_inputs.py，再用E:/Program Files/Polyspace/R2020a/bin/matlab.exe -batch添加本目录并调用analyze_four_short；最后运行verify_and_report.py。prepare_inputs.py会重新记录运行时dirty哈希，故本次原始保护基线以随提交保存的original_dirty_sha256.json为准。主计算由MATLAB完成，NumPy仅作独立公式交叉检查，不替代MATLAB。', '',
+'输出：summary.json/.csv、22份*_series.csv、main_distance_errors.png、verification.json、input_sha256.json。analyze_four_short.m包含回放、冻结progress重现、OD与尾窗检查。源码只读关联chassis_auto_test.c:595–679共同时间/达到冻结路径，kinematics及odometry；这些静态机制解释不等于独立验证当前板端运行状态。', '']
+(O/'REPORT.md').write_text('\n'.join(lines),encoding='utf-8')
+print(json.dumps(V,ensure_ascii=False));print('REPORT generated')

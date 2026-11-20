@@ -1,0 +1,28 @@
+{
+  "status": "passed for the two actual mode3 targets; no actionable findings",
+  "baseline": "0ba2524",
+  "reviewer": "main_c1_review_medium",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "findings": [],
+  "reviewed_raw_sha256": {
+    "CHASSIS/USER/main.c": "d59edd638f1d7070c95c34b5cd2178153792a3b093a9921de9722391b84f0605",
+    "CHASSIS/USER/app_translation_runtime.c": "bc027047ce95032b8eaa0cb5de0df7df7243031bfbd33119ff99676cd6e90b9a",
+    "CHASSIS/USER/app_translation_runtime.h": "790841cdf2708924b17b773bf219cad6f100d8bf09cc8be4739d8eb0762822c6",
+    "gongxun-f407.uvprojx": "529e4e0d97a7837dd20803d77215e4f9397c2ebabc0cf9ce0ad6049d64371e6e"
+  },
+  "checks": [
+    "69 function bodies restored identically",
+    "both actual target preprocessing independently rerun:146 functions each",
+    "Watch structure and 10385 protected raw hashes checked",
+    "read-only ARM replay:1024 cases,28672 assertions,prepare232/begin180/live mutations42",
+    "build source mapping and four clean logs checked"
+  ],
+  "limits": [
+    "Real RTOS timing/stack/hardware untested",
+    "Historical non-mode3 baseline already cannot build; current pass does not cover those modes",
+    "Non-mode3 translation branch still refers to legacy s_serial_start_permit and must be addressed if that unsupported mode is restored"
+  ],
+  "hardware_accessed": false,
+  "files_modified_by_reviewer": false
+}

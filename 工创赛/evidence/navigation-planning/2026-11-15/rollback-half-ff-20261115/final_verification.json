@@ -1,0 +1,123 @@
+{
+  "status": "PASS_LOCAL_ROLLBACK_ONLY",
+  "label": "half geometric FF control + current normal-DONE VM retention and serial handshake fixes",
+  "restored_sources": {
+    "chassis_auto_test.c": "4434979a40f940d8ee582378e5b57b45da8caeefb29bdde1558d1b17e85dac19",
+    "chassis_auto_test.h": "e940c64b4a5126f63a6cc6e4d814be2ef3096bd0d59f2e049d6a53257033b764",
+    "hwt101.c": "690b864c1144baf247a93cffb8be585675a0612002333edaf006026b5dbb3c90",
+    "hwt101.h": "eb01b7feb7e18c73495c472b09497514ab14de6941013683315b61f929b56429"
+  },
+  "preserved_sources": {
+    "app_motion_runtime.c": "2cded70cccf56c9464a0787be6656e81aad5e9a9d9334620d3c5a958b5eef611",
+    "app_serial_runtime.c": "d99860e5266f1e56156f41f88452895aff55d20a35459649ca97f72facdfbca4"
+  },
+  "dependency_sources_checked": 1731,
+  "changed_sources": [
+    "3.stm32f407工程/CHASSIS/USER/chassis_auto_test.c",
+    "3.stm32f407工程/CHASSIS/USER/chassis_auto_test.h",
+    "3.stm32f407工程/CHASSIS/USER/hwt101.c",
+    "3.stm32f407工程/CHASSIS/USER/hwt101.h"
+  ],
+  "encoding": {
+    "chassis_auto_test.c": {
+      "lf": 2043,
+      "crlf": 2043,
+      "sha256": "4434979a40f940d8ee582378e5b57b45da8caeefb29bdde1558d1b17e85dac19"
+    },
+    "chassis_auto_test.h": {
+      "lf": 210,
+      "crlf": 1,
+      "sha256": "e940c64b4a5126f63a6cc6e4d814be2ef3096bd0d59f2e049d6a53257033b764"
+    },
+    "hwt101.c": {
+      "lf": 750,
+      "crlf": 750,
+      "sha256": "690b864c1144baf247a93cffb8be585675a0612002333edaf006026b5dbb3c90"
+    },
+    "hwt101.h": {
+      "lf": 75,
+      "crlf": 75,
+      "sha256": "eb01b7feb7e18c73495c472b09497514ab14de6941013683315b61f929b56429"
+    }
+  },
+  "actual_ARM": {
+    "cases": 1374,
+    "assertions": 16614,
+    "half_entry_observation_identical": true,
+    "half_FF_observation_identical": true,
+    "external_calls_stubbed": true
+  },
+  "builds": {
+    "baseline40_integrated": {
+      "program_size": "Program Size: Code=101744 RO-data=6572 RW-data=2952 ZI-data=118912  \r",
+      "axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\rollback-half-ff-build-20261115\\baseline40_integrated\\Vehicle_Integrated.axf",
+      "axf_sha256": "2e4cd7946dcfa537fdf29eea1b0f6514916b5913b00f66020dec064883ae5d6b",
+      "allocated_equal_to_before_rollback": false,
+      "old_half_AXF_sha256": "2661174f8e54f31285cb6666f2ddd1dada110e53f005201b92c5d3b85e29c1e7",
+      "equals_old_half_whole_AXF": false
+    },
+    "baseline40_offline": {
+      "program_size": "Program Size: Code=101096 RO-data=6564 RW-data=2760 ZI-data=118912  \r",
+      "axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\rollback-half-ff-build-20261115\\baseline40_offline\\Vehicle_Offline.axf",
+      "axf_sha256": "9ea061191a743e4820615a6ebe5ee6997d004fc5aeb2b1dee51539148317d21a",
+      "allocated_equal_to_before_rollback": false,
+      "old_half_AXF_sha256": "7fcc9e1ff4af9239e8a5431d83d7eafc8e7fd3f5ee165232e42cc7711c922fc9",
+      "equals_old_half_whole_AXF": false
+    },
+    "baseline_off_integrated": {
+      "program_size": "Program Size: Code=11974 RO-data=470 RW-data=960 ZI-data=25576  \r",
+      "axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\rollback-half-ff-build-20261115\\baseline_off_integrated\\Vehicle_Integrated.axf",
+      "axf_sha256": "66935b32e2507bca7c9ee03ac027d925512d0b35e5c963a05290b033b2c61cd7",
+      "allocated_equal_to_before_rollback": true,
+      "old_half_AXF_sha256": "8cc09d16d15b641e7d5c428665021a9989f7c4c72b051ab000257ebb73d6fc16",
+      "equals_old_half_whole_AXF": false
+    }
+  },
+  "legacy_protocol": {
+    "scopes": 3,
+    "fields": 28,
+    "new_timing_and_tail_symbols_absent": true
+  },
+  "reused_MATLAB": {
+    "half_selected_FF": 0.5,
+    "half_completed": true,
+    "normal_done_VM_cases": 249,
+    "numerical_control_not_new": true
+  },
+  "reference_evidence": [
+    {
+      "path": "工创赛\\evidence\\navigation-planning\\2026-11-14\\baseline40-field\\field-candidate-conservative-ff\\matlab_summary.json",
+      "sha256": "2da53aa0bd4dc6f7ce1ced4836db50a4053631f92d64031d13a3be9b674e6847"
+    },
+    {
+      "path": "工创赛\\evidence\\navigation-planning\\2026-11-14\\baseline40-field\\field-candidate-conservative-ff\\matlab_process.json",
+      "sha256": "a80b0a34c69de0957293ff66420ea2c6b842d2be896237a82205d73ed6d2433b"
+    },
+    {
+      "path": "工创赛\\evidence\\navigation-planning\\2026-11-15\\bounded-lateral-enhancement\\vm_matlab_summary.json",
+      "sha256": "32b007151dc1f7481df0f9672163ae8700cb46379577667795bd5fd0d0693406"
+    },
+    {
+      "path": "工创赛\\evidence\\navigation-planning\\2026-11-15\\bounded-lateral-enhancement\\vm_actual_c_check.json",
+      "sha256": "08ea69b39e47b8ff1cfa4faef597f40e8467d8b2ca30948db4554769ef78077e"
+    },
+    {
+      "path": "工创赛\\evidence\\navigation-planning\\2026-11-15\\bounded-lateral-enhancement\\serial_actual_c_check.json",
+      "sha256": "07bf795f5b147105a65c9034d42f831b57e326a45e5954785b61528c32117628"
+    },
+    {
+      "path": "工创赛\\evidence\\navigation-planning\\2026-11-14\\baseline40-field\\field-candidate-conservative-ff\\four_ff_field_runs_summary.json",
+      "sha256": "0f4168ba6fa9e59bc35651427d2ab7d27af9e33f11e0396006c6fc18e491580e"
+    }
+  ],
+  "rollback_reversible": {
+    "previous_diag_sources": "工创赛\\evidence\\navigation-planning\\2026-11-15\\rollback-half-ff-20261115\\recover_previous_diag",
+    "automatically_reapplied": false
+  },
+  "hardware_accessed": false,
+  "downloaded": false,
+  "reset": false,
+  "serial_accessed": false,
+  "git_accessed": false,
+  "limitations": "New isolated build is half control plus newer VM/serial fixes, not the original 2661174f whole AXF; source/ARM/build evidence is not a fresh physical pass. User cancelled further physical tests; no startup-fault repair attempted."
+}

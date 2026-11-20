@@ -1,0 +1,59 @@
+{
+  "raw_parser_output": {
+    "enabled": true,
+    "SystemCoreClock": 168000000,
+    "chip_cycles_measured": false,
+    "provenance": "offline decode only; hardware provenance not established",
+    "irq_included": true,
+    "scopes": [
+      {
+        "name": "target_plus_feedforward",
+        "valid": true,
+        "count": 113,
+        "min_cycles": 1263,
+        "last_cycles": 1320,
+        "max_cycles": 1681,
+        "sum_cycles": 149930,
+        "first_ms": 28654,
+        "last_ms": 36618,
+        "window_ms": 7964,
+        "count_saturated": false,
+        "mean_cycles": 1326.8141592920354,
+        "mean_us": 7.897703329119258,
+        "min_us": 7.517857142857143,
+        "last_us": 7.857142857142857,
+        "max_us": 10.005952380952381,
+        "intervals_per_second": 14.063284781516826
+      },
+      {
+        "name": "step_budget_quantize",
+        "valid": true,
+        "count": 113,
+        "min_cycles": 634,
+        "last_cycles": 641,
+        "max_cycles": 642,
+        "sum_cycles": 72013,
+        "first_ms": 28654,
+        "last_ms": 36618,
+        "window_ms": 7964,
+        "count_saturated": false,
+        "mean_cycles": 637.2831858407079,
+        "mean_us": 3.7933522966708804,
+        "min_us": 3.7738095238095237,
+        "last_us": 3.8154761904761907,
+        "max_us": 3.8214285714285716,
+        "intervals_per_second": 14.063284781516826
+      }
+    ]
+  },
+  "trusted_acquisition": {
+    "accepted": true,
+    "candidate_sha256": "5e803d0def9e33155752d4ceec71b9ca93ab903311407185d5d7af3c4880a185",
+    "same_session": 1,
+    "stable_double_read": true,
+    "core_running": true,
+    "no_halt_reset_vm_write": true,
+    "chip_cycles_measured": true,
+    "irq_included": true
+  }
+}

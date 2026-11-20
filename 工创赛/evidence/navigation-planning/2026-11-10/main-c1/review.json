@@ -1,0 +1,48 @@
+{
+  "self_review": "passed",
+  "independent_review": "passed; independent_review.json",
+  "baseline": "16f47b76753f115b2326602cabc0c760fa52eafd",
+  "protected_tracked_files": 10380,
+  "raw_sha256_unchanged": true,
+  "before_manifest_digest": "ee72409f17e4bd91d574257884d88f461803955fc7afc82e01c475fd8b48f030",
+  "allowed_existing_source_changes": [
+    "3.stm32f407工程/CHASSIS/USER/main.c",
+    "3.stm32f407工程/gongxun-f407.uvprojx"
+  ],
+  "new_firmware": [
+    "app_can_diagnostics.c",
+    "app_can_diagnostics.h"
+  ],
+  "new_task": false,
+  "hardware_accessed": false,
+  "checks": [
+    "11 moved bodies and 78 remaining main functions restored identically",
+    "two real Keil target preprocessings: 166 functions each; eight configASSERT line metadata shifted by -924",
+    "104 owner symbols retain type/initializer/name; static state stays private",
+    "original manual dispatch else-if body verbatim; outer CAN task, mechanical calls, reporting, priorities/stacks/delays unchanged",
+    "odometry stores private jog live address once before original Init; direct callers dereference getter in original expression",
+    "both targets Rebuild 0 errors 0 warnings",
+    "12288 actual ARM C differential steps, 1351683 assertions",
+    "new Keil source/header paths resolve once per real target",
+    "CP936 CRLF retained; original debug send critical body retained"
+  ],
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "FIELD-06",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "LOC-03",
+    "LOC-05",
+    "MOT-02",
+    "RUN-06",
+    "SRC-04"
+  ],
+  "open": [
+    "real RTOS stack/timing and physical bus/vehicle remain unverified",
+    "ICM/navigation/speed/state machine changes excluded"
+  ]
+}

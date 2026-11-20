@@ -276,7 +276,9 @@ static void Low_Service(uint32_t now)
  if(!Low_Busy())return;
  now=(uint32_t)xTaskGetTickCount();g_low_elapsed_ms=now-low_begin;g_it_elapsed_ms=g_low_elapsed_ms;
  if(!it_platform() || g_lift_ruler_cause || g_startup_axes_cause || g_dm_jog_first_fault ||
-  g_it_cause || g_it_rejected || (!VehicleSourceParallel_Owns() && (uint32_t)(now-low_phase_tick)>=16000U)){Low_Fail(g_it_cause?g_it_cause:12U);return;}
+  g_it_cause || g_it_rejected ||
+  (!(APP_ZONE2_MISSION_ENABLE && RegionDispatch_WantsService()) &&
+    !VehicleSourceParallel_Owns() && (uint32_t)(now-low_phase_tick)>=16000U)){Low_Fail(g_it_cause?g_it_cause:12U);return;}
 #if !APP_MOTOR_OFFLINE_ONLY
  Low_ReleaseLoadedTransfer(now);
  now=(uint32_t)xTaskGetTickCount();

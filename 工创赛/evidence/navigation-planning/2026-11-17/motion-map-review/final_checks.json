@@ -1,0 +1,74 @@
+{
+  "base_commit": "0a6608e772d0fa227b96a43f4adc4aea14751c6b",
+  "stage": "motion_map_analysis_only",
+  "hardware_accessed": false,
+  "new_field_data_collected": false,
+  "new_product_changes": false,
+  "fetch_push_performed": false,
+  "index_initially_empty": true,
+  "protected_dirty": {
+    "3.stm32f407工程/gongxun-f407.uvguix.lenovo": {
+      "sha256": "2f61627e8b99940ce40e871ffeb46350a05e7c97422791ac79e0e9e063c24f6c",
+      "unchanged": true
+    },
+    "3.stm32f407工程/gongxun-f407.uvoptx": {
+      "sha256": "2df48e3df8efe95110fcea3b508b4f57d5d71cc9cdd357339ab1461050111bb1",
+      "unchanged": true
+    },
+    "工创赛/docs/RADAR_F407_PLAN_2026-10-29.md": {
+      "sha256": "b5928cec33dc41921eb292f274b3f17eacb7047a615e6a5f71b01a98ad11ef49",
+      "unchanged": true
+    },
+    "工创赛/scripts/p1_serial_motion.py": {
+      "sha256": "a98cc830e71f060da80eeaa1efcdd72c32c17ff8aea8902a62afb6fec0ee6c4f",
+      "unchanged": true
+    },
+    "工创赛/scripts/vehicle_uart_capture.py": {
+      "sha256": "7c87c2c3b3825aa642a1d642068dea96be7038341004961c22b5b81c96ec700c",
+      "unchanged": true
+    },
+    "底盘定位与路径规划_2026-11-09.md": {
+      "sha256": "581341a2b2570e18e6621c9ab5fc0d41c54c233e46cdaa2fdaa3a6d832352142",
+      "unchanged": true
+    }
+  },
+  "evidence_sha256": {
+    "INDEPENDENT_REVIEW.md": "ef17b7b8f72ee71dde67aaf488093e48f7a9cb6c3f2fb08d9ddf48fd25c1cbd8",
+    "PLAN.md": "f7a2c3b39e90fbad9bd08a111e522b872378817762232a2f748ce91731a787ce",
+    "run_speed_matlab.py": "f266db1c3d930a337ce6d95371392976b7281cc5b5ab754f0f49a84aa8cb2a67",
+    "speed_feasibility.csv": "7c412d81c3bf310d84df6f49e8786566b83df9798ef598da62bd20edd1a7b826",
+    "speed_matlab_receipt.json": "ca0324a7313c62d9f2d07026e397abfa60dd67056cddb687b8d73e88cce7c7ac",
+    "speed_matlab.log": "3bb454606a4dbfb7cf70b80afb9a5ac8b1b0d5176a67a8e6b1afbfb24fc8422a",
+    "speed_summary.json": "28690658c6ec8362b59370bc3ed7bb47ecd533dd2c03b4dae91378280dd5b820",
+    "verify_speed_feasibility.m": "de0f497ba77e76568494b937f11e1bde35d5ab640078f756ac87b883c8ff9eb2"
+  },
+  "matlab": {
+    "status": "PASS_MATHEMATICAL_REFERENCE_ONLY",
+    "cases": 32,
+    "checks": 1252,
+    "acceleration_mm_s2": 150,
+    "jerk_mm_s3": 300,
+    "source": "MotionProfile_Prepare seven phase formulas, double transcription",
+    "hardware_accessed": false,
+    "actual_c_executed": false,
+    "ground_verified": false,
+    "rest_to_rest": true,
+    "braking_initial_acceleration": 0,
+    "braking_final_speed": 0,
+    "short_distance_crossover_mm": [
+      116.66666666666666,
+      366.66666666666663,
+      750,
+      1266.6666666666665
+    ],
+    "limits": "No latency, feedback, slip, load, wheel limiting, trim, obstacle footprint or emergency dynamics modeled. Not a stopping safety proof."
+  },
+  "matlab_receipt_input_hashes_match": true,
+  "independent_review": "INDEPENDENT_REVIEW.md",
+  "rule_baseline_sha256": "7b508d60ae40d3915b85f1593e0b74305f142d4dce3aa48c423f8560c46e3f57",
+  "source_motion_profile_sha256": "5e3b205b42f9824fa76e334f7c23a65162fdfe69a18e454a64f46fc26777af59",
+  "candidate_product_hashes_unchanged": true,
+  "last_recorded_installed_axf": "3043c4a98aed1b04eb0c80fd4b2ea819b2c70b52a2c0dbe60613a969bca48ad3",
+  "board_state_checked_this_phase": false,
+  "root_handoff_utf8_no_bom_crlf": true
+}

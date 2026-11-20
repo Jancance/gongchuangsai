@@ -21,17 +21,6 @@ static __inline uint32_t RouteHeading_Target(const RouteHeadingReference *r,
     return 1U;
 }
 /* 只接受名义±90度；实际87..93度，且不得反向追角。 */
-/* One field heading epoch per user run. Search/subroutes reuse that epoch,
- * while a new run must explicitly clear it before initializing from fresh yaw. */
-#define ROUTE_HEADING_RUN_REFERENCE_V2 1U
-static __inline void RouteHeading_Reset(RouteHeadingReference *r)
-{if(r){r->valid=0U;r->origin_deg=0.0f;}}
-static __inline uint32_t RouteHeading_Ensure(RouteHeadingReference *r,float yaw,uint32_t reuse)
-{
-    if(!r || reuse>1U || !(yaw>=-180.0f && yaw<=180.0f))return 0U;
-    if(r->valid)return reuse==1U && r->valid==1U && r->origin_deg>=-180.0f && r->origin_deg<=180.0f;
-    return RouteHeading_Init(r,yaw);
-}
 static __inline uint32_t RouteHeading_TurnDelta(float nominal, float target,
     float yaw, float *delta)
 {
@@ -47,5 +36,18 @@ static __inline uint32_t RouteHeading_TurnDelta(float nominal, float target,
     if (!((actual >= 87.0f && actual <= 93.0f) ||
           (actual <= -87.0f && actual >= -93.0f))) return 0U;
     *delta = actual; return 1U;
+}
+/* Carry only a successfully completed planned heading within one map round. */
+typedef struct {uint32_t run,valid;float target_deg;} RouteHeadingContinuation;
+static __inline uint32_t RouteHeading_BeginContinued(RouteHeadingReference *r,
+    const RouteHeadingContinuation *previous,uint32_t run,float yaw)
+{
+    float seed=(run && previous->valid && previous->run==run)?previous->target_deg:yaw;
+    r->valid=0U;return RouteHeading_Init(r,seed);
+}
+static __inline void RouteHeading_Complete(RouteHeadingContinuation *previous,uint32_t run,float target)
+{
+    previous->run=run;previous->valid=run!=0U;
+    previous->target_deg=HeadingController_WrapDeg(target);
 }
 #endif

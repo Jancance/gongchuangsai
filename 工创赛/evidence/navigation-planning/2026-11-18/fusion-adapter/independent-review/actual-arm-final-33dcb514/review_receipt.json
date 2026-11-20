@@ -1,0 +1,145 @@
+{
+  "status": "PASS",
+  "reviewed_at": "2026-11-18T01:53:25.124564+08:00",
+  "scope": "final independent source/contract review and independently executed ARMCC/Unicorn C test; no hardware",
+  "head": "dedd8d5661c98aff8c4f2f97fb7799e263f34067",
+  "function_baseline": "d023c37a6c51e5a454b828cf1e557643ee31c4dd",
+  "final_arm_result_file": "actual-arm-final-33dcb514/actual_arm_results.json",
+  "final_arm_result_sha256": "63b4ed453a889b7c6c0a4f526e429e2ccc5ee16b4c24405481228a47b66f175e",
+  "source_sha256": {
+    "fusion_adapter.c": "33dcb51411f0fd9cc76ba977187a5d8f9f6aa19a20ad55a7fcf5e6733cc371b9",
+    "fusion_adapter.h": "9e344b6d37c10f8b0c69b09d0b552cae0ad677c2a45234fdd7f05c3ca9d8849d",
+    "fusion_reference.c": "07a9439f0435cb8ce35fc045b0a74f17e07e0362549336859760ae5921d02fb2",
+    "fusion_reference.h": "8e0d855ae91a5ae6bc856aaf6af2300cd24ccdf8d91d251294087466fa0ab961",
+    "app_odometry.h": "a02dc8aa4c367107f77b16131508c5e77520a69b862775b71f24bffa48c8d0cd",
+    "chassis_odometry.h": "ca7cbf0fe3620c5f2d7c9fbaa04b2c940e7b60d0f55a2b7292cc025d1a3dc211",
+    "chassis_kinematics.c": "9f009f558c6c82607dda9319e8abba96c2b3536343a91d3ffaef5dc2073f76aa",
+    "chassis_kinematics.h": "7a6f763a665691b0b7db04efdcd4fa014b1bb31438d810acaf05300a90e9ce89"
+  },
+  "sources_unchanged_during_run": true,
+  "final_review_source_sha256": {
+    "fusion_adapter.c": "33dcb51411f0fd9cc76ba977187a5d8f9f6aa19a20ad55a7fcf5e6733cc371b9",
+    "fusion_adapter.h": "9e344b6d37c10f8b0c69b09d0b552cae0ad677c2a45234fdd7f05c3ca9d8849d",
+    "fusion_reference.c": "07a9439f0435cb8ce35fc045b0a74f17e07e0362549336859760ae5921d02fb2",
+    "fusion_reference.h": "8e0d855ae91a5ae6bc856aaf6af2300cd24ccdf8d91d251294087466fa0ab961",
+    "app_odometry.h": "a02dc8aa4c367107f77b16131508c5e77520a69b862775b71f24bffa48c8d0cd",
+    "chassis_odometry.h": "ca7cbf0fe3620c5f2d7c9fbaa04b2c940e7b60d0f55a2b7292cc025d1a3dc211",
+    "chassis_kinematics.c": "9f009f558c6c82607dda9319e8abba96c2b3536343a91d3ffaef5dc2073f76aa",
+    "chassis_kinematics.h": "7a6f763a665691b0b7db04efdcd4fa014b1bb31438d810acaf05300a90e9ce89"
+  },
+  "assertions": 2114,
+  "assertion_breakdown": {
+    "original_independent_semantics": 978,
+    "within_original_semantics_boundary_assertions": 648,
+    "final_numeric_supplement": 56,
+    "matlab_vector_assertions": 1080
+  },
+  "matlab_vectors": 120,
+  "sizes": {
+    "adapter_state": 172,
+    "adapter_input": 168,
+    "adapter_report": 92,
+    "map": 128,
+    "observation": 76
+  },
+  "matlab_v10": {
+    "status": "PASS",
+    "checks": 946,
+    "groups": {
+      "M1": 37,
+      "M2": 12,
+      "M3": 71,
+      "M4": 27,
+      "M5": 241,
+      "M6": 22,
+      "M7": 536
+    },
+    "vectors": 120,
+    "reviewed_execution_not_independently_rerun": true,
+    "receipt_started_at": "2026-11-18T01:42:31.929467+08:00",
+    "receipt_finished_at": "2026-11-18T01:42:40.161506+08:00",
+    "receipt_returncode": 0,
+    "precondition_product_before": {
+      "fusion_adapter.c": "bd94ea3e23abe8d54168b998174620b41e38f9ae44e9eed623e4a4a878fee708",
+      "fusion_adapter.h": "9e344b6d37c10f8b0c69b09d0b552cae0ad677c2a45234fdd7f05c3ca9d8849d"
+    },
+    "precondition_product_after": {
+      "fusion_adapter.c": "bd94ea3e23abe8d54168b998174620b41e38f9ae44e9eed623e4a4a878fee708",
+      "fusion_adapter.h": "9e344b6d37c10f8b0c69b09d0b552cae0ad677c2a45234fdd7f05c3ca9d8849d"
+    },
+    "artifacts": {
+      "verify_fusion_adapter_v10.m": {
+        "sha256": "31a5fed336e691182e0fc8ca50acbec98fc34269d13e73e56cdf0fd5577def8f",
+        "matches_receipt": true
+      },
+      "matlab_v10.log": {
+        "sha256": "fb7996b3de047d72d4027a13e1ab9f4efd5feeaacc328a21b1b0aac636fae439",
+        "matches_receipt": true
+      },
+      "matlab_summary_v10.json": {
+        "sha256": "8dbc4663c0429ce30c7dee6908a99492a655c4ebdbb1b5748ceb03c6edecb071",
+        "matches_receipt": true
+      },
+      "adapter_vectors_v10.csv": {
+        "sha256": "31e85fe56dd8e6c2501bfe6241a977c0613a84ac619155b00cc969976a82ee8b",
+        "matches_receipt": true
+      },
+      "quantization_scan_v10.csv": {
+        "sha256": "7311be6cd46a2f07316aee50fbf7b1cb4efe07ceea248fceeb06328a2b0abef7",
+        "matches_receipt": true
+      }
+    },
+    "vectors_v8_v10_identical": true
+  },
+  "platform_stubs": [],
+  "hardware_symbol_matches": [],
+  "preserved_earlier_evidence_sha256": {
+    "preimplementation_review.md": "12b9314c712015f90251152da9c2bfc475d0ecabe6bf5bd2ab3ed91111c5d742",
+    "actual_arm_results.json": "80c139c47338e65d8271bc01a07e4b49f22195d7301b6702e513269448281dfe",
+    "actual_arm_failure_overflow.json": "b7daf77f2e2625c77605b6cdb891bf7e281636018b9fc7c5c3544492a3e6a0c6",
+    "actual_arm_boundary_scan_before_fix.json": "80c139c47338e65d8271bc01a07e4b49f22195d7301b6702e513269448281dfe",
+    "run_independent.py": "8f0ed11e6bf1e261b1d33317eec394299c4c8537b2247c9742b5ffa48b7fd267",
+    "independent_unit.c": "27b0905fc4e2ae5d79ca7a485ef87a9b00b3fb181fb6b0f65bd0b14e1de7986d",
+    "independent_unit_attempt1.c": "719292f06ed220446f7dc253bcc7dcdb2686581dd85c8518d5fe26131f871924",
+    "run_independent_attempt1.py": "8f0ed11e6bf1e261b1d33317eec394299c4c8537b2247c9742b5ffa48b7fd267"
+  },
+  "execution_limits": [
+    "Cortex-M3 Thumb soft-float independent portable C execution; full M4F integrated/offline project builds left to root",
+    "No RTOS/CAN/getter owner execution, no hardware access, no flash/reset/vehicle run",
+    "No physical instantaneous ground velocity, physical stopping, calibration or stack-margin proof"
+  ],
+  "r_ids": [
+    "FIELD-01",
+    "FIELD-02",
+    "FIELD-06",
+    "OBS-01",
+    "OBS-04",
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "RUN-04",
+    "RUN-07",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "e_ids": [
+    "LOC-02",
+    "LOC-03",
+    "LOC-05",
+    "LOC-06",
+    "LOC-07",
+    "MOT-01",
+    "MOT-02",
+    "MOT-03",
+    "MOT-04",
+    "CAL-02",
+    "RUN-05",
+    "RUN-06"
+  ],
+  "q_pending": [
+    "FIELD-05",
+    "OBS-03",
+    "QR-04"
+  ]
+}

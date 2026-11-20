@@ -1,0 +1,73 @@
+{
+  "owning_project": "D:\\Desktop\\工创赛\\3.stm32f407工程\\gongxun-f407.uvprojx",
+  "project_sha256": "a22c41ff8e04cf496552e1f147ecad06b9fa7a2bd00a9731d09fdfc3a962c14f",
+  "source_sha256": {
+    "app_odometry.c": "7f1ac1dfd61af209e892fc2fe206f4ef7a486274f1dc4265060dfb5de148eceb",
+    "app_odometry.h": "ca320eb6be63478404e51ed1d477dff63287d336c7d7ca441e56c133f90adf58",
+    "chassis_kinematics.c": "b54a676083a557fd5a1266d34b5c174e48b569fae5dd98ab46e53e18059ee5e0",
+    "chassis_kinematics.h": "6d5028f598e2f743602526c424b9538b12198985ec9e57248acc3097bf5e3333",
+    "chassis_auto_test.c": "ef5e6540df59b976b6200f7601443e7acdbc565ea3c8779f9f15343b64a59a24",
+    "app_motion_runtime.c": "2cded70cccf56c9464a0787be6656e81aad5e9a9d9334620d3c5a958b5eef611",
+    "app_serial_runtime.c": "d99860e5266f1e56156f41f88452895aff55d20a35459649ca97f72facdfbca4",
+    "chassis_auto_test.h": "f1298246023c87b15388529ea5c26e5e23c40bb04ed9ac46e619e9e5bc881fa2",
+    "hwt101.c": "690b864c1144baf247a93cffb8be585675a0612002333edaf006026b5dbb3c90",
+    "hwt101.h": "eb01b7feb7e18c73495c472b09497514ab14de6941013683315b61f929b56429"
+  },
+  "hardware_accessed": false,
+  "builds": {
+    "baseline40_integrated": {
+      "returncode": 0,
+      "defines": "APP_BASELINE40_ENABLE=1,VEHICLE_INTEGRATED_ENABLE=0,VEHICLE_STAGE1_ENABLE=0",
+      "command": [
+        "D:/Keil_v5/UV4/UV4.exe",
+        "-r",
+        "D:\\Desktop\\工创赛\\工创赛\\tmp\\half-stop-observer-build-20261115\\baseline40_integrated.uvprojx",
+        "-t",
+        "Vehicle_Integrated",
+        "-o",
+        "D:\\Desktop\\工创赛\\工创赛\\evidence\\navigation-planning\\2026-11-15\\rollback-half-ff-20261115\\stop-distance-observer\\baseline40_integrated.log"
+      ],
+      "project_copy_sha256": "7a530e6eba9507e7dd0515d82b4340c8dd1834ab434a8a83799f3b0e4c0edd41",
+      "log_sha256": "eaa2d30dfe835626a14d14ebfc7b37974b01c46562716aa9283d837095bb8e7c",
+      "program_size": "Program Size: Code=102328 RO-data=6572 RW-data=2952 ZI-data=119096  \r",
+      "axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\half-stop-observer-build-20261115\\baseline40_integrated\\Vehicle_Integrated.axf",
+      "axf_sha256": "3966ed37a6c2dd85319884fbe22a2c54a610a9bb9e50f46240e79c006bf1113d"
+    },
+    "baseline40_offline": {
+      "returncode": 0,
+      "defines": "APP_BASELINE40_ENABLE=1,VEHICLE_INTEGRATED_ENABLE=0,VEHICLE_STAGE1_ENABLE=0",
+      "command": [
+        "D:/Keil_v5/UV4/UV4.exe",
+        "-r",
+        "D:\\Desktop\\工创赛\\工创赛\\tmp\\half-stop-observer-build-20261115\\baseline40_offline.uvprojx",
+        "-t",
+        "Vehicle_Offline",
+        "-o",
+        "D:\\Desktop\\工创赛\\工创赛\\evidence\\navigation-planning\\2026-11-15\\rollback-half-ff-20261115\\stop-distance-observer\\baseline40_offline.log"
+      ],
+      "project_copy_sha256": "458b691a19a5341257b84fbfe349100d5988e9751077cbba34b0eb1406013194",
+      "log_sha256": "dc24bff59df19918a924224d9a4d1047b55362dd2513ed6578a1fda1ea16d80a",
+      "program_size": "Program Size: Code=101680 RO-data=6564 RW-data=2760 ZI-data=119088  \r",
+      "axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\half-stop-observer-build-20261115\\baseline40_offline\\Vehicle_Offline.axf",
+      "axf_sha256": "6d1a006d7a02c8e92361bc5913a57f9a5c4c8a28d6c5a2e9b6dd8869d9b8405a"
+    },
+    "baseline_off_integrated": {
+      "returncode": 0,
+      "defines": "",
+      "command": [
+        "D:/Keil_v5/UV4/UV4.exe",
+        "-r",
+        "D:\\Desktop\\工创赛\\工创赛\\tmp\\half-stop-observer-build-20261115\\baseline_off_integrated.uvprojx",
+        "-t",
+        "Vehicle_Integrated",
+        "-o",
+        "D:\\Desktop\\工创赛\\工创赛\\evidence\\navigation-planning\\2026-11-15\\rollback-half-ff-20261115\\stop-distance-observer\\baseline_off_integrated.log"
+      ],
+      "project_copy_sha256": "9baec4c56b9eccbe244ecc756ee4dfbf829a5a6c4237caa446a9149fcc95afe1",
+      "log_sha256": "25656e55c28d6ca8747205554281ca8979dec73f2d40b8fca59c05c0f81c8e7b",
+      "program_size": "Program Size: Code=11974 RO-data=470 RW-data=960 ZI-data=25576  \r",
+      "axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\half-stop-observer-build-20261115\\baseline_off_integrated\\Vehicle_Integrated.axf",
+      "axf_sha256": "c2cde9ad3e47f49b635d1de8025828c6103145268eb93f4a4889e1d06e5550c8"
+    }
+  }
+}

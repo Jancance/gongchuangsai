@@ -1,0 +1,47 @@
+{
+  "self_review": "passed",
+  "independent_review": "passed; independent_review.json",
+  "baseline": "660223ec734e9fdcdfb86fb47f2314665b245730",
+  "protected_existing_files": 10380,
+  "raw_sha256_unchanged": true,
+  "manifest_digest": "87c28329ee7ed05029a02845a343b1c49363a43bc07637668a3a83727c3268f9",
+  "allowed_existing_files": [
+    "3.stm32f407工程/CHASSIS/USER/main.c",
+    "3.stm32f407工程/CHASSIS/USER/stage1_runtime.inc",
+    "3.stm32f407工程/CHASSIS/USER/vehicle_mission.inc",
+    "3.stm32f407工程/gongxun-f407.uvprojx"
+  ],
+  "owner_state_symbols": 29,
+  "new_shared_mutable_state": false,
+  "inputs": "Five const live addresses; Step/Safety preserve reads at original expression positions, including after preparation/relock",
+  "inc_change": "Exactly three HeadingSession_Init(&s_heading_exec) calls replaced with ResetSession() in two existing inc files; reversing that replacement gives identical original bytes, including all mechanical rows/actions/service behavior. ResetSession only calls the original Init.",
+  "fault_bridge": "One bottom-chassis internal function, no callback registry/context or additional lock",
+  "checks": [
+    "9 moved and 69 remaining raw function bodies restored unchanged",
+    "both actual target preprocessings 155 functions each; eight assert line metadata values shift -477 only",
+    "2048 actual ARM cases,141312 assertions;202 prepare calls,202 begin calls,166 live mutations including both sides",
+    "both actual Keil targets 0 errors 0 warnings",
+    "CP936/CRLF retained",
+    "No new tasks, no mechanical/vision/config/threshold edits"
+  ],
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "FIELD-06",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "LOC-03",
+    "LOC-05",
+    "MOT-02",
+    "RUN-06",
+    "SRC-04"
+  ],
+  "hardware_accessed": false,
+  "remaining": [
+    "translation/combined+route/serial/telemetry/tasks remaining",
+    "real RTOS timing/stack and physical bus/vehicle unverified"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "status": "EXPLORATORY_NOT_DEPLOYED",
+  "frozen_at": "2026-11-17T04:58:43.616809+08:00",
+  "training": [
+    {
+      "run": 1,
+      "main": 2112.041160771056,
+      "cross": -46.231215361076764,
+      "ground_main": 2098,
+      "ground_cross": -2.5,
+      "input_sha256": {
+        "holdout_prediction.json": "471b6612e899283e5deff89b008661ffd9f91028ea840b55051a9527598f1b43",
+        "operator_measurement.json": "94462f5aadcc2075677d079a32b898ecd711ea25f177e82a17d29ce286398ff5"
+      }
+    },
+    {
+      "run": 2,
+      "main": 2112.318808164418,
+      "cross": -46.95313151225462,
+      "ground_main": 2099,
+      "ground_cross": -12.5,
+      "input_sha256": {
+        "holdout_prediction.json": "5d0b28c659a081096ced87f43e2bc0a813540910af4840771a09ad44b990ccfb",
+        "operator_measurement.json": "7bdbe495198b51ac4226e2cebbbe26c331be2828a8b7919f962132a71457d6cf"
+      }
+    }
+  ],
+  "held_out_run": 3,
+  "heldout_ground_read": false,
+  "heldout_motion_already_complete": true,
+  "main_scale_gamma": 0.9935232978388142,
+  "cross_model_minus_ground_per_main_beta": -0.018507830134159294,
+  "correction_rule": "corrected_main=gamma*baseline_main; corrected_cross=baseline_cross-beta*baseline_main",
+  "scope": "only same version/left210/same condition; two fitted scalar coordinate corrections for offline diagnostic; unknown ruler uncertainty, not fused ICM, no control change"
+}

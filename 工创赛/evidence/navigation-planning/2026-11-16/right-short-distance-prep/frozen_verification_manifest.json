@@ -1,0 +1,43 @@
+{
+  "recorded_at": "2026-11-16T21:21:14.779985+08:00",
+  "status": "SOFTWARE_READY_NOT_DEPLOYED",
+  "candidate_project": "D:\\Desktop\\工创赛\\工创赛\\tmp\\right-short40-build-20261116\\right150_40.uvprojx",
+  "project_sha256": "55eb2cceb06ab031d25c59096c23703e0ff9c2db48eed600c42e98d82ffea683",
+  "target": "Vehicle_Integrated",
+  "frozen_axf": "D:\\Desktop\\工创赛\\工创赛\\evidence\\navigation-planning\\2026-11-16\\right-short-distance-prep\\frozen\\Vehicle_Integrated.axf",
+  "normal_axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\right-short40-build-20261116\\right150_40\\Vehicle_Integrated.axf",
+  "axf_sha256": "38a7a344c0763abbf76570270d2fa3cf9c363d653c2fc4f59cd72bb01d4f3fd3",
+  "flash_sections": [
+    {
+      "name": "PT_LOAD_0",
+      "address": 134217728,
+      "size": 116232,
+      "sha256": "6e374139636161e7c70d180ba8c736bdd31f654396c12b119ef5dc71fc8aff3d"
+    }
+  ],
+  "plan": {
+    "id": 12,
+    "client_name": "right150_40",
+    "direction": 2,
+    "kind": 6,
+    "rpm_budget": 102,
+    "target_mm": 1500,
+    "reference_mm_s": 400,
+    "baseline_BF1": [
+      12,
+      102,
+      1500,
+      400,
+      150,
+      300,
+      130,
+      12779
+    ]
+  },
+  "old_8_to_11_unchanged": true,
+  "matlab_before_product_write": true,
+  "review": "Current model independent subagent, not6.1-sol high; user fallback authorized",
+  "hardware_execution_permitted": false,
+  "old_image_file_sha256": "821fae6a877486e6b388620142dec6b9a9c8756366439ac8218e507b68ea9288",
+  "do_not_install": "build1_before_directionfix/Vehicle_Integrated.axf is a historical failed candidate"
+}

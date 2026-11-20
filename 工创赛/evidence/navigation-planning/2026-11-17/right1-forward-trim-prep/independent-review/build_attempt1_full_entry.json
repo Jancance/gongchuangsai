@@ -1,0 +1,74 @@
+[
+  {
+    "label": "enable0_unit.o",
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M4",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "D:\\Desktop\\工创赛\\3.stm32f407工程\\CHASSIS\\USER",
+      "-DVEHICLE_INTEGRATED_ENABLE=0",
+      "-DVEHICLE_STAGE1_ENABLE=0",
+      "-DAPP_BASELINE40_ENABLE=1",
+      "-DAPP_LEFT40_DRIFT_TRIM_ENABLE=1",
+      "-DAPP_RIGHT40_FORWARD_TRIM_ENABLE=0",
+      "-c",
+      "D:\\Desktop\\工创赛\\工创赛\\evidence\\navigation-planning\\2026-11-17\\right1-forward-trim-prep\\independent-review\\unit.c",
+      "-o",
+      "unit.o"
+    ],
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "label": "enable0_kinematics.o",
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M4",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "D:\\Desktop\\工创赛\\3.stm32f407工程\\CHASSIS\\USER",
+      "-DVEHICLE_INTEGRATED_ENABLE=0",
+      "-DVEHICLE_STAGE1_ENABLE=0",
+      "-DAPP_BASELINE40_ENABLE=1",
+      "-DAPP_LEFT40_DRIFT_TRIM_ENABLE=1",
+      "-DAPP_RIGHT40_FORWARD_TRIM_ENABLE=0",
+      "-c",
+      "D:\\Desktop\\工创赛\\3.stm32f407工程\\CHASSIS\\USER\\chassis_kinematics.c",
+      "-o",
+      "kinematics.o"
+    ],
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "label": "enable0_entry.o",
+    "command": [
+      "D:\\Keil_v5\\ARM\\arm5_compiler\\bin\\armcc.exe",
+      "--cpu",
+      "Cortex-M4",
+      "--c99",
+      "--split_sections",
+      "-O1",
+      "-I",
+      "D:\\Desktop\\工创赛\\3.stm32f407工程\\CHASSIS\\USER",
+      "-DVEHICLE_INTEGRATED_ENABLE=0",
+      "-DVEHICLE_STAGE1_ENABLE=0",
+      "-DAPP_BASELINE40_ENABLE=1",
+      "-DAPP_LEFT40_DRIFT_TRIM_ENABLE=1",
+      "-DAPP_RIGHT40_FORWARD_TRIM_ENABLE=0",
+      "-c",
+      "D:\\Desktop\\工创赛\\3.stm32f407工程\\CHASSIS\\USER\\app_entry.c",
+      "-o",
+      "entry.o"
+    ],
+    "returncode": 1,
+    "output": "\"D:\\Desktop\\宸ュ垱璧沑3.stm32f407宸ョ▼\\CHASSIS\\USER\\app_entry.c\", line 82: Error:  #29: expected an expression\n          static const RouteRow configured[] = { APP_ROUTE_ROWS(ROUTE_ROW) };\n                                                                           ^\n\"D:\\Desktop\\宸ュ垱璧沑3.stm32f407宸ョ▼\\CHASSIS\\USER\\app_entry.c\", line 82: Error:  #1514: an empty initializer is invalid for an array with unspecified bound\n          static const RouteRow configured[] = { APP_ROUTE_ROWS(ROUTE_ROW) };\n                                ^\nD:\\Desktop\\工创赛\\3.stm32f407工程\\CHASSIS\\USER\\app_entry.c: 0 warnings, 2 errors\n"
+  }
+]

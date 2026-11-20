@@ -1,0 +1,35 @@
+{
+  "frozen": true,
+  "hardware_accessed": false,
+  "source_sha256": {
+    "app_config.h": "fe13a98681c35622a65db6a71860cd4afd7b3a23a5f1a6dd4476fec63a9d6e55",
+    "motion_trial40.h": "f6a64b667b53bc1a8538ac3315e14fdc8dd70c26591aab48f2ba0f40259ecc03",
+    "chassis_kinematics.h": "d9600c79c9954277f6e824b895799e7da516ac4068957e8759d100b3d1aed320",
+    "chassis_kinematics.c": "1c6d4ebcd7aa092eef6ecd639549f62c103f53db71320c7e3a134c8fdeb46b5e",
+    "chassis_auto_test.c": "0688057158abc34a2be3e7ca6027f5097ff5ef620dbe61d592301dfc3ddfe711"
+  },
+  "evidence_sha256": {
+    "source_changes.json": "355b8fd55990aee6790e56e5c0639153865d8fe5b18e3a7bc1d0b1c74b5a3529",
+    "protected_functions_check.json": "b5322c81c0f06571f574f881dccc14190542124e9feceee53b0e28cfcb1df852",
+    "input_sha256.json": "6068a0505499ed4155024bf5374f096cf9f914ede6804d17f351bab7be11531b",
+    "actual_matlab_receipt.json": "b9a6b40ce4b204caaa8a7e3c319cf3ea6d5ac7a32cb13ccb2f501c5e1f688eff",
+    "matlab_summary.json": "22e523cbc72c3e30d79c65632357f184f1f8a212aa81e4f4ad93d25bd0725c4c",
+    "actual_c_checks.json": "30b4e49d03466cd6b93bc6119a0dd36bd892e1f5fc7409c3512b8c8ce8577273",
+    "nonbaseline_compile.json": "96872d8b5d1e9cfd9707f7835d2f731da7c9fe7ae71af5e7339da4053ac930c2",
+    "build_receipt.json": "65b9368c86e44b9d651123b204b3d21515b6fddc04fcda51728dca7859888de0",
+    "offline_elf_check.json": "cb94cef1d9a88af8ea2721d0c88f801092271bd0535dfc6108ea8d1d730bad27",
+    "defaultoff_build_receipt.json": "bceb7895bd5f9a6b756fcfc1772e2eec0fd7395a955273bb72e48ead8513fe24",
+    "defaultoff_load_comparison.json": "cb0e5b8ff0077d2649164c405c31e10b8d08eb018cd92ed869aa3c5116ce0e44",
+    "defaultoff_first_comparison_preserved.json": "8aba48dfc2ec0064e4b95f99ba0fe4348d47ad4e976de2d358a5ddfa3ae20ba6",
+    "implementation_report.md": "f7f6e6ca30cbaf5a1151665279dec89646b093e9a06709e34430c392e5b7e9e4",
+    "report_61medium.md": "c1d3e7b72932b9b730b7283e3f1687477c9ae1f143aa8aaaf8fccc4570f01788"
+  },
+  "candidate_axf_sha256": "73b4fad295ac044af9002e93e65858d7bc87165543557cd034a7a758406224ce",
+  "source_locations": {
+    "app_config.h": "24-30 defaultOFF macro and beta",
+    "motion_trial40.h": "12-22 exact left A/J allocation",
+    "chassis_kinematics.h": "84-85 new declaration",
+    "chassis_kinematics.c": "274-286 PLAN9 wheel mix",
+    "chassis_auto_test.c": "1423-1428 compile-isolated exact PLAN9 call"
+  }
+}

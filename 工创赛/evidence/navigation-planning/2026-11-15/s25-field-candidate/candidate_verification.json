@@ -1,0 +1,221 @@
+{
+  "source_sha256": "5742f22ba37b9fc211c5129d6a8dab607fdf8f376e5bc6fcc31070ec18208c1b",
+  "byte_exact_scale_only": true,
+  "crlf_count": 2047,
+  "gbk_preserved": true,
+  "source_items_checked": 1731,
+  "mismatches_from_final_s3": [
+    {
+      "path": "3.stm32f407\u5de5\u7a0b/CHASSIS/USER/chassis_auto_test.c",
+      "expected": "368fc6aa0cd2aada7168843c234dce7aa5c8f49512f83d9838ec1fe0226c22b9",
+      "actual": "5742f22ba37b9fc211c5129d6a8dab607fdf8f376e5bc6fcc31070ec18208c1b"
+    }
+  ],
+  "builds": {
+    "baseline40_integrated": {
+      "allocated_before": [
+        {
+          "kind": 1,
+          "flags": 6,
+          "address": 134217728,
+          "size": 108448,
+          "sha256": "a7a050d8fac66b295b55bc6dc270ef077ced3a4a9d6057374ca47da4b6012352"
+        },
+        {
+          "kind": 1,
+          "flags": 3,
+          "address": 536870912,
+          "size": 128,
+          "sha256": "51142cae6c88e205545a4c126105c28389688bde22211ad63338de6a140e04bb"
+        },
+        {
+          "kind": 8,
+          "flags": 3,
+          "address": 536872776,
+          "size": 91840,
+          "sha256": "be4224fd353d407f7662f4924701ede56f6ca831cb724be3916c2c95ff0ac161"
+        },
+        {
+          "kind": 1,
+          "flags": 3,
+          "address": 268435456,
+          "size": 52,
+          "sha256": "1525ef8f2886e788f24a9ea511cae449f9a72ff8e919a46bce73e524d8506a04"
+        },
+        {
+          "kind": 8,
+          "flags": 3,
+          "address": 268436544,
+          "size": 27072,
+          "sha256": "a78865e83dac42f13322257206f07104b7d929893a30bac20ae248170bb4bddb"
+        }
+      ],
+      "allocated_after": [
+        {
+          "kind": 1,
+          "flags": 6,
+          "address": 134217728,
+          "size": 108448,
+          "sha256": "5c1d50287d74b0f0782391114558dc0ae9a7cc2e4b2c56786d38008bfdaf1099"
+        },
+        {
+          "kind": 1,
+          "flags": 3,
+          "address": 536870912,
+          "size": 128,
+          "sha256": "51142cae6c88e205545a4c126105c28389688bde22211ad63338de6a140e04bb"
+        },
+        {
+          "kind": 8,
+          "flags": 3,
+          "address": 536872776,
+          "size": 91840,
+          "sha256": "be4224fd353d407f7662f4924701ede56f6ca831cb724be3916c2c95ff0ac161"
+        },
+        {
+          "kind": 1,
+          "flags": 3,
+          "address": 268435456,
+          "size": 52,
+          "sha256": "1525ef8f2886e788f24a9ea511cae449f9a72ff8e919a46bce73e524d8506a04"
+        },
+        {
+          "kind": 8,
+          "flags": 3,
+          "address": 268436544,
+          "size": 27072,
+          "sha256": "a78865e83dac42f13322257206f07104b7d929893a30bac20ae248170bb4bddb"
+        }
+      ],
+      "allocated_identical": false
+    },
+    "baseline40_offline": {
+      "allocated_before": [
+        {
+          "kind": 1,
+          "flags": 6,
+          "address": 134217728,
+          "size": 107792,
+          "sha256": "436a92ed16da4db2f195482e4fb211ef49fd80e2ff885717c1047232792aca71"
+        },
+        {
+          "kind": 1,
+          "flags": 3,
+          "address": 536870912,
+          "size": 108,
+          "sha256": "ce32fe9b234b99c83cb23eae6514d746a5b2b112c2bfc9bce1162e08a7499284"
+        },
+        {
+          "kind": 8,
+          "flags": 3,
+          "address": 536872720,
+          "size": 91800,
+          "sha256": "d27cf1e300fd54991aab0df6b0b6f2d03e3ddb8ed5c3ce1b767c3c22808a7af7"
+        },
+        {
+          "kind": 1,
+          "flags": 3,
+          "address": 268435456,
+          "size": 64,
+          "sha256": "8e2b5a9d4049e33dd736452e5e05e920ab7246f90f5ac479d81a8126012d9b8f"
+        },
+        {
+          "kind": 8,
+          "flags": 3,
+          "address": 268436408,
+          "size": 27112,
+          "sha256": "5847b07e85e0c0a51342a90688ee4d6fa5ccf28742ae3b38a7b685b7ddd43908"
+        }
+      ],
+      "allocated_after": [
+        {
+          "kind": 1,
+          "flags": 6,
+          "address": 134217728,
+          "size": 107792,
+          "sha256": "c7a1119a4509fcfef8824d2aaf73d22a7a990d47ec9b8555545a830f6d1b3076"
+        },
+        {
+          "kind": 1,
+          "flags": 3,
+          "address": 536870912,
+          "size": 108,
+          "sha256": "ce32fe9b234b99c83cb23eae6514d746a5b2b112c2bfc9bce1162e08a7499284"
+        },
+        {
+          "kind": 8,
+          "flags": 3,
+          "address": 536872720,
+          "size": 91800,
+          "sha256": "d27cf1e300fd54991aab0df6b0b6f2d03e3ddb8ed5c3ce1b767c3c22808a7af7"
+        },
+        {
+          "kind": 1,
+          "flags": 3,
+          "address": 268435456,
+          "size": 64,
+          "sha256": "8e2b5a9d4049e33dd736452e5e05e920ab7246f90f5ac479d81a8126012d9b8f"
+        },
+        {
+          "kind": 8,
+          "flags": 3,
+          "address": 268436408,
+          "size": 27112,
+          "sha256": "5847b07e85e0c0a51342a90688ee4d6fa5ccf28742ae3b38a7b685b7ddd43908"
+        }
+      ],
+      "allocated_identical": false
+    },
+    "baseline_off_integrated": {
+      "allocated_before": [
+        {
+          "kind": 1,
+          "flags": 6,
+          "address": 134217728,
+          "size": 12444,
+          "sha256": "2e2597b294bda28bc9a3924e38fbdccd1408bd4dd9b7663394acc11596e4aa44"
+        },
+        {
+          "kind": 1,
+          "flags": 3,
+          "address": 536870912,
+          "size": 64,
+          "sha256": "d016ed1e3ce5f067f3257e29831e0befb277d589016c2679bc4dfff14cd6975d"
+        },
+        {
+          "kind": 8,
+          "flags": 3,
+          "address": 536871872,
+          "size": 25576,
+          "sha256": "af68c0fce1a0a9cdf18cbcc3ab028c52782eae102424f5cc7e1ffc142d5c7a12"
+        }
+      ],
+      "allocated_after": [
+        {
+          "kind": 1,
+          "flags": 6,
+          "address": 134217728,
+          "size": 12444,
+          "sha256": "2e2597b294bda28bc9a3924e38fbdccd1408bd4dd9b7663394acc11596e4aa44"
+        },
+        {
+          "kind": 1,
+          "flags": 3,
+          "address": 536870912,
+          "size": 64,
+          "sha256": "d016ed1e3ce5f067f3257e29831e0befb277d589016c2679bc4dfff14cd6975d"
+        },
+        {
+          "kind": 8,
+          "flags": 3,
+          "address": 536871872,
+          "size": 25576,
+          "sha256": "af68c0fce1a0a9cdf18cbcc3ab028c52782eae102424f5cc7e1ffc142d5c7a12"
+        }
+      ],
+      "allocated_identical": true
+    }
+  },
+  "hardware_accessed": false,
+  "rollback_scope": "baa80295 stores this controller file only; not a complete firmware checkout"
+}

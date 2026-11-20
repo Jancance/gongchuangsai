@@ -4,6 +4,49 @@
 #include "field_map.h"
 volatile RouteCheck g_route_check = {0};
 volatile CompetitionEntryStatus g_competition_entry = {0};
+uint32_t AppDebugStraightCapturePlan(uint32_t id, MotionAction *action)
+{
+#if APP_STRAIGHT_CAPTURE_ENABLE
+    uint32_t index,direction;
+    if(id<DEBUG_PLAN_STRAIGHT_CAPTURE_FIRST || id>DEBUG_PLAN_STRAIGHT_CAPTURE_LAST) return 0U;
+    index=id-DEBUG_PLAN_STRAIGHT_CAPTURE_FIRST;
+    direction=index%4U;
+    if(action) *action=(MotionAction){MOTION_FORWARD_DISTANCE+direction,
+        (direction==1U || direction==2U)?APP_BASELINE40_LEFT_RPM:APP_BASELINE40_RPM,
+        0U,0.0f,index<4U?1000.0f:2000.0f};
+    return 1U;
+#else
+    (void)id;(void)action;
+    return 0U;
+#endif
+}
+uint32_t AppDebugTurn90Allowed(uint32_t id,uint32_t rpm,float angle)
+{
+    return AppDebugTurn90Plan(id) && rpm==82U &&
+        ((id==DEBUG_PLAN_TURN_CCW90_90 && angle==90.0f) ||
+         (id==DEBUG_PLAN_TURN_CW90_90 && angle==-90.0f));
+}
+uint32_t AppDebugPlan40Allowed(uint32_t id,uint32_t direction,uint32_t rpm,float mm)
+{
+    MotionAction capture;
+    if(AppDebugStraightCapturePlan(id,&capture))
+        return MotionTrial40Allowed(direction,rpm,mm) &&
+            direction<=3U && capture.kind==MOTION_FORWARD_DISTANCE+direction &&
+            capture.base_rpm==rpm && capture.distance_mm==mm;
+    return MotionTrial40Allowed(direction,rpm,mm) &&
+        ((((id==DEBUG_PLAN_FORWARD210_40 && direction==0U) ||
+           (id==DEBUG_PLAN_LEFT210_40 && direction==1U) ||
+           (id==DEBUG_PLAN_RIGHT210_40 && direction==2U) ||
+           (id==DEBUG_PLAN_BACKWARD210_40 && direction==3U)) && mm==APP_BASELINE40_MM) ||
+         (id==DEBUG_PLAN_RIGHT150_40 && direction==2U && mm==1500.0f) ||
+         (id==DEBUG_PLAN_RIGHT30_40 && direction==2U && mm==300.0f) ||
+         (id==DEBUG_PLAN_FORWARD150_40 && direction==0U && mm==1500.0f) ||
+         (id==DEBUG_PLAN_FORWARD30_40 && direction==0U && mm==300.0f) ||
+         (id==DEBUG_PLAN_BACKWARD150_40 && direction==3U && mm==1500.0f) ||
+         (id==DEBUG_PLAN_BACKWARD30_40 && direction==3U && mm==300.0f) ||
+         (id==DEBUG_PLAN_LEFT150_40 && direction==1U && mm==1500.0f) ||
+         (id==DEBUG_PLAN_LEFT30_40 && direction==1U && mm==300.0f));
+}
 uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count)
 {
 #if !APP_ROUTE_USE_CUSTOM || (APP_TEST_MODE != 3U)
@@ -16,7 +59,38 @@ uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count)
     };
     uint32_t i,n;
     if (!APP_IS_DEBUG || !actions || !count || id > DEBUG_PLAN_MAX || id == DEBUG_PLAN_FORWARD237) return 0U;
-    if (id == DEBUG_PLAN_DEFAULT) {
+    if (APP_STRAIGHT_CAPTURE_ENABLE && id<DEBUG_PLAN_STRAIGHT_CAPTURE_FIRST) return 0U;
+    if (AppDebugStraightCapturePlan(id,actions)) { *count=1U; return 1U; }
+    if ((id==DEBUG_PLAN_TURN_CCW90_90 || id==DEBUG_PLAN_TURN_CW90_90) && !AppDebugTurn90Plan(id)) return 0U;
+    if (APP_BASELINE40_ACTIVE && id!=DEBUG_PLAN_FORWARD210_40 && id!=DEBUG_PLAN_LEFT210_40 &&
+        id!=DEBUG_PLAN_RIGHT210_40 && id!=DEBUG_PLAN_BACKWARD210_40 && id!=DEBUG_PLAN_RIGHT150_40 && id!=DEBUG_PLAN_RIGHT30_40 && id!=DEBUG_PLAN_FORWARD150_40 && id!=DEBUG_PLAN_FORWARD30_40 && id!=DEBUG_PLAN_BACKWARD150_40 && id!=DEBUG_PLAN_BACKWARD30_40 && id!=DEBUG_PLAN_LEFT150_40 && id!=DEBUG_PLAN_LEFT30_40 && !AppDebugTurn90Plan(id)) return 0U;
+    if (AppDebugTurn90Plan(id)) {
+        MotionAction turn={MOTION_TURN,82U,0U,0.0f,0.0f};
+        turn.relative_deg=(id==DEBUG_PLAN_TURN_CCW90_90)?90.0f:-90.0f;
+        if(!AppDebugTurn90Allowed(id,turn.base_rpm,turn.relative_deg))return 0U;
+        actions[0]=turn;*count=1U;return 1U;
+    }
+    if (id == DEBUG_PLAN_FORWARD210_40 || id == DEBUG_PLAN_FORWARD150_40 || id == DEBUG_PLAN_FORWARD30_40) {
+        MotionAction trial={MOTION_FORWARD_DISTANCE,APP_BASELINE40_RPM,0U,0.0f,APP_BASELINE40_MM};
+        if(id==DEBUG_PLAN_FORWARD150_40) trial.distance_mm=1500.0f;
+        else if(id==DEBUG_PLAN_FORWARD30_40) trial.distance_mm=300.0f;
+        if (!AppDebugPlan40Allowed(id,0U,trial.base_rpm,trial.distance_mm)) return 0U;
+        n=1U;actions[0]=trial;
+    } else if (id == DEBUG_PLAN_LEFT210_40 || id == DEBUG_PLAN_LEFT150_40 || id == DEBUG_PLAN_LEFT30_40) {
+        MotionAction trial={MOTION_LEFT_DISTANCE,APP_BASELINE40_LEFT_RPM,0U,0.0f,APP_BASELINE40_MM};
+        if(id==DEBUG_PLAN_LEFT150_40) trial.distance_mm=1500.0f;
+        else if(id==DEBUG_PLAN_LEFT30_40) trial.distance_mm=300.0f;
+        if (!AppDebugPlan40Allowed(id,1U,trial.base_rpm,trial.distance_mm)) return 0U;
+        n=1U;actions[0]=trial;
+    } else if (id == DEBUG_PLAN_RIGHT210_40 || id == DEBUG_PLAN_BACKWARD210_40 || id == DEBUG_PLAN_RIGHT150_40 || id == DEBUG_PLAN_RIGHT30_40 || id == DEBUG_PLAN_BACKWARD150_40 || id == DEBUG_PLAN_BACKWARD30_40) {
+        uint32_t direction=(id==DEBUG_PLAN_BACKWARD210_40 || id==DEBUG_PLAN_BACKWARD150_40 || id==DEBUG_PLAN_BACKWARD30_40) ? 3U : 2U;
+        MotionAction trial={MOTION_RIGHT_DISTANCE,APP_BASELINE40_LEFT_RPM,0U,0.0f,APP_BASELINE40_MM};
+        if(direction==3U) {trial.kind=MOTION_BACKWARD_DISTANCE;trial.base_rpm=APP_BASELINE40_RPM;}
+        if(id==DEBUG_PLAN_RIGHT150_40 || id==DEBUG_PLAN_BACKWARD150_40) trial.distance_mm=1500.0f;
+        else if(id==DEBUG_PLAN_RIGHT30_40 || id==DEBUG_PLAN_BACKWARD30_40) trial.distance_mm=300.0f;
+        if (!AppDebugPlan40Allowed(id,direction,trial.base_rpm,trial.distance_mm)) return 0U;
+        n=1U;actions[0]=trial;
+    } else if (id == DEBUG_PLAN_DEFAULT) {
 #if VEHICLE_STAGE1_ENABLE
         FieldStage1Plan p;RouteRow rows[2];RouteCheck check;
         if(!FieldMap_Stage1(&p)) return 0U;

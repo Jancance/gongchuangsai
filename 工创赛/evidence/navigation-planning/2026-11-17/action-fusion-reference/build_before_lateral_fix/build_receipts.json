@@ -1,0 +1,68 @@
+{
+  "integrated": {
+    "started_at": "2026-11-18T00:18:19.589459+08:00",
+    "command": [
+      "D:/Keil_v5/UV4/UV4.exe",
+      "-r",
+      "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\action-fusion-build-20261118\\integrated.uvprojx",
+      "-t",
+      "Vehicle_Integrated",
+      "-o",
+      "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\action-fusion-reference\\integrated_build.log"
+    ],
+    "defines": "ICM45686_SAMPLE_ONLY=0,APP_CONTINUOUS_MAP_ENABLE=1,APP_MAP_NAV_RESIDUAL_ENABLE=1",
+    "target": "Vehicle_Integrated",
+    "hardware_accessed": false,
+    "scope": "Compile pure module in both real targets; no runtime caller is added.",
+    "returncode": 0,
+    "finished_at": "2026-11-18T00:18:26.845932+08:00",
+    "success": true,
+    "compiled_reference": true,
+    "source_sha256": {
+      "fusion_reference.c": "ea20c345b9b5249a9fbaade264a98185b1553ce78b0077321421c8ec47218ded",
+      "fusion_reference.h": "e796af40ea19d38430f8f9fe4f415380d5ca83d3749d0a10df261ac90addc238"
+    },
+    "frozen_sha256": {
+      "integrated.uvprojx": "243dfa68f103979c5e5b20cea615495548a384ca756b6e7c02f876ab9ea09795",
+      "Vehicle_Integrated.axf": "b91e87e2dc6d9794d78bc23ec438f23d17d81610efc6970dc81b7a543aa58925",
+      "Vehicle_Integrated.build_log.htm": "87140d1520b62dae9585195f3ae85a220056efc20379b48c82a8d3a09f66e2fe",
+      "Vehicle_Integrated.htm": "694562a4e0c3091b026b92e7ce641061e255b4b6d3c08d23695fff668912fc11",
+      "Vehicle_Integrated.lnp": "97fd5df5e1db026c92095e085a70866e402520cccffb4686dd8a7e5b16f1bc28",
+      "Vehicle_Integrated.map": "bfe62dfddc2812e2c3add5aaeee8783861b41a04d88533f073581805a6b25469"
+    },
+    "size_line": "Program Size: Code=144588 RO-data=6892 RW-data=3612 ZI-data=124004  "
+  },
+  "offline": {
+    "started_at": "2026-11-18T00:18:26.877630+08:00",
+    "command": [
+      "D:/Keil_v5/UV4/UV4.exe",
+      "-r",
+      "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\action-fusion-build-20261118\\offline.uvprojx",
+      "-t",
+      "Vehicle_Offline",
+      "-o",
+      "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\action-fusion-reference\\offline_build.log"
+    ],
+    "defines": "ICM45686_SAMPLE_ONLY=0,APP_CONTINUOUS_MAP_ENABLE=1,APP_MAP_NAV_RESIDUAL_ENABLE=1",
+    "target": "Vehicle_Offline",
+    "hardware_accessed": false,
+    "scope": "Compile pure module in both real targets; no runtime caller is added.",
+    "returncode": 0,
+    "finished_at": "2026-11-18T00:18:34.756358+08:00",
+    "success": true,
+    "compiled_reference": true,
+    "source_sha256": {
+      "fusion_reference.c": "ea20c345b9b5249a9fbaade264a98185b1553ce78b0077321421c8ec47218ded",
+      "fusion_reference.h": "e796af40ea19d38430f8f9fe4f415380d5ca83d3749d0a10df261ac90addc238"
+    },
+    "frozen_sha256": {
+      "offline.uvprojx": "f4676a2797a38637ace440ef64bc395bb1778681b5d3b8cdb3a1a4d175f5ac1d",
+      "Vehicle_Offline.axf": "97eeb190025b841d7621a752fb4ac5b19b26992ca2f34d30eed5c845dfad98bb",
+      "Vehicle_Offline.build_log.htm": "2aa071dc149497d05255641e0b1c15e4eb587d7cc1960efced8f4d48d077bc50",
+      "Vehicle_Offline.htm": "c02f2b154b156405ac43786e04366bc5a3642a62e6a8d9aff6f3e7da916b38fe",
+      "Vehicle_Offline.lnp": "bb8e496898536f0a0c8cd02c7fdae005bd31979af709946a4cfd44095e27fda6",
+      "Vehicle_Offline.map": "b37ae885182ab80717b96f817c816d0542f6261d472aeb1803fdac119278ccc4"
+    },
+    "size_line": "Program Size: Code=132780 RO-data=6884 RW-data=3416 ZI-data=123896  "
+  }
+}

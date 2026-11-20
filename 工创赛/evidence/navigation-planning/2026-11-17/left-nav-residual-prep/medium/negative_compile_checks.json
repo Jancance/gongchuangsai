@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "hardware_accessed": false,
+  "source_sha256": "a4fe963a0373d4b4d9c8b1a1dfae62a29872ac16aa41e8a3fe08cb481e0cdea2",
+  "cases": {
+    "default_off": {
+      "returncode": 0,
+      "expected_error": "",
+      "status": "PASS"
+    },
+    "enabled_debug": {
+      "returncode": 0,
+      "expected_error": "",
+      "status": "PASS"
+    },
+    "enable2_rejected": {
+      "returncode": 1,
+      "expected_error": "Left_nav_residual_enable_invalid",
+      "status": "PASS"
+    },
+    "baseline_inactive_rejected": {
+      "returncode": 1,
+      "expected_error": "Left_nav_residual_requires_baseline40_debug",
+      "status": "PASS"
+    }
+  }
+}

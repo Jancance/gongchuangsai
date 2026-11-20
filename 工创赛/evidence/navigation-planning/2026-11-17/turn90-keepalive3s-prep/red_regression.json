@@ -1,0 +1,15 @@
+{
+  "old_c": {
+    "expected_failure": true,
+    "returncode": 1,
+    "assertion": "(1, 317, '  reset(id,1);clock_ms+=boundary-1;App_SerialMotionSafety();CK(g_serial_motion_state==2 && permit==1 && !abort_count);')"
+  },
+  "old_client": {
+    "plan": 20,
+    "time_s": 2.01,
+    "status": "ack_timeout",
+    "commands": [
+      "STOP"
+    ]
+  }
+}

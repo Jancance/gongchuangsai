@@ -1,0 +1,65 @@
+{
+  "result": "passed",
+  "actionable_findings": [],
+  "reviewer": "main_review_astra_high",
+  "model": "gpt-6-astra",
+  "effort": "high",
+  "scope": "C2c ELF initializer correction only",
+  "baseline_commit": "5111ab98019619e1b14a97c0b409f759a9662e1c",
+  "candidate_commit": "1f272dd8cae82bea606f4f779573ecf5e22d4cf1",
+  "correction_report_sha256": "0849ed19cd004b92f83dfe8ac27c00b915cdd73b86653174cf6d8748244d57eb",
+  "loader": {
+    "progbits_at_execution_address": true,
+    "nobits_explicitly_zeroed": true,
+    "mapped_bounds_and_file_bounds_checked": true,
+    "all_allocated_sections_readback_verified": true,
+    "initialized_rw_bytes": 636,
+    "nonzero_rw_bytes": 126,
+    "zeroed_nobits_bytes": 6716
+  },
+  "initial_owner_checks": {
+    "old_and_new_turn_max_rpm": 5,
+    "old_and_new_perimeter_first": [
+      2100,
+      2100,
+      -90
+    ],
+    "old_and_new_debug_plan_id": 0,
+    "live_owner_pointers_verified": 13
+  },
+  "independent_read_only_replays": [
+    {
+      "target": "Vehicle_Integrated",
+      "artifact_sha256": "ff7acc43f1f06f4eb8292cb411c5e303b51d9f0a07d5e9bc2cddcce370473a6c",
+      "return_code": 0,
+      "cases": 672,
+      "assertions": 44418
+    },
+    {
+      "target": "Vehicle_Offline",
+      "artifact_sha256": "57d8b96715012b8c0622161f44c8239cf16820bb5783ab98bbc67a6630c69360",
+      "return_code": 0,
+      "cases": 672,
+      "assertions": 44418
+    }
+  ],
+  "all_reported_counters_reproduced": true,
+  "frozen_candidate_files_verified": 10,
+  "dependencies_raw_and_git_verified": 996,
+  "original_preprocessed_inputs_token_equal": 8,
+  "generated_c_identical_to_original": true,
+  "preservation_and_script_hashes_checked": 30,
+  "historical_C2c_evidence_unchanged": true,
+  "D_product_and_evidence_unchanged": true,
+  "supersedes": "Previous C2c ARM dynamic claims made using PT_LOAD-only initialization",
+  "does_not_supersede": "Original static equivalence, protected hashes, owner maps and formal firmware builds",
+  "limits": [
+    "Same narrow actual ARM C with controlled backend, RTOS/clock, plan-generation and action-submission stubs.",
+    "No other historical stage is revalidated.",
+    "No MATLAB dynamics, hardware timing, task-stack, bus or vehicle claim."
+  ],
+  "reviewer_file_writes": false,
+  "reviewer_builds": false,
+  "network_accessed": false,
+  "hardware_accessed": false
+}

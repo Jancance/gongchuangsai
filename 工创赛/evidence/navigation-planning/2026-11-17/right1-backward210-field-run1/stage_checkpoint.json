@@ -1,0 +1,75 @@
+{
+  "status": "BACKWARD210_STAGE3_COMPLETE",
+  "candidate_sha256": "3043c4a98aed1b04eb0c80fd4b2ea819b2c70b52a2c0dbe60613a969bca48ad3",
+  "downloads": 0,
+  "reset": 3,
+  "START": 3,
+  "KEEP": 131,
+  "trials": [
+    {
+      "trial": 1,
+      "measurement": {
+        "user_text": "右偏1cm，多走0.25c'm再测一次已经放好",
+        "backward_mm": 2102.5,
+        "right_mm": 10.0,
+        "unit_interpretation": "c'm interpreted as cm in established cm measurement context",
+        "measurement_uncertainty_mm": null
+      },
+      "commands": {
+        "PLAN11": 1,
+        "ARM": 1,
+        "START": 1,
+        "KEEP": 43
+      },
+      "raw_count": 2021,
+      "raw_sha256": {
+        "bank_a": "e38cdf26f1aefc7392ffed3fa2f7b2475a7687cab9d827cd8be46e12d07ebde9",
+        "bank_b": "3d2307c76e6caa28c629753e4db16a944957cf5c84859e8f66a26943b5794275"
+      }
+    },
+    {
+      "trial": 2,
+      "measurement": {
+        "user_text": "右偏1.75cm多走0.45cm，再测一次已经放好",
+        "backward_mm": 2104.5,
+        "right_mm": 17.5,
+        "measurement_uncertainty_mm": null
+      },
+      "commands": {
+        "PLAN11": 1,
+        "ARM": 1,
+        "START": 1,
+        "KEEP": 44
+      },
+      "raw_count": 2026,
+      "raw_sha256": {
+        "bank_a": "2fc8dbc90a1fbd1042cf13655b000d12a5f52b286164d32464f561eff614b704",
+        "bank_b": "67b520b124f99cf3c08f8f564e66be7b6a4f04bfe5fed6102f74ee71fc8bb606"
+      }
+    },
+    {
+      "trial": 3,
+      "measurement": {
+        "user_text": "右偏0.5cm多走0.2cm，还要测啥吗还是说可以分析数据了？",
+        "backward_mm": 2102.0,
+        "right_mm": 5.0,
+        "measurement_uncertainty_mm": null
+      },
+      "commands": {
+        "PLAN11": 1,
+        "ARM": 1,
+        "START": 1,
+        "KEEP": 44
+      },
+      "raw_count": 2026,
+      "raw_sha256": {
+        "bank_a": "233c50641dda07260f331a917ec1ed7839d22bafc005032c229c41cdaa4790de",
+        "bank_b": "970ab09cb55140f3729872db665f82b743ae66efd490cb24346faf554bdf99ca"
+      }
+    }
+  ],
+  "mean_backward_mm": 2103.0,
+  "mean_right_mm": 10.833333333333334,
+  "hardware_paused_no_new_motion": true,
+  "no_fitting_or_product_changes": true
+}

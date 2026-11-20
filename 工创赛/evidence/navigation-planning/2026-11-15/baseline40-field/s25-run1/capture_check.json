@@ -1,0 +1,199 @@
+{
+  "run_id": "2026-11-15_s25-run1",
+  "software_status": "software_complete",
+  "candidate_sha256": "41dd9265f971f4d78a83bf93a2db6b52535d01701409aa83c528f4d2a758f7df",
+  "source_sha256": "5742f22ba37b9fc211c5129d6a8dab607fdf8f376e5bc6fcc31070ec18208c1b",
+  "kinematics_sha256": "b54a676083a557fd5a1266d34b5c174e48b569fae5dd98ab46e53e18059ee5e0",
+  "raw_sha256": "990826e647782ebf9dfaef031db0c183f1083b8cd324a2d4e9b2df25b3167ba0",
+  "journal_sha256": "ea1d72905d05880de9eab4937c22b98abbde5ddc895344f5f9090646d5a1907c",
+  "xd1": {
+    "session": 1,
+    "expected_records": 932,
+    "received_records": 932,
+    "dropped": 0,
+    "complete": true
+  },
+  "parse_errors": {},
+  "crc_checked_frames": {
+    "TMQ": 317,
+    "OD1": 31,
+    "WF1": 54,
+    "XD1": 117
+  },
+  "excluded_final_incomplete_fragments": [],
+  "tx_commands": {
+    "PLAN8": 1,
+    "ARM": 1,
+    "START": 1,
+    "KEEP": 44
+  },
+  "post_complete_tx": 0,
+  "complete_batches": 103,
+  "exact_FLCN_remix_checks": 103,
+  "max_batch_ack_span_ms": 66,
+  "lateral_peak_rpm": 2.1,
+  "lateral_cap30_complete_batches": 0,
+  "lateral_above_old24_complete_batches": 0,
+  "heading_peak_rpm": 1.8,
+  "heading_cap20_complete_batches": 0,
+  "od": [
+    {
+      "tick_ms": 23104,
+      "sample_ms": 22919,
+      "along_mm": 1,
+      "right_mm": 1,
+      "local_heading_left_deg": -0.013999999999995794,
+      "packet_age_ms": 176
+    },
+    {
+      "tick_ms": 24107,
+      "sample_ms": 23953,
+      "along_mm": 66,
+      "right_mm": 1,
+      "local_heading_left_deg": -0.972999999999999,
+      "packet_age_ms": 154
+    },
+    {
+      "tick_ms": 25107,
+      "sample_ms": 24976,
+      "along_mm": 272,
+      "right_mm": 3,
+      "local_heading_left_deg": -0.8529999999999944,
+      "packet_age_ms": 121
+    },
+    {
+      "tick_ms": 26107,
+      "sample_ms": 25999,
+      "along_mm": 618,
+      "right_mm": 4,
+      "local_heading_left_deg": -1.054000000000002,
+      "packet_age_ms": 99
+    },
+    {
+      "tick_ms": 27107,
+      "sample_ms": 26978,
+      "along_mm": 1016,
+      "right_mm": 4,
+      "local_heading_left_deg": -0.9270000000000067,
+      "packet_age_ms": 121
+    },
+    {
+      "tick_ms": 28107,
+      "sample_ms": 27957,
+      "along_mm": 1414,
+      "right_mm": 4,
+      "local_heading_left_deg": -1.105000000000004,
+      "packet_age_ms": 143
+    },
+    {
+      "tick_ms": 29108,
+      "sample_ms": 28958,
+      "along_mm": 1785,
+      "right_mm": 3,
+      "local_heading_left_deg": -0.7540000000000049,
+      "packet_age_ms": 143
+    },
+    {
+      "tick_ms": 30110,
+      "sample_ms": 29904,
+      "along_mm": 2016,
+      "right_mm": 2,
+      "local_heading_left_deg": -0.382000000000005,
+      "packet_age_ms": 198
+    },
+    {
+      "tick_ms": 31112,
+      "sample_ms": 31004,
+      "along_mm": 2114,
+      "right_mm": 1,
+      "local_heading_left_deg": 1.0379999999999967,
+      "packet_age_ms": 99
+    }
+  ],
+  "middle_samples": 4,
+  "middle_sample_peak_abs_mm": 4,
+  "middle_sample_min_right_mm": 3,
+  "middle_sample_peak_right_mm": 4,
+  "middle_peak_observations": [
+    {
+      "tick_ms": 26107,
+      "sample_ms": 25999,
+      "along_mm": 618,
+      "right_mm": 4,
+      "local_heading_left_deg": -1.054000000000002,
+      "packet_age_ms": 99
+    },
+    {
+      "tick_ms": 27107,
+      "sample_ms": 26978,
+      "along_mm": 1016,
+      "right_mm": 4,
+      "local_heading_left_deg": -0.9270000000000067,
+      "packet_age_ms": 121
+    },
+    {
+      "tick_ms": 28107,
+      "sample_ms": 27957,
+      "along_mm": 1414,
+      "right_mm": 4,
+      "local_heading_left_deg": -1.105000000000004,
+      "packet_age_ms": 143
+    }
+  ],
+  "hwt_start_deg": 0.214,
+  "hwt_end_deg": 1.213,
+  "hwt_delta_deg": 0.9989999999999952,
+  "moving_sampled_peak_right_yaw_deg": 1.2410000000000139,
+  "first_stop_ack_ms": 30685,
+  "last_stop_ack_ms": 30718,
+  "stop_ack_span_ms": 33,
+  "pre_stop_hwt_tick_ms": 30630,
+  "pre_stop_gap_to_ack_ms": 55,
+  "pre_stop_hwt_deg": 0.587,
+  "pre_stop_left_from_start_deg": 0.37299999999999045,
+  "post_pre_stop_yaw_change_deg": 0.6260000000000048,
+  "first_complete_hwt_deg": 1.213,
+  "last_1s_hwt_samples": 11,
+  "last_1s_hwt_span_deg": 0.0,
+  "operator_measurement": {
+    "source": "User ruler report after physically stopped",
+    "user_reply": "右偏0.8cm，多走0.5cm可以再测一次已经摆好你复位就行",
+    "forward_cm": 210.5,
+    "forward_error_cm": 0.5,
+    "right_cm": 0.8,
+    "forward_mm": 2105.0,
+    "forward_error_mm": 5.0,
+    "right_mm": 8.0,
+    "middle_ground_observation": null,
+    "next_run_explicitly_authorized": true
+  },
+  "software_final": {
+    "vm_request": 1,
+    "pe2_active": 1,
+    "backend_active": 0,
+    "trip": 0,
+    "stop_mask": 15,
+    "can_fault": 0,
+    "safety_fault": 0,
+    "rtos_fault": 0,
+    "rpm1": 0.0,
+    "rpm2": 0.0,
+    "rpm3": 0.0,
+    "rpm4": 0.0,
+    "distance_progress_milli_mm": 2104655,
+    "feedback_limit_rpm": 130
+  },
+  "limits": [
+    "Complete-batch targets are acknowledged commands, not simultaneous actual body speeds.",
+    "OD is sparse wheel-odometry, not a measured ground path; operator gave endpoints only.",
+    "Batch counts are not time fractions. Common-sample OD association is descriptive offline alignment, not an online availability claim.",
+    "Live HWT yaw used, not frozen controller error; STOP markers are ACK timestamps.",
+    "No new motion authorized after these completed captures."
+  ],
+  "controller": {
+    "M": 1.5,
+    "Pscale_mm_s": 2.5,
+    "Ky": 0.75
+  },
+  "reused_analyzer_sha256": "a30eb7063993c95d4093c93460487747c87ad870192ee2d7650d20bde5f4133b"
+}

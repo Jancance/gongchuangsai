@@ -1,0 +1,44 @@
+{
+  "base": "e9471affcc6c3a0423aef80173cb0161437f2f34",
+  "defines": [
+    "ICM45686_SAMPLE_ONLY=0",
+    "APP_CONTINUOUS_MAP_ENABLE=1",
+    "APP_MAP_NAV_RESIDUAL_ENABLE=1",
+    "APP_ZONE2_NAV_ENABLE=1"
+  ],
+  "inputs_sha256": {
+    "3.stm32f407工程/CHASSIS/HARDWARE/RADAR_SERVO/radar_lift.c": "96b01a3b092fe15c494158c4d3789acb11117da41ed2fc8b7f68b0143524f17c",
+    "3.stm32f407工程/CHASSIS/USER/app_chassis_service.c": "f748c81b8b0a5fc20bb1bd0160a2cc4d13317f52f6401072c8d1d9db5caba033",
+    "3.stm32f407工程/CHASSIS/USER/app_chassis_service.h": "c793c941f92fbd7456051afc00986be07432f083a01bbf8ac396ef6c519cbcb9",
+    "3.stm32f407工程/CHASSIS/USER/app_config.h": "adab59b9056a26ebfbd809710da8e034ae6ce21b8ba81bc96d5fe86041e0848a",
+    "3.stm32f407工程/CHASSIS/USER/app_input_runtime.c": "26cd41c80e6314767badadab380c41fc55d5d3a1c1beac8c8207929959bdbb4b",
+    "3.stm32f407工程/CHASSIS/USER/app_motion_runtime.c": "7fb13c5528951b58bcd6941b84ddde495b364b211a7c15f52172625da904b3b2",
+    "3.stm32f407工程/CHASSIS/USER/app_zone2.c": "3cfcf3cc63325594d8b6b3783683f4deed9f936086b69ffeda4d31fd0abaa0bf",
+    "3.stm32f407工程/CHASSIS/USER/app_zone2.h": "cb6b5a8b778b3497d2f6231944f8b1e08a08049b210839ee361a5d210fed1c6c",
+    "3.stm32f407工程/CHASSIS/USER/chassis_auto_test.c": "2034bce1f6d2684e22ac31f28618e5c738a2887919c2a55dc07f0496e1588877",
+    "3.stm32f407工程/CHASSIS/USER/chassis_auto_test.h": "7508d86b05e319c63568c9587035254de07a983a28fdd23e0297dd5aabf41379",
+    "3.stm32f407工程/CHASSIS/USER/main.c": "e07ac783150f03c02bfabde125672b949fd91fa6ee87a73e9abd4635ff372492",
+    "3.stm32f407工程/CHASSIS/USER/zone2_nav_schedule.c": "14d167456a052696b801a6c59f5abf28aa8082b8ee4b8e3bf9e9b94649105ed1",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "59abdf18008bf32dd77ae28831cf399a25cbfb233dc6aebb9e679c54f0ae76e6"
+  },
+  "targets": {
+    "Vehicle_Integrated": {
+      "passed": true,
+      "exit_code": 0,
+      "compiled": {
+        "app_zone2.c": true,
+        "chassis_auto_test.c": true,
+        "radar_lift.c": true
+      }
+    },
+    "Vehicle_Offline": {
+      "passed": true,
+      "exit_code": 0,
+      "compiled": {
+        "app_zone2.c": true,
+        "chassis_auto_test.c": true,
+        "radar_lift.c": true
+      }
+    }
+  }
+}

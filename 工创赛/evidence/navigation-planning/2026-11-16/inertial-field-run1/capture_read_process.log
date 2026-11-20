@@ -1,0 +1,116 @@
+{
+  "started_at": "2026-11-16T11:11:51.159985+08:00",
+  "axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\inertial-field-run1-build-20261116\\motion_static0_integrated\\Vehicle_Integrated.axf",
+  "axf_sha256": "d7d66e1dd78fcfc70dceb7d4dc7569c987a87be5687abcf69f42f9b8d9a5d609",
+  "expected_session": 1,
+  "probe_uid": "6afaae24",
+  "symbols": {
+    "g_fusion_capture_b": [
+      268464896,
+      33600
+    ],
+    "g_chassis_auto_active": [
+      536871092,
+      4
+    ],
+    "g_chassis_auto_session": [
+      536871100,
+      4
+    ],
+    "g_chassis_auto_tail_snapshots": [
+      536948504,
+      176
+    ],
+    "g_fusion_capture_a": [
+      536965888,
+      34020
+    ]
+  },
+  "accepted": true,
+  "hardware_accessed": true,
+  "reset_requested": false,
+  "halt_requested": false,
+  "resume_requested": false,
+  "target_memory_writes": 0,
+  "flash_programmed": false,
+  "automatic_retry": false,
+  "header": {
+    "magic": 826491462,
+    "version": 1,
+    "size_a": 34020,
+    "size_b": 33600,
+    "state": 2,
+    "reason": 1,
+    "session": 1,
+    "trigger_ms": 366846,
+    "stop_ms": 374897,
+    "freeze_ms": 375397,
+    "pre_count": 100,
+    "pre_head": 56,
+    "post_count": 1710,
+    "raw_count": 1810,
+    "wheel_count": 298,
+    "hwt_count": 171,
+    "od_count": 69,
+    "wheel_dropped": 0,
+    "hwt_dropped": 0,
+    "od_dropped": 0,
+    "quality": 0,
+    "first_sample_sequence": 73257,
+    "last_sample_sequence": 75066,
+    "first_edge_sequence": 73257,
+    "last_edge_sequence": 75066,
+    "trigger_skipped": 0,
+    "final_skipped": 0,
+    "trigger_races": 0,
+    "final_races": 0,
+    "trigger_errors": 0,
+    "final_errors": 0,
+    "accel_config": 56,
+    "gyro_config": 40,
+    "whoami": 233,
+    "max_read_lag_cycles": 317557,
+    "max_read_duration_cycles": 20547,
+    "max_step_cycles": 6606,
+    "reference_set_ms": 365192,
+    "origin_x_mm": 2100.0,
+    "origin_y_mm": 2100.0,
+    "path_heading_deg": -90.0,
+    "heading_offset_deg": -90.9063720703125,
+    "first_ms": 366347,
+    "last_ms": 375392,
+    "last_raw_state": 2,
+    "last_raw_error": 0,
+    "system_core_clock": 168000000,
+    "frozen": true,
+    "truncated": false,
+    "tail_completed": true,
+    "anchor_valid": true,
+    "reference_changed": false
+  },
+  "tail": {
+    "schema_valid": true,
+    "session_match": true,
+    "version": 1,
+    "session": 1,
+    "valid_mask": 7,
+    "complete": true,
+    "sha256": "ea2744526905e5e83b92d8bf5275629e2912f1705aa71a1482be82fa094d958c",
+    "stable_double_read": true,
+    "note": "Independent tail evidence; unknown schema retains raw only. Not ground stopping distance"
+  },
+  "flash_checks": [
+    {
+      "section": "PT_LOAD_0",
+      "address": 134217728,
+      "size": 115064,
+      "sha256": "136d2f855f780fe80f5175af6043f937271a3ffa23e489c0751c75813e0fa8f4"
+    }
+  ],
+  "raw_sha256": {
+    "bank_a": "06f7667ec91e8e94d2fb1b6ba4fcbc91b7070510f52ae3d14b9f1eb13f62c7a8",
+    "bank_b": "698d0fcc24c87c9012763135af3c5d414bfe319a8fecc0a2f358d4d75f06e7c4"
+  },
+  "stable_double_read": true,
+  "finished_at": "2026-11-16T11:11:57.611480+08:00"
+}

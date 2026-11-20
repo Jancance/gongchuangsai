@@ -1,0 +1,82 @@
+{
+  "status": "SOFTWARE_READY_NOT_DEPLOYED",
+  "source_checkpoint": "ee16175ed6ec509075c6cc1c77c7c569a243c5d1",
+  "normal_project": "D:\\Desktop\\工创赛\\工创赛\\tmp\\all-directions-short-build-20261116\\all_directions_short40.uvprojx",
+  "project_sha256": "14a5a5d38431c52f5e822dfa78e8bd438ee8b79dd15a470eb7494a85d9f59bba",
+  "normal_axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\all-directions-short-build-20261116\\all_directions_short40\\Vehicle_Integrated.axf",
+  "axf_sha256": "6b4c42de810137e39ddfe999800b4b96581790efcf4024daeec29f1262de7095",
+  "frozen_axf": "D:\\Desktop\\工创赛\\工创赛\\evidence\\navigation-planning\\2026-11-16\\all-directions-short-prep\\frozen\\Vehicle_Integrated.axf",
+  "flash_sections": [
+    {
+      "address": 134217728,
+      "size": 117072,
+      "sha256": "4d2abce83bcd55461bd1d10d070d415e9dbdcd382cf28d3d0751d2171dece584"
+    }
+  ],
+  "symbols": {
+    "g_fusion_capture_b": {
+      "address": 268464896,
+      "size": 33600
+    },
+    "g_chassis_auto_session": {
+      "address": 536871100,
+      "size": 4
+    },
+    "g_chassis_auto_tail_snapshots": {
+      "address": 536948504,
+      "size": 176
+    },
+    "g_fusion_capture_a": {
+      "address": 536965888,
+      "size": 34020
+    }
+  },
+  "new_presets": [
+    {
+      "id": 14,
+      "name": "forward150_40",
+      "direction": 0,
+      "rpm": 100,
+      "mm": 1500
+    },
+    {
+      "id": 15,
+      "name": "forward30_40",
+      "direction": 0,
+      "rpm": 100,
+      "mm": 300
+    },
+    {
+      "id": 16,
+      "name": "backward150_40",
+      "direction": 3,
+      "rpm": 100,
+      "mm": 1500
+    },
+    {
+      "id": 17,
+      "name": "backward30_40",
+      "direction": 3,
+      "rpm": 100,
+      "mm": 300
+    },
+    {
+      "id": 18,
+      "name": "left150_40",
+      "direction": 1,
+      "rpm": 102,
+      "mm": 1500
+    },
+    {
+      "id": 19,
+      "name": "left30_40",
+      "direction": 1,
+      "rpm": 102,
+      "mm": 300
+    }
+  ],
+  "old_presets": "8..13 unchanged tuples; default8; oldPLAN3 remains",
+  "client_sha256": "472b219602812a50fbc3c90359611d5eb23f28ace7b4b1d5f1270012ba4427ad",
+  "hardware_execution_permitted": false,
+  "independent_review": "PASS_WITH_LIMITATIONS, current model not6.1-sol"
+}

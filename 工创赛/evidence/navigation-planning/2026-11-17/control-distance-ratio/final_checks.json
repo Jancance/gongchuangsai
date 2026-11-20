@@ -1,0 +1,123 @@
+{
+  "base_commit": "30750bd9fff58ae8d9abb5f3593e28cecdf6eb2e",
+  "index_initially_empty": true,
+  "hardware_accessed": false,
+  "downloaded": false,
+  "fetch_push_performed": false,
+  "board_remains": "3043...8ad3",
+  "protected_dirty": {
+    "3.stm32f407工程/gongxun-f407.uvguix.lenovo": {
+      "sha256": "2f61627e8b99940ce40e871ffeb46350a05e7c97422791ac79e0e9e063c24f6c",
+      "unchanged": true
+    },
+    "3.stm32f407工程/gongxun-f407.uvoptx": {
+      "sha256": "2df48e3df8efe95110fcea3b508b4f57d5d71cc9cdd357339ab1461050111bb1",
+      "unchanged": true
+    },
+    "工创赛/docs/RADAR_F407_PLAN_2026-10-29.md": {
+      "sha256": "b5928cec33dc41921eb292f274b3f17eacb7047a615e6a5f71b01a98ad11ef49",
+      "unchanged": true
+    },
+    "工创赛/scripts/p1_serial_motion.py": {
+      "sha256": "a98cc830e71f060da80eeaa1efcdd72c32c17ff8aea8902a62afb6fec0ee6c4f",
+      "unchanged": true
+    },
+    "工创赛/scripts/vehicle_uart_capture.py": {
+      "sha256": "7c87c2c3b3825aa642a1d642068dea96be7038341004961c22b5b81c96ec700c",
+      "unchanged": true
+    },
+    "底盘定位与路径规划_2026-11-09.md": {
+      "sha256": "581341a2b2570e18e6621c9ab5fc0d41c54c233e46cdaa2fdaa3a6d832352142",
+      "unchanged": true
+    }
+  },
+  "source_format": {
+    "app_config.h": {
+      "sha256": "028d63cde36167ef26257ba64bb36cea7d046e544afd8cc0c5be51f3ce50fab8",
+      "gbk_decodable": true,
+      "crlf_only": true,
+      "non_ascii_bytes_unchanged": true
+    },
+    "chassis_auto_test.c": {
+      "sha256": "6dd245b130521e6ac8f5970c962af4632e981ec4d9ec65cf89032d92507b9909",
+      "gbk_decodable": true,
+      "crlf_only": true,
+      "non_ascii_bytes_unchanged": true
+    }
+  },
+  "frozen": {
+    "build_options.json": "9694405ef2eb9e23b7bf36e18879457ee211733c48401d45fdc4e92957d33c28",
+    "ratio_off.axf": "24c9a31726acfe5f6f2fe78b16488cb6320af5733d55ad39406d9043dd768994",
+    "ratio_off.uvprojx": "4b940d191f3a0dfb6ca5c6149b24053418dd30e77d7a3079e26086634d5248ba",
+    "ratio_on.axf": "ae46ea7f62072dfa5388cda450ae2aaf029bb1b1a42a1dcb9147d42f8add1f28",
+    "ratio_on.uvprojx": "d38eb69ef62b50c554a5f0ab86505aa56dc447311831b4f69cef072757ed434f"
+  },
+  "matlab": {
+    "status": "PASS_PROPORTIONAL_CANDIDATE_ONLY",
+    "mode_order": [
+      "forward",
+      "left",
+      "right",
+      "backward"
+    ],
+    "actual_mean_mm": [
+      2108.3333333333335,
+      2099,
+      2099.6666666666665,
+      2103
+    ],
+    "request_scale": [
+      0.9960474308300394,
+      1.0004764173415912,
+      1.0001587553579934,
+      0.9985734664764622
+    ],
+    "nominal_2100_internal_mm": [
+      2091.699604743083,
+      2101.0004764173414,
+      2100.333386251786,
+      2097.0042796005705
+    ],
+    "checks": 6628,
+    "proportional_assumption": true,
+    "ground_verified": false,
+    "fit_stop_offset": false,
+    "hardware_access": false
+  },
+  "actual_arm_c": {
+    "ratio_on": {
+      "assertions": 213704,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "ratio_off": {
+      "assertions": 213704,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "inactive": {
+      "assertions": 13815,
+      "failed_line": 0,
+      "status": "PASS"
+    }
+  },
+  "whitespace_check": 0,
+  "status": "PASS_LOCAL_CANDIDATE_ONLY",
+  "raw_evidence_whitespace_exceptions": {
+    "preserve_original_bytes": true,
+    "details": [
+      "工创赛/evidence/navigation-planning/2026-11-17/control-distance-ratio/actual-c/unit.c:162: trailing whitespace.",
+      "+return ",
+      "工创赛/evidence/navigation-planning/2026-11-17/control-distance-ratio/attempt1_fixture_include/unit.c:161: trailing whitespace.",
+      "+return ",
+      "工创赛/evidence/navigation-planning/2026-11-17/control-distance-ratio/attempt2_fixture_macro/unit.c:162: trailing whitespace.",
+      "+return ",
+      "工创赛/evidence/navigation-planning/2026-11-17/control-distance-ratio/build.log:74: trailing whitespace.",
+      "+Program Size: Code=112888 RO-data=6656 RW-data=3068 ZI-data=190508  ",
+      "工创赛/evidence/navigation-planning/2026-11-17/control-distance-ratio/build_off.log:74: trailing whitespace.",
+      "+Program Size: Code=111828 RO-data=6656 RW-data=3064 ZI-data=190512  ",
+      "工创赛/evidence/navigation-planning/2026-11-17/control-distance-ratio/matlab.log:5: new blank line at EOF."
+    ],
+    "reason": "Generated ARM fixture and original Keil/MATLAB logs retain tool output, not reformatted after validation."
+  }
+}

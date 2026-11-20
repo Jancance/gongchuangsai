@@ -1,0 +1,90 @@
+{
+  "started_at": "2026-11-17T05:39:16.727427+08:00",
+  "axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\turn90-keepalive3s-build-20261117\\turn90_90_keepalive3s\\Vehicle_Integrated.axf",
+  "axf_sha256": "79e74f1fce55d88027c665cb3b1ae2f53ad38ed3af4abf193c3f78d5c0fa2f0d",
+  "expected_session": 1,
+  "probe_uid": "6afaae24",
+  "symbols": {
+    "g_fusion_capture_b": [
+      268464896,
+      33600
+    ],
+    "g_chassis_auto_active": [
+      536870956,
+      4
+    ],
+    "g_chassis_auto_session": [
+      536870964,
+      4
+    ],
+    "g_chassis_auto_tail_snapshots": [
+      536948412,
+      176
+    ],
+    "g_fusion_capture_a": [
+      536965888,
+      34020
+    ]
+  },
+  "accepted": false,
+  "hardware_accessed": false,
+  "reset_requested": false,
+  "halt_requested": false,
+  "resume_requested": false,
+  "target_memory_writes": 0,
+  "flash_programmed": false,
+  "automatic_retry": false,
+  "error": "USBTimeoutError(10060, 'Operation timed out')",
+  "finished_at": "2026-11-17T05:39:17.936407+08:00"
+}
+Traceback (most recent call last):
+  File "D:\Desktop\工创赛\工创赛\evidence\navigation-planning\2026-11-17\localization-forward210-field-run1\read_capture_once.py", line 211, in <module>
+    main()
+  File "D:\Desktop\工创赛\工创赛\evidence\navigation-planning\2026-11-17\localization-forward210-field-run1\read_capture_once.py", line 184, in main
+    session = Session(probe, options={"target_override": "stm32f407ve",
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Desktop\工创赛\工创赛\tmp\turn_probe_deps\pyocd\core\session.py", line 264, in __init__
+    self._board = probe.create_associated_board() or Board(self)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Desktop\工创赛\工创赛\tmp\turn_probe_deps\pyocd\probe\cmsis_dap_probe.py", line 255, in create_associated_board
+    board_info = self.associated_board_info
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Desktop\工创赛\工创赛\tmp\turn_probe_deps\pyocd\probe\cmsis_dap_probe.py", line 222, in associated_board_info
+    with _TemporaryOpen(self._link):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Desktop\工创赛\工创赛\tmp\turn_probe_deps\pyocd\probe\cmsis_dap_probe.py", line 65, in __enter__
+    self._device.open()
+  File "D:\Desktop\工创赛\工创赛\tmp\turn_probe_deps\pyocd\utility\concurrency.py", line 29, in _locking
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Desktop\工创赛\工创赛\tmp\turn_probe_deps\pyocd\probe\pydapaccess\dap_access_cmsis_dap.py", line 771, in open
+    self._read_protocol_version()
+  File "D:\Desktop\工创赛\工创赛\tmp\turn_probe_deps\pyocd\probe\pydapaccess\dap_access_cmsis_dap.py", line 687, in _read_protocol_version
+    protocol_version_str = self.identify(self.ID.CMSIS_DAP_PROTOCOL_VERSION)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Desktop\工创赛\工创赛\tmp\turn_probe_deps\pyocd\utility\concurrency.py", line 29, in _locking
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Desktop\工创赛\工创赛\tmp\turn_probe_deps\pyocd\probe\pydapaccess\dap_access_cmsis_dap.py", line 901, in identify
+    value = self._protocol.dap_info(item)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Desktop\工创赛\工创赛\tmp\turn_probe_deps\pyocd\probe\pydapaccess\cmsis_dap_core.py", line 185, in dap_info
+    resp = self.interface.read()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Desktop\工创赛\工创赛\scripts\source_stage2_readonly_sync_probe_20261105.py", line 60, in read_sync
+    return bytes(interface.ep_in.read(interface.packet_size, timeout=1000))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Desktop\工创赛\工创赛\tmp\turn_probe_deps\usb\core.py", line 431, in read
+    return self.device.read(self, size_or_buffer, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Desktop\工创赛\工创赛\tmp\turn_probe_deps\usb\core.py", line 1043, in read
+    ret = fn(
+          ^^^
+  File "D:\Desktop\工创赛\工创赛\tmp\turn_probe_deps\usb\backend\libusb1.py", line 850, in bulk_read
+    return self.__read(self.lib.libusb_bulk_transfer,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Desktop\工创赛\工创赛\tmp\turn_probe_deps\usb\backend\libusb1.py", line 958, in __read
+    _check(retval)
+  File "D:\Desktop\工创赛\工创赛\tmp\turn_probe_deps\usb\backend\libusb1.py", line 602, in _check
+    raise USBTimeoutError(_strerror(ret), ret, _libusb_errno[ret])
+usb.core.USBTimeoutError: [Errno 10060] Operation timed out

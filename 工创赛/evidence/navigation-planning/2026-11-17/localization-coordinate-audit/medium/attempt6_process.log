@@ -1,0 +1,7 @@
+{在不同结构体之间进行下标赋值。
+
+出错 audit_localization>loo (line 51)
+train=setdiff(1:numel(ix),j);alpha=mean(b(train));beta=sum(x(train).*b(train))/sum(x(train).^2);f(j)=b(j)-alpha;s(j)=b(j)-beta*x(j);n=n+1;details(n)=struct('held_out_name',rows(ix(j)).name,'direction',names{g},'training_n',numel(train),'training_names',strjoin({rows(ix(train)).name},';'),'fixed_train_mm',alpha,'proportional_train_ratio',beta,'baseline_residual_mm',b(j),'fixed_LOO_residual_mm',f(j),'proportional_LOO_residual_mm',s(j));
+
+出错 audit_localization (line 23)
+rows=[rows{:}];S.runs=rows;writetable(struct2table(rows),fullfile(out,'run_summary.csv'));S.loo=loo(rows,out);S.turns=turns(base,out);writetable(struct2table(S.loo),fullfile(out,'loo_summary.csv'));writetable(struct2table(S.turns),fullfile(out,'turn_summary.csv'));S.status='PASS_DIAGNOSTIC_WITH_LIMITATIONS';} 

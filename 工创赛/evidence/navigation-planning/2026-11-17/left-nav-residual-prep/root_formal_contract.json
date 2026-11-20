@@ -1,0 +1,46 @@
+{
+  "status": "ROOT_FORMAL_SOFTWARE_CONTRACT",
+  "head": "90da438545f0058252162384f6b478f7bee043ca",
+  "user_authorization": [
+    "左移旁偏的经验残差先归入惯性导航",
+    "主要补HWT已解释以外的轮子平移误差",
+    "每同工况3次误差取均值",
+    "就用此前讨论50%候选权重"
+  ],
+  "hardware_paused": true,
+  "HWT_trusted": true,
+  "k_definition": "mean((measured_F-model_full_HWT_F)/raw_positive_L) across three new left210 trials",
+  "k": 0.017905538496259973,
+  "weight": 0.5,
+  "main_gamma_applied": false,
+  "scope_ids": [
+    9,
+    18
+  ],
+  "scope_excluded_19": true,
+  "raw_API_unchanged": "AppOdometry_ReadBaseline40",
+  "new_nav_API": "AppOdometry_ReadNavigation40 same existing struct64B; feature-off raw alias",
+  "nav_consumers": [
+    "g_chassis_odometry telemetry",
+    "ICM wheel anchors via new getter once"
+  ],
+  "raw_consumers_unchanged": [
+    "capture banks",
+    "perimeter records",
+    "forward controller"
+  ],
+  "correction": "raw world XY + ref-front unit * (.5*k*max(net reference-left raw displacement,0))",
+  "ResetRecords": "anchors invalid immediately; retain old correction scope/frame until successful new reference",
+  "manual_failed": "preserve scope/frame, preserve original raw anchor-invalid behavior",
+  "manual_success": "clear scope for explicit new raw pose",
+  "invalid": "project same frozen raw XY with unchanged invalid/reasons/time/heading metadata, never treat previous nav as raw",
+  "single_left_only": true,
+  "product_allowed": [
+    "app_config.h",
+    "app_odometry.c",
+    "app_odometry.h",
+    "app_icm_observer.c"
+  ],
+  "matlab_script_sha256": "3B6358D300CC6A937D13EA38364B2E1204B43F2AFE7CE885FE868EFCC9DB4FD9",
+  "matlab_prior_to_product": true
+}

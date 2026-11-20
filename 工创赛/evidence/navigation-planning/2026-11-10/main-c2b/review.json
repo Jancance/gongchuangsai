@@ -1,0 +1,48 @@
+{
+  "self_review": "passed",
+  "independent_review": "passed current actual targets; independent_review.json",
+  "baseline": "0ba2524bcac3eea5bc5be69f1f3a096e921cede2",
+  "protected_existing_files": 10385,
+  "raw_sha256_unchanged": true,
+  "manifest_digest": "186bd79ff90eb5ee526536ca6b006c9492fcfda4aa9ce11fda6976820adeaa8b",
+  "allowed_existing_files": [
+    "3.stm32f407工程/CHASSIS/USER/main.c",
+    "3.stm32f407工程/gongxun-f407.uvprojx"
+  ],
+  "owner_state_symbols": 13,
+  "stage_inputs": "9 readonly live fields; exact original expression reads and rechecks after prepare/relock",
+  "prepared_scope": "Original ChassisAutoPreparedTranslation remains static inside Step when APP_DISTANCE_SCURVE_ACTIVE, otherwise original stack scope",
+  "existing_inc_files": "Both byte unchanged in this step",
+  "checks": [
+    "4 moved and 65 remaining raw functions restored unchanged",
+    "two actual target preprocessings 146 functions each; assert line metadata shifts -322 only",
+    "1024 actual ARM differential steps,28672 assertions;232 prepare/180 begin/42 live mutation calls counted across old and new",
+    "both actual Keil targets 0 errors 0 warnings",
+    "real Keil file paths verified once per target",
+    "CP936/CRLF preserved; no global Git whitespace config changed"
+  ],
+  "supported_configurations": [
+    "current mode3 Vehicle_Integrated",
+    "current mode3 Vehicle_Offline"
+  ],
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "FIELD-06",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "LOC-03",
+    "LOC-05",
+    "MOT-02",
+    "RUN-06",
+    "SRC-04"
+  ],
+  "hardware_accessed": false,
+  "remaining": [
+    "combined/route owner,serial/telemetry/mission/tasks remaining",
+    "physical RTOS stack/timing and vehicle unverified"
+  ]
+}

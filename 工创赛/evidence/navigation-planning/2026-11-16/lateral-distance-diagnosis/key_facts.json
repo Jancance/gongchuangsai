@@ -1,0 +1,150 @@
+{
+  "lateral-field-run1": {
+    "trigger_ms": 222104,
+    "stop_state_observed_ms": 230188,
+    "terminal_ms": 231266,
+    "stop_to_terminal_ms": 1078,
+    "stop_decision_progress_mm": 2103.606,
+    "later_endpoint_projection_mm": 2116.74217445853,
+    "endpoint_minus_latched_progress_mm": 13.136174458529695,
+    "endpoint_body_forward_mm": 0.1347266563860785,
+    "endpoint_times_ms": [
+      231223,
+      231234,
+      231245,
+      231256
+    ],
+    "peak_heading_error_deg": 1.812,
+    "final_heading_error_deg": -1.192,
+    "first_observed_TM_by_state": {
+      "5": {
+        "tick_ms": 222124,
+        "backend_state": 5,
+        "distance_progress_milli_mm": 0,
+        "distance_base_rpm": 0,
+        "rpm1": 0.0,
+        "rpm2": 0.0,
+        "rpm3": 0.0,
+        "rpm4": 0.0,
+        "yaw_mdeg": -549,
+        "target_mdeg": -549
+      },
+      "6": {
+        "tick_ms": 222224,
+        "backend_state": 6,
+        "distance_progress_milli_mm": 0,
+        "distance_base_rpm": 0,
+        "rpm1": 0.0,
+        "rpm2": 0.0,
+        "rpm3": 0.0,
+        "rpm4": 0.0,
+        "yaw_mdeg": -549,
+        "target_mdeg": -549
+      },
+      "7": null,
+      "8": {
+        "tick_ms": 230230,
+        "backend_state": 8,
+        "distance_progress_milli_mm": 2103606,
+        "distance_base_rpm": 15,
+        "rpm1": 16.0,
+        "rpm2": 21.0,
+        "rpm3": -31.0,
+        "rpm4": -31.0,
+        "yaw_mdeg": 258,
+        "target_mdeg": -549
+      },
+      "9": {
+        "tick_ms": 231336,
+        "backend_state": 9,
+        "distance_progress_milli_mm": 2103606,
+        "distance_base_rpm": 15,
+        "rpm1": 0.0,
+        "rpm2": 0.0,
+        "rpm3": 0.0,
+        "rpm4": 0.0,
+        "yaw_mdeg": 642,
+        "target_mdeg": -549
+      }
+    },
+    "endpoint_interpretation": "Later asynchronously sampled wheel projection; difference includes feedback age and post-decision motion, NOT isolated ground stopping distance",
+    "inputs": {
+      "lateral-field-run1\\result_summary.json": "52b0ac0cb2f27e18b89210a3bfd216da6d4e921d9ff28e60b8932af7967026d3",
+      "lateral-field-run1\\capture\\decoded.json": "fb4c3ca48c1b76dc5ee80a4483ec5a0bd4cb40badf6e329d0d47afc3d01919c7"
+    }
+  },
+  "lateral-field-run2": {
+    "trigger_ms": 38105,
+    "stop_state_observed_ms": 46189,
+    "terminal_ms": 47267,
+    "stop_to_terminal_ms": 1078,
+    "stop_decision_progress_mm": 2104.161,
+    "later_endpoint_projection_mm": 2116.5779186719765,
+    "endpoint_minus_latched_progress_mm": 12.416918671976418,
+    "endpoint_body_forward_mm": -0.05167597779188782,
+    "endpoint_times_ms": [
+      47224,
+      47235,
+      47246,
+      47257
+    ],
+    "peak_heading_error_deg": 1.917,
+    "final_heading_error_deg": -1.906,
+    "first_observed_TM_by_state": {
+      "5": {
+        "tick_ms": 38124,
+        "backend_state": 5,
+        "distance_progress_milli_mm": 0,
+        "distance_base_rpm": 0,
+        "rpm1": 0.0,
+        "rpm2": 0.0,
+        "rpm3": 0.0,
+        "rpm4": 0.0,
+        "yaw_mdeg": 0,
+        "target_mdeg": 0
+      },
+      "6": {
+        "tick_ms": 38225,
+        "backend_state": 6,
+        "distance_progress_milli_mm": 0,
+        "distance_base_rpm": 0,
+        "rpm1": 0.0,
+        "rpm2": 0.0,
+        "rpm3": 0.0,
+        "rpm4": 0.0,
+        "yaw_mdeg": 0,
+        "target_mdeg": 0
+      },
+      "7": null,
+      "8": {
+        "tick_ms": 46233,
+        "backend_state": 8,
+        "distance_progress_milli_mm": 2104161,
+        "distance_base_rpm": 15,
+        "rpm1": 23.0,
+        "rpm2": 17.0,
+        "rpm3": -30.0,
+        "rpm4": -26.0,
+        "yaw_mdeg": 999,
+        "target_mdeg": 0
+      },
+      "9": {
+        "tick_ms": 47334,
+        "backend_state": 9,
+        "distance_progress_milli_mm": 2104161,
+        "distance_base_rpm": 15,
+        "rpm1": 0.0,
+        "rpm2": 0.0,
+        "rpm3": 0.0,
+        "rpm4": 0.0,
+        "yaw_mdeg": 1906,
+        "target_mdeg": 0
+      }
+    },
+    "endpoint_interpretation": "Later asynchronously sampled wheel projection; difference includes feedback age and post-decision motion, NOT isolated ground stopping distance",
+    "inputs": {
+      "lateral-field-run2\\result_summary.json": "966d4ceac2fedc73aa89560bfa766ca500ef2b11ac666304b1184aab6576a009",
+      "lateral-field-run2\\capture\\decoded.json": "b23529d0bdfce763863115cb008635535995677d43e16e60afedee174dafc6ce"
+    }
+  }
+}

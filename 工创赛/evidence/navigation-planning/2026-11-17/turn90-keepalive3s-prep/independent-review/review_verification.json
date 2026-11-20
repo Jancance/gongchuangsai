@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "hardware_accessed": false,
+  "product_files_written": false,
+  "source_sha256": "6a2d57a45cea8b386d20455873de4be817eb08e9d5374c5273c7e80f365a4ee0",
+  "exact_function_slices": 8,
+  "actual_c": {
+    "1": {
+      "status": "PASS",
+      "assertions": 100
+    },
+    "0": {
+      "status": "PASS",
+      "assertions": 101
+    }
+  },
+  "upstream_host_checks": 24,
+  "independent_host_and_preservation_checks": 63,
+  "original_dirty_unchanged": {
+    "3.stm32f407工程/gongxun-f407.uvguix.lenovo": true,
+    "3.stm32f407工程/gongxun-f407.uvoptx": true,
+    "工创赛/docs/RADAR_F407_PLAN_2026-10-29.md": true,
+    "工创赛/scripts/p1_serial_motion.py": true,
+    "工创赛/scripts/vehicle_uart_capture.py": true,
+    "底盘定位与路径规划_2026-11-09.md": true
+  },
+  "old_client_unchanged": true,
+  "build_success": true,
+  "axf_sha256": "79e74f1fce55d88027c665cb3b1ae2f53ad38ed3af4abf193c3f78d5c0fa2f0d",
+  "limits": "Timing/dispatch only. RTOS, physical stop and RF recovery are not proven; one-way no-RX with arriving KEEP can approach 5+3 seconds before board cancellation if STOP is lost."
+}

@@ -18,24 +18,3 @@ void StartupPose_Init(void)
     g_startup_carrier_result=CarrierPwm_Write(pulse)?1U:4U;
 #endif
 }
-
-uint32_t StartupPose_GroupValid(void)
-{
-    return STARTUP_GROUP_GRIPPER_ANGLE_DEG>=0.0f && STARTUP_GROUP_GRIPPER_ANGLE_DEG<=270.0f &&
-           STARTUP_GROUP_CARRIER_ANGLE_DEG>=0.0f && STARTUP_GROUP_CARRIER_ANGLE_DEG<=CARRIER_ANGLE_MAX_DEG &&
-           STARTUP_GROUP_SERVO_SETTLE_MS<=10000U;
-}
-uint32_t StartupPose_GroupCommand(void)
-{
-#if APP_MOTOR_OFFLINE_ONLY
-    return 0U;
-#else
-    uint32_t pulse;
-    if(!StartupPose_GroupValid())return 0U;
-    pulse=CARRIER_PULSE_MIN_US+(uint32_t)(STARTUP_GROUP_CARRIER_ANGLE_DEG*
-        (CARRIER_PULSE_MAX_US-CARRIER_PULSE_MIN_US)/CARRIER_ANGLE_MAX_DEG+0.5f);
-    /* 同角度只维持PWM；发送成功和等待不作为实物到位证据。 */
-    if(jiazhua(STARTUP_GROUP_GRIPPER_ANGLE_DEG)!=1U)return 0U;
-    return CarrierPwm_Write(pulse)?1U:0U;
-#endif
-}

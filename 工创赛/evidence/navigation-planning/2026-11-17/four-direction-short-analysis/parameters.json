@@ -1,0 +1,43 @@
+{
+  "wheel_diameter_mm": 77,
+  "counts_per_rev": 65536,
+  "motor_forward_sign": [
+    1,
+    -1,
+    1,
+    -1
+  ],
+  "forward_scale": 1.0218254,
+  "interval_s": 0.2,
+  "body_map": [
+    [
+      0,
+      -1,
+      0
+    ],
+    [
+      -1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      -1
+    ]
+  ],
+  "accel_scale_m_s2_per_count": 0.001197100830078125,
+  "gyro_scale_deg_s_per_count": 0.030517578125,
+  "source_notes": [
+    "wheel_diameter77: USER/vehicle_parameters.h:60",
+    "motor_signs and65536: CHASSIS/USER/chassis_kinematics.c:11,414-446",
+    "forward scale applies mode0 and3 exactly once: chassis_kinematics.h:113,c:446",
+    "F/LEFT odometry rotation and scale: CHASSIS/USER/chassis_odometry.c:157-166",
+    "ICM axes and accel scale: CHASSIS/USER/app_icm_observer.c:152-166"
+  ],
+  "ground_accuracy_established": false,
+  "new_fusion_model": false,
+  "hardware_access": false,
+  "parameter_fit": false,
+  "source_authority_correction": "Derived uvprojx line769 compiles CHASSIS/USER/chassis_odometry.c. Initially inspected USER copy currently byte-identical, but not active. Shared vehicle_parameters.h truly exists only under USER and is included in project."
+}

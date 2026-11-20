@@ -2,6 +2,12 @@
 #include "boot_ready_link.h"
 #include "stage3_cycle.h"
 #include "region_dispatch.h"
+#include "app_zone2.h"
+#if APP_ZONE2_MISSION_ENABLE
+#include "usart.h"
+#include <stdio.h>
+#include "region_placement_feedback.inc"
+#endif
 static uint32_t RegionDispatch_SharedByte(uint8_t,uint32_t,uint32_t);
 static void RegionDispatch_Telemetry(uint32_t);
 static void RegionDispatch_Service(uint32_t);
@@ -214,10 +220,10 @@ static void Vision_Byte(uint8_t b)
 void Vision_Poll(void)
 {
  uint8_t b,command[3];uint32_t budget=128U,request;
-#if VEHICLE_INTEGRATED_ENABLE
- char task_code[16];uint32_t task_run,task_batch;
- if(VehicleMission_ReadSourceTask(task_code,&task_run,&task_batch))
-  (void)Vision_SetTask(task_code,task_batch,task_run);
+#if APP_ZONE2_MISSION_ENABLE
+ AppZone2Station station;
+ if(AppZone2_StationRead(&station))
+  (void)Vision_SetTask(station.task_code,station.batch,station.ticket);
 #endif
  if(!g_vis_rx_armed){USART6_VisionEnableReceive();g_vis_rx_armed=1U;}
  if(vis_errors_seen!=g_uart6_rx_errors){
@@ -225,12 +231,11 @@ void Vision_Poll(void)
   g_vis_material_valid=g_vis_center_valid=0U;
  }
  while(budget-- && USART6_VisionReadByte(&b)){g_vis_rx_bytes++;
-  if(!BootReady_SharedByte(b,(uint32_t)xTaskGetTickCount(),vis_len!=0U) &&
-     !RegionDispatch_SharedByte(b,(uint32_t)xTaskGetTickCount(),vis_len!=0U) &&
-     !SourceObserver_SharedByte(b,(uint32_t)xTaskGetTickCount(),vis_len!=0U))Vision_Byte(b);}
- BootReady_LinkPoll((uint32_t)xTaskGetTickCount());
+#if APP_ZONE2_MISSION_ENABLE
+  if(RegionPlacement_SharedByte(b,(uint32_t)xTaskGetTickCount(),vis_len!=0U))continue;
+#endif
+  if(!RegionDispatch_SharedByte(b,(uint32_t)xTaskGetTickCount(),vis_len!=0U))Vision_Byte(b);}
  RegionDispatch_Telemetry((uint32_t)xTaskGetTickCount());
- if(g_region_dispatch_area!=3U)(void)SourceObserver_TrySend(USART6_VisionSend);
  if(g_vis_test_push){g_vis_test_push=0U;Vision_Byte((uint8_t)g_vis_test_byte);}
  request=g_vis_command_request;
  if(request){
@@ -712,7 +717,8 @@ void Integration10_Service(void)
  if(g_it_state!=1U){it_auto_service((uint32_t)xTaskGetTickCount());return;}
  g_it_elapsed_ms=now-it_begin;
  if(!it_platform() || g_lift_ruler_cause || g_startup_axes_cause || g_dm_jog_first_fault){it_fail(3U);return;}
- if(g_it_elapsed_ms>=(g_it_action==1U || g_it_action==4U?60000U:15000U)){it_fail(4U);return;}
+ if(!(APP_ZONE2_MISSION_ENABLE && RegionDispatch_WantsService()) &&
+    g_it_elapsed_ms>=(g_it_action==1U || g_it_action==4U?60000U:15000U)){it_fail(4U);return;}
  switch(g_it_action){
  case 1U:case 4U:
   it_service_lift_command(now);break;

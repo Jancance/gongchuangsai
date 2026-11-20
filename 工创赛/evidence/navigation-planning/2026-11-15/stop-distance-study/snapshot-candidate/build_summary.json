@@ -1,0 +1,73 @@
+{
+  "owning_project": "D:\\Desktop\\工创赛\\3.stm32f407工程\\gongxun-f407.uvprojx",
+  "project_sha256": "a22c41ff8e04cf496552e1f147ecad06b9fa7a2bd00a9731d09fdfc3a962c14f",
+  "source_sha256": {
+    "app_odometry.c": "7f1ac1dfd61af209e892fc2fe206f4ef7a486274f1dc4265060dfb5de148eceb",
+    "app_odometry.h": "ca320eb6be63478404e51ed1d477dff63287d336c7d7ca441e56c133f90adf58",
+    "chassis_kinematics.c": "b54a676083a557fd5a1266d34b5c174e48b569fae5dd98ab46e53e18059ee5e0",
+    "chassis_kinematics.h": "6d5028f598e2f743602526c424b9538b12198985ec9e57248acc3097bf5e3333",
+    "chassis_auto_test.c": "ada294ab54d230e1c791a701b99c9007dc3c15ee7711633d63fe9855b4de122b",
+    "app_motion_runtime.c": "2cded70cccf56c9464a0787be6656e81aad5e9a9d9334620d3c5a958b5eef611",
+    "app_serial_runtime.c": "d99860e5266f1e56156f41f88452895aff55d20a35459649ca97f72facdfbca4",
+    "chassis_auto_test.h": "aa431918fb5b111d083647320b7d042ef60fb5d19c05c184c5d101c9882dbefe",
+    "hwt101.c": "060b33d363caa9eed79c916864abb793f19272c37db046fedce154f344df0b39",
+    "hwt101.h": "40f4c4e2254ade99fb096ea89bc3c336bcaf359ab9946c3898f153d787dcc73b"
+  },
+  "hardware_accessed": false,
+  "builds": {
+    "baseline40_integrated": {
+      "returncode": 0,
+      "defines": "APP_BASELINE40_ENABLE=1,VEHICLE_INTEGRATED_ENABLE=0,VEHICLE_STAGE1_ENABLE=0",
+      "command": [
+        "D:/Keil_v5/UV4/UV4.exe",
+        "-r",
+        "D:\\Desktop\\工创赛\\工创赛\\tmp\\tail-snapshot-build-20261115\\baseline40_integrated.uvprojx",
+        "-t",
+        "Vehicle_Integrated",
+        "-o",
+        "D:\\Desktop\\工创赛\\工创赛\\evidence\\navigation-planning\\2026-11-15\\stop-distance-study\\snapshot-candidate\\baseline40_integrated.log"
+      ],
+      "project_copy_sha256": "7a530e6eba9507e7dd0515d82b4340c8dd1834ab434a8a83799f3b0e4c0edd41",
+      "log_sha256": "07cc74fcfb54c95a477e01fae3feec7791121dc2ad11584727f8302b5930cebf",
+      "program_size": "Program Size: Code=102676 RO-data=6572 RW-data=2952 ZI-data=119196  \r",
+      "axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\tail-snapshot-build-20261115\\baseline40_integrated\\Vehicle_Integrated.axf",
+      "axf_sha256": "5e803d0def9e33155752d4ceec71b9ca93ab903311407185d5d7af3c4880a185"
+    },
+    "baseline40_offline": {
+      "returncode": 0,
+      "defines": "APP_BASELINE40_ENABLE=1,VEHICLE_INTEGRATED_ENABLE=0,VEHICLE_STAGE1_ENABLE=0",
+      "command": [
+        "D:/Keil_v5/UV4/UV4.exe",
+        "-r",
+        "D:\\Desktop\\工创赛\\工创赛\\tmp\\tail-snapshot-build-20261115\\baseline40_offline.uvprojx",
+        "-t",
+        "Vehicle_Offline",
+        "-o",
+        "D:\\Desktop\\工创赛\\工创赛\\evidence\\navigation-planning\\2026-11-15\\stop-distance-study\\snapshot-candidate\\baseline40_offline.log"
+      ],
+      "project_copy_sha256": "458b691a19a5341257b84fbfe349100d5988e9751077cbba34b0eb1406013194",
+      "log_sha256": "09ab417845222c592f3a0c3c9f1fdad54345c052cce041cb8b124aa2ac7fce1f",
+      "program_size": "Program Size: Code=102028 RO-data=6564 RW-data=2760 ZI-data=119196  \r",
+      "axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\tail-snapshot-build-20261115\\baseline40_offline\\Vehicle_Offline.axf",
+      "axf_sha256": "4099e742ec2e243122770ec25ea8acd97aeb8e9ed0f1718898adf68d1b02bb24"
+    },
+    "baseline_off_integrated": {
+      "returncode": 0,
+      "defines": "",
+      "command": [
+        "D:/Keil_v5/UV4/UV4.exe",
+        "-r",
+        "D:\\Desktop\\工创赛\\工创赛\\tmp\\tail-snapshot-build-20261115\\baseline_off_integrated.uvprojx",
+        "-t",
+        "Vehicle_Integrated",
+        "-o",
+        "D:\\Desktop\\工创赛\\工创赛\\evidence\\navigation-planning\\2026-11-15\\stop-distance-study\\snapshot-candidate\\baseline_off_integrated.log"
+      ],
+      "project_copy_sha256": "9baec4c56b9eccbe244ecc756ee4dfbf829a5a6c4237caa446a9149fcc95afe1",
+      "log_sha256": "7add9a706ac79fe3bf234d5b055c0795d51db4ea9a9dd1e014a988cdc83e2679",
+      "program_size": "Program Size: Code=11974 RO-data=470 RW-data=960 ZI-data=25576  \r",
+      "axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\tail-snapshot-build-20261115\\baseline_off_integrated\\Vehicle_Integrated.axf",
+      "axf_sha256": "b1bf3107694fb57c5e7099aa4d9fd98b1209a307a7ac626730513d6a20601017"
+    }
+  }
+}

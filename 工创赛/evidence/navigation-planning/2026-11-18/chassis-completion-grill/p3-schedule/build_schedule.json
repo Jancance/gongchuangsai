@@ -1,0 +1,33 @@
+{
+  "base": "34ac06051450fa14177ea91d5d0d9034ccd5d135",
+  "defines": [
+    "ICM45686_SAMPLE_ONLY=0",
+    "APP_CONTINUOUS_MAP_ENABLE=1",
+    "APP_MAP_NAV_RESIDUAL_ENABLE=1"
+  ],
+  "inputs_sha256": {
+    "3.stm32f407工程/CHASSIS/USER/zone2_nav_schedule.c": "9442fef2294fbcceecaafef2c5043ac2f1ecef6dda9d8f1c064c641c3a6339f1",
+    "3.stm32f407工程/CHASSIS/USER/zone2_nav_schedule.h": "f44e8f214dc4d6ea267e66e89239edafe1624af7d2e56d756117d9883578c6dc",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "00c89f79244cd449a0d7b04a4821acad4e2ae34af6d8ca4c82030bcda283df2f"
+  },
+  "targets": {
+    "Vehicle_Integrated": {
+      "passed": true,
+      "exit_code": 0,
+      "compiled": {
+        "zone2_nav_schedule.c": true,
+        "chassis_auto_test.c": true,
+        "radar_observer.c": true
+      }
+    },
+    "Vehicle_Offline": {
+      "passed": true,
+      "exit_code": 0,
+      "compiled": {
+        "zone2_nav_schedule.c": true,
+        "chassis_auto_test.c": true,
+        "radar_observer.c": true
+      }
+    }
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "status": "PASS_SAVED_EVIDENCE_AND_NUMERIC_CROSSCHECK",
+  "review_role": "root separate NumPy formula crosscheck; not completed new GPT-6.1 high agent review",
+  "frozen_candidate_sha256": "847956d477d463919ffc1b8b0ed618f1afd821b85a2a3eb74c315b5c7a5089a6",
+  "numpy_vs_MATLAB_max_mm": 3.637978807091713e-12,
+  "runs": [
+    {
+      "run": 1,
+      "ground_left_mm": 1499,
+      "ground_forward_mm": -7.5,
+      "baseline_left_mm": 1513.3960587861588,
+      "baseline_forward_mm": -31.267558716654833,
+      "corrected_left_mm": 1503.5942432614884,
+      "corrected_forward_mm": -3.2578815349344517,
+      "baseline_main_apparent_error_mm": 14.396058786158846,
+      "corrected_main_apparent_error_mm": 4.594243261488373,
+      "baseline_cross_apparent_error_mm": -23.767558716654833,
+      "corrected_cross_apparent_error_mm": 4.242118465065548,
+      "cross_worsened": false,
+      "raw_count": 1758,
+      "TX": {
+        "PLAN18": 1,
+        "ARM": 1,
+        "START": 1,
+        "KEEP": 38
+      },
+      "common_end_s": 7.74,
+      "terminal_gap_s": 0.04699999999999971,
+      "IO1_legal": 32,
+      "IO1_bad": 0,
+      "IO1_valid": 8,
+      "IO1_final_valid": false,
+      "shared_wheel_not_independent_ground": true,
+      "coefficients_refit": false,
+      "ground_time_aligned": false
+    },
+    {
+      "run": 2,
+      "ground_left_mm": 1504,
+      "ground_forward_mm": -6.25,
+      "baseline_left_mm": 1514.550892897413,
+      "baseline_forward_mm": -30.00821000004153,
+      "corrected_left_mm": 1504.7415978561585,
+      "corrected_forward_mm": -1.9771593447569238,
+      "baseline_main_apparent_error_mm": 10.55089289741295,
+      "corrected_main_apparent_error_mm": 0.741597856158478,
+      "baseline_cross_apparent_error_mm": -23.75821000004153,
+      "corrected_cross_apparent_error_mm": 4.272840655243076,
+      "cross_worsened": false,
+      "raw_count": 1766,
+      "TX": {
+        "PLAN18": 1,
+        "ARM": 1,
+        "START": 1,
+        "KEEP": 39
+      },
+      "common_end_s": 7.785,
+      "terminal_gap_s": 0.04600000000000026,
+      "IO1_legal": 23,
+      "IO1_bad": 0,
+      "IO1_valid": 0,
+      "IO1_final_valid": false,
+      "shared_wheel_not_independent_ground": true,
+      "coefficients_refit": false,
+      "ground_time_aligned": false
+    },
+    {
+      "run": 3,
+      "ground_left_mm": 1505,
+      "ground_forward_mm": -17.5,
+      "baseline_left_mm": 1514.128817718501,
+      "baseline_forward_mm": -30.154398723155982,
+      "corrected_left_mm": 1504.32225633247,
+      "corrected_forward_mm": -2.131159763586524,
+      "baseline_main_apparent_error_mm": 9.128817718501068,
+      "corrected_main_apparent_error_mm": -0.6777436675299668,
+      "baseline_cross_apparent_error_mm": -12.654398723155982,
+      "corrected_cross_apparent_error_mm": 15.368840236413476,
+      "cross_worsened": true,
+      "raw_count": 1766,
+      "TX": {
+        "PLAN18": 1,
+        "ARM": 1,
+        "START": 1,
+        "KEEP": 39
+      },
+      "common_end_s": 7.795,
+      "terminal_gap_s": 0.036000000000000476,
+      "IO1_legal": 23,
+      "IO1_bad": 0,
+      "IO1_valid": 0,
+      "IO1_final_valid": false,
+      "shared_wheel_not_independent_ground": true,
+      "coefficients_refit": false,
+      "ground_time_aligned": false
+    }
+  ],
+  "metrics": {
+    "baseline_main_apparent_error_mm": 11.358589800690956,
+    "corrected_main_apparent_error_mm": 2.0045282617256057,
+    "baseline_cross_apparent_error_mm": 20.060055813284112,
+    "corrected_cross_apparent_error_mm": 7.9612664522407
+  },
+  "cross_worsened_runs": [
+    3
+  ],
+  "new_measurements_used_for_training": false,
+  "new_compensation_deployed": false,
+  "hardware_access": false
+}

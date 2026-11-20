@@ -1,0 +1,50 @@
+{
+  "started_at": "2026-11-16T23:23:43.308564+08:00",
+  "axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\all-directions-short-build-20261116\\all_directions_short40\\Vehicle_Integrated.axf",
+  "axf_sha256": "6b4c42de810137e39ddfe999800b4b96581790efcf4024daeec29f1262de7095",
+  "expected_session": 1,
+  "probe_uid": "6afaae24",
+  "symbols": {
+    "g_fusion_capture_b": [
+      268464896,
+      33600
+    ],
+    "g_chassis_auto_active": [
+      536871092,
+      4
+    ],
+    "g_chassis_auto_session": [
+      536871100,
+      4
+    ],
+    "g_chassis_auto_tail_snapshots": [
+      536948504,
+      176
+    ],
+    "g_fusion_capture_a": [
+      536965888,
+      34020
+    ]
+  },
+  "accepted": false,
+  "hardware_accessed": true,
+  "reset_requested": false,
+  "halt_requested": false,
+  "resume_requested": false,
+  "target_memory_writes": 0,
+  "flash_programmed": false,
+  "automatic_retry": false,
+  "error": "ValueError('Capture not frozen or header session mismatch')",
+  "finished_at": "2026-11-16T23:23:44.397427+08:00"
+}
+Traceback (most recent call last):
+  File "D:\Desktop\工创赛\工创赛\evidence\navigation-planning\2026-11-16\forward150_40-field-run1\read_capture_once.py", line 211, in <module>
+    main()
+  File "D:\Desktop\工创赛\工创赛\evidence\navigation-planning\2026-11-16\forward150_40-field-run1\read_capture_once.py", line 190, in main
+    result = acquire(session.target, symbols, flash, args.expected_session,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Desktop\工创赛\工创赛\evidence\navigation-planning\2026-11-16\forward150_40-field-run1\read_capture_once.py", line 115, in acquire
+    require(h["frozen"] and h["session"] == expected_session,
+  File "D:\Desktop\工创赛\工创赛\evidence\navigation-planning\2026-11-16\forward150_40-field-run1\read_capture_once.py", line 25, in require
+    raise ValueError(message)
+ValueError: Capture not frozen or header session mismatch

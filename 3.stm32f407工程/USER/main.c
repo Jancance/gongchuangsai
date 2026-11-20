@@ -2203,6 +2203,8 @@ int main(void){
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
     /* 调度启动前初始化状态灯 */
     LED_Init();
+    /* 调度前初始化蜂鸣器，保持关闭 */
+    Buzzer_Init();
     /* 初始化调试串口，本轮仅发送 */
     USART1_Config();
     /* 调度前初始化启动按键 */
@@ -2216,8 +2218,6 @@ int main(void){
     Safety_Init();
     SAOMA_Init();
     HWT101_Init();
-    /* 调度前初始化蜂鸣器，保持关闭 */
-    Buzzer_Init();
     g_watchdog_init_result = Watchdog_Init();
     configASSERT(g_watchdog_init_result == 1U);
     

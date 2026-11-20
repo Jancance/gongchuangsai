@@ -1,0 +1,97 @@
+{
+  "read_only": true,
+  "reset": false,
+  "halt": false,
+  "resume": false,
+  "target_memory_writes": 0,
+  "USART_DR_read": false,
+  "missing_symbols": [],
+  "symbols": {
+    "s_serial_keepalive_ms": [
+      536871296,
+      4
+    ],
+    "s_serial_tx_seq": [
+      536871300,
+      4
+    ],
+    "s_serial_dropped": [
+      536871304,
+      4
+    ],
+    "s_vm_command_active": [
+      268436836,
+      4
+    ],
+    "s_vm_enable_seen": [
+      268436840,
+      4
+    ],
+    "s_vm_enable_tick": [
+      268436844,
+      4
+    ],
+    "s_vm_enable_count": [
+      268436848,
+      4
+    ],
+    "g_tx_length": [
+      268436860,
+      2
+    ],
+    "g_tx_position": [
+      268436862,
+      2
+    ],
+    "xTickCount": [
+      536872160,
+      4
+    ],
+    "g_vm_test_request": [
+      268435456,
+      4
+    ],
+    "g_test_count_a": [
+      268435460,
+      4
+    ],
+    "g_test_tick": [
+      268435468,
+      4
+    ],
+    "g_serial_rx_count": [
+      268435488,
+      4
+    ],
+    "g_can_task_count": [
+      268435528,
+      4
+    ],
+    "g_heading_power_wait_state": [
+      268436032,
+      4
+    ],
+    "g_heading_power_on_age_ms": [
+      268436036,
+      4
+    ],
+    "g_heading_power_post_settle_mask": [
+      268436040,
+      4
+    ],
+    "g_uart1_rx_errors": [
+      268436868,
+      4
+    ],
+    "g_safety_count": [
+      536871928,
+      4
+    ]
+  },
+  "snapshots": [],
+  "status": "FAILED_BEFORE_TARGET_ATTACHMENT",
+  "error": "USBTimeoutError Errno10060 during DAPInfo in Session construction",
+  "target_attached": false,
+  "target_memory_read": false,
+  "valid_hardware_snapshot": false
+}

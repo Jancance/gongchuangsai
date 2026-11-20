@@ -1,0 +1,113 @@
+{
+  "status": "PASS_WITH_MEASUREMENT_LIMITS",
+  "read_only_review": true,
+  "review_hardware_accessed": false,
+  "plan_id": 20,
+  "direction": "CCW",
+  "image_sha256": "79e74f1fce55d88027c665cb3b1ae2f53ad38ed3af4abf193c3f78d5c0fa2f0d",
+  "commands": {
+    "PLAN20": 1,
+    "ARM": 1,
+    "START": 1,
+    "KEEP": 26
+  },
+  "fault_maxima": {
+    "trip": 0,
+    "can_fault": 0,
+    "rtos_fault": 0,
+    "safety_fault": 0,
+    "link_lost": 0,
+    "remote_rejected": 0,
+    "uart_rx_errors": 0
+  },
+  "measurement": {
+    "initial_stationary_HWT_deg": -13.6944580078125,
+    "target_from_initial_deg": 76.3055419921875,
+    "raw_final_HWT_deg": 76.09130859375,
+    "raw_relative_angle_deg": 89.7857666015625,
+    "raw_remaining_to_90_deg": 0.2142333984375,
+    "twenty_second_tail_final_serial_yaw_deg": 76.091,
+    "tail_final_relative_angle_deg": 89.78545800781251,
+    "tail_final_remaining_to_90_deg": 0.21454199218749181,
+    "reference_peak_deg_s": 90,
+    "retained_HWT_peak_abs_deg_s": 92.041015625,
+    "peak_vs_reference_pct": 2.267795138888884,
+    "peak_rate_source_ms": 7510,
+    "peak_observed_ms": 7526,
+    "positive_overshoot_observed_deg": 0,
+    "max_signed_error_using_serial_target_deg": -0.21369140625000682,
+    "first_motion_rate_source_ms": 6770,
+    "paired_snapshot_stable700_observed_ms": 10326,
+    "motion_to_paired_stable_observation_s": 3.551,
+    "software_first_DONE_receiver_ms": 11452,
+    "software_motion_elapsed_ms": 6526,
+    "control_frozen_error_mdeg": 241,
+    "current_serial_yaw_minus_serial_target_deg": -0.21399999999999864
+  },
+  "tail": {
+    "frames": 200,
+    "device_span_ms": 19940,
+    "host_span_s": 19.953999999997905,
+    "yaw_range_deg": 0.006,
+    "net_yaw_change_deg": 0.0,
+    "max_abs_HWT_rate_deg_s": 0.061,
+    "angle_age_range_ms": [
+      1,
+      11
+    ],
+    "stopped_backend_and_mask15_all_frames": true
+  },
+  "sampling": {
+    "HWT_retained_count": 108,
+    "angle_age_range_ms": [
+      5,
+      26
+    ],
+    "rate_age_range_ms": [
+      5,
+      26
+    ],
+    "angle_minus_rate_ms_counts": {
+      "1": 48,
+      "0": 45,
+      "-19": 15
+    },
+    "angle_source_step_range_ms": [
+      39,
+      61
+    ],
+    "serial_bad_frames": 0,
+    "serial_sequence_gaps": 6,
+    "serial_dropped_start": 2,
+    "serial_dropped_end": 8,
+    "CAN_min_observed_stack_free_words": 109
+  },
+  "RAW_integrity": {
+    "stable_double_read": true,
+    "bank_a_sha256": "62d20fa6bef5b031ff84ef300c900987bc1196a362055b12c6e7c0d3e281cb6d",
+    "bank_b_sha256": "ad03e33680bbf29ae803eb27788ef41f50221163329afb54502b9e985ce2ee9d",
+    "sample_count": 1173,
+    "service_delta_ms_counts": {
+      "5": 1130,
+      "6": 21,
+      "4": 21
+    },
+    "edge_deltas_all_one": true,
+    "header_quality": 0,
+    "source_drops": 0,
+    "source_errors_races_skips": 0,
+    "terminal_tail_completed": true
+  },
+  "reportable_scope": "One separately authorized single relative turn; software DONE + HWT internal heading/rate observations, not external ground calibration.",
+  "limitations": [
+    "相对角直接由本趟运动前静止HWT样本与末航向复算，不以目标倒推起始角。",
+    "有限HWT留存快照中未见越目标，不证明采样间隙内绝无越目标。",
+    "现有capture_max_overshoot为最大有符号目标误差，负值表示仍欠目标，正超调应取max(0,该值)。",
+    "稳定700ms为约20Hz留存角/率配对快照证据；角与角速度时间戳不完全同步，不能据此给出连续时间的精确停稳时刻。",
+    "末TMQ error_mdeg是控制器停止前冻结值；末误差须用新鲜yaw-target复算。",
+    "成功尾约20秒有新鲜HWT且航向稳定；末PM1轮位置/轮速是停止后的缓存，不能声称20秒四轮反馈持续新鲜。",
+    "HWT内部航向闭环/编码器停止确认不能证明地面绝对直角、转心不平移或真实机械完全静止。",
+    "独立前进补偿tail块为全零/未采集属非前进计划诊断，不等同RAW采集失败。",
+    "本次成功不证明外部无线中断根因已修复，也不建立重复精度。"
+  ]
+}

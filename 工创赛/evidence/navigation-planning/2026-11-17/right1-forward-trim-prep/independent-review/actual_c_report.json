@@ -1,0 +1,61 @@
+{
+  "status": "PASS_ACTUAL_C_ARITHMETIC_AND_EXTRACTED_GATE",
+  "results": [
+    {
+      "enabled": 0,
+      "passed": true,
+      "assertions": 1018205,
+      "failure_line": null,
+      "command_cases": 42127,
+      "gate_cases": 6440,
+      "gate_enabled": 0,
+      "old_generic_checksum": 2467659381,
+      "max_wheel_error_rpm": 0.05001068115234375,
+      "max_component_error_F_L_H_rpm": [
+        0.040001749992370605,
+        0.0500030517578125,
+        0.049003005027770996
+      ],
+      "max_wheel_rpm": 105.0
+    },
+    {
+      "enabled": 1,
+      "passed": true,
+      "assertions": 1018205,
+      "failure_line": null,
+      "command_cases": 42127,
+      "gate_cases": 6440,
+      "gate_enabled": 3,
+      "old_generic_checksum": 2467659381,
+      "max_wheel_error_rpm": 0.05001068115234375,
+      "max_component_error_F_L_H_rpm": [
+        0.040001749992370605,
+        0.0500030517578125,
+        0.049003005027770996
+      ],
+      "max_wheel_rpm": 105.0
+    }
+  ],
+  "source_sha256": {
+    "3.stm32f407工程\\CHASSIS\\USER\\chassis_kinematics.c": "9f009f558c6c82607dda9319e8abba96c2b3536343a91d3ffaef5dc2073f76aa",
+    "3.stm32f407工程\\CHASSIS\\USER\\chassis_kinematics.h": "7a6f763a665691b0b7db04efdcd4fa014b1bb31438d810acaf05300a90e9ce89",
+    "3.stm32f407工程\\CHASSIS\\USER\\app_config.h": "6eb8534458f8afe7e7f23ff7464e0d4c8a6fb113dfee50301f3d6ff0ac76cf5e",
+    "3.stm32f407工程\\CHASSIS\\USER\\motion_trial40.h": "aaf77f81f2997b208cd596b7a98644fad4b7b54e11acf522c5995b8a45392625",
+    "3.stm32f407工程\\CHASSIS\\USER\\chassis_auto_test.c": "29eb62638f58d0f7bcc2e9690660a4238050f9b63743964ce0657c11d9cff8c9",
+    "3.stm32f407工程\\CHASSIS\\USER\\app_entry.c": "755a02b5df2b4198896276f48d75cc5bf6206db877d3c94a712ab3e280b63f8d",
+    "3.stm32f407工程\\CHASSIS\\USER\\app_entry.h": "92b494d3ad8adec8c4ee985e708e105962e382f3a1059a2ee19408168835b542",
+    "3.stm32f407工程\\CHASSIS\\USER\\chassis_odometry.c": "963f5a4b58d22df734f7fe8061a408423e90936b8e4931b0e46a25d66f59e17a",
+    "3.stm32f407工程\\CHASSIS\\USER\\app_icm_observer.c": "ef3c62a442fc7b893736cc6ec7da8bf6d7d1d6dd6e20ff50d2c7d24098dff163"
+  },
+  "runtime_gate_text": "((g_debug_plan_id==DEBUG_PLAN_RIGHT210_40 || g_debug_plan_id==DEBUG_PLAN_RIGHT150_40 || g_debug_plan_id==DEBUG_PLAN_RIGHT30_40) &&\r\n                s_translation_mode==2U && !s_route_trial &&\r\n                AppDebugPlan40Allowed(g_debug_plan_id,s_translation_mode,s_distance_max_rpm,s_distance_target_mm))",
+  "runtime_gate_sha256": "f94abe5cba86162de1068c8bc42672cc5a03224b4726fec54e310bfb07005b74",
+  "entry_function_text": "uint32_t AppDebugPlan40Allowed(uint32_t id,uint32_t direction,uint32_t rpm,float mm)\r\n{\r\n    return MotionTrial40Allowed(direction,rpm,mm) &&\r\n        ((((id==DEBUG_PLAN_FORWARD210_40 && direction==0U) ||\r\n           (id==DEBUG_PLAN_LEFT210_40 && direction==1U) ||\r\n           (id==DEBUG_PLAN_RIGHT210_40 && direction==2U) ||\r\n           (id==DEBUG_PLAN_BACKWARD210_40 && direction==3U)) && mm==APP_BASELINE40_MM) ||\r\n         (id==DEBUG_PLAN_RIGHT150_40 && direction==2U && mm==1500.0f) ||\r\n         (id==DEBUG_PLAN_RIGHT30_40 && direction==2U && mm==300.0f) ||\r\n         (id==DEBUG_PLAN_FORWARD150_40 && direction==0U && mm==1500.0f) ||\r\n         (id==DEBUG_PLAN_FORWARD30_40 && direction==0U && mm==300.0f) ||\r\n         (id==DEBUG_PLAN_BACKWARD150_40 && direction==3U && mm==1500.0f) ||\r\n         (id==DEBUG_PLAN_BACKWARD30_40 && direction==3U && mm==300.0f) ||\r\n         (id==DEBUG_PLAN_LEFT150_40 && direction==1U && mm==1500.0f) ||\r\n         (id==DEBUG_PLAN_LEFT30_40 && direction==1U && mm==300.0f));\r\n}",
+  "entry_function_sha256": "3a1541cc7ffee41825d9aef0a35b7b3588c72222d0cfa33f121ca60c8ea5743a",
+  "negative_compile_guards": [
+    "flag2",
+    "nonbaseline"
+  ],
+  "hardware_accessed": false,
+  "product_modified": false,
+  "limits": "Actual full kinematics and motion_trial40 headers run offline. AppDebugPlan40Allowed and runtime gate are extracted verbatim, not model replacements. Full app_entry compile failed on existing empty route initializer; first failure saved. No full RTOS/CAN/STOP execution, dynamics or physical acceptance."
+}

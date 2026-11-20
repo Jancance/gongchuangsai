@@ -1,0 +1,100 @@
+diff --git a/3.stm32f407工程/CHASSIS/USER/app_config.h b/3.stm32f407工程/CHASSIS/USER/app_config.h
+index 59d5422a..8d03da3a 100644
+--- a/3.stm32f407工程/CHASSIS/USER/app_config.h
++++ b/3.stm32f407工程/CHASSIS/USER/app_config.h
+@@ -46,6 +46,16 @@
+ #error Left40_drift_trim_enable_invalid
+ #endif
+ #define APP_LEFT40_DRIFT_RATIO 0.02f
++#ifndef APP_RIGHT40_FORWARD_TRIM_ENABLE
++#define APP_RIGHT40_FORWARD_TRIM_ENABLE 0U
++#endif
++#if APP_RIGHT40_FORWARD_TRIM_ENABLE > 1U
++#error Right40_forward_trim_enable_invalid
++#endif
++#if APP_RIGHT40_FORWARD_TRIM_ENABLE && !APP_BASELINE40_ACTIVE
++#error Right40_forward_trim_requires_baseline40_debug
++#endif
++#define APP_RIGHT40_FORWARD_RATIO 0.01f
+ #define APP_BASELINE40_MM 2100.0f
+ #define APP_BASELINE40_MM_S 400.0f
+ #define APP_BASELINE40_ACCEL_MM_S2 150.0f
+diff --git a/3.stm32f407工程/CHASSIS/USER/chassis_auto_test.c b/3.stm32f407工程/CHASSIS/USER/chassis_auto_test.c
+index 34377679..d27003c2 100644
+--- a/3.stm32f407工程/CHASSIS/USER/chassis_auto_test.c
++++ b/3.stm32f407工程/CHASSIS/USER/chassis_auto_test.c
+@@ -1420,6 +1420,12 @@ void ChassisAuto_CanStep(void)
+         if (((s_forward_hold == 1U) ?
+ #if APP_DISTANCE_SCURVE_ACTIVE
+             (s_profile_active ? (
++#if APP_BASELINE40_ACTIVE && APP_RIGHT40_FORWARD_TRIM_ENABLE
++                ((g_debug_plan_id==DEBUG_PLAN_RIGHT210_40 || g_debug_plan_id==DEBUG_PLAN_RIGHT150_40 || g_debug_plan_id==DEBUG_PLAN_RIGHT30_40) &&
++                s_translation_mode==2U && !s_route_trial &&
++                AppDebugPlan40Allowed(g_debug_plan_id,s_translation_mode,s_distance_max_rpm,s_distance_target_mm)) ?
++                Chassis_Right40ForwardCommands(s_translation_base_rpm,effective_heading,s_commands[2]) :
++#endif
+ #if APP_BASELINE40_ACTIVE && APP_LEFT40_DRIFT_TRIM_ENABLE
+                 ((g_debug_plan_id==DEBUG_PLAN_LEFT210_40 || g_debug_plan_id==DEBUG_PLAN_LEFT150_40 || g_debug_plan_id==DEBUG_PLAN_LEFT30_40) &&
+                 s_translation_mode==1U && !s_route_trial &&
+diff --git a/3.stm32f407工程/CHASSIS/USER/chassis_kinematics.c b/3.stm32f407工程/CHASSIS/USER/chassis_kinematics.c
+index cfee7d78..0261fb61 100644
+--- a/3.stm32f407工程/CHASSIS/USER/chassis_kinematics.c
++++ b/3.stm32f407工程/CHASSIS/USER/chassis_kinematics.c
+@@ -283,6 +283,18 @@ uint32_t Chassis_Left40DriftCommands(uint32_t base_rpm,float correction_rpm,
+     logical.rpm[2]=-b-t-h;logical.rpm[3]=b-t+h;
+     return Chassis_EncodeEmm(&logical,APP_BASELINE40_LEFT_RPM+6U,commands);
+ }
++uint32_t Chassis_Right40ForwardCommands(uint32_t base_rpm,float correction_rpm,
++    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
++{
++    ChassisWheelSpeeds logical;float h,b,t;
++    Chassis_ClearMotorCommands(commands);
++    if (!commands || base_rpm>APP_BASELINE40_LEFT_RPM ||
++        !Chassis_ProfileCorrectionRpm(base_rpm,correction_rpm,&h)) return 0U;
++    b=(float)base_rpm;t=APP_RIGHT40_FORWARD_RATIO*b;
++    logical.rpm[0]=-b+t-h;logical.rpm[1]=b+t+h;
++    logical.rpm[2]=b+t-h;logical.rpm[3]=-b+t+h;
++    return Chassis_EncodeEmm(&logical,APP_BASELINE40_LEFT_RPM+4U,commands);
++}
+ uint32_t Chassis_Baseline40Budget(uint32_t base_rpm, float heading_rpm,
+     int32_t *heading_deci, int32_t *lateral_limit_deci, float *mm_s_per_deci)
+ {
+diff --git a/3.stm32f407工程/CHASSIS/USER/chassis_kinematics.h b/3.stm32f407工程/CHASSIS/USER/chassis_kinematics.h
+index 3f36beff..02847eda 100644
+--- a/3.stm32f407工程/CHASSIS/USER/chassis_kinematics.h
++++ b/3.stm32f407工程/CHASSIS/USER/chassis_kinematics.h
+@@ -83,6 +83,8 @@ uint32_t Chassis_TranslationProfileCommands(uint32_t mode, uint32_t base_rpm,
+ #if APP_BASELINE40_ACTIVE
+ uint32_t Chassis_Left40DriftCommands(uint32_t base_rpm,float correction_rpm,
+     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
++uint32_t Chassis_Right40ForwardCommands(uint32_t base_rpm,float correction_rpm,
++    ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+ /* PLAN8-only budget/mix: integer 0.1RPM, heading first, no forward scaling. */
+ uint32_t Chassis_Baseline40Budget(uint32_t base_rpm, float heading_rpm,
+     int32_t *heading_deci, int32_t *lateral_limit_deci, float *mm_s_per_deci);
+diff --git a/3.stm32f407工程/CHASSIS/USER/motion_trial40.h b/3.stm32f407工程/CHASSIS/USER/motion_trial40.h
+index f1f8b681..041f5b29 100644
+--- a/3.stm32f407工程/CHASSIS/USER/motion_trial40.h
++++ b/3.stm32f407工程/CHASSIS/USER/motion_trial40.h
+@@ -13,6 +13,10 @@ static __inline float MotionDistanceAcceleration(uint32_t direction,uint32_t rpm
+ #if APP_LEFT40_DRIFT_TRIM_ENABLE
+     if (direction==1U && rpm==APP_BASELINE40_LEFT_RPM &&
+         MotionTrial40Allowed(direction,rpm,mm)) return APP_BASELINE40_ACCEL_MM_S2/(1.0f+APP_LEFT40_DRIFT_RATIO);
++#endif
++#if APP_RIGHT40_FORWARD_TRIM_ENABLE
++    if (direction==2U && rpm==APP_BASELINE40_LEFT_RPM &&
++        MotionTrial40Allowed(direction,rpm,mm)) return APP_BASELINE40_ACCEL_MM_S2/(1.0f+APP_RIGHT40_FORWARD_RATIO);
+ #endif
+     return MotionTrial40Allowed(direction,rpm,mm) ? APP_BASELINE40_ACCEL_MM_S2 : APP_DISTANCE_SCURVE_ACCEL_MM_S2;
+ }
+@@ -21,6 +25,10 @@ static __inline float MotionDistanceJerk(uint32_t direction,uint32_t rpm,float m
+ #if APP_LEFT40_DRIFT_TRIM_ENABLE
+     if (direction==1U && rpm==APP_BASELINE40_LEFT_RPM &&
+         MotionTrial40Allowed(direction,rpm,mm)) return APP_BASELINE40_JERK_MM_S3/(1.0f+APP_LEFT40_DRIFT_RATIO);
++#endif
++#if APP_RIGHT40_FORWARD_TRIM_ENABLE
++    if (direction==2U && rpm==APP_BASELINE40_LEFT_RPM &&
++        MotionTrial40Allowed(direction,rpm,mm)) return APP_BASELINE40_JERK_MM_S3/(1.0f+APP_RIGHT40_FORWARD_RATIO);
+ #endif
+     return MotionTrial40Allowed(direction,rpm,mm) ? APP_BASELINE40_JERK_MM_S3 : APP_DISTANCE_SCURVE_JERK_MM_S3;
+ }

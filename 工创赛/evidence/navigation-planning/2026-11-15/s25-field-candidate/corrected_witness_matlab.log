@@ -1,0 +1,26 @@
+The following file can't be accessed C:\Users\lenovo\AppData\Roaming\MathWorks\MATLAB\R2020a\migratePref.txt
+java.io.FileNotFoundException: C:\Users\lenovo\AppData\Roaming\MathWorks\MATLAB\R2020a\migratePref.txt (拒绝访问。)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at java.io.FileInputStream.<init>(FileInputStream.java:93)
+	at java.io.FileReader.<init>(FileReader.java:58)
+	at com.mathworks.services.Prefs.readMigrateFlag(Prefs.java:2160)
+	at com.mathworks.services.Prefs.createTwoWayMapPrefsSettings(Prefs.java:373)
+	at com.mathworks.services.Prefs.<clinit>(Prefs.java:214)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.mathworks.util.PostVMInit$StartupClass.init(PostVMInit.java:156)
+	at com.mathworks.util.PostVMInit.perform(PostVMInit.java:187)
+java.lang.IllegalArgumentException: File migratePref.txt should only contain 'T' or 'F'!
+java.lang.IllegalArgumentException: File migratePref.txt should only contain 'T' or 'F'!
+	at com.mathworks.services.Prefs.readMigrateFlag(Prefs.java:2182)
+	at com.mathworks.services.Prefs.createTwoWayMapPrefsSettings(Prefs.java:373)
+	at com.mathworks.services.Prefs.<clinit>(Prefs.java:214)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.mathworks.util.PostVMInit$StartupClass.init(PostVMInit.java:156)
+	at com.mathworks.util.PostVMInit.perform(PostVMInit.java:187)
+[警告: 无法加载工具箱路径缓存 C:\Users\lenovo\AppData\Local\MathWorks\MATLAB\R2020a\toolbox_cache-9.8.0-345199666-win64.xml。该缓存文件的格式不
+正确。退出 MATLAB 时将重新生成该文件。] 
+{"run":"2026-11-14_ky075-run3","plant_effect":1.4,"tau_s":0.3,"delay_s":0.2,"position_bias_mm":-1,"yaw_bias_deg":-0.1,"cadence":2,"basis":2,"controller_scales":[3,3,3,2.5],"S3_middle_peak_mm":4.0592995600881352,"S25_middle_peak_mm":3.6396671927359416,"S3_middle_reverse_mm":1.8719981937380001,"S25_middle_reverse_mm":2.1036153102820405,"S3_first_middle_crossing_m":1.0494032882011606,"S25_first_middle_crossing_m":1.0229381044487427,"interpretation":"Conditional fixed measured yaw and injected biases; not measured ground overshoot. Prior two-slot witness compared noFF/half, not S3/S2.5."}

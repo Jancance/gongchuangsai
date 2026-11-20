@@ -1,0 +1,128 @@
+% Local-history observer math precondition. Synthetic only; no board access.
+% New implementation supersedes no prior artifact. Acceleration units mm/s^2.
+out=fileparts(mfilename('fullpath')); cases=0; maxp=0; maxv=0;
+maxps=0; maxvs=0; dt=0.005; t=(0:127)'*dt;
+% Piecewise-linear acceleration is integrated analytically, including clips.
+% p0/p1 are the already-arrived common wheel poses, never future poses.
+for a=[-150 0 150]
+ for j=[-20 0 20]
+  for delta=[0.001 0.022 0.1 0.2]
+   for h=[0 0.053 0.15]
+    now=0.635; t1=now-h; t0=t1-delta;
+    aa=[a+j*t,-0.4*a-0.6*j*t];
+    pp=@(x) [80*x+0.5*a*x.^2+j*x.^3/6,...
+             -30*x-0.2*a*x.^2-0.1*j*x.^3];
+    vv=@(x) [80+a*x+0.5*j*x.^2,-30-0.4*a*x-0.3*j*x.^2];
+    [p,v,ok]=predict(t,aa,t0,t1,now,pp(t0),pp(t1),false);
+    assert(ok); ep=max(abs(p-pp(now))); ev=max(abs(v-vv(now)));
+    maxp=max(maxp,ep); maxv=max(maxv,ev);
+    assert(ep<1e-9 && ev<1e-9);
+    [ps,vs,ok]=predict(t,aa,t0,t1,now,pp(t0),pp(t1),true);
+    assert(ok); epsp=max(abs(double(ps)-pp(now))); epsv=max(abs(double(vs)-vv(now)));
+    maxps=max(maxps,epsp); maxvs=max(maxvs,epsv);
+    % Conservative local single rounding bound, not a ground-accuracy target.
+    bound=64*double(eps(single(1)))*max([1 abs(pp(now)) abs(vv(now))]);
+    assert(epsp<bound && epsv<bound); cases=cases+2;
+   end
+  end
+ end
+end
+% Zero motion and constant bias: error depends on anchor interval/age only.
+for bias=[-9.80665 0 9.80665]
+ for delta=[0.001 0.022 0.1 0.2]
+  for h=[0 0.053 0.15]
+   now=0.635; t1=now-h; t0=t1-delta; b=[bias,-0.5*bias];
+   [p,v,ok]=predict(t,repmat(b,numel(t),1),t0,t1,now,[0 0],[0 0],false);
+   assert(ok && max(abs(p-0.5*b*(delta*h+h*h)))<1e-10);
+   assert(max(abs(v-b*(delta/2+h)))<1e-10); cases=cases+1;
+  end
+ end
+end
+% Causal query: no extrapolation of acceleration beyond newest history.
+acc=zeros(numel(t),2);
+[~,~,ok]=predict(t,acc,-0.001,0.1,0.2,[0 0],[0 0],false); assert(~ok);
+[~,~,ok]=predict(t,acc,0.1,0.2,0.636,[0 0],[0 0],false); assert(~ok);
+[~,~,ok]=predict(t,acc,0.2,0.2,0.3,[0 0],[0 0],false); assert(~ok);
+bad=t; bad(30:end)=bad(30:end)+0.03;
+[~,~,ok]=predict(bad,acc,0.1,0.2,0.3,[0 0],[0 0],false); assert(~ok);
+[~,~,ok]=predict(t,acc,0.1,0.2,0.633,[0 0],[0 0],false); assert(~ok);
+cases=cases+5;
+% Unsigned tick wrap: subtract in uint32 domain, then convert local delta.
+base=2^32-200; ticks=mod(base+(0:127)'*5,2^32);
+local=mod(ticks-ticks(1),2^32)*0.001;
+assert(max(abs(local-t))<1e-12);
+aa=[150+20*t,-60-12*t];
+for origin=[base,1234567890]
+ raw=mod(origin+(0:127)'*5,2^32);
+ relative=mod(raw-raw(1),2^32)*0.001;
+ [p,v,ok]=predict(relative,aa,0.461,0.483,0.635,[0 0],[2 -1],false);
+ [p0,v0,ok0]=predict(t,aa,0.461,0.483,0.635,[0 0],[2 -1],false);
+ assert(ok && ok0 && max(abs(p-p0))<1e-12 && max(abs(v-v0))<1e-12);
+ cases=cases+1;
+end
+% Body transform: sensor X right/Y rear/Z down -> F/L/up; path R=-L.
+M=[0 -1 0;-1 0 0;0 0 -1];
+assert(det(M)==1 && isequal(M*[1;0;0],[0;-1;0]));
+assert(isequal(M*[0;1;0],[-1;0;0]));
+for yaw=[-pi/2 0 pi/2]
+ body=[21;-13]; path=[cos(yaw) -sin(yaw);-sin(yaw) -cos(yaw)]*body;
+ assert(abs(norm(path)-norm(body))<1e-12); cases=cases+1;
+end
+% Same normalized second-order gravity transport intended for 200 Hz C.
+% Derive tolerance from O(T*w^3*dt^2/6), not a competition precision claim.
+gravity=9806.65; duration=10; gravity_results=cell(0,1);
+for omega={[0.03 -0.02 0.01],[0.7 -0.5 0.3]}
+ w=omega{1}; errors=zeros(1,2);
+ for rate=[200 400]
+  step=1/rate; g=[0 0 gravity]; initial=g;
+  for k=1:round(duration/step)
+   c=cross(w,g); g=g-step*c+0.5*step^2*cross(w,c);
+   g=g/norm(g)*gravity;
+  end
+  axis=w/norm(w); angle=-norm(w)*duration;
+  exact=initial*cos(angle)+cross(axis,initial)*sin(angle)+axis*dot(axis,initial)*(1-cos(angle));
+  err=norm(g-exact); bound=1.05*gravity*duration*norm(w)^3*step^2/6+1e-8;
+  assert(err<bound); errors(rate/200)=err;
+  gravity_results{end+1}=struct('rate_Hz',rate,'omega_rad_s',w,...
+    'error_mm_s2',err,'method_bound_mm_s2',bound); cases=cases+1;
+ end
+ assert(errors(2)<0.26*errors(1)+1e-9); cases=cases+1;
+end
+result=struct('status','PASS_MATLAB_LOCAL_KERNEL_ONLY','cases',cases,...
+ 'max_double_position_error_mm',maxp,'max_double_velocity_error_mm_s',maxv,...
+ 'max_single_position_error_mm',maxps,'max_single_velocity_error_mm_s',maxvs,...
+ 'gravity_results',{gravity_results},'rate_Hz',200,'history_samples',128,...
+ 'history_representation','local time and path F/R acceleration; no whole-run I/J',...
+ 'lever_compensation',false,'known_mount_mm_F_L',[-20 90],...
+ 'mount_height_mm','unknown','new_stop_conditions',0,'controls_modified',false,...
+ 'ground_accuracy_validated',false,'board_validated',false,...
+ 'limitations','assumed stationary 200-sample startup; no six-face calibration; no vibration/slip/noise/timing or 3D lever-arm validation');
+f=fopen(fullfile(out,'observer_local_matlab_summary.json'),'w'); assert(f>=0);
+fwrite(f,jsonencode(result)); fclose(f); disp(jsonencode(result));
+
+function [p,v,ok]=predict(t,a,t0,t1,now,p0,p1,use_single)
+ p=[NaN NaN]; v=p; ok=false;
+ causal=t<=now; t=t(causal); a=a(causal,:);
+ if isempty(t), return; end
+ if t1<=t0 || now<t1 || t0<t(1) || now>t(end) || any(diff(t)<=0) || any(diff(t)>0.020)
+  return;
+ end
+ x=unique([t0;t(t>t0 & t<now);t1;now]); ax=interp1(t,a,x,'linear');
+ if use_single
+  x=single(x-t0); t1=single(t1-t0); now=single(now-t0); t0=single(0);
+  ax=single(ax); p0=single(p0); p1=single(p1);
+ end
+ pre=cast([0 0],'like',ax); post=pre; postp=pre;
+ for k=1:numel(x)-1
+  l=x(k); r=x(k+1); span=r-l;
+  A=span*(ax(k,:)+ax(k+1,:))/2;
+  B=span^2*(ax(k,:)+2*ax(k+1,:))/6;
+  if r<=t1
+   pre=pre+((l-t0)*A+B)/(t1-t0);
+  else
+   post=post+A; postp=postp+(now-l)*A-B;
+  end
+ end
+ u=(p1-p0)/(t1-t0); h=now-t1;
+ v=u+pre+post; p=p1+u*h+h*pre+postp; ok=true;
+end

@@ -1,0 +1,13 @@
+[Unit]
+Description=Full-map competition vision
+
+[Service]
+Type=simple
+User=orangepi
+ExecStart=/bin/bash /home/orangepi/vision_tools/full_map_pi_20261120/run-competition.sh
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

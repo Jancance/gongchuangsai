@@ -1,0 +1,68 @@
+{
+  "integrated": {
+    "started_at": "2026-11-18T01:52:26.816299+08:00",
+    "command": [
+      "D:/Keil_v5/UV4/UV4.exe",
+      "-r",
+      "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\fusion-adapter-build-20261118\\integrated.uvprojx",
+      "-t",
+      "Vehicle_Integrated",
+      "-o",
+      "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-18\\fusion-adapter\\integrated_build.log"
+    ],
+    "defines": "ICM45686_SAMPLE_ONLY=0,APP_CONTINUOUS_MAP_ENABLE=1,APP_MAP_NAV_RESIDUAL_ENABLE=1",
+    "target": "Vehicle_Integrated",
+    "hardware_accessed": false,
+    "scope": "Compile pure copied-value adapter in both real targets; no runtime caller is added.",
+    "returncode": 0,
+    "finished_at": "2026-11-18T01:52:35.687820+08:00",
+    "success": true,
+    "compiled_reference": true,
+    "source_sha256": {
+      "fusion_adapter.c": "33dcb51411f0fd9cc76ba977187a5d8f9f6aa19a20ad55a7fcf5e6733cc371b9",
+      "fusion_adapter.h": "9e344b6d37c10f8b0c69b09d0b552cae0ad677c2a45234fdd7f05c3ca9d8849d"
+    },
+    "frozen_sha256": {
+      "integrated.uvprojx": "05f9e5c3c5cdea73d03ff41ecf5f7395ff61d1fbb54952258de26a252ff44735",
+      "Vehicle_Integrated.axf": "f7a7b2e4d690678f8197d14f5c0229d3004307da034a7f8a0aaf79fad1798672",
+      "Vehicle_Integrated.build_log.htm": "76cf5a7cf554b3f4983a2af0562b0a5b5e51c50bd3b4915a819b237fa4153d65",
+      "Vehicle_Integrated.htm": "2e887f0ad00bd818b60c1fd8235a7a5f30f363bdcc87c452a1763533a6b5c13d",
+      "Vehicle_Integrated.lnp": "08acf62da795e86f43ea0fef6111d606b2c90bb209b8f9ba8b3cae18ec76d3db",
+      "Vehicle_Integrated.map": "93d0ca51c505793a5e38ebb582482cca7bcb9579821cae6b804b13a5231cf7ca"
+    },
+    "size_line": "Program Size: Code=144588 RO-data=6892 RW-data=3612 ZI-data=124004  "
+  },
+  "offline": {
+    "started_at": "2026-11-18T01:52:35.728469+08:00",
+    "command": [
+      "D:/Keil_v5/UV4/UV4.exe",
+      "-r",
+      "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\fusion-adapter-build-20261118\\offline.uvprojx",
+      "-t",
+      "Vehicle_Offline",
+      "-o",
+      "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-18\\fusion-adapter\\offline_build.log"
+    ],
+    "defines": "ICM45686_SAMPLE_ONLY=0,APP_CONTINUOUS_MAP_ENABLE=1,APP_MAP_NAV_RESIDUAL_ENABLE=1",
+    "target": "Vehicle_Offline",
+    "hardware_accessed": false,
+    "scope": "Compile pure copied-value adapter in both real targets; no runtime caller is added.",
+    "returncode": 0,
+    "finished_at": "2026-11-18T01:52:44.123733+08:00",
+    "success": true,
+    "compiled_reference": true,
+    "source_sha256": {
+      "fusion_adapter.c": "33dcb51411f0fd9cc76ba977187a5d8f9f6aa19a20ad55a7fcf5e6733cc371b9",
+      "fusion_adapter.h": "9e344b6d37c10f8b0c69b09d0b552cae0ad677c2a45234fdd7f05c3ca9d8849d"
+    },
+    "frozen_sha256": {
+      "offline.uvprojx": "178ba481b535467eb306ecaa2c7c6e209c8d1ca3be72ab98933cfcf4f88e1960",
+      "Vehicle_Offline.axf": "8d3ed833ffb421ce2fd873859a65eb1fe73b14211bf8741f0931449008d86473",
+      "Vehicle_Offline.build_log.htm": "64655b41f308a78db91df60d22c8a07ff4c8037e0d8abf375353a1abb1e40803",
+      "Vehicle_Offline.htm": "f5cd8ac4ce09549dd1cf9efa16fbd39bd3ffcf363157a09314a5abc446c49f46",
+      "Vehicle_Offline.lnp": "05bfe47c03a472d11a3b08607cd8d762a2ca91e0e4b798bd744fcab55109ebcf",
+      "Vehicle_Offline.map": "b10681dd098e5eb0b9e201606b87f58c48c9f196ca4bc60635dd0d383372b182"
+    },
+    "size_line": "Program Size: Code=132780 RO-data=6884 RW-data=3416 ZI-data=123896  "
+  }
+}

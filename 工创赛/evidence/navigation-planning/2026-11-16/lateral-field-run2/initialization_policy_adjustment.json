@@ -1,0 +1,39 @@
+{
+  "root_authorization": "root explicitly authorized continuing from observed fresh state with assistant reset0 and refreshing run_go wrapper SHA for policy-only update",
+  "reason": "current board already reinitialized; original reset gate rejected before any reset",
+  "before_wrapper_sha256": "8f032b6342e937cb33b6193cb588c74495a91986e13f8e8840ce945ead099243",
+  "after_wrapper_sha256": "b6a22f88b98adae5ffd29840f5cbc5c3899f8a0ffdd0714d3346d46a943a3177",
+  "candidate_unchanged": "0d5e2b752c92db9094393723b42411cbf02dbdc2f3950ac4c4ca6847fe73242f",
+  "client_unchanged": "c470b3c00d69c4ef0f6b53c0da37a47f6d526eb1fb464e9bd356ec93c6b9da12",
+  "actual_assistant_resets": 0,
+  "ready": {
+    "accepted": true,
+    "recorded_at": "2026-11-16T12:49:03.899842+08:00",
+    "candidate_sha256": "0d5e2b752c92db9094393723b42411cbf02dbdc2f3950ac4c4ca6847fe73242f",
+    "wireless_port": "COM17",
+    "probe_uid": "6afaae24",
+    "initialization_policy": "observed_already_reinitialized_no_assistant_reset",
+    "initialization_source": "unknown; not attributed to user",
+    "checks": {
+      "monitor_zero_TX": true,
+      "new_monitor_healthy": true,
+      "zero_wheels": true,
+      "core_RUNNING": true,
+      "fresh_capture": true,
+      "faults0": true,
+      "VM_off": true,
+      "raw_healthy": true
+    },
+    "explicit_reset_count": 0,
+    "start_count": 0,
+    "fresh_capture_session": 0,
+    "prior_reset_gate_receipt_preserved": true,
+    "flash_identity_policy": "inherited run1 last full Flash match + same current candidate/source SHA; no run2 Flash read",
+    "hwt_age_ms": {
+      "angle": 7,
+      "rate": 8
+    },
+    "monitor_valid_frames": 32,
+    "monitor_invalid_frames": 1
+  }
+}

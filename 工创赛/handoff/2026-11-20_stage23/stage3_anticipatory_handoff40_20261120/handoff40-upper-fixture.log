@@ -1,5 +1,0 @@
-PASS last placement uses the locked target ring minus 16000 pulses; nonfinal placement keeps the old return
-PASS immediate release uses real top and current slot; missing evidence keeps original checks
-PASS first two releases submit immediately after the completed return, hold DM for 100 ms, then go to the next item
-PASS final release waits 100 ms, submits DM-only 0, then timestamps only the matching DONE
-PASS either release or DM rejection follows the existing failure path without completion timing

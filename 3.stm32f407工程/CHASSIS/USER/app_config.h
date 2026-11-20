@@ -1,29 +1,196 @@
 #ifndef APP_CONFIG_H
 #define APP_CONFIG_H
+#ifndef APP_ZONE2_NAV_ENABLE
+#define APP_ZONE2_NAV_ENABLE 0U
+#endif
+#if APP_ZONE2_NAV_ENABLE > 1U
+#error Zone2_nav_enable_invalid
+#endif
+#ifndef APP_ZONE2_NAV_MOTION_ENABLE
+#define APP_ZONE2_NAV_MOTION_ENABLE 0U
+#endif
+#if APP_ZONE2_NAV_MOTION_ENABLE > 1U || (APP_ZONE2_NAV_MOTION_ENABLE && !APP_ZONE2_NAV_ENABLE)
+#error Zone2_nav_motion_requires_navigation
+#endif
+#ifndef APP_ZONE2_POSE_TRACE_ENABLE
+#define APP_ZONE2_POSE_TRACE_ENABLE 0U
+#endif
+#if APP_ZONE2_POSE_TRACE_ENABLE > 1U || (APP_ZONE2_POSE_TRACE_ENABLE && !APP_ZONE2_NAV_MOTION_ENABLE)
+#error Zone2_pose_trace_requires_navigation_motion
+#endif
+#ifndef APP_CONTINUOUS_MAP_ENABLE
+#define APP_CONTINUOUS_MAP_ENABLE 0U
+#endif
+#if APP_CONTINUOUS_MAP_ENABLE > 1U
+#error Continuous_map_enable_invalid
+#endif
+#ifndef APP_MAP_NAV_RESIDUAL_ENABLE
+#define APP_MAP_NAV_RESIDUAL_ENABLE 0U
+#endif
+#if APP_MAP_NAV_RESIDUAL_ENABLE > 1U || (APP_MAP_NAV_RESIDUAL_ENABLE && !APP_CONTINUOUS_MAP_ENABLE)
+#error Map_nav_residual_requires_continuous_map
+#endif
+#ifndef APP_BASELINE40_ENABLE
+#define APP_BASELINE40_ENABLE 0U
+#endif
+#if APP_BASELINE40_ENABLE > 1U
+#error Baseline40_enable_invalid
+#endif
+#define APP_BASELINE40_ACTIVE (APP_BASELINE40_ENABLE && APP_IS_DEBUG && (APP_TEST_MODE == 3U))
 #include "../../USER/vehicle_parameters.h"
+#ifndef APP_ZONE2_RADAR_CALIBRATION_TEST
+#define APP_ZONE2_RADAR_CALIBRATION_TEST 0U
+#endif
+#if APP_ZONE2_RADAR_CALIBRATION_TEST > 1U || (APP_ZONE2_RADAR_CALIBRATION_TEST && !APP_ZONE2_NAV_ENABLE)
+#error Zone2_radar_calibration_test_requires_navigation
+#endif
+#ifndef APP_ZONE2_MISSION_ENABLE
+#define APP_ZONE2_MISSION_ENABLE 0U
+#endif
+#if APP_ZONE2_MISSION_ENABLE > 1U || (APP_ZONE2_MISSION_ENABLE && (!APP_ZONE2_NAV_MOTION_ENABLE || APP_ZONE2_RADAR_CALIBRATION_TEST))
+#error Zone2_mission_requires_active_navigation
+#endif
 #include "zdt_emm_config.h"
 #include "app_entry_config.h"
-
-/* 2026-11-07 integration: the LiftRuler node5 controller must stay serviceable in the
- * full-vehicle profile, because VSP stage2 execution derives its top reference from it
- * (SingleTeach_TopDeg = g_lift_ruler_controller.top_position_raw/top_scale). */
-#define LIFT_RULER_SERVICE_ENABLED (VEHICLE_LIFT_RULER_ONLY || VEHICLE_INTEGRATED_ENABLE)
+#ifndef APP_ZONE1_RADAR_SERVO_TEST
+#define APP_ZONE1_RADAR_SERVO_TEST 0U
+#endif
+#ifndef APP_ZONE1_RADAR_LIFT_CONFIRMED
+#define APP_ZONE1_RADAR_LIFT_CONFIRMED 0U
+#endif
+#if APP_ZONE1_RADAR_LIFT_CONFIRMED > 1U || RADAR_ZONE1_DOWN_DIRECTION > 1U
+#error Invalid_Zone1_radar_lift_reference
+#endif
+#ifndef APP_ZONE1_RADAR_LIFT_TEST
+#define APP_ZONE1_RADAR_LIFT_TEST 0U
+#endif
+#if APP_ZONE1_RADAR_SERVO_TEST > 1U || APP_ZONE1_RADAR_LIFT_TEST > 1U || \
+    (APP_ZONE1_RADAR_SERVO_TEST && APP_ZONE1_RADAR_LIFT_TEST) || \
+    ((APP_ZONE1_RADAR_SERVO_TEST || APP_ZONE1_RADAR_LIFT_TEST) && \
+    (!APP_IS_DEBUG || !APP_ZONE2_NAV_ENABLE || APP_ZONE2_RADAR_CALIBRATION_TEST || APP_BASELINE40_ENABLE))
+#error Zone1_radar_servo_test_requires_exclusive_debug_entry
+#endif
+#ifndef APP_STRAIGHT_CAPTURE_ENABLE
+#define APP_STRAIGHT_CAPTURE_ENABLE 0U
+#endif
+#if APP_STRAIGHT_CAPTURE_ENABLE > 1U || (APP_STRAIGHT_CAPTURE_ENABLE && !APP_BASELINE40_ACTIVE)
+#error Straight_capture_requires_Baseline40
+#endif
 #if VEHICLE_INTEGRATED_ENABLE && APP_IS_COMPETITION
 #error Integrated_field_debug_is_not_verified_competition_profile
 #endif
-/* removed: APP_PERIMETER_TRIAL_ACTIVE was never referenced */
+#if APP_BASELINE40_ENABLE && (!APP_IS_DEBUG || APP_TEST_MODE != 3U || VEHICLE_INTEGRATED_ENABLE)
+#error Baseline40_requires_debug3_and_no_integrated_entry
+#endif
+#if APP_BASELINE40_ENABLE && (!defined(VEHICLE_STAGE1_ENABLE) || VEHICLE_STAGE1_ENABLE)
+#error Baseline40_requires_explicit_stage1_disabled
+#endif
+#ifndef APP_VM_CALIBRATION_ONLY_ENABLE
+#define APP_VM_CALIBRATION_ONLY_ENABLE 0U
+#endif
+#if APP_VM_CALIBRATION_ONLY_ENABLE > 1U
+#error Vm_calibration_only_enable_invalid
+#endif
+#if APP_VM_CALIBRATION_ONLY_ENABLE && !APP_IS_DEBUG
+#error Vm_calibration_only_requires_debug_entry
+#endif
+#ifndef APP_VM_ONLY_ENABLE
+#define APP_VM_ONLY_ENABLE 0U
+#endif
+#if APP_VM_ONLY_ENABLE > 1U
+#error Vm_only_enable_invalid
+#endif
+#if APP_VM_ONLY_ENABLE && !APP_BASELINE40_ACTIVE
+#error Vm_only_requires_dedicated_baseline40_debug
+#endif
+#define APP_BASELINE40_RPM 100U
+#define APP_BASELINE40_LEFT_RPM 102U
+#ifndef APP_LEFT40_DRIFT_TRIM_ENABLE
+#define APP_LEFT40_DRIFT_TRIM_ENABLE 0U
+#endif
+#if APP_LEFT40_DRIFT_TRIM_ENABLE > 1U
+#error Left40_drift_trim_enable_invalid
+#endif
+#define APP_LEFT40_DRIFT_RATIO 0.02f
+#ifndef APP_RIGHT40_FORWARD_TRIM_ENABLE
+#define APP_RIGHT40_FORWARD_TRIM_ENABLE 0U
+#endif
+#if APP_RIGHT40_FORWARD_TRIM_ENABLE > 1U
+#error Right40_forward_trim_enable_invalid
+#endif
+#if APP_RIGHT40_FORWARD_TRIM_ENABLE && !APP_BASELINE40_ACTIVE
+#error Right40_forward_trim_requires_baseline40_debug
+#endif
+#define APP_RIGHT40_FORWARD_RATIO 0.01f
+#ifndef APP_LEFT_NAV_RESIDUAL_ENABLE
+#define APP_LEFT_NAV_RESIDUAL_ENABLE 0U
+#endif
+#if APP_LEFT_NAV_RESIDUAL_ENABLE > 1U
+#error Left_nav_residual_enable_invalid
+#endif
+#if APP_LEFT_NAV_RESIDUAL_ENABLE && !APP_BASELINE40_ACTIVE
+#error Left_nav_residual_requires_baseline40_debug
+#endif
+#define APP_LEFT_NAV_RESIDUAL_COEFFICIENT 0.0179055385f
+#define APP_LEFT_NAV_RESIDUAL_WEIGHT 0.5f
+#ifndef APP_DIRECTION_NAV_RESIDUAL_ENABLE
+#define APP_DIRECTION_NAV_RESIDUAL_ENABLE 0U
+#endif
+#if APP_DIRECTION_NAV_RESIDUAL_ENABLE > 1U
+#error Direction_nav_residual_enable_invalid
+#endif
+#if APP_DIRECTION_NAV_RESIDUAL_ENABLE && !APP_BASELINE40_ACTIVE
+#error Direction_nav_residual_requires_baseline40_debug
+#endif
+#define APP_NAV_RESIDUAL_ACTIVE (APP_LEFT_NAV_RESIDUAL_ENABLE || APP_DIRECTION_NAV_RESIDUAL_ENABLE)
+#define APP_RIGHT_NAV_RESIDUAL_COEFFICIENT -0.0110117302776f
+#define APP_FORWARD_NAV_RESIDUAL_COEFFICIENT -0.00753449552346f
+#define APP_BACKWARD_NAV_RESIDUAL_COEFFICIENT 0.00614032994653f
+#ifndef APP_MAIN_NAV_RESIDUAL_ENABLE
+#define APP_MAIN_NAV_RESIDUAL_ENABLE 0U
+#endif
+#if APP_MAIN_NAV_RESIDUAL_ENABLE > 1U
+#error Main_nav_residual_enable_invalid
+#endif
+#if APP_MAIN_NAV_RESIDUAL_ENABLE && !APP_NAV_RESIDUAL_ACTIVE
+#error Main_nav_residual_requires_direction_scope
+#endif
+#define APP_LEFT_MAIN_NAV_COEFFICIENT -0.00670232061578f
+#define APP_RIGHT_MAIN_NAV_COEFFICIENT -0.00634297364924f
+#define APP_FORWARD_MAIN_NAV_COEFFICIENT -0.00281456044014f
+#define APP_BACKWARD_MAIN_NAV_COEFFICIENT -0.00457267364223f
+#ifndef APP_CONTROL_DISTANCE_RATIO_ENABLE
+#define APP_CONTROL_DISTANCE_RATIO_ENABLE 0U
+#endif
+#if APP_CONTROL_DISTANCE_RATIO_ENABLE > 1U
+#error Control_distance_ratio_enable_invalid
+#endif
+#if APP_CONTROL_DISTANCE_RATIO_ENABLE && !APP_BASELINE40_ACTIVE
+#error Control_distance_ratio_requires_baseline40_debug
+#endif
+#define APP_FORWARD_CONTROL_DISTANCE_RATIO 0.99604743083f
+#define APP_LEFT_CONTROL_DISTANCE_RATIO 1.00047641734f
+#define APP_RIGHT_CONTROL_DISTANCE_RATIO 1.00015875536f
+#define APP_BACKWARD_CONTROL_DISTANCE_RATIO 0.998573466476f
+#define APP_BASELINE40_MM 2100.0f
+#define APP_BASELINE40_MM_S 400.0f
+#define APP_BASELINE40_ACCEL_MM_S2 150.0f
+#define APP_BASELINE40_JERK_MM_S3 300.0f
+#define APP_BASELINE40_FEEDBACK_RPM 130U
+#define APP_BASELINE40_RUN_MS 12779U
+#define APP_PERIMETER_TRIAL_ACTIVE 1U
 #define APP_PERIMETER_GROUP_MS 300000U
-/* User decision 2026-11-04: NO protection may cut VM. 0 = a latched fault
- * stops the wheels (stop frame to all four drivers) but keeps VM on, so the
- * drivers keep braking and the car never loses power mid-run.
- * 1 = legacy behaviour (fault -> Power_Disable). */
-#ifndef APP_FAULT_CUT_VM_ENABLE
-#define APP_FAULT_CUT_VM_ENABLE 0U
-#endif
-#if APP_FAULT_CUT_VM_ENABLE > 1U
-#error Fault_cut_vm_enable_invalid
-#endif
 #include "route_config.h"
+#ifndef APP_TURN90_90_ENABLE
+#define APP_TURN90_90_ENABLE 0U
+#endif
+#if APP_TURN90_90_ENABLE > 1U
+#error Turn90_90_enable_invalid
+#endif
+#define APP_TURN90_90_ACTIVE (APP_TURN90_90_ENABLE && APP_BASELINE40_ACTIVE)
+#if APP_TURN90_90_ENABLE && !APP_BASELINE40_ACTIVE
+#error Turn90_90_requires_baseline40_debug
+#endif
 /* Explicit single-turn debug candidate. Ordinary rotation remains capped at5RPM. */
 #ifndef APP_TURN_BRAKE_TRIAL_ENABLE
 #define APP_TURN_BRAKE_TRIAL_ENABLE 1U
@@ -33,13 +200,16 @@
 #endif
 #define APP_TURN_BRAKE_TRIAL_ACTIVE (APP_TURN_BRAKE_TRIAL_ENABLE && APP_ROUTE_USE_CUSTOM && APP_IS_DEBUG && (APP_TEST_MODE == 3U))
 #ifndef APP_TURN_BRAKE_TRIAL_DPS
-#define APP_TURN_BRAKE_TRIAL_DPS VEHICLE_CHASSIS_TURN_DEG_S
+#define APP_TURN_BRAKE_TRIAL_DPS 30U
 #endif
-#if APP_TURN_BRAKE_TRIAL_DPS != 15U && APP_TURN_BRAKE_TRIAL_DPS != 30U && APP_TURN_BRAKE_TRIAL_DPS != 60U
+#if APP_TURN_BRAKE_TRIAL_DPS != 15U && APP_TURN_BRAKE_TRIAL_DPS != 30U && !(APP_TURN90_90_ACTIVE && APP_TURN_BRAKE_TRIAL_DPS == 90U)
 #error Turn_brake_trial_speed_invalid
 #endif
-#define APP_TURN_BRAKE_MAX_RPM ((APP_TURN_BRAKE_TRIAL_DPS == 60U) ? 54U : ((APP_TURN_BRAKE_TRIAL_DPS == 30U) ? 27U : 13U))
-#define APP_TURN_BRAKE_FEEDBACK_RPM ((APP_TURN_BRAKE_TRIAL_DPS == 60U) ? 80U : ((APP_TURN_BRAKE_TRIAL_DPS == 30U) ? 40U : 30U))
+#define APP_TURN_BRAKE_MAX_RPM ((APP_TURN_BRAKE_TRIAL_DPS == 90U) ? 82U : ((APP_TURN_BRAKE_TRIAL_DPS == 30U) ? 27U : 13U))
+#define APP_TURN_BRAKE_FEEDBACK_RPM ((APP_TURN_BRAKE_TRIAL_DPS == 90U) ? 130U : ((APP_TURN_BRAKE_TRIAL_DPS == 30U) ? 40U : 30U))
+#if APP_TURN90_90_ENABLE && APP_TURN_BRAKE_TRIAL_DPS != 90U
+#error Turn90_90_requires_explicit_90dps
+#endif
 
 /* 低速距离S曲线候选，默认关闭；仅调试mode3，仍不超过15RPM。
  * 下列数值为软件候选，未做载物/刹车实测，不作为提速许可。 */
@@ -64,14 +234,8 @@
 #define APP_LEFT_TRIM_ACTIVE (APP_LEFT_TRIM_ENABLE && APP_ROUTE_SPEED_TRIAL_ACTIVE)
 #define APP_LEFT_DISTANCE_SCALE 0.99761905f
 #define APP_LEFT_BACKWARD_RATIO 0.01670644f
-#if APP_ROUTE_SPEED_TRIAL_ACTIVE
-/* 仅路线曲线采用集中工程候选；旧非路线入口维持原限值。 */
-#define APP_DISTANCE_SCURVE_ACCEL_MM_S2 VEHICLE_ROUTE_ACCEL_MM_S2
-#define APP_DISTANCE_SCURVE_JERK_MM_S3 VEHICLE_ROUTE_JERK_MM_S3
-#else
 #define APP_DISTANCE_SCURVE_ACCEL_MM_S2 40.0f
 #define APP_DISTANCE_SCURVE_JERK_MM_S3 80.0f
-#endif
 #define APP_DISTANCE_SCURVE_TRACK_MM 50.0f
 #define APP_DISTANCE_SCURVE_ARRIVAL_MM 2.0f
 #define APP_DISTANCE_SCURVE_FINAL_WAIT_MS 2000U
@@ -194,6 +358,12 @@
 #error Heading_session_mode_must_be_exclusive
 #endif
 
+#if APP_CONTINUOUS_MAP_ENABLE && (!APP_POSITION_DIAGNOSTIC || !APP_HEADING_SESSION_TEST || APP_TEST_MODE != 3U)
+#error Continuous_map_requires_existing_odometry_owner
+#endif
+#if APP_ZONE2_NAV_ENABLE && (!APP_CONTINUOUS_MAP_ENABLE || APP_TEST_MODE != 3U || APP_BASELINE40_ACTIVE || APP_VM_CALIBRATION_ONLY_ENABLE)
+#error Zone2_nav_requires_continuous_map_and_the_normal_mode3_tasks
+#endif
 #endif
 
 /* Offline experiment. Not a vehicle-ready firmware or persistent motor configuration. */

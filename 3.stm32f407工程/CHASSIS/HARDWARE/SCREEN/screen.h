@@ -17,5 +17,6 @@ uint32_t Screen_SendByte(uint8_t data);
 uint32_t Screen_SendString(const char *text);
 uint32_t Screen_SendCommand(const char *command);
 uint32_t Screen_ShowTaskCode(const char *task_code);
+uint32_t Screen_ShowResult(uint32_t grabs, uint32_t placements);
 
 #endif

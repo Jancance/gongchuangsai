@@ -1,0 +1,311 @@
+{
+  "cpu": "Cortex-M4.fp.sp",
+  "sha256": {
+    "fusion_motion.c": "c98f807f7ca2e4c1d2401653ef453bbbcbcfec2d82bde8c8cc197fc6b1f96b97",
+    "fusion_motion.h": "c4c3dfdc048a0cbe953a96766595e4dae45557fcdf97a0bd0e160fb12cc7152a",
+    "chassis_kinematics.c": "9f009f558c6c82607dda9319e8abba96c2b3536343a91d3ffaef5dc2073f76aa",
+    "chassis_kinematics.h": "7a6f763a665691b0b7db04efdcd4fa014b1bb31438d810acaf05300a90e9ce89"
+  },
+  "unchanged": true,
+  "vectors": 22,
+  "checks": 1219,
+  "mismatches": [],
+  "prefix_underbudget": {
+    "0": {
+      "decision": 2,
+      "reason": 0,
+      "duration": 200,
+      "prefix_q": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "prefix_a": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "prefix_mm": 0.0,
+      "before_mm": 2.0,
+      "after_mm": 2.0,
+      "omitted_mm": 2.0,
+      "brake_ms": 200,
+      "available_mm": 3.0
+    },
+    "0.1": {
+      "decision": 2,
+      "reason": 0,
+      "duration": 200,
+      "prefix_q": [
+        0.10000000149011612,
+        0.0,
+        0.0
+      ],
+      "prefix_a": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "prefix_mm": 0.010000000707805157,
+      "before_mm": 2.0,
+      "after_mm": 2.009999990463257,
+      "omitted_mm": 2.0,
+      "brake_ms": 200,
+      "available_mm": 3.0
+    },
+    "1": {
+      "decision": 2,
+      "reason": 0,
+      "duration": 200,
+      "prefix_q": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "prefix_a": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "prefix_mm": 0.10000000149011612,
+      "before_mm": 2.0,
+      "after_mm": 2.0999999046325684,
+      "omitted_mm": 2.0,
+      "brake_ms": 200,
+      "available_mm": 3.0
+    },
+    "2": {
+      "decision": 2,
+      "reason": 0,
+      "duration": 200,
+      "prefix_q": [
+        2.0,
+        0.0,
+        0.0
+      ],
+      "prefix_a": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "prefix_mm": 0.20000000298023224,
+      "before_mm": 2.0,
+      "after_mm": 2.200000047683716,
+      "omitted_mm": 2.0,
+      "brake_ms": 200,
+      "available_mm": 3.0
+    },
+    "3": {
+      "decision": 1,
+      "reason": 6,
+      "duration": 260,
+      "prefix_q": [
+        2.594447135925293,
+        0.0,
+        0.0
+      ],
+      "prefix_a": [
+        12.289484977722168,
+        0.0,
+        0.0
+      ],
+      "prefix_mm": 0.21847975254058838,
+      "before_mm": 2.0,
+      "after_mm": 3.959444761276245,
+      "omitted_mm": 2.0,
+      "brake_ms": 340,
+      "available_mm": 3.0
+    },
+    "5": {
+      "decision": 1,
+      "reason": 6,
+      "duration": 320,
+      "prefix_q": [
+        3.41796875,
+        0.0,
+        0.0
+      ],
+      "prefix_a": [
+        21.972654342651367,
+        0.0,
+        0.0
+      ],
+      "prefix_mm": 0.2685546875,
+      "before_mm": 2.0,
+      "after_mm": 5.773583889007568,
+      "omitted_mm": 2.0,
+      "brake_ms": 460,
+      "available_mm": 3.0
+    }
+  },
+  "numeric_boundaries": [
+    {
+      "q": 400,
+      "a": 0,
+      "target": 0,
+      "accepted": 1,
+      "duration": 4000,
+      "initial_a": 0.0,
+      "peak_q": 400.0,
+      "peak_a": 150.0,
+      "peak_j": 150.0,
+      "first_overspeed_ms": 0
+    },
+    {
+      "q": 400,
+      "a": 0,
+      "target": 400,
+      "accepted": 1,
+      "duration": 20,
+      "initial_a": 0.0,
+      "peak_q": 400.0,
+      "peak_a": 0.0,
+      "peak_j": 0.0,
+      "first_overspeed_ms": 0
+    },
+    {
+      "q": 400,
+      "a": 0.001,
+      "target": 0,
+      "accepted": 1,
+      "duration": 4020,
+      "initial_a": 0.0010020697955042124,
+      "peak_q": 400.0,
+      "peak_a": 149.25399780273438,
+      "peak_j": 148.51217651367188,
+      "first_overspeed_ms": 0
+    },
+    {
+      "q": 400,
+      "a": 0.001,
+      "target": 400,
+      "accepted": 1,
+      "duration": 20,
+      "initial_a": 0.0,
+      "peak_q": 400.0,
+      "peak_a": 0.0,
+      "peak_j": 0.0,
+      "first_overspeed_ms": 0
+    },
+    {
+      "q": 400,
+      "a": 0.01,
+      "target": 0,
+      "accepted": 1,
+      "duration": 4020,
+      "initial_a": 0.009997923858463764,
+      "peak_q": 400.0,
+      "peak_a": 149.25624084472656,
+      "peak_j": 148.52113342285156,
+      "first_overspeed_ms": 0
+    },
+    {
+      "q": 400,
+      "a": 0.01,
+      "target": 400,
+      "accepted": 1,
+      "duration": 20,
+      "initial_a": 0.009155272506177425,
+      "peak_q": 400.00006103515625,
+      "peak_a": 0.009155272506177425,
+      "peak_j": 1.8310543298721313,
+      "first_overspeed_ms": 6
+    },
+    {
+      "q": 400,
+      "a": 0.05,
+      "target": 0,
+      "accepted": 1,
+      "duration": 4020,
+      "initial_a": 0.049989618360996246,
+      "peak_q": 400.0,
+      "peak_a": 149.2662353515625,
+      "peak_j": 148.5609130859375,
+      "first_overspeed_ms": 0
+    },
+    {
+      "q": 400,
+      "a": 0.05,
+      "target": 400,
+      "accepted": 0,
+      "duration": 0,
+      "initial_a": 0.0,
+      "peak_q": 0.0,
+      "peak_a": 0.0,
+      "peak_j": 0.0,
+      "first_overspeed_ms": 0
+    },
+    {
+      "q": 400,
+      "a": 0.1,
+      "target": 0,
+      "accepted": 1,
+      "duration": 4020,
+      "initial_a": 0.10000200569629669,
+      "peak_q": 400.0000915527344,
+      "peak_a": 149.27874755859375,
+      "peak_j": 148.61068725585938,
+      "first_overspeed_ms": 1
+    },
+    {
+      "q": 400,
+      "a": 0.1,
+      "target": 400,
+      "accepted": 0,
+      "duration": 0,
+      "initial_a": 0.0,
+      "peak_q": 0.0,
+      "peak_a": 0.0,
+      "peak_j": 0.0,
+      "first_overspeed_ms": 0
+    },
+    {
+      "q": 400,
+      "a": 0.5,
+      "target": 0,
+      "accepted": 0,
+      "duration": 0,
+      "initial_a": 0.0,
+      "peak_q": 0.0,
+      "peak_a": 0.0,
+      "peak_j": 0.0,
+      "first_overspeed_ms": 0
+    },
+    {
+      "q": 400,
+      "a": 0.5,
+      "target": 400,
+      "accepted": 0,
+      "duration": 0,
+      "initial_a": 0.0,
+      "peak_q": 0.0,
+      "peak_a": 0.0,
+      "peak_j": 0.0,
+      "first_overspeed_ms": 0
+    },
+    {
+      "q": 400,
+      "a": 1,
+      "target": 0,
+      "accepted": 0,
+      "duration": 0,
+      "initial_a": 0.0,
+      "peak_q": 0.0,
+      "peak_a": 0.0,
+      "peak_j": 0.0,
+      "first_overspeed_ms": 0
+    },
+    {
+      "q": 400,
+      "a": 1,
+      "target": 400,
+      "accepted": 0,
+      "duration": 0,
+      "initial_a": 0.0,
+      "peak_q": 0.0,
+      "peak_a": 0.0,
+      "peak_j": 0.0,
+      "first_overspeed_ms": 0
+    }
+  ]
+}

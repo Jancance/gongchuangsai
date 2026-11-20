@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "hardware_accessed": false,
+  "source_sha256": "6eb8534458f8afe7e7f23ff7464e0d4c8a6fb113dfee50301f3d6ff0ac76cf5e",
+  "cases": {
+    "default_off": {
+      "returncode": 0,
+      "expected_error": "",
+      "status": "PASS"
+    },
+    "enabled_debug": {
+      "returncode": 0,
+      "expected_error": "",
+      "status": "PASS"
+    },
+    "enable2_rejected": {
+      "returncode": 1,
+      "expected_error": "Right40_forward_trim_enable_invalid",
+      "status": "PASS"
+    },
+    "baseline_inactive_rejected": {
+      "returncode": 1,
+      "expected_error": "Right40_forward_trim_requires_baseline40_debug",
+      "status": "PASS"
+    }
+  }
+}

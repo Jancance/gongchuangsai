@@ -1,0 +1,31 @@
+{
+  "status": "passed; no actionable findings",
+  "baseline": "660223e",
+  "reviewer": "main_c1_review_medium",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "findings": [],
+  "reviewed_raw_sha256": {
+    "CHASSIS/USER/main.c": "071c12f7c9345771af61e9f638c628f09ef60e44d31b62f78e2bacb6b72a419a",
+    "CHASSIS/USER/app_heading_runtime.c": "b05eaa5759e703c0581ad670153bb31b554e2c674b31cb9b2667760d317b81dc",
+    "CHASSIS/USER/app_heading_runtime.h": "ce25653256f92493116a01fee334148dbdd9df9d38c95c5b6d4186416978fda6",
+    "CHASSIS/USER/app_motion_internal.h": "e6c506a5ffe77b33935182803a0995ebe644157aa936e0297b42f374ca507934",
+    "CHASSIS/USER/stage1_runtime.inc": "c300b40f06c4cb00602ac7d313a2fff59939a9762064e14dfd75af574a96a890",
+    "CHASSIS/USER/vehicle_mission.inc": "75fb83e8caaf8220e6f69848cea79d308ba3611aa33a65174c9233fdd3b09112",
+    "gongxun-f407.uvprojx": "7b072a97af8888b1fe0a923709f59e82555a1c70582aa4727101c186ea0c4967"
+  },
+  "checks": [
+    "9 moved and 69 remaining functions restored identically",
+    "two inc files restore byte-identically after reversing session reset bridge",
+    "both real target preprocessings independently rerun:155 functions each",
+    "29 states and Watch layouts checked; live reads, preparation relock, reset and fault bridge preserved",
+    "10380 protected raw hashes independently match",
+    "read-only replayed final ARM artifact:2048 cases,141312 assertions,prepare202/begin202/live mutations166",
+    "active source build mapping and clean logs checked"
+  ],
+  "limits": [
+    "No hardware timing, stack, bus or vehicle validation"
+  ],
+  "hardware_accessed": false,
+  "files_modified_by_reviewer": false
+}

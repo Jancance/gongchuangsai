@@ -1,0 +1,29 @@
+{
+  "base": "15b839988c0d2eb2cc076e8c3b6f305617622edd",
+  "defines": [
+    "ICM45686_SAMPLE_ONLY=0",
+    "APP_CONTINUOUS_MAP_ENABLE=1",
+    "APP_MAP_NAV_RESIDUAL_ENABLE=1"
+  ],
+  "inputs_sha256": {
+    "3.stm32f407工程/CHASSIS/SYSTEM/CAN/can.c": "0574ec7140816dab87d66e38ca0edc9b30c36c7b1eb985b1655ad24cde4d9060",
+    "3.stm32f407工程/CHASSIS/SYSTEM/CAN/can.h": "47936e6ede282068a38eed9b49e7ef13980829f2a66abed1bd162f4ff9d3ac86",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "00c89f79244cd449a0d7b04a4821acad4e2ae34af6d8ca4c82030bcda283df2f"
+  },
+  "targets": {
+    "Vehicle_Integrated": {
+      "passed": true,
+      "exit_code": 0,
+      "compiled": {
+        "can.c": true
+      }
+    },
+    "Vehicle_Offline": {
+      "passed": true,
+      "exit_code": 0,
+      "compiled": {
+        "can.c": true
+      }
+    }
+  }
+}

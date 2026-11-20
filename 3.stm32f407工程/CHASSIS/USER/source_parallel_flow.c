@@ -139,7 +139,7 @@ uint32_t SPF_GroupBegin(SPF_Group *g,const SPF_Command *c,const SPF_GroupIO *io,
  }else if(c->kind==SPF_CMD_STAGE3_EMPTY_HANDOFF){
   g->delayed_mask=SPF_EXT|SPF_DM;g->release_mask=SPF_LIFT;
  }
- g->timeout_ms=timeout;g->begin_ms=io->clock_ms(io->context);g->state=1;return 1;
+ g->timeout_ms=timeout;g->progress_ms=g->begin_ms=io->clock_ms(io->context);g->state=1;return 1;
 }
 void SPF_GroupCancel(SPF_Group *g,uint32_t reason)
 {
@@ -155,7 +155,7 @@ void SPF_GroupService(SPF_Group *g)
   return;
  }
  now=g->io.clock_ms(g->io.context);
- if(now-g->begin_ms>=g->timeout_ms){SPF_GroupCancel(g,3);return;}
+ if(now-g->progress_ms>=g->timeout_ms){SPF_GroupCancel(g,3);return;}
 
  if(g->delayed_mask &&
     !((g->command.kind==SPF_CMD_STAGE3_LOADED_RETURN ||
@@ -167,11 +167,11 @@ void SPF_GroupService(SPF_Group *g)
    if(!(g->prepared&bit)){
     result=g->io.prepare(g->io.context,bit,&g->command);
     if(result==2U){SPF_GroupCancel(g,4U);return;}
-    if(result==1U)g->prepared|=bit;
+    if(result==1U){g->prepared|=bit;g->progress_ms=now;}
     break;
    }
    if(!g->started)g->first_start_ms=now;
-   g->started|=bit;
+   g->started|=bit;g->progress_ms=now;
    if(g->io.start(g->io.context,bit,&g->command)!=1U){SPF_GroupCancel(g,6U);return;}
    g->last_start_ms=g->io.clock_ms(g->io.context);g->state=2U;break;
   }
@@ -179,7 +179,7 @@ void SPF_GroupService(SPF_Group *g)
   for(bit=1U;bit<=4U;bit<<=1)if((g->started&bit) && !(g->done&bit)){
    result=g->io.poll(g->io.context,bit);
    if(result==2U){SPF_GroupCancel(g,7U);return;}
-   if(result==1U)g->done|=bit;
+   if(result==1U){g->done|=bit;g->progress_ms=now;}
   }
   if(g->done==g->command.axes_mask)g->state=3U;
   return;
@@ -193,7 +193,7 @@ void SPF_GroupService(SPF_Group *g)
   for(bit=1;bit<=4;bit<<=1)if((initial_mask&bit) && !(g->prepared&bit)){
    result=g->io.prepare(g->io.context,bit,&g->command);
    if(result==2){SPF_GroupCancel(g,4);return;}
-   if(result==1)g->prepared|=bit;return;
+   if(result==1){g->prepared|=bit;g->progress_ms=now;}return;
   }
   if((g->prepared&initial_mask)!=initial_mask)return;
   /* No completion wait between starts: every prepared axis is released
@@ -201,7 +201,7 @@ void SPF_GroupService(SPF_Group *g)
   for(bit=1;bit<=4;bit<<=1)if(initial_mask&bit){
    now=g->io.clock_ms(g->io.context);if(!g->started)g->first_start_ms=now;
    /* Start skew is diagnostic only; the group deadline still applies. */
-   g->started|=bit; /* uncertain start failure still needs STOP */
+   g->started|=bit;g->progress_ms=now; /* uncertain start failure still needs STOP */
    if(g->io.start(g->io.context,bit,&g->command)!=1){SPF_GroupCancel(g,6);return;}
    g->last_start_ms=g->io.clock_ms(g->io.context);
    /* Measured start skew retained in first/last_start_ms. */
@@ -211,7 +211,7 @@ void SPF_GroupService(SPF_Group *g)
  for(bit=1;bit<=4;bit<<=1)if((g->command.axes_mask&bit) && !(g->done&bit)){
   result=g->io.poll(g->io.context,bit);
   if(result==2){SPF_GroupCancel(g,7);return;}
-  if(result==1)g->done|=bit;
+  if(result==1){g->done|=bit;g->progress_ms=now;}
  }
  if(g->done==g->command.axes_mask)g->state=3;
 }

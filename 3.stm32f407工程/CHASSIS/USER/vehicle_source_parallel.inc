@@ -323,7 +323,12 @@ static uint32_t VSP_Poll(void *context,uint32_t bit)
   a->flags=s_rx.Data[1];a->phase=1;return 0;
  }
  if(a->phase==1){
+  float previous=a->current;
   if(!VSP_Position(address,a)){if(zero_return)a->samples=0;return 0;}
+  if(fabsf(a->current-a->goal)+0.2f<fabsf(previous-a->goal)){
+   g->progress_ms=a->position_tick;
+   if(g!=&vsp_group)vsp_group.progress_ms=a->position_tick;
+  }
   /* 2026-11-08: the +/-2 deg overshoot window (0.55 mm) was tighter than the axis can hold -- the extension lands within ~1.7 mm of target and was being reported as a fault. Widen to 8 deg (2.2 mm) which still catches a runaway (670 deg). */
   /* 2026-11-08: measured stop overshoot after the 294.4 pulses/mm recalibration is
    * ~33 deg (1.0 mm) on a 100 mm move. 60 deg still catches the 670 deg runaway seen
@@ -419,7 +424,7 @@ static void VSP_CarryService(void)
      0U,0U,0U,g_vsp_carry_wait_speed_raw,0U);
   return;
  }
- if((uint32_t)(now-vsp_group.begin_ms)>=vsp_group.timeout_ms){
+ if((uint32_t)(now-vsp_group.progress_ms)>=vsp_group.timeout_ms){
   VSP_CarryFirst(VSP_CARRY_DIAG_TIMEOUT,g_vsp_carry_wait_speed_node,0U,0U,0U,g_vsp_carry_wait_speed_raw,0U);
   SPF_GroupCancel(&vsp_group,3U);return;
  }
@@ -429,7 +434,7 @@ static void VSP_CarryService(void)
   /* X/Z 原命令已结束；下一段用新的读数计算相对位移。DM 继续由原组轮询。 */
   memset(vsp_axis,0,sizeof(vsp_axis));
   vsp_carry_leg=vsp_pick_sync=1U;vsp_pick_queued=vsp_carry_origin_sampled=0U;
-  vsp_carry_place.begin_ms=now;
+  vsp_carry_place.begin_ms=vsp_carry_place.progress_ms=now;
  }
  SPF_GroupService(&vsp_carry_place);
  if(vsp_carry_place.state==4U){SPF_GroupCancel(&vsp_group,vsp_carry_place.fault);return;}
@@ -484,7 +489,7 @@ static void VehicleSourceParallel_Service(void)
    uint32_t now=(uint32_t)xTaskGetTickCount();
    /* Z 到位后组不再轮询；等旋转反馈恢复时只读刷新位置。 */
    if((vsp_group.done&SPF_LIFT) && (uint32_t)(now-vsp_axis[1].position_tick)>150U &&
-      (uint32_t)(now-vsp_group.begin_ms)<vsp_group.timeout_ms && g_dm_can2_feedback_valid &&
+      (uint32_t)(now-vsp_group.progress_ms)<vsp_group.timeout_ms && g_dm_can2_feedback_valid &&
       (uint32_t)(now-g_dm_can2_feedback_tick)<100U)
     (void)VSP_Position(5U,&vsp_axis[1]);
    if(VehicleArm_Stage3GroupStopPending())SPF_GroupCancel(&vsp_group,2U);

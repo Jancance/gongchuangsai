@@ -1,0 +1,492 @@
+
+========================================================================
+
+** ELF Header Information
+
+    File Name: unit.axf
+
+    Machine class: ELFCLASS32 (32-bit)
+    Data encoding: ELFDATA2LSB (Little endian)
+    Header version: EV_CURRENT (Current version)
+    Operating System ABI: none
+    ABI Version: 0
+    File Type: ET_EXEC (Executable) (2)
+    Machine: EM_ARM (ARM)
+
+    Image Entry point: 0x08000001
+    Flags: EF_ARM_HASENTRY + EF_ARM_ABI_FLOAT_SOFT (0x05000202)
+
+    ARM ELF revision: 5 (ABI version 2)
+
+    Conforms to Soft float procedure-call standard
+
+    Built with
+    Component: ARM Compiler 5.06 update 7 (build 960) Tool: armcc [4d365d]
+    Component: ARM Compiler 5.06 update 7 (build 960) Tool: armlink [4d3601]
+
+    Header size: 52 bytes (0x34)
+    Program header entry size: 32 bytes (0x20)
+    Section header entry size: 40 bytes (0x28)
+
+    Program header entries: 1
+    Section header entries: 10
+
+    Program header offset: 68432 (0x00010b50)
+    Section header offset: 68464 (0x00010b70)
+
+    Section header string table index: 9
+
+========================================================================
+
+** Program header #0 (PT_LOAD) [PF_X + PF_W + PF_R + PF_ARM_ENTRY]
+    Size : 59500 bytes (54072 bytes in file)
+    Virtual address: 0x08000000 (Alignment 4)
+
+
+========================================================================
+
+** Section #1 'ER_ROM' (SHT_PROGBITS) [SHF_ALLOC + SHF_EXECINSTR]
+    Size   : 54040 bytes (alignment 4)
+    Address: 0x08000000
+
+
+** Section #2 'RW_RAM' (SHT_PROGBITS) [SHF_ALLOC + SHF_WRITE]
+    Size   : 32 bytes (alignment 4)
+    Address: 0x20000000
+
+
+** Section #3 'RW_RAM' (SHT_NOBITS) [SHF_ALLOC + SHF_WRITE]
+    Size   : 5428 bytes (alignment 4)
+    Address: 0x20000020
+
+
+** Section #4 '.debug_frame' (SHT_PROGBITS)
+    Size   : 2732 bytes
+
+
+** Section #5 '.symtab' (SHT_SYMTAB)
+    Size   : 6208 bytes (alignment 4)
+    String table #6 '.strtab'
+    Last local symbol no. 333
+
+    Symbol table .symtab (387 symbols, 333 local)
+
+      #  Symbol Name                Value      Bind  Sec  Type  Vis  Size
+    ========================================================================
+
+      1  $t                         0x08000000   Lc    1   --   De 
+      2  $d                         0x08000240   Lc    1   --   De 
+      3  $t                         0x08000254   Lc    1   --   De 
+      4  $d                         0x08000432   Lc    1   --   De 
+      5  $t                         0x08000464   Lc    1   --   De 
+      6  $d                         0x08000652   Lc    1   --   De 
+      7  $t                         0x0800065a   Lc    1   --   De 
+      8  $d                         0x08000850   Lc    1   --   De 
+      9  $t                         0x08000860   Lc    1   --   De 
+     10  $d                         0x08000c52   Lc    1   --   De 
+     11  $t                         0x08000c84   Lc    1   --   De 
+     12  $d                         0x08001070   Lc    1   --   De 
+     13  $t                         0x080010ac   Lc    1   --   De 
+     14  $d                         0x080014ae   Lc    1   --   De 
+     15  $t                         0x080014d8   Lc    1   --   De 
+     16  $d                         0x080018e6   Lc    1   --   De 
+     17  $t                         0x08001920   Lc    1   --   De 
+     18  $d                         0x08001d24   Lc    1   --   De 
+     19  $t                         0x08001d54   Lc    1   --   De 
+     20  $d                         0x0800214c   Lc    1   --   De 
+     21  $t                         0x0800217c   Lc    1   --   De 
+     22  $d                         0x0800258e   Lc    1   --   De 
+     23  $t                         0x080025d8   Lc    1   --   De 
+     24  $d                         0x080029e6   Lc    1   --   De 
+     25  $t                         0x08002a1c   Lc    1   --   De 
+     26  $d                         0x08002e04   Lc    1   --   De 
+     27  $t                         0x08002e34   Lc    1   --   De 
+     28  $d                         0x08003270   Lc    1   --   De 
+     29  $t                         0x08003298   Lc    1   --   De 
+     30  $d                         0x0800368e   Lc    1   --   De 
+     31  $t                         0x080036c0   Lc    1   --   De 
+     32  $d                         0x08003aa8   Lc    1   --   De 
+     33  $t                         0x08003ac8   Lc    1   --   De 
+     34  $d                         0x08003ed8   Lc    1   --   De 
+     35  $t                         0x08003f00   Lc    1   --   De 
+     36  $d                         0x08004324   Lc    1   --   De 
+     37  $t                         0x08004350   Lc    1   --   De 
+     38  $d                         0x08004742   Lc    1   --   De 
+     39  $t                         0x0800476c   Lc    1   --   De 
+     40  $d                         0x08004b56   Lc    1   --   De 
+     41  $t                         0x08004b90   Lc    1   --   De 
+     42  $d                         0x08004f72   Lc    1   --   De 
+     43  $t                         0x08004f9c   Lc    1   --   De 
+     44  $d                         0x080053aa   Lc    1   --   De 
+     45  $t                         0x080053ec   Lc    1   --   De 
+     46  $d                         0x080057de   Lc    1   --   De 
+     47  $t                         0x08005814   Lc    1   --   De 
+     48  $d                         0x08005ca2   Lc    1   --   De 
+     49  $t                         0x08005cc8   Lc    1   --   De 
+     50  $d                         0x0800613e   Lc    1   --   De 
+     51  $t                         0x08006174   Lc    1   --   De 
+     52  $d                         0x0800655c   Lc    1   --   De 
+     53  $t                         0x08006580   Lc    1   --   De 
+     54  $d                         0x08006978   Lc    1   --   De 
+     55  $t                         0x080069b4   Lc    1   --   De 
+     56  $d                         0x08006db4   Lc    1   --   De 
+     57  $t                         0x08006de0   Lc    1   --   De 
+     58  $d                         0x080071d4   Lc    1   --   De 
+     59  $t                         0x08007204   Lc    1   --   De 
+     60  $d                         0x08007610   Lc    1   --   De 
+     61  $t                         0x08007644   Lc    1   --   De 
+     62  $d                         0x08007a58   Lc    1   --   De 
+     63  $t                         0x08007a80   Lc    1   --   De 
+     64  $d                         0x08007e70   Lc    1   --   De 
+     65  $t                         0x08007e98   Lc    1   --   De 
+     66  $d                         0x08008282   Lc    1   --   De 
+     67  $t                         0x080082bc   Lc    1   --   De 
+     68  $d                         0x080086b6   Lc    1   --   De 
+     69  $t                         0x080086e8   Lc    1   --   De 
+     70  $d                         0x08008b5a   Lc    1   --   De 
+     71  $t                         0x08008b94   Lc    1   --   De 
+     72  $d                         0x08008f94   Lc    1   --   De 
+     73  $t                         0x08008fc8   Lc    1   --   De 
+     74  $d                         0x080093c0   Lc    1   --   De 
+     75  $t                         0x080093e0   Lc    1   --   De 
+     76  $d                         0x0800984e   Lc    1   --   De 
+     77  $t                         0x0800987c   Lc    1   --   De 
+     78  $d                         0x08009c62   Lc    1   --   De 
+     79  $t                         0x08009c98   Lc    1   --   De 
+     80  $d                         0x0800a1a4   Lc    1   --   De 
+     81  $t                         0x0800a1cc   Lc    1   --   De 
+     82  $d                         0x0800a5ca   Lc    1   --   De 
+     83  $t                         0x0800a5f0   Lc    1   --   De 
+     84  $d                         0x0800aade   Lc    1   --   De 
+     85  $t                         0x0800aae8   Lc    1   --   De 
+     86  $d                         0x0800b11e   Lc    1   --   De 
+     87  $t                         0x0800b130   Lc    1   --   De 
+     88  $d                         0x0800b3ec   Lc    1   --   De 
+     89  $t                         0x0800b404   Lc    1   --   De 
+     90  $d                         0x0800b8e8   Lc    1   --   De 
+     91  $t                         0x0800b8fc   Lc    1   --   De 
+     92  $d                         0x0800bd42   Lc    1   --   De 
+     93  $t                         0x0800bd54   Lc    1   --   De 
+     94  $d                         0x0800bef0   Lc    1   --   De 
+     95  $t                         0x0800bf00   Lc    1   --   De 
+     96  $d                         0x0800bf06   Lc    1   --   De 
+     97  $t                         0x0800bf0c   Lc    1   --   De 
+     98  $d                         0x0800bf36   Lc    1   --   De 
+     99  $t                         0x0800bf3c   Lc    1   --   De 
+    100  $d                         0x0800c192   Lc    1   --   De 
+    101  $t                         0x0800c1e0   Lc    1   --   De 
+    102  $d                         0x0800c288   Lc    1   --   De 
+    103  $t                         0x0800c290   Lc    1   --   De 
+    104  $d                         0x0800c376   Lc    1   --   De 
+    105  $t                         0x0800c384   Lc    1   --   De 
+    106  $d                         0x0800c49e   Lc    1   --   De 
+    107  $t                         0x0800c4a4   Lc    1   --   De 
+    108  $d                         0x0800c5ec   Lc    1   --   De 
+    109  $t                         0x0800c610   Lc    1   --   De 
+    110  $d                         0x0800c784   Lc    1   --   De 
+    111  $t                         0x0800c7b8   Lc    1   --   De 
+    112  $d                         0x0800c832   Lc    1   --   De 
+    113  $t                         0x0800c83c   Lc    1   --   De 
+    114  $d                         0x0800c95e   Lc    1   --   De 
+    115  $t                         0x0800c968   Lc    1   --   De 
+    116  $d                         0x0800ca1c   Lc    1   --   De 
+    117  $t                         0x0800ca24   Lc    1   --   De 
+    118  $d                         0x0800cb26   Lc    1   --   De 
+    119  $t                         0x0800cb2c   Lc    1   --   De 
+    120  $d                         0x0800cc76   Lc    1   --   De 
+    121  $t                         0x0800cc90   Lc    1   --   De 
+    122  $d                         0x0800cd20   Lc    1   --   De 
+    123  $t                         0x0800cd28   Lc    1   --   De 
+    124  $d                         0x0800cd5e   Lc    1   --   De 
+    125  $t                         0x0800cd68   Lc    1   --   De 
+    126  $d                         0x0800cf4c   Lc    1   --   De 
+    127  $t                         0x0800cf98   Lc    1   --   De 
+    128  $d                         0x0800d0f2   Lc    1   --   De 
+    129  $t                         0x0800d128   Lc    1   --   De 
+    130  $d                         0x0800d214   Lc    1   --   De 
+    131  $t                         0x0800d218   Lc    1   --   De 
+    132  $d                         0x0800d236   Lc    1   --   De 
+    133  $t                         0x0800d23c   Lc    1   --   De 
+    134  $d                         0x0800d254   Lc    1   --   De 
+    135  $t                         0x0800d258   Lc    1   --   De 
+    136  $d                         0x0800d280   Lc    1   --   De 
+    137  $t                         0x0800d288   Lc    1   --   De 
+    138  $d                         0x0800d2b0   Lc    1   --   De 
+    139  $d.realdata                0x0800d2b8   Lc    1   --   De 
+    140  $d.realdata                0x20000000   Lc    2   --   De 
+    141  D:\Desktop\������\������\evidence\NAVIGA~1\2007C6~1\FUSION~1\ACTUAL~3\unit.c
+                                    0x00000000   Lc  Abs  File  De 
+    142  i.advance_reference        0x0800bf24   Lc    1  Sect  De 
+    143  advance_reference          0x0800bf25   Lc    1  Code  De   0x12
+    144  i.observe                  0x0800cc20   Lc    1  Sect  De 
+    145  observe                    0x0800cc21   Lc    1  Code  De   0x56
+    146  i.setup                    0x0800ce78   Lc    1  Sect  De 
+    147  setup                      0x0800ce79   Lc    1  Code  De   0xd4
+    148  i.test_entry               0x08000000   Lc    1  Sect  De 
+    149  i.tick                     0x0800d200   Lc    1  Sect  De 
+    150  tick                       0x0800d201   Lc    1  Code  De   0x14
+    151  i.time_at                  0x0800d218   Lc    1  Sect  De 
+    152  time_at                    0x0800d219   Lc    1  Code  De   0x1e
+    153  i.unavailable              0x0800d23c   Lc    1  Sect  De 
+    154  unavailable                0x0800d23d   Lc    1  Code  De   0x18
+    155  .bss                       0x20000020   Lc    3  Sect  De   0x1534
+    156  input                      0x20000020   Lc    3  Data  De   0x3f4
+    157  plan                       0x20000414   Lc    3  Data  De   0x580
+    158  original_plan              0x20000994   Lc    3  Data  De   0x580
+    159  state                      0x20000f14   Lc    3  Data  De   0xac
+    160  saved                      0x20000fc0   Lc    3  Data  De   0xac
+    161  in                         0x2000106c   Lc    3  Data  De   0xa8
+    162  backup                     0x20001114   Lc    3  Data  De   0xa8
+    163  original_input             0x200011bc   Lc    3  Data  De   0xa8
+    164  obs                        0x20001264   Lc    3  Data  De   0x4c
+    165  old                        0x200012b0   Lc    3  Data  De   0x4c
+    166  zero                       0x200012fc   Lc    3  Data  De   0x4c
+    167  report                     0x20001348   Lc    3  Data  De   0x5c
+    168  reference                  0x200013a4   Lc    3  Data  De   0x78
+    169  saved_reference            0x2000141c   Lc    3  Data  De   0x78
+    170  desired                    0x20001494   Lc    3  Data  De   0x60
+    171  old_desired                0x200014f4   Lc    3  Data  De   0x60
+    172  .data                      0x20000000   Lc    2  Sect  De   0x1c
+    173  mutated                    0x20000010   Lc    2  Data  De   0x4
+    174  check                      0x20000014   Lc    2  Data  De   0x8
+    175  D:\Desktop\������\33EC1~1.STM\CHASSIS\USER\FUSION~2.C
+                                    0x00000000   Lc  Abs  File  De 
+    176  i.FusionAdapter_Observe    0x0800ac3c   Lc    1  Sect  De 
+    177  i.FusionAdapter_Reset      0x0800b130   Lc    1  Sect  De 
+    178  i.abs_f                    0x0800bf0c   Lc    1  Sect  De 
+    179  abs_f                      0x0800bf0d   Lc    1  Code  De   0xc
+    180  i.audit                    0x0800c1e0   Lc    1  Sect  De 
+    181  audit                      0x0800c1e1   Lc    1  Code  De   0x4c
+    182  i.core                     0x0800c610   Lc    1  Sect  De 
+    183  core                       0x0800c611   Lc    1  Code  De   0x2c
+    184  i.finite_f                 0x0800c968   Lc    1  Sect  De 
+    185  finite_f                   0x0800c969   Lc    1  Code  De   0x14
+    186  i.identity                 0x0800cb2c   Lc    1  Sect  De 
+    187  identity                   0x0800cb2d   Lc    1  Code  De   0x38
+    188  i.not_before               0x0800cbf0   Lc    1  Sect  De 
+    189  not_before                 0x0800cbf1   Lc    1  Code  De   0x10
+    190  i.plan_ok                  0x0800cc90   Lc    1  Sect  De 
+    191  plan_ok                    0x0800cc91   Lc    1  Code  De   0x90
+    192  i.prime                    0x0800cd68   Lc    1  Sect  De 
+    193  prime                      0x0800cd69   Lc    1  Code  De   0x52
+    194  i.result                   0x0800ce1e   Lc    1  Sect  De 
+    195  result                     0x0800ce1f   Lc    1  Code  De   0x8
+    196  i.same_core                0x0800ce26   Lc    1  Sect  De 
+    197  same_core                  0x0800ce27   Lc    1  Code  De   0x50
+    198  i.stationary               0x0800d154   Lc    1  Sect  De 
+    199  stationary                 0x0800d155   Lc    1  Code  De   0x40
+    200  i.stop_ok                  0x0800d194   Lc    1  Sect  De 
+    201  stop_ok                    0x0800d195   Lc    1  Code  De   0x38
+    202  i.wrap                     0x0800d258   Lc    1  Sect  De 
+    203  wrap                       0x0800d259   Lc    1  Code  De   0x28
+    204  D:\Desktop\������\33EC1~1.STM\CHASSIS\USER\FUSION~1.C
+                                    0x00000000   Lc  Abs  File  De 
+    205  i.FusionReference_Prepare  0x0800b13c   Lc    1  Sect  De 
+    206  i.FusionReference_Reset    0x0800b404   Lc    1  Sect  De 
+    207  i.FusionReference_Step     0x0800b410   Lc    1  Sect  De 
+    208  i.abs_f                    0x0800bf18   Lc    1  Sect  De 
+    209  abs_f                      0x0800bf19   Lc    1  Code  De   0xc
+    210  i.box_ok                   0x0800c22c   Lc    1  Sect  De 
+    211  box_ok                     0x0800c22d   Lc    1  Code  De   0x5c
+    212  i.clamp                    0x0800c290   Lc    1  Sect  De 
+    213  clamp                      0x0800c291   Lc    1  Code  De   0x1a
+    214  i.clear_extents            0x0800c2ac   Lc    1  Sect  De 
+    215  clear_extents              0x0800c2ad   Lc    1  Code  De   0xca
+    216  i.clear_line               0x0800c384   Lc    1  Sect  De 
+    217  clear_line                 0x0800c385   Lc    1  Code  De   0x34
+    218  i.clear_turn               0x0800c3b8   Lc    1  Sect  De 
+    219  clear_turn                 0x0800c3b9   Lc    1  Code  De   0x34
+    220  i.collinear                0x0800c3ec   Lc    1  Sect  De 
+    221  collinear                  0x0800c3ed   Lc    1  Code  De   0xb2
+    222  i.config_ok                0x0800c4a4   Lc    1  Sect  De 
+    223  config_ok                  0x0800c4a5   Lc    1  Code  De   0x148
+    224  i.extent_at                0x0800c7b8   Lc    1  Sect  De 
+    225  extent_at                  0x0800c7b9   Lc    1  Code  De   0x7a
+    226  i.extents                  0x0800c83c   Lc    1  Sect  De 
+    227  extents                    0x0800c83d   Lc    1  Code  De   0x122
+    228  i.finite_f                 0x0800c97c   Lc    1  Sect  De 
+    229  finite_f                   0x0800c97d   Lc    1  Code  De   0x14
+    230  i.hash_bytes               0x0800c9fc   Lc    1  Sect  De 
+    231  hash_bytes                 0x0800c9fd   Lc    1  Code  De   0x20
+    232  i.hits_box                 0x0800ca24   Lc    1  Sect  De 
+    233  hits_box                   0x0800ca25   Lc    1  Code  De   0x102
+    234  i.identity                 0x0800cb64   Lc    1  Sect  De 
+    235  identity                   0x0800cb65   Lc    1  Code  De   0x38
+    236  i.max_f                    0x0800cb9c   Lc    1  Sect  De 
+    237  max_f                      0x0800cb9d   Lc    1  Code  De   0x18
+    238  i.min_f                    0x0800cbb4   Lc    1  Sect  De 
+    239  min_f                      0x0800cbb5   Lc    1  Code  De   0x18
+    240  i.norm                     0x0800cbcc   Lc    1  Sect  De 
+    241  norm                       0x0800cbcd   Lc    1  Code  De   0x24
+    242  i.observation_signature    0x0800cc00   Lc    1  Sect  De 
+    243  observation_signature      0x0800cc01   Lc    1  Code  De   0x1e
+    244  i.point_ok                 0x0800cd28   Lc    1  Sect  De 
+    245  point_ok                   0x0800cd29   Lc    1  Code  De   0x36
+    246  i.range                    0x0800cdba   Lc    1  Sect  De 
+    247  range                      0x0800cdbb   Lc    1  Code  De   0x2c
+    248  i.reject                   0x0800cde6   Lc    1  Sect  De 
+    249  reject                     0x0800cde7   Lc    1  Code  De   0x38
+    250  i.signature                0x0800cf98   Lc    1  Sect  De 
+    251  signature                  0x0800cf99   Lc    1  Code  De   0x8
+    252  i.stopped                  0x0800d1cc   Lc    1  Sect  De 
+    253  stopped                    0x0800d1cd   Lc    1  Code  De   0x32
+    254  i.wrap                     0x0800d288   Lc    1  Sect  De 
+    255  wrap                       0x0800d289   Lc    1  Code  De   0x28
+    256  .constdata                 0x0800d2b8   Lc    1  Sect  De   0x40
+    257  yellow                     0x0800d2b8   Lc    1  Data  De   0x40
+    258  D:\Desktop\������\33EC1~1.STM\CHASSIS\USER\CHASSI~2.C
+                                    0x00000000   Lc  Abs  File  De 
+    259  i.Chassis_Abs              0x0800aa2c   Lc    1  Sect  De 
+    260  Chassis_Abs                0x0800aa2d   Lc    1  Code  De   0xc
+    261  i.Chassis_Finite           0x0800aa38   Lc    1  Sect  De 
+    262  Chassis_Finite             0x0800aa39   Lc    1  Code  De   0x14
+    263  i.Chassis_GeometryFactors  0x0800aa4c   Lc    1  Sect  De 
+    264  Chassis_GeometryFactors    0x0800aa4d   Lc    1  Code  De   0x92
+    265  i.Chassis_Inverse          0x0800aae8   Lc    1  Sect  De 
+    266  ../mathlib/atan2f.c        0x00000000   Lc  Abs  File  De 
+    267  i.atan2f                   0x0800bf3c   Lc    1  Sect  De 
+    268  ../mathlib/atan2f.c        0x00000000   Lc  Abs  File  De 
+    269  ../mathlib/cosf.c          0x00000000   Lc  Abs  File  De 
+    270  i.cosf                     0x0800c63c   Lc    1  Sect  De 
+    271  ../mathlib/cosf.c          0x00000000   Lc  Abs  File  De 
+    272  ../mathlib/fmodf.c         0x00000000   Lc  Abs  File  De 
+    273  i.fmodf                    0x0800c990   Lc    1  Sect  De 
+    274  ../mathlib/fmodf.c         0x00000000   Lc  Abs  File  De 
+    275  ../mathlib/sinf.c          0x00000000   Lc  Abs  File  De 
+    276  i.sinf                     0x0800cfa0   Lc    1  Sect  De 
+    277  ../mathlib/sinf.c          0x00000000   Lc  Abs  File  De 
+    278  ../mathlib/sqrtf.c         0x00000000   Lc  Abs  File  De 
+    279  i.sqrtf                    0x0800d128   Lc    1  Sect  De 
+    280  ../mathlib/sqrtf.c         0x00000000   Lc  Abs  File  De 
+    281  dc.s                       0x00000000   Lc  Abs  File  De 
+    282  ../clib/microlib/string/memcpy.c
+                                    0x00000000   Lc  Abs  File  De 
+    283  .text                      0x0800a652   Lc    1  Sect  De 
+    284  ../clib/microlib/string/memset.c
+                                    0x00000000   Lc  Abs  File  De 
+    285  .text                      0x0800a676   Lc    1  Sect  De 
+    286  ../clib/microlib/string/memcmp.c
+                                    0x00000000   Lc  Abs  File  De 
+    287  .text                      0x0800a69a   Lc    1  Sect  De 
+    288  ../clib/microlib/string/memcpy.c
+                                    0x00000000   Lc  Abs  File  De 
+    289  ../fplib/microlib/fpadd.c  0x00000000   Lc  Abs  File  De 
+    290  .text                      0x0800a6b4   Lc    1  Sect  De 
+    291  ../fplib/microlib/fpmul.c  0x00000000   Lc  Abs  File  De 
+    292  .text                      0x0800a764   Lc    1  Sect  De 
+    293  ../fplib/microlib/fpdiv.c  0x00000000   Lc  Abs  File  De 
+    294  .text                      0x0800a7c8   Lc    1  Sect  De 
+    295  ../fplib/microlib/fpscalb.c
+                                    0x00000000   Lc  Abs  File  De 
+    296  .text                      0x0800a844   Lc    1  Sect  De 
+    297  ../fplib/microlib/fpflt.c  0x00000000   Lc  Abs  File  De 
+    298  .text                      0x0800a85c   Lc    1  Sect  De 
+    299  ../fplib/microlib/fpflt.c  0x00000000   Lc  Abs  File  De 
+    300  .text                      0x0800a86e   Lc    1  Sect  De 
+    301  ../fplib/microlib/fpflt.c  0x00000000   Lc  Abs  File  De 
+    302  ../fplib/microlib/fpfix.c  0x00000000   Lc  Abs  File  De 
+    303  cfcmple.s                  0x00000000   Lc  Abs  File  De 
+    304  .text                      0x0800a878   Lc    1  Sect  De   0x14
+    305  cfrcmple.s                 0x00000000   Lc  Abs  File  De 
+    306  .text                      0x0800a88c   Lc    1  Sect  De   0x14
+    307  ../mathlib/fpclassifyf.c   0x00000000   Lc  Abs  File  De 
+    308  i.__ARM_fpclassifyf        0x0800bd54   Lc    1  Sect  De 
+    309  ../mathlib/funder.c        0x00000000   Lc  Abs  File  De 
+    310  i.__mathlib_flt_infnan     0x0800bd7a   Lc    1  Sect  De 
+    311  i.__mathlib_flt_infnan2    0x0800bd80   Lc    1  Sect  De 
+    312  i.__mathlib_flt_invalid    0x0800bd84   Lc    1  Sect  De 
+    313  i.__mathlib_flt_underflow  0x0800bd8c   Lc    1  Sect  De 
+    314  ../mathlib/rredf.c         0x00000000   Lc  Abs  File  De 
+    315  i.__mathlib_rredf2         0x0800bd98   Lc    1  Sect  De 
+    316  .constdata                 0x0800d2f8   Lc    1  Sect  De   0x20
+    317  twooverpi                  0x0800d2f8   Lc    1  Data  De   0x20
+    318  ../clib/microlib/errno.c   0x00000000   Lc  Abs  File  De 
+    319  i.__set_errno              0x0800bf00   Lc    1  Sect  De 
+    320  .data                      0x2000001c   Lc    2  Sect  De   0x4
+    321  _errno                     0x2000001c   Lc    2  Data  De   0x4
+    322  ../clib/microlib/stubs.s   0x00000000   Lc  Abs  File  De 
+    323  .text                      0x0800a8a0   Lc    1  Sect  De 
+    324  ../fplib/microlib/fpepilogue.c
+                                    0x00000000   Lc  Abs  File  De 
+    325  .text                      0x0800a8a0   Lc    1  Sect  De 
+    326  ../fplib/microlib/fpsqrt.c 0x00000000   Lc  Abs  File  De 
+    327  .text                      0x0800a90e   Lc    1  Sect  De 
+    328  ../fplib/microlib/fprnd.c  0x00000000   Lc  Abs  File  De 
+    329  .text                      0x0800a96c   Lc    1  Sect  De 
+    330  ../fplib/microlib/fprem.c  0x00000000   Lc  Abs  File  De 
+    331  .text                      0x0800a9a8   Lc    1  Sect  De 
+    332  ../fplib/microlib/fpfix.c  0x00000000   Lc  Abs  File  De 
+    333  .text                      0x0800a9fa   Lc    1  Sect  De 
+    334  BuildAttributes$$THM_ISAv4$P$D$K$B$S$PE$A:L22UL41UL21$X:L11$S22US41US21$IEEE1$IW$USESV6$~STKCKD$USESV7$~SHL$OTIME$ROPI$IEEEX$EBA8$MICROLIB$REQ8$PRES8$EABIv2
+                                    0x00000000   Gb  Abs   --   Hi 
+    335  test_entry                 0x08000001   Gb    1  Code  Hi   0xa652
+    336  __aeabi_memcpy             0x0800a653   Gb    1  Code  Hi   0x24
+    337  __aeabi_memcpy4            0x0800a653   Gb    1  Code  Hi 
+    338  __aeabi_memcpy8            0x0800a653   Gb    1  Code  Hi 
+    339  __aeabi_memset             0x0800a677   Gb    1  Code  Hi   0xe
+    340  __aeabi_memset4            0x0800a677   Gb    1  Code  Hi 
+    341  __aeabi_memset8            0x0800a677   Gb    1  Code  Hi 
+    342  __aeabi_memclr             0x0800a685   Gb    1  Code  Hi   0x4
+    343  __aeabi_memclr4            0x0800a685   Gb    1  Code  Hi 
+    344  __aeabi_memclr8            0x0800a685   Gb    1  Code  Hi 
+    345  _memset$wrapper            0x0800a689   Gb    1  Code  Hi   0x12
+    346  memcmp                     0x0800a69b   Gb    1  Code  Hi   0x1a
+    347  __aeabi_fadd               0x0800a6b5   Gb    1  Code  Hi   0xa4
+    348  __aeabi_fsub               0x0800a759   Gb    1  Code  Hi   0x6
+    349  __aeabi_frsub              0x0800a75f   Gb    1  Code  Hi   0x6
+    350  __aeabi_fmul               0x0800a765   Gb    1  Code  Hi   0x64
+    351  __aeabi_fdiv               0x0800a7c9   Gb    1  Code  Hi   0x7c
+    352  __ARM_scalbnf              0x0800a845   Gb    1  Code  Hi   0x18
+    353  scalbnf                    0x0800a845   Gb    1  Code  Hi 
+    354  __aeabi_i2f                0x0800a85d   Gb    1  Code  Hi   0x12
+    355  __aeabi_ui2f               0x0800a86f   Gb    1  Code  Hi   0xa
+    356  __aeabi_cfcmpeq            0x0800a879   Gb    1  Code  Hi 
+    357  __aeabi_cfcmple            0x0800a879   Gb    1  Code  Hi   0x14
+    358  __aeabi_cfrcmple           0x0800a88d   Gb    1  Code  Hi   0x14
+    359  __I$use$fp                 0x0800a8a1   Gb    1  Code  Hi 
+    360  _float_round               0x0800a8a1   Gb    1  Code  Hi   0x12
+    361  _float_epilogue            0x0800a8b3   Gb    1  Code  Hi   0x5c
+    362  _fsqrt                     0x0800a90f   Gb    1  Code  Hi   0x5e
+    363  _frnd                      0x0800a96d   Gb    1  Code  Hi   0x3c
+    364  _frem                      0x0800a9a9   Gb    1  Code  Hi   0x52
+    365  __aeabi_f2iz               0x0800a9fb   Gb    1  Code  Hi   0x32
+    366  Chassis_Inverse            0x0800aae9   Gb    1  Code  Hi   0x154
+    367  FusionAdapter_Observe      0x0800ac3d   Gb    1  Code  Hi   0x4e2
+    368  FusionAdapter_Reset        0x0800b131   Gb    1  Code  Hi   0xc
+    369  FusionReference_Prepare    0x0800b13d   Gb    1  Code  Hi   0x2b0
+    370  FusionReference_Reset      0x0800b405   Gb    1  Code  Hi   0xc
+    371  FusionReference_Step       0x0800b411   Gb    1  Code  Hi   0x932
+    372  __ARM_fpclassifyf          0x0800bd55   Gb    1  Code  De   0x26
+    373  __mathlib_flt_infnan       0x0800bd7b   Gb    1  Code  De   0x6
+    374  __mathlib_flt_infnan2      0x0800bd81   Gb    1  Code  De   0x4
+    375  __mathlib_flt_invalid      0x0800bd85   Gb    1  Code  De   0x8
+    376  __mathlib_flt_underflow    0x0800bd8d   Gb    1  Code  De   0xa
+    377  __mathlib_rredf2           0x0800bd99   Gb    1  Code  De   0x158
+    378  __set_errno                0x0800bf01   Gb    1  Code  Hi   0x6
+    379  atan2f                     0x0800bf3d   Gb    1  Code  Hi   0x256
+    380  cosf                       0x0800c63d   Gb    1  Code  Hi   0x148
+    381  fmodf                      0x0800c991   Gb    1  Code  Hi   0x6c
+    382  sinf                       0x0800cfa1   Gb    1  Code  Hi   0x152
+    383  sqrtf                      0x0800d129   Gb    1  Code  Hi   0x2c
+    384  size_adapter_state         0x20000000   Gb    2  Data  Hi   0x4
+    385  size_adapter_input         0x20000004   Gb    2  Data  Hi   0x4
+    386  size_adapter_report        0x20000008   Gb    2  Data  Hi   0x4
+    387  review_assertions          0x2000000c   Gb    2  Data  Hi   0x4
+
+
+** Section #6 '.strtab' (SHT_STRTAB)
+    Size   : 3200 bytes
+
+
+** Section #7 '.note' (SHT_NOTE)
+    Size   : 28 bytes (alignment 4)
+
+
+** Section #8 '.comment' (SHT_PROGBITS)
+    Size   : 2068 bytes
+
+
+** Section #9 '.shstrtab' (SHT_STRTAB)
+    Size   : 72 bytes
+
+

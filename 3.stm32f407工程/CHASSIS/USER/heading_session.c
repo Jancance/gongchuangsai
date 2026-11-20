@@ -1,7 +1,5 @@
 #include "heading_session.h"
-#include "stage3_cycle.h"
 #include <stddef.h>
-#include <math.h>
 #include "route_heading_reference.h"
 
 static void HS_Out(const HeadingSession *s, uint32_t action, HeadingSessionOutput *out)
@@ -34,8 +32,8 @@ void HeadingSession_Init(HeadingSession *s)
     if (s != NULL) *s = empty;
 }
 
-static uint32_t HS_Start(HeadingSession *s, const HeadingSessionInput *in,
-    float relative_deg, HeadingSessionOutput *out, uint32_t fine)
+uint32_t HeadingSession_Start(HeadingSession *s, const HeadingSessionInput *in,
+    float relative_deg, HeadingSessionOutput *out)
 {
     HeadingControllerConfig config = g_heading_controller_default_config;
     HeadingControllerOutput calculated = {0};
@@ -43,9 +41,8 @@ static uint32_t HS_Start(HeadingSession *s, const HeadingSessionInput *in,
     HS_Out(s, HS_ACTION_NONE, out);
     if ((s->used != 0U) || (s->state != HS_IDLE) || !HS_Fresh(in) ||
         (in->backend_active != 0U) || (in->backend_result != 0U) ||
-        !((!fine && (((relative_deg >= 5.0f) && (relative_deg <= ((APP_TEST_MODE == 3U) ? 90.0f : 45.0f))) ||
-          ((relative_deg <= -5.0f) && (relative_deg >= ((APP_TEST_MODE == 3U) ? -90.0f : -45.0f))))) ||
-          (fine && APP_TEST_MODE==3U && fabsf(relative_deg)>(fine==2U?S3_STRICT_YAW_DEG:1.0f) && fabsf(relative_deg)<=10.0f))) return 0U;
+        !(((relative_deg >= 5.0f) && (relative_deg <= ((APP_TEST_MODE == 3U) ? 90.0f : 45.0f))) ||
+          ((relative_deg <= -5.0f) && (relative_deg >= ((APP_TEST_MODE == 3U) ? -90.0f : -45.0f))))) return 0U;
 
     /* 有限会话截止从接受会话开始计时，包含执行器准备耗时。 */
     s->turn_trial = (APP_TURN_BRAKE_TRIAL_ACTIVE &&
@@ -58,7 +55,7 @@ static uint32_t HS_Start(HeadingSession *s, const HeadingSessionInput *in,
         if (config.medium_rpm > config.coarse_rpm) config.medium_rpm = config.coarse_rpm;
     }
     config.timeout_ms = HS_RUN_MS;
-    config.tolerance_deg = fine==2U?S3_STRICT_HEADING_ARRIVAL_DEG:APP_HEADING_TOLERANCE_DEG;
+    config.tolerance_deg = APP_HEADING_TOLERANCE_DEG;
     if (HeadingController_Start(&s->controller, &config,
         in->yaw_deg + relative_deg, in->yaw_deg, in->now_ms) != 1U) return 0U;
     (void)HeadingController_Step(&s->controller, in->now_ms,
@@ -66,6 +63,9 @@ static uint32_t HS_Start(HeadingSession *s, const HeadingSessionInput *in,
     if (s->turn_trial) {
         TurnBrake_Init(&s->brake, in->now_ms, in->yaw_deg, relative_deg,
             (float)APP_TURN_BRAKE_MAX_RPM * (6.0f*77.0f/418.0f));
+#if APP_TURN90_90_ACTIVE
+        if(!s->brake.profile.valid){HS_Fail(s,HS_CAUSE_INPUT,out);return 0U;}
+#endif
         s->controller.command_rpm = 0;
     }
     s->used = 1U;
@@ -83,15 +83,6 @@ static uint32_t HS_Start(HeadingSession *s, const HeadingSessionInput *in,
 }
 
 /* 保留原90度准入；仅本候选增加有界参考目标，绝不隐式放宽公共入口。 */
-uint32_t HeadingSession_Start(HeadingSession *s,const HeadingSessionInput *in,float relative_deg,HeadingSessionOutput *out)
-{return HS_Start(s,in,relative_deg,out,0U);}
-
-uint32_t HeadingSession_StartFine(HeadingSession *s,const HeadingSessionInput *in,float relative_deg,HeadingSessionOutput *out)
-{return HS_Start(s,in,relative_deg,out,1U);}
-
-uint32_t HeadingSession_StartStage3Fine(HeadingSession *s,const HeadingSessionInput *in,float relative_deg,HeadingSessionOutput *out)
-{return HS_Start(s,in,relative_deg,out,2U);}
-
 uint32_t HeadingSession_StartReference(HeadingSession *s, const HeadingSessionInput *in,
     float nominal_deg, float target_deg, HeadingSessionOutput *out)
 {

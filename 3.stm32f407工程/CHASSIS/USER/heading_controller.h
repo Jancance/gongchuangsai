@@ -2,7 +2,6 @@
 #define HEADING_CONTROLLER_H
 
 #include <stdint.h>
-#define HEADING_HOLD_SOURCE_TIMEOUT_MS 500U
 
 /* 航向闭环当前只输出带符号的逻辑转向轮速，不直接操作CAN或VM。 */
 #define HEADING_CTRL_IDLE       0U

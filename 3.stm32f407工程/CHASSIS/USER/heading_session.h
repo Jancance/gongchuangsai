@@ -23,7 +23,7 @@
 #define HS_CAUSE_EXECUTOR 5U
 #define HS_CAUSE_STOP_TIMEOUT 6U
 #define HS_CAUSE_REVERSE 7U
-#define HS_SOURCE_MS HEADING_HOLD_SOURCE_TIMEOUT_MS
+#define HS_SOURCE_MS 100U
 #define HS_RUN_MS APP_HEADING_RUN_MS
 #define HS_STOP_MS 2500U
 
@@ -63,8 +63,6 @@ uint32_t HeadingSession_Start(HeadingSession *session,
 uint32_t HeadingSession_StartReference(HeadingSession *session,
     const HeadingSessionInput *input, float nominal_deg, float target_deg,
     HeadingSessionOutput *out);
-uint32_t HeadingSession_StartStage3Fine(HeadingSession*,const HeadingSessionInput*,float,HeadingSessionOutput*);
-uint32_t HeadingSession_StartFine(HeadingSession*,const HeadingSessionInput*,float,HeadingSessionOutput*);
 void HeadingSession_Step(HeadingSession *session,
     const HeadingSessionInput *input, HeadingSessionOutput *out);
 void HeadingSession_ReportBegin(HeadingSession *session,

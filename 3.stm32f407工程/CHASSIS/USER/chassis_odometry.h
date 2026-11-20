@@ -1,6 +1,7 @@
 #ifndef CHASSIS_ODOMETRY_H
 #define CHASSIS_ODOMETRY_H
 #include <stdint.h>
+#include "app_config.h"
 
 /* 底盘几何中心；场地X/Y固定，车身前/左/逆时针为正。仅观察，无运动许可。 */
 #define ODOM_HISTORY 32U
@@ -9,7 +10,11 @@
 #define ODOM_BAD_SAMPLE 4U
 #define ODOM_GAP 8U
 #define ODOM_WHEEL_MAX_AGE_MS 400U
+#if APP_ZONE2_NAV_MOTION_ENABLE && !APP_ZONE2_RADAR_CALIBRATION_TEST
+#define ODOM_YAW_MAX_AGE_MS 120U
+#else
 #define ODOM_YAW_MAX_AGE_MS 100U
+#endif
 typedef struct { uint32_t ms; float value; } ChassisOdomPoint;
 typedef struct {
     ChassisOdomPoint points[ODOM_HISTORY];

@@ -1,0 +1,71 @@
+{
+  "project_sha256": "a22c41ff8e04cf496552e1f147ecad06b9fa7a2bd00a9731d09fdfc3a962c14f",
+  "source_sha256": {
+    "app_odometry.c": "7f1ac1dfd61af209e892fc2fe206f4ef7a486274f1dc4265060dfb5de148eceb",
+    "app_odometry.h": "ca320eb6be63478404e51ed1d477dff63287d336c7d7ca441e56c133f90adf58",
+    "chassis_kinematics.c": "b54a676083a557fd5a1266d34b5c174e48b569fae5dd98ab46e53e18059ee5e0",
+    "chassis_kinematics.h": "6d5028f598e2f743602526c424b9538b12198985ec9e57248acc3097bf5e3333",
+    "chassis_auto_test.c": "5742f22ba37b9fc211c5129d6a8dab607fdf8f376e5bc6fcc31070ec18208c1b",
+    "app_motion_runtime.c": "2cded70cccf56c9464a0787be6656e81aad5e9a9d9334620d3c5a958b5eef611",
+    "app_serial_runtime.c": "d99860e5266f1e56156f41f88452895aff55d20a35459649ca97f72facdfbca4"
+  },
+  "builds": {
+    "baseline40_integrated": {
+      "returncode": 0,
+      "target": "Vehicle_Integrated",
+      "defines": "APP_BASELINE40_ENABLE=1,VEHICLE_INTEGRATED_ENABLE=0,VEHICLE_STAGE1_ENABLE=0",
+      "project_copy_sha256": "7a530e6eba9507e7dd0515d82b4340c8dd1834ab434a8a83799f3b0e4c0edd41",
+      "log_sha256": "38ad143982f72f5e7f1e0f764fcaf8a0761079f67f8f505881a1f9bc9317f480",
+      "command": [
+        "D:\\Keil_v5\\UV4\\UV4.exe",
+        "-r",
+        "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\baseline40-s25-build-20261115\\baseline40_integrated.uvprojx",
+        "-t",
+        "Vehicle_Integrated",
+        "-o",
+        "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-15\\s25-field-candidate\\baseline40_integrated.log"
+      ],
+      "program_size": "Program Size: Code=101876 RO-data=6572 RW-data=2952 ZI-data=118912  \r",
+      "axf": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\baseline40-s25-build-20261115\\baseline40_integrated\\Vehicle_Integrated.axf",
+      "axf_sha256": "41dd9265f971f4d78a83bf93a2db6b52535d01701409aa83c528f4d2a758f7df"
+    },
+    "baseline40_offline": {
+      "returncode": 0,
+      "target": "Vehicle_Offline",
+      "defines": "APP_BASELINE40_ENABLE=1,VEHICLE_INTEGRATED_ENABLE=0,VEHICLE_STAGE1_ENABLE=0",
+      "project_copy_sha256": "458b691a19a5341257b84fbfe349100d5988e9751077cbba34b0eb1406013194",
+      "log_sha256": "6cfd6e3fa72a53b54ec5211b5b2bb8321b863e28f8adbae5763ae3d219a35c85",
+      "command": [
+        "D:\\Keil_v5\\UV4\\UV4.exe",
+        "-r",
+        "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\baseline40-s25-build-20261115\\baseline40_offline.uvprojx",
+        "-t",
+        "Vehicle_Offline",
+        "-o",
+        "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-15\\s25-field-candidate\\baseline40_offline.log"
+      ],
+      "program_size": "Program Size: Code=101228 RO-data=6564 RW-data=2760 ZI-data=118912  \r",
+      "axf": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\baseline40-s25-build-20261115\\baseline40_offline\\Vehicle_Offline.axf",
+      "axf_sha256": "464714974fc62b554eea19d1bc0764a27c9ead3bceabb4ed7d3c0484f86636fa"
+    },
+    "baseline_off_integrated": {
+      "returncode": 0,
+      "target": "Vehicle_Integrated",
+      "defines": "",
+      "project_copy_sha256": "9baec4c56b9eccbe244ecc756ee4dfbf829a5a6c4237caa446a9149fcc95afe1",
+      "log_sha256": "623d1977d25e2339e26ab0b40bcb8046ae7d4b77e038192951e1dc7e34e1fc99",
+      "command": [
+        "D:\\Keil_v5\\UV4\\UV4.exe",
+        "-r",
+        "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\baseline40-s25-build-20261115\\baseline_off_integrated.uvprojx",
+        "-t",
+        "Vehicle_Integrated",
+        "-o",
+        "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-15\\s25-field-candidate\\baseline_off_integrated.log"
+      ],
+      "program_size": "Program Size: Code=11974 RO-data=470 RW-data=960 ZI-data=25576  \r",
+      "axf": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\baseline40-s25-build-20261115\\baseline_off_integrated\\Vehicle_Integrated.axf",
+      "axf_sha256": "7e554d696c1fa30f8d01c7f2f30275192f2b11fdfa44bb009cf2ce06e7e100d3"
+    }
+  }
+}

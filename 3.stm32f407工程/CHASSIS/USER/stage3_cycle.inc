@@ -203,7 +203,7 @@ static uint32_t S3_Config(void)
   j=S3_TargetPosition(i);
   if(j<1U || j>3U)return 0U;
   j--;
-  if(g_stage3_task_run && g_stage3_cycle_mode==1U && i+1U==first+count &&
+  if(!s3_module_run && g_stage3_task_run && g_stage3_cycle_mode==1U && i+1U==first+count &&
      !(g_stage3_target_depth[j]>=3200.0f+S3_FAST_HANDOFF_OFFSET_PULSES))return 0U;
   if(g_stage3_cycle_mode==1U && !(g_stage3_recovery_depth[j]>=3200.0f &&
     g_stage3_recovery_depth[j]<=(float)SPF_STAGE3_MAX_LIFT_PULSES))return 0U;
@@ -378,6 +378,20 @@ static uint32_t S3_Complete(void)
  if(g_it_request || g_it_state!=2U || g_it_action!=s3_pending)return 0U;
  s3_pending=0U;return 1U;
 }
+#if APP_ZONE2_MISSION_ENABLE
+static uint32_t S3_MapConfirm(AppZone2Action action)
+{
+ uint8_t item=(uint8_t)g_stage3_item;
+ if(!s3_module_run)return 1U;
+ if(item>=3U)return 0U;
+ if((action==APP_ZONE2_ROUGH_PLACE || action==APP_ZONE2_STORAGE_PLACE) &&
+    !RegionDispatch_PlacementStable(s3_module_run,item,s3_colors[item],s3_positions[item]))return 0U;
+ if(AppZone2_StationConfirm(s3_module_run,item,action,(uint8_t)s3_colors[item],
+                           (uint8_t)s3_positions[item]))return 1U;
+ S3_Fail(12U);
+ return 0U;
+}
+#endif
 static void S3_Axis(uint32_t axis,float value)
 {
  g_it_axes=axis;
@@ -391,13 +405,13 @@ static uint32_t S3_TrayGripElapsed(void)
 {return s3_tray_grip_sent && (uint32_t)((uint32_t)xTaskGetTickCount()-s3_tray_grip_tick)>=100U;}
 static uint32_t S3_AnticipatoryOwned(uint32_t phase)
 {
- return Stage3_Owns() && s3_round_trip && s3_cycle_mode==1U && g_stage3_state==5U &&
+ return !s3_module_run && Stage3_Owns() && s3_round_trip && s3_cycle_mode==1U && g_stage3_state==5U &&
   g_stage3_phase==phase && g_stage3_locked_run==g_stage3_run &&
   !g_stage3_fault && g_low_wheel_hold_ready;
 }
 static uint32_t S3_FastRecoveryOwned(void)
 {
- return Stage3_Owns() && s3_round_trip && s3_cycle_mode==1U && g_stage3_state==5U &&
+ return !s3_module_run && Stage3_Owns() && s3_round_trip && s3_cycle_mode==1U && g_stage3_state==5U &&
   g_stage3_phase==21U && s3_pending==3U && !g_stage3_fault && g_low_wheel_hold_ready;
 }
 static uint32_t S3_EmptyHandoffOwned(void)
@@ -510,6 +524,14 @@ static void Stage3_Telemetry(uint32_t now)
   (unsigned long)g_stage3_align_done,(unsigned long)g_stage3_config_ready);
  if(n<=0 || (uint32_t)n>=sizeof(wire)-7U)return;
  snprintf(wire+n,sizeof(wire)-(uint32_t)n,"%04X\r\n",SC_Crc(wire,(uint32_t)n));
+#if APP_ZONE2_MISSION_ENABLE
+ if(s3_module_run){
+  if(RegionPlacement_Send(wire,(uint16_t)((uint32_t)n+6U),g_stage3_run,g_stage3_pose,g_stage3_item,now)){
+   s3_tx_tick=now;g_stage3_tx++;
+  }
+  return;
+ }
+#endif
  if(USART6_VisionSend((const uint8_t*)wire,(uint16_t)((uint32_t)n+6U))){s3_tx_tick=now;g_stage3_tx++;}
 }
 
@@ -798,8 +820,13 @@ static void Stage3_Service(uint32_t now)
    if(!g_lift_ruler_controller.top_scale){S3_Fail(12U);break;}
    g_it_axes=SPF_DM|SPF_EXT|SPF_LIFT;g_it_dm_deg=s3_yaw[target];
    g_it_extension_mm=0.0f;g_it_lift_pulses=S3_SafeTopPulses();S3_Command(3U);break;
-  case 8U:S3_Axis(SPF_DM,s3_yaw[target]);break;
+  case 8U:
+#if APP_ZONE2_MISSION_ENABLE
+   if(!S3_MapConfirm(s3_cycle_mode==1U?APP_ZONE2_ROUGH_SLOT_GRIP:APP_ZONE2_STORAGE_SLOT_GRIP))return;
+#endif
+   S3_Axis(SPF_DM,s3_yaw[target]);break;
   case S3_SYNC_PLACE_PHASE:
+
    if(s3_round_trip){
     if(!S3_PrefetchNextTray(g_stage3_item+1U,now))return;
     g_it_axes=SPF_EXT|SPF_LIFT;
@@ -814,11 +841,12 @@ static void Stage3_Service(uint32_t now)
    break;
   case 11U:S3_Command(s3_round_trip?17U:6U);break; /* Place-only release uses the 160-degree command. */
   case S3_SYNC_RETURN_PHASE:
+   if(s3_module_run){S3_Command(4U);break;}
    if(!s3_round_trip || (target!=1U && s3_cycle_mode!=1U)){S3_Command(4U);break;}
    g_it_axes=SPF_EXT|SPF_LIFT;
    g_it_extension_mm=0.0f;
    if(!g_lift_ruler_controller.top_scale){S3_Fail(12U);break;}
-   if(s3_cycle_mode==1U && g_stage3_item+1U==s3_first+s3_count){
+   if(!s3_module_run && s3_cycle_mode==1U && g_stage3_item+1U==s3_first+s3_count){
     g_stage3_fast_place_tick=(uint32_t)xTaskGetTickCount();g_stage3_fast_timing_mask|=2U;
     s3_low_handoff=1U;
    }
@@ -830,9 +858,16 @@ static void Stage3_Service(uint32_t now)
    S3_Command(3U);
    break;
   case 13U:
+#if APP_ZONE2_MISSION_ENABLE
+   if(s3_module_run){
+    if(!S3_MapConfirm(s3_cycle_mode==1U?APP_ZONE2_ROUGH_PLACE:APP_ZONE2_STORAGE_PLACE))return;
+    S3_Axis(SPF_EXT,0.0f);break;
+   }
+#endif
    if(s3_round_trip && s3_cycle_mode==1U){g_stage3_phase=30U;return;}
    S3_Axis(SPF_EXT,0.0f);break;
   case 14U:
+   if(s3_module_run){g_stage3_phase=30U;return;}
    if(s3_round_trip){g_stage3_phase=29U;S3_Command(17U);break;}
    g_stage3_placed_count++;
    if(++g_stage3_item<s3_first+s3_count){g_stage3_phase=0U;return;}
@@ -851,7 +886,7 @@ static void Stage3_Service(uint32_t now)
    if(s3_cycle_mode==1U){
     s3_tray_valid=0U;g_stage3_item=s3_first;g_stage3_phase=S3_RECOVER_FIRST_PHASE;return;
    }
-  if(s3_cycle_mode==2U && s3_module_run){g_stage3_phase=33U;return;}
+  if(s3_module_run){g_stage3_phase=33U;return;}
    g_stage3_state=6U;S3_Pose();return;
   case 33U:
    if(!it_at_top()){S3_Command(4U);break;}
@@ -881,12 +916,15 @@ static void Stage3_Service(uint32_t now)
    break;
   case 20U:S3_Command(5U);break;
   case 21U:
-   if(s3_cycle_mode!=1U){S3_Command(4U);break;}
+#if APP_ZONE2_MISSION_ENABLE
+   if(!S3_MapConfirm(APP_ZONE2_ROUGH_GRIP))return;
+#endif
+   if(s3_module_run || s3_cycle_mode!=1U){S3_Command(4U);break;}
    if(!g_lift_ruler_controller.top_scale){S3_Fail(12U);break;}
    g_it_axes=SPF_DM|SPF_EXT|SPF_LIFT;g_it_dm_deg=s3_carrier;g_it_extension_mm=0.0f;
    g_it_lift_pulses=S3_SafeTopPulses();S3_Command(3U);break;
   case 22U:
-   if(s3_cycle_mode==1U){
+   if(!s3_module_run && s3_cycle_mode==1U){
     if(it_at_top() && s3_tray_valid && g_stage3_tray_prefetch_item==g_stage3_item){
      g_stage3_phase=26U;S3_Command(17U);return;
     }
@@ -907,9 +945,12 @@ static void Stage3_Service(uint32_t now)
    if(s3_cycle_mode==1U && it_at_top()){g_stage3_phase++;return;}
    S3_Command(4U);break;
   case 28U:
+#if APP_ZONE2_MISSION_ENABLE
+   if(!S3_MapConfirm(APP_ZONE2_ROUGH_SLOT))return;
+#endif
    g_stage3_recovered_count++;
    if(++g_stage3_item<s3_first+s3_count)g_stage3_phase=S3_RECOVER_FIRST_PHASE;
-   else if(s3_cycle_mode==1U)g_stage3_phase=31U;
+   else if(s3_cycle_mode==1U)g_stage3_phase=s3_module_run?33U:31U;
    else {g_stage3_state=6U;S3_Pose();}
    break;
   case 31U:S3_Axis(SPF_DM,0.0f);break;

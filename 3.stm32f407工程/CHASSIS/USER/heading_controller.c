@@ -229,10 +229,7 @@ uint32_t HeadingController_HoldStep(HeadingHoldController *hold,
     if (HeadingController_HoldCorrection(target_deg, yaw_deg, rate_dps,
         &desired, error_deg) != 1U) return 0U;
     elapsed = (hold->initialized != 0U) ? now_ms - hold->tick : 20U;
-    if (elapsed >= HEADING_HOLD_SOURCE_TIMEOUT_MS) return 0U;
-    /* Scheduling jitter may exceed 100 ms with a fresh sensor sample.
-     * Bound the numerical update; never integrate the whole delayed interval. */
-    if (elapsed > 100U) elapsed = 100U;
+    if (elapsed >= 100U) return 0U;
     if ((hold->initialized != 0U) && (elapsed == 0U))
     { *correction_rpm = (float)hold->quantized_deci_rpm*0.1f; return 1U; }
     filtered = (hold->initialized != 0U) ? hold->filtered_rate_dps +

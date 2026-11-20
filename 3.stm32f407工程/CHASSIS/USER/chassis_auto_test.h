@@ -35,6 +35,37 @@
 #define CHASSIS_AUTO_FAULT 10U
 #define CHASSIS_AUTO_CANCELLED 11U
 
+#if APP_BASELINE40_ACTIVE
+/* Three baseline40 tail events, debug RAM only; F is reference/request/applied,
+ * never measured speed or a complete ACK batch. Slots: entry/latest freeze/arrival.
+ * Retained after STOP/fault; reset only by an accepted matching session. */
+typedef struct
+{
+    uint32_t now_ms, run_tick_ms, common_ms, follow_tick_ms;
+    float common_mean_mm, reference_position_mm, reference_rpm;
+    float follow_rpm, follow_rate_rpm_s;
+    uint32_t pending_base_rpm, applied_base_rpm, flags;
+} ChassisAutoTailSnapshot;
+typedef struct
+{
+    uint32_t format_version, session, valid_mask;
+    uint32_t entry_count, freeze_count, arrival_count, reserved[2];
+    ChassisAutoTailSnapshot slot[3];
+} ChassisAutoTailSnapshots;
+#define CHASSIS_TAIL_PROFILE_ACTIVE 1U
+#define CHASSIS_TAIL_PROFILE_DONE 2U
+#define CHASSIS_TAIL_RUN_STARTED 4U
+#define CHASSIS_TAIL_REACHED_BEFORE_EVENT 8U
+#define CHASSIS_TAIL_STOP_DUE_BEFORE_EVENT 16U
+#define CHASSIS_TAIL_FINISH_BEFORE_EVENT 32U
+#define CHASSIS_TAIL_ALIGNMENT_SEEN 64U
+#define CHASSIS_TAIL_COMMON_FRESH 128U
+typedef char ChassisAutoTailSizeCheck[(sizeof(ChassisAutoTailSnapshot)==48U &&
+    sizeof(ChassisAutoTailSnapshots)==176U) ? 1 : -1];
+extern volatile ChassisAutoTailSnapshots g_chassis_auto_tail_snapshots;
+void ChassisAuto_ReadTailSnapshots(ChassisAutoTailSnapshots *snapshot);
+#endif
+
 extern volatile uint32_t g_chassis_auto_request;
 extern volatile uint32_t g_chassis_auto_dry_run;
 extern volatile uint32_t g_chassis_auto_mode;
@@ -92,7 +123,6 @@ typedef struct
 {
     uint32_t valid, motion_mode, base_rpm, run_ms;
     float distance_mm, route_reference_mm_s;
-    uint32_t stage3_fine;
 #if APP_DISTANCE_SCURVE_ACTIVE
     MotionProfile profile;
 #endif
@@ -100,23 +130,16 @@ typedef struct
 } ChassisAutoPreparedTranslation;
 uint32_t ChassisAuto_PrepareTranslation(uint32_t motion_mode, uint32_t base_rpm,
     uint32_t run_ms, float distance_mm, ChassisAutoPreparedTranslation *prepared);
-uint32_t ChassisAuto_PrepareStage3FineTranslation(uint32_t mode,uint32_t rpm,uint32_t run_ms,
-    float mm,float speed,ChassisAutoPreparedTranslation *prepared);
 uint32_t ChassisAuto_PrepareRouteTranslation(uint32_t motion_mode,uint32_t base_rpm,
     uint32_t run_ms,float distance_mm,float reference_mm_s,ChassisAutoPreparedTranslation *prepared);
 uint32_t ChassisAuto_BeginPreparedTranslation(const ChassisAutoPreparedTranslation *prepared,
     uint32_t expected_session);
-uint32_t ChassisAuto_PrepareRouteBlend(uint32_t mode,uint32_t rpm,uint32_t run_ms,float mm,float speed,ChassisAutoPreparedTranslation *prepared);
-uint32_t ChassisAuto_BeginPreparedBlend(const ChassisAutoPreparedTranslation *prepared,uint32_t expected_session);
-extern volatile uint32_t g_stage1_blend_active;
-extern volatile float g_stage1_forward_mm,g_stage1_lateral_mm;
 void ChassisAuto_Init(void);
 uint32_t ChassisAuto_Begin(uint32_t dry_run);
 void ChassisAuto_CanStep(void);
 void ChassisAuto_Abort(void);
 #if APP_TEST_MODE == 3U
 uint32_t ChassisAuto_BeginSequence(void);
-uint32_t ChassisAuto_BeginHeldSequence(void);
 uint32_t ChassisAuto_RearmCompleted(uint32_t expected_session);
 void ChassisAuto_ReportIdleSpeed(uint32_t index,float rpm,uint32_t tick);
 uint32_t ChassisAuto_ReleaseCompleted(uint32_t session);
@@ -149,8 +172,7 @@ uint32_t ChassisAuto_UpdateHeading(float command_rpm);
 /* Safety任务独立调用，不发送/等待CAN */
 void ChassisAuto_SafetyUpdate(uint32_t vm_request);
 /* TaskA到CAN任务的纯数据交接；1有效，0无效/过期。 */
-#include "heading_controller.h"
-#define CHASSIS_HEADING_MAILBOX_MAX_AGE_MS HEADING_HOLD_SOURCE_TIMEOUT_MS
+#define CHASSIS_HEADING_MAILBOX_MAX_AGE_MS 100U
 typedef struct
 {
     float command_rpm;
@@ -205,6 +227,7 @@ typedef struct
     uint32_t end_sign[4], end_raw[4], end_ms[4];
 } ChassisPositionEndpoints;
 uint32_t ChassisAuto_ReadPositionEndpoints(uint32_t index, ChassisPositionEndpoints *record);
+uint32_t ChassisAuto_BeginTurnBrake(int32_t direction);
 /* 四轮只读实验快照：RPM为带符号0.1RPM，时间为uint32毫秒。
  * 反馈为各轮异步CAN最近样本；ack仅表示命令收到应答，不表示到速。
  * mask无效时仍保留旧数值用于追溯，分析时必须检查mask/active/dry_run。
@@ -215,5 +238,32 @@ typedef struct {
     uint32_t ack_ms[4],sample_ms[4],age_ms[4];
 } ChassisWheelLog;
 uint32_t ChassisAuto_ReadWheelLog(ChassisWheelLog *snapshot);
-uint32_t ChassisAuto_CloseHeldCompleted(uint32_t session);
+#if APP_ZONE2_NAV_ENABLE
+typedef struct {
+    uint32_t run_id, session, power_epoch, state, result, cause, ready;
+    uint32_t ack_generation, attempt_generation, possible_mask, ack_mask;
+    uint32_t stop_ack_ms, wheel_quiet, position_mask, status_mask;
+    uint32_t zero_ack_ms, zero_confirmed, feedback_ready, next_batch_ms;
+    uint32_t wheel_ms[4], position_sign[4], position_counts[4], status_ms[4];
+    uint32_t tx_ms[4], reply_ms[4], tx_complete_mask;
+    uint32_t wheel_misses[4], status_misses[4];
+    uint32_t status_miss_streak[4];
+    int32_t wheel_decirpm[4];
+} ChassisZone2CanStatus;
+
+/* Sole CAN task. The startup/leg scheduler reads copies and submits once per generation. */
+uint32_t ChassisAuto_Zone2Prime(uint32_t run_id);
+uint32_t ChassisAuto_Zone2Disarm(void);
+uint32_t ChassisAuto_Zone2Begin(uint32_t run_id,uint32_t expected_session);
+uint32_t ChassisAuto_Zone2Submit(uint32_t run_id,uint32_t session,uint32_t generation,
+    const ChassisMotorCommand commands[4]);
+/* batch_ms must still name the owner's next future phase-zero slot. */
+uint32_t ChassisAuto_Zone2SubmitAt(uint32_t run_id,uint32_t session,uint32_t generation,
+    uint32_t batch_ms,const ChassisMotorCommand commands[4]);
+/* Release a clean stopped leg and retain the same scan and VM epoch. */
+uint32_t ChassisAuto_Zone2ReleaseCompleted(uint32_t run_id,uint32_t session);
+void ChassisAuto_Zone2Read(ChassisZone2CanStatus *snapshot);
+void ChassisAuto_Zone2CanStep(uint32_t slot_ms,uint32_t phase);
+void ChassisAuto_Zone2SafetyReport(void);
+#endif
 #endif

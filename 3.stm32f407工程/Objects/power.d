@@ -1,0 +1,17 @@
+.\objects\power.o: HARDWARE\POWER\power.c
+.\objects\power.o: .\CORE\stm32f4xx.h
+.\objects\power.o: .\CORE\core_cm4.h
+.\objects\power.o: D:\Keil_v5\ARM\arm5_compiler\Bin\..\include\stdint.h
+.\objects\power.o: .\CORE\cmsis_version.h
+.\objects\power.o: .\CORE\cmsis_compiler.h
+.\objects\power.o: .\CORE\cmsis_armcc.h
+.\objects\power.o: .\CORE\mpu_armv7.h
+.\objects\power.o: .\CORE\system_stm32f4xx.h
+.\objects\power.o: .\USER\stm32f4xx_conf.h
+.\objects\power.o: .\StdPeriph_Driver\inc\stm32f4xx_gpio.h
+.\objects\power.o: .\CORE\stm32f4xx.h
+.\objects\power.o: .\StdPeriph_Driver\inc\stm32f4xx_rcc.h
+.\objects\power.o: .\StdPeriph_Driver\inc\misc.h
+.\objects\power.o: .\StdPeriph_Driver\inc\stm32f4xx_usart.h
+.\objects\power.o: .\StdPeriph_Driver\inc\stm32f4xx_can.h
+.\objects\power.o: HARDWARE\POWER\power.h

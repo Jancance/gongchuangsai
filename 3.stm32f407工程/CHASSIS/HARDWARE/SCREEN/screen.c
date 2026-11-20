@@ -206,3 +206,4 @@ uint32_t Screen_ShowTaskCode(const char *task_code)
     return Screen_SendCommand(command);
 }
 
+#include "screen_result.inc"

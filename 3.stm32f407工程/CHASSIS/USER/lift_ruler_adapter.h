@@ -1,5 +1,6 @@
 #ifndef LIFT_RULER_ADAPTER_H
 #define LIFT_RULER_ADAPTER_H
+#define LIFT_RULER_SERVICE_ENABLED (VEHICLE_LIFT_RULER_ONLY || VEHICLE_INTEGRATED_ENABLE)
 #include <stdint.h>
 #include "lift_ruler_calibration.h"
 extern LiftRulerController g_lift_ruler_controller;

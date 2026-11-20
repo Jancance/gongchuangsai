@@ -1,0 +1,354 @@
+{
+  "time": "2026-11-17T19:52:06.706736+08:00",
+  "hardware_accessed": false,
+  "static_only": true,
+  "builds": {
+    "integrated_on": {
+      "size_line": "Program Size: Code=144588 RO-data=6892 RW-data=3612 ZI-data=124004  ",
+      "stacks": {
+        "App_CanTask": {
+          "frame": 0,
+          "chain": 912,
+          "has_unknown": true
+        },
+        "AppChassis_CanStep": {
+          "frame": 8,
+          "chain": 912,
+          "has_unknown": true
+        },
+        "App_CombinedTestStep": {
+          "frame": 160,
+          "chain": 904,
+          "has_unknown": false
+        },
+        "App_ForwardHoldStep": {
+          "frame": 216,
+          "chain": 744,
+          "has_unknown": false
+        },
+        "App_MoveSubmit": {
+          "frame": 168,
+          "chain": 368,
+          "has_unknown": false
+        },
+        "App_RouteHeadingBegin": {
+          "frame": 24,
+          "chain": 80,
+          "has_unknown": false
+        },
+        "App_RouteHeadingCompleted": {
+          "frame": 16,
+          "chain": 48,
+          "has_unknown": false
+        },
+        "App_RouteHeadingDirectCompleted": {
+          "frame": 96,
+          "chain": 144,
+          "has_unknown": false
+        },
+        "AppOdometry_Step": {
+          "frame": 136,
+          "chain": 396,
+          "has_unknown": false
+        },
+        "AppOdometry_MapStep": {
+          "frame": 136,
+          "chain": 260,
+          "has_unknown": false
+        },
+        "AppOdometry_MapNavigationStep": {
+          "frame": 56,
+          "chain": 92,
+          "has_unknown": false
+        },
+        "AppOdometry_MapTrackingRun": {
+          "frame": 16,
+          "chain": 32,
+          "has_unknown": false
+        },
+        "AppOdometry_ReadMap": {
+          "frame": 16,
+          "chain": 32,
+          "has_unknown": false
+        }
+      },
+      "regions": {
+        "RW_IRAM2": {
+          "base": "0x10000000",
+          "size": 31040,
+          "limit": 65536,
+          "free": 34496
+        },
+        "RW_IRAM1": {
+          "base": "0x20000000",
+          "size": 96576,
+          "limit": 131072,
+          "free": 34496
+        }
+      },
+      "symbols": {
+        "s_map_published": {
+          "address": "0x100074c0",
+          "size": 128
+        },
+        "s_map_pose": {
+          "address": "0x10001060",
+          "size": 128
+        },
+        "s_map_action": {
+          "address": "0x10007488",
+          "size": 20
+        },
+        "s_map_navigation": {
+          "address": "0x1000749c",
+          "size": 36
+        }
+      }
+    },
+    "integrated_off": {
+      "size_line": "Program Size: Code=143740 RO-data=6860 RW-data=3612 ZI-data=123948  ",
+      "stacks": {
+        "App_CanTask": {
+          "frame": 0,
+          "chain": 912,
+          "has_unknown": true
+        },
+        "AppChassis_CanStep": {
+          "frame": 8,
+          "chain": 912,
+          "has_unknown": true
+        },
+        "App_CombinedTestStep": {
+          "frame": 160,
+          "chain": 904,
+          "has_unknown": false
+        },
+        "App_ForwardHoldStep": {
+          "frame": 216,
+          "chain": 744,
+          "has_unknown": false
+        },
+        "App_MoveSubmit": {
+          "frame": 168,
+          "chain": 368,
+          "has_unknown": false
+        },
+        "App_RouteHeadingBegin": {
+          "frame": 24,
+          "chain": 80,
+          "has_unknown": false
+        },
+        "App_RouteHeadingCompleted": {
+          "frame": 16,
+          "chain": 48,
+          "has_unknown": false
+        },
+        "App_RouteHeadingDirectCompleted": {
+          "frame": 96,
+          "chain": 144,
+          "has_unknown": false
+        },
+        "AppOdometry_Step": {
+          "frame": 136,
+          "chain": 396,
+          "has_unknown": false
+        },
+        "AppOdometry_MapStep": {
+          "frame": 136,
+          "chain": 260,
+          "has_unknown": false
+        },
+        "AppOdometry_MapTrackingRun": {
+          "frame": 16,
+          "chain": 32,
+          "has_unknown": false
+        },
+        "AppOdometry_ReadMap": {
+          "frame": 16,
+          "chain": 32,
+          "has_unknown": false
+        }
+      },
+      "regions": {
+        "RW_IRAM2": {
+          "base": "0x10000000",
+          "size": 31016,
+          "limit": 65536,
+          "free": 34520
+        },
+        "RW_IRAM1": {
+          "base": "0x20000000",
+          "size": 96544,
+          "limit": 131072,
+          "free": 34528
+        }
+      },
+      "symbols": {
+        "s_map_published": {
+          "address": "0x100074a4",
+          "size": 128
+        },
+        "s_map_pose": {
+          "address": "0x10001028",
+          "size": 128
+        }
+      }
+    },
+    "map_off": {
+      "size_line": "Program Size: Code=141332 RO-data=6860 RW-data=3592 ZI-data=122192  ",
+      "stacks": {
+        "App_CanTask": {
+          "frame": 0,
+          "chain": 920,
+          "has_unknown": true
+        },
+        "AppChassis_CanStep": {
+          "frame": 8,
+          "chain": 920,
+          "has_unknown": true
+        },
+        "App_CombinedTestStep": {
+          "frame": 168,
+          "chain": 912,
+          "has_unknown": false
+        },
+        "App_ForwardHoldStep": {
+          "frame": 216,
+          "chain": 744,
+          "has_unknown": false
+        },
+        "App_MoveSubmit": {
+          "frame": 120,
+          "chain": 320,
+          "has_unknown": false
+        },
+        "AppOdometry_Step": {
+          "frame": 136,
+          "chain": 260,
+          "has_unknown": false
+        }
+      },
+      "regions": {
+        "RW_IRAM2": {
+          "base": "0x10000000",
+          "size": 30120,
+          "limit": 65536,
+          "free": 35416
+        },
+        "RW_IRAM1": {
+          "base": "0x20000000",
+          "size": 95664,
+          "limit": 131072,
+          "free": 35408
+        }
+      },
+      "symbols": {}
+    },
+    "baseline_on": {
+      "size_line": "Program Size: Code=115828 RO-data=6688 RW-data=3088 ZI-data=191636  ",
+      "stacks": {
+        "App_CanTask": {
+          "frame": 0,
+          "chain": 1016,
+          "has_unknown": false
+        },
+        "AppChassis_CanStep": {
+          "frame": 8,
+          "chain": 1016,
+          "has_unknown": false
+        },
+        "App_CombinedTestStep": {
+          "frame": 160,
+          "chain": 1008,
+          "has_unknown": false
+        },
+        "App_ForwardHoldStep": {
+          "frame": 216,
+          "chain": 800,
+          "has_unknown": false
+        },
+        "App_MoveSubmit": {
+          "frame": 168,
+          "chain": 368,
+          "has_unknown": false
+        },
+        "App_RouteHeadingBegin": {
+          "frame": 24,
+          "chain": 80,
+          "has_unknown": false
+        },
+        "App_RouteHeadingCompleted": {
+          "frame": 16,
+          "chain": 48,
+          "has_unknown": false
+        },
+        "App_RouteHeadingDirectCompleted": {
+          "frame": 96,
+          "chain": 144,
+          "has_unknown": false
+        },
+        "AppOdometry_Step": {
+          "frame": 160,
+          "chain": 420,
+          "has_unknown": false
+        },
+        "AppOdometry_MapStep": {
+          "frame": 136,
+          "chain": 260,
+          "has_unknown": false
+        },
+        "AppOdometry_MapNavigationStep": {
+          "frame": 56,
+          "chain": 92,
+          "has_unknown": false
+        },
+        "AppOdometry_MapTrackingRun": {
+          "frame": 16,
+          "chain": 32,
+          "has_unknown": false
+        }
+      },
+      "regions": {
+        "RW_IRAM2": {
+          "base": "0x10000000",
+          "size": 64576,
+          "limit": 65536,
+          "free": 960
+        },
+        "RW_IRAM1": {
+          "base": "0x20000000",
+          "size": 130148,
+          "limit": 131072,
+          "free": 924
+        }
+      },
+      "symbols": {
+        "g_fusion_capture_a": {
+          "address": "0x20017300",
+          "size": 34020
+        },
+        "g_fusion_capture_b": {
+          "address": "0x10007300",
+          "size": 33600
+        },
+        "s_map_published": {
+          "address": "0x2001fbe4",
+          "size": 128
+        },
+        "s_map_pose": {
+          "address": "0x200160e8",
+          "size": 128
+        },
+        "s_map_action": {
+          "address": "0x10007114",
+          "size": 20
+        },
+        "s_map_navigation": {
+          "address": "0x10007128",
+          "size": 36
+        }
+      }
+    }
+  },
+  "note": "Compiler static chains may contain Unknown; no physical stack high-watermark or run-time memory acceptance."
+}

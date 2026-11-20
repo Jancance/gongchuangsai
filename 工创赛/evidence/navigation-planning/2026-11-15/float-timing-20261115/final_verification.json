@@ -1,0 +1,93 @@
+{
+  "all_passed": true,
+  "chip_cycles_measured": false,
+  "hardware_accessed": false,
+  "source_control_equivalence": true,
+  "builds": {
+    "baseline40_integrated": {
+      "before": "Program Size: Code=101876 RO-data=6572 RW-data=2952 ZI-data=118912  \r",
+      "after": "Program Size: Code=102096 RO-data=6572 RW-data=2952 ZI-data=119024  \r",
+      "allocated_identical": false
+    },
+    "baseline40_offline": {
+      "before": "Program Size: Code=101228 RO-data=6564 RW-data=2760 ZI-data=118912  \r",
+      "after": "Program Size: Code=101448 RO-data=6564 RW-data=2760 ZI-data=119024  \r",
+      "allocated_identical": false
+    },
+    "baseline_off_integrated": {
+      "before": "Program Size: Code=11974 RO-data=470 RW-data=960 ZI-data=25576  \r",
+      "after": "Program Size: Code=11974 RO-data=470 RW-data=960 ZI-data=25576  \r",
+      "allocated_identical": true
+    }
+  },
+  "debug_symbols": {
+    "baseline40_integrated": {
+      "axf": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\float-timing-build-20261115\\baseline40_integrated\\Vehicle_Integrated.axf",
+      "axf_sha256": "b32ba55f389ed7738826c720ac3ee271faca2128869ef27fba87ff567d29af81",
+      "symbol": "g_chassis_auto_lateral_timing",
+      "address": "0x200124c8",
+      "size_bytes": 104,
+      "read_before_reset": true,
+      "coherence": "future authorized acquisition only: same session DONE/backend inactive/no fault before and after two identical 104-byte reads; no halt/reset/VM change/IRQ masking/getter; otherwise unstable and not accepted",
+      "getter_linked": false
+    },
+    "baseline40_offline": {
+      "axf": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\tmp\\float-timing-build-20261115\\baseline40_offline\\Vehicle_Offline.axf",
+      "axf_sha256": "6dfdb8bc162ab9247eb6b373bd05dbe0f7c69a49a3e5e07dee4d116934155973",
+      "symbol": "g_chassis_auto_lateral_timing",
+      "address": "0x200123f8",
+      "size_bytes": 104,
+      "read_before_reset": true,
+      "coherence": "future authorized acquisition only: same session DONE/backend inactive/no fault before and after two identical 104-byte reads; no halt/reset/VM change/IRQ masking/getter; otherwise unstable and not accepted",
+      "getter_linked": false
+    }
+  },
+  "scope_layout": {
+    "header": {
+      "enabled": 0,
+      "SystemCoreClock": 4
+    },
+    "scope0": 8,
+    "scope1": 56,
+    "scope_bytes": 48,
+    "fields": {
+      "valid": 0,
+      "count": 4,
+      "min_cycles": 8,
+      "last_cycles": 12,
+      "max_cycles": 16,
+      "sum_cycles_u64": 24,
+      "first_ms": 32,
+      "last_ms": 36,
+      "window_ms": 40
+    }
+  },
+  "encoding": {
+    "chassis_auto_test.c": {
+      "before_lf": 2047,
+      "before_crlf": 2047,
+      "after_lf": 2088,
+      "after_crlf": 2088
+    },
+    "chassis_auto_test.h": {
+      "before_lf": 210,
+      "before_crlf": 1,
+      "after_lf": 229,
+      "after_crlf": 1
+    },
+    "hwt101.c": {
+      "before_lf": 750,
+      "before_crlf": 750,
+      "after_lf": 752,
+      "after_crlf": 752
+    },
+    "hwt101.h": {
+      "before_lf": 75,
+      "before_crlf": 75,
+      "after_lf": 76,
+      "after_crlf": 76
+    }
+  },
+  "parser_synthetic_cases_passed": 4,
+  "matlab_process_exit_code": 0
+}

@@ -1,0 +1,17 @@
+.\objects\led.o: HARDWARE\LED\led.c
+.\objects\led.o: .\CORE\stm32f4xx.h
+.\objects\led.o: .\CORE\core_cm4.h
+.\objects\led.o: D:\Keil_v5\ARM\arm5_compiler\Bin\..\include\stdint.h
+.\objects\led.o: .\CORE\cmsis_version.h
+.\objects\led.o: .\CORE\cmsis_compiler.h
+.\objects\led.o: .\CORE\cmsis_armcc.h
+.\objects\led.o: .\CORE\mpu_armv7.h
+.\objects\led.o: .\CORE\system_stm32f4xx.h
+.\objects\led.o: .\USER\stm32f4xx_conf.h
+.\objects\led.o: .\StdPeriph_Driver\inc\stm32f4xx_gpio.h
+.\objects\led.o: .\CORE\stm32f4xx.h
+.\objects\led.o: .\StdPeriph_Driver\inc\stm32f4xx_rcc.h
+.\objects\led.o: .\StdPeriph_Driver\inc\misc.h
+.\objects\led.o: .\StdPeriph_Driver\inc\stm32f4xx_usart.h
+.\objects\led.o: .\StdPeriph_Driver\inc\stm32f4xx_can.h
+.\objects\led.o: HARDWARE\LED\led.h

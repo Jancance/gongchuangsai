@@ -1,0 +1,78 @@
+{
+  "status": "PASS_LOCAL_CANDIDATE_ONLY",
+  "pre_manifest_items": 1937,
+  "changed_existing_manifest_paths": [
+    "3.stm32f407工程\\gongxun-f407.uvprojx",
+    "3.stm32f407工程\\CHASSIS\\USER\\app_serial_runtime.c",
+    "3.stm32f407工程\\CHASSIS\\USER\\main.c"
+  ],
+  "baseline_off_allocated_sizes_equal": true,
+  "baseline_off_allocated_byte_identical": false,
+  "baseline_off_only_assert_source_line_differences": [
+    {
+      "section": 0,
+      "offset": 6808,
+      "address": 134224536,
+      "before": 145,
+      "after": 149
+    },
+    {
+      "section": 0,
+      "offset": 6830,
+      "address": 134224558,
+      "before": 215,
+      "after": 219
+    }
+  ],
+  "disassembly": {
+    "before": [
+      "        0x08001a96:    f2401091    @...    MOV      r0,#0x191",
+      "        0x08001a9a:    f7fefe41    ..A.    BL       App_RtosAssertFailed ; 0x8000720",
+      "        0x08001aac:    f24010d7    @...    MOV      r0,#0x1d7",
+      "        0x08001ab0:    f7fefe36    ..6.    BL       App_RtosAssertFailed ; 0x8000720"
+    ],
+    "after": [
+      "        0x08001a96:    f2401095    @...    MOV      r0,#0x195",
+      "        0x08001a9a:    f7fefe41    ..A.    BL       App_RtosAssertFailed ; 0x8000720",
+      "        0x08001aac:    f24010db    @...    MOV      r0,#0x1db",
+      "        0x08001ab0:    f7fefe36    ..6.    BL       App_RtosAssertFailed ; 0x8000720"
+    ]
+  },
+  "assert_source_lines": {
+    "before": [
+      401,
+      471
+    ],
+    "after": [
+      405,
+      475
+    ]
+  },
+  "baseline_off_old_axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\half-stop-observer-build-20261115\\baseline_off_integrated\\Vehicle_Integrated.axf",
+  "baseline_off_new_axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\icm-observer-build-20261115\\baseline_off_integrated\\Vehicle_Integrated.axf",
+  "baseline_off_old_axf_sha256": "c2cde9ad3e47f49b635d1de8025828c6103145268eb93f4a4889e1d06e5550c8",
+  "baseline_off_new_axf_sha256": "cd66ac6d93877e8c2af5f1bf756508f1098d85e5954673856931e5d6172e839b",
+  "source_binding_to_arm_and_build": "PASS",
+  "actual_arm_cases": 98,
+  "actual_arm_assertions": 395,
+  "icm_task_static_chain_bytes": 592,
+  "icm_task_allocated_stack_bytes": 1024,
+  "observer_step_static_frame_bytes": 328,
+  "io1_known_static_chain_bytes": 376,
+  "io1_stack_unknown_printf": true,
+  "taskA_stack_watermark_not_measured": true,
+  "hardware_accessed": false,
+  "flashed": false,
+  "candidate_axf": {
+    "baseline40_integrated": "0ebf9e4e5d89e507cafd9e5cd17ce66570ec861804d38535e61ee89bbad874b3",
+    "baseline40_offline": "53ca96f5dd4c6e39e3495ccc5a1da0d77bd7ef1e72d5b798f46a635d4972e2d1",
+    "baseline_off_integrated": "cd66ac6d93877e8c2af5f1bf756508f1098d85e5954673856931e5d6172e839b"
+  },
+  "matlab_evidence_sha256": {
+    "observer_local_matlab_receipt.json": "f2080f30faa933eb176cc075908245f72239585b50bf025ec4caa133fc808cf4",
+    "observer_local_matlab_summary.json": "12f3d5c31abd41d2e9fca030b37f06e4f87a22982fc7e1b57f0efd4f663dda18",
+    "observer_schedule_matlab_receipt.json": "5d7cea2016b01aede949b7c5934f3a8339c12a03f9e28da539cda94881d5ce41",
+    "observer_schedule_matlab_summary.json": "5212bb90dc5a80657e04012040bea90dfd50f9d6d92cd8503bda2ce1b43b6f5c"
+  },
+  "limits": "Static linker chain excludes interrupt/context overhead; printf has unknown library stack. RTOS execution timing, real spare stack, physical 200Hz continuity and ground benefit remain untested."
+}

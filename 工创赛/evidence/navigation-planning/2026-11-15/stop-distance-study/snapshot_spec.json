@@ -1,0 +1,17 @@
+{
+  "schema": "baseline40-tail-three-snapshot-v1",
+  "status": "MATLAB prerequisite only; product write awaits root greenlight",
+  "snapshot_count": 3,
+  "snapshot_bytes": 48,
+  "header_bytes": 32,
+  "total_bytes": 176,
+  "field_order": ["now_ms", "run_tick_ms", "common_ms", "follow_tick_ms", "common_mean_mm", "current_reference_position_mm", "current_reference_F_rpm", "follow_rpm", "follow_rate_rpm_s", "pending_F_rpm", "applied_F_rpm", "flags"],
+  "field_type": ["uint32", "uint32", "uint32", "uint32", "single", "single", "single", "single", "single", "uint32", "uint32", "uint32"],
+  "header_u32": ["format_version", "session", "valid_mask", "entry_count", "freeze_count", "arrival_count", "reserved0", "reserved1"],
+  "slot_ids": ["first_tail_entry", "latest_tail_batch_freeze_not_ACK", "arrival_before_reached_assignment"],
+  "gate": "original valid calibrated common mean>=1980mm AND original reference has entered deceleration; baseline40 exact action only",
+  "flag_bits": {"0": "profile_active", "1": "profile_done", "2": "run_started", "3": "reached_before_event", "4": "stop_due_before_event", "5": "finish_requested_before_event", "6": "common_alignment_seen", "7": "common_age_less_400ms"},
+  "reset": "next accepted baseline40 session only; failed start does not erase previous capture",
+  "hold": "normal finish, fault, STOP and idle retain snapshots; no UART/CAN/dynamic allocation",
+  "scope": "three event states explain nonzero reference at STOP; does not reconstruct past/future plant or accept B1"
+}

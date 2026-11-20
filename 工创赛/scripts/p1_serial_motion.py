@@ -14,12 +14,22 @@ DISPLAY_FIELDS = ["action_kind", "target_theoretical_milli_cm_s"]
 DISTANCE_FIELDS = ["distance_mode", "distance_target_milli_mm", "distance_progress_milli_mm", "distance_base_rpm", "distance_reached"]
 ACTION_FIELDS = ["sequence_count"]
 CAN_DIAG_FIELDS = ["can_guard_cause", "can_guard_bad_nodes", "power_wait_state", "post_settle_mask"]
-DEBUG_PLAN_IDS = {"default": 0, "left30": 1, "forward30": 2, "right30": 3, "route-a": 4, "forward210": 6, "forward210-20": 7}
+DEBUG_PLAN_IDS = {"default": 0, "left30": 1, "forward30": 2, "right30": 3, "route-a": 4, "forward210": 6, "forward210-20": 7, "forward210_40": 8}
+STRAIGHT_CAPTURE_PLANS = {
+    22: (4, 100, 1000), 23: (5, 102, 1000), 24: (6, 102, 1000), 25: (7, 100, 1000),
+    26: (4, 100, 2000), 27: (5, 102, 2000), 28: (6, 102, 2000), 29: (7, 100, 2000),
+}
+DEBUG_PLAN_IDS.update({
+    "forward-1m": 22, "left-1m": 23, "right-1m": 24, "backward-1m": 25,
+    "forward-2m": 26, "left-2m": 27, "right-2m": 28, "backward-2m": 29,
+})
 UINT_FIELDS = {"seq", "tick_ms", "token_seq", "token_tick"}
 
 
 def command(verb, token=(0, 0)):
-    if verb not in {"ARM", "START", "KEEP", "STOP", "PLAN0", "PLAN1", "PLAN2", "PLAN3", "PLAN4", "PLAN6", "PLAN7"}:
+    if verb not in {"ARM", "START", "KEEP", "STOP"} and verb not in {
+        f"PLAN{plan}" for plan in DEBUG_PLAN_IDS.values()
+    }:
         raise ValueError("unsupported command")
     seq, tick = token
     if not all(0 <= n <= 0xFFFFFFFF for n in token):
@@ -383,9 +393,24 @@ class Controller:
 
     def _speed_profile_healthy(self, r):
         plan = r.get("debug_plan_id", 0)
+        if self.plan in STRAIGHT_CAPTURE_PLANS:
+            if plan not in STRAIGHT_CAPTURE_PLANS or (self.plan_selected and plan != self.plan):
+                return False
+            kind, rpm, _ = STRAIGHT_CAPTURE_PLANS[plan]
+            return (r.get("action_kind") == kind and r["base_rpm"] == rpm and
+                    r["feedback_limit_rpm"] == 130 and r.get("sequence_count") == 1 and
+                    r.get("target_theoretical_milli_cm_s") == 40000)
+        if plan in STRAIGHT_CAPTURE_PLANS:
+            return False
         if self.turn_trial:
             return (plan==0 and r["base_rpm"]==27 and r["feedback_limit_rpm"]==40 and
                     r.get("sequence_count")==1 and not r.get("distance_mode"))
+        if plan == 8:
+            return (self.mode == 3 and self.plan == 8 and not self.route_trial and not self.turn_trial and
+                    r["base_rpm"] == 100 and r["feedback_limit_rpm"] == 130 and
+                    r.get("sequence_count") == 1 and r.get("target_theoretical_milli_cm_s") == 40000)
+        if self.plan == 8:
+            return False
         if plan == 0 and r["feedback_limit_rpm"] == 80:
             # An explicit different preset may leave the candidate while idle;
             # these observations authorize PLAN only, never ARM on this profile.
@@ -451,6 +476,14 @@ class Controller:
         if self.start_sent:
             if r["phase"] in {4, 5}:
                 return self.abort("motion_fault_or_cancelled")
+            if self.plan in STRAIGHT_CAPTURE_PLANS:
+                kind, rpm, distance = STRAIGHT_CAPTURE_PLANS[self.plan]
+                if (r.get("debug_plan_id") != self.plan or r["feedback_limit_rpm"] != 130 or
+                        r.get("sequence_count") != 1 or r.get("target_theoretical_milli_cm_s") != 40000 or
+                        (r.get("distance_mode") and (r.get("action_kind") != kind or
+                         r.get("distance_target_milli_mm") != distance * 1000 or
+                         not 0 <= r.get("distance_base_rpm", -1) <= rpm))):
+                    return self.abort("straight_capture_profile_changed")
             if self.turn_trial and (r.get("debug_plan_id")!=0 or
                     r["base_rpm"]!=27 or r["feedback_limit_rpm"]!=40 or
                     r.get("sequence_count")!=1 or r.get("distance_mode") or
@@ -462,6 +495,14 @@ class Controller:
                     (r.get("distance_mode") and (r.get("action_kind") not in {4, 5, 6} or
                      not 100000 <= r.get("distance_target_milli_mm", -1) <= 2100000))):
                 return self.abort("route_trial_profile_changed")
+            if self.plan == 8 and (r.get("debug_plan_id") != 8 or
+                    r["feedback_limit_rpm"] != 130 or r.get("sequence_count") != 1 or
+                    r.get("target_theoretical_milli_cm_s") != 40000 or
+                    not 0 <= r["base_rpm"] <= 100 or
+                    not 0 <= r.get("distance_base_rpm", 0) <= 100 or
+                    (r.get("distance_mode") and (r.get("action_kind") != 4 or
+                     r.get("distance_target_milli_mm") != 2100000))):
+                return self.abort("baseline40_profile_changed")
             if self.plan == 7 and (r.get("debug_plan_id") != 7 or
                     r["feedback_limit_rpm"] != 80 or r.get("sequence_count") != 1 or
                     not 0 <= r["base_rpm"] <= 52 or
@@ -731,7 +772,7 @@ def main():
                     previous=record["seq"]
                     record["target_theoretical_cm_s"] = target_theoretical_cm_s(record)
                     kind = record.get("action_kind")
-                    record["distance_direction"] = kind-4 if record.get("distance_mode") and kind in (4,5,6) else None
+                    record["distance_direction"] = kind-4 if record.get("distance_mode") and kind in (4,5,6,7) else None
                     if record.get("distance_mode") and record["source_valid"]:
                         yaw = record["yaw_mdeg"] / 1000
                         observation = report["heading_observation"]

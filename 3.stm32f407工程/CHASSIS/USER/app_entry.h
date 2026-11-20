@@ -11,7 +11,27 @@
 #define DEBUG_PLAN_FORWARD237 5U /* 保留历史编号，当前禁用，不映射为其他距离。 */
 #define DEBUG_PLAN_FORWARD210 6U
 #define DEBUG_PLAN_FORWARD210_20 7U /* 仅专用构建允许的20cm/s候选。 */
-#define DEBUG_PLAN_MAX DEBUG_PLAN_FORWARD210_20
+#define DEBUG_PLAN_FORWARD210_40 8U
+#define DEBUG_PLAN_LEFT210_40 9U
+#define DEBUG_PLAN_RIGHT210_40 10U
+#define DEBUG_PLAN_BACKWARD210_40 11U
+#define DEBUG_PLAN_RIGHT150_40 12U
+#define DEBUG_PLAN_RIGHT30_40 13U
+#define DEBUG_PLAN_FORWARD150_40 14U
+#define DEBUG_PLAN_FORWARD30_40 15U
+#define DEBUG_PLAN_BACKWARD150_40 16U
+#define DEBUG_PLAN_BACKWARD30_40 17U
+#define DEBUG_PLAN_LEFT150_40 18U
+#define DEBUG_PLAN_LEFT30_40 19U
+#define DEBUG_PLAN_TURN_CCW90_90 20U
+#define DEBUG_PLAN_TURN_CW90_90 21U
+#define DEBUG_PLAN_STRAIGHT_CAPTURE_FIRST 22U
+#define DEBUG_PLAN_STRAIGHT_CAPTURE_LAST 29U
+#define DEBUG_PLAN_MAX (APP_STRAIGHT_CAPTURE_ENABLE ? DEBUG_PLAN_STRAIGHT_CAPTURE_LAST : DEBUG_PLAN_TURN_CW90_90)
+uint32_t AppDebugStraightCapturePlan(uint32_t id, MotionAction *action);
+#define AppDebugTurn90Plan(id) (APP_TURN90_90_ACTIVE && ((id)==DEBUG_PLAN_TURN_CCW90_90 || (id)==DEBUG_PLAN_TURN_CW90_90))
+uint32_t AppDebugTurn90Allowed(uint32_t id,uint32_t rpm,float angle);
+uint32_t AppDebugPlan40Allowed(uint32_t id,uint32_t direction,uint32_t rpm,float mm);
 /* 仅复制参数；许可、空闲和源新鲜度由调用适配层锁内检查。 */
 uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count);
 #define COMP_ENTRY_IDLE 0U

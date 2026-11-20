@@ -1,0 +1,80 @@
+{
+  "baseline": "3676d2dacd4889d7439663eeb691c061be387acb",
+  "before_reused": "Main-D final Rebuild; raw main/project and serial owner SHA verified against D report",
+  "before_evidence": "工创赛/evidence/navigation-planning/2026-11-10/main-d/build_summary.json",
+  "before_evidence_sha256": "5ac5ee65e9369927e2638a22cc1b5ea8fc0c8e0ead17d048d2526f9edee1fdfc",
+  "final_source_sha256": {
+    "3.stm32f407工程/gongxun-f407.uvprojx": "cfc78d3681d237797fb84d427d5bc1804d9bcd2ddda99a822fd79e764435c6fd",
+    "3.stm32f407工程/CHASSIS/USER/main.c": "8bda4e64419177851ba46bb261661a1a19db040510a6037d3691b4433aafea42",
+    "3.stm32f407工程/CHASSIS/USER/app_debug_runtime.c": "b796acdd61d5ace3bf3981b4d5dca67ae5c2cdb176c217357ba627e2382b329f",
+    "3.stm32f407工程/CHASSIS/USER/app_debug_runtime.h": "bbd07ab82c966fa0dae789233c9ad94388ab9343fe9cffc856572d11f05a689a"
+  },
+  "targets": {
+    "Vehicle_Integrated": {
+      "before": {
+        "Code": 126408,
+        "RO": 6740,
+        "RW": 3340,
+        "ZI": 118908
+      },
+      "after": {
+        "Code": 126408,
+        "RO": 6740,
+        "RW": 3340,
+        "ZI": 118908
+      },
+      "errors": 0,
+      "warnings": 0,
+      "command": [
+        "D:\\Keil_v5\\UV4\\UV4.exe",
+        "-r",
+        "D:\\Desktop\\工创赛\\工创赛\\tmp\\debug_runtime_main_e\\build_final_Vehicle_Integrated.uvprojx",
+        "-t",
+        "Vehicle_Integrated",
+        "-o",
+        "D:\\Desktop\\工创赛\\工创赛\\evidence\\navigation-planning\\2026-11-10\\main-e\\final_Vehicle_Integrated.log"
+      ],
+      "log_sha256": "a628c1e54c53aca552e6c69048a5f2b34bebc307b5aae2215cf526cc12e5c9f3",
+      "artifact_sha256": {
+        "工创赛/tmp/debug_runtime_main_e/final/Vehicle_Integrated/Vehicle_Integrated.axf": "1c32749ed74a4af810ab414a41b3d0a5a804b4b4e07f00062f283a441aa183dc",
+        "工创赛/tmp/debug_runtime_main_e/final/Vehicle_Integrated/Vehicle_Integrated.map": "ba405d9a045648c1dc25099be50c3d80894489d4994a1336fd1225dfb6ad8153"
+      }
+    },
+    "Vehicle_Offline": {
+      "before": {
+        "Code": 115580,
+        "RO": 6732,
+        "RW": 3160,
+        "ZI": 118800
+      },
+      "after": {
+        "Code": 115580,
+        "RO": 6732,
+        "RW": 3160,
+        "ZI": 118808
+      },
+      "errors": 0,
+      "warnings": 0,
+      "command": [
+        "D:\\Keil_v5\\UV4\\UV4.exe",
+        "-r",
+        "D:\\Desktop\\工创赛\\工创赛\\tmp\\debug_runtime_main_e\\build_final_Vehicle_Offline.uvprojx",
+        "-t",
+        "Vehicle_Offline",
+        "-o",
+        "D:\\Desktop\\工创赛\\工创赛\\evidence\\navigation-planning\\2026-11-10\\main-e\\final_Vehicle_Offline.log"
+      ],
+      "log_sha256": "64d1ca7cfe5edf9e29052b8800aa574ab348cc02a36a957894d7284d4a98b649",
+      "artifact_sha256": {
+        "工创赛/tmp/debug_runtime_main_e/final/Vehicle_Offline/Vehicle_Offline.axf": "4fc0966010cca9dcd5829016ffe3c086867acc5c19e736e16b1fd3b3fbe39d96",
+        "工创赛/tmp/debug_runtime_main_e/final/Vehicle_Offline/Vehicle_Offline.map": "687a50233cd58f87f5ff9f5e7fb966a28d9bc48f10ea1305b85d3fc57bf33574"
+      }
+    }
+  },
+  "build_driver_sha256": "379b321a8258af9d8b601d36d29dc4f02f53da0ec26a8696e8a31cfc1fd8ed58",
+  "build_projects_sha256": {
+    "工创赛/tmp/debug_runtime_main_e/build_final_Vehicle_Integrated.uvprojx": "be137bd2615407a3633c42d1a7bcef82a9d7025416e755ca0801979a9f23745d",
+    "工创赛/tmp/debug_runtime_main_e/build_final_Vehicle_Offline.uvprojx": "64469fc83d74bae8813998d6c7d0b3bd6834333712209a2687139193c529a332"
+  },
+  "hardware_accessed": false
+}

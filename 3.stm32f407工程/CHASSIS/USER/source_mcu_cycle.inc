@@ -53,6 +53,7 @@ char g_source_scan_code[16];
 static uint32_t sc_scan_seen;
 static volatile uint32_t sc_bound_batch;
 static uint32_t sc_retract_pending,sc_bound_slots[3];
+static uint32_t sc_transport;
 void SourceCycle_ScanService(void)
 {
 #if SOURCE_CYCLE_TEST_215
@@ -62,7 +63,7 @@ void SourceCycle_ScanService(void)
  uint32_t run=g_source_cycle_run,state=g_source_cycle_state;
  if(sc_bound_batch)return;
  if(state==1U && g_source_scan_owner_run!=run){
-  SAOMA_DisableReceive();SAOMA_EnableReceive();
+  SAOMA_EnableReceive();
   taskENTER_CRITICAL();
   sc_scan_seen=g_saoma_accept_count;g_source_scan_pending=0U;
   g_source_scan_result=0U;g_source_scan_code[0]='\0';
@@ -70,7 +71,6 @@ void SourceCycle_ScanService(void)
   taskEXIT_CRITICAL();
  }
  if(g_source_scan_locked_run==run && run){
-  if(!g_saoma_locked)SAOMA_DisableReceive();
   if(g_source_scan_displayed_run!=run){
    g_scan_display_result=Screen_ShowTaskCode(g_source_scan_code);
    if(g_scan_display_result==SCREEN_OK)g_scan_display_count++;
@@ -209,12 +209,22 @@ static void SourceCycle_Telemetry(uint32_t now)
   (unsigned long)g_source_cycle_scheduled,(unsigned long)((g_source_cycle_scheduled && (int32_t)(g_source_cycle_due_tick-now)>0)?g_source_cycle_due_tick-now:0U));
  if(n<=0 || (uint32_t)n>=sizeof(wire)-7U)return;
  snprintf(wire+n,sizeof(wire)-(uint32_t)n,"%04X\r\n",SC_Crc(wire,(uint32_t)n));
+#if APP_ZONE2_MISSION_ENABLE
+ if(sc_bound_batch){
+  if(RegionPlacement_Send(wire,(uint16_t)((uint32_t)n+6U),g_source_cycle_run,
+                         g_source_cycle_pose,g_source_cycle_item,now)){
+   sc_last_tx=now;g_source_cycle_tx++;
+  }
+  return;
+ }
+#endif
  if(USART6_VisionSend((const uint8_t*)wire,(uint16_t)((uint32_t)n+6U))){sc_last_tx=now;g_source_cycle_tx++;}
 }
 static void SourceCycle_Service(uint32_t now)
 {
  uint32_t request=g_source_cycle_request;g_source_cycle_request=0U;
- if(request==9U && g_source_cycle_state && g_source_cycle_state<8U){SC_Fail(2U);return;}
+ if(request==9U && g_source_cycle_state && g_source_cycle_state!=8U &&
+    g_source_cycle_state!=9U){SC_Fail(2U);return;}
  if(request==1U){
   if(g_source_cycle_state || g_it_state || Low_Busy() || SourceBodyStep_Busy() ||
     g_safety_fault || g_rtos_fault || g_can_ctrl_fault_latched || !g_safety_ready || g_can_test_result!=1U){g_source_cycle_rejected++;return;}
@@ -223,7 +233,7 @@ static void SourceCycle_Service(uint32_t now)
   g_source_cycle_colors[0]=g_source_cycle_colors[1]=g_source_cycle_colors[2]=0U;
   g_source_cycle_started=now;g_source_cycle_state=1U;SC_Pose();
  }
- if(!g_source_cycle_state || g_source_cycle_state>=8U)return;
+ if(!g_source_cycle_state || g_source_cycle_state==8U || g_source_cycle_state==9U)return;
  if(g_safety_fault || g_rtos_fault || g_can_ctrl_fault_latched || g_it_state==9U ||
     g_low_state==9U || g_startup_axes_cause || g_lift_ruler_cause || g_dm_jog_first_fault ||
     g_source_body_step_reason || g_source_body_step_state==9U){SC_Fail(g_it_cause?g_it_cause:12U);return;}
@@ -324,9 +334,41 @@ static void SourceCycle_Service(uint32_t now)
    g_source_cycle_start_lag_ms=(uint32_t)xTaskGetTickCount()-g_source_cycle_due_tick;return;
   }
   if(g_low_state!=2U || g_low_done_sequence!=sc_pending)return;
+#if APP_ZONE2_MISSION_ENABLE
+  if(sc_bound_batch){
+   uint8_t item=(uint8_t)g_source_cycle_item,color=(uint8_t)g_source_cycle_colors[item];
+   if(!AppZone2_StationConfirm(g_source_cycle_run,item,APP_ZONE2_SOURCE_GRIP,color,0U) ||
+      !AppZone2_StationConfirm(g_source_cycle_run,item,APP_ZONE2_SOURCE_SLOT,color,0U)){
+    SC_Fail(12U);return;
+   }
+  }
+#endif
   g_source_cycle_piece_ms[g_source_cycle_item]=g_low_elapsed_ms;
   g_source_cycle_grip_command_ms[g_source_cycle_item]=g_low_grip_command_ms;g_source_cycle_item++;
-  if(g_source_cycle_item==3U){g_source_cycle_done=now;g_source_cycle_state=8U;SC_Pose();return;}
+  if(g_source_cycle_item==3U){
+   if(sc_bound_batch){sc_transport=0U;g_source_cycle_state=10U;SC_Pose();return;}
+   g_source_cycle_done=now;g_source_cycle_state=8U;SC_Pose();return;
+  }
   g_source_cycle_state=6U;SC_Pose();return;
+ }
+ if(g_source_cycle_state==10U){
+  if(g_it_request)return;
+  if(g_it_rejected){SC_Fail(g_it_rejected);return;}
+  if(sc_transport && g_it_state!=2U)return;
+  switch(sc_transport){
+  case 0U:
+   if(!it_at_top())g_it_request=4U;
+   break;
+  case 1U:
+   if(!it_at_top()){SC_Fail(12U);return;}
+   g_it_axes=SPF_EXT;g_it_extension_mm=0.0f;g_it_request=3U;
+   break;
+  case 2U:
+   g_it_axes=SPF_DM;g_it_dm_deg=0.0f;g_it_request=3U;
+   break;
+  default:
+   g_source_cycle_done=now;g_source_cycle_state=8U;SC_Pose();return;
+  }
+  sc_transport++;
  }
 }

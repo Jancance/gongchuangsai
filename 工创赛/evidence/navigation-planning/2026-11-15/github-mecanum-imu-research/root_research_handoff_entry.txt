@@ -1,0 +1,6 @@
+## 2026-11-15 GitHub/图片方法借鉴：只研究，未改控制
+
+- 用户要求看别人如何融合麦轮与陀螺，并提供XY公式图；后明确“只是叫你借鉴”。按此收束，不将图片视为换算法/改PID/发车指令。
+- 已核WPILib实际Odometry/Mecanum代码、Road Runner固定commit6e63a779…50c51、一个STM32麦轮实例，以及robot_localization实际EKF/配置源。可借鉴轮增量平移＋yaw增量、前进/横向两分量、实际时刻与初始化、不确定度/外部位姿修正。当前chassis_odometry.c已有同类基础，保留并作小范围对照，不重写。
+- [借鉴落点](工创赛/evidence/navigation-planning/2026-11-15/github-mecanum-imu-research/borrowing_notes.md)及同目录实际源码方法报告已保存。后续可先离线研究预测/校正及记录u/IMU修正，但本轮未实施。板上仍0ebf9e4e…874b3，20ms独立观测，不参与控制；当前无新实测授权。原R/E/Q、其他dirty保持，不fetch/push。
+

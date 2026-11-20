@@ -85,7 +85,7 @@ typedef struct {
 typedef struct {
  SPF_Command command;SPF_GroupIO io;
  uint32_t state,prepared,started,done,stop_mask,fault,begin_ms;
- uint32_t first_start_ms,last_start_ms,max_start_skew_ms,timeout_ms;
+ uint32_t first_start_ms,last_start_ms,max_start_skew_ms,timeout_ms,progress_ms;
  /* Opt-in position-gated release; legacy groups keep both zero. */
  uint32_t delayed_mask,release_mask;
 } SPF_Group;

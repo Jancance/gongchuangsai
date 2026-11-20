@@ -1,0 +1,134 @@
+{
+  "time": "2026-11-17T15:38:52.628169+08:00",
+  "hardware_accessed": false,
+  "product_sha256": {
+    "app_config.h": "bdc6b30019db1788be49a1c40b47991ec558602cfe14ac4321928485ccd10ac6",
+    "app_odometry.c": "d78a8522edbade0b0814bef86de9c6900dc029622b3fcd3f55934fba2575420c",
+    "app_odometry.h": "297e16caae7c6eb27e5cab004b08e862162fc097569381bb32e78cc13d7b4bee",
+    "app_can_diagnostics.c": "594c9a81925ebb1e9a0780c7ba284425535fe1832b377dde837b69dc87f250ac",
+    "app_can_diagnostics.h": "dca7980d92e61e5a7843255638a4c59e2609f8d0c255dd1b0c6a338a4e102e2a",
+    "vehicle_mission.inc": "2c47440cd4aae08299c3dce5584fa75c0e4ffcef46379ad6b854d71e2a07067d",
+    "stage1_runtime.inc": "9c3416b89c64405a263d3ecc97e968ce78862412001196c7ebc8b46efb5ca6aa"
+  },
+  "protected_dirty_unchanged": {
+    "3.stm32f407\u5de5\u7a0b/gongxun-f407.uvguix.lenovo": true,
+    "3.stm32f407\u5de5\u7a0b/gongxun-f407.uvoptx": true,
+    "\u5de5\u521b\u8d5b/docs/RADAR_F407_PLAN_2026-10-29.md": true,
+    "\u5de5\u521b\u8d5b/scripts/p1_serial_motion.py": true,
+    "\u5de5\u521b\u8d5b/scripts/vehicle_uart_capture.py": true,
+    "\u5e95\u76d8\u5b9a\u4f4d\u4e0e\u8def\u5f84\u89c4\u5212_2026-11-09.md": true
+  },
+  "format_checks": {
+    "app_config.h": {
+      "sha256": "bdc6b30019db1788be49a1c40b47991ec558602cfe14ac4321928485ccd10ac6",
+      "crlf_only": true,
+      "non_ascii_unchanged": true
+    },
+    "app_odometry.c": {
+      "sha256": "d78a8522edbade0b0814bef86de9c6900dc029622b3fcd3f55934fba2575420c",
+      "crlf_only": true,
+      "non_ascii_unchanged": true
+    },
+    "app_odometry.h": {
+      "sha256": "297e16caae7c6eb27e5cab004b08e862162fc097569381bb32e78cc13d7b4bee",
+      "crlf_only": true,
+      "non_ascii_unchanged": true
+    },
+    "app_can_diagnostics.c": {
+      "sha256": "594c9a81925ebb1e9a0780c7ba284425535fe1832b377dde837b69dc87f250ac",
+      "crlf_only": true,
+      "non_ascii_unchanged": true
+    },
+    "app_can_diagnostics.h": {
+      "sha256": "dca7980d92e61e5a7843255638a4c59e2609f8d0c255dd1b0c6a338a4e102e2a",
+      "crlf_only": true,
+      "non_ascii_unchanged": true
+    },
+    "vehicle_mission.inc": {
+      "sha256": "2c47440cd4aae08299c3dce5584fa75c0e4ffcef46379ad6b854d71e2a07067d",
+      "crlf_only": true,
+      "non_ascii_unchanged": true
+    },
+    "stage1_runtime.inc": {
+      "sha256": "9c3416b89c64405a263d3ecc97e968ce78862412001196c7ebc8b46efb5ca6aa",
+      "crlf_only": true,
+      "non_ascii_unchanged": true
+    }
+  },
+  "matlab_checks": 146,
+  "actual_c_cases": {
+    "map_on": {
+      "assertions": 106,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "map_on_nav": {
+      "assertions": 106,
+      "failed_line": 0,
+      "status": "PASS"
+    },
+    "map_off": {
+      "assertions": 3,
+      "failed_line": 0,
+      "status": "PASS"
+    }
+  },
+  "builds": {
+    "integrated_on": {
+      "success": true,
+      "size_line": "Program Size: Code=143000 RO-data=6860 RW-data=3612 ZI-data=123876  ",
+      "axf_sha256": "4bb2a46561c2cc864569834e79e31ea9ebc33a803824f4426e852345d87ac6be"
+    },
+    "integrated_off": {
+      "success": true,
+      "size_line": "Program Size: Code=141276 RO-data=6860 RW-data=3592 ZI-data=122192  ",
+      "axf_sha256": "a1ae9aab605c94cf809135ecd0e2d3b3fb65280ba4e4296399047f68dd8ff2f5"
+    },
+    "standalone_on": {
+      "success": true,
+      "size_line": "Program Size: Code=142048 RO-data=6816 RW-data=3524 ZI-data=123668  ",
+      "axf_sha256": "9eec7017df9fbedaf2c5da8aa048099cbf7054cacdb881d58f760fbbb03fa816"
+    },
+    "baseline_on": {
+      "success": true,
+      "size_line": "Program Size: Code=114208 RO-data=6656 RW-data=3088 ZI-data=191528  ",
+      "axf_sha256": "d4c2da482236c7eb2e9b3f708fe1f9d654bdf7fa7b83ab445842a4156f72cb14"
+    }
+  },
+  "compiler_stack_evidence": {
+    "integrated_on": {
+      "AppOdometry_MapStep": "AppOdometry_MapStep (Thumb, 1084 bytes, Stack size 136 bytes, app_odometry.o(i.AppOdometry_MapStep)) [Stack] Max Depth = 260 Call Chain = AppOdometry_MapStep &rArr; ChassisOdometry_Update &rArr; at",
+      "AppOdometry_ReadMap": "AppOdometry_ReadMap (Thumb, 226 bytes, Stack size 16 bytes, app_odometry.o(i.AppOdometry_ReadMap)) [Stack] Max Depth = 32 Call Chain = AppOdometry_ReadMap &rArr; vPortExitCritical &rArr; App_RtosAssertFailed &rArr; App_RtosStop &rArr; Power_Disable",
+      "AppOdometry_Step": "AppOdometry_Step (Thumb, 622 bytes, Stack size 136 bytes, app_odometry.o(i.AppOdometry_Step)) [Stack] Max Depth = 396 Call Chain = AppOdometry_Step &rArr; AppOdometry_MapStep &rArr; ChassisOdometry_Update &rArr; at",
+      "App_CanTask": "App_CanTask (Thumb, 38 bytes, Stack size 0 bytes, main.o(i.App_CanTask)) [Stack] Max Depth = 920 + Unknown Stack Size Call Chain = App_CanTask &rArr; AppChassis_CanStep &rArr; App_CombinedTestStep &rArr; App_ForwardHoldStep &rArr; App_ForwardHoldSafety &rArr; App_ForwardHoldTrip &rArr; AppMotion_InternalFaultCapture &rArr; App_HeadingRuntimeSource &rArr; App_HeadingSourceRead &rArr; vPortExitCritical &rArr; App_RtosAssertFailed &rArr; App_RtosStop &rArr; Power_Disable"
+    },
+    "integrated_off": {
+      "AppOdometry_Step": "AppOdometry_Step (Thumb, 612 bytes, Stack size 136 bytes, app_odometry.o(i.AppOdometry_Step)) [Stack] Max Depth = 260 Call Chain = AppOdometry_Step &rArr; ChassisOdometry_Update &rArr; at",
+      "App_CanTask": "App_CanTask (Thumb, 38 bytes, Stack size 0 bytes, main.o(i.App_CanTask)) [Stack] Max Depth = 920 + Unknown Stack Size Call Chain = App_CanTask &rArr; AppChassis_CanStep &rArr; App_CombinedTestStep &rArr; App_ForwardHoldStep &rArr; App_ForwardHoldSafety &rArr; App_ForwardHoldTrip &rArr; AppMotion_InternalFaultCapture &rArr; App_HeadingRuntimeSource &rArr; App_HeadingSourceRead &rArr; vPortExitCritical &rArr; App_RtosAssertFailed &rArr; App_RtosStop &rArr; Power_Disable"
+    },
+    "standalone_on": {
+      "AppOdometry_MapStep": "AppOdometry_MapStep (Thumb, 1084 bytes, Stack size 136 bytes, app_odometry.o(i.AppOdometry_MapStep)) [Stack] Max Depth = 260 Call Chain = AppOdometry_MapStep &rArr; ChassisOdometry_Update &rArr; at",
+      "AppOdometry_ReadMap": "AppOdometry_ReadMap (Thumb, 226 bytes, Stack size 16 bytes, app_odometry.o(i.AppOdometry_ReadMap)) [Stack] Max Depth = 32 Call Chain = AppOdometry_ReadMap &rArr; vPortExitCritical &rArr; App_RtosAssertFailed &rArr; App_RtosStop &rArr; Power_Disable",
+      "AppOdometry_Step": "AppOdometry_Step (Thumb, 622 bytes, Stack size 136 bytes, app_odometry.o(i.AppOdometry_Step)) [Stack] Max Depth = 396 Call Chain = AppOdometry_Step &rArr; AppOdometry_MapStep &rArr; ChassisOdometry_Update &rArr; at",
+      "App_CanTask": "App_CanTask (Thumb, 38 bytes, Stack size 0 bytes, main.o(i.App_CanTask)) [Stack] Max Depth = 920 + Unknown Stack Size Call Chain = App_CanTask &rArr; AppChassis_CanStep &rArr; App_CombinedTestStep &rArr; App_ForwardHoldStep &rArr; App_ForwardHoldSafety &rArr; App_ForwardHoldTrip &rArr; AppMotion_InternalFaultCapture &rArr; App_HeadingRuntimeSource &rArr; App_HeadingSourceRead &rArr; vPortExitCritical &rArr; App_RtosAssertFailed &rArr; App_RtosStop &rArr; Power_Disable"
+    },
+    "baseline_on": {
+      "AppOdometry_MapStep": "AppOdometry_MapStep (Thumb, 1084 bytes, Stack size 136 bytes, app_odometry.o(i.AppOdometry_MapStep)) [Stack] Max Depth = 260 Call Chain = AppOdometry_MapStep &rArr; ChassisOdometry_Update &rArr; at",
+      "AppOdometry_Step": "AppOdometry_Step (Thumb, 1412 bytes, Stack size 160 bytes, app_odometry.o(i.AppOdometry_Step)) [Stack] Max Depth = 420 Call Chain = AppOdometry_Step &rArr; AppOdometry_MapStep &rArr; ChassisOdometry_Update &rArr; at",
+      "App_CanTask": "App_CanTask (Thumb, 38 bytes, Stack size 0 bytes, main.o(i.App_CanTask)) [Stack] Max Depth = 1024 Call Chain = App_CanTask &rArr; AppChassis_CanStep &rArr; App_CombinedTestStep &rArr; App_HeadingRuntimeStep &rArr; HeadingSession_StartReference &rArr; HeadingSession_Start &rArr; TurnBrake_Init &rArr; MotionProfile_Prepare &rArr; __hardfp_powf &rArr; __set_errno"
+    }
+  },
+  "git_diff_check_returncode": 0,
+  "git_diff_check_cr_at_eol": true,
+  "source_options_reference_only": true,
+  "map_context_static_bytes": 1456,
+  "integrated_map_ram_delta_bytes": 1704,
+  "can_task_stack_words": 384,
+  "can_task_stack_bytes": 1536,
+  "limitations": [
+    "No hardware access, flash, reset or drive",
+    "Actual ARM odometry and kinematics with source/power/RTOS stubs",
+    "Compiler stack estimates contain unknown sizes; physical high-watermark unverified",
+    "Initial placement, polling timing, drift and whole-field accuracy unverified"
+  ]
+}

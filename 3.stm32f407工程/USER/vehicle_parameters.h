@@ -1,22 +1,22 @@
 #ifndef VEHICLE_PARAMETERS_H
 #define VEHICLE_PARAMETERS_H
 #include <stdint.h>
+/* 区 2 雷达两点校准测试。PC13 触发 ID 2 校准，成功后扫图一次，底盘原地待机。 */
+//#define APP_ZONE2_RADAR_CALIBRATION_TEST 1U
+/* 区 1 舵机单测。PC13 每按一次，在 500 µs 收拢和 2500 µs 端点命令之间切换。 */
+//#define APP_ZONE1_RADAR_SERVO_TEST 1U
+/* 区 1 步进测向。PC13 依次展开舵机、方向 0 走 32 半步、方向 1 回 32 半步、收拢舵机。展开后至少等 1 秒再试走。 */
+//#define APP_ZONE1_RADAR_LIFT_TEST 1U
+/* 区 1 正式发车放行。确认升降方向和 4000 半步行程后启用，PA1 低档可选区 1 跑八段，高档选区 2。 */
+#define APP_ZONE1_RADAR_LIFT_CONFIRMED 1U
+#define RADAR_ZONE1_DOWN_DIRECTION 0U
 /* ================= 现场只改这一个文件，保存→Rebuild→Download =================
  * 调参单位：底盘距离cm、平移cm/s；机械臂Z为旧3200脉冲/圈的虚拟脉冲，
  * 伸缩mm仅沿用32脉冲/mm粗标；DM/舵机为角度deg、DM速度deg/s。
  * 本文件是工程E调试输入，坐标、路径、夹持和负载须现场逐段验证。
  */
 #ifndef VEHICLE_INTEGRATED_ENABLE
-#define SOURCE_MCU_CYCLE_ENABLE 1U /* 保留取料模块的扫码兼容服务。 */
 #define VEHICLE_INTEGRATED_ENABLE 1U
-#endif
-/* PC13 的独立机台入口。模块交付默认交给整车按键路由。 */
-#ifndef VEHICLE_REGION_BENCH_KEY_ENABLE
-#define VEHICLE_REGION_BENCH_KEY_ENABLE 0U
-#endif
-/* 已编译的整车入口默认不调度，待路线、停稳交接和双批次验证后解锁。 */
-#ifndef VEHICLE_FULL_RUN_ENTRY_ENABLE
-#define VEHICLE_FULL_RUN_ENTRY_ENABLE 0U
 #endif
 #ifndef VEHICLE_TEST_STAGE
 #define VEHICLE_TEST_STAGE 1U       /* 1~8：本次只调哪一大步骤。 */
@@ -27,187 +27,35 @@
 #ifndef VEHICLE_REHEARSAL
 #define VEHICLE_REHEARSAL 0U        /* 八段现场分别通过后才设1，整场180秒。 */
 #endif
-/* 第三区固定整轮：1=PC13直接三放三收；0=恢复原手动装料和参数入口。
- * 颜色按任务顺序，槽颜色按物理槽位，环号及各环数组按物理环1/2/3。
- * 固定任务215+213+512+321第一批；上电只预置参数，不请求动作。 */
-#ifndef VEHICLE_STAGE3_STANDALONE_ENABLE
-#define VEHICLE_STAGE3_STANDALONE_ENABLE 0U
-#endif
-/* 保留已标定的第三区几何，模块任务的颜色、槽位和环位由上层绑定。 */
-#ifndef VEHICLE_STAGE3_PROFILE_PRESET_ENABLE
-#define VEHICLE_STAGE3_PROFILE_PRESET_ENABLE 1U
-#endif
-#define VEHICLE_STAGE3_STANDALONE_COLORS {2U,1U,5U}
-#define VEHICLE_STAGE3_STANDALONE_SLOTS {2U,1U,5U}
-#define VEHICLE_STAGE3_STANDALONE_RINGS {2U,1U,3U}
-#define VEHICLE_STAGE3_STANDALONE_CARRIER_DEG 36.5f /* 取槽姿态，度。 */
-#define VEHICLE_STAGE3_STANDALONE_OBSERVE_DEG 180.55f /* 观测姿态，度。 */
-#define VEHICLE_STAGE3_STANDALONE_PICK_PULSES 8003.47f /* 取槽Z，虚拟脉冲。 */
-#define VEHICLE_STAGE3_STANDALONE_RING_YAW_DEG {224.48699951171875f,180.55f,139.5509033203125f}
-#define VEHICLE_STAGE3_STANDALONE_RING_X_MM {43.0f,0.0f,70.5f}
-/* 放置和回收Z独立，单位均为虚拟脉冲。 */
-#define VEHICLE_STAGE3_STANDALONE_PLACE_PULSES {61802.22274305556f,60795.02378472222f,63002.22274305556f}
-#define VEHICLE_STAGE3_STANDALONE_RECOVER_PULSES {61802.22274305556f,61595.02378472222f,63002.22274305556f}
-/* 第1段：同时前进/横移；纵向到150mm后横向继续，不在中途停车。 */
-#define VEHICLE_STAGE1_BLEND_ENABLE 1U
-#define VEHICLE_STAGE1_FORWARD_DISTANCE_CM 15.0f
-#define VEHICLE_STAGE1_FORWARD_CM_S 20.0f
-#define VEHICLE_STAGE1_LATERAL_CM_S 40.0f
-#define VEHICLE_STAGE1_BLEND_MAX_RPM 175U /* 四轮合成边界，不是单轴提速。 */
-#define VEHICLE_STAGE1_BLEND_FEEDBACK_RPM 200U
-#define VEHICLE_STAGE1_TRACK_MIN_MM 50.0f
-#define VEHICLE_STAGE1_TRACK_MARGIN_MM 20.0f
-#define VEHICLE_STAGE1_TRACK_LAG_MS 100.0f
-#define VEHICLE_STAGE1_TRACK_MAX_MM 80.0f
-#define VEHICLE_STAGE1_FINAL_WAIT_MS 3000U
-/* 斜移期间的距离诊断放宽值：单轴的"倒退5mm/超差50mm"判据不适用于两轴同时运动 */
-#define VEHICLE_STAGE1_BLEND_BACK_MM   30.0f
-#define VEHICLE_STAGE1_BLEND_OVER_MM   80.0f
-#define VEHICLE_STAGE1_BLEND_SPREAD_MM 80.0f
-/* 斜移末端可用的最大跟随修正(RPM)：2RPM只能爬8mm/s，3s补不完30mm */
-#define VEHICLE_STAGE1_CORR_MAX_RPM    4.0f
-/* 名义扫码点两侧偏移：第一次15cm，第二次跨回30cm。 */
-#define VEHICLE_SCAN_SEARCH_OFFSET_CM 15.0f
-#define VEHICLE_SCAN_SEARCH_SPEED_CM_S 45.0f
-#define VEHICLE_SCAN_SEARCH_TOTAL_MS 15000U
-#if VEHICLE_STAGE1_BLEND_MAX_RPM>300U || VEHICLE_STAGE1_BLEND_FEEDBACK_RPM>300U || VEHICLE_STAGE1_BLEND_FEEDBACK_RPM<VEHICLE_STAGE1_BLEND_MAX_RPM
-#error Stage1_blend_wheel_limits_invalid
-#endif
 #ifndef VEHICLE_SCAN_BYPASS
-#define VEHICLE_SCAN_BYPASS 0U      /* 恢复真实扫码：本轮合法四段码，停稳后显示；不造码。 */
+#define VEHICLE_SCAN_BYPASS 1U      /* 当前按用户要求跳过扫码；不伪造任务码/计数。 */
 #endif
-/* 第2段手填雷达同形节点：起点2，返回列表不含起点，即12、14。
- * 仅路线调试；到14格中心后停车并等待未来视觉毫米校准，不抓料。
- * 无雷达时来源是MANUAL，不伪造扫描结果。坐标用本项目+X右/+Y前。
- */
-/* 本次只联调第1→2段；固定启停区1，完成第2段即停，不进入抓料。 */
-#define VEHICLE_CHAIN_STAGE12 1U
-#define VEHICLE_TEST_START_ZONE 1U /* 0沿用选区输入；1/2仅现场调试指定起点。 */
-#define VEHICLE_STAGE2_GOAL_OFFSET_X_MM (-100.0f) /* 14格中心沿-X偏置。 */
-#define VEHICLE_HANDOFF_ALIGN_TOL_MM 22.0f /* 每段目标都由当前位置重算，10mm 会把正常停车当成故障 */
-/* 第2段首次X对齐允许的起点窗口：不再用"格心±半格"派生，改成显式上下界 */
-#define VEHICLE_STAGE2_ALIGN_X_MIN_MM 1000.0f
-#define VEHICLE_STAGE2_ALIGN_X_MAX_MM 1400.0f
-#define VEHICLE_STAGE2_ALIGN_Y_MIN_MM 100.0f
-#define VEHICLE_STAGE2_ALIGN_Y_MAX_MM 520.0f
-#define VEHICLE_HANDOFF_MAX_ALIGN_MM 200.0f
-#define VEHICLE_HANDOFF_ENDPOINT_MAX_AGE_MS 1000U
-#define VEHICLE_QUEUE_ADMISSION_TIMEOUT_MS 1000U /* 已停车后等待原准入条件，禁止无限等待。 */
-#define VEHICLE_STAGE2_ROUTE_ONLY 1U
-/* 到原料区停车后，三个机构准备好后同轮放行；完成后只等视觉。 */
-#ifndef VEHICLE_EXTENSION_CALIBRATION_ONLY
-#define VEHICLE_EXTENSION_CALIBRATION_ONLY 0U
-#endif
-/* Explicit stand-alone source debug task; default remains real QR. */
-#ifndef SOURCE_CYCLE_TEST_215
-#define SOURCE_CYCLE_TEST_215 0U
-#endif
-
-#define VEHICLE_LIFT_RULER_ONLY 0U /* 2026-11-07 integration: full-vehicle profile; wheels CAN / Vision_Poll / Stage2Body all enabled, LiftRuler controller remains the node5 actuator. Isolated node5-only bring-up is finished (integration11). */
-#define VEHICLE_SOURCE_PREP_ENABLE 1U
-#ifndef VEHICLE_DM_LEFTUP_SHORT_RETURN
-#define VEHICLE_DM_LEFTUP_SHORT_RETURN 1U /* User: left-up short path, 180deg clockwise. */
-#endif
-#define SOURCE_INITIAL_DM_START_MIN_DEG (-5.0f) /* 用户2026-11-18确认：仅首次180度/65mm并行起点下限，后续仍为-2度。 */
-#define VEHICLE_SOURCE_PREP_DM_DEG 180.0f
-#define VEHICLE_SOURCE_PREP_DM_SPEED_DEG_S 300.0f
-#define VEHICLE_SOURCE_PREP_DM_ACCEL_DEG_S2 150.0f
-#define VEHICLE_SOURCE_PREP_EXTENSION_MM 70.0f /* 用户已确认机械可用行程；比例仍粗标。 */
-#define VEHICLE_SOURCE_PREP_EXTENSION_SEGMENT_MM 35.0f
-#define VEHICLE_SOURCE_PREP_EXTENSION_RPM 106.0f
-#define VEHICLE_SOURCE_PREP_EXTENSION_ACCEL_RPM_S 45055U
-#define VEHICLE_SOURCE_PREP_GRIP_DEG 210.0f
-#define VEHICLE_SOURCE_PREP_GRIP_RAMP_MS 1500U
-#define VEHICLE_SOURCE_PREP_GRIP_SETTLE_MS 300U
-#define VEHICLE_SOURCE_PREP_TIMEOUT_MS 12000U
-
-#if VEHICLE_CHAIN_STAGE12 && (VEHICLE_RUN_ALL || VEHICLE_TEST_STAGE!=1U || !VEHICLE_STAGE2_ROUTE_ONLY)
-#error Stage12_chain_requires_stage1_start_and_stage2_route_only_stop
-#endif
-#if VEHICLE_TEST_START_ZONE>2U
-#error Test_start_zone_out_of_range
-#endif
-
-#define VEHICLE_STAGE2_START_CELL 2U
-#define VEHICLE_STAGE2_GOAL_CELL 14U
-#define VEHICLE_STAGE2_FORWARD_CM_S 40.0f
-#define VEHICLE_STAGE2_LATERAL_CM_S 40.0f
-#define VEHICLE_STAGE2_START_X_MM FIELD_SCAN_X_MM
-#define VEHICLE_STAGE2_START_Y_MM FIELD_SCAN_Y_MM
-#ifdef VEHICLE_PARAMETER_TABLES
-static const uint8_t vehicle_stage2_waypoints[]={12U,14U};
-#endif
-/* 毫米视觉尚未接入：只发布校准请求，不发送位置微调，不宣称校准完成。 */
-#define VEHICLE_ALIGNMENT_POSITION_EXECUTOR_ENABLE 0U
-#if VEHICLE_ALIGNMENT_POSITION_EXECUTOR_ENABLE
-#error Metric_vision_and_position_executor_are_not_integrated
-#endif
-
-/* 当前只做伸缩回零：1=PC13单次回零后停留；0恢复原八段入口。
- * 不触发DM、升降、载盘或底盘；夹爪上电初始化另设为145度。
- */
-#ifndef VEHICLE_EXTENSION_HOME_ONLY
-#define VEHICLE_EXTENSION_HOME_ONLY 1U
-#endif
-/* 单独4310：从实际左上角收拢姿态逆时针到0度并保持。
- * 1时不执行伸缩回零/固定目标，不进入底盘或搬运动作。
- * 两个单项开关都为0时才恢复原八段入口；不能同时为1。
- */
-#ifndef VEHICLE_DM_STARTUP_ONLY
-#define VEHICLE_DM_STARTUP_ONLY 0U
-#endif
-/* 当前联合启动：4310到0、伸缩回零、载盘到0，夹爪保持145。
- * 仅机构模式或下方联合后行驶模式仅选一个；全部为0才使用旧固定目标启动。
- */
-#ifndef VEHICLE_STARTUP_GROUP_ONLY
-#define VEHICLE_STARTUP_GROUP_ONLY 0U
-#endif
-/* 当前第1段：联合启动全部完成并持位后，自动执行本段底盘路线。
- * 此开关1时，三个仅机构调试开关都设0；距离/速度仍在vehicle_drive第1行。
- */
-#ifndef VEHICLE_STARTUP_GROUP_BEFORE_ROUTE
-#define VEHICLE_STARTUP_GROUP_BEFORE_ROUTE 0U
-#endif
-#define VEHICLE_STARTUP_GROUP_ENABLE (VEHICLE_STARTUP_GROUP_ONLY || VEHICLE_STARTUP_GROUP_BEFORE_ROUTE)
-#ifndef STARTUP_GROUP_GRIPPER_ANGLE_DEG
-#define STARTUP_GROUP_GRIPPER_ANGLE_DEG 145.0f
-#endif
-#ifndef STARTUP_GROUP_CARRIER_ANGLE_DEG
-#define STARTUP_GROUP_CARRIER_ANGLE_DEG 0.0f
-#endif
-#ifndef STARTUP_GROUP_SERVO_SETTLE_MS
-#define STARTUP_GROUP_SERVO_SETTLE_MS 1500U /* PWM后等待，不冒充实物到位反馈。 */
-#endif
-#if (VEHICLE_EXTENSION_HOME_ONLY + VEHICLE_DM_STARTUP_ONLY + VEHICLE_STARTUP_GROUP_ONLY + VEHICLE_STARTUP_GROUP_BEFORE_ROUTE)>1U
-#error Select_one_startup_test_only
-#endif
-#if VEHICLE_EXTENSION_HOME_ONLY && VEHICLE_DM_STARTUP_ONLY
-#error Select_one_startup_test_only
-#endif
-#define VEHICLE_EXTENSION_HOLD_CONFIRM_SAMPLES 3U
-#define VEHICLE_EXTENSION_HOLD_TIMEOUT_MS 2000U
-#define VEHICLE_EXTENSION_HOLD_POSITION_TOL_DEG 3.0f /* 2.0deg=0.55mm低于回零重复性 */
-#define VEHICLE_EXTENSION_HOME_DIRECTION 1U
-#define VEHICLE_EXTENSION_HOME_RPM 30U
-#define VEHICLE_EXTENSION_HOME_DRIVER_TIMEOUT_MS 10000U
-#define VEHICLE_EXTENSION_HOME_DETECT_RPM 300U
-#define VEHICLE_EXTENSION_HOME_DETECT_CURRENT_MA 800U
-#define VEHICLE_EXTENSION_HOME_DETECT_TIME_MS 60U
 #define VEHICLE_STAGE_TIMEOUT_MS 120000U
 #define VEHICLE_REHEARSAL_MS 180000U
 
 /* ---------- 上电停放：按键前DM/伸缩不自动运动 ---------- */
 #ifndef STARTUP_GRIPPER_ANGLE_DEG
-#define STARTUP_GRIPPER_ANGLE_DEG 210.0f /* this isolated candidate preserves user's current open command */
+#define STARTUP_GRIPPER_ANGLE_DEG 140.0f
 #endif
 #ifndef STARTUP_CARRIER_ANGLE_DEG
 #define STARTUP_CARRIER_ANGLE_DEG (-1.0f) /* 未定=-1不输出；填0~270后生效。 */
 #endif
 #define STARTUP_DM_SPEED_SCALE 1.0f /* Reference300deg/s; no startup half-speed override. */
-/* 伸缩：先在本次有效机械缩回参考处读取驱动角，填ZERO及VALID。
- * VALID=0时按键只读位置并退出，不发DM/伸缩运动；不自动设置电机零点。
- * 手推、失电或位置故障后，必须重新确认参考，不承诺掉电机械绝对位置。
+/* 伸缩：回零开启时，按键后先按既有30RPM参数回零，确认本次完成才建参考。
+ * 首次TEST_ONLY=1只测试回零，结束撤VM且不运行DM/底盘；无自动写回零参数。
+ * HOME_ENABLE=0才使用手工ZERO/VALID流程；手推/失电/故障会使参考失效。
  */
+/* 用户已确认缩回挡块及30RPM回零可用；先单次回零，再执行启动准备。
+ * 改速度需另核驱动菜单并验证；不自动写参数，不把普通106RPM当回零速度。 */
+#ifndef STARTUP_EXTENSION_HOME_ENABLE
+#define STARTUP_EXTENSION_HOME_ENABLE 1U
+#endif
+/* 首次仅测伸缩回零，不启动DM或底盘；实物确认后改0再联调。 */
+#ifndef STARTUP_EXTENSION_HOME_TEST_ONLY
+#define STARTUP_EXTENSION_HOME_TEST_ONLY 1U
+#endif
+#define STARTUP_EXTENSION_HOME_RPM 30U
+#define STARTUP_EXTENSION_HOME_TIMEOUT_MS 11000U
 #define STARTUP_EXTENSION_REFERENCE_VALID 0U
 #define STARTUP_EXTENSION_ZERO_DEG 0.0f
 #define STARTUP_EXTENSION_EXTEND_SIGN (1)
@@ -222,12 +70,7 @@ static const uint8_t vehicle_stage2_waypoints[]={12U,14U};
 #define VEHICLE_TRACK_WIDTH_MM 212.0f
 #define VEHICLE_WHEELBASE_MM 206.0f
 /* 升降机械顶部对应驱动角；未确认时禁止Z动作，不影响只调底盘路线。 */
-/* 2026-11-08: confirmed on hardware this session -- IT1 built the top reference
- * (top_valid=1, after_raw=26981/27014/27020 across runs) and the descent to
- * 118800 pulses landed within 1-72 counts of 1336500 every time. Leaving this at
- * 0 blocked every IT3 transfer with it_cause=7 (VehicleArm_BeginSourceParallel
- * rejects on !g_vehicle_lift_reference_valid). */
-#define VEHICLE_LIFT_REFERENCE_VALID 1U
+#define VEHICLE_LIFT_REFERENCE_VALID 0U
 #define VEHICLE_LIFT_TOP_DEG 0.0f
 #define VEHICLE_LIFT_DOWN_SIGN 1
 #define VEHICLE_LIFT_MAX_TARGET_PULSES 26250.0f
@@ -235,7 +78,7 @@ static const uint8_t vehicle_stage2_waypoints[]={12U,14U};
 #define VEHICLE_DM_SPEED_DEG_S 300.0f /* 既有应用上限；逐行速度独立配置。 */
 #define VEHICLE_DM_ZERO_RAW_DEG (-0.010928F) /* 既有逻辑左零基准，非本轮机械零点证明。 */
 #define VEHICLE_GRIP_OPEN_DEG 180.0f
-#define VEHICLE_GRIP_CLOSE_DEG 135.0f /* 上电145与动作闭合135分开。 */
+#define VEHICLE_GRIP_CLOSE_DEG 135.0f /* 上电140与动作闭合135分开。 */
 #define VEHICLE_CARRIER_REFERENCE_VALID 0U /* 调好三槽角后再填1，不拿历史0度当当前对齐。 */
 #define VEHICLE_CARRIER_SLOT1_DEG 0.0f
 #define VEHICLE_CARRIER_SLOT2_DEG 120.0f
@@ -252,22 +95,7 @@ static const uint8_t vehicle_stage2_waypoints[]={12U,14U};
 /* 工程运行范围与故障限值保留，普通调参不能用删除判断来绕过。 */
 #define VEHICLE_MIN_ROUTE_CM 1.0f
 #define VEHICLE_MAX_ROUTE_CM 210.0f
-#define VEHICLE_MAX_TRANSLATION_CM_S 45.0f
-/* 参考例程的比例速度/近点降速思路，按本车77mm轮径使用cm/s。
- * 第1段本次候选前20、横40；本车不直接使用参考0.238轮速系数。
- * 原300RPM协议硬上限保持；以下只扩展本次路线曲线的合法范围。
- */
-#define VEHICLE_ROUTE_MAX_BASE_RPM 126U /* 40~45cm/s 时留出航向修正余量，原来只剩1RPM */
-#define VEHICLE_ROUTE_FEEDBACK_RPM 170U /* 40cm/s=102RPM，130上限余量仅27%，打滑即误撤VM */
-#define VEHICLE_ROUTE_ACCEL_MM_S2 1000.0f
-#define VEHICLE_ROUTE_JERK_MM_S3 2000.0f
-/* 底盘旋转上限；与DM机械臂300deg/s分开。 */
-#define VEHICLE_CHASSIS_TURN_DEG_S 60U
-#define VEHICLE_TURN_ACCEL_DEG_S2 90.0f
-#define VEHICLE_TURN_JERK_DEG_S3 360.0f
-#if VEHICLE_ROUTE_MAX_BASE_RPM>298U || VEHICLE_ROUTE_FEEDBACK_RPM>300U
-#error Route_limits_exceed_motor_application_range
-#endif
+#define VEHICLE_MAX_TRANSLATION_CM_S 20.0f
 #define VEHICLE_AXIS_TIMEOUT_MS 0U /* 0保留动作总等待无限；通信/服务间隔及整段截止仍保留。 */
 #ifndef VEHICLE_MATERIAL_OBSERVATION_REQUIRED
 #define VEHICLE_MATERIAL_OBSERVATION_REQUIRED 1U
@@ -285,21 +113,21 @@ typedef struct {uint32_t direction;float distance_cm,speed_cm_s;} VehicleDriveRo
 #ifdef VEHICLE_PARAMETER_TABLES
 static const VehicleDriveRow vehicle_drive[8][8]={
  /* 1 启停区1→扫码区：已经观察方向正确，距离/停车仍要量。 */
- {VF(VEHICLE_STAGE1_FORWARD_DISTANCE_CM,VEHICLE_STAGE1_FORWARD_CM_S),VL(105.0f,VEHICLE_STAGE1_LATERAL_CM_S),VSTOP},
+ {VF(15.0f,5.0f),VL(105.0f,10.0f),VSTOP},
  /* 2 扫码区→原料区：以下2~8是场地图推导候选，未实车验收。 */
- {VF(90.0f,40.0f),VR(96.0f,40.0f),VSTOP},
+ {VF(90.0f,10.0f),VR(96.0f,10.0f),VSTOP},
  /* 3 原料区→粗加工区 */
- {VL(192.0f,40.0f),VSTOP},
+ {VL(192.0f,10.0f),VSTOP},
  /* 4 粗加工区→暂存区 */
- {VR(96.0f,40.0f),VF(96.0f,40.0f),VSTOP},
+ {VR(96.0f,10.0f),VF(96.0f,10.0f),VSTOP},
  /* 5 暂存区→原料区 */
- {VB(96.0f,40.0f),VR(96.0f,40.0f),VSTOP},
+ {VB(96.0f,10.0f),VR(96.0f,10.0f),VSTOP},
  /* 6 原料区→粗加工区 */
- {VL(192.0f,40.0f),VSTOP},
+ {VL(192.0f,10.0f),VSTOP},
  /* 7 粗加工区→暂存区 */
- {VR(96.0f,40.0f),VF(96.0f,40.0f),VSTOP},
+ {VR(96.0f,10.0f),VF(96.0f,10.0f),VSTOP},
  /* 8 暂存区→本轮启停区（用户已确认）。区2仅镜像1/8段的最后接入横移。 */
- {VB(96.0f,40.0f),VB(90.0f,40.0f),VR(105.0f,40.0f),VB(15.0f,40.0f),VSTOP}
+ {VB(96.0f,10.0f),VB(90.0f,10.0f),VR(105.0f,10.0f),VB(15.0f,5.0f),VSTOP}
 };
 #endif
 
@@ -320,7 +148,7 @@ typedef struct {uint32_t op;float target,speed;uint32_t settle_ms;} VehicleArmRo
 #define VA_WAIT(ms) {6U,0.0f,0.0f,ms}
 #define VA_OBSERVE(kind) {kind,0.0f,0.0f,0U}
 #ifdef VEHICLE_PARAMETER_TABLES
-static const uint32_t vehicle_arm_enable[8]={0U,VEHICLE_STAGE2_ROUTE_ONLY?0U:1U,1U,1U,1U,1U,1U,0U};
+static const uint32_t vehicle_arm_enable[8]={0U,1U,1U,1U,1U,1U,1U,0U};
 #endif
 #ifdef VEHICLE_PARAMETER_TABLES
 static const uint32_t vehicle_arm_repeat[8]={1U,3U,3U,3U,3U,3U,3U,1U};
@@ -368,7 +196,53 @@ static const float vehicle_station_extension_mm[8][3]={
  {-1,-1,-1},{-1,-1,-1},{0,0,0}};
 #endif
 
-/* 2026-11-14 用户确认：丝杆2→8mm，仅导程改变；顶部识别抓取。 */
+#define SOURCE_MCU_CYCLE_ENABLE 1U /* 保留取料模块的扫码兼容服务。 */
+#define VEHICLE_STAGE3_STANDALONE_ENABLE 0U
+#define VEHICLE_STAGE3_PROFILE_PRESET_ENABLE 1U
+#define VEHICLE_STAGE3_STANDALONE_COLORS {2U,1U,5U}
+#define VEHICLE_STAGE3_STANDALONE_SLOTS {2U,1U,5U}
+#define VEHICLE_STAGE3_STANDALONE_RINGS {2U,1U,3U}
+#define VEHICLE_STAGE3_STANDALONE_CARRIER_DEG 36.5f /* 取槽姿态，度。 */
+#define VEHICLE_STAGE3_STANDALONE_OBSERVE_DEG 180.55f /* 观测姿态，度。 */
+#define VEHICLE_STAGE3_STANDALONE_PICK_PULSES 8003.47f /* 取槽Z，虚拟脉冲。 */
+#define VEHICLE_STAGE3_STANDALONE_RING_YAW_DEG {224.48699951171875f,180.55f,139.5509033203125f}
+#define VEHICLE_STAGE3_STANDALONE_RING_X_MM {43.0f,0.0f,70.5f}
+#define VEHICLE_STAGE3_STANDALONE_PLACE_PULSES {61802.22274305556f,60795.02378472222f,63002.22274305556f}
+#define VEHICLE_STAGE3_STANDALONE_RECOVER_PULSES {61802.22274305556f,61595.02378472222f,63002.22274305556f}
+#define VEHICLE_EXTENSION_CALIBRATION_ONLY 0U
+#define SOURCE_CYCLE_TEST_215 0U
+#define VEHICLE_LIFT_RULER_ONLY 0U /* 2026-11-07 integration: full-vehicle profile; wheels CAN / Vision_Poll / Stage2Body all enabled, LiftRuler controller remains the node5 actuator. Isolated node5-only bring-up is finished (integration11). */
+#define VEHICLE_SOURCE_PREP_ENABLE 1U
+#define VEHICLE_DM_LEFTUP_SHORT_RETURN 1U /* User: left-up short path, 180deg clockwise. */
+#define SOURCE_INITIAL_DM_START_MIN_DEG (-5.0f) /* 用户2026-11-18确认：仅首次180度/65mm并行起点下限，后续仍为-2度。 */
+#define VEHICLE_SOURCE_PREP_DM_DEG 180.0f
+#define VEHICLE_SOURCE_PREP_DM_SPEED_DEG_S 300.0f
+#define VEHICLE_SOURCE_PREP_DM_ACCEL_DEG_S2 150.0f
+#define VEHICLE_SOURCE_PREP_EXTENSION_MM 70.0f /* 用户已确认机械可用行程；比例仍粗标。 */
+#define VEHICLE_SOURCE_PREP_EXTENSION_SEGMENT_MM 35.0f
+#define VEHICLE_SOURCE_PREP_EXTENSION_RPM 106.0f
+#define VEHICLE_SOURCE_PREP_EXTENSION_ACCEL_RPM_S 45055U
+#define VEHICLE_SOURCE_PREP_GRIP_DEG 210.0f
+#define VEHICLE_SOURCE_PREP_GRIP_RAMP_MS 1500U
+#define VEHICLE_SOURCE_PREP_GRIP_SETTLE_MS 300U
+#define VEHICLE_SOURCE_PREP_TIMEOUT_MS 12000U
+#define VEHICLE_EXTENSION_HOME_ONLY 1U
+#define VEHICLE_DM_STARTUP_ONLY 0U
+#define VEHICLE_STARTUP_GROUP_ONLY 0U
+#define VEHICLE_STARTUP_GROUP_BEFORE_ROUTE 0U
+#define VEHICLE_STARTUP_GROUP_ENABLE (VEHICLE_STARTUP_GROUP_ONLY || VEHICLE_STARTUP_GROUP_BEFORE_ROUTE)
+#define STARTUP_GROUP_GRIPPER_ANGLE_DEG 145.0f
+#define STARTUP_GROUP_CARRIER_ANGLE_DEG 0.0f
+#define STARTUP_GROUP_SERVO_SETTLE_MS 1500U /* PWM后等待，不冒充实物到位反馈。 */
+#define VEHICLE_EXTENSION_HOLD_CONFIRM_SAMPLES 3U
+#define VEHICLE_EXTENSION_HOLD_TIMEOUT_MS 2000U
+#define VEHICLE_EXTENSION_HOLD_POSITION_TOL_DEG 3.0f /* 2.0deg=0.55mm低于回零重复性 */
+#define VEHICLE_EXTENSION_HOME_DIRECTION 1U
+#define VEHICLE_EXTENSION_HOME_RPM 30U
+#define VEHICLE_EXTENSION_HOME_DRIVER_TIMEOUT_MS 10000U
+#define VEHICLE_EXTENSION_HOME_DETECT_RPM 300U
+#define VEHICLE_EXTENSION_HOME_DETECT_CURRENT_MA 800U
+#define VEHICLE_EXTENSION_HOME_DETECT_TIME_MS 60U
 #define SOURCE_LIFT_PULSES_PER_MM 400.0f /* 原1600/4，虚拟脉冲/mm */
 #define SOURCE_GRIP_LEAD_MM 20.0f /* 用户2026-11-18：剩20mm发140度夹紧，继续到原抓取高度即升，无新增停顿。 */
 #define SOURCE_PICK_PULSES 29700U /* 原118800/4，物理下降74.25mm不变 */
@@ -378,9 +252,6 @@ static const float vehicle_station_extension_mm[8][3]={
 #define SOURCE_TOP_TOLERANCE_DEG 22.5f /* 顶部反馈容差约0.5mm */
 #define SOURCE_EXTENSION_DONE_DEG (5.0f * VEHICLE_EXTENSION_PULSES_PER_MM * 360.0f / 3200.0f) /* User2026-11-15: normal arrival5mm; zero unchanged. */
 #define SOURCE_EXTENSION_CORRIDOR_DEG (10.0f * VEHICLE_EXTENSION_PULSES_PER_MM * 360.0f / 3200.0f) /* User2026-11-15:10mm path window;arrival unchanged. */
-/* 本轮不新增保护类别；以后新增保护/故障/门限须用户先同意。 */
-
-/* 2026-11-14 用户要求：一次2帧触发整件；X/Z重叠，先收臂再转槽。 */
 #define SOURCE_OVERLAP_HOVER_PULSES 15600U /* 原39mm/80mm净空点，按新400p/mm换算 */
 #define SOURCE_LOADED_PARTIAL_RETRACT_MM 60.0f /* MATLAB轨迹段，非新增停车门限 */
 #define SOURCE_EXTENSION_STALL_CONFIRM_MS 3000U /* User:2026-11-15; existing stall window. */

@@ -1,0 +1,55 @@
+{
+  "records": [
+    {
+      "group": "train",
+      "run": 1,
+      "measurement": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left210-field-run1\\operator_measurement.json",
+      "prediction": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left210-field-run1\\holdout_prediction.json",
+      "trace": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left210-field-run1\\holdout_decomposition.csv"
+    },
+    {
+      "group": "train",
+      "run": 2,
+      "measurement": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left210-field-run2\\operator_measurement.json",
+      "prediction": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left210-field-run2\\holdout_prediction.json",
+      "trace": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left210-field-run2\\holdout_decomposition.csv"
+    },
+    {
+      "group": "train",
+      "run": 3,
+      "measurement": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left210-field-run3\\operator_measurement.json",
+      "prediction": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left210-field-run3\\holdout_prediction.json",
+      "trace": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left210-field-run3\\holdout_decomposition.csv"
+    },
+    {
+      "group": "heldout",
+      "run": 1,
+      "measurement": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left150-crossdistance-run1\\operator_measurement.json",
+      "prediction": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left150-crossdistance-run1\\holdout_prediction.json",
+      "trace": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left150-crossdistance-run1\\holdout_decomposition.csv"
+    },
+    {
+      "group": "heldout",
+      "run": 2,
+      "measurement": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left150-crossdistance-run2\\operator_measurement.json",
+      "prediction": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left150-crossdistance-run2\\holdout_prediction.json",
+      "trace": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left150-crossdistance-run2\\holdout_decomposition.csv"
+    },
+    {
+      "group": "heldout",
+      "run": 3,
+      "measurement": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left150-crossdistance-run3\\operator_measurement.json",
+      "prediction": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left150-crossdistance-run3\\holdout_prediction.json",
+      "trace": "D:\\Desktop\\\u5de5\u521b\u8d5b\\\u5de5\u521b\u8d5b\\evidence\\navigation-planning\\2026-11-17\\localization-left150-crossdistance-run3\\holdout_decomposition.csv"
+    }
+  ],
+  "fit_definition": "mean_i((groundF_i-modelF_i)/modelL_i)",
+  "training_count": 3,
+  "heldout_refit": false,
+  "lambda_sensitivity": [
+    0,
+    0.5,
+    1
+  ],
+  "hardware_accessed": false
+}

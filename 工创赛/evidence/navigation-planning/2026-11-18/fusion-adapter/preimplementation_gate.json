@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "released_for_c": true,
+  "time": "2026-11-18T01:34:31.642825+08:00",
+  "matlab_script": "verify_fusion_adapter_v8.m",
+  "matlab_script_sha256": "81888abffe3faee2fec80cfca6c5509bf02d361f2f6cf84cb4728522a1dcd356",
+  "matlab_receipt": "matlab_receipt_v8.json",
+  "checks": 740,
+  "groups": {
+    "M1": 37,
+    "M2": 12,
+    "M3": 71,
+    "M4": 27,
+    "M5": 35,
+    "M6": 22,
+    "M7": 536
+  },
+  "vectors": 120,
+  "independent_preimplementation_review": "independent-review/preimplementation_review.md",
+  "independent_preimplementation_review_sha256": "12b9314c712015f90251152da9c2bfc475d0ecabe6bf5bd2ab3ed91111c5d742",
+  "adapter_products_absent_at_release": true,
+  "hardware_accessed": false,
+  "scope": "Pure copied-value ESTIMATED adapter only; no runtime owner or actuator"
+}

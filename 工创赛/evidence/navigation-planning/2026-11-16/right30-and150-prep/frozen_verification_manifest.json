@@ -1,0 +1,45 @@
+{
+  "recorded_at": "2026-11-16T22:02:49.003925+08:00",
+  "status": "SOFTWARE_READY_NOT_DEPLOYED",
+  "source_checkpoint": "607368de0ce5eeb087f675b9183fbee4cb761f35",
+  "current_changes_uncommitted": true,
+  "normal_project": "D:\\Desktop\\工创赛\\工创赛\\tmp\\right30-and150-build-20261116\\right30_150_40.uvprojx",
+  "project_sha256": "c2d33956362d9ed4177f0569637e2cb0c35ec7da0bfe99ab2dfc85205dd58731",
+  "target": "Vehicle_Integrated",
+  "normal_axf": "D:\\Desktop\\工创赛\\工创赛\\tmp\\right30-and150-build-20261116\\right30_150_40\\Vehicle_Integrated.axf",
+  "frozen_axf": "D:\\Desktop\\工创赛\\工创赛\\evidence\\navigation-planning\\2026-11-16\\right30-and150-prep\\frozen\\Vehicle_Integrated.axf",
+  "axf_sha256": "3f8fe3bf732637ebe1e9765b5ebf686c7042d536bcfd1898dc163033d260b3cd",
+  "flash_sections": [
+    {
+      "name": "PT_LOAD_0",
+      "address": 134217728,
+      "size": 116424,
+      "sha256": "b8cd6790ed133de5aa2c5ebee0c87e3793a14bc85ce72891cc8ae4a74ef458e7"
+    }
+  ],
+  "presets": [
+    {
+      "id": 12,
+      "client": "right150_40",
+      "direction": 2,
+      "kind": 6,
+      "rpm_budget": 102,
+      "target_mm": 1500,
+      "reference_ceiling_mm_s": 400,
+      "reference_peak_mm_s": 400
+    },
+    {
+      "id": 13,
+      "client": "right30_40",
+      "direction": 2,
+      "kind": 6,
+      "rpm_budget": 102,
+      "target_mm": 300,
+      "reference_ceiling_mm_s": 400,
+      "reference_peak_mm_s": 167.93089480786773
+    }
+  ],
+  "hardware_execution_permitted": false,
+  "model_review": "current-model independent subagent, not6.1-sol high",
+  "matlab_before_products": true
+}

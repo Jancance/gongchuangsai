@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+result 352 cases 0 checks 4
+    CHECK(!RadarClient_IsReady() && !RadarObserver_StartZone2(0U,24U,true));
+  File "D:\Desktop\工创赛\工创赛\evidence\navigation-planning\2026-11-18\chassis-completion-grill\zone2-mechanism\independent\run_combined.py", line 81, in <module>
+    result = run(root, out, arm, unit, commands)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Desktop\工创赛\工创赛\scripts\radar_zone2_arm_runner_20261111.py", line 21, in run
+    assert result==0
+           ^^^^^^^^^
+AssertionError

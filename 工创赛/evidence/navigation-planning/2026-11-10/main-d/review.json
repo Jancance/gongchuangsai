@@ -1,0 +1,83 @@
+{
+  "self_review": "passed",
+  "independent_review": "passed; see independent_review.json",
+  "baseline": "1f272dd8cae82bea606f4f779573ecf5e22d4cf1",
+  "product_files": [
+    "3.stm32f407工程/CHASSIS/USER/main.c",
+    "3.stm32f407工程/CHASSIS/USER/app_serial_runtime.c",
+    "3.stm32f407工程/CHASSIS/USER/app_serial_runtime.h",
+    "3.stm32f407工程/gongxun-f407.uvprojx"
+  ],
+  "scope": "Move serial token/state, parsing, command/safety, debug send and existing main telemetry to app_serial_runtime; original serial_internal remains unchanged. TaskA calls two short Init/Telemetry wrappers at original points.",
+  "checks": [
+    "45 original raw functions and 106 preprocessed functions per actual target unchanged; 8 assert line metadata values shift -700 only",
+    "Entire original serial declaration/function block exact after reversing two static-to-public function modifiers; all 15 global owner symbols uniquely in app_serial_runtime.o",
+    "Protocol selftest before route init and full telemetry dispatch order/conditions unchanged; no additional CAN reads",
+    "Actual Integrated/Offline each 405 paired ARM scenarios / 20449 assertions; additional isolated nonintegrated, non-stage1 fixture 405 / 20405",
+    "Actual target integrated source_parameter_entry values verified [1,1]; protocol fixture [0,0], loaded from initialized RAM execution sections",
+    "Status attempt increments sequence before send; successful send updates valid/tick, failed send increments dropped. Failed retry preserves each diagnostic local cursor/timestamp behavior",
+    "CRC/field/uint overflow, stale token, repeated KEEP, START rejection, STOP, RQ repeated GO forwarding, byte overflow/control byte/CR and 199/200 ms byte gaps covered",
+    "Eight actual formatted frame types byte-compared and Python CRC checked: TMQ PE3 OP1 OD1 WF1 PM1 BTQ XD1",
+    "Both final Rebuild targets zero errors/warnings, source paths single per target",
+    "10392 protected existing files raw SHA unchanged, two inc byte unchanged; mechanical shared calls covered in remaining raw/preprocessed main comparisons",
+    "git -c core.whitespace=cr-at-eol diff --check clean; no Git config changes"
+  ],
+  "source_sha256": {
+    "3.stm32f407工程/CHASSIS/USER/main.c": "0fcf589ec3abe70afc49d262275489f0e0eb64e74c35af38e9cafbcb541af807",
+    "3.stm32f407工程/CHASSIS/USER/app_serial_runtime.c": "e2d15d8dab98cf06b534fab807e574d491304db1e474a74616bbc6337a77c1d2",
+    "3.stm32f407工程/CHASSIS/USER/app_serial_runtime.h": "3db4681b05e47130d7d21fee880448f1b69c4ba5aa1d553c69e275301f5a5625",
+    "3.stm32f407工程/gongxun-f407.uvprojx": "c1aa59669e95e24d10eb29ba894b650d7bb4a34d8baea4aa003d47eaba2df5f3"
+  },
+  "script_sha256": {
+    "工创赛/scripts/check_serial_runtime_extraction_20261110.py": "d2c9bdb62fe72fed852c2683b8c428e0047f53b9e94bf04ba95ad2f33bc8d5aa",
+    "工创赛/scripts/check_serial_runtime_arm_20261110.py": "20b0b13f096b92b56bb3e34ba97f315233c54e317512b01d8a0f43ef0540cfc8"
+  },
+  "protected_manifest_sha256": "d0123493566c8e03aa922081777939e2c5e230a51ca626c8c6c22d15a2ced044",
+  "protected_existing_files": 10392,
+  "encoding": {
+    "main.c": {
+      "gbk_decodable": true,
+      "lines": 1121,
+      "crlf": 1121
+    },
+    "app_serial_runtime.c": {
+      "gbk_decodable": true,
+      "lines": 766,
+      "crlf": 766
+    },
+    "app_serial_runtime.h": {
+      "gbk_decodable": true,
+      "lines": 10,
+      "crlf": 10
+    }
+  },
+  "requirements_R": [
+    "RUN-01",
+    "RUN-02",
+    "FIELD-06",
+    "PWR-01",
+    "MECH-01",
+    "MECH-02"
+  ],
+  "requirements_E": [
+    "LOC-03",
+    "LOC-05",
+    "MOT-02",
+    "RUN-06",
+    "SRC-04"
+  ],
+  "open_Q": [
+    "QR-04: 待技术答疑确认",
+    "FIELD-05: 待技术答疑确认",
+    "OBS-03: 待技术答疑确认"
+  ],
+  "matlab": "Not applicable: behavior-preserving owner extraction, no new numerical/control model",
+  "hardware_accessed": false,
+  "limits": [
+    "Actual serial C and formatting; controlled backend/clock/UART/other-owner stubs. Actual Integrated/Offline plus explicitly separate nonintegrated fixture for dormant protocol branches. No physical timing, stack, bus or vehicle validation.",
+    "RQ GO is only checked for exact repeated forwarding; unchanged runtime route command semantics are outside this extraction.",
+    "Other-owner telemetry, backend snapshots and UART/clock are controlled stubs; no hardware/real RTOS timing or stack validation.",
+    "Independent review and local commit pending root; no E implementation."
+  ],
+  "next": "Freeze D product and wait for root independent review/commit; do not begin E."
+}

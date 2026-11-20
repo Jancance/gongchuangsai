@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "D:\Desktop\工创赛\工创赛\evidence\navigation-planning\2026-11-17\turn90-entry-fix\check_integration.py", line 183, in <module>
+    assert result==0,(result,unit.splitlines()[result-1] if result else '',words('debug_values',8,'f'))
+           ^^^^^^^^^
+AssertionError: (195, '  CK(values[56]==3 && values[57]==(-2147483647L-1L) && values[38]==82 && values[39]==130);memcpy((void*)exported_telemetry[id-19],values,sizeof(values));', (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))

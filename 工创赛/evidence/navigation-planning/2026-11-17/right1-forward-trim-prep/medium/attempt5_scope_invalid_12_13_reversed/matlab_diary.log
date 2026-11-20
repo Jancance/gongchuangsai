@@ -1,0 +1,50 @@
+{错误使用 validate_right1_candidate (line 30)
+断言失败。
+} 
+{在不同结构体之间进行下标赋值。
+
+出错 validate_right1_candidate (line 62)
+ profiles(n)=struct('distance_mm',distance,'peak_mm_s',v,'duration_s',sum(d),'phase_s',d);
+} 
+                              status: 'PASS_ARITHMETIC_ONLY'
+                      matlab_version: '9.8.0.1323502 (R2020a)'
+                                beta: 0.0100
+                       command_cases: 17201
+                       invalid_cases: 10
+                         scope_cases: 2880
+                 enabled_scope_cases: 3
+                      wheel_peak_rpm: 105
+    max_quantization_error_F_L_H_rpm: [0.0500 0.0500 0.0490]
+                   reference_A_mm_s2: 132.3880
+                   reference_J_mm_s3: 248.6492
+                            profiles: [1x3 struct]
+                   hardware_accessed: 0
+                     product_written: 0
+                         float_model: 'MATLAB single per C float operation'
+     continuous_wheel_jerk_certified: 0
+                              limits: {1x5 cell}
+
+{函数或变量 'ideal' 无法识别。
+
+出错 validate_right1_candidate (line 8)
+  [ok,q]=mix(b,requested);assert(ok);maxWheelError=max(maxWheelError,max(abs(q-ideal)));assert(all(abs(q-ideal)<=.0501));
+} 
+                              status: 'PASS_ARITHMETIC_ONLY'
+                      matlab_version: '9.8.0.1323502 (R2020a)'
+                                beta: 0.0100
+                       command_cases: 17201
+                       invalid_cases: 10
+                         scope_cases: 2880
+                 enabled_scope_cases: 3
+                      wheel_peak_rpm: 105
+    max_wheel_quantization_error_rpm: 0.0500
+    max_quantization_error_F_L_H_rpm: [0.0500 0.0500 0.0490]
+                   reference_A_mm_s2: 132.3880
+                   reference_J_mm_s3: 248.6492
+                            profiles: [1x3 struct]
+                   hardware_accessed: 0
+                     product_written: 0
+                         float_model: 'MATLAB single per C float operation'
+     continuous_wheel_jerk_certified: 0
+                              limits: {1x5 cell}
+

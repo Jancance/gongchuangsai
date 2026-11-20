@@ -1,0 +1,96 @@
+{
+  "status": "RIGHT210_THREE_AND_RIGHT150_ONE_COMPLETE",
+  "facts": [
+    {
+      "name": "localization-right210-field-run1",
+      "measurement": {
+        "user_text": "右移多走0.5，向后偏0.5cm再测一次已经放好",
+        "target_right_mm": 2100,
+        "actual_right_mm": 2105,
+        "forward_mm": -5,
+        "backward_mm": 5,
+        "interpretation": "多走0.5按上下文cm记5mm，保留原话",
+        "measurement_uncertainty_mm": null,
+        "used_for_training": false,
+        "recorded_at": "2026-11-17T05:27:13.239310+08:00"
+      },
+      "RAW": 2028,
+      "quality": 0,
+      "status": "software_complete",
+      "START": 1,
+      "reset": 1,
+      "download": 0
+    },
+    {
+      "name": "localization-right210-field-run2",
+      "measurement": {
+        "user_text": "右移多走1cm，向后偏4cm，感觉这次有点以外再测一次已经放好",
+        "target_right_mm": 2100,
+        "actual_right_mm": 2110,
+        "forward_mm": -40,
+        "backward_mm": 40,
+        "user_suspected_unusual": true,
+        "excluded": false,
+        "reason_not_excluded": "用户觉得意外，原因待后续全方向分析；原始记录保留不自动剔除",
+        "measurement_uncertainty_mm": null,
+        "used_for_training": false,
+        "recorded_at": "2026-11-17T05:29:09.973689+08:00"
+      },
+      "RAW": 2041,
+      "quality": 0,
+      "status": "software_complete",
+      "START": 1,
+      "reset": 1,
+      "download": 0
+    },
+    {
+      "name": "localization-right210-field-run3",
+      "measurement": {
+        "user_text": "右移多走0.5cm向后偏4cm，感觉这个向后移动百分之2可以不要了，现在测试150cm",
+        "target_right_mm": 2100,
+        "actual_right_mm": 2105,
+        "forward_mm": -40,
+        "backward_mm": 40,
+        "measurement_uncertainty_mm": null,
+        "used_for_training": false,
+        "user_suggested_remove_2percent": true,
+        "actual_left_trim_applied_to_right": false,
+        "recorded_at": "2026-11-17T05:33:00.206826+08:00"
+      },
+      "RAW": 2019,
+      "quality": 0,
+      "status": "software_complete",
+      "START": 1,
+      "reset": 1,
+      "download": 0
+    },
+    {
+      "name": "localization-right150-field-run1",
+      "measurement": {
+        "user_text": "向右多走0.5cm向后偏1cm，现在测试前进后退",
+        "target_right_mm": 1500,
+        "actual_right_mm": 1505,
+        "forward_mm": -10,
+        "backward_mm": 10,
+        "measurement_uncertainty_mm": null,
+        "used_for_training": false,
+        "recorded_at": "2026-11-17T05:36:52.706101+08:00"
+      },
+      "RAW": 1752,
+      "quality": 0,
+      "status": "software_complete",
+      "START": 1,
+      "reset": 1,
+      "download": 0
+    }
+  ],
+  "analysis_deferred_by_user": true,
+  "left2percent_applied_to_right": false,
+  "product_changed": false,
+  "next": [
+    "FORWARD210",
+    "BACKWARD210"
+  ],
+  "forward_site_ready": false,
+  "active_hardware_commands": false
+}

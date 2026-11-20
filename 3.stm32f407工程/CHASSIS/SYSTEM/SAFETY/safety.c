@@ -1,4 +1,3 @@
-#include "source_body_step.h"
 #include "startup_axes.h"
 #include "safety.h"
 #include "chassis_auto_test.h"
@@ -47,15 +46,15 @@ volatile uint32_t g_wheel_test_active = 0U;
 volatile uint32_t g_wheel_test_cut_vm = 0U;
 volatile uint32_t g_wheel_test_session = 0U;
 volatile uint32_t g_wheel_test_cause = 0U;
+static uint32_t s_wheel_test_used = 0U;
+static uint32_t s_wheel_test_vm_requested = 0U;
+static TickType_t s_wheel_test_start_tick = 0U;
 
 static uint32_t s_auto_stop_pending = 0U;
 static uint32_t s_auto_stop_inflight = 0U;
 static uint32_t s_auto_stop_seen_latch = 0U;
 static uint32_t s_auto_stop_vm_requested = 0U;
 static TickType_t s_auto_stop_start_tick = 0U;
-/* VM is latched on after first healthy enable; faults never drop it. */
-static uint32_t s_power_latched = 0U;
-static uint32_t s_auto_stop_retries = 0U;
 static volatile uint32_t s_motion_feedback_enabled = 0U;
 static volatile uint32_t s_motion_speed_valid = 0U;
 static volatile uint32_t s_motion_position_valid = 0U;
@@ -112,6 +111,9 @@ void Safety_Init(void)
     g_wheel_test_cut_vm = 0U;
     g_wheel_test_session = 0U;
     g_wheel_test_cause = 0U;
+    s_wheel_test_used = 0U;
+    s_wheel_test_vm_requested = 0U;
+    s_wheel_test_start_tick = 0U;
     s_auto_stop_pending = 0U;
     s_auto_stop_inflight = 0U;
     s_auto_stop_seen_latch = 0U;
@@ -183,10 +185,19 @@ void Safety_MotionFeedbackReport(uint32_t enabled,
     const volatile TickType_t *speed_ticks,
     const volatile TickType_t *position_ticks)
 {
-    /* Diagnostic publish only. Speed/position freshness now lives in the
-     * chassis backend (400 ms / 1 s) and never gates VM. */
-    (void)enabled; (void)speed_valid_mask; (void)position_valid_mask;
-    (void)speed_ticks; (void)position_ticks;
+    uint32_t i;
+    taskENTER_CRITICAL();
+    s_motion_feedback_enabled = (enabled == 1U) ? 1U : 0U;
+    s_motion_speed_valid = (speed_ticks != NULL) ?
+                          (speed_valid_mask & 0x0FU) : 0U;
+    s_motion_position_valid = (position_ticks != NULL) ?
+                             (position_valid_mask & 0x0FU) : 0U;
+    for (i = 0U; i < 4U; i++)
+    {
+        s_motion_speed_ticks[i] = (speed_ticks != NULL) ? speed_ticks[i] : 0U;
+        s_motion_position_ticks[i] = (position_ticks != NULL) ? position_ticks[i] : 0U;
+    }
+    taskEXIT_CRITICAL();
 }
 
 /* 只由监督任务调用，不等待CAN，不操作接收FIFO */
@@ -201,30 +212,9 @@ static void Safety_CanGuardUpdate(uint32_t vm_request)
     uint32_t i;
 
     g_can_guard_ready = 0U;
-    /* 2026-11-08: the wheel guard only protects wheel motion. While the chassis is
-     * not being driven the mechanism axes own the VM; their own CAN traffic starves
-     * the 400ms wheel poll, which used to expire this guard and latch 0x20, killing
-     * the motion that caused it (and with it the DM service via startup_axes FAULT).
-     * Check the wheels only when the chassis actually asks to move. */
-    extern volatile uint32_t g_lift_ruler_state, g_startup_axes_state, g_chassis_auto_request;
-    extern volatile uint32_t g_it_state, g_it_lift_permit;
-    /* 2026-11-08: the guard must also stand down while an IT transfer is being
-     * authorised. IT1/IT2 run before either mechanism state reaches 1, so the old
-     * check armed the guard during that window. The wheel poll visits one node per
-     * CAN task turn (~0.4 s), slower than SAFETY_CAN_FRESH_MS, so it latched 0x20
-     * within 3 s; that forced safety_ready=0 and rejected IT1 with rejected=2.
-     * IT only ever runs while g_chassis_auto_request==0, so no wheel motion can be
-     * left unprotected here. Wheel protection under a chassis request is unchanged. */
-    if (!SourceBodyStep_WheelWindow() && g_chassis_auto_request == 0U &&
-        (g_lift_ruler_state >= 1U || g_startup_axes_state >= 1U ||
-         g_it_lift_permit == 1U || g_it_state == 1U))
-    {
-        s_can_requested = 0U;
-        s_can_was_ready = 0U;
-        return;
-    }
     if (g_safety_fault != 0U)
     {
+        /* 已锁定故障时保留首次CAN上下文，避免自身关电导致二次误报 */
         return;
     }
     if (vm_request != 1U)
@@ -299,49 +289,30 @@ static void Safety_CanGuardUpdate(uint32_t vm_request)
 /* 已在短临界区内调用；只发布关VM标志 */
 static void Safety_MotionStopCut(uint32_t cause)
 {
-    g_motion_auto_stop_cause = cause;
-#if APP_FAULT_CUT_VM_ENABLE
     g_motion_auto_stop_state = MOTION_STOP_VM_CUT;
     g_motion_auto_stop_cut_vm = 1U;
+    g_motion_auto_stop_cause = cause;
     s_auto_stop_pending = 0U;
-#else
-    /* VM stays on. Saturate diagnostics, never manufacture an ACK.
-     * Retry only missing wheels at the existing 500 ms round deadline. */
-    if (s_auto_stop_retries < 20U) s_auto_stop_retries++;
-    s_auto_stop_pending = 0x0FU & ~g_motion_auto_stop_ack_mask;
-    s_auto_stop_inflight = 0U;
-    s_auto_stop_start_tick = xTaskGetTickCount();
-    g_motion_auto_stop_state = (s_auto_stop_pending == 0U) ?
-        MOTION_STOP_ACKED : MOTION_STOP_PENDING;
-#endif
 }
 
 /* Safety独立推进总等待时间，不等待CAN任务 */
-/* Any latched fault or backend cause asks for orderly wheel stop. */
-static uint32_t Safety_StopNeeded(void)
-{
-    return ((g_rtos_fault != 0U) || (g_safety_fault != 0U) ||
-            (g_chassis_auto_cause != 0U) || (g_startup_axes_cause != 0U)) ? 1U : 0U;
-}
-
-/* Safety independently drives the stop deadline; never waits for the CAN task. */
 static void Safety_MotionStopUpdate(uint32_t vm_request)
 {
     TickType_t now;
     taskENTER_CRITICAL();
     now = xTaskGetTickCount();
     s_auto_stop_vm_requested = (vm_request == 1U) ? 1U : 0U;
-    if (Safety_StopNeeded() == 0U)
+    if (g_motion_diag_fault_latched == 0U)
     {
         if (vm_request == 0U)
         {
+            /* 仅初始或撤VM后明确确认才重置，不靠反馈恢复重置 */
             g_motion_auto_stop_state = MOTION_STOP_IDLE;
             g_motion_auto_stop_cut_vm = 0U;
             g_motion_auto_stop_cause = 0U;
             s_auto_stop_pending = 0U;
             s_auto_stop_inflight = 0U;
             s_auto_stop_seen_latch = 0U;
-            s_auto_stop_retries = 0U;
         }
         taskEXIT_CRITICAL();
         return;
@@ -358,6 +329,7 @@ static void Safety_MotionStopUpdate(uint32_t vm_request)
     }
     if (s_auto_stop_seen_latch == 0U)
     {
+        /* 每个锁存会话只请求一次，禁止无限重试 */
         s_auto_stop_seen_latch = 1U;
         g_motion_auto_stop_session++;
         g_motion_auto_stop_state = MOTION_STOP_PENDING;
@@ -370,13 +342,14 @@ static void Safety_MotionStopUpdate(uint32_t vm_request)
         g_motion_auto_stop_cause = 0U;
         s_auto_stop_pending = 0x0FU;
         s_auto_stop_inflight = 0U;
-        s_auto_stop_retries = 0U;
         s_auto_stop_start_tick = now;
     }
     if (g_motion_auto_stop_state == MOTION_STOP_PENDING)
     {
-        if ((TickType_t)(now - s_auto_stop_start_tick) >=
-            pdMS_TO_TICKS(MOTION_STOP_ACK_WAIT_MS))
+        if ((g_rtos_fault != 0U) || (g_safety_fault != 0U) ||
+            (g_safety_ready != 1U)) Safety_MotionStopCut(3U);
+        else if ((TickType_t)(now - s_auto_stop_start_tick) >=
+                 pdMS_TO_TICKS(MOTION_STOP_ACK_WAIT_MS))
             Safety_MotionStopCut(2U);
     }
     taskEXIT_CRITICAL();
@@ -390,19 +363,26 @@ uint32_t Safety_MotionStopTake(uint8_t *address, uint32_t *session)
     if ((address == NULL) || (session == NULL)) return 0U;
     taskENTER_CRITICAL();
     if ((g_motion_auto_stop_state == MOTION_STOP_PENDING) &&
-        (s_auto_stop_vm_requested == 1U) && (s_auto_stop_inflight == 0U))
+        (s_auto_stop_vm_requested == 1U) && (s_auto_stop_inflight == 0U) &&
+        (g_rtos_fault == 0U) && (g_safety_fault == 0U) &&
+        (g_safety_ready == 1U))
     {
-        for (i = 0U; i < 4U; i++)
+        if ((TickType_t)(xTaskGetTickCount() - s_auto_stop_start_tick) >=
+            pdMS_TO_TICKS(MOTION_STOP_ACK_WAIT_MS)) Safety_MotionStopCut(2U);
+        else
         {
-            bit = 1UL << i;
-            if ((s_auto_stop_pending & bit) != 0U)
+            for (i = 0U; i < 4U; i++)
             {
-                s_auto_stop_pending &= ~bit;
-                s_auto_stop_inflight = bit;
-                *address = (uint8_t)(i + 1U);
-                *session = g_motion_auto_stop_session;
-                taken = 1U;
-                break;
+                bit = 1UL << i;
+                if ((s_auto_stop_pending & bit) != 0U)
+                {
+                    s_auto_stop_pending &= ~bit;
+                    s_auto_stop_inflight = bit;
+                    *address = (uint8_t)(i + 1U);
+                    *session = g_motion_auto_stop_session;
+                    taken = 1U;
+                    break;
+                }
             }
         }
     }
@@ -423,41 +403,326 @@ void Safety_MotionStopReport(uint8_t address, uint32_t session,
         s_auto_stop_inflight = 0U;
         g_motion_auto_stop_result[address - 1U] = result;
         if (result == 1U) g_motion_auto_stop_ack_mask |= bit;
-        else
+        else g_motion_auto_stop_fail_mask |= bit;
+        /* 超时或撤VM后的晚回报只记录，不得恢复完成态 */
+        if (g_motion_auto_stop_state == MOTION_STOP_PENDING)
         {
-            g_motion_auto_stop_fail_mask |= bit;
-#if APP_FAULT_CUT_VM_ENABLE
-            Safety_MotionStopCut(1U);
-#else
-            /* Finish this round before retrying: a failed low address must
-             * not starve STOP for the other wheels. Preserve failure bits. */
-            g_motion_auto_stop_cause = 1U;
-#endif
+            if (result != 1U) Safety_MotionStopCut(1U);
+            else if ((TickType_t)(xTaskGetTickCount() - s_auto_stop_start_tick) >=
+                     pdMS_TO_TICKS(MOTION_STOP_ACK_WAIT_MS))
+                Safety_MotionStopCut(2U);
+            else if (g_motion_auto_stop_ack_mask == 0x0FU)
+                g_motion_auto_stop_state = MOTION_STOP_ACKED;
         }
-        if ((g_motion_auto_stop_ack_mask == 0x0FU) &&
-            (g_motion_auto_stop_state == MOTION_STOP_PENDING))
-            g_motion_auto_stop_state = MOTION_STOP_ACKED;
     }
     taskEXIT_CRITICAL();
 }
 
 /* 调用者持短临界区；不等待CAN，关电在本轮或下一轮Safety输出执行 */
-/* Wheel spin test is not reachable in this build (no request source); kept as
- * refusing stubs so a stray request can never arm a 10 s unattended run. */
-uint32_t Safety_WheelTestPrepare(void) { return 0U; }
-void Safety_WheelTestPrepareFailed(void) { }
-uint32_t Safety_WheelTestArm(uint32_t *session) { (void)session; return 0U; }
-uint32_t Safety_WheelTestStartAllowed(uint32_t session) { (void)session; return 0U; }
+static void Safety_WheelTestCut(uint32_t cause)
+{
+    if (cause != 0U) g_wheel_test_state = WHEEL_TEST_CUT;
+    g_wheel_test_active = 0U;
+    g_wheel_test_cut_vm = 1U;
+    g_wheel_test_cause = cause;
+}
+
+/* 每20ms由Safety推进；即使CAN任务停止推进，截止时间仍生效 */
+static void Safety_WheelTestUpdate(uint32_t vm_request)
+{
+    taskENTER_CRITICAL();
+    s_wheel_test_vm_requested = (vm_request == 1U) ? 1U : 0U;
+    if (vm_request != 1U)
+    {
+        if (g_wheel_test_active == 1U)
+            g_wheel_test_state = WHEEL_TEST_CANCELLED;
+        g_wheel_test_active = 0U;
+        g_wheel_test_cut_vm = 0U;
+        s_wheel_test_used = 0U;
+    }
+    else if (g_wheel_test_active == 1U)
+    {
+        if ((g_rtos_fault != 0U) || (g_safety_fault != 0U) ||
+            (g_safety_ready != 1U) || (g_can_guard_ready != 1U) ||
+            (g_motion_diag_fault_latched != 0U) ||
+            (g_motion_auto_stop_state != MOTION_STOP_IDLE) ||
+            (g_motion_auto_stop_cut_vm != 0U))
+            Safety_WheelTestCut(4U);
+        else if (g_wheel_test_state == WHEEL_TEST_PREPARING)
+        {
+            if ((TickType_t)(xTaskGetTickCount() - s_wheel_test_start_tick) >=
+                pdMS_TO_TICKS(WHEEL_TEST_PREP_MS)) Safety_WheelTestCut(6U);
+        }
+        else if ((TickType_t)(xTaskGetTickCount() - s_wheel_test_start_tick) >=
+                 pdMS_TO_TICKS(WHEEL_TEST_CUT_MS))
+            Safety_WheelTestCut((g_wheel_test_state == WHEEL_TEST_DONE) ? 0U : 3U);
+    }
+    taskEXIT_CRITICAL();
+}
+
+/* 先占用本次供电会话，准备超时也由Safety独立关VM */
+uint32_t Safety_WheelTestPrepare(void)
+{
+    uint32_t accepted = 0U;
+    taskENTER_CRITICAL();
+    if ((s_wheel_test_vm_requested == 1U) && (s_wheel_test_used == 0U) &&
+        (g_wheel_test_active == 0U) && (g_wheel_test_cut_vm == 0U) &&
+        (g_rtos_fault == 0U) && (g_safety_fault == 0U) &&
+        (g_safety_ready == 1U) && (g_can_guard_ready == 1U) &&
+        (g_motion_diag_fault_latched == 0U) &&
+        (g_motion_auto_stop_state == MOTION_STOP_IDLE) &&
+        (g_motion_auto_stop_cut_vm == 0U))
+    {
+        s_wheel_test_used = 1U;
+        s_wheel_test_start_tick = xTaskGetTickCount();
+        g_wheel_test_session++;
+        g_wheel_test_state = WHEEL_TEST_PREPARING;
+        g_wheel_test_active = 1U;
+        g_wheel_test_cause = 0U;
+        accepted = 1U;
+    }
+    taskEXIT_CRITICAL();
+    return accepted;
+}
+
+void Safety_WheelTestPrepareFailed(void)
+{
+    taskENTER_CRITICAL();
+    if ((g_wheel_test_active == 1U) &&
+        (g_wheel_test_state == WHEEL_TEST_PREPARING)) Safety_WheelTestCut(6U);
+    taskEXIT_CRITICAL();
+}
+
+uint32_t Safety_WheelTestArm(uint32_t *session)
+{
+    uint32_t accepted = 0U;
+    if (session == NULL) return 0U;
+    taskENTER_CRITICAL();
+    if ((s_wheel_test_vm_requested == 1U) && (g_wheel_test_active == 1U) &&
+        (g_wheel_test_state == WHEEL_TEST_PREPARING) &&
+        (g_wheel_test_cut_vm == 0U) && (g_rtos_fault == 0U) &&
+        (g_safety_fault == 0U) && (g_safety_ready == 1U) &&
+        (g_can_guard_ready == 1U) && (g_motion_diag_fault_latched == 0U) &&
+        (g_motion_auto_stop_state == MOTION_STOP_IDLE) &&
+        (g_motion_auto_stop_cut_vm == 0U))
+    {
+        if ((TickType_t)(xTaskGetTickCount() - s_wheel_test_start_tick) >=
+            pdMS_TO_TICKS(WHEEL_TEST_PREP_MS)) Safety_WheelTestCut(6U);
+        else
+        {
+            /* 转动时间从本次速度发送前另起算，不包含准备阶段 */
+            s_wheel_test_start_tick = xTaskGetTickCount();
+            *session = g_wheel_test_session;
+            g_wheel_test_state = WHEEL_TEST_STARTING;
+            accepted = 1U;
+        }
+    }
+    taskEXIT_CRITICAL();
+    return accepted;
+}
+
+/* 四轮分笔启动前复核本会话，过期或撤VM后不得补发启动 */
+uint32_t Safety_WheelTestStartAllowed(uint32_t session)
+{
+    uint32_t allowed = 0U;
+    taskENTER_CRITICAL();
+    if ((session == g_wheel_test_session) && (g_wheel_test_active == 1U) &&
+        (g_wheel_test_state == WHEEL_TEST_STARTING))
+    {
+        if ((s_wheel_test_vm_requested != 1U) || (g_rtos_fault != 0U) ||
+            (g_safety_fault != 0U) || (g_safety_ready != 1U) ||
+            (g_can_guard_ready != 1U)) Safety_WheelTestCut(4U);
+        else if ((TickType_t)(xTaskGetTickCount() - s_wheel_test_start_tick) >=
+                 pdMS_TO_TICKS(WHEEL_TEST_RUN_MS)) Safety_WheelTestCut(3U);
+        else allowed = 1U;
+    }
+    taskEXIT_CRITICAL();
+    return allowed;
+}
+
 void Safety_WheelTestStartReport(uint32_t session, uint32_t result)
-{ (void)session; (void)result; }
-uint32_t Safety_WheelTestTakeStop(uint32_t *session) { (void)session; return 0U; }
+{
+    taskENTER_CRITICAL();
+    if ((session == g_wheel_test_session) && (g_wheel_test_active == 1U) &&
+        (g_wheel_test_state == WHEEL_TEST_STARTING))
+    {
+        if (result != 1U) Safety_WheelTestCut(1U);
+        else if ((TickType_t)(xTaskGetTickCount() - s_wheel_test_start_tick) >=
+                 pdMS_TO_TICKS(WHEEL_TEST_CUT_MS)) Safety_WheelTestCut(3U);
+        else g_wheel_test_state = WHEEL_TEST_RUNNING;
+    }
+    taskEXIT_CRITICAL();
+}
+
+uint32_t Safety_WheelTestTakeStop(uint32_t *session)
+{
+    uint32_t taken = 0U;
+    if (session == NULL) return 0U;
+    taskENTER_CRITICAL();
+    if ((g_wheel_test_active == 1U) &&
+        (g_wheel_test_state == WHEEL_TEST_RUNNING))
+    {
+        TickType_t age = (TickType_t)(xTaskGetTickCount() - s_wheel_test_start_tick);
+        if (age >= pdMS_TO_TICKS(WHEEL_TEST_CUT_MS)) Safety_WheelTestCut(3U);
+        else if (age >= pdMS_TO_TICKS(WHEEL_TEST_RUN_MS))
+        {
+            g_wheel_test_state = WHEEL_TEST_STOPPING;
+            *session = g_wheel_test_session;
+            taken = 1U;
+        }
+    }
+    taskEXIT_CRITICAL();
+    return taken;
+}
+
 void Safety_WheelTestStopReport(uint32_t session, uint32_t result)
-{ (void)session; (void)result; }
-void Safety_WheelTestAbort(void) { }
+{
+    taskENTER_CRITICAL();
+    if ((session == g_wheel_test_session) && (g_wheel_test_active == 1U) &&
+        (g_wheel_test_state == WHEEL_TEST_STOPPING))
+    {
+        if (result != 1U) Safety_WheelTestCut(2U);
+        else if ((TickType_t)(xTaskGetTickCount() - s_wheel_test_start_tick) >=
+                 pdMS_TO_TICKS(WHEEL_TEST_CUT_MS)) Safety_WheelTestCut(3U);
+        else g_wheel_test_state = WHEEL_TEST_DONE;
+    }
+    taskEXIT_CRITICAL();
+}
+
+void Safety_WheelTestAbort(void)
+{
+    taskENTER_CRITICAL();
+    if (g_wheel_test_active == 1U) Safety_WheelTestCut(5U);
+    taskEXIT_CRITICAL();
+}
 
 /* 反馈诊断锁存只记账，不改原故障、供电、喂狗或发送CAN */
-/* Removed: MOTION_BLOCK_* permission diagnostic. It only produced
- * false fault latches and never authorised any motion. */
+static void Safety_MotionDiagLatchUpdate(uint32_t vm_request,
+                                        uint32_t speed_fresh,
+                                        uint32_t position_fresh)
+{
+    if (vm_request != 1U)
+    {
+        /* 正常撤VM不作为新反馈故障；已有锁存仍保留 */
+        g_motion_diag_monitor_armed = 0U;
+    }
+    else if ((speed_fresh == 0x0FU) && (position_fresh == 0x0FU))
+    {
+        /* 首次采集未完成时不误锁存；恢复新鲜也不清旧记录 */
+        g_motion_diag_monitor_armed = 1U;
+    }
+    else if (g_motion_diag_monitor_armed == 1U)
+    {
+        if (speed_fresh != 0x0FU)
+        {
+            g_motion_diag_fault_latched |= MOTION_BLOCK_SPEED_FEEDBACK;
+        }
+        if (position_fresh != 0x0FU)
+        {
+            g_motion_diag_fault_latched |= MOTION_BLOCK_POSITION_FEEDBACK;
+        }
+    }
+
+    if (g_motion_diag_ack_request == 1U)
+    {
+        /* 本次立即处理，失败不排队到条件恢复时自动确认 */
+        g_motion_diag_ack_request = 0U;
+        if ((vm_request == 0U) && (g_rtos_fault == 0U) &&
+            (g_safety_fault == 0U) && (g_safety_ready == 1U))
+        {
+            /* 只确认这层诊断，不代表修复硬件或重新允许运动 */
+            g_motion_diag_fault_latched = 0U;
+            g_motion_diag_monitor_armed = 0U;
+            g_motion_diag_ack_result = 1U;
+        }
+        else
+        {
+            g_motion_diag_ack_result = 9U;
+        }
+    }
+}
+
+/* 只由监督任务调用；这一步只显示禁止原因，不发送CAN */
+static void Safety_MotionPermissionUpdate(uint32_t vm_request)
+{
+    uint32_t blocked = MOTION_BLOCK_POLICY_PENDING;
+    uint32_t enabled;
+    uint32_t speed_valid;
+    uint32_t position_valid;
+    uint32_t speed_fresh = 0U;
+    uint32_t position_fresh = 0U;
+    uint32_t i;
+    TickType_t now;
+    TickType_t speed_ticks[4];
+    TickType_t position_ticks[4];
+
+    /* 一次取出一致快照；CAN任务停住时，本任务仍会继续算年龄 */
+    taskENTER_CRITICAL();
+    now = xTaskGetTickCount();
+    enabled = s_motion_feedback_enabled;
+    speed_valid = s_motion_speed_valid;
+    position_valid = s_motion_position_valid;
+    for (i = 0U; i < 4U; i++)
+    {
+        speed_ticks[i] = s_motion_speed_ticks[i];
+        position_ticks[i] = s_motion_position_ticks[i];
+    }
+    taskEXIT_CRITICAL();
+
+    if ((vm_request == 1U) && (enabled == 1U))
+    {
+        for (i = 0U; i < 4U; i++)
+        {
+            /* 有效位确认本会话成功采样；无符号相减支持tick回绕 */
+            if (((speed_valid & (1UL << i)) != 0U) &&
+                ((TickType_t)(now - speed_ticks[i]) <=
+                 pdMS_TO_TICKS(SAFETY_MOTION_DIAG_FRESH_MS)))
+            {
+                speed_fresh |= 1UL << i;
+            }
+            if (((position_valid & (1UL << i)) != 0U) &&
+                ((TickType_t)(now - position_ticks[i]) <=
+                 pdMS_TO_TICKS(SAFETY_MOTION_DIAG_FRESH_MS)))
+            {
+                position_fresh |= 1UL << i;
+            }
+        }
+    }
+    g_motion_speed_fresh_mask = speed_fresh;
+    g_motion_position_fresh_mask = position_fresh;
+    Safety_MotionDiagLatchUpdate(vm_request, speed_fresh, position_fresh);
+    if (g_motion_diag_fault_latched != 0U)
+    {
+        blocked |= MOTION_BLOCK_DIAG_LATCHED;
+    }
+    if (speed_fresh != 0x0FU)
+    {
+        blocked |= MOTION_BLOCK_SPEED_FEEDBACK;
+    }
+    if (position_fresh != 0x0FU)
+    {
+        blocked |= MOTION_BLOCK_POSITION_FEEDBACK;
+    }
+    if (vm_request != 1U)
+    {
+        blocked |= MOTION_BLOCK_VM_OFF;
+    }
+    if ((g_rtos_fault != 0U) || (g_safety_fault != 0U) ||
+        (g_safety_ready != 1U))
+    {
+        blocked |= MOTION_BLOCK_PLATFORM;
+    }
+    if (g_can_guard_ready != 1U)
+    {
+        blocked |= MOTION_BLOCK_CAN;
+    }
+
+    /* 平台/CAN就绪也不放行，不能用静态1秒反馈阈值允许运动 */
+    g_motion_block_reason = blocked;
+    g_motion_allowed = 0U;
+}
+
+/* 只有监督任务调用；故障锁定后，正常心跳恢复也不能自动开VM */
 void Safety_Update(uint32_t vm_request, uint32_t can_test_result)
 {
     TickType_t now;
@@ -527,37 +792,25 @@ void Safety_Update(uint32_t vm_request, uint32_t can_test_result)
         g_safety_ready = 1U;
     }
 
-    /* Publish stop request and backend snapshot; faults never cut VM. */
+    /* 更新诊断并发布停止请求，失败或超时追加关VM条件 */
+    Safety_WheelTestUpdate(vm_request);
     ChassisAuto_SafetyUpdate(vm_request);
-    Safety_MotionStopUpdate(vm_request);
+    Safety_MotionPermissionUpdate(((g_wheel_test_cut_vm == 1U) || (g_chassis_auto_cut_vm == 1U)) ? 0U : vm_request);
+    Safety_MotionStopUpdate(((g_wheel_test_cut_vm == 1U) || (g_chassis_auto_cut_vm == 1U)) ? 0U : vm_request);
 
-    if ((vm_request == 1U) || (g_startup_axes_vm_request == 1U))
+    if ((g_safety_ready == 1U) && (vm_request == 1U || g_startup_axes_vm_request==1U) &&
+        (g_motion_auto_stop_cut_vm == 0U) &&
+        (g_wheel_test_cut_vm == 0U) &&
+        ((g_chassis_auto_cut_vm == 0U) || StartupAxes_NormalStopHold()))
     {
-#if APP_FAULT_CUT_VM_ENABLE
-        if ((g_safety_ready == 1U) && (g_motion_auto_stop_cut_vm == 0U) &&
-            ((g_chassis_auto_cut_vm == 0U) || StartupAxes_NormalStopHold()))
-            Power_Enable();
-        else
-            Power_Disable();
-#else
-        /* Latched power: once healthy-enabled, keep VM on through any fault so
-         * the wheels stay braked instead of coasting on a dead driver. Only an
-         * explicit VM request drop (normal end / key cancel) powers off. */
-        if ((g_safety_ready == 1U) || (s_power_latched != 0U))
-        {
-            Power_Enable();
-            s_power_latched = 1U;
-        }
-#endif
+        Power_Enable();
     }
     else
     {
         Power_Disable();
-        s_power_latched = 0U;
     }
-
-    /* Keep the MCU alive to hold VM and keep issuing stop frames. */
-    if (g_rtos_fault == 0U)
+    /* 本轮任务/CAN检查与输出决策完成，只有健康才继续喂狗 */
+    if ((g_safety_ready == 1U) && (g_rtos_fault == 0U))
     {
         Watchdog_Feed();
     }

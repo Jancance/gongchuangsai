@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "baseline": "4a90de1",
+  "active_user": "D:\\Desktop\\工创赛\\3.stm32f407工程\\CHASSIS\\USER",
+  "equivalent_main_functions": 89,
+  "reset_call_sites": [
+    "App_RuntimeRouteInstall",
+    "App_Stage1Rearm"
+  ],
+  "arm_results": [
+    {
+      "stage1": 0,
+      "cases": 2584,
+      "assertions": 23770
+    },
+    {
+      "stage1": 1,
+      "cases": 2584,
+      "assertions": 23770
+    }
+  ],
+  "module_sha256": "efe1f1e9055298222f5497bf680c53d6f01c72600ed6393ffb9fae33a9b7362c",
+  "hardware_accessed": false,
+  "limits": "Actual old/new adapter plus unchanged pure odometry C with I/O and critical-section hooks; not RTOS scheduling, dynamics, timing, stack or vehicle acceptance. No MATLAB dynamics needed for behavior-preserving extraction."
+}
