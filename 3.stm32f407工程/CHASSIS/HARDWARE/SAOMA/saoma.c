@@ -1,4 +1,8 @@
 #include "saoma.h"
+#include "app_config.h"
+#if APP_ZONE2_MISSION_ENABLE
+#include "app_zone2.h"
+#endif
 #include "stm32f4xx.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -131,6 +135,10 @@ static void SAOMA_Finish(void)
         g_saoma_last_result = 2U;
     }
     taskEXIT_CRITICAL();
+#if APP_ZONE2_MISSION_ENABLE
+    if (valid != 0U)
+        AppZone2_OfferTaskCode(SAOMA_Data,g_saoma_frame_start_ms,g_saoma_frame_end_ms);
+#endif
     s_length = 0U;
     s_bad = 0U;
     s_active = 0U;

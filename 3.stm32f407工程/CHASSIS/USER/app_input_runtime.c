@@ -14,6 +14,9 @@
 #include "radar_zone_switch.h"
 #include "radar_lift.h"
 #include "radar_servo.h"
+#if APP_ZONE1_RADAR_SERVO_TEST || APP_ZONE1_RADAR_LIFT_TEST
+#include "radar_servo_config.h"
+#endif
 #if APP_ZONE2_NAV_ENABLE
 #include "app_zone2.h"
 #endif
@@ -270,9 +273,58 @@ void App_HwtTurnSafety(void)
 #endif
 #endif
 
+#if APP_ZONE1_RADAR_LIFT_TEST
+/* Each key press advances one bench action. No automatic motion follows a jog. */
+static void zone1_lift_test_key(void)
+{
+    enum { STOWED, DEPLOYED, FIRST_JOG, BACK_JOG };
+    static uint32_t step,sequence,deploy_ms;
+    uint32_t now=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
+    uint32_t safe=!g_vm_test_request && !g_chassis_auto_active && !g_safety_fault &&
+        !g_rtos_fault && !g_can_ctrl_fault_latched;
+    RadarLiftSnapshot status;
+    RadarLift_Service(now,safe);
+    if (Key_GetEvent()==0U) return;
+    g_start_key_count++;
+    if (!safe) return;
+    RadarLift_GetSnapshot(&status);
+    if (step==STOWED) {
+        if (RadarServo_SetAngle(1U,RADAR_SERVO1_DEPLOY_DEG)) {
+            deploy_ms=now;
+            step=DEPLOYED;
+        }
+    } else if (step==DEPLOYED) {
+        if ((uint32_t)(now-deploy_ms)<1000U) return;
+        g_radar_lift_interval_us=4000U;
+        g_radar_lift_enable=1U;
+        if (RadarLift_Begin(32U,0U,&sequence)) step=FIRST_JOG;
+        else g_radar_lift_enable=0U;
+    } else if (status.sequence==sequence && status.state==2U && status.result==1U && status.done==32U) {
+        if (step==FIRST_JOG) {
+            if (RadarLift_Begin(32U,1U,&sequence)) step=BACK_JOG;
+        } else if (RadarLift_Release(sequence)) {
+            if (RadarServo_SetAngle(1U,RADAR_SERVO1_INIT_DEG)) step=STOWED;
+        }
+    }
+}
+#endif
+
 void AppInput_KeyStep(void)
 {
-#if APP_ZONE2_NAV_ENABLE
+#if APP_ZONE1_RADAR_LIFT_TEST
+    zone1_lift_test_key();
+#elif APP_ZONE1_RADAR_SERVO_TEST
+    if (Key_GetEvent()!=0U) {
+        g_start_key_count++;
+        taskENTER_CRITICAL();
+        if (!g_vm_test_request && !g_chassis_auto_active && !g_safety_fault &&
+            !g_rtos_fault && !g_can_ctrl_fault_latched) {
+            (void)RadarServo_SetAngle(1U,g_radar_servo_angle_deg[0]==RADAR_SERVO1_INIT_DEG ?
+                RADAR_SERVO1_MAX_DEG : RADAR_SERVO1_INIT_DEG);
+        }
+        taskEXIT_CRITICAL();
+    }
+#elif APP_ZONE2_NAV_ENABLE
     uint32_t now=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
     RadarZoneSwitch_Service(now);
     RadarLift_Service(now,!g_vm_test_request && !g_chassis_auto_active && !g_safety_fault &&

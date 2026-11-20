@@ -1,0 +1,43 @@
+{
+  "profile_id": "source-rim-top180-ext65-z600-integration19-body5-20261115",
+  "image_size": [
+    1920,
+    1080
+  ],
+  "camera_pose": {
+    "yaw_deg": 180,
+    "extension_mm": 65,
+    "lift_depth_pulses": 600
+  },
+  "sampling_origin_px": [
+    950,
+    430
+  ],
+  "sampling_radius_px": 610,
+  "reference_center_px": [
+    986.2289983969464,
+    399.8714121472991
+  ],
+  "reference_radius_px": 605.8327276530682,
+  "response_px_per_command_mm": [
+    [
+      2.021498854352318,
+      4.4425601745097785
+    ],
+    [
+      1.6426723182963958,
+      -0.22672511331164566
+    ]
+  ],
+  "scale_mm_per_px": 0.24684448312572155,
+  "position_tolerance_mm": 5,
+  "max_step_mm": 20,
+  "reference_image_sha256": "a81356165eef82a6ff003dba979a4aa0b555537706726301086106150cadcb57",
+  "calibration_evidence": "integration19-right7-1450/parking-current-matlab.json + integration19-response-v2-matlab.json + integration19-body-tolerance5-matlab.json",
+  "physical_auto_correction_passed": false,
+  "current_session_probes": [
+    "right9",
+    "back13"
+  ],
+  "user_decision": "2026-11-15 body visual positioning tolerance 2mm to5mm; extension tolerances unchanged"
+}

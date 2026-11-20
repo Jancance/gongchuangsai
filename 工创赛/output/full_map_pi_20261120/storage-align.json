@@ -1,0 +1,42 @@
+{
+  "format_version": 1,
+  "region": "storage",
+  "geometry": {
+    "outer_diameter_mm": 95.0,
+    "center_spacing_mm": 150.0,
+    "line_offset_mm": 75.0
+  },
+  "camera": {
+    "width": 1920,
+    "height": 1080,
+    "undistort": false,
+    "calibration_file": null
+  },
+  "pose_contract": "Grid 22; DM180.55, extension0, liftTop; MCU state2 only",
+  "reference": null,
+  "image_to_station_affine": null,
+  "chassis_image_to_motion": null,
+  "search_calibration": null,
+  "calibration_verified": false,
+  "verification_evidence": null,
+  "observation_mode": "cyqm_ring_station",
+  "ring_row_alignment": {
+    "enabled": true,
+    "target_center_px": [992.9757080078125, 553.7538970947266],
+    "target_row_yaw_deg": 0,
+    "target_confirmed_by_user": false,
+    "response_measured_on_vehicle": false,
+    "response_pixel_per_right_forward_ccw": [
+      [0.136083984375, 2.4842529296875, 7.3781890869140625],
+      [2.89210205078125, -0.0543548583984375, 0.58551025390625],
+      [0.004547685273412006, -0.004578951260242148, 0.5592142975863156]
+    ],
+    "nominal_image_to_station_affine": [
+      [0.36365066919609434, -0.011578404580947572],
+      [0.01168540192970625, 0.35188959352492266]
+    ],
+    "measurement_scope": "Rough-station seed values; verify target and response at grid 22",
+    "yaw_reference": "vehicle_edge",
+    "vehicle_edge_roi_xyxy": [790, 951, 1071, 970]
+  }
+}

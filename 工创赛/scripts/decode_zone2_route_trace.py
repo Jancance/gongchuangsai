@@ -13,6 +13,9 @@ SYMBOL = "g_zone2_route_trace"
 HEADER = struct.Struct("<14I4B")
 LEG = struct.Struct("<5IH6B24B")
 STATIONS = (0, 2, 14, 10, 22, 14, 10, 22, 0)
+START_CELLS = {1: 4, 2: 0}
+# Old Zone 2 logs used node 1. Keep decoding them without allowing mixed areas.
+MAP_IDENTITIES = {(1, 1, 1), (2, 2, 2), (2, 1, 2)}
 SOURCES = (1, 2, 3, 4, 5, 3, 4, 8)
 SIZE = HEADER.size + LEG.size * len(SOURCES)
 
@@ -26,9 +29,10 @@ def decode(blob, pose_summary=None):
         raise ValueError("Route trace has an unexpected size")
     (magic, state, fault, path_error, start_ms, elapsed, grid_valid, occupied,
      run, generation, layout, link, scan, completed, start_id, node, zone, phase) = HEADER.unpack_from(blob)
-    if magic != 0x3152325A or state != 2 or phase not in (7, 10):
+    if magic != 0x3152325A or state != 2 or phase not in (7, 10, 13):
         raise ValueError("Route trace is not a frozen Z2R1 recording")
-    if (phase == 10 and (fault or path_error or completed != 8)) or (phase == 7 and not fault):
+    expected_legs = {10: 8, 13: 3}
+    if (phase in expected_legs and (fault or path_error or completed != expected_legs[phase])) or (phase == 7 and not fault):
         raise ValueError("Route terminal phase disagrees with its result")
     summary = dict(terminal_phase=PHASES[phase], fault=fault, path_error=path_error,
                    elapsed_ms=elapsed, completed_legs=completed)
@@ -40,7 +44,7 @@ def decode(blob, pose_summary=None):
 
     grid = None
     if grid_valid == 1:
-        if occupied >> 25 or not all((run, generation, layout, link)) or (start_id, node, zone) != (2, 1, 2):
+        if occupied >> 25 or not all((run, generation, layout, link)) or (start_id, node, zone) not in MAP_IDENTITIES:
             raise ValueError("Route trace has an invalid map identity or occupancy mask")
         grid = dict(run_id=run, map_generation=generation, layout_id=layout, link_generation=link,
                     scan_sequence=scan, start_id=start_id, node_id=node, zone=zone,
@@ -51,6 +55,8 @@ def decode(blob, pose_summary=None):
     records = []
     prior_stop = 0
     arrived = 0
+    home = START_CELLS.get(start_id, 0)
+    stations = (home, *STATIONS[1:-1], home)
     for index, wire in enumerate(LEG.iter_unpack(blob[HEADER.size:])):
         seen, begun, stopped, stop_source, session, seq, status, start, goal, count, source, flags, *ids = wire
         if not flags:
@@ -61,7 +67,7 @@ def decode(blob, pose_summary=None):
         label = f"Leg {leg}"
         if not grid or index != arrived or flags not in (1, 3, 7) or source != SOURCES[index]:
             raise ValueError(f"{label} has inconsistent event ordering or provenance")
-        if (start, goal) != STATIONS[index:index + 2] or status or not 1 <= count <= 24:
+        if (start, goal) != stations[index:index + 2] or status or not 1 <= count <= 24:
             raise ValueError(f"{label} has inconsistent PATH metadata")
         waypoints = ids[:count]
         if any(cell >= 25 for cell in waypoints) or waypoints[-1] != goal or any(ids[count:]):

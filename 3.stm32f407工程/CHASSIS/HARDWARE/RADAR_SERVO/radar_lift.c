@@ -14,29 +14,45 @@ static uint32_t nominal_ms(uint32_t steps,uint32_t interval)
 { return (uint32_t)(((uint64_t)steps*interval+999U)/1000U); }
 static uint32_t valid_interval(uint32_t interval) { return interval>=733U && interval<=4000U; }
 #if APP_IS_DEBUG && !APP_MOTOR_OFFLINE_ONLY
-static uint32_t initialized=0U,start_tick,active_budget,active_interval;
+static uint32_t initialized=0U,active_zone=2U,start_tick,active_budget,active_interval;
 static volatile uint32_t phase=7U,total,direction;
 static volatile uint32_t timer_active,terminal_reason,safe_cycle;
 static const uint8_t phases[8]={1U,3U,2U,6U,4U,12U,8U,9U};
 static void setup(void)
 {
     GPIO_InitTypeDef gpio;
-    if (initialized) return;
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB|RCC_AHB1Periph_GPIOD,ENABLE);
-    GPIO_ResetBits(GPIOD,GPIO_Pin_10|GPIO_Pin_11|GPIO_Pin_12);
-    GPIO_ResetBits(GPIOB,GPIO_Pin_8);
+    if (initialized==active_zone) return;
     GPIO_StructInit(&gpio);gpio.GPIO_Mode=GPIO_Mode_OUT;
     gpio.GPIO_OType=GPIO_OType_PP;gpio.GPIO_PuPd=GPIO_PuPd_DOWN;
     gpio.GPIO_Speed=GPIO_Speed_2MHz;
-    gpio.GPIO_Pin=GPIO_Pin_10|GPIO_Pin_11|GPIO_Pin_12;GPIO_Init(GPIOD,&gpio);
-    gpio.GPIO_Pin=GPIO_Pin_8;GPIO_Init(GPIOB,&gpio);phase=7U;initialized=1U;
+    if (active_zone==1U) {
+        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE|RCC_AHB1Periph_GPIOD,ENABLE);
+        GPIO_ResetBits(GPIOE,GPIO_Pin_11|GPIO_Pin_9);
+        GPIO_ResetBits(GPIOD,GPIO_Pin_4|GPIO_Pin_3);
+        gpio.GPIO_Pin=GPIO_Pin_11|GPIO_Pin_9;GPIO_Init(GPIOE,&gpio);
+        gpio.GPIO_Pin=GPIO_Pin_4|GPIO_Pin_3;GPIO_Init(GPIOD,&gpio);
+    } else {
+        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB|RCC_AHB1Periph_GPIOD,ENABLE);
+        GPIO_ResetBits(GPIOD,GPIO_Pin_10|GPIO_Pin_11|GPIO_Pin_12);
+        GPIO_ResetBits(GPIOB,GPIO_Pin_8);
+        gpio.GPIO_Pin=GPIO_Pin_10|GPIO_Pin_11|GPIO_Pin_12;GPIO_Init(GPIOD,&gpio);
+        gpio.GPIO_Pin=GPIO_Pin_8;GPIO_Init(GPIOB,&gpio);
+    }
+    phase=7U;initialized=active_zone;
 }
 static void apply(uint32_t bits)
 {
-    uint16_t pd=(uint16_t)((bits&7U)<<10);
     /* Each bank uses one BSRR write; no read-modify-write of unrelated pins. */
-    (*(volatile uint32_t *)&GPIOD->BSRRL)=(uint32_t)pd|((uint32_t)((GPIO_Pin_10|GPIO_Pin_11|GPIO_Pin_12)&~pd)<<16);
-    (*(volatile uint32_t *)&GPIOB->BSRRL)=(bits&8U)?GPIO_Pin_8:((uint32_t)GPIO_Pin_8<<16);
+    if (active_zone==1U) {
+        uint32_t pe=((bits&1U)<<11)|((bits&2U)<<8);
+        uint32_t pd=((bits&4U)<<2)|(bits&8U);
+        (*(volatile uint32_t *)&GPIOE->BSRRL)=pe|(((GPIO_Pin_11|GPIO_Pin_9)&~pe)<<16);
+        (*(volatile uint32_t *)&GPIOD->BSRRL)=pd|(((GPIO_Pin_4|GPIO_Pin_3)&~pd)<<16);
+    } else {
+        uint32_t pd=(bits&7U)<<10;
+        (*(volatile uint32_t *)&GPIOD->BSRRL)=pd|(((GPIO_Pin_10|GPIO_Pin_11|GPIO_Pin_12)&~pd)<<16);
+        (*(volatile uint32_t *)&GPIOB->BSRRL)=(bits&8U)?GPIO_Pin_8:((uint32_t)GPIO_Pin_8<<16);
+    }
     g_radar_lift_phase_bits=bits;
 }
 
@@ -119,7 +135,8 @@ uint32_t RadarLift_Begin(uint32_t steps,uint32_t dir,uint32_t *sequence)
 uint32_t RadarLift_BeginBounded(uint32_t steps,uint32_t dir,uint32_t budget_ms,uint32_t *sequence)
 {
     uint32_t key=__get_PRIMASK(),ok=0U;__disable_irq();
-    if(sequence && available_owner() && steps>=1U && steps<=RADAR_LIFT_LONG_MAX_STEPS && dir<=1U &&
+    if(!APP_ZONE1_RADAR_LIFT_TEST && sequence && available_owner() && steps>=1U &&
+       steps<=RADAR_LIFT_LONG_MAX_STEPS && dir<=1U &&
        valid_interval(g_radar_lift_interval_us) && budget_ms>=nominal_ms(steps,g_radar_lift_interval_us) && budget_ms<0x80000000U) {
         pending_steps=g_radar_lift_steps=steps;pending_direction=g_radar_lift_direction=dir;
         pending_budget=budget_ms;pending_long=1U;pending_interval=g_radar_lift_interval_us;
@@ -127,11 +144,15 @@ uint32_t RadarLift_BeginBounded(uint32_t steps,uint32_t dir,uint32_t budget_ms,u
     }
     if(!key)__enable_irq();return ok;
 }
-uint32_t RadarLift_Claim(void)
+uint32_t RadarLift_Claim(uint32_t zone)
 {
     uint32_t key=__get_PRIMASK(),ok=0U;__disable_irq();
 #if APP_IS_DEBUG && !APP_MOTOR_OFFLINE_ONLY
-    if(!claimed && !pending_long && !g_radar_lift_request && g_radar_lift_state!=1U){claimed=1U;ok=1U;}
+    if(!APP_ZONE1_RADAR_LIFT_TEST && (zone==2U || (zone==1U && APP_ZONE1_RADAR_LIFT_CONFIRMED)) &&
+       !claimed && !pending_long && !g_radar_lift_request && g_radar_lift_state!=1U &&
+       (!g_radar_lift_phase_bits || zone==active_zone)){claimed=zone;ok=1U;}
+#else
+    (void)zone;
 #endif
     if(!key)__enable_irq();return ok;
 }
@@ -175,7 +196,9 @@ static void service_owner(uint32_t now_ms,uint32_t safe_idle)
     uint32_t request_direction=queued?pending_direction:g_radar_lift_direction;
     pending_interval=0U;pending_long=0U;last_service=now_ms;safe_service=safe_idle;
     g_radar_lift_request=0U;
-#if APP_ZONE2_NAV_ENABLE
+#if APP_ZONE1_RADAR_LIFT_TEST
+    if (request==1U && (!queued || long_request || request_steps!=32U || request_interval!=4000U)) request=0U;
+#elif APP_ZONE2_NAV_ENABLE
     if (request==1U && (!long_request || !claimed)) request=0U;
 #endif
 #if APP_IS_DEBUG && !APP_MOTOR_OFFLINE_ONLY
@@ -204,6 +227,7 @@ static void service_owner(uint32_t now_ms,uint32_t safe_idle)
         if(safe_service!=1U || g_radar_lift_enable!=1U){g_radar_lift_result=2U;return;}
         total=request_steps;direction=request_direction;active_interval=request_interval;
         active_budget=queued?pending_budget:nominal_ms(total,active_interval)+250U;
+        active_zone=claimed?claimed:(APP_ZONE1_RADAR_LIFT_TEST?1U:2U);
         setup();g_radar_lift_done=0U;start_tick=now_ms;
         g_radar_lift_state=1U;g_radar_lift_result=1U;
         if(!timer_start()){g_radar_lift_state=3U;g_radar_lift_result=2U;}

@@ -17,6 +17,7 @@ typedef struct {
     Zone2SchedulePhase phase;
     Zone2NavPathResult error;
     uint32_t run_id,layout_id,scan_status_sequence,leg,session,prepared_sample_ms;
+    uint8_t start_id;
     RadarObserverMapIdentity map_identity;
     Zone2NavMap map;
     Zone2NavReply reply,cache[2];

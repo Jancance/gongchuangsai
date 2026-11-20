@@ -44,8 +44,38 @@
 #if APP_ZONE2_RADAR_CALIBRATION_TEST > 1U || (APP_ZONE2_RADAR_CALIBRATION_TEST && !APP_ZONE2_NAV_ENABLE)
 #error Zone2_radar_calibration_test_requires_navigation
 #endif
+#ifndef APP_ZONE2_MISSION_ENABLE
+#define APP_ZONE2_MISSION_ENABLE 0U
+#endif
+#if APP_ZONE2_MISSION_ENABLE > 1U || (APP_ZONE2_MISSION_ENABLE && (!APP_ZONE2_NAV_MOTION_ENABLE || APP_ZONE2_RADAR_CALIBRATION_TEST))
+#error Zone2_mission_requires_active_navigation
+#endif
 #include "zdt_emm_config.h"
 #include "app_entry_config.h"
+#ifndef APP_ZONE1_RADAR_SERVO_TEST
+#define APP_ZONE1_RADAR_SERVO_TEST 0U
+#endif
+#ifndef APP_ZONE1_RADAR_LIFT_CONFIRMED
+#define APP_ZONE1_RADAR_LIFT_CONFIRMED 0U
+#endif
+#if APP_ZONE1_RADAR_LIFT_CONFIRMED > 1U || RADAR_ZONE1_DOWN_DIRECTION > 1U
+#error Invalid_Zone1_radar_lift_reference
+#endif
+#ifndef APP_ZONE1_RADAR_LIFT_TEST
+#define APP_ZONE1_RADAR_LIFT_TEST 0U
+#endif
+#if APP_ZONE1_RADAR_SERVO_TEST > 1U || APP_ZONE1_RADAR_LIFT_TEST > 1U || \
+    (APP_ZONE1_RADAR_SERVO_TEST && APP_ZONE1_RADAR_LIFT_TEST) || \
+    ((APP_ZONE1_RADAR_SERVO_TEST || APP_ZONE1_RADAR_LIFT_TEST) && \
+    (!APP_IS_DEBUG || !APP_ZONE2_NAV_ENABLE || APP_ZONE2_RADAR_CALIBRATION_TEST || APP_BASELINE40_ENABLE))
+#error Zone1_radar_servo_test_requires_exclusive_debug_entry
+#endif
+#ifndef APP_STRAIGHT_CAPTURE_ENABLE
+#define APP_STRAIGHT_CAPTURE_ENABLE 0U
+#endif
+#if APP_STRAIGHT_CAPTURE_ENABLE > 1U || (APP_STRAIGHT_CAPTURE_ENABLE && !APP_BASELINE40_ACTIVE)
+#error Straight_capture_requires_Baseline40
+#endif
 #if VEHICLE_INTEGRATED_ENABLE && APP_IS_COMPETITION
 #error Integrated_field_debug_is_not_verified_competition_profile
 #endif

@@ -1,5 +1,6 @@
 #include "app_config.h"
 #include "zone2_nav_schedule.h"
+#include "radar_zone_config.h"
 #include <math.h>
 #include <string.h>
 
@@ -133,12 +134,12 @@ bool Zone2NavSchedule_Start(Zone2NavSchedule *s,uint32_t run_id,uint8_t start_id
 {
     RadarObserverStatus before;
     if(!s || (s->phase!=ZONE2_SCHEDULE_IDLE && s->phase!=ZONE2_SCHEDULE_DONE) ||
-       !run_id || run_id==s->run_id || start_id!=2U || !layout_id || !stowed || !config ||
+       !run_id || run_id==s->run_id || (start_id!=1U && start_id!=2U) || !layout_id || !stowed || !config ||
        !config->max_age_ms || config->max_age_ms>=0x80000000U || !(speed_mm_s>0.0f && speed_mm_s<=400.0f))
         return false;
     RadarObserver_GetStatus(&before);
     if(!RadarObserver_StartScan(run_id,start_id,layout_id)) return false;
-    s->run_id=run_id;s->layout_id=layout_id;s->leg=0U;s->session=0U;s->error=ZONE2_NAV_OK;
+    s->run_id=run_id;s->layout_id=layout_id;s->start_id=start_id;s->leg=0U;s->session=0U;s->error=ZONE2_NAV_OK;
     s->scan_status_sequence=before.sequence;
     s->geometry.config=*config;s->geometry.speed_mm_s=speed_mm_s;
     memset(s->cache,0,sizeof(s->cache));
@@ -165,7 +166,8 @@ Zone2SchedulePhase Zone2NavSchedule_Poll(Zone2NavSchedule *s,const FusionObserva
         if(map.valid!=1U || !map.status.map_valid || map.status.stage!=8U || map.status.error ||
            map.identity.run_id!=s->run_id || map.identity.layout_id!=s->layout_id ||
            !map.identity.map_generation || !map.identity.link_generation ||
-           map.identity.start_id!=2U || map.identity.node_id!=1U || map.identity.zone!=2U)
+           map.identity.start_id!=s->start_id || map.identity.node_id!=RADAR_NODE_FOR_ZONE(s->start_id) ||
+           map.identity.zone!=s->start_id)
             return fail(s,ZONE2_NAV_STALE_MAP);
         s->map_identity=map.identity;
         s->map=(Zone2NavMap){context_of(&map.identity),map.occupied_mask,1U};
@@ -180,7 +182,7 @@ Zone2SchedulePhase Zone2NavSchedule_Poll(Zone2NavSchedule *s,const FusionObserva
         if((uint32_t)(now_ms-s->prepared_sample_ms)<=s->geometry.config.max_age_ms) return s->phase;
         s->plan.valid=0U;s->phase=ZONE2_SCHEDULE_POSE;
     }
-    if(!Zone2NavPath_Leg(s->leg,&leg)) return fail(s,ZONE2_NAV_INPUT);
+    if(!Zone2NavPath_Leg(s->start_id,s->leg,&leg)) return fail(s,ZONE2_NAV_INPUT);
     cached=s->leg==5U || s->leg==6U;
     if(cached) reply=&s->cache[s->leg-5U];
     if(s->phase==ZONE2_SCHEDULE_REQUEST) {
@@ -211,6 +213,9 @@ Zone2SchedulePhase Zone2NavSchedule_Poll(Zone2NavSchedule *s,const FusionObserva
     if(!(fabsf(remainderf(pose->heading_deg-leg.start_heading_deg,360.0f))<=
         s->geometry.config.heading_budget_deg)) return s->phase;
     if(!Zone2NavPath_Station(leg.goal,&s->geometry.terminal)) return fail(s,ZONE2_NAV_TERMINAL);
+#if APP_ZONE2_MISSION_ENABLE
+    if(leg.goal==10U) s->geometry.terminal.x_mm+=50.0f;
+#endif
     s->geometry.actual=pose->position;
     /* Plan the nominal turn and swept envelope from the stage heading.
      * Keep the measured position and check its heading against that envelope. */
@@ -259,7 +264,7 @@ bool Zone2NavSchedule_Arrive(Zone2NavSchedule *s,uint32_t session,bool station_a
     if(session!=s->session || !station_arrived || !fresh_pose(s,pose,now_ms) || pose->stopped!=1U ||
        !same_identity(&pose->identity,&s->plan.input.identity)) return false;
     if(s->leg+1U==ZONE2_NAV_LEGS &&
-       !Zone2NavPath_InsideReturn(pose->position,pose->heading_deg,s->geometry.config.position_budget_mm,
+       !Zone2NavPath_InsideReturn(s->start_id,pose->position,pose->heading_deg,s->geometry.config.position_budget_mm,
            s->geometry.config.heading_budget_deg,pose->stopped)) return false;
 #if APP_ZONE2_POSE_TRACE_ENABLE
     if(g_zone2_route_trace.state==ZONE2_ROUTE_TRACE_CAPTURE) {

@@ -9,6 +9,7 @@ typedef struct {
     uint32_t deploy_ms,settle_ms,stow_ms,stage_timeout_ms;
     /* 节点ID必须实物确认；方向、半步数和等待时间均须实测，不设部署默认值。 */
     uint8_t measured;
+    uint8_t zone; /* 0 retains the historical area 2 configuration. */
 } RadarZone2Config;
 /* 估算命令数及RADAR_LIFT_INTERVAL_US基线名义耗时，未经实测；不能代替实际四圈/高度测量，无默认H。 */
 typedef struct {
@@ -46,13 +47,14 @@ typedef struct {
     radar_client_path_result_t path;
     RadarObserverStatus status;
 } RadarObserverPathReply;
-/* Watch/SWD独立机构邮箱，无node/measured依赖，不初始化雷达；8559为70mm单样本比例候选。
+/* Watch/SWD独立机构邮箱，无node/measured依赖，不初始化雷达；4000 half-steps per stroke。
  * request 0默认关闭，1下(45→等待→dir1→释放)，2上(dir0→180→等待→释放)。
  * 先填正值wait_ms/budget_ms及interval_us=733..4000(默认977)，最后写request；一次消费并锁存。
  * result 1接受/2参数或忙拒绝/3失败保相/4正常完成释放；状态仍读observer快照。 */
 extern volatile uint32_t g_radar_mechanism_request,g_radar_mechanism_wait_ms;
 extern volatile uint32_t g_radar_mechanism_budget_ms,g_radar_mechanism_interval_us,g_radar_mechanism_result;
 void RadarObserver_Service(void);
+bool RadarObserver_PollZone1Link(void);
 /* 仅登记配置或单次请求；true只表示已入队，最终结果读取状态快照。
  * Configure/Start可由其他任务调用，Client与Service只能由main的雷达任务调用。
  * manual_stowed_reference=true表示本次已由人工恢复固定收拢起点。 */

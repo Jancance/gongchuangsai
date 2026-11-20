@@ -10,6 +10,7 @@
 #include "heading_source.h"
 #include "radar_lift.h"
 #include "radar_servo.h"
+#include "radar_servo_config.h"
 #include "radar_zone_switch.h"
 #include "safety.h"
 #include "vehicle_tuning.h"
@@ -21,6 +22,12 @@
 #include "task.h"
 #include <math.h>
 #include <float.h>
+#if APP_ZONE2_MISSION_ENABLE
+#include "field_map.h"
+#include "screen.h"
+#include "source_body_step.h"
+#include <string.h>
+#endif
 #if APP_ZONE2_POSE_TRACE_ENABLE
 #include <stddef.h>
 #endif
@@ -34,16 +41,33 @@
 #define ZONE2_SECTION_PROGRESS_STEP 0.2f
 #define ZONE2_SECTION_POSITION_MM 2.5f
 #define ZONE2_SECTION_HEADING_DEG (FUSION_MOTION_HEADING_TOLERANCE_DEG+FUSION_MOTION_HEADING_ROUNDOFF_DEG)
+#if APP_ZONE2_MISSION_ENABLE
+#define ZONE2_QR_DWELL_MS 1000U
+#define ZONE2_QR_SHIFT_MM 50.0f
+#define ZONE2_QR_SPEED_MM_S 30.0f
+#define ZONE2_QR_PATH_ID 9U
+#define STATION_STEP_MM 30.0f
+#define STATION_STEP_DEG 10.0f
+#define STATION_STOP_MM 0.20f
+#define STATION_STOP_DEG 0.15f
+#define STATION_SWEEP_RESERVE_MM 10.0f
+#endif
 
 typedef enum {
     ZONE2_IDLE, ZONE2_WAIT_READY, ZONE2_SCAN, ZONE2_PREPARE,
     ZONE2_ZERO, ZONE2_STOP, ZONE2_SHADOW_DONE, ZONE2_FAILED,
     ZONE2_TRACK, ZONE2_SECTION_ZERO, ZONE2_DONE
+#if APP_ZONE2_MISSION_ENABLE
+    , ZONE2_QR_WAIT, ZONE2_STATION_WAIT, ZONE2_MISSION_DONE
+#endif
 } Zone2Phase;
 
 typedef enum {
     ZONE2_FAULT_NONE, ZONE2_FAULT_HEALTH, ZONE2_FAULT_DEADLINE,
     ZONE2_FAULT_PATH, ZONE2_FAULT_BACKEND, ZONE2_FAULT_SOURCE, ZONE2_FAULT_REFERENCE
+#if APP_ZONE2_MISSION_ENABLE
+    , ZONE2_FAULT_QR, ZONE2_FAULT_STATION
+#endif
 } Zone2Fault;
 
 static const FusionConfig s_config = {
@@ -64,9 +88,12 @@ static Zone2NavSchedule s_schedule;
 #if APP_ZONE2_NAV_MOTION_ENABLE
 static Zone2MotionReference s_trajectory;
 static FusionMotionVector s_correction, s_proposed;
-static uint32_t s_section, s_section_ms, s_generation, s_station_stop, s_prepare_ms;
+static uint32_t s_section, s_section_ms, s_generation, s_station_stop;
+#if !APP_ZONE2_MISSION_ENABLE
+static uint32_t s_prepare_ms;
 static uint32_t s_section_progress_started, s_section_progress_ms, s_section_sample_ms;
 static float s_section_checkpoint;
+#endif
 volatile uint32_t g_zone2_completed_legs;
 #else
 static FusionState s_reference;
@@ -77,6 +104,68 @@ volatile Zone2Phase g_zone2_phase;
 volatile Zone2Fault g_zone2_fault;
 volatile Zone2NavPathResult g_zone2_path_error;
 volatile uint32_t g_zone2_reference_status, g_zone2_stop_pose_ms;
+
+#if APP_ZONE2_MISSION_ENABLE
+typedef struct {
+    uint32_t start_ms,end_ms;
+} MissionInterval;
+
+volatile struct {
+    uint32_t key_ms,scan_start_ms,scan_end_ms,return_ms,page1_ms,failure_ms;
+    MissionInterval navigation[ZONE2_NAV_LEGS],station[ZONE2_NAV_LEGS-2U];
+    uint32_t receipt_ms[ZONE2_NAV_LEGS-2U][12];
+    uint32_t picks,places;
+} g_zone2_mission_trace;
+
+static struct {
+    char task_code[16];
+    uint32_t scan_open, scan_after_ms, display_pending;
+    uint32_t scan_wait_ms, search_count, search_active, search_interrupted;
+    uint32_t station_result, station_result_ms, page1_pending;
+    AppZone2Station station;
+    uint8_t receipt_count, slots[3], base_color[4];
+    float scan_y_mm;
+} s_mission;
+volatile uint32_t g_zone2_task_display_result;
+volatile uint32_t g_source_body_step_request,g_source_body_step_state;
+volatile uint32_t g_source_body_step_reason,g_source_body_step_session,g_source_align_rejected;
+volatile uint32_t g_source_body_step_elapsed_ms,g_source_body_step_submitted;
+volatile uint32_t g_source_align_direction,g_source_align_command_seq,g_source_align_chain_active;
+volatile float g_source_align_distance_mm,g_source_align_turn_deg;
+
+typedef enum { STATION_BODY_IDLE,STATION_BODY_ZERO,STATION_BODY_TRACK,STATION_BODY_STOP } StationBodyPhase;
+static struct {
+    StationBodyPhase phase;
+    FusionPoint anchor,target;
+    float nominal_yaw,target_yaw;
+    uint32_t restoring,started_ms,stop_ms,ready_ms;
+} s_station_body;
+
+uint32_t SourceBodyStep_KeepsPower(void)
+{
+    return s_station_body.phase!=STATION_BODY_IDLE;
+}
+
+uint32_t SourceBodyStep_WheelWindow(void)
+{
+    return s_station_body.phase!=STATION_BODY_IDLE;
+}
+
+uint32_t SourceBodyStep_Busy(void)
+{
+    return SourceBodyStep_WheelWindow();
+}
+
+uint32_t SourceBodyStep_SmallDistanceWindow(void)
+{
+    return SourceBodyStep_WheelWindow();
+}
+
+uint32_t SourceBodyStep_FastAlignmentWindow(void)
+{
+    return SourceBodyStep_WheelWindow();
+}
+#endif
 
 #if APP_ZONE2_POSE_TRACE_ENABLE
 #define ZONE2_TRACE_CAPACITY 2048U
@@ -163,6 +252,162 @@ static uint32_t newer(uint32_t stamp,uint32_t anchor)
     return (int32_t)(stamp-anchor)>0;
 }
 
+#if APP_ZONE2_MISSION_ENABLE
+void AppZone2_OfferTaskCode(const char *code,uint32_t first_ms,uint32_t last_ms)
+{
+    uint32_t now=now_ms();
+    if (!FieldMap_TaskCodeValid(code) || now-last_ms>VEHICLE_STAGE1_SCAN_FRESH_MS ||
+        (int32_t)(last_ms-first_ms)<0) return;
+    taskENTER_CRITICAL();
+    if (s_mission.scan_open && newer(first_ms,s_mission.scan_after_ms) && !s_mission.task_code[0]) {
+        memcpy(s_mission.task_code,code,sizeof(s_mission.task_code));
+        s_mission.display_pending=2U;
+        s_mission.scan_open=0U;
+    }
+    taskEXIT_CRITICAL();
+}
+
+void AppZone2_DisplayTaskCode(void)
+{
+    char code[16]={0};
+    uint32_t result_pending,picks,places;
+    taskENTER_CRITICAL();
+    result_pending=s_mission.page1_pending;
+    picks=g_zone2_mission_trace.picks;
+    places=g_zone2_mission_trace.places;
+    if (!result_pending && s_mission.display_pending) {
+        memcpy(code,s_mission.task_code,sizeof(code));
+        s_mission.display_pending--;
+    }
+    taskEXIT_CRITICAL();
+    if (result_pending) {
+        if (Screen_ShowResult(picks,places)==SCREEN_OK) {
+            g_zone2_mission_trace.page1_ms=now_ms();
+            s_mission.page1_pending=0U;
+        }
+        return;
+    }
+    if (!code[0]) return;
+    g_zone2_task_display_result=Screen_ShowTaskCode(code);
+    if (g_zone2_task_display_result==SCREEN_OK) s_mission.display_pending=0U;
+}
+
+uint32_t AppZone2_CopyTaskCode(char code[16])
+{
+    uint32_t ready;
+    if (!code) return 0U;
+    taskENTER_CRITICAL();
+    ready=s_mission.task_code[0]!=0;
+    if (ready) memcpy(code,s_mission.task_code,sizeof(s_mission.task_code));
+    taskEXIT_CRITICAL();
+    return ready;
+}
+
+uint32_t AppZone2_StationRead(AppZone2Station *station)
+{
+    uint32_t ready=0U;
+    if (!station) return 0U;
+    taskENTER_CRITICAL();
+    if (g_zone2_phase==ZONE2_STATION_WAIT && !s_mission.station_result) {
+        *station=s_mission.station;
+        ready=1U;
+    }
+    taskEXIT_CRITICAL();
+    return ready;
+}
+
+static uint8_t station_receipts(uint8_t kind)
+{
+    return kind==APP_ZONE2_ROUGH?12U:6U;
+}
+
+static uint32_t confirm_transfer(uint8_t item,AppZone2Action action,uint8_t color,uint8_t ring)
+{
+    switch (action) {
+    case APP_ZONE2_SOURCE_GRIP:
+    case APP_ZONE2_ROUGH_GRIP:
+        g_zone2_mission_trace.picks++;
+        break;
+    case APP_ZONE2_SOURCE_SLOT:
+    case APP_ZONE2_ROUGH_SLOT:
+        if (s_mission.slots[item]) return 0U;
+        s_mission.slots[item]=color;
+        break;
+    case APP_ZONE2_ROUGH_SLOT_GRIP:
+    case APP_ZONE2_STORAGE_SLOT_GRIP:
+        if (s_mission.slots[item]!=color) return 0U;
+        s_mission.slots[item]=0U;
+        break;
+    case APP_ZONE2_STORAGE_PLACE:
+        if (s_mission.station.kind==APP_ZONE2_STORAGE_BASE) {
+            if (s_mission.base_color[ring]) return 0U;
+            s_mission.base_color[ring]=color;
+        } else if (s_mission.base_color[ring]!=color) return 0U;
+        /* Fall through to count confirmed field placements. */
+    case APP_ZONE2_ROUGH_PLACE:
+        g_zone2_mission_trace.places++;
+        break;
+    default:
+        return 0U;
+    }
+    return 1U;
+}
+
+uint32_t AppZone2_StationConfirm(uint32_t ticket,uint8_t item,AppZone2Action action,
+    uint8_t color,uint8_t ring)
+{
+    static const AppZone2Action source[]={APP_ZONE2_SOURCE_GRIP,APP_ZONE2_SOURCE_SLOT};
+    static const AppZone2Action rough[]={APP_ZONE2_ROUGH_SLOT_GRIP,APP_ZONE2_ROUGH_PLACE,
+        APP_ZONE2_ROUGH_GRIP,APP_ZONE2_ROUGH_SLOT};
+    static const AppZone2Action storage[]={APP_ZONE2_STORAGE_SLOT_GRIP,APP_ZONE2_STORAGE_PLACE};
+    const AppZone2Station *station=&s_mission.station;
+    const AppZone2Action *expected;
+    uint8_t count;
+    uint32_t accepted=0U;
+
+    taskENTER_CRITICAL();
+    count=s_mission.receipt_count;
+    expected=station->kind==APP_ZONE2_SOURCE?source:
+        station->kind==APP_ZONE2_ROUGH?rough:storage;
+    if (g_zone2_phase==ZONE2_STATION_WAIT && ticket && ticket==station->ticket &&
+        !s_mission.station_result && count<station_receipts(station->kind) &&
+        item==(count/2U)%3U && action==expected[(count>=6U?2U:0U)+count%2U] &&
+        color==station->colors[item] && ring==station->rings[item] &&
+        confirm_transfer(item,action,color,ring)) {
+        g_zone2_mission_trace.receipt_ms[station->leg-2U][count]=now_ms();
+        s_mission.receipt_count++;
+        accepted=1U;
+    }
+    taskEXIT_CRITICAL();
+    return accepted;
+}
+
+uint32_t AppZone2_StationComplete(uint32_t ticket,uint32_t success)
+{
+    uint32_t accepted=0U;
+    taskENTER_CRITICAL();
+    if (g_zone2_phase==ZONE2_STATION_WAIT && ticket && ticket==s_mission.station.ticket &&
+        !s_mission.station_result && success<=1U &&
+        (!success || (s_mission.receipt_count==station_receipts(s_mission.station.kind) &&
+            !SourceBodyStep_Busy() && !g_source_body_step_request))) {
+        s_mission.station_result=success?1U:2U;
+        s_mission.station_result_ms=now_ms();
+        accepted=1U;
+    }
+    taskEXIT_CRITICAL();
+    return accepted;
+}
+
+static uint32_t scan_has_code(void)
+{
+    uint32_t ready;
+    taskENTER_CRITICAL();
+    ready=s_mission.task_code[0]!=0;
+    taskEXIT_CRITICAL();
+    return ready;
+}
+#endif
+
 static uint32_t healthy(void)
 {
     return !g_safety_fault && !g_rtos_fault && !g_can_ctrl_fault_latched &&
@@ -173,14 +418,32 @@ static uint32_t healthy(void)
 static uint32_t stowed_command(void)
 {
     RadarLiftSnapshot lift;
+    uint32_t zone=s_zone_locked;
+    if(zone!=1U && zone!=2U) return 0U;
     RadarLift_GetSnapshot(&lift);
-    return g_radar_servo_state==1U && g_radar_servo_angle_deg[1]==180.0f &&
+    return g_radar_servo_state==1U &&
+        g_radar_servo_angle_deg[zone-1U]==(zone==1U?RADAR_SERVO1_INIT_DEG:RADAR_SERVO2_INIT_DEG) &&
         !g_radar_lift_request && !g_radar_lift_phase_bits && !g_radar_lift_enable &&
-        (lift.state==0U || (lift.state==2U && lift.result==1U && g_radar_lift_direction==0U));
+        (lift.state==0U || (lift.state==2U && lift.result==1U &&
+         g_radar_lift_direction==(zone==1U?(RADAR_ZONE1_DOWN_DIRECTION^1U):0U)));
 }
 
 static void fail(Zone2Fault reason)
 {
+#if APP_ZONE2_MISSION_ENABLE
+    taskENTER_CRITICAL();
+    s_mission.scan_open=0U;
+    if (s_station_body.phase!=STATION_BODY_IDLE || g_source_body_step_request) {
+        g_source_body_step_state=9U;
+        g_source_body_step_reason=(uint32_t)reason;
+        s_station_body.phase=STATION_BODY_IDLE;
+        g_source_body_step_request=0U;
+        g_source_align_chain_active=0U;
+    }
+    g_zone2_mission_trace.failure_ms=now_ms();
+    g_zone2_phase=ZONE2_FAILED;
+    taskEXIT_CRITICAL();
+#endif
     g_zone2_fault=reason;
     g_zone2_path_error=s_schedule.error;
     Zone2NavSchedule_Abort(&s_schedule);
@@ -212,7 +475,7 @@ static uint32_t sources(const ChassisZone2CanStatus *can,uint32_t *now,
     *now=now_ms();
     return can->run_id==ZONE2_RUN_ID && can->power_epoch && can->feedback_ready &&
         (!s_power_epoch || can->power_epoch==s_power_epoch) &&
-        map->run_id==ZONE2_RUN_ID && map->start_id==ZONE2_START_ID &&
+        map->run_id==ZONE2_RUN_ID && map->start_id==s_zone_locked &&
         map->map_version==VEHICLE_MAP_VERSION && map->state==APP_MAP_TRACKING &&
         map->based && map->pose.valid && !map->pose.local_origin &&
         !map->pose.continuity_lost && !map->pose.reasons &&
@@ -243,7 +506,7 @@ static uint32_t observation(const ChassisZone2CanStatus *can,uint32_t now,
     s=sinf(map.pose.heading_deg*ZONE2_DEG_TO_RAD);
     *o=(FusionObservation){0};
     if (s_schedule.plan.valid) o->identity=s_schedule.plan.input.identity;
-    else o->identity=(FusionIdentity){ZONE2_RUN_ID,ZONE2_START_ID,
+    else o->identity=(FusionIdentity){ZONE2_RUN_ID,s_zone_locked,
         s_schedule.map_identity.map_generation,VEHICLE_MAP_VERSION,0U,0U};
     o->position=(FusionPoint){map.pose.x_mm,map.pose.y_mm};
     o->heading_deg=map.pose.heading_deg;
@@ -275,7 +538,9 @@ static uint32_t quiet_since(const FusionObservation *pose,const AppHeadingSource
 static void start_section(uint32_t batch_ms)
 {
     s_section_ms=batch_ms;
+#if !APP_ZONE2_MISSION_ENABLE
     s_section_progress_started=0U;
+#endif
     s_generation=0U;
     s_correction=(FusionMotionVector){0};
     g_zone2_phase=ZONE2_TRACK;
@@ -292,6 +557,7 @@ static uint32_t section_error(const FusionObservation *pose,const FusionMotionVe
     return 1U;
 }
 
+#if !APP_ZONE2_MISSION_ENABLE
 static uint32_t section_stalled(const FusionObservation *pose,float error)
 {
     if (!s_section_progress_started || newer(pose->sample_ms,s_section_sample_ms)) {
@@ -304,6 +570,7 @@ static uint32_t section_stalled(const FusionObservation *pose,float error)
     }
     return pose->now_ms-s_section_progress_ms>=ZONE2_SECTION_PROGRESS_MS;
 }
+#endif
 
 static uint32_t submit_zero(const ChassisZone2CanStatus *can)
 {
@@ -364,6 +631,347 @@ static void motion_batch(const ChassisZone2CanStatus *can,const FusionObservatio
     if (out.finish_requested) g_zone2_phase=ZONE2_SECTION_ZERO;
 }
 
+static void finish_navigation(void)
+{
+    RadarObserver_Cancel();
+    (void)ChassisAuto_Zone2Disarm();
+    s_primed=0U;
+    RadarZoneSwitch_Unlock();
+    s_zone_locked=0U;
+#if APP_ZONE2_MISSION_ENABLE
+    g_zone2_mission_trace.return_ms=now_ms();
+    taskENTER_CRITICAL();
+    s_mission.page1_pending=1U;
+    g_zone2_phase=ZONE2_MISSION_DONE;
+    taskEXIT_CRITICAL();
+#else
+    g_zone2_phase=ZONE2_DONE;
+#endif
+    g_zone2_reference_status=FUSION_DONE;
+}
+
+#if APP_ZONE2_MISSION_ENABLE
+static uint32_t start_scan_shift(ChassisZone2CanStatus *can,const FusionObservation *pose)
+{
+    ChassisAutoStatus backend;
+    Zone2NavGeometry geometry=s_schedule.geometry;
+    Zone2NavRequest request={s_schedule.map.context,ZONE2_QR_PATH_ID+s_mission.search_count,0U,2U,2U,0U};
+    Zone2NavReply reply={0};
+
+    if (!(fabsf(remainderf(pose->heading_deg-90.0f,360.0f))<=s_config.heading_budget_deg)) return 0U;
+    geometry.actual=pose->position;
+    geometry.terminal=(FusionPoint){
+        FIELD_SCAN_X_MM+(s_mission.search_count==0U?ZONE2_QR_SHIFT_MM:-ZONE2_QR_SHIFT_MM),
+        s_mission.scan_y_mm};
+    geometry.config.start_heading_deg=90.0f;
+    geometry.config.goal_heading_deg=90.0f;
+    geometry.speed_mm_s=ZONE2_QR_SPEED_MM_S;
+    reply.context=s_schedule.map.context;
+    reply.path.start=reply.path.goal=2U;
+    s_schedule.error=Zone2NavPath_Prepare(&s_schedule.map,&request,&reply,&geometry,
+        &s_schedule.route,&s_schedule.plan);
+    if (s_schedule.error!=ZONE2_NAV_OK ||
+        !Zone2MotionReference_Prepare(&s_schedule.plan,&s_trajectory)) return 0U;
+    if (!ChassisAuto_Zone2ReleaseCompleted(ZONE2_RUN_ID,can->session) ||
+        !ChassisAuto_ReadStatus(&backend) || backend.active ||
+        !ChassisAuto_Zone2Begin(ZONE2_RUN_ID,backend.session)) return 0U;
+    ChassisAuto_Zone2Read(can);
+    s_session=can->session;
+    s_power_epoch=can->power_epoch;
+    s_section=0U;
+    s_station_stop=0U;
+    s_mission.search_count++;
+    s_mission.search_active=1U;
+    s_mission.search_interrupted=0U;
+    g_zone2_reference_status=FUSION_TURN_START;
+    g_zone2_phase=ZONE2_ZERO;
+    return 1U;
+}
+
+static void wait_at_scan(ChassisZone2CanStatus *can,const FusionObservation *pose,
+    const AppHeadingSource *heading,uint32_t observed,uint32_t now)
+{
+    uint32_t ready=scan_has_code();
+    if (!ready && (s_mission.search_count>=2U ||
+        now-s_mission.scan_wait_ms<ZONE2_QR_DWELL_MS)) return;
+    if (!observed || !can->wheel_quiet || !quiet_since(pose,heading,can->stop_ack_ms)) {
+        fail(ZONE2_FAULT_SOURCE);
+        return;
+    }
+    if (ready) {
+        if (!ChassisAuto_Zone2ReleaseCompleted(ZONE2_RUN_ID,can->session)) {
+            fail(ZONE2_FAULT_BACKEND);
+            return;
+        }
+        g_zone2_mission_trace.scan_end_ms=now;
+        g_zone2_phase=ZONE2_PREPARE;
+    } else if (!start_scan_shift(can,pose)) {
+        fail(ZONE2_FAULT_QR);
+    }
+}
+
+static uint32_t station_step_clear(FusionPoint from,FusionPoint target)
+{
+    static const FusionBox yellow[]={{550,550,1000,1000},{550,1400,1000,1850},
+        {1400,550,1850,1000},{1400,1400,1850,1850}};
+    const float radius=0.5f*hypotf(VEHICLE_BODY_LENGTH_MM,VEHICLE_BODY_WIDTH_MM)+STATION_SWEEP_RESERVE_MM;
+    FusionBox hull={fminf(from.x_mm,target.x_mm)-radius,fminf(from.y_mm,target.y_mm)-radius,
+        fmaxf(from.x_mm,target.x_mm)+radius,fmaxf(from.y_mm,target.y_mm)+radius};
+    FieldPoint center;
+    uint32_t i;
+    if (!(hull.min_x>0.0f && hull.min_y>0.0f &&
+          hull.max_x<FIELD_SIZE_MM && hull.max_y<FIELD_SIZE_MM)) return 0U;
+    for (i=0U;i<sizeof(yellow)/sizeof(yellow[0]);i++) {
+        if (hull.min_x<=yellow[i].max_x && hull.max_x>=yellow[i].min_x &&
+            hull.min_y<=yellow[i].max_y && hull.max_y>=yellow[i].min_y) return 0U;
+    }
+    for (i=0U;i<25U;i++) {
+        const float half=FIELD_GRID_SIZE_MM*0.5f;
+        if ((s_schedule.map.occupied_mask&(1UL<<i)) && FieldMap_CellCenter(i,&center) &&
+            hull.min_x<=center.x_mm+half && hull.max_x>=center.x_mm-half &&
+            hull.min_y<=center.y_mm+half && hull.max_y>=center.y_mm-half) return 0U;
+    }
+    return 1U;
+}
+
+static uint32_t station_step_target(const FusionObservation *pose,uint32_t request,
+    uint32_t direction,float amount)
+{
+    static const float offset[]={0.0f,90.0f,-90.0f,180.0f};
+    float angle;
+    s_station_body.target=pose->position;
+    s_station_body.target_yaw=pose->heading_deg;
+    if (request==2U) {
+        if (direction>3U || !(amount>=0.25f && amount<=STATION_STEP_MM)) return 0U;
+        angle=(pose->heading_deg+offset[direction])*ZONE2_DEG_TO_RAD;
+        s_station_body.target.x_mm+=amount*cosf(angle);
+        s_station_body.target.y_mm+=amount*sinf(angle);
+    } else if (request==3U) {
+        if (!(fabsf(amount)>STATION_STOP_DEG && fabsf(amount)<=STATION_STEP_DEG+0.5f)) return 0U;
+        s_station_body.target_yaw+=amount;
+    } else return 0U;
+    if (!(hypotf(s_station_body.target.x_mm-s_station_body.anchor.x_mm,
+                 s_station_body.target.y_mm-s_station_body.anchor.y_mm)<=STATION_STEP_MM+0.01f) ||
+        !(fabsf(remainderf(s_station_body.target_yaw-s_station_body.nominal_yaw,360.0f))<=STATION_STEP_DEG+0.01f))
+        return 0U;
+    return station_step_clear(pose->position,s_station_body.target);
+}
+
+static uint32_t station_step_begin(const ChassisZone2CanStatus *can,uint32_t restoring,uint32_t now)
+{
+    ChassisAutoStatus backend;
+    ChassisZone2CanStatus started;
+    if (can->state!=CHASSIS_AUTO_IDLE || !ChassisAuto_ReadStatus(&backend) || backend.active ||
+        !ChassisAuto_Zone2Begin(ZONE2_RUN_ID,backend.session)) return 0U;
+    ChassisAuto_Zone2Read(&started);
+    s_session=started.session;
+    s_power_epoch=started.power_epoch;
+    s_station_body.started_ms=now;
+    s_station_body.phase=STATION_BODY_ZERO;
+    s_station_body.restoring=restoring;
+    g_source_body_step_state=1U;
+    g_source_body_step_session=s_session;
+    g_source_body_step_submitted=0U;
+    g_source_align_chain_active=!restoring;
+    return 1U;
+}
+
+static uint32_t station_step_commands(const FusionObservation *pose,ChassisMotorCommand commands[4],
+    uint32_t *at_target)
+{
+    const float dx=s_station_body.target.x_mm-pose->position.x_mm;
+    const float dy=s_station_body.target.y_mm-pose->position.y_mm;
+    const float distance=hypotf(dx,dy);
+    const float angle=remainderf(s_station_body.target_yaw-pose->heading_deg,360.0f);
+    const float heading=pose->heading_deg*ZONE2_DEG_TO_RAD;
+    const float c=cosf(heading),s=sinf(heading);
+    const float gain=distance>STATION_STOP_MM?fminf(2.0f,15.0f/distance):0.0f;
+    ChassisBodyVelocity body={gain*(dx*c+dy*s),gain*(dy*c-dx*s),
+        fabsf(angle)>STATION_STOP_DEG?fmaxf(-10.0f,fminf(10.0f,2.0f*angle))*ZONE2_DEG_TO_RAD:0.0f};
+    ChassisWheelSpeeds wheels;
+    if (!(distance<=STATION_STEP_MM+STATION_SWEEP_RESERVE_MM && fabsf(angle)<=2.0f*STATION_STEP_DEG) ||
+        !station_step_clear(pose->position,s_station_body.target)) return 0U;
+    *at_target=distance<=STATION_STOP_MM && fabsf(angle)<=STATION_STOP_DEG;
+    return Chassis_Inverse(&g_chassis_geometry,&body,20.0f,&wheels,0) &&
+        Chassis_EncodeEmm(&wheels,200U,commands);
+}
+
+static void station_body_service(const ChassisZone2CanStatus *can,const FusionObservation *pose,
+    const AppHeadingSource *heading,uint32_t observed,uint32_t now)
+{
+    ChassisMotorCommand commands[4];
+    uint32_t request=g_source_body_step_request,at_target;
+    uint32_t i;
+    float amount;
+
+    if (request==9U) {
+        fail(ZONE2_FAULT_STATION);
+        return;
+    }
+    if (s_station_body.phase==STATION_BODY_IDLE) {
+        if (!request || s_mission.station_result) return;
+        if (request==7U) {
+            g_source_align_chain_active=0U;
+            g_source_body_step_request=0U;
+            return;
+        }
+        if (!observed || can->state!=CHASSIS_AUTO_IDLE ||
+            !quiet_since(pose,heading,s_station_body.ready_ms)) return;
+        for (i=0U;i<4U;i++) {
+            if (can->wheel_decirpm[i] || !newer(can->wheel_ms[i],s_station_body.ready_ms)) return;
+        }
+        amount=request==2U?g_source_align_distance_mm:g_source_align_turn_deg;
+        if (!station_step_target(pose,request,g_source_align_direction,amount) ||
+            !station_step_begin(can,0U,now)) {
+            g_source_align_rejected++;
+            fail(ZONE2_FAULT_STATION);
+            return;
+        }
+        g_source_body_step_request=0U;
+        return;
+    }
+    g_source_body_step_elapsed_ms=now-s_station_body.started_ms;
+    if (can->session!=s_session || can->power_epoch!=s_power_epoch || can->cause ||
+        can->state==CHASSIS_AUTO_FAULT || can->state==CHASSIS_AUTO_CANCELLED) {
+        fail(ZONE2_FAULT_BACKEND);
+        return;
+    }
+    if (s_station_body.phase==STATION_BODY_STOP) {
+        if (can->state==CHASSIS_AUTO_DONE && can->result==1U &&
+            can->wheel_quiet && observed && quiet_since(pose,heading,can->stop_ack_ms)) {
+            if (hypotf(pose->position.x_mm-s_station_body.target.x_mm,
+                       pose->position.y_mm-s_station_body.target.y_mm)>1.0f ||
+                fabsf(remainderf(pose->heading_deg-s_station_body.target_yaw,360.0f))>0.5f ||
+                !ChassisAuto_Zone2ReleaseCompleted(ZONE2_RUN_ID,can->session)) {
+                fail(ZONE2_FAULT_STATION);
+                return;
+            }
+            s_station_body.ready_ms=now;
+            s_station_body.phase=STATION_BODY_IDLE;
+            g_source_body_step_state=3U;
+            if (!s_station_body.restoring) g_source_align_command_seq++;
+        } else if (now-s_station_body.stop_ms>=CHASSIS_AUTO_STOP_MS+CHASSIS_AUTO_SETTLE_MS) {
+            fail(ZONE2_FAULT_BACKEND);
+        }
+        return;
+    }
+    if (!observed || can->state==CHASSIS_AUTO_STOP ||
+        can->state==CHASSIS_AUTO_SETTLE || can->state==CHASSIS_AUTO_DONE) {
+        fail(ZONE2_FAULT_SOURCE);
+        return;
+    }
+    if (!can->ready) return;
+    if (s_station_body.phase==STATION_BODY_ZERO) {
+        if (!can->zero_confirmed || !quiet_since(pose,heading,can->zero_ack_ms)) {
+            if (!submit_zero(can)) fail(ZONE2_FAULT_BACKEND);
+            return;
+        }
+        s_station_body.phase=STATION_BODY_TRACK;
+    }
+    if (!station_step_commands(pose,commands,&at_target)) {
+        fail(ZONE2_FAULT_REFERENCE);
+    } else if (at_target) {
+        if (!ChassisAuto_RequestStop()) {
+            fail(ZONE2_FAULT_BACKEND);
+            return;
+        }
+        s_station_body.stop_ms=now;
+        s_station_body.phase=STATION_BODY_STOP;
+    } else if (!ChassisAuto_Zone2SubmitAt(ZONE2_RUN_ID,s_session,can->ack_generation+1U,
+        can->next_batch_ms,commands)) {
+        fail(ZONE2_FAULT_BACKEND);
+    } else {
+        g_source_body_step_submitted++;
+    }
+}
+
+static void wait_at_station(const ChassisZone2CanStatus *can,const FusionObservation *pose,
+    const AppHeadingSource *heading,uint32_t observed,uint32_t now)
+{
+    uint32_t result,stamp,i;
+    float heading_error;
+    taskENTER_CRITICAL();
+    result=s_mission.station_result;
+    stamp=s_mission.station_result_ms;
+    taskEXIT_CRITICAL();
+    if (!result || SourceBodyStep_Busy()) {
+        station_body_service(can,pose,heading,observed,now);
+        return;
+    }
+    if (result==2U) {
+        fail(ZONE2_FAULT_STATION);
+        return;
+    }
+    if (newer(s_station_body.ready_ms,stamp)) stamp=s_station_body.ready_ms;
+    if (!observed || !quiet_since(pose,heading,stamp) || !can->feedback_ready ||
+        can->state!=CHASSIS_AUTO_IDLE) {
+        if (now-stamp>=CHASSIS_AUTO_STOP_MS+CHASSIS_AUTO_SETTLE_MS) fail(ZONE2_FAULT_SOURCE);
+        return;
+    }
+    for (i=0U;i<4U;i++) {
+        if (can->wheel_decirpm[i] || !newer(can->wheel_ms[i],stamp)) {
+            if (now-stamp>=CHASSIS_AUTO_STOP_MS+CHASSIS_AUTO_SETTLE_MS) fail(ZONE2_FAULT_SOURCE);
+            return;
+        }
+    }
+    heading_error=remainderf(s_station_body.nominal_yaw-pose->heading_deg,360.0f);
+    if (fabsf(heading_error)>s_config.heading_budget_deg) {
+        if (!station_step_target(pose,3U,0U,heading_error) || !station_step_begin(can,1U,now))
+            fail(ZONE2_FAULT_STATION);
+        return;
+    }
+    g_zone2_mission_trace.station[s_mission.station.leg-2U].end_ms=now;
+    g_zone2_phase=ZONE2_PREPARE;
+}
+
+static uint32_t offer_station(uint32_t now,const FusionObservation *pose)
+{
+    static const uint8_t kinds[6]={APP_ZONE2_SOURCE,APP_ZONE2_ROUGH,APP_ZONE2_STORAGE_BASE,
+        APP_ZONE2_SOURCE,APP_ZONE2_ROUGH,APP_ZONE2_STORAGE_STACK};
+    AppZone2Station station={0};
+    Zone2NavLeg leg;
+    uint8_t i,ring,offset;
+
+    if (s_schedule.leg<2U || s_schedule.leg>=ZONE2_NAV_LEGS ||
+        !Zone2NavPath_Leg(s_schedule.start_id,s_schedule.leg-1U,&leg) || !scan_has_code()) return 0U;
+    station.leg=(uint8_t)s_schedule.leg;
+    station.ticket=s_mission.station.ticket+1U;
+    station.run_id=s_schedule.run_id;
+    station.cell=leg.goal;
+    station.kind=kinds[station.leg-2U];
+    station.batch=station.leg<5U?1U:2U;
+    offset=station.batch==1U?0U:8U;
+    memcpy(station.task_code,s_mission.task_code,sizeof(station.task_code));
+    for (i=0U;i<3U;i++) {
+        station.colors[i]=(uint8_t)(station.task_code[offset+i]-'0');
+        if (station.kind==APP_ZONE2_SOURCE) {
+            if (s_mission.slots[i]) return 0U;
+            continue;
+        }
+        if (s_mission.slots[i]!=station.colors[i]) return 0U;
+        if (station.kind!=APP_ZONE2_STORAGE_STACK) {
+            station.rings[i]=(uint8_t)(station.task_code[offset+4U+i]-'0');
+        } else {
+            for (ring=1U;ring<=3U;ring++) {
+                if (s_mission.base_color[ring]==station.colors[i]) station.rings[i]=ring;
+            }
+            if (!station.rings[i]) return 0U;
+        }
+    }
+    taskENTER_CRITICAL();
+    s_mission.station=station;
+    s_mission.receipt_count=0U;
+    s_mission.station_result=0U;
+    s_station_body.anchor=pose->position;
+    s_station_body.nominal_yaw=leg.goal_heading_deg;
+    s_station_body.ready_ms=pose->sample_ms;
+    g_zone2_mission_trace.station[station.leg-2U].start_ms=now;
+    g_zone2_phase=ZONE2_STATION_WAIT;
+    taskEXIT_CRITICAL();
+    return 1U;
+}
+#endif
+
 static void advance_after_stop(ChassisZone2CanStatus *can,FusionObservation *pose,uint32_t now)
 {
     FusionMotionVector endpoint;
@@ -376,41 +984,79 @@ static void advance_after_stop(ChassisZone2CanStatus *can,FusionObservation *pos
         fail(ZONE2_FAULT_REFERENCE);
         return;
     }
-    if (!(hypotf(pose->position.x_mm-endpoint.x,pose->position.y_mm-endpoint.y)<=
+    if (
+#if APP_ZONE2_MISSION_ENABLE
+        !s_mission.search_interrupted &&
+#endif
+        (!(hypotf(pose->position.x_mm-endpoint.x,pose->position.y_mm-endpoint.y)<=
         s_config.position_tolerance_mm) ||
         !(fabsf(remainderf(pose->heading_deg-endpoint.yaw/ZONE2_DEG_TO_RAD,360.0f))<=
-        s_config.heading_budget_deg)) {
+        s_config.heading_budget_deg))) {
         fail(ZONE2_FAULT_REFERENCE);
         return;
     }
     pose->stopped=1U;
+#if APP_ZONE2_MISSION_ENABLE
+    if (s_mission.search_active) {
+        s_schedule.plan.valid=0U;
+        s_mission.search_active=0U;
+        s_mission.search_interrupted=0U;
+        s_mission.scan_wait_ms=now;
+        g_zone2_stop_pose_ms=pose->sample_ms;
+        g_zone2_phase=ZONE2_QR_WAIT;
+        return;
+    }
+#endif
     if (!Zone2NavSchedule_Arrive(&s_schedule,s_session,true,pose,now)) {
         fail(ZONE2_FAULT_PATH);
         return;
     }
     g_zone2_completed_legs=s_schedule.leg;
     g_zone2_stop_pose_ms=pose->sample_ms;
+#if APP_ZONE2_MISSION_ENABLE
+    g_zone2_mission_trace.navigation[s_schedule.leg-1U].end_ms=now;
+    if (s_schedule.leg==1U) {
+        s_mission.scan_y_mm=pose->position.y_mm;
+        s_mission.scan_wait_ms=now;
+        g_zone2_mission_trace.scan_start_ms=now;
+        taskENTER_CRITICAL();
+        s_mission.scan_after_ms=now;
+        s_mission.scan_open=1U;
+        g_zone2_phase=ZONE2_QR_WAIT;
+        taskEXIT_CRITICAL();
+    } else if (s_schedule.phase==ZONE2_SCHEDULE_DONE) {
+        finish_navigation();
+    } else if (!ChassisAuto_Zone2ReleaseCompleted(ZONE2_RUN_ID,can->session)) {
+        fail(ZONE2_FAULT_BACKEND);
+    } else if (!offer_station(now,pose)) {
+        fail(ZONE2_FAULT_STATION);
+    }
+#else
     if (s_schedule.phase==ZONE2_SCHEDULE_DONE) {
-        RadarObserver_Cancel();
-        (void)ChassisAuto_Zone2Disarm();
-        s_primed=0U;
-        RadarZoneSwitch_Unlock();
-        s_zone_locked=0U;
-        g_zone2_phase=ZONE2_DONE;
-        g_zone2_reference_status=FUSION_DONE;
+        finish_navigation();
     } else if (ChassisAuto_Zone2ReleaseCompleted(ZONE2_RUN_ID,can->session)) {
         s_prepare_ms=now;
         g_zone2_phase=ZONE2_PREPARE;
     } else {
         fail(ZONE2_FAULT_BACKEND);
     }
+#endif
 }
 #endif
 
 void AppZone2_RequestStart(void)
 {
     taskENTER_CRITICAL();
-    if (g_zone2_phase==ZONE2_IDLE) s_start_request=1U;
+    if (g_zone2_phase==ZONE2_IDLE && !s_start_request) {
+        uint32_t zone=RadarZoneSwitch_Lock();
+        if (zone==ZONE2_START_ID || (zone==1U && APP_ZONE1_RADAR_LIFT_CONFIRMED)) {
+            s_zone_locked=zone;
+#if APP_ZONE2_MISSION_ENABLE
+            g_zone2_mission_trace.key_ms=now_ms();
+#endif
+            s_start_request=1U;
+        } else if (zone) RadarZoneSwitch_Unlock();
+    }
     taskEXIT_CRITICAL();
 }
 
@@ -421,8 +1067,13 @@ uint32_t AppZone2_CanPermit(uint32_t slot_ms)
     AppMapPose map;
     uint32_t now=now_ms();
     (void)slot_ms;
-    if ((g_zone2_phase!=ZONE2_ZERO && g_zone2_phase!=ZONE2_TRACK &&
-        g_zone2_phase!=ZONE2_SECTION_ZERO) || !healthy() || !current_map()) return 0U;
+    if (!healthy() || !current_map()) return 0U;
+    if (g_zone2_phase!=ZONE2_ZERO && g_zone2_phase!=ZONE2_TRACK &&
+        g_zone2_phase!=ZONE2_SECTION_ZERO
+#if APP_ZONE2_MISSION_ENABLE
+        && !(g_zone2_phase==ZONE2_STATION_WAIT && SourceBodyStep_WheelWindow())
+#endif
+        ) return 0U;
     ChassisAuto_Zone2Read(&can);
     return can.session==s_session && sources(&can,&now,&map,&heading);
 }
@@ -467,30 +1118,50 @@ void AppZone2_Step(void)
         }
         return;
     }
+#if APP_ZONE2_MISSION_ENABLE
+    if (g_zone2_phase==ZONE2_MISSION_DONE) return;
+#endif
     if (g_zone2_phase==ZONE2_IDLE || g_zone2_phase==ZONE2_SHADOW_DONE || g_zone2_phase==ZONE2_DONE) return;
     if (!healthy()) {
         fail(ZONE2_FAULT_HEALTH);
         return;
     }
     if (g_zone2_phase==ZONE2_WAIT_READY) {
-        if (g_can_test_result==1U && g_safety_ready && g_radar_zone_selected==ZONE2_START_ID &&
-            stowed_command() && RadarObserver_IsScanReady()) {
-            s_zone_locked=RadarZoneSwitch_Lock();
-            if (s_zone_locked==ZONE2_START_ID && Zone2NavSchedule_Start(&s_schedule,
-                ZONE2_RUN_ID,ZONE2_START_ID,VEHICLE_MAP_VERSION,true,&s_config,400.0f)) {
-                g_zone2_phase=ZONE2_SCAN;
-                return;
-            }
-            if (s_zone_locked) RadarZoneSwitch_Unlock();
-            s_zone_locked=0U;
+        if (g_can_test_result==1U && g_safety_ready && s_zone_locked &&
+            stowed_command() && RadarObserver_IsScanReady() &&
+            Zone2NavSchedule_Start(&s_schedule,ZONE2_RUN_ID,(uint8_t)s_zone_locked,
+                VEHICLE_MAP_VERSION,true,&s_config,400.0f)) {
+            g_zone2_phase=ZONE2_SCAN;
+            return;
         }
+#if !APP_ZONE2_MISSION_ENABLE
         if (now-s_begin_ms>=ZONE2_WAIT_READY_MS) fail(ZONE2_FAULT_DEADLINE);
+#endif
         return;
     }
     ChassisAuto_Zone2Read(&can);
     observed=observation(&can,now,&pose,&heading);
     if (observed) now=pose.now_ms;
+#if APP_ZONE2_MISSION_ENABLE
+    if (g_zone2_phase==ZONE2_QR_WAIT || g_zone2_phase==ZONE2_STATION_WAIT || s_mission.search_active) {
+        if (!current_map()) {
+            fail(ZONE2_FAULT_PATH);
+            return;
+        }
+        if (g_zone2_phase==ZONE2_QR_WAIT) {
+            wait_at_scan(&can,&pose,&heading,observed,now);
+            return;
+        }
+        if (g_zone2_phase==ZONE2_STATION_WAIT) {
+            wait_at_station(&can,&pose,&heading,observed,now);
+            return;
+        }
+    }
+    schedule_phase=s_mission.search_active?ZONE2_SCHEDULE_ACTIVE:
+        Zone2NavSchedule_Poll(&s_schedule,observed?&pose:0,now);
+#else
     schedule_phase=Zone2NavSchedule_Poll(&s_schedule,observed?&pose:0,now);
+#endif
     if (schedule_phase==ZONE2_SCHEDULE_FAILED) {
         fail(ZONE2_FAULT_PATH);
         return;
@@ -501,8 +1172,8 @@ void AppZone2_Step(void)
             return;
         }
         s_primed=1U;
-        AppOdometry_RequestMapRun(ZONE2_RUN_ID,ZONE2_START_ID);
-#if APP_ZONE2_NAV_MOTION_ENABLE
+        AppOdometry_RequestMapRun(ZONE2_RUN_ID,s_zone_locked);
+#if APP_ZONE2_NAV_MOTION_ENABLE && !APP_ZONE2_MISSION_ENABLE
         s_prepare_ms=now;
 #endif
         g_zone2_phase=ZONE2_PREPARE;
@@ -538,10 +1209,13 @@ void AppZone2_Step(void)
             fail(ZONE2_FAULT_PATH);
             return;
         }
+#if APP_ZONE2_MISSION_ENABLE
+        g_zone2_mission_trace.navigation[s_schedule.leg].start_ms=now;
+#endif
         g_zone2_phase=ZONE2_ZERO;
         return;
     }
-#if APP_ZONE2_NAV_MOTION_ENABLE
+#if APP_ZONE2_NAV_MOTION_ENABLE && !APP_ZONE2_MISSION_ENABLE
     if (g_zone2_phase==ZONE2_PREPARE && now-s_prepare_ms>=ZONE2_WAIT_READY_MS) {
         fail(ZONE2_FAULT_DEADLINE);
         return;
@@ -564,11 +1238,37 @@ void AppZone2_Step(void)
     if (can.ready && (g_zone2_phase==ZONE2_ZERO || g_zone2_phase==ZONE2_TRACK ||
         g_zone2_phase==ZONE2_SECTION_ZERO)) {
         float endpoint_error=0.0f;
-        uint32_t stalled=0U,endpoint_ready=0U,station_ready=0U;
+        uint32_t endpoint_ready=0U,station_ready=0U;
+#if !APP_ZONE2_MISSION_ENABLE
+        uint32_t stalled=0U;
+#endif
         if (!observed) {
             fail(ZONE2_FAULT_SOURCE);
             return;
         }
+#if APP_ZONE2_MISSION_ENABLE
+        if (s_mission.search_active && scan_has_code()) {
+            if (!s_mission.search_interrupted) {
+                s_mission.search_interrupted=1U;
+                s_stop_ms=now;
+            }
+            if (can.ack_generation && can.ack_mask==0x0FU && can.tx_complete_mask==0x0FU &&
+                can.zero_confirmed && quiet_since(&pose,&heading,can.zero_ack_ms)) {
+                if (!ChassisAuto_RequestStop()) {
+                    fail(ZONE2_FAULT_BACKEND);
+                    return;
+                }
+                s_station_stop=1U;
+                s_stop_ms=now;
+                g_zone2_phase=ZONE2_STOP;
+            } else if (now-s_stop_ms>=CHASSIS_AUTO_STOP_MS+CHASSIS_AUTO_SETTLE_MS) {
+                fail(ZONE2_FAULT_SOURCE);
+            } else if (!submit_zero(&can)) {
+                fail(ZONE2_FAULT_BACKEND);
+            }
+            return;
+        }
+#endif
         if (g_zone2_phase!=ZONE2_ZERO) {
             int32_t duration=(int32_t)s_trajectory.sections[s_section].duration_ms;
             if ((int32_t)(pose.sample_ms-s_section_ms)>=duration) {
@@ -581,11 +1281,13 @@ void AppZone2_Step(void)
                 endpoint_ready=1U;
                 station_ready=g_zone2_phase==ZONE2_SECTION_ZERO &&
                     s_trajectory.sections[s_section].terminal && endpoint_error<=1.0f;
+#if !APP_ZONE2_MISSION_ENABLE
                 /* Inside the endpoint band, wait at zero for standstill evidence. */
                 if (endpoint_error<=1.0f) s_section_progress_started=0U;
                 else stalled=section_stalled(&pose,endpoint_error);
             } else if (s_section_progress_started) {
                 stalled=pose.now_ms-s_section_progress_ms>=ZONE2_SECTION_PROGRESS_MS;
+#endif
             }
         }
         /* A station STOP has its own measured standstill check after the STOP ACK. */
@@ -598,10 +1300,12 @@ void AppZone2_Step(void)
                     return;
                 }
                 if (endpoint_error>1.0f) {
+#if !APP_ZONE2_MISSION_ENABLE
                     if (stalled) {
                         fail(ZONE2_FAULT_DEADLINE);
                         return;
                     }
+#endif
                     s_generation=0U;
                     s_correction=(FusionMotionVector){0};
                     g_zone2_phase=ZONE2_TRACK;
@@ -621,11 +1325,16 @@ void AppZone2_Step(void)
                 s_section++;
             }
             start_section(can.next_batch_ms);
+#if !APP_ZONE2_MISSION_ENABLE
             stalled=0U;
+#endif
         }
+#if !APP_ZONE2_MISSION_ENABLE
         if (stalled) {
             fail(ZONE2_FAULT_DEADLINE);
-        } else if (g_zone2_phase==ZONE2_TRACK) {
+        } else
+#endif
+        if (g_zone2_phase==ZONE2_TRACK) {
             motion_batch(&can,&pose);
         } else if (!submit_zero(&can)) {
             fail(ZONE2_FAULT_BACKEND);
@@ -682,6 +1391,9 @@ void AppZone2_Step(void)
     zone2_step();
     if (g_zone2_pose_trace.state==ZONE2_TRACE_CAPTURE) {
         terminal=g_zone2_phase==ZONE2_DONE || g_zone2_phase==ZONE2_FAILED;
+#if APP_ZONE2_MISSION_ENABLE
+        terminal|=g_zone2_phase==ZONE2_MISSION_DONE;
+#endif
         now=now_ms();
         trace_capture(now,terminal);
         if (terminal) Zone2NavSchedule_TraceFreeze(&s_schedule,now,(uint32_t)g_zone2_fault,

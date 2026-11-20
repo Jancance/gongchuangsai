@@ -3,10 +3,11 @@
 uint32_t RadarServo_Encode(uint32_t id, float angle_deg, uint16_t *pulse_us)
 {
     float pulse;
+    float max_deg = id == 1U ? RADAR_SERVO1_MAX_DEG : RADAR_SERVO2_MAX_DEG;
     if (pulse_us == NULL || id < 1U || id > RADAR_SERVO_COUNT ||
-        !(angle_deg >= 0.0f && angle_deg <= RADAR_SERVO_MAX_DEG)) return 0U;
+        !(angle_deg >= 0.0f && angle_deg <= max_deg)) return 0U;
     pulse = (float)RADAR_SERVO_ZERO_US + angle_deg *
-        (float)(RADAR_SERVO_180_US-RADAR_SERVO_ZERO_US)/RADAR_SERVO_MAX_DEG;
+        (float)(RADAR_SERVO_MAX_US-RADAR_SERVO_ZERO_US)/max_deg;
     *pulse_us = (uint16_t)(pulse + 0.5f);
     return 1U;
 }

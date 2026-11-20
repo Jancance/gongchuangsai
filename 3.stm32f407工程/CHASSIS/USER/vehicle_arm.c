@@ -5,6 +5,7 @@
 #include "gripper.h"
 #include "carrier_pwm.h"
 #include "carrier_config.h"
+#include "lift_ruler_adapter.h"
 #include "can.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -26,10 +27,17 @@ static CanRxMsg s_rx;
 extern volatile uint32_t g_dm_integrated_owner;
 extern void StartupAxes_SetExtensionHoldTarget(float target);
 uint32_t VehicleArm_Busy(void){return g_vehicle_arm_state==1U;}
+static void SourcePrep_RecordFault(uint32_t why);
+static uint32_t VehicleSourceParallel_Owns(void);
+static void VehicleSourceParallel_Cancel(void);
+static void VehicleSourceParallel_Service(void);
 static void arm_fail(uint32_t why)
-{g_vehicle_arm_stop_pending=g_vehicle_arm_axis_owned;if(g_vehicle_arm_state!=3U || !g_vehicle_arm_cause)g_vehicle_arm_cause=why;g_vehicle_arm_state=3U;g_dm_jog_request=3U;StartupAxes_Cancel();}
+{if(g_source_prepare_state==1U || g_source_prepare_state==2U)SourcePrep_RecordFault(why);
+ if(g_extension_cal_state==1U || g_extension_cal_state==2U){g_extension_cal_state=4U;g_extension_cal_cause=why;}
+ g_vehicle_arm_stop_pending=g_vehicle_arm_axis_owned;if(g_vehicle_arm_state!=3U || !g_vehicle_arm_cause)g_vehicle_arm_cause=why;g_vehicle_arm_state=3U;g_dm_jog_request=3U;
+ if(g_source_prepare_state==1U || g_source_prepare_state==2U){g_source_prepare_state=4U;g_source_prepare_cause=why;g_dm_source_go=0U;}StartupAxes_Cancel();}
 void VehicleArm_Cancel(void)
-{arm_fail(2U);}
+{if(VehicleSourceParallel_Owns()){VehicleSourceParallel_Cancel();return;}arm_fail(2U);}
 #if !APP_MOTOR_OFFLINE_ONLY
 static uint32_t query(uint8_t command,uint8_t n)
 {uint8_t q[2]={command,0x6b};return VehicleArm_Exchange(s_address,q,2U,n,&s_rx)==1U;}
@@ -38,11 +46,29 @@ static uint32_t position(void)
     uint32_t raw;
     if(!query(0x36,7U) || s_rx.Data[1]>1U)return 0U;
     raw=((uint32_t)s_rx.Data[2]<<24)|((uint32_t)s_rx.Data[3]<<16)|((uint32_t)s_rx.Data[4]<<8)|s_rx.Data[5];
-    s_current=(s_rx.Data[1]?-1.0f:1.0f)*(float)raw*0.1f;
+    s_current=(s_rx.Data[1]?-1.0f:1.0f)*(float)raw/((s_address==6U && (s_options&0x80U))?100.0f:10.0f);
     if(s_address==5U){g_vehicle_lift_current_deg=s_current;g_vehicle_lift_feedback_valid=1U;}
     return 1U;
 }
 #endif
+#include "source_prepare.inc"
+#include "extension_calibration.inc"
+extern volatile uint32_t g_vm_test_request,g_safety_ready,g_safety_fault,g_rtos_fault;
+extern volatile uint32_t g_can_test_result,g_can_guard_ready,g_can_ctrl_fault_latched,g_chassis_auto_active;
+static uint32_t SingleTeach_ReferencesReady(void)
+{return g_lift_ruler_controller.top_valid && !g_lift_ruler_cause && g_lift_ruler_state==4U &&
+ g_startup_axes_state==4U && !g_startup_axes_cause && g_extension_home_reference_valid &&
+ g_extension_hold_confirmed && g_vm_test_request==1U && !g_safety_fault && !g_rtos_fault && !g_can_ctrl_fault_latched;}
+#if !APP_MOTOR_OFFLINE_ONLY
+static float SingleTeach_TopDeg(void)
+{return (float)g_lift_ruler_controller.top_position_raw/(float)g_lift_ruler_controller.top_scale;}
+#endif
+static uint32_t Low_Busy(void);
+static uint32_t Low_ObserveReturnSettling(void);
+#include "vehicle_source_parallel.inc"
+#include "integration10_complete.inc"
+#include "stage2_fast_cycle.inc"
+#include "source_stage2_backend.inc"
 uint32_t VehicleArm_Begin(const VehicleArmRow *row,uint32_t item)
 {
 #if APP_MOTOR_OFFLINE_ONLY
@@ -59,12 +85,19 @@ void VehicleArm_Service(void)
 #if !APP_MOTOR_OFFLINE_ONLY
     uint32_t now=(uint32_t)xTaskGetTickCount(),pulse,units,speed;
     float target,delta;uint8_t q[5]={0xf3,0xab,1,0,0x6b};
+    if(VehicleSourceParallel_Owns()){VehicleSourceParallel_Service();return;}
     if(g_vehicle_arm_stop_pending==5U || g_vehicle_arm_stop_pending==6U) {
         const uint8_t stop[4]={0xfe,0x98,0,0x6b};
         g_vehicle_arm_stop_result=VehicleArm_Exchange((uint8_t)g_vehicle_arm_stop_pending,stop,4U,3U,&s_rx);
-        g_vehicle_arm_stop_pending=0U;return;
+        /* STOP is idempotent. Keep retrying until a positive driver ACK;
+         * dropping the pending flag on timeout would leave a powered axis moving. */
+        if(g_vehicle_arm_stop_result==1U && s_rx.Data[1]==2U)g_vehicle_arm_stop_pending=0U;
+        else if(g_vehicle_arm_stop_result==1U)g_vehicle_arm_stop_result=8U;
+        return;
     }
     if(!VehicleArm_Busy())return;
+    if(g_extension_cal_state==1U || g_extension_cal_state==2U){ExtensionCalibration_Service();return;}
+    if(g_source_prepare_state==1U || g_source_prepare_state==2U){SourcePrep_Service();return;}
     if(!StartupAxes_Holding() || (VEHICLE_AXIS_TIMEOUT_MS && now-s_begin>=VEHICLE_AXIS_TIMEOUT_MS)){arm_fail(3U);return;}
     if(s_row.op==2U) {
         if(!s_phase) {
@@ -107,7 +140,7 @@ void VehicleArm_Service(void)
         } else {
             s_address=6U;
             if(!(s_row.target>=0 && s_row.target<=50)){arm_fail(4U);return;}
-            s_goal=g_startup_extension_zero_deg+STARTUP_EXTENSION_EXTEND_SIGN*s_row.target*VEHICLE_EXTENSION_PULSES_PER_MM*360.0f/3200.0f;
+            s_goal=STARTUP_EXTENSION_ZERO_DEG+STARTUP_EXTENSION_EXTEND_SIGN*s_row.target*VEHICLE_EXTENSION_PULSES_PER_MM*360.0f/3200.0f;
         }
         if(!(s_row.speed>0 && s_row.speed<=(s_address==5U?VEHICLE_LIFT_RPM:VEHICLE_EXTENSION_RPM))){arm_fail(4U);return;}
         g_vehicle_arm_axis_owned=s_address;
@@ -143,7 +176,7 @@ void VehicleArm_Service(void)
     if(s_phase==5U) {
         if(!query(0x3a,3U) || !(s_rx.Data[1]&1U) || (s_rx.Data[1]&0x08U)){arm_fail(9U);return;}
         s_flags=s_rx.Data[1];
-        if(s_flags&4U){if(s_address==5U){arm_fail(9U);return;}if(!s_stall_active){s_stall_active=1;s_stall_ms=now;}else if(now-s_stall_ms>=2000U){arm_fail(9U);return;}}
+        if(s_flags&4U){if(s_address==5U){arm_fail(9U);return;}if(!s_stall_active){s_stall_active=1;s_stall_ms=now;}else if(now-s_stall_ms>=SOURCE_EXTENSION_STALL_CONFIRM_MS){arm_fail(9U);return;}}
         else s_stall_active=0U;
         s_phase=6U;return;
     }

@@ -1031,7 +1031,8 @@ void AppMotion_LoadDefaultPlan(void)
 #if APP_HEADING_SESSION_TEST && APP_FORWARD_HOLD_TEST && APP_TEST_MODE == 3U
     if (APP_IS_DEBUG)
     {
-        g_debug_plan_id=APP_BASELINE40_ACTIVE ? DEBUG_PLAN_FORWARD210_40 : DEBUG_PLAN_DEFAULT;
+        g_debug_plan_id=APP_STRAIGHT_CAPTURE_ENABLE ? DEBUG_PLAN_STRAIGHT_CAPTURE_FIRST :
+            (APP_BASELINE40_ACTIVE ? DEBUG_PLAN_FORWARD210_40 : DEBUG_PLAN_DEFAULT);
         (void)AppDebugPlan_Load(g_debug_plan_id,s_motion_actions,&s_motion_action_count);
         g_motion_plan_valid = App_MotionPlanValid();
     }

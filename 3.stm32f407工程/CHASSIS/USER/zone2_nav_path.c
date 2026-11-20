@@ -1,5 +1,6 @@
 #include "zone2_nav_path.h"
 #include "field_map.h"
+#include "radar_zone_config.h"
 #include <math.h>
 #include <string.h>
 
@@ -12,7 +13,8 @@
 static uint32_t context_valid(const Zone2NavContext *c)
 {
     return c && c->run_id && c->map_generation && c->layout_id && c->link_generation &&
-        c->start_id==2U && c->node_id==1U && c->zone==2U;
+        (c->start_id==1U || c->start_id==2U) && c->node_id==RADAR_NODE_FOR_ZONE(c->start_id) &&
+        c->zone==c->start_id;
 }
 
 static uint32_t same_context(const Zone2NavContext *a,const Zone2NavContext *b)
@@ -23,14 +25,18 @@ static uint32_t same_context(const Zone2NavContext *a,const Zone2NavContext *b)
         a->node_id==b->node_id && a->zone==b->zone;
 }
 
-uint32_t Zone2NavPath_Leg(uint32_t index,Zone2NavLeg *leg)
+uint32_t Zone2NavPath_Leg(uint8_t start_id,uint32_t index,Zone2NavLeg *leg)
 {
     static const Zone2NavLeg legs[ZONE2_NAV_LEGS]={
         {0,2,90,90},{2,14,90,90},{14,10,90,-90},{10,22,-90,180},
         {22,14,180,90},{14,10,90,-90},{10,22,-90,180},{22,0,180,90}
     };
-    if(!leg || index>=ZONE2_NAV_LEGS) return 0U;
+    if(!leg || index>=ZONE2_NAV_LEGS || (start_id!=1U && start_id!=2U)) return 0U;
     *leg=legs[index];
+    if(start_id==1U) {
+        if(index==0U) leg->start=4U;
+        if(index+1U==ZONE2_NAV_LEGS) leg->goal=4U;
+    }
     return 1U;
 }
 
@@ -40,7 +46,7 @@ uint32_t Zone2NavPath_Station(uint8_t id,FusionPoint *point)
     if(!point) return 0U;
     switch(id) {
     case 2U: p.x_mm=FIELD_SCAN_X_MM;p.y_mm=FIELD_SCAN_Y_MM;break;
-    case 0U: case 10U: case 14U: case 22U:
+    case 0U: case 4U: case 10U: case 14U: case 22U:
         if(!FieldMap_Park(id,&p)) return 0U;
         break;
     default: return 0U;
@@ -146,9 +152,13 @@ static Zone2NavPathResult convert(const Zone2NavMap *map,const Zone2NavRequest *
             result=check_span(center,next,map->occupied_mask,&route->visited_mask);
             if(result!=ZONE2_NAV_OK) return result;
             /* Stop at the scan station before reaching its cell center. */
-            if(q->start==0U && q->goal==2U && i+1U==path->waypoint_count &&
+            if((q->start==0U || q->start==4U) && q->goal==2U && i+1U==path->waypoint_count &&
                center.x_mm==next.x_mm && g->terminal.x_mm==next.x_mm &&
                g->terminal.y_mm>next.y_mm && g->terminal.y_mm<center.y_mm) break;
+            /* The shifted rough-processing stop can lie on the final westbound span. */
+            if(q->start==14U && q->goal==10U && i+1U==path->waypoint_count &&
+               center.y_mm==next.y_mm && g->terminal.y_mm==next.y_mm &&
+               g->terminal.x_mm>next.x_mm && g->terminal.x_mm<center.x_mm) break;
             if(!append(in,(FusionPoint){next.x_mm,next.y_mm})) return ZONE2_NAV_CAPACITY;
             center=next;
         }
@@ -215,10 +225,10 @@ Zone2NavPathResult Zone2NavPath_Prepare(const Zone2NavMap *map,const Zone2NavReq
     return ZONE2_NAV_OK;
 }
 
-uint32_t Zone2NavPath_InsideReturn(FusionPoint p,float heading,float pos_error,float heading_error,uint32_t stopped)
+uint32_t Zone2NavPath_InsideReturn(uint8_t start_id,FusionPoint p,float heading,float pos_error,float heading_error,uint32_t stopped)
 {
-    float deviation,r,c,s,ex,ey;
-    if(stopped!=1U || !(heading>=-3600.0f && heading<=3600.0f) ||
+    float deviation,r,c,s,ex,ey,x;
+    if((start_id!=1U && start_id!=2U) || stopped!=1U || !(heading>=-3600.0f && heading<=3600.0f) ||
        !(pos_error>=0.0f && pos_error<=100.0f) || !(heading_error>=0.0f && heading_error<=5.0f)) return 0U;
     deviation=fabsf(wrap(heading-90.0f));
     if(deviation>1.0f) return 0U;
@@ -227,6 +237,7 @@ uint32_t Zone2NavPath_InsideReturn(FusionPoint p,float heading,float pos_error,f
     c=cosf(r);s=sinf(r);
     ex=(VEHICLE_BODY_WIDTH_MM*c+VEHICLE_BODY_LENGTH_MM*s)*0.5f+pos_error;
     ey=(VEHICLE_BODY_LENGTH_MM*c+VEHICLE_BODY_WIDTH_MM*s)*0.5f+pos_error;
-    return p.x_mm>=ex && p.x_mm<=ZONE2_START_AREA_MM-ex &&
+    x=p.x_mm-(start_id==1U?FIELD_SIZE_MM-ZONE2_START_AREA_MM:0.0f);
+    return x>=ex && x<=ZONE2_START_AREA_MM-ex &&
         p.y_mm>=ey && p.y_mm<=ZONE2_START_AREA_MM-ey;
 }

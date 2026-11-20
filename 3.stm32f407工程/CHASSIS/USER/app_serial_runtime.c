@@ -246,10 +246,8 @@ static void App_SerialMotionCommand(char *line)
         g_serial_motion_accepted++;
     }
 #if APP_TEST_MODE == 3U
-    else if ((strncmp(p,"PLAN",4U)==0 && p[4]>='0' && p[4]<='9' && p[5]=='\0') ||
-             strcmp(p,"PLAN10")==0 || strcmp(p,"PLAN11")==0 || strcmp(p,"PLAN12")==0 || strcmp(p,"PLAN13")==0 ||
-             strcmp(p,"PLAN14")==0 || strcmp(p,"PLAN15")==0 || strcmp(p,"PLAN16")==0 || strcmp(p,"PLAN17")==0 || strcmp(p,"PLAN18")==0 || strcmp(p,"PLAN19")==0 ||
-              strcmp(p,"PLAN20")==0 || strcmp(p,"PLAN21")==0)
+    else if (strncmp(p,"PLAN",4U)==0 && p[4]>='0' && p[4]<='9' &&
+             (p[5]=='\0' || (p[4]!='0' && p[5]>='0' && p[5]<='9' && p[6]=='\0')))
     {
         if (!s_serial_tx_seq || (uint32_t)(s_serial_tx_seq-1U-seq)>5U ||
             (uint32_t)(now-tick)>=500U) App_SerialReject(5U);
@@ -266,7 +264,8 @@ static void App_SerialMotionCommand(char *line)
                  (!APP_BASELINE40_ACTIVE && (!AppRuntimeRoute_Live()->ready || AppRuntimeRoute_Live()->staging || AppRuntimeRoute_Live()->consumed)) ||
                  (APP_BASELINE40_ACTIVE && ((g_debug_plan_id!=DEBUG_PLAN_FORWARD210_40 && g_debug_plan_id!=DEBUG_PLAN_LEFT210_40 &&
                   g_debug_plan_id!=DEBUG_PLAN_RIGHT210_40 && g_debug_plan_id!=DEBUG_PLAN_BACKWARD210_40 && g_debug_plan_id!=DEBUG_PLAN_RIGHT150_40 && g_debug_plan_id!=DEBUG_PLAN_RIGHT30_40 &&
-                   g_debug_plan_id!=DEBUG_PLAN_FORWARD150_40 && g_debug_plan_id!=DEBUG_PLAN_FORWARD30_40 && g_debug_plan_id!=DEBUG_PLAN_BACKWARD150_40 && g_debug_plan_id!=DEBUG_PLAN_BACKWARD30_40 && g_debug_plan_id!=DEBUG_PLAN_LEFT150_40 && g_debug_plan_id!=DEBUG_PLAN_LEFT30_40 && !AppDebugTurn90Plan(g_debug_plan_id)) ||
+                   g_debug_plan_id!=DEBUG_PLAN_FORWARD150_40 && g_debug_plan_id!=DEBUG_PLAN_FORWARD30_40 && g_debug_plan_id!=DEBUG_PLAN_BACKWARD150_40 && g_debug_plan_id!=DEBUG_PLAN_BACKWARD30_40 && g_debug_plan_id!=DEBUG_PLAN_LEFT150_40 && g_debug_plan_id!=DEBUG_PLAN_LEFT30_40 && !AppDebugTurn90Plan(g_debug_plan_id) &&
+                   !AppDebugStraightCapturePlan(g_debug_plan_id,0)) ||
                   *AppMotion_Live()->action_count!=1U))) App_SerialReject(6U);
         else
         {
@@ -541,7 +540,16 @@ static void App_Baseline40Telemetry(void)
     static char frame[160];static uint32_t last,sent,sequence;
     uint32_t now=(uint32_t)xTaskGetTickCount();int n;uint16_t crc;
     if ((sent && now-last<1000U) || !App_SerialDiagnosticWindow(now,40U)) return;
-    n=snprintf(frame,sizeof(frame),"BF1,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,",
+    if (APP_STRAIGHT_CAPTURE_ENABLE) {
+        MotionAction action;
+        if(!AppDebugStraightCapturePlan(g_debug_plan_id,&action)) return;
+        n=snprintf(frame,sizeof(frame),"BF1,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,",
+            (unsigned long)sequence++,(unsigned long)now,(unsigned long)g_debug_plan_id,
+            (unsigned long)action.base_rpm,(unsigned long)action.distance_mm,
+            (unsigned long)APP_BASELINE40_MM_S,(unsigned long)APP_BASELINE40_ACCEL_MM_S2,
+            (unsigned long)APP_BASELINE40_JERK_MM_S3,(unsigned long)APP_BASELINE40_FEEDBACK_RPM,
+            (unsigned long)APP_BASELINE40_RUN_MS);
+    } else n=snprintf(frame,sizeof(frame),"BF1,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,",
         (unsigned long)sequence++,(unsigned long)now,(unsigned long)g_debug_plan_id,
         (unsigned long)((g_debug_plan_id==DEBUG_PLAN_LEFT210_40 || g_debug_plan_id==DEBUG_PLAN_RIGHT210_40 || g_debug_plan_id==DEBUG_PLAN_RIGHT150_40 || g_debug_plan_id==DEBUG_PLAN_RIGHT30_40 || g_debug_plan_id==DEBUG_PLAN_LEFT150_40 || g_debug_plan_id==DEBUG_PLAN_LEFT30_40) ? APP_BASELINE40_LEFT_RPM : APP_BASELINE40_RPM),
         (unsigned long)((g_debug_plan_id==DEBUG_PLAN_RIGHT150_40 || g_debug_plan_id==DEBUG_PLAN_FORWARD150_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD150_40 || g_debug_plan_id==DEBUG_PLAN_LEFT150_40) ? 1500U :
@@ -820,6 +828,7 @@ static void App_SerialMotionTelemetry(void)
         g_debug_plan_id==DEBUG_PLAN_RIGHT210_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD210_40 || g_debug_plan_id==DEBUG_PLAN_RIGHT150_40 || g_debug_plan_id==DEBUG_PLAN_RIGHT30_40 ||
         g_debug_plan_id==DEBUG_PLAN_FORWARD150_40 || g_debug_plan_id==DEBUG_PLAN_FORWARD30_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD150_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD30_40 || g_debug_plan_id==DEBUG_PLAN_LEFT150_40 || g_debug_plan_id==DEBUG_PLAN_LEFT30_40))
         values[39]=(int32_t)APP_BASELINE40_FEEDBACK_RPM;
+    if (AppDebugStraightCapturePlan(g_debug_plan_id,0)) values[39]=(int32_t)APP_BASELINE40_FEEDBACK_RPM;
     if (APP_SPEED20_TRIAL_ACTIVE && g_debug_plan_id==DEBUG_PLAN_FORWARD210_20)
         values[39]=(int32_t)APP_SPEED20_FEEDBACK_RPM;
     if(APP_ROUTE_SPEED_TRIAL_ACTIVE && g_debug_plan_id==DEBUG_PLAN_DEFAULT)
@@ -864,6 +873,11 @@ static void App_SerialMotionTelemetry(void)
         g_debug_plan_id==DEBUG_PLAN_FORWARD150_40 || g_debug_plan_id==DEBUG_PLAN_FORWARD30_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD150_40 || g_debug_plan_id==DEBUG_PLAN_BACKWARD30_40 || g_debug_plan_id==DEBUG_PLAN_LEFT150_40 || g_debug_plan_id==DEBUG_PLAN_LEFT30_40))
     {
         values[57]=40000; /* 40cm/s reference ceiling, not wheel/ground measurement. */
+        if (g_combined_test.state==0U && !(*AppMotion_Live()->has_action) &&
+            (*AppMotion_Live()->action_count)==1U) values[56]=(int32_t)AppMotion_Live()->actions[0].kind;
+    }
+    if (AppDebugStraightCapturePlan(g_debug_plan_id,0)) {
+        values[57]=(int32_t)(APP_BASELINE40_MM_S*100.0f);
         if (g_combined_test.state==0U && !(*AppMotion_Live()->has_action) &&
             (*AppMotion_Live()->action_count)==1U) values[56]=(int32_t)AppMotion_Live()->actions[0].kind;
     }

@@ -25,6 +25,7 @@ extern volatile RouteCheck g_route_check;
 #include "dm_can2.h"
 #include "radar_observer.h"
 #include "radar_servo.h"
+#include "radar_zone_config.h"
 #include "radar_lift.h"
 #include "radar_zone_switch.h"
 #include "fine_rpm_telemetry.h"
@@ -49,6 +50,9 @@ extern volatile RouteCheck g_route_check;
 #include "app_input_runtime.h"
 #include "vehicle_tuning.h"
 #include "app_chassis_service.h"
+#if APP_ZONE2_MISSION_ENABLE
+#include "app_zone2.h"
+#endif
 #include "hwt101.h"
 #include "heading_source.h"
 #include "safety.h"
@@ -225,7 +229,10 @@ static void App_TestTaskA(void *argument)
     /* FreeRTOS运行后才开启接收中断 */
     if (APP_IS_DEBUG) USART1_EnableReceive();
     /* 启动时只请求发送一次基础平台就绪信息 */
-    if (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE) SAOMA_EnableReceive();
+    if (APP_ZONE2_MISSION_ENABLE || (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_EnableReceive();
+#if APP_ZONE2_MISSION_ENABLE
+    USART6_VisionEnableReceive();
+#endif
     HWT101_EnableReceive();
     g_serial_send_ok = App_DebugSendString("F407 FreeRTOS READY\r\n");
 #if !APP_ZONE2_RADAR_CALIBRATION_TEST
@@ -266,7 +273,7 @@ static void App_TestTaskA(void *argument)
         App_HeadingLiveStep();
         #endif
         /* 一轮最多处理64字节；只有任务A交接并更新屏幕 */
-        if (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE) SAOMA_Update();
+        if (APP_ZONE2_MISSION_ENABLE || (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_Update();
         if(APP_BASELINE40_ACTIVE || APP_ZONE2_NAV_ENABLE) { /* Dedicated chassis branch; no mission dispatch. */ }
         else if(VEHICLE_INTEGRATED_ENABLE){AppMotion_MissionService();AppMotion_MissionTelemetry();}
         else if(VEHICLE_STAGE1_ENABLE)
@@ -307,6 +314,9 @@ static void App_TestTaskB(void *argument)
         /* 每500毫秒翻转一次，完整亮灭周期约1秒 */
         LED_Turn();
         /* 查询任务B自己的最小剩余栈 */
+#if APP_ZONE2_MISSION_ENABLE
+        AppZone2_DisplayTaskCode();
+#endif
         g_stack_b_words = uxTaskGetStackHighWaterMark(NULL);
         vTaskDelay(pdMS_TO_TICKS(500U));
     }
@@ -385,22 +395,41 @@ volatile uint32_t g_radar_app_scan_result = 0U;
 
 /* 校准测试由PC13触发，只校准、扫描一次。 */
 #if !APP_BASELINE40_ACTIVE
+#if APP_ZONE1_RADAR_LIFT_TEST
+volatile uint32_t g_radar_zone1_link_ready;
+#endif
 static void App_RadarTask(void *argument)
 {
+#if APP_ZONE1_RADAR_LIFT_TEST
+    (void)argument;
+    for (;;) {
+        g_radar_zone1_link_ready=RadarObserver_PollZone1Link();
+        vTaskDelay(pdMS_TO_TICKS(2U));
+    }
+#else
 #if !APP_ZONE2_NAV_ENABLE || APP_ZONE2_RADAR_CALIBRATION_TEST
     uint32_t calibration_attempted = 0U;
     uint32_t scan_attempted = 0U;
     RadarObserverStatus radar_status;
 #endif
     /* 用户2026-11-11临时授权measured=1，仅供校准和路径观察；
-     * 自动扫描下行和回升均用3800半步；等待时间为工程选择，非实测。 */
-    const RadarZone2Config cfg = {
-        1U, 1U, 3800U, 1000U, 500U, 1000U, 60000U, 1U
+     * 自动扫描下行和回升均用4000半步；等待时间为工程选择，非实测。 */
+    RadarZone2Config cfg = {
+        RADAR_ZONE2_NODE_ID, 1U, RADAR_ZONE_LIFT_STEPS, 1000U, 500U, 1000U, 60000U, 1U, 2U
     };
 
     (void)argument;
 #if APP_ZONE2_RADAR_CALIBRATION_TEST
     g_can_test_result = CAN1_LoopbackTest();
+#endif
+#if APP_ZONE2_NAV_ENABLE && !APP_ZONE2_RADAR_CALIBRATION_TEST && APP_ZONE1_RADAR_LIFT_CONFIRMED && !APP_ZONE1_RADAR_SERVO_TEST
+    while (!g_radar_zone_locked) {
+        RadarObserver_Service();
+        vTaskDelay(pdMS_TO_TICKS(2U));
+    }
+    cfg.zone=(uint8_t)g_radar_zone_locked;
+    cfg.node_id=RADAR_NODE_FOR_ZONE(cfg.zone);
+    if (cfg.zone==1U) cfg.down_direction=RADAR_ZONE1_DOWN_DIRECTION;
 #endif
     g_radar_app_config_result = RadarObserver_Configure(&cfg) ? 1U : 2U;
 #if APP_ZONE2_RADAR_CALIBRATION_TEST
@@ -470,6 +499,7 @@ static void App_RadarTask(void *argument)
         }
         vTaskDelay(pdMS_TO_TICKS(2U));
     }
+#endif
 }
 
 #endif /* !APP_BASELINE40_ACTIVE */
@@ -536,6 +566,9 @@ int main(void)
     Buzzer_Init();
     /* 初始化调试串口，本轮仅发送 */
     USART1_Config();
+#if APP_ZONE2_MISSION_ENABLE
+    USART6_VisionConfig();
+#endif
     /* 调度前初始化启动按键 */
     /* UART4仅初始化，实际发送放到任务A */
     Screen_Init();
@@ -543,14 +576,14 @@ int main(void)
     /* 初始化PE2，默认关闭VM允许请求 */
     Power_Init();
 #if !APP_BASELINE40_ACTIVE
-    if (!APP_ZONE2_NAV_ENABLE) StartupPose_Init();
     RadarZoneSwitch_Init();
 #if !APP_ZONE2_RADAR_CALIBRATION_TEST
     (void)RadarServo_Init();
 #endif
+    if (!APP_ZONE2_NAV_ENABLE || APP_ZONE2_MISSION_ENABLE) StartupPose_Init();
 #endif
     Safety_Init();
-    if (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE) SAOMA_Init();
+    if (APP_ZONE2_MISSION_ENABLE || (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_Init();
     HWT101_Init();
     g_watchdog_init_result = Watchdog_Init();
     configASSERT(g_watchdog_init_result == 1U);

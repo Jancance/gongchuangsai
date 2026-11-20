@@ -56,7 +56,7 @@ typedef enum {
     ZONE2_NAV_GEOMETRY,ZONE2_NAV_COINCIDENT
 } Zone2NavPathResult;
 
-uint32_t Zone2NavPath_Leg(uint32_t index,Zone2NavLeg *leg);
+uint32_t Zone2NavPath_Leg(uint8_t start_id,uint32_t index,Zone2NavLeg *leg);
 uint32_t Zone2NavPath_Station(uint8_t grid_id,FusionPoint *point);
 /* Call only with a completed GRID_SCAN callback for the supplied context. */
 uint32_t Zone2NavPath_SetMap(const Zone2NavContext *context,const radar_client_grid_result_t *grid,Zone2NavMap *map);
@@ -67,7 +67,7 @@ uint32_t Zone2NavPath_Matches(const Zone2NavRequest *request,const Zone2NavReply
 Zone2NavPathResult Zone2NavPath_Prepare(const Zone2NavMap *map,const Zone2NavRequest *request,
     const Zone2NavReply *reply,const Zone2NavGeometry *geometry,Zone2NavRoute *route,FusionPlan *plan);
 /* stopped must be independent caller evidence. Budgets bound the supplied measured pose. */
-uint32_t Zone2NavPath_InsideReturn(FusionPoint pose,float heading_deg,float position_budget_mm,
+uint32_t Zone2NavPath_InsideReturn(uint8_t start_id,FusionPoint pose,float heading_deg,float position_budget_mm,
     float heading_budget_deg,uint32_t stopped);
 
 #endif

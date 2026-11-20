@@ -17,8 +17,9 @@ MAGIC = 0x3154325A
 PHASES = (
     "IDLE", "WAIT_READY", "SCAN", "PREPARE", "ZERO", "STOP",
     "SHADOW_DONE", "FAILED", "TRACK", "SECTION_ZERO", "DONE",
+    "QR_WAIT", "STATION_WAIT", "MISSION_DONE",
 )
-TERMINAL = {7, 10}
+TERMINAL = {7, 10, 13}
 COLUMNS = (
     "elapsed_ms", "source_ms", "phase", "completed_legs",
     "valid", "x_mm", "y_mm", "heading_deg", "terminal",

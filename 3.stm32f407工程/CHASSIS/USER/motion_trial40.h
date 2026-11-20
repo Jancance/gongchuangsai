@@ -4,7 +4,8 @@
 static __inline uint32_t MotionTrial40Allowed(uint32_t direction,uint32_t rpm,float mm)
 {
     return APP_BASELINE40_ACTIVE &&
-        (mm==APP_BASELINE40_MM || mm==1500.0f || mm==300.0f) &&
+        (mm==APP_BASELINE40_MM || mm==1500.0f || mm==300.0f ||
+         (APP_STRAIGHT_CAPTURE_ENABLE && (mm==1000.0f || mm==2000.0f))) &&
         (((direction==0U || direction==3U) && rpm==APP_BASELINE40_RPM) ||
          ((direction==1U || direction==2U) && rpm==APP_BASELINE40_LEFT_RPM));
 }

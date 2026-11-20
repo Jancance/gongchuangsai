@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>ICM45686_SAMPLE_ONLY=0,APP_CONTINUOUS_MAP_ENABLE=1,APP_MAP_NAV_RESIDUAL_ENABLE=1,APP_ZONE2_NAV_ENABLE=1,APP_ZONE2_NAV_MOTION_ENABLE=1,APP_ZONE2_POSE_TRACE_ENABLE=1,STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000,APP_MOTOR_OFFLINE_ONLY=0</Define>
+              <Define>ICM45686_SAMPLE_ONLY=0,APP_CONTINUOUS_MAP_ENABLE=1,APP_MAP_NAV_RESIDUAL_ENABLE=1,APP_ZONE2_NAV_ENABLE=1,APP_ZONE2_NAV_MOTION_ENABLE=1,APP_ZONE2_MISSION_ENABLE=1,STARTUP_EXTENSION_HOME_TEST_ONLY=0,APP_ZONE2_POSE_TRACE_ENABLE=1,STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000,APP_MOTOR_OFFLINE_ONLY=0</Define>
               <Undefine></Undefine>
               <IncludePath>.\CHASSIS\CORE;.\CHASSIS\USER;.\CHASSIS\StdPeriph_Driver\inc;.\CHASSIS\FreeRTOS\include;.\CHASSIS\FreeRTOS\portable\RVDS\ARM_CM4F;.\CHASSIS\HARDWARE\LED;.\CHASSIS\HARDWARE\BUZZER;.\CHASSIS\SYSTEM\USART;.\CHASSIS\HARDWARE\KEY;.\CHASSIS\HARDWARE\POWER;.\CHASSIS\SYSTEM\CAN;.\CHASSIS\SYSTEM\SAFETY;.\CHASSIS\SYSTEM\WATCHDOG;.\CHASSIS\HARDWARE\SCREEN;.\CHASSIS\HARDWARE\SAOMA;.\CHASSIS\HARDWARE\RADAR_SERVO;.\CHASSIS\HARDWARE\RADAR_V6;.\CHASSIS\HARDWARE\ICM45686;.\HARDWARE\GRIPPER;.\HARDWARE\CARRIER;.\HARDWARE\DM_CAN2</IncludePath>
             </VariousControls>
@@ -1154,6 +1154,36 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+            <File>
+              <FileName>lift_ruler_adapter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\USER\lift_ruler_adapter.c</FilePath>
+            </File>
+            <File>
+              <FileName>lift_ruler_calibration.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\USER\lift_ruler_calibration.c</FilePath>
+            </File>
+            <File>
+              <FileName>source_parallel_flow.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\USER\source_parallel_flow.c</FilePath>
+            </File>
+            <File>
+              <FileName>source_stage2_owner.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\USER\source_stage2_owner.c</FilePath>
+            </File>
+            <File>
+              <FileName>source_stage2_runtime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\USER\source_stage2_runtime.c</FilePath>
+            </File>
+            <File>
+              <FileName>source_stage2_vision_bridge.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\USER\source_stage2_vision_bridge.c</FilePath>
             </File>
             <File>
               <FileName>vehicle_arm.c</FileName>
@@ -1757,7 +1787,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>ICM45686_SAMPLE_ONLY=0,APP_CONTINUOUS_MAP_ENABLE=1,APP_MAP_NAV_RESIDUAL_ENABLE=1,APP_ZONE2_NAV_ENABLE=1,APP_ZONE2_NAV_MOTION_ENABLE=1,APP_ZONE2_POSE_TRACE_ENABLE=1,STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000,APP_MOTOR_OFFLINE_ONLY=1</Define>
+              <Define>ICM45686_SAMPLE_ONLY=0,APP_CONTINUOUS_MAP_ENABLE=1,APP_MAP_NAV_RESIDUAL_ENABLE=1,APP_ZONE2_NAV_ENABLE=1,APP_ZONE2_NAV_MOTION_ENABLE=1,APP_ZONE2_MISSION_ENABLE=1,STARTUP_EXTENSION_HOME_TEST_ONLY=0,APP_ZONE2_POSE_TRACE_ENABLE=1,STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000,APP_MOTOR_OFFLINE_ONLY=1</Define>
               <Undefine></Undefine>
               <IncludePath>.\CHASSIS\CORE;.\CHASSIS\USER;.\CHASSIS\StdPeriph_Driver\inc;.\CHASSIS\FreeRTOS\include;.\CHASSIS\FreeRTOS\portable\RVDS\ARM_CM4F;.\CHASSIS\HARDWARE\LED;.\CHASSIS\HARDWARE\BUZZER;.\CHASSIS\SYSTEM\USART;.\CHASSIS\HARDWARE\KEY;.\CHASSIS\HARDWARE\POWER;.\CHASSIS\SYSTEM\CAN;.\CHASSIS\SYSTEM\SAFETY;.\CHASSIS\SYSTEM\WATCHDOG;.\CHASSIS\HARDWARE\SCREEN;.\CHASSIS\HARDWARE\SAOMA;.\CHASSIS\HARDWARE\RADAR_SERVO;.\CHASSIS\HARDWARE\RADAR_V6;.\CHASSIS\HARDWARE\ICM45686;.\HARDWARE\GRIPPER;.\HARDWARE\CARRIER;.\HARDWARE\DM_CAN2</IncludePath>
             </VariousControls>
@@ -2573,6 +2603,36 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+            <File>
+              <FileName>lift_ruler_adapter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\USER\lift_ruler_adapter.c</FilePath>
+            </File>
+            <File>
+              <FileName>lift_ruler_calibration.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\USER\lift_ruler_calibration.c</FilePath>
+            </File>
+            <File>
+              <FileName>source_parallel_flow.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\USER\source_parallel_flow.c</FilePath>
+            </File>
+            <File>
+              <FileName>source_stage2_owner.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\USER\source_stage2_owner.c</FilePath>
+            </File>
+            <File>
+              <FileName>source_stage2_runtime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\USER\source_stage2_runtime.c</FilePath>
+            </File>
+            <File>
+              <FileName>source_stage2_vision_bridge.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CHASSIS\USER\source_stage2_vision_bridge.c</FilePath>
             </File>
             <File>
               <FileName>vehicle_arm.c</FileName>

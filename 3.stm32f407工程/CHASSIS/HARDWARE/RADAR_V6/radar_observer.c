@@ -1,5 +1,6 @@
 #include "radar_observer.h"
 #include "app_config.h"
+#include "radar_zone_config.h"
 #include "radar_uart_port.h"
 #include "radar_servo.h"
 #include "radar_servo_config.h"
@@ -46,6 +47,8 @@ static uint32_t now(void) { return (uint32_t)(xTaskGetTickCount()*portTICK_PERIO
 static bool configured(const RadarZone2Config *c)
 {
     return c && c->measured==1U && c->node_id>=1U && c->node_id<=254U &&
+        (c->zone==0U || c->zone==2U ||
+         (c->zone==1U && APP_ZONE1_RADAR_LIFT_CONFIRMED && c->node_id==RADAR_ZONE1_NODE_ID)) &&
         c->steps>=1U && c->steps<=RADAR_LIFT_LONG_MAX_STEPS && c->down_direction<=1U &&
         c->deploy_ms>0U && c->settle_ms>0U && c->stow_ms>0U &&
         c->stage_timeout_ms>c->deploy_ms && c->stage_timeout_ms>c->settle_ms &&
@@ -74,7 +77,7 @@ static bool same_map(const RadarObserverMapIdentity *a,const RadarObserverMapIde
 }
 static void on_state(const radar_client_state_t *s)
 {
-    bool ready=s->ready && s->connected && s->selected_zone==2U && s->node_id==config.node_id;
+    bool ready=s->ready && s->connected && s->selected_zone==config.zone && s->node_id==config.node_id;
     if(ready && !link_ready)link_generation++;
     if(!ready && link_ready && !mechanism && status.stage>0U && status.stage<8U && !status.error)
         status.error=5U;
@@ -149,19 +152,40 @@ static void configure_uart(void)
     n.NVIC_IRQChannel=USART3_IRQn;n.NVIC_IRQChannelPreemptionPriority=6U;
     n.NVIC_IRQChannelSubPriority=0U;n.NVIC_IRQChannelCmd=ENABLE;NVIC_Init(&n);USART_Cmd(USART3,ENABLE);
 }
+#if APP_ZONE1_RADAR_LIFT_TEST
+bool RadarObserver_PollZone1Link(void)
+{
+    static bool started;
+    radar_client_state_t client;
+    if(!started) {
+        configure_uart();
+        RadarClient_Init(NULL,RADAR_ZONE1_NODE_ID);
+        (void)RadarClient_RequestSelectZone(1U);
+        started=true;
+    }
+    RadarClient_Poll();
+    RadarClient_GetState(&client);
+    return client.connected && client.ready && client.node_id==RADAR_ZONE1_NODE_ID &&
+        client.selected_zone==1U;
+}
+#endif
+
 bool RadarObserver_Configure(const RadarZone2Config *c)
 {
     uint32_t key;bool ok=false;if(!configured(c))return false;
     key=RadarUartPort_EnterCritical();
     if(!configure_pending && !command && !owner_busy && !g_radar_mechanism_request && !cancel_pending && !stop_pending) {
-        pending_config=*c;configure_pending=1U;ok=true;
+        pending_config=*c;
+        if(!pending_config.zone) pending_config.zone=2U;
+        configure_pending=1U;ok=true;
     }
     RadarUartPort_ExitCritical(key);return ok;
 }
 static bool submit(uint8_t kind,uint8_t start,uint8_t goal)
 {
     uint32_t key=RadarUartPort_EnterCritical();bool ok=false;
-    if(initialized && !configure_pending && !command && !owner_busy && !g_radar_mechanism_request && !cancel_pending && !stop_pending) {
+    if(initialized && config.zone==2U && !configure_pending && !command && !owner_busy &&
+       !g_radar_mechanism_request && !cancel_pending && !stop_pending) {
         request_start=start;request_goal=goal;owner_busy=1U;command=kind;ok=true;
     }
     RadarUartPort_ExitCritical(key);return ok;
@@ -189,9 +213,9 @@ bool RadarObserver_IsScanReady(void)
 bool RadarObserver_StartScan(uint32_t run_id,uint8_t start_id,uint32_t layout_id)
 {
     uint32_t key;bool ok=false;
-    if(!run_id || start_id!=2U || !layout_id)return false;
+    if(!run_id || !layout_id || (start_id!=2U && (start_id!=1U || !APP_ZONE1_RADAR_LIFT_CONFIRMED)))return false;
     key=RadarUartPort_EnterCritical();
-    if(scan_ready() && run_id!=scan_run) {
+    if(scan_ready() && start_id==config.zone && run_id!=scan_run) {
         scan_run=run_id;scan_layout=layout_id;owner_busy=1U;command=CMD_SCAN;
         published_map.valid=0U;ok=true;
     }
@@ -281,7 +305,7 @@ static bool recover_radar_fault(uint32_t t,uint32_t error)
 /* 单一雷达任务服务入口，测试也执行此实际代码；不调用底盘接口。 */
 static void service_owner(void)
 {
-    uint8_t cmd;bool maintenance,cancel;uint32_t key,t=now();radar_client_state_t client;RadarLiftSnapshot lift;
+    uint8_t cmd,zone;bool maintenance,cancel;uint32_t key,t=now();radar_client_state_t client;RadarLiftSnapshot lift;
     key=RadarUartPort_EnterCritical();
     if(configure_pending) {
         config=pending_config;configure_pending=0U;initialized=0U;link_ready=0U;
@@ -296,7 +320,7 @@ static void service_owner(void)
         if(!owner_busy && !cmd && !configure_pending && !stop_pending && request<=2U &&
            g_radar_mechanism_wait_ms>0U && g_radar_mechanism_wait_ms<0x80000000U &&
            g_radar_mechanism_interval_us>=733U && g_radar_mechanism_interval_us<=4000U &&
-           g_radar_mechanism_budget_ms>=(uint32_t)(((uint64_t)8559U*g_radar_mechanism_interval_us+999U)/1000U) &&
+           g_radar_mechanism_budget_ms>=(uint32_t)(((uint64_t)RADAR_ZONE_LIFT_STEPS*g_radar_mechanism_interval_us+999U)/1000U) &&
            g_radar_mechanism_budget_ms>g_radar_mechanism_wait_ms && g_radar_mechanism_budget_ms<0x80000000U) {
             mechanism_wait=g_radar_mechanism_wait_ms;mechanism_budget=g_radar_mechanism_budget_ms;
             mechanism_interval=g_radar_mechanism_interval_us;cmd=(uint8_t)(request+2U);owner_busy=1U;
@@ -305,11 +329,12 @@ static void service_owner(void)
     }
     RadarUartPort_ExitCritical(key);
     maintenance=cmd==3U || cmd==4U;
+    zone=(maintenance || mechanism)?2U:config.zone;
     if(!maintenance && !mechanism && configured(&config) && !initialized) {
         radar_client_callbacks_t cb;memset(&cb,0,sizeof(cb));
         cb.state=on_state;cb.error=on_error;cb.grid=on_grid;cb.path=on_path;cb.calibration=on_calibration;
         configure_uart();RadarClient_Init(&cb,config.node_id);
-        (void)RadarClient_RequestSelectZone(2U);initialized=1U;
+        (void)RadarClient_RequestSelectZone(config.zone);initialized=1U;
     }
     if(initialized && !mechanism && !maintenance)RadarClient_Poll();
     key=RadarUartPort_EnterCritical();
@@ -346,12 +371,12 @@ static void service_owner(void)
         mechanism=maintenance;
         if((!mechanism && (!configured(&config) || !RadarClient_IsReady() || RadarClient_IsBusy())) ||
            (cmd==CMD_SCAN && !link_ready) ||
-           !RadarLift_SafeIdle(t) || !RadarLift_Claim()) {
+           !RadarLift_SafeIdle(t) || !RadarLift_Claim(zone)) {
             status.error=1U;if(mechanism)g_radar_mechanism_result=3U;stage(99U);return;
         }
         lift_claimed=1U;scan_only=cmd==CMD_SCAN;
         calibrating=cmd==2U;grid_done=calibration_done=path_done=0U;
-        leg_steps=mechanism?8559U:config.steps;
+        leg_steps=mechanism?RADAR_ZONE_LIFT_STEPS:config.steps;
         leg_direction=mechanism?1U:config.down_direction;
         leg_budget=mechanism?mechanism_budget:config.stage_timeout_ms-250U;
         leg_wait=mechanism?mechanism_wait:config.deploy_ms;
@@ -361,7 +386,7 @@ static void service_owner(void)
             if(!RadarLift_Enable(t) || !RadarLift_BeginBounded(leg_steps,0U,leg_budget,&lift_sequence)){fail(2U);return;}
             stage(5U);
         } else {
-            if(RadarServo_SetAngle(2U,RADAR_SERVO2_DEPLOY_DEG)!=1U){fail(2U);return;}stage(1U);
+            if(RadarServo_SetAngle(zone,zone==1U?RADAR_SERVO1_DEPLOY_DEG:RADAR_SERVO2_DEPLOY_DEG)!=1U){fail(2U);return;}stage(1U);
         }
     }
     if(status.stage==0U || status.stage>=8U)return;
@@ -380,7 +405,7 @@ static void service_owner(void)
 #endif
     {
     if(status.error){fail(status.error);return;}
-    if((!mechanism && (!client.ready || client.selected_zone!=2U)) || (lift_claimed && !RadarLift_SafeIdle(t)) ||
+    if((!mechanism && (!client.ready || client.selected_zone!=zone)) || (lift_claimed && !RadarLift_SafeIdle(t)) ||
        (uint32_t)(t-entered)>(mechanism?mechanism_budget:config.stage_timeout_ms)) { fail(5U);return; }
     }
     switch(status.stage) {
@@ -400,7 +425,7 @@ static void service_owner(void)
             }
             else {
                 if(!mechanism && !calibrating && !RadarLift_Release(lift_sequence)){fail(2U);break;}
-                if(RadarServo_SetAngle(2U,180.0f)!=1U){fail(2U);break;}stage(6U);
+                if(RadarServo_SetAngle(zone,zone==1U?RADAR_SERVO1_INIT_DEG:RADAR_SERVO2_INIT_DEG)!=1U){fail(2U);break;}stage(6U);
             }
         }break;
     case 3U:
@@ -444,9 +469,9 @@ static void service_owner(void)
                 nav_map.identity.layout_id=scan_layout;
                 nav_map.identity.link_generation=link_generation;
                 nav_map.identity.scan_sequence=scan_sequence;
-                nav_map.identity.start_id=2U;
+                nav_map.identity.start_id=zone;
                 nav_map.identity.node_id=config.node_id;
-                nav_map.identity.zone=2U;
+                nav_map.identity.zone=zone;
 #if APP_ZONE2_NAV_MOTION_ENABLE && !APP_ZONE2_RADAR_CALIBRATION_TEST
                 idle_bad_event_ignored=0U;
 #endif
