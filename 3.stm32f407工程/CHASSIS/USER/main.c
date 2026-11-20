@@ -229,8 +229,8 @@ static void App_TestTaskA(void *argument)
     /* FreeRTOS运行后才开启接收中断 */
     if (APP_IS_DEBUG) USART1_EnableReceive();
     /* 启动时只请求发送一次基础平台就绪信息 */
-    if (APP_ZONE2_MISSION_ENABLE || (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_EnableReceive();
-#if APP_ZONE2_MISSION_ENABLE
+    if ((APP_ZONE2_MISSION_ENABLE && !APP_ZONE2_RADAR_CALIBRATION_TEST) || (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_EnableReceive();
+#if APP_ZONE2_MISSION_ENABLE && !APP_ZONE2_RADAR_CALIBRATION_TEST
     USART6_VisionEnableReceive();
 #endif
     HWT101_EnableReceive();
@@ -273,7 +273,7 @@ static void App_TestTaskA(void *argument)
         App_HeadingLiveStep();
         #endif
         /* 一轮最多处理64字节；只有任务A交接并更新屏幕 */
-        if (APP_ZONE2_MISSION_ENABLE || (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_Update();
+        if ((APP_ZONE2_MISSION_ENABLE && !APP_ZONE2_RADAR_CALIBRATION_TEST) || (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_Update();
         if(APP_BASELINE40_ACTIVE || APP_ZONE2_NAV_ENABLE) { /* Dedicated chassis branch; no mission dispatch. */ }
         else if(VEHICLE_INTEGRATED_ENABLE){AppMotion_MissionService();AppMotion_MissionTelemetry();}
         else if(VEHICLE_STAGE1_ENABLE)
@@ -314,7 +314,7 @@ static void App_TestTaskB(void *argument)
         /* 每500毫秒翻转一次，完整亮灭周期约1秒 */
         LED_Turn();
         /* 查询任务B自己的最小剩余栈 */
-#if APP_ZONE2_MISSION_ENABLE
+#if APP_ZONE2_MISSION_ENABLE && !APP_ZONE2_RADAR_CALIBRATION_TEST
         AppZone2_DisplayTaskCode();
 #endif
         g_stack_b_words = uxTaskGetStackHighWaterMark(NULL);
@@ -566,7 +566,7 @@ int main(void)
     Buzzer_Init();
     /* 初始化调试串口，本轮仅发送 */
     USART1_Config();
-#if APP_ZONE2_MISSION_ENABLE
+#if APP_ZONE2_MISSION_ENABLE && !APP_ZONE2_RADAR_CALIBRATION_TEST
     USART6_VisionConfig();
 #endif
     /* 调度前初始化启动按键 */
@@ -580,10 +580,10 @@ int main(void)
 #if !APP_ZONE2_RADAR_CALIBRATION_TEST
     (void)RadarServo_Init();
 #endif
-    if (!APP_ZONE2_NAV_ENABLE || APP_ZONE2_MISSION_ENABLE) StartupPose_Init();
+    if (!APP_ZONE2_NAV_ENABLE || (APP_ZONE2_MISSION_ENABLE && !APP_ZONE2_RADAR_CALIBRATION_TEST)) StartupPose_Init();
 #endif
     Safety_Init();
-    if (APP_ZONE2_MISSION_ENABLE || (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_Init();
+    if ((APP_ZONE2_MISSION_ENABLE && !APP_ZONE2_RADAR_CALIBRATION_TEST) || (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_Init();
     HWT101_Init();
     g_watchdog_init_result = Watchdog_Init();
     configASSERT(g_watchdog_init_result == 1U);
