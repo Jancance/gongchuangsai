@@ -77,7 +77,9 @@
 #error Speed_trial160_mode_requires_matching_vehicle_parameters
 #endif
 /* 0 forward, 1 reverse, 2 left, 3 right. */
-#define APP_SPEED_TRIAL160_MAX_RPM 397U
+#define APP_SPEED_TRIAL160_BASE_RPM 397U
+#define APP_SPEED_TRIAL160_HEADING_MAX_RPM 20U
+#define APP_SPEED_TRIAL160_MAX_RPM (APP_SPEED_TRIAL160_BASE_RPM + APP_SPEED_TRIAL160_HEADING_MAX_RPM)
 #if APP_SPEED_TRIAL160 > 1U || APP_SPEED_TRIAL160_DIRECTION > 3U
 #error Invalid_speed_trial160_configuration
 #endif

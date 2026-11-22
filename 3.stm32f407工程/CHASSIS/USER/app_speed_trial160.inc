@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "app_entry.h"
+#include "heading_controller.h"
 #include "heading_source.h"
 #include "icm45686_raw.h"
 
@@ -59,6 +60,7 @@ static uint32_t s_trial_wheel_ms[4], s_trial_hwt_sequence, s_trial_icm_sequence;
 static uint32_t s_trial_phase, s_trial_reason, s_trial_tick, s_trial_record;
 #if !VEHICLE_SPEED_TRIAL160_VM_SETUP_ONLY
 static uint32_t s_trial_index;
+static float s_trial_target_yaw;
 #endif
 static volatile uint32_t s_trial_start_request, s_trial_cancel_request;
 static volatile uint32_t s_trial_export_ready;
@@ -184,6 +186,7 @@ static void SpeedTrial_Drive(const ChassisZone2CanStatus *status,uint32_t now)
     ChassisMotorCommand commands[4];
     AppHeadingSource heading;
     uint32_t i, profile;
+    int32_t trim=0;
     if (!status->ready) return;
     if (s_trial_index==batch_count && status->zero_confirmed) {
         SpeedTrial_Stop(TRIAL_OK);
@@ -195,13 +198,28 @@ static void SpeedTrial_Drive(const ChassisZone2CanStatus *status,uint32_t now)
     }
     s_trial_record=1U;
     profile=s_trial_index<batch_count && (s_trial_index || status->zero_confirmed);
+    if (profile) {
+        uint32_t limit=APP_SPEED_TRIAL160_HEADING_MAX_RPM;
+        float correction;
+        if (s_trial_index==0U) s_trial_target_yaw=heading.yaw_deg;
+        for (i=0U;i<4U;i++)
+            if (s_trial_rpm[s_trial_index][i]<limit) limit=s_trial_rpm[s_trial_index][i];
+        correction=2.5f*HeadingController_ErrorDeg(s_trial_target_yaw,heading.yaw_deg)
+            -0.20f*heading.rate_dps;
+        if (correction>(float)limit) correction=(float)limit;
+        if (correction<-(float)limit) correction=-(float)limit;
+        trim=(int32_t)(correction+(correction<0.0f ? -0.5f : 0.5f));
+    }
     for (i=0U;i<4U;i++) {
         /* LR, RR, LF, RF. Left uses + - - + in logical wheel coordinates. */
         uint32_t reverse=(APP_SPEED_TRIAL160_DIRECTION&1U) ^
             (APP_SPEED_TRIAL160_DIRECTION>=2U && (i==1U || i==2U));
+        int32_t rpm=profile ? s_trial_rpm[s_trial_index][i] : 0;
+        /* Positive yaw slows the left wheels and speeds up the right wheels. */
+        rpm+=((i&1U)^reverse) ? trim : -trim;
         commands[i].address=(uint8_t)(i+1U);
         commands[i].direction=(uint8_t)(g_chassis_forward_direction[i]^reverse);
-        commands[i].speed_raw=profile ? s_trial_rpm[s_trial_index][i] : 0U;
+        commands[i].speed_raw=(uint16_t)rpm;
     }
     if (ChassisAuto_Zone2SubmitAt(TRIAL_RUN_ID,status->session,status->ack_generation+1U,
                                 status->next_batch_ms,commands)) {
