@@ -2126,16 +2126,13 @@ static void Auto_NavMonitor(uint32_t slot,uint32_t phase,uint32_t session,uint32
             s_nav.wheel_renewed_mask|=bit;
             if (s_nav.wheel_renewed_mask==ZONE2_FULL_MASK) s_nav.wheel_retry=0U;
             Auto_NavRememberWheel(i,&feedback);
+#if !APP_SPEED_TRIAL160
             if (g_chassis_auto_active && g_chassis_auto_state<=CHASSIS_AUTO_RUN && !s_stop_due) {
-#if APP_SPEED_TRIAL160
-                /* The 0x43 integer RPM feedback is already normalized to deci-RPM. */
-                const float limit=(float)(APP_SPEED_TRIAL160_MAX_RPM*10U+5U);
-#else
                 float limit=g_fusion_motion_limits.wheel_rpm*10.0f+5.0f;
-#endif
                 if ((float)feedback.speed_decirpm < -limit || (float)feedback.speed_decirpm > limit)
                     Auto_CutDetailLocked(8U,9U,result,i+1U);
             }
+#endif
         }
     }
     taskEXIT_CRITICAL();
