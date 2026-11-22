@@ -200,12 +200,18 @@ static void SpeedTrial_Drive(const ChassisZone2CanStatus *status,uint32_t now)
     profile=s_trial_index<batch_count && (s_trial_index || status->zero_confirmed);
     if (profile) {
         uint32_t limit=APP_SPEED_TRIAL160_HEADING_MAX_RPM;
+        float kp=(APP_SPEED_TRIAL160_DIRECTION==2U) ?
+            APP_SPEED_TRIAL160_LEFT_HEADING_KP_RPM_PER_DEG :
+            APP_SPEED_TRIAL160_HEADING_KP_RPM_PER_DEG;
+        float kd=(APP_SPEED_TRIAL160_DIRECTION==2U) ?
+            APP_SPEED_TRIAL160_LEFT_HEADING_KD_RPM_PER_DPS :
+            APP_SPEED_TRIAL160_HEADING_KD_RPM_PER_DPS;
         float correction;
         if (s_trial_index==0U) s_trial_target_yaw=heading.yaw_deg;
         for (i=0U;i<4U;i++)
             if (s_trial_rpm[s_trial_index][i]<limit) limit=s_trial_rpm[s_trial_index][i];
-        correction=2.5f*HeadingController_ErrorDeg(s_trial_target_yaw,heading.yaw_deg)
-            -0.20f*heading.rate_dps;
+        correction=kp*HeadingController_ErrorDeg(s_trial_target_yaw,heading.yaw_deg)
+            -kd*heading.rate_dps;
         if (correction>(float)limit) correction=(float)limit;
         if (correction<-(float)limit) correction=-(float)limit;
         trim=(int32_t)(correction+(correction<0.0f ? -0.5f : 0.5f));
