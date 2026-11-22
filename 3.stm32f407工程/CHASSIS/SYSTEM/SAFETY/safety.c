@@ -1,6 +1,7 @@
 #include "startup_axes.h"
 #include "safety.h"
 #include "chassis_auto_test.h"
+#include "can.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "power.h"
@@ -723,6 +724,17 @@ static void Safety_MotionPermissionUpdate(uint32_t vm_request)
 }
 
 /* 只有监督任务调用；故障锁定后，正常心跳恢复也不能自动开VM */
+/* A normally stopped chassis still shares live VM with held arm axes.
+ * Keep real wheel queries alive without restoring chassis motion permission. */
+static uint32_t Safety_ChassisFeedbackVm(uint32_t vm_request)
+{
+    if(vm_request!=0U)return vm_request;
+    if(g_safety_ready!=1U || g_safety_fault || g_rtos_fault ||
+       g_can_ctrl_fault_latched || g_startup_axes_vm_request!=1U ||
+       g_motion_auto_stop_cut_vm || g_wheel_test_cut_vm)return 0U;
+    return StartupAxes_NormalStopHold()?1U:0U;
+}
+
 void Safety_Update(uint32_t vm_request, uint32_t can_test_result)
 {
     TickType_t now;
@@ -794,7 +806,7 @@ void Safety_Update(uint32_t vm_request, uint32_t can_test_result)
 
     /* 更新诊断并发布停止请求，失败或超时追加关VM条件 */
     Safety_WheelTestUpdate(vm_request);
-    ChassisAuto_SafetyUpdate(vm_request);
+    ChassisAuto_SafetyUpdate(Safety_ChassisFeedbackVm(vm_request));
     Safety_MotionPermissionUpdate(((g_wheel_test_cut_vm == 1U) || (g_chassis_auto_cut_vm == 1U)) ? 0U : vm_request);
     Safety_MotionStopUpdate(((g_wheel_test_cut_vm == 1U) || (g_chassis_auto_cut_vm == 1U)) ? 0U : vm_request);
 

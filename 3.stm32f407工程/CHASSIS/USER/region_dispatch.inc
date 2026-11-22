@@ -247,7 +247,13 @@ void RegionDispatch_MapService(uint32_t now)
  if(map_ticket!=station.ticket)return;
  state=RegionDispatch_Poll(map_ticket);
  if(state==REGION_MODULE_DONE || state==REGION_MODULE_FAULT || state==REGION_MODULE_STOPPED){
-  (void)AppZone2_StationComplete(map_ticket,state==REGION_MODULE_DONE);
+#if APP_ZONE2_UNVERIFIED_TRIAL_ENABLE
+  if(state==REGION_MODULE_DONE &&
+     (station.kind==APP_ZONE2_STORAGE_BASE || station.kind==APP_ZONE2_STORAGE_STACK))
+   (void)AppZone2_StationCompleteUnverified(map_ticket);
+  else
+#endif
+   (void)AppZone2_StationComplete(map_ticket,state==REGION_MODULE_DONE);
   map_ticket=0U;
  }
 }

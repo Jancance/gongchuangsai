@@ -7,9 +7,9 @@
 #define REF_BATCH_MS FUSION_MOTION_FEEDBACK_PERIOD_MS
 #define REF_BATCH_S 0.08f
 #define REF_SPEED 250.0f
-#define REF_ACCEL 120.0f
-#define REF_JERK 240.0f
-#define LONG_LINE_SPEED 400.0f
+#define REF_ACCEL 600.0f
+#define REF_JERK 1200.0f
+#define LONG_LINE_SPEED 600.0f
 #define LONG_LINE_MIN_MM 780.0f
 #define TRACK_MM 2.0f
 #define EDGE_TRACK_MM 1.0f
@@ -191,7 +191,8 @@ static void fit_long_line(FusionPoint d,float length,float cap,Zone2MotionSpan *
     const float minimum=fmaxf(entry,exit);
     float lo=minimum,hi=fminf(cap,LONG_LINE_SPEED),peak,rise,fall,dist,seconds;
     uint32_t i,batches;
-    if(length<LONG_LINE_MIN_MM || fminf(fabsf(d.x_mm),fabsf(d.y_mm))>1.0e-6f ||
+    (void)d;
+    if(length<LONG_LINE_MIN_MM ||
        hi<=minimum || s_ramp_distance(entry,exit,lo,&rise,&fall)>length) return;
 
     /* Find the fastest feasible peak, then refit it to a whole number of batches. */
@@ -324,7 +325,7 @@ static uint32_t add_turn(const FusionPlan *p,Zone2MotionReference *r,FusionPoint
     return 1U;
 }
 
-uint32_t Zone2MotionReference_Prepare(const FusionPlan *p,Zone2MotionReference *r)
+static uint32_t prepare_with_stop(const FusionPlan *p,Zone2MotionReference *r,uint32_t stop_node)
 {
     Corner corners[FUSION_POINTS]={0};
     Zone2MotionSpan span={0};
@@ -344,7 +345,7 @@ uint32_t Zone2MotionReference_Prepare(const FusionPlan *p,Zone2MotionReference *
     ext=body_extent(&in->config,hold);
     for(i=0U;i<n;i++)
         if(!(p->lengths[i]>=.01f && p->lengths[i]<=4000.0f) || !clear_line(p,i,ext)) return 0U;
-    for(i=1U;i<n;i++) select_corner(p,i,ext,&corners[i]);
+    for(i=1U;i<n;i++) if(i!=stop_node) select_corner(p,i,ext,&corners[i]);
     for(;;) {
         memset(r,0,sizeof(*r));
         r->hold_rad=hold*DEG_TO_RAD;
@@ -387,6 +388,22 @@ uint32_t Zone2MotionReference_Prepare(const FusionPlan *p,Zone2MotionReference *
     }
     r->sections[r->section_count-1U].terminal=1U;
     return 1U;
+}
+
+uint32_t Zone2MotionReference_Prepare(const FusionPlan *p,Zone2MotionReference *r)
+{
+    return prepare_with_stop(p,r,0U);
+}
+
+uint32_t Zone2MotionReference_PrepareWithStop(const FusionPlan *p,Zone2MotionReference *r,uint32_t stop_node)
+{
+    if(r) r->section_count=0U;
+    if(stop_node!=1U || !p || p->valid!=1U || p->input.count<3U ||
+       (p->input.identity.path_id!=3U && p->input.identity.path_id!=6U) ||
+       (p->input.identity.start_id!=1U && p->input.identity.start_id!=2U) ||
+       !(fabsf(p->input.points[1].x_mm-FIELD_RAW_X_MM)<=0.01f &&
+         fabsf(p->input.points[1].y_mm-FIELD_RAW_Y_MM)<=0.01f)) return 0U;
+    return prepare_with_stop(p,r,stop_node);
 }
 
 static float ramp_area(float u)

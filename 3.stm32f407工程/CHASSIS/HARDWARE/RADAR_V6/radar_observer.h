@@ -31,6 +31,7 @@ typedef struct {
     uint32_t sequence,stage,error;
     uint8_t map_valid,path_valid,calibration_complete;
     uint8_t recovered; /* 故障后完成回升和收拢的开环输出。 */
+    uint8_t obstacle_count; /* 与本次GRID序号配对的RESULT障碍数。 */
 } RadarObserverStatus;
 typedef struct {
     uint32_t run_id,map_generation,layout_id,link_generation,scan_sequence;
@@ -62,6 +63,7 @@ bool RadarObserver_Configure(const RadarZone2Config *config);
 bool RadarObserver_StartZone2(uint8_t start,uint8_t goal,bool manual_stowed_reference);
 /* 区2导航调用方负责锁存PC13、收拢基准及run_id唯一性；握手就绪后仅入队一次。 */
 bool RadarObserver_IsScanReady(void);
+bool RadarObserver_IsReadyForZone(uint32_t zone);
 bool RadarObserver_StartScan(uint32_t run_id,uint8_t start_id,uint32_t layout_id);
 /* 两个读接口仅在结果匹配时写入调用方对象，状态与结果同次发布。 */
 bool RadarObserver_GetMap(uint32_t run_id,RadarObserverMap *map);

@@ -13,7 +13,7 @@
 #define FEEDBACK_YAW_CAP (3.0f * FEEDBACK_RAD_PER_DEG)
 
 const FusionMotionLimits g_fusion_motion_limits = {
-    400.0f,150.0f,300.0f,MOTION_PI/2.0f,MOTION_PI,8.0f*MOTION_PI,
+    600.0f,600.0f,1200.0f,MOTION_PI/2.0f,MOTION_PI,8.0f*MOTION_PI,
     300.0f,250.0f,1400.0f
 };
 

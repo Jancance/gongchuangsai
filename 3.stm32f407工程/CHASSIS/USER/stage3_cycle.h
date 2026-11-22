@@ -1,7 +1,7 @@
 #ifndef STAGE3_CYCLE_H
 #define STAGE3_CYCLE_H
 #include <stdint.h>
-#define S3_STRICT_NORM_UM 2000U
+#define S3_STRICT_NORM_UM 5000U
 #define S3_STRICT_YAW_MDEG 1000L
 #define S3_STRICT_YAW_DEG 1.0f
 #define S3_STRICT_TRANSLATE_MIN_MM 0.25f
@@ -28,6 +28,7 @@ extern volatile uint32_t g_stage3_cycle_mode,g_stage3_locked_run;
 extern volatile uint32_t g_stage3_first_colors[3],g_stage3_first_positions[3],g_stage3_first_mapping_valid;
 extern volatile float g_stage3_recovery_depth[3];
 uint32_t Stage3_Owns(void);
+uint32_t Stage3_CarrierReturn600Owned(void);
 uint32_t Stage3_ReplayBodyQueueOwned(void);
 uint32_t Stage3_ReplayStopPending(void);
 uint32_t Stage3_FineTurnAllowed(void);

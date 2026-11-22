@@ -327,8 +327,6 @@ void AppInput_KeyStep(void)
 #elif APP_ZONE2_NAV_ENABLE
     uint32_t now=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
     RadarZoneSwitch_Service(now);
-    RadarLift_Service(now,!g_vm_test_request && !g_chassis_auto_active && !g_safety_fault &&
-        !g_rtos_fault && !g_can_ctrl_fault_latched);
     if (Key_GetEvent()!=0U) {
         g_start_key_count++;
 #if APP_ZONE2_RADAR_CALIBRATION_TEST

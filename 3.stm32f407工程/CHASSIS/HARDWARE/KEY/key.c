@@ -8,6 +8,11 @@
 static uint8_t g_key_last_raw = 1U;
 static uint8_t g_key_release_seen = 0U;
 static TickType_t g_key_change_tick = 0U;
+static uint8_t g_key_press_active = 0U;
+static uint8_t g_key_reset_fired = 0U;
+static TickType_t g_key_press_tick = 0U;
+
+#define KEY_RESET_HOLD_MS 3000U
 
 /* 初始化启动按键输入，使用上拉 */
 void Key_Init(void)
@@ -28,9 +33,12 @@ void Key_Init(void)
     g_key_release_seen = 0U;
 #endif
     g_key_change_tick = 0U;
+    g_key_press_active = 0U;
+    g_key_reset_fired = 0U;
+    g_key_press_tick = 0U;
 }
 
-/* 稳定20ms产生一次事件；长按不重复，再次按下需先稳定释放 */
+/* Debounced short event is emitted on release; a continuous 3 s hold resets. */
 uint8_t Key_GetEvent(void)
 {
     uint8_t raw;
@@ -51,15 +59,35 @@ uint8_t Key_GetEvent(void)
         return 0U;
     }
 
-    if (raw != 0U)
+    if (raw == 0U)
     {
-        g_key_release_seen = 1U;
-    }
-    else if (g_key_release_seen != 0U)
-    {
-        g_key_release_seen = 0U;
-        return 1U;
+        if (g_key_release_seen != 0U)
+        {
+            g_key_release_seen = 0U;
+            g_key_press_active = 1U;
+            g_key_reset_fired = 0U;
+            g_key_press_tick = g_key_change_tick;
+        }
+
+        if ((g_key_press_active != 0U) && (g_key_reset_fired == 0U) &&
+            ((TickType_t)(now - g_key_press_tick) >=
+             pdMS_TO_TICKS(KEY_RESET_HOLD_MS)))
+        {
+            g_key_reset_fired = 1U;
+            NVIC_SystemReset();
+        }
+        return 0U;
     }
 
+    if (g_key_press_active != 0U)
+    {
+        uint8_t short_event = (g_key_reset_fired == 0U) ? 1U : 0U;
+        g_key_press_active = 0U;
+        g_key_reset_fired = 0U;
+        g_key_release_seen = 1U;
+        return short_event;
+    }
+
+    g_key_release_seen = 1U;
     return 0U;
 }
