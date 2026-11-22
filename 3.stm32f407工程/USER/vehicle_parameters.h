@@ -1,6 +1,9 @@
 #ifndef VEHICLE_PARAMETERS_H
 #define VEHICLE_PARAMETERS_H
 #include <stdint.h>
+#ifndef VEHICLE_SPEED_TRIAL160_MODE
+#define VEHICLE_SPEED_TRIAL160_MODE 0U /* 0U 普通 v1.1（四轮 S_Vel_IS=Enable），1U 校准供电（PC13 开关 VM），2U 测速（四轮 S_Vel_IS=Disable）。 */
+#endif
 /* 区 2 雷达两点校准测试。PC13 触发 ID 2 校准，成功后扫图一次，底盘原地待机。 */
 //#define APP_ZONE2_RADAR_CALIBRATION_TEST 1U
 /* 区 1 舵机单测。PC13 每按一次，在 500 µs 收拢和 2500 µs 端点命令之间切换。 */
@@ -203,9 +206,7 @@ static const float vehicle_station_extension_mm[8][3]={
 #ifndef APP_ZONE2_UNVERIFIED_TRIAL_ENABLE
 #define APP_ZONE2_UNVERIFIED_TRIAL_ENABLE 1U
 #endif
-#ifndef VEHICLE_SPEED_TRIAL160_MODE
-#define VEHICLE_SPEED_TRIAL160_MODE 0U
-#endif
+
 #ifndef VEHICLE_SPEED_TRIAL160_DIRECTION
 #define VEHICLE_SPEED_TRIAL160_DIRECTION 0U
 #endif
