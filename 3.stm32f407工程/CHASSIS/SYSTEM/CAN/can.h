@@ -58,6 +58,8 @@ uint32_t CAN1_SetMotorEnable(uint8_t address, uint8_t enabled,
 
 /* 立即停止；地址限定1～4 */
 uint32_t CAN1_StopMotor(uint8_t address, CanRxMsg *reply);
+uint32_t CAN1_ReadWheelOptionsBounded(uint8_t address, uint32_t slot_ms,
+                                      uint16_t *flags, uint32_t *reply_ms);
 
 /* Emm速度控制：输入缩小10倍，加速度为0..255档。 */
 uint32_t CAN1_SetEmmSpeedRaw(uint8_t address, uint8_t direction,

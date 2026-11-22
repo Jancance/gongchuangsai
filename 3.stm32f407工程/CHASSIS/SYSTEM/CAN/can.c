@@ -8,6 +8,9 @@
 #include "../../../USER/vehicle_parameters.h"
 #include "power.h"
 #include "safety.h"
+#if APP_SPEED_TRIAL160
+#include "chassis_auto_test.h"
+#endif
 
 /* 新目标航向模式不允许单次交易长于指令提交监督期限。 */
 #if APP_HEADING_SESSION_TEST
@@ -306,6 +309,15 @@ static uint32_t CAN1_SubmitWindow(CanTxMsg *tx, uint32_t slot_ms,
         taskEXIT_CRITICAL();
         return CAN1_TIMING_WINDOW;
     }
+#if APP_SPEED_TRIAL160
+    if (tx->Data[0]==0xF6U && (tx->Data[2] || tx->Data[3]) &&
+        !ChassisAuto_SpeedTrialPermit((uint8_t)(tx->ExtId >> 8),
+            (uint16_t)(((uint16_t)tx->Data[2] << 8) | tx->Data[3])))
+    {
+        taskEXIT_CRITICAL();
+        return 9U;
+    }
+#endif
     *mailbox = CAN_Transmit(CAN1, tx);
     taskEXIT_CRITICAL();
     if (*mailbox == CAN_TxStatus_NoMailBox) return 4U;
@@ -518,6 +530,29 @@ uint32_t CAN1_ReadStatus(uint8_t address, CanRxMsg *reply)
     }
     return result;
 }
+#if APP_SPEED_TRIAL160
+uint32_t CAN1_ReadWheelOptionsBounded(uint8_t address, uint32_t slot_ms,
+                                      uint16_t *flags, uint32_t *reply_ms)
+{
+    const uint8_t request[2] = {0x1AU, 0x6BU};
+    CAN1_EmmSpeedReceipt receipt = {0};
+    CanRxMsg reply = {0};
+    uint32_t result;
+    if (address<1U || address>4U || !flags || !reply_ms) return 7U;
+    *flags=0U;
+    *reply_ms=0U;
+    result=CAN1_ExchangeSingleWindow(address,request,2U,4U,&reply,slot_ms,&receipt);
+    if (result==1U && (receipt.reply_ms-slot_ms>CAN1_NAV_COMPLETION_MS ||
+        CAN1_NowMs()-slot_ms>CAN1_NAV_COMPLETION_MS)) result=CAN1_TIMING_WINDOW;
+    if (result==1U) {
+        if (reply.Data[0]!=0x1AU || reply.Data[3]!=0x6BU) result=6U;
+        else *flags=(uint16_t)(((uint16_t)reply.Data[1]<<8)|reply.Data[2]);
+        if (result==1U) *reply_ms=receipt.reply_ms;
+    }
+    return result;
+}
+#endif
+
 uint32_t CAN1_ReadStatusBounded(uint8_t address, uint32_t slot_ms,
                                 CanRxMsg *reply, uint32_t *reply_ms)
 {
@@ -707,6 +742,9 @@ static uint32_t CAN1_EmmSpeed(uint8_t address,uint8_t direction,uint16_t speed_r
 {
  uint8_t request[7];
  if(speed_raw && !ZDT_EMM_SETTINGS_CONFIRMED)return 9U;
+#if APP_SPEED_TRIAL160
+ if(speed_raw && (!receipt || sync || acceleration || speed_raw>APP_SPEED_TRIAL160_MAX_RPM))return 9U;
+#endif
  if(speed_raw>ZDT_EMM_APP_MAX_SPEED_RAW || !ZdtEmm_EncodeSpeed(direction,speed_raw,acceleration,sync,request))return 7U;
  { uint32_t result;int32_t target=direction?-(int32_t)speed_raw:(int32_t)speed_raw;
    ChassisLoad_RecordCommand(address,target,CHASSIS_LOAD_TX,0U,(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS);

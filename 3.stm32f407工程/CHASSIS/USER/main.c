@@ -230,8 +230,9 @@ static void App_TestTaskA(void *argument)
     /* FreeRTOS运行后才开启接收中断 */
     if (APP_IS_DEBUG) USART1_EnableReceive();
     /* 启动时只请求发送一次基础平台就绪信息 */
-    if (APP_ZONE2_MISSION_ENABLE || (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_EnableReceive();
-#if APP_ZONE2_MISSION_ENABLE
+    if ((APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160) ||
+        (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_EnableReceive();
+#if APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160
     USART6_VisionEnableReceive();
 #endif
     HWT101_EnableReceive();
@@ -276,7 +277,8 @@ static void App_TestTaskA(void *argument)
         App_HeadingLiveStep();
         #endif
         /* 一轮最多处理64字节；只有任务A交接并更新屏幕 */
-        if (APP_ZONE2_MISSION_ENABLE || (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_Update();
+        if ((APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160) ||
+            (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_Update();
         if(APP_BASELINE40_ACTIVE || APP_ZONE2_NAV_ENABLE) { /* Dedicated chassis branch; no mission dispatch. */ }
         else if(VEHICLE_INTEGRATED_ENABLE){AppMotion_MissionService();AppMotion_MissionTelemetry();}
         else if(VEHICLE_STAGE1_ENABLE)
@@ -289,6 +291,9 @@ static void App_TestTaskA(void *argument)
             AppInput_ScanDisplay(screen_start_tick);
         }
 
+#if APP_SPEED_TRIAL160
+        AppChassis_SpeedTrialLog();
+#endif
         if (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE) App_StartGateUpdate();
 #if APP_SERIAL_MOTION_CONTROL && !APP_ZONE2_NAV_ENABLE
         AppSerial_Telemetry();
@@ -317,7 +322,7 @@ static void App_TestTaskB(void *argument)
         /* 每500毫秒翻转一次，完整亮灭周期约1秒 */
         LED_Turn();
         /* 查询任务B自己的最小剩余栈 */
-#if APP_ZONE2_MISSION_ENABLE
+#if APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160
         {
             const TickType_t period=pdMS_TO_TICKS(500U);
             const TickType_t begin=xTaskGetTickCount();
@@ -465,7 +470,7 @@ int main(void)
     Buzzer_Init();
     /* 初始化调试串口，本轮仅发送 */
     USART1_Config();
-#if APP_ZONE2_MISSION_ENABLE
+#if APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160
     USART6_VisionConfig();
 #endif
     /* 调度前初始化启动按键 */
@@ -479,10 +484,11 @@ int main(void)
 #if !APP_ZONE2_RADAR_CALIBRATION_TEST
     /* Fixed field mode: PA1 selection only, no radar servo initialization. */
 #endif
-    if (!APP_ZONE2_NAV_ENABLE || APP_ZONE2_MISSION_ENABLE) StartupPose_Init();
+    if (!APP_ZONE2_NAV_ENABLE || (APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160)) StartupPose_Init();
 #endif
     Safety_Init();
-    if (APP_ZONE2_MISSION_ENABLE || (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_Init();
+    if ((APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160) ||
+        (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_Init();
     HWT101_Init();
     g_watchdog_init_result = Watchdog_Init();
     configASSERT(g_watchdog_init_result == 1U);
@@ -498,7 +504,7 @@ int main(void)
     configASSERT(g_test_create_a == pdPASS);
     g_test_create_b = xTaskCreate(App_TestTaskB, "TestB",
                                  256U, NULL, 1U,
-#if APP_ZONE2_MISSION_ENABLE
+#if APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160
                                  &g_zone2_display_task);
 #else
                                  NULL);

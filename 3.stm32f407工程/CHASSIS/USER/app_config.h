@@ -59,6 +59,39 @@
 #endif
 #include "zdt_emm_config.h"
 #include "app_entry_config.h"
+#ifndef ICM45686_RAW_ENABLE
+#if VEHICLE_SPEED_TRIAL160_MODE == 2U
+#define ICM45686_RAW_ENABLE 1U
+#else
+#define ICM45686_RAW_ENABLE 0U
+#endif
+#endif
+#ifndef APP_SPEED_TRIAL160
+#define APP_SPEED_TRIAL160 (VEHICLE_SPEED_TRIAL160_MODE != 0U)
+#endif
+#ifndef APP_SPEED_TRIAL160_DIRECTION
+#define APP_SPEED_TRIAL160_DIRECTION VEHICLE_SPEED_TRIAL160_DIRECTION
+#endif
+#if APP_SPEED_TRIAL160 != (VEHICLE_SPEED_TRIAL160_MODE != 0U) || \
+    APP_SPEED_TRIAL160_DIRECTION != VEHICLE_SPEED_TRIAL160_DIRECTION
+#error Speed_trial160_mode_requires_matching_vehicle_parameters
+#endif
+/* 0 forward, 1 reverse, 2 left, 3 right. */
+#define APP_SPEED_TRIAL160_MAX_RPM 397U
+#if APP_SPEED_TRIAL160 > 1U || APP_SPEED_TRIAL160_DIRECTION > 3U
+#error Invalid_speed_trial160_configuration
+#endif
+#if VEHICLE_SPEED_TRIAL160_VM_SETUP_ONLY && !APP_SPEED_TRIAL160
+#error Speed_trial160_VM_setup_requires_speed_trial
+#endif
+#if APP_SPEED_TRIAL160 && (!APP_IS_DEBUG || !APP_ZONE2_NAV_MOTION_ENABLE || \
+    !APP_ZONE2_MISSION_ENABLE || APP_ZONE2_RADAR_CALIBRATION_TEST || \
+    APP_MOTOR_OFFLINE_ONLY || !ZDT_EMM_SETTINGS_CONFIRMED)
+#error Speed_trial160_requires_exclusive_debug_profile
+#endif
+#if VEHICLE_SPEED_TRIAL160_MODE == 2U && ICM45686_RAW_ENABLE != 1U
+#error Speed_trial160_motion_requires_raw_ICM
+#endif
 #ifndef APP_ZONE1_RADAR_SERVO_TEST
 #define APP_ZONE1_RADAR_SERVO_TEST 0U
 #endif
@@ -76,6 +109,9 @@
     ((APP_ZONE1_RADAR_SERVO_TEST || APP_ZONE1_RADAR_LIFT_TEST) && \
     (!APP_IS_DEBUG || !APP_ZONE2_NAV_ENABLE || APP_ZONE2_RADAR_CALIBRATION_TEST || APP_BASELINE40_ENABLE))
 #error Zone1_radar_servo_test_requires_exclusive_debug_entry
+#endif
+#if APP_SPEED_TRIAL160 && (APP_ZONE1_RADAR_SERVO_TEST || APP_ZONE1_RADAR_LIFT_TEST)
+#error Speed_trial160_cannot_run_with_zone1_radar_tests
 #endif
 #ifndef APP_STRAIGHT_CAPTURE_ENABLE
 #define APP_STRAIGHT_CAPTURE_ENABLE 0U

@@ -1829,6 +1829,64 @@ static void Auto_NavFaultLocked(uint32_t cause,uint32_t io,uint32_t address,Tick
     s_finish_requested=s_stop_due=1U;
 }
 
+#if APP_SPEED_TRIAL160
+/* Admit integer-RPM trial commands only after each official 0x1A status check. */
+uint32_t ChassisAuto_SpeedTrialPermit(uint8_t address,uint16_t rpm)
+{
+#if VEHICLE_SPEED_TRIAL160_VM_SETUP_ONLY
+    (void)address; (void)rpm;
+    return 0U;
+#else
+    PowerCommandStatus power;
+    Power_ReadCommandStatus(&power);
+    return address>=1U && address<=4U && rpm<=APP_SPEED_TRIAL160_MAX_RPM &&
+        s_nav.report.options_mask==ZONE2_FULL_MASK && s_nav.pending && s_vm_requested &&
+        s_nav.report.run_id && s_nav.report.session==g_chassis_auto_session &&
+        power.active && power.enable_count==s_nav.report.power_epoch &&
+        g_chassis_auto_active && !s_stop_due && !g_chassis_auto_cut_vm &&
+        !g_safety_fault && !g_rtos_fault && !g_can_ctrl_fault_latched &&
+        (g_chassis_auto_state==CHASSIS_AUTO_START || g_chassis_auto_state==CHASSIS_AUTO_RUN) &&
+        Auto_NavFeedbackReady(Auto_NavNow());
+#endif
+}
+
+static void Auto_SpeedTrialProbe(uint32_t slot,uint32_t epoch)
+{
+    PowerCommandStatus power;
+    uint32_t i=s_nav.report.options_address, reply_ms=0U, result;
+    uint16_t flags=0U;
+#if VEHICLE_SPEED_TRIAL160_VM_SETUP_ONLY
+    if (i>=4U) return;
+#else
+    if (i>=4U || s_nav.report.options_result) return;
+#endif
+    result=CAN1_ReadWheelOptionsBounded((uint8_t)(i+1U),slot,&flags,&reply_ms);
+    taskENTER_CRITICAL();
+    Power_ReadCommandStatus(&power);
+    if (!g_chassis_auto_active && power.active && power.enable_count==epoch &&
+        s_vm_requested && g_vm_test_request && !g_chassis_auto_cut_vm) {
+        s_nav.report.options_flags[i]=flags;
+        s_nav.report.options_ms[i]=reply_ms;
+#if VEHICLE_SPEED_TRIAL160_VM_SETUP_ONLY
+        s_nav.report.options_address=(i+1U)%4U;
+        s_nav.report.options_mask&=~(1UL<<i);
+        if (result==1U && (flags&0x0086U)==0x0006U)
+            s_nav.report.options_mask|=1UL<<i;
+        s_nav.report.options_result=result==1U ? 0U : result;
+#else
+        /* 0x1A is the documented 16-bit driver-options status word. */
+        if (result==1U && (flags&0x0086U)==0x0006U) {
+            s_nav.report.options_mask|=1UL<<i;
+            s_nav.report.options_address=i+1U;
+        } else {
+            s_nav.report.options_result=result==1U ? 9U : result;
+        }
+#endif
+    }
+    taskEXIT_CRITICAL();
+}
+#endif
+
 uint32_t ChassisAuto_Zone2Prime(uint32_t run_id)
 {
     uint32_t accepted=0U;
@@ -1866,6 +1924,9 @@ uint32_t ChassisAuto_Zone2Begin(uint32_t run_id,uint32_t expected_session)
     Power_ReadCommandStatus(&power);
     if (run_id && run_id==s_nav.report.run_id && expected_session==g_chassis_auto_session &&
         power.active && s_nav.report.power_epoch==power.enable_count &&
+#if APP_SPEED_TRIAL160
+        s_nav.report.options_mask==ZONE2_FULL_MASK &&
+#endif
         Auto_NavFeedbackReady(Auto_NavNow()) && CAN1_EmmSettingsConfirmed() &&
         Auto_BeginPreparedBasicLocked(0U,NULL)) {
         s_nav.report.session=g_chassis_auto_session;
@@ -1902,8 +1963,13 @@ static uint32_t Auto_NavSubmit(uint32_t run_id,uint32_t session,uint32_t generat
     PowerCommandStatus power;
     if (!commands || !generation) return 0U;
     for (i=0U;i<4U;i++) {
+#if APP_SPEED_TRIAL160
+        const uint32_t raw_limit=APP_SPEED_TRIAL160_MAX_RPM;
+#else
+        const uint32_t raw_limit=(uint32_t)(g_fusion_motion_limits.wheel_rpm*10.0f);
+#endif
         if (commands[i].address!=i+1U || commands[i].direction>1U ||
-            commands[i].speed_raw>(uint32_t)(g_fusion_motion_limits.wheel_rpm*10.0f)) return 0U;
+            commands[i].speed_raw>raw_limit) return 0U;
         if (commands[i].speed_raw) zero=0U;
     }
     taskENTER_CRITICAL();
@@ -1918,6 +1984,9 @@ static uint32_t Auto_NavSubmit(uint32_t run_id,uint32_t session,uint32_t generat
         generation==s_nav.report.ack_generation+1U && (s_nav.report.ack_generation || zero)) {
         for (i=0U;i<4U;i++) s_nav.commands[i]=commands[i];
         s_nav.report.attempt_generation=generation;
+#if APP_SPEED_TRIAL160
+        s_nav.report.attempt_mask=0U;
+#endif
         s_nav.report.possible_mask=s_nav.report.ack_mask=s_nav.report.tx_complete_mask=0U;
         for (i=0U;i<4U;i++) s_nav.report.tx_ms[i]=s_nav.report.reply_ms[i]=0U;
         s_nav.pending=1U;
@@ -2058,7 +2127,12 @@ static void Auto_NavMonitor(uint32_t slot,uint32_t phase,uint32_t session,uint32
             if (s_nav.wheel_renewed_mask==ZONE2_FULL_MASK) s_nav.wheel_retry=0U;
             Auto_NavRememberWheel(i,&feedback);
             if (g_chassis_auto_active && g_chassis_auto_state<=CHASSIS_AUTO_RUN && !s_stop_due) {
+#if APP_SPEED_TRIAL160
+                /* The 0x43 integer RPM feedback is already normalized to deci-RPM. */
+                const float limit=(float)(APP_SPEED_TRIAL160_MAX_RPM*10U+5U);
+#else
                 float limit=g_fusion_motion_limits.wheel_rpm*10.0f+5.0f;
+#endif
                 if ((float)feedback.speed_decirpm < -limit || (float)feedback.speed_decirpm > limit)
                     Auto_CutDetailLocked(8U,9U,result,i+1U);
             }
@@ -2120,11 +2194,18 @@ static void Auto_NavSend(uint32_t slot,uint32_t index,uint32_t run,uint32_t sess
     }
     if (!s_run_started) { s_run_started=1U; s_run_tick=xTaskGetTickCount(); }
     command=s_nav.commands[index]; generation=s_nav.report.attempt_generation;
+#if APP_SPEED_TRIAL160
+    s_nav.report.attempt_mask|=bit;
+#endif
     if (command.speed_raw) { s_nav.committed_zero=0U; s_nav.quiet_seen=0U; }
     taskEXIT_CRITICAL();
 
     result=CAN1_SetEmmSpeedRawBounded(command.address,command.direction,command.speed_raw,
+#if APP_SPEED_TRIAL160
+        0U,slot,&reply,&receipt);
+#else
         ZDT_EMM_MOTION_ACCELERATION,slot,&reply,&receipt);
+#endif
 
     taskENTER_CRITICAL();
     Power_ReadCommandStatus(&power);
@@ -2257,6 +2338,18 @@ void ChassisAuto_Zone2CanStep(uint32_t slot_ms,uint32_t phase)
     }
     if (g_chassis_auto_cut_vm) { taskEXIT_CRITICAL(); return; }
     taskEXIT_CRITICAL();
+#if APP_SPEED_TRIAL160
+#if VEHICLE_SPEED_TRIAL160_VM_SETUP_ONLY
+    if (state==CHASSIS_AUTO_IDLE && !(phase&1U) &&
+        now_ms-slot_ms<=CAN1_NAV_ADMISSION_MS) {
+#else
+    if (state==CHASSIS_AUTO_IDLE && !(phase&1U) &&
+        now_ms-slot_ms<=CAN1_NAV_ADMISSION_MS && s_nav.report.options_mask!=ZONE2_FULL_MASK) {
+#endif
+        Auto_SpeedTrialProbe(slot_ms,epoch);
+        return;
+    }
+#endif
     if (phase&1U) {
         if (now_ms-slot_ms<=CAN1_NAV_ADMISSION_MS) Auto_NavMonitor(slot_ms,phase,session,epoch);
     } else if (state==CHASSIS_AUTO_START || state==CHASSIS_AUTO_RUN) {
