@@ -385,6 +385,10 @@ static uint32_t S3_MapConfirm(AppZone2Action action)
  if(!s3_module_run)return 1U;
  if(item>=3U)return 0U;
  if((action==APP_ZONE2_ROUGH_PLACE || action==APP_ZONE2_STORAGE_PLACE) &&
+#if APP_ZONE2_UNVERIFIED_TRIAL_ENABLE
+    !(action==APP_ZONE2_STORAGE_PLACE && s3_module_run &&
+      (s3_cycle_mode==0U || s3_cycle_mode==2U)) &&
+#endif
     !RegionDispatch_PlacementStable(s3_module_run,item,s3_colors[item],s3_positions[item]))return 0U;
  if(AppZone2_StationConfirm(s3_module_run,item,action,(uint8_t)s3_colors[item],
                            (uint8_t)s3_positions[item]))return 1U;

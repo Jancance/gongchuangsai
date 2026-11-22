@@ -198,7 +198,9 @@ static void App_UartLinkTestTask(void *argument)
     (void)argument;
     if (APP_IS_DEBUG) USART1_EnableReceive();
     HWT101_EnableReceive();
+#if !APP_ZONE2_NAV_ENABLE
     Buzzer_Start(APP_INIT_BEEP_COUNT);
+#endif
     while (1)
     {
         HWT101_Update();
@@ -237,7 +239,9 @@ static void App_TestTaskA(void *argument)
     g_serial_send_ok = App_DebugSendString("F407 FreeRTOS READY\r\n");
 #if !APP_ZONE2_RADAR_CALIBRATION_TEST
     /* 已验收的基础平台就绪后，只请求一次提示音 */
+#if !APP_ZONE2_NAV_ENABLE
     Buzzer_Start(APP_INIT_BEEP_COUNT);
+#endif
 #endif
         /* 一次性虚拟角度自检，不驱动小车。 */
     if (!APP_ZONE2_NAV_ENABLE) App_HeadingDryRun();
@@ -415,7 +419,7 @@ static void App_RadarTask(void *argument)
     /* 用户2026-11-11临时授权measured=1，仅供校准和路径观察；
      * 自动扫描下行和回升均用4000半步；等待时间为工程选择，非实测。 */
     RadarZone2Config cfg = {
-        RADAR_ZONE2_NODE_ID, 1U, RADAR_ZONE_LIFT_STEPS, 1000U, 500U, 1000U, 60000U, 1U, 2U
+        RADAR_ZONE2_NODE_ID, 1U, RADAR_ZONE_LIFT_STEPS, 1500U, 500U, 1000U, 60000U, 1U, 2U
     };
 
     (void)argument;
@@ -423,11 +427,11 @@ static void App_RadarTask(void *argument)
     g_can_test_result = CAN1_LoopbackTest();
 #endif
 #if APP_ZONE2_NAV_ENABLE && !APP_ZONE2_RADAR_CALIBRATION_TEST && APP_ZONE1_RADAR_LIFT_CONFIRMED && !APP_ZONE1_RADAR_SERVO_TEST
-    while (!g_radar_zone_locked) {
+    while (!g_radar_zone_ready) {
         RadarObserver_Service();
         vTaskDelay(pdMS_TO_TICKS(2U));
     }
-    cfg.zone=(uint8_t)g_radar_zone_locked;
+    cfg.zone=(uint8_t)g_radar_zone_selected;
     cfg.node_id=RADAR_NODE_FOR_ZONE(cfg.zone);
     if (cfg.zone==1U) cfg.down_direction=RADAR_ZONE1_DOWN_DIRECTION;
 #endif
@@ -437,7 +441,15 @@ static void App_RadarTask(void *argument)
 #endif
     for (;;)
     {
-        if (g_radar_app_config_result == 1U)
+        if (!g_radar_zone_locked && g_radar_zone_ready &&
+            (g_radar_zone_selected==1U || g_radar_zone_selected==2U) &&
+            cfg.zone!=(uint8_t)g_radar_zone_selected) {
+            RadarZone2Config next_cfg=cfg;
+            next_cfg.zone=(uint8_t)g_radar_zone_selected;
+            next_cfg.node_id=RADAR_NODE_FOR_ZONE(next_cfg.zone);
+            next_cfg.down_direction=next_cfg.zone==1U?RADAR_ZONE1_DOWN_DIRECTION:1U;
+            if (RadarObserver_Configure(&next_cfg)) cfg=next_cfg;
+        }        if (g_radar_app_config_result == 1U)
         {
             RadarObserver_Service();
 #if !APP_ZONE2_NAV_ENABLE || APP_ZONE2_RADAR_CALIBRATION_TEST

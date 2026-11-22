@@ -163,7 +163,7 @@ Zone2SchedulePhase Zone2NavSchedule_Poll(Zone2NavSchedule *s,const FusionObserva
             if(status.sequence!=s->scan_status_sequence && status.error) return fail(s,ZONE2_NAV_STATUS);
             return s->phase;
         }
-        if(map.valid!=1U || !map.status.map_valid || map.status.stage!=8U || map.status.error ||
+        if(map.valid!=1U || !map.status.map_valid || map.status.stage<5U || map.status.stage>8U || map.status.error ||
            map.identity.run_id!=s->run_id || map.identity.layout_id!=s->layout_id ||
            !map.identity.map_generation || !map.identity.link_generation ||
            map.identity.start_id!=s->start_id || map.identity.node_id!=RADAR_NODE_FOR_ZONE(s->start_id) ||
@@ -205,7 +205,8 @@ Zone2SchedulePhase Zone2NavSchedule_Poll(Zone2NavSchedule *s,const FusionObserva
 #if APP_ZONE2_POSE_TRACE_ENABLE
         trace_reply(s->leg,&incoming.path,(uint8_t)(s->leg+1U),now_ms);
 #endif
-        if(incoming.status.stage!=8U || incoming.status.error) return fail(s,ZONE2_NAV_STATUS);
+        if(!incoming.status.path_valid || incoming.status.stage<5U ||
+           incoming.status.stage>8U || incoming.status.error) return fail(s,ZONE2_NAV_STATUS);
         s->reply=(Zone2NavReply){context_of(&incoming.identity),incoming.path};
         s->phase=ZONE2_SCHEDULE_POSE;
     }
