@@ -106,7 +106,7 @@ uint32_t FusionReference_Prepare(FusionPlan *p,const FusionInput *in,FusionCheck
  for(i=0;i<n;i++){
   check->edge=i;
   p->lengths[i]=norm(in->points[i+1].x_mm-in->points[i].x_mm,in->points[i+1].y_mm-in->points[i].y_mm);
-  if(!range(p->lengths[i],.01f,4000)||!range(in->speed_mm_s[i],.01f,400))return 0U;
+  if(!range(p->lengths[i],.01f,4000)||!range(in->speed_mm_s[i],.01f,600))return 0U;
   p->prefix[i+1]=p->prefix[i]+p->lengths[i];
   if(!clear_line(in,in->points[i],in->points[i+1],h)){check->reason=FUSION_GEOMETRY;return 0U;}
  }
@@ -174,13 +174,13 @@ uint32_t FusionReference_Step(const FusionPlan *p,FusionState *s,const FusionObs
   exit=(i+1U<n&&collinear(in,i))?p->node_cap[i+1U]:0.0f;
   cap=min_f(in->speed_mm_s[i],sqrtf(exit*exit+2*c->acceleration_hint_mm_s2*max_f(0,residual)));
   speed=norm(o->vx_mm_s,o->vy_mm_s);
-  if(o->vx_mm_s*tx+o->vy_mm_s*ty>cap+c->speed_state_margin_mm_s||o->vx_mm_s*tx+o->vy_mm_s*ty< -c->stop_speed_mm_s||abs_f(o->vx_mm_s*nx+o->vy_mm_s*ny)>c->lateral_cap_mm_s+c->speed_state_margin_mm_s||speed>400.0f+c->speed_state_margin_mm_s)return reject(out,FUSION_RECOVERY,FUSION_SPEED_STATE);
+  if(o->vx_mm_s*tx+o->vy_mm_s*ty>cap+c->speed_state_margin_mm_s||o->vx_mm_s*tx+o->vy_mm_s*ty< -c->stop_speed_mm_s||abs_f(o->vx_mm_s*nx+o->vy_mm_s*ny)>c->lateral_cap_mm_s+c->speed_state_margin_mm_s||speed>600.0f+c->speed_state_margin_mm_s)return reject(out,FUSION_RECOVERY,FUSION_SPEED_STATE);
   projection.x_mm=a.x_mm+clamp(q,0,len)*tx;projection.y_mm=a.y_mm+clamp(q,0,len)*ty;
   if(!clear_line(in,o->position,projection,o->heading_deg))return reject(out,FUSION_RECOVERY,FUSION_GEOMETRY);
   out->status=FUSION_FOLLOW;out->speed_cap_mm_s=cap;
   lat=clamp(-c->cross_gain_s*e,-c->lateral_cap_mm_s,c->lateral_cap_mm_s);
   out->world_vx_mm_s=cap*tx+lat*nx;out->world_vy_mm_s=cap*ty+lat*ny;
-  mag=norm(out->world_vx_mm_s,out->world_vy_mm_s);if(mag>400){out->world_vx_mm_s*=400/mag;out->world_vy_mm_s*=400/mag;}
+  mag=norm(out->world_vx_mm_s,out->world_vy_mm_s);if(mag>600){out->world_vx_mm_s*=600/mag;out->world_vy_mm_s*=600/mag;}
   r=o->heading_deg*F_PI/180.0f;
   out->body.vx_mm_s=cosf(r)*out->world_vx_mm_s+sinf(r)*out->world_vy_mm_s;
   out->body.vy_mm_s=-sinf(r)*out->world_vx_mm_s+cosf(r)*out->world_vy_mm_s;

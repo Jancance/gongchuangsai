@@ -21,6 +21,7 @@ typedef struct {
  int64_t top_position_raw;
  uint32_t down_target_pulses;
  uint32_t return_limit_pulses; /* Latched only for the explicit return. */
+ uint32_t return_speed; /* Explicit return transaction only; raw 0.1 RPM. */
  uint32_t reuse_reference,reuse_count;
  uint8_t home_parameters[17];
  uint32_t backoff_active,backoff_valid;
@@ -32,6 +33,7 @@ uint32_t LiftRuler_Start(LiftRulerController*,uint32_t now,uint32_t ready);
 uint32_t LiftRuler_SetDownTarget(LiftRulerController*,uint32_t pulses);
 uint32_t LiftRuler_StartReturn(LiftRulerController*,uint32_t now,uint32_t ready);
 uint32_t LiftRuler_StartReturnWithLimit(LiftRulerController*,uint32_t now,uint32_t ready,uint32_t limit);
+uint32_t LiftRuler_StartReturnWithLimitSpeed(LiftRulerController*,uint32_t now,uint32_t ready,uint32_t limit,uint32_t speed);
 /* Explicit commissioning escape: confirmed empty at top; no origin created. */
 uint32_t LiftRuler_StartRelease(LiftRulerController*,uint32_t now,uint32_t ready);
 void LiftRuler_Stop(LiftRulerController*,uint32_t now);

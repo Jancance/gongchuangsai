@@ -36,11 +36,10 @@ volatile radar_client_error_t g_radar_scan_first_error;
 static uint8_t request_start,request_goal,calibrating,initialized,mechanism;
 static uint32_t mechanism_wait,mechanism_budget,mechanism_interval;
 static uint32_t leg_steps,leg_direction,leg_budget,leg_wait;
-static uint32_t entered,lift_sequence,scan_sequence,return_settle_tick;
+static uint32_t entered,lift_sequence,scan_sequence;
 static uint8_t grid_done,obstacles_done,calibration_done,path_done;
 static uint32_t pending_obstacle_sequence;
 static uint8_t pending_obstacle_count,pending_obstacles_valid;
-static uint8_t return_servo_pending;
 #if APP_ZONE2_RADAR_CALIBRATION_TEST
 /* Keep the first calibration error through recovery for debugger readback. */
 volatile int32_t g_radar_calibration_submit_result=-1;
@@ -297,7 +296,6 @@ static bool begin_up(uint32_t t)
     g_radar_lift_interval_us=RADAR_LIFT_INTERVAL_US;
     if(!RadarLift_Enable(t) || !RadarLift_BeginBounded(leg_steps,leg_direction^1U,leg_budget,&lift_sequence))
         return false;
-    return_servo_pending=0U;
     stage(5U);return true;
 }
 static void publish_scan_map(void)
@@ -471,13 +469,6 @@ static void service_owner(void)
             if(!RadarLift_Enable(t) || !RadarLift_BeginBounded(leg_steps,leg_direction,leg_budget,&lift_sequence)){fail(2U);break;}stage(2U);
         }break;
     case 2U:case 5U:
-        if(status.stage==5U && return_servo_pending) {
-            if((uint32_t)(t-return_settle_tick)>=config.settle_ms) {
-                if(RadarServo_SetAngle(zone,zone==1U?RADAR_SERVO1_INIT_DEG:RADAR_SERVO2_INIT_DEG)!=1U){fail(2U);break;}
-                return_servo_pending=0U;stage(6U);
-            }
-            break;
-        }
         RadarLift_GetSnapshot(&lift);
         if(lift.sequence!=lift_sequence){if(lift.sequence+1U!=lift_sequence)fail(2U);break;}
         if(lift.state==3U || lift.result!=1U){fail(2U);break;}
@@ -487,7 +478,8 @@ static void service_owner(void)
                 if(mechanism){g_radar_mechanism_result=4U;stage(8U);}else stage(3U);
             }
             else {
-                return_settle_tick=t;return_servo_pending=1U;
+                if(!mechanism && !calibrating && !RadarLift_Release(lift_sequence)){fail(2U);break;}
+                if(RadarServo_SetAngle(zone,zone==1U?RADAR_SERVO1_INIT_DEG:RADAR_SERVO2_INIT_DEG)!=1U){fail(2U);break;}stage(6U);
             }
         }break;
     case 3U:
@@ -514,7 +506,7 @@ static void service_owner(void)
         }break;
     case 6U:
         if((uint32_t)(t-entered)>= (mechanism?mechanism_wait:config.stow_ms)) {
-            if(!RadarLift_Release(lift_sequence)){fail(2U);break;}
+            if((mechanism || calibrating) && !RadarLift_Release(lift_sequence)){fail(2U);break;}
 #if APP_ZONE2_RADAR_CALIBRATION_TEST
             if(recovering) {
                 RadarLift_GetSnapshot(&lift);

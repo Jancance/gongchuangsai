@@ -38,7 +38,7 @@ typedef struct {
     uint32_t model_only,count,box_count;
     FusionConfig config;
     FusionPoint points[FUSION_POINTS];
-    float speed_mm_s[FUSION_POINTS-1U]; /* Along-path cap; total desired translation <=400. */
+    float speed_mm_s[FUSION_POINTS-1U]; /* Along-path cap; total desired translation <=600. */
     FusionBox boxes[FUSION_BOXES]; /* Additional obstacles; four yellow blocks are built in. */
 } FusionInput;
 typedef struct {

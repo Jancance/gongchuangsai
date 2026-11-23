@@ -1,6 +1,5 @@
 #include "app_config.h"
 #include "zone2_nav_schedule.h"
-#include "radar_zone_config.h"
 #include <math.h>
 #include <string.h>
 
@@ -18,7 +17,7 @@ typedef struct {
     uint32_t observed_elapsed_ms,begin_elapsed_ms,arrive_elapsed_ms,stop_source_ms,session;
     uint16_t sequence;
     uint8_t status,start,goal,count,source_leg,flags;
-    uint8_t ids[RADAR_CLIENT_MAX_WAYPOINTS];
+    uint8_t ids[24U];
 } Zone2RouteTraceLeg;
 
 typedef struct {
@@ -55,45 +54,26 @@ void Zone2NavSchedule_TraceFreeze(const Zone2NavSchedule *s,uint32_t now_ms,
     g_zone2_route_trace.state=ZONE2_ROUTE_TRACE_FROZEN;
 }
 
-static void trace_map(const RadarObserverMap *map)
+static void trace_map(const Zone2NavMap *map)
 {
     if(g_zone2_route_trace.state!=ZONE2_ROUTE_TRACE_CAPTURE) return;
-    g_zone2_route_trace.occupied_mask=map->occupied_mask;
-    g_zone2_route_trace.run_id=map->identity.run_id;
-    g_zone2_route_trace.map_generation=map->identity.map_generation;
-    g_zone2_route_trace.layout_id=map->identity.layout_id;
-    g_zone2_route_trace.link_generation=map->identity.link_generation;
-    g_zone2_route_trace.scan_sequence=map->identity.scan_sequence;
-    g_zone2_route_trace.start_id=map->identity.start_id;
-    g_zone2_route_trace.node_id=map->identity.node_id;
-    g_zone2_route_trace.zone=map->identity.zone;
-    g_zone2_route_trace.grid_valid=1U;
+    g_zone2_route_trace.run_id=map->context.run_id;
+    g_zone2_route_trace.map_generation=map->context.map_generation;
+    g_zone2_route_trace.layout_id=map->context.layout_id;
+    g_zone2_route_trace.start_id=map->context.start_id;
+    g_zone2_route_trace.grid_valid=map->valid;
 }
-
-static void trace_reply(uint32_t leg_index,const radar_client_path_result_t *path,
-    uint8_t source_leg,uint32_t now_ms)
+static void trace_local(uint32_t index,const Zone2NavLeg *leg,uint32_t count,uint32_t now_ms)
 {
     volatile Zone2RouteTraceLeg *record;
-    uint32_t i;
     if(g_zone2_route_trace.state!=ZONE2_ROUTE_TRACE_CAPTURE) return;
-    record=&g_zone2_route_trace.legs[leg_index];
+    record=&g_zone2_route_trace.legs[index];
     record->observed_elapsed_ms=now_ms-g_zone2_route_trace.run_start_ms;
-    record->sequence=path->request_sequence;
-    record->status=path->status;
-    record->start=path->start;
-    record->goal=path->goal;
-    record->count=path->waypoint_count;
-    record->source_leg=source_leg;
-    for(i=0U;i<RADAR_CLIENT_MAX_WAYPOINTS;++i) record->ids[i]=path->waypoints[i];
+    record->start=leg->start;record->goal=leg->goal;
+    record->count=(uint8_t)count;record->source_leg=(uint8_t)(index+1U);
     record->flags|=ZONE2_ROUTE_TRACE_OBSERVED;
 }
 #endif
-
-static Zone2NavContext context_of(const RadarObserverMapIdentity *id)
-{
-    return (Zone2NavContext){id->run_id,id->map_generation,id->layout_id,id->link_generation,
-        id->scan_sequence,id->start_id,id->node_id,id->zone};
-}
 
 static bool same_identity(const FusionIdentity *a,const FusionIdentity *b)
 {
@@ -104,27 +84,21 @@ static bool same_identity(const FusionIdentity *a,const FusionIdentity *b)
 static Zone2SchedulePhase fail(Zone2NavSchedule *s,Zone2NavPathResult error)
 {
     s->phase=ZONE2_SCHEDULE_FAILED;s->error=error;s->plan.valid=0U;s->map.valid=0U;
-    memset(s->cache,0,sizeof(s->cache));
-    RadarObserver_Cancel();
     return s->phase;
 }
 
-static bool current_map(const Zone2NavSchedule *s)
+bool Zone2NavSchedule_MapCurrent(const Zone2NavSchedule *s)
 {
-    RadarObserverMap map;
-    const RadarObserverMapIdentity *id=&s->map_identity;
-    return RadarObserver_GetMap(s->run_id,&map) && map.valid==1U && map.occupied_mask==s->map.occupied_mask &&
-        map.identity.run_id==id->run_id && map.identity.map_generation==id->map_generation &&
-        map.identity.layout_id==id->layout_id && map.identity.link_generation==id->link_generation &&
-        map.identity.scan_sequence==id->scan_sequence && map.identity.start_id==id->start_id &&
-        map.identity.node_id==id->node_id && map.identity.zone==id->zone;
+    return s && s->map.valid==1U && s->map.context.run_id==s->run_id &&
+        s->map.context.layout_id==s->layout_id && s->map.context.map_generation==s->layout_id &&
+        s->map.context.start_id==s->start_id && (s->start_id==1U || s->start_id==2U);
 }
 
 static bool fresh_pose(const Zone2NavSchedule *s,const FusionObservation *pose,uint32_t now_ms)
 {
     return pose && pose->valid==1U && !pose->continuity_lost && !pose->reasons &&
         pose->feedback_source==FUSION_MEASURED_FEEDBACK &&
-        pose->identity.run_id==s->run_id && pose->identity.start_id==s->map_identity.start_id &&
+        pose->identity.run_id==s->run_id && pose->identity.start_id==s->start_id &&
         pose->identity.layout_id==s->layout_id &&
         (uint32_t)(now_ms-pose->sample_ms)<=s->geometry.config.max_age_ms;
 }
@@ -132,84 +106,32 @@ static bool fresh_pose(const Zone2NavSchedule *s,const FusionObservation *pose,u
 bool Zone2NavSchedule_Start(Zone2NavSchedule *s,uint32_t run_id,uint8_t start_id,
     uint32_t layout_id,bool stowed,const FusionConfig *config,float speed_mm_s)
 {
-    RadarObserverStatus before;
     if(!s || (s->phase!=ZONE2_SCHEDULE_IDLE && s->phase!=ZONE2_SCHEDULE_DONE) ||
        !run_id || run_id==s->run_id || (start_id!=1U && start_id!=2U) || !layout_id || !stowed || !config ||
-       !config->max_age_ms || config->max_age_ms>=0x80000000U || !(speed_mm_s>0.0f && speed_mm_s<=400.0f))
+       !config->max_age_ms || config->max_age_ms>=0x80000000U || !(speed_mm_s>0.0f && speed_mm_s<=600.0f))
         return false;
-    RadarObserver_GetStatus(&before);
-    if(!RadarObserver_StartScan(run_id,start_id,layout_id)) return false;
     s->run_id=run_id;s->layout_id=layout_id;s->start_id=start_id;s->leg=0U;s->session=0U;s->error=ZONE2_NAV_OK;
-    s->scan_status_sequence=before.sequence;
     s->geometry.config=*config;s->geometry.speed_mm_s=speed_mm_s;
-    memset(s->cache,0,sizeof(s->cache));
-    s->map.valid=0U;s->plan.valid=0U;s->phase=ZONE2_SCHEDULE_SCAN;
+    s->map=(Zone2NavMap){{run_id,layout_id,layout_id,start_id},1U};
+    s->plan.valid=0U;s->phase=ZONE2_SCHEDULE_POSE;
+#if APP_ZONE2_POSE_TRACE_ENABLE
+    trace_map(&s->map);
+#endif
     return true;
 }
 
 Zone2SchedulePhase Zone2NavSchedule_Poll(Zone2NavSchedule *s,const FusionObservation *pose,uint32_t now_ms)
 {
     Zone2NavLeg leg;
-    Zone2NavRequest request;
-    Zone2NavReply *reply=&s->reply;
     Zone2NavPathResult result;
-    bool cached;
     if(s->phase==ZONE2_SCHEDULE_IDLE || s->phase>=ZONE2_SCHEDULE_DONE) return s->phase;
-    if(s->phase==ZONE2_SCHEDULE_SCAN) {
-        RadarObserverMap map;
-        if(!RadarObserver_GetMap(s->run_id,&map)) {
-            RadarObserverStatus status;
-            RadarObserver_GetStatus(&status);
-            if(status.sequence!=s->scan_status_sequence && status.error) return fail(s,ZONE2_NAV_STATUS);
-            return s->phase;
-        }
-        if(map.valid!=1U || !map.status.map_valid || map.status.stage<5U || map.status.stage>8U || map.status.error ||
-           map.identity.run_id!=s->run_id || map.identity.layout_id!=s->layout_id ||
-           !map.identity.map_generation || !map.identity.link_generation ||
-           map.identity.start_id!=s->start_id || map.identity.node_id!=RADAR_NODE_FOR_ZONE(s->start_id) ||
-           map.identity.zone!=s->start_id)
-            return fail(s,ZONE2_NAV_STALE_MAP);
-        s->map_identity=map.identity;
-        s->map=(Zone2NavMap){context_of(&map.identity),map.occupied_mask,1U};
-#if APP_ZONE2_POSE_TRACE_ENABLE
-        trace_map(&map);
-#endif
-        s->phase=ZONE2_SCHEDULE_REQUEST;
-    }
-    if(!current_map(s)) return fail(s,ZONE2_NAV_STALE_MAP);
+    if(!Zone2NavSchedule_MapCurrent(s)) return fail(s,ZONE2_NAV_STALE_MAP);
     if(s->phase==ZONE2_SCHEDULE_ACTIVE) return s->phase;
     if(s->phase==ZONE2_SCHEDULE_READY) {
         if((uint32_t)(now_ms-s->prepared_sample_ms)<=s->geometry.config.max_age_ms) return s->phase;
         s->plan.valid=0U;s->phase=ZONE2_SCHEDULE_POSE;
     }
     if(!Zone2NavPath_Leg(s->start_id,s->leg,&leg)) return fail(s,ZONE2_NAV_INPUT);
-    cached=s->leg==5U || s->leg==6U;
-    if(cached) reply=&s->cache[s->leg-5U];
-    if(s->phase==ZONE2_SCHEDULE_REQUEST) {
-        if(cached) {
-#if APP_ZONE2_POSE_TRACE_ENABLE
-            /* Legs 6 and 7 select the saved replies from legs 3 and 4. */
-            trace_reply(s->leg,&reply->path,(uint8_t)(s->leg-2U),now_ms);
-#endif
-            s->phase=ZONE2_SCHEDULE_POSE;
-        } else {
-            /* A busy observer can accept the same request on a later poll. */
-            if(!RadarObserver_RequestPath(&s->map_identity,leg.start,leg.goal)) return s->phase;
-            s->phase=ZONE2_SCHEDULE_REPLY;
-            return s->phase;
-        }
-    }
-    if(s->phase==ZONE2_SCHEDULE_REPLY) {
-        RadarObserverPathReply incoming;
-        if(!RadarObserver_GetPathReply(&s->map_identity,leg.start,leg.goal,&incoming)) return s->phase;
-#if APP_ZONE2_POSE_TRACE_ENABLE
-        trace_reply(s->leg,&incoming.path,(uint8_t)(s->leg+1U),now_ms);
-#endif
-        if(!incoming.status.path_valid || incoming.status.stage<5U ||
-           incoming.status.stage>8U || incoming.status.error) return fail(s,ZONE2_NAV_STATUS);
-        s->reply=(Zone2NavReply){context_of(&incoming.identity),incoming.path};
-        s->phase=ZONE2_SCHEDULE_POSE;
-    }
     if(!fresh_pose(s,pose,now_ms)) return s->phase;
     if(!(fabsf(remainderf(pose->heading_deg-leg.start_heading_deg,360.0f))<=
         s->geometry.config.heading_budget_deg)) return s->phase;
@@ -222,13 +144,12 @@ Zone2SchedulePhase Zone2NavSchedule_Poll(Zone2NavSchedule *s,const FusionObserva
      * Keep the measured position and check its heading against that envelope. */
     s->geometry.config.start_heading_deg=leg.start_heading_deg;
     s->geometry.config.goal_heading_deg=leg.goal_heading_deg;
-    /* The observer publishes only the accepted path transaction, including its wire sequence. */
-    request=(Zone2NavRequest){s->map.context,s->leg+1U,reply->path.request_sequence,
-        leg.start,leg.goal,(uint8_t)cached};
-    result=Zone2NavPath_Prepare(&s->map,&request,reply,&s->geometry,&s->route,&s->plan);
+    result=Zone2NavPath_PrepareLocal(&s->map,s->leg,&s->geometry,&s->route,&s->plan);
     if(result!=ZONE2_NAV_OK) return fail(s,result);
-    if(!current_map(s)) return fail(s,ZONE2_NAV_STALE_MAP);
-    if(s->leg==2U || s->leg==3U) s->cache[s->leg-2U]=s->reply;
+    if(!Zone2NavSchedule_MapCurrent(s)) return fail(s,ZONE2_NAV_STALE_MAP);
+#if APP_ZONE2_POSE_TRACE_ENABLE
+    trace_local(s->leg,&leg,s->route.reference.count,now_ms);
+#endif
     s->prepared_sample_ms=pose->sample_ms;s->phase=ZONE2_SCHEDULE_READY;
     return s->phase;
 }
@@ -238,7 +159,7 @@ bool Zone2NavSchedule_BeginLeg(Zone2NavSchedule *s,const FusionIdentity *identit
     if(s->phase!=ZONE2_SCHEDULE_READY || !session || session==s->session ||
        !same_identity(identity,&s->plan.input.identity) ||
        (uint32_t)(now_ms-s->prepared_sample_ms)>s->geometry.config.max_age_ms) return false;
-    if(!current_map(s)) {
+    if(!Zone2NavSchedule_MapCurrent(s)) {
         fail(s,ZONE2_NAV_STALE_MAP);
         return false;
     }
@@ -258,7 +179,7 @@ bool Zone2NavSchedule_Arrive(Zone2NavSchedule *s,uint32_t session,bool station_a
     const FusionObservation *pose,uint32_t now_ms)
 {
     if(s->phase!=ZONE2_SCHEDULE_ACTIVE) return false;
-    if(!current_map(s)) {
+    if(!Zone2NavSchedule_MapCurrent(s)) {
         fail(s,ZONE2_NAV_STALE_MAP);
         return false;
     }
@@ -276,7 +197,7 @@ bool Zone2NavSchedule_Arrive(Zone2NavSchedule *s,uint32_t session,bool station_a
     }
 #endif
     s->plan.valid=0U;
-    s->phase=++s->leg==ZONE2_NAV_LEGS?ZONE2_SCHEDULE_DONE:ZONE2_SCHEDULE_REQUEST;
+    s->phase=++s->leg==ZONE2_NAV_LEGS?ZONE2_SCHEDULE_DONE:ZONE2_SCHEDULE_POSE;
     return true;
 }
 

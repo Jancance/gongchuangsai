@@ -10,6 +10,9 @@
 #include "app_motion_runtime.h"
 #include "startup_axes.h"
 #include "chassis_auto_test.h"
+#if APP_SPEED_TRIAL160
+#include "app_chassis_service.h"
+#endif
 #include "motion_control.h"
 #include "radar_zone_switch.h"
 #include "radar_lift.h"
@@ -325,13 +328,15 @@ void AppInput_KeyStep(void)
         taskEXIT_CRITICAL();
     }
 #elif APP_ZONE2_NAV_ENABLE
+#if !APP_SPEED_TRIAL160
     uint32_t now=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
     RadarZoneSwitch_Service(now);
-    RadarLift_Service(now,!g_vm_test_request && !g_chassis_auto_active && !g_safety_fault &&
-        !g_rtos_fault && !g_can_ctrl_fault_latched);
+#endif
     if (Key_GetEvent()!=0U) {
         g_start_key_count++;
-#if APP_ZONE2_RADAR_CALIBRATION_TEST
+#if APP_SPEED_TRIAL160
+        AppChassis_SpeedTrialKey();
+#elif APP_ZONE2_RADAR_CALIBRATION_TEST
         g_zone2_radar_calibration_requested = 1U;
 #else
         AppZone2_RequestStart();

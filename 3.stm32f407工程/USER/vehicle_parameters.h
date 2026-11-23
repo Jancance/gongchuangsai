@@ -1,6 +1,9 @@
 #ifndef VEHICLE_PARAMETERS_H
 #define VEHICLE_PARAMETERS_H
 #include <stdint.h>
+#ifndef VEHICLE_SPEED_TRIAL160_MODE
+#define VEHICLE_SPEED_TRIAL160_MODE 2U /* 0U 普通 v1.1（四轮 S_Vel_IS=Enable），1U 校准供电（PC13 开关 VM），2U 测速（四轮 S_Vel_IS=Disable）。 */
+#endif
 /* 区 2 雷达两点校准测试。PC13 触发 ID 2 校准，成功后扫图一次，底盘原地待机。 */
 //#define APP_ZONE2_RADAR_CALIBRATION_TEST 1U
 /* 区 1 舵机单测。PC13 每按一次，在 500 µs 收拢和 2500 µs 端点命令之间切换。 */
@@ -203,6 +206,14 @@ static const float vehicle_station_extension_mm[8][3]={
 #ifndef APP_ZONE2_UNVERIFIED_TRIAL_ENABLE
 #define APP_ZONE2_UNVERIFIED_TRIAL_ENABLE 1U
 #endif
+
+#ifndef VEHICLE_SPEED_TRIAL160_DIRECTION
+#define VEHICLE_SPEED_TRIAL160_DIRECTION 3U
+#endif
+#if VEHICLE_SPEED_TRIAL160_MODE > 2U || VEHICLE_SPEED_TRIAL160_DIRECTION > 3U
+#error Invalid_speed_trial160_configuration
+#endif
+#define VEHICLE_SPEED_TRIAL160_VM_SETUP_ONLY (VEHICLE_SPEED_TRIAL160_MODE == 1U)
 #define VEHICLE_STAGE3_STANDALONE_COLORS {2U,1U,5U}
 #define VEHICLE_STAGE3_STANDALONE_SLOTS {2U,1U,5U}
 #define VEHICLE_STAGE3_STANDALONE_RINGS {2U,1U,3U}
@@ -223,7 +234,7 @@ static const float vehicle_station_extension_mm[8][3]={
 #define VEHICLE_SOURCE_PREP_DM_SPEED_DEG_S 300.0f
 #define VEHICLE_SOURCE_PREP_DM_ACCEL_DEG_S2 150.0f
 #define VEHICLE_SOURCE_PREP_EXTENSION_MM 70.0f /* 用户已确认机械可用行程；比例仍粗标。 */
-#define VEHICLE_SOURCE_PREP_EXTENSION_SEGMENT_MM 35.0f
+#define VEHICLE_SOURCE_PREP_EXTENSION_SEGMENT_MM 36.0f
 #define VEHICLE_SOURCE_PREP_EXTENSION_RPM 106.0f
 #define VEHICLE_SOURCE_PREP_EXTENSION_ACCEL_RPM_S 45055U
 #define VEHICLE_SOURCE_PREP_GRIP_DEG 210.0f
@@ -248,6 +259,9 @@ static const float vehicle_station_extension_mm[8][3]={
 #define VEHICLE_EXTENSION_HOME_DETECT_CURRENT_MA 800U
 #define VEHICLE_EXTENSION_HOME_DETECT_TIME_MS 60U
 #define SOURCE_LIFT_PULSES_PER_MM 400.0f /* 原1600/4，虚拟脉冲/mm */
+/* User 2026-11-21: lift moving path corridor only; final arrival/EXT stay unchanged. */
+#define SOURCE_LIFT_MOVING_CORRIDOR_MM 2.0f
+#define SOURCE_LIFT_MOVING_CORRIDOR_DEG (SOURCE_LIFT_MOVING_CORRIDOR_MM * SOURCE_LIFT_PULSES_PER_MM * 360.0f / 3200.0f)
 #define SOURCE_GRIP_LEAD_MM 20.0f /* 用户2026-11-18：剩20mm发140度夹紧，继续到原抓取高度即升，无新增停顿。 */
 #define SOURCE_PICK_PULSES 29700U /* 原118800/4，物理下降74.25mm不变 */
 #define SOURCE_RETURN_PULSES 1800U /* 原7200/4，距真实顶部4.5mm */
@@ -259,7 +273,7 @@ static const float vehicle_station_extension_mm[8][3]={
 #define SOURCE_OVERLAP_HOVER_PULSES 15600U /* 原39mm/80mm净空点，按新400p/mm换算 */
 #define SOURCE_LOADED_PARTIAL_RETRACT_MM 60.0f /* MATLAB轨迹段，非新增停车门限 */
 #define SOURCE_EXTENSION_STALL_CONFIRM_MS 3000U /* User:2026-11-15; existing stall window. */
-#define SOURCE_RELEASE_DWELL_MS 100U /* 松爪脉冲生效后计时，用户指定 */
+#define SOURCE_RELEASE_DWELL_MS 200U /* 松爪脉冲生效后计时，用户指定 */
 #define SOURCE_OBSERVE_PULSES 600U /* 回到原框选的顶部1.5mm退出位 */
 #define SOURCE_EXTENSION_ZERO_DONE_DEG 17.75f /* 仅新动作：原2度放宽约0.5mm */
 #define SOURCE_WHEEL_HOLD_SPEED_RAW 37U /* 已有15mm/s低速档折算；Emm输入速度/10 */

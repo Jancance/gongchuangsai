@@ -13,7 +13,7 @@ volatile uint32_t g_source_cycle_request,g_source_cycle_state,g_source_cycle_fau
 volatile uint32_t g_source_cycle_run,g_source_cycle_pose,g_source_cycle_item,g_source_cycle_prep;
 volatile uint32_t g_source_cycle_colors[3]={0U,0U,0U};
 volatile float g_source_cycle_yaw[3]={195.0f,165.0f,180.0f};
-volatile float g_source_cycle_extension[3]={164.0708363f,161.9699163f,0.0f};
+volatile float g_source_cycle_extension[3]={164.0708363f,167.9699163f,0.0f};
 volatile uint32_t g_source_cycle_rx,g_source_cycle_rx_bad,g_source_cycle_tx,g_source_cycle_rejected;
 volatile uint32_t g_source_cycle_body_steps,g_source_cycle_beeps,g_source_cycle_beep_started,g_source_cycle_beep_done;
 volatile uint32_t g_source_cycle_started,g_source_cycle_done,g_source_cycle_piece_ms[3];
