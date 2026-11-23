@@ -1,13 +1,22 @@
-function validate_speed_trial160
+function validate_speed_trial160(softLeft)
+if nargin == 0
+    softLeft = false;
+end
 vPeak = 1600;
 dt = 0.080;
-jerkTime = 3*dt;
-accelTime = 5*dt;
-holdTime = 2*dt;
-aPeak = vPeak/(jerkTime+accelTime);
-jerk = aPeak/jerkTime;
-phases = [3 5 3 2 3 5 3];
-phaseJerk = jerk*[1 0 -1 0 -1 0 1];
+acceleration = [3 5 3];
+braking = [3 5 3];
+holdBatches = 2;
+if softLeft
+    acceleration = [5 5 5];
+    holdBatches = 0;
+end
+aPeak = vPeak/(sum(acceleration(1:2))*dt);
+jerk = aPeak/(acceleration(1)*dt);
+brakePeak = vPeak/(sum(braking(1:2))*dt);
+brakeJerk = brakePeak/(braking(1)*dt);
+phases = [acceleration holdBatches braking];
+phaseJerk = [jerk 0 -jerk 0 -brakeJerk 0 brakeJerk];
 state = [0 0 0];
 samples = state;
 for n = 1:numel(phases)
@@ -20,7 +29,7 @@ for n = 1:numel(phases)
 end
 assert(all(diff(samples(:,1)) >= -1e-8));
 assert(all(samples(:,2) >= -1e-8 & samples(:,2) <= vPeak+1e-8));
-assert(sum(abs(samples(:,2)-vPeak)<1e-8)==3);
+assert(sum(abs(samples(:,2)-vPeak)<1e-8)==holdBatches+1);
 assert(norm(samples(end,2:3))<1e-8 && abs(state(1)-1664)<1e-8);
 axis = [1 0; -1 0; 0 1; 0 -1];
 wheel = [1 1; 1 -1; 1 -1; 1 1];
@@ -55,20 +64,35 @@ for d = 1:4
     for k = 1:size(command,1)
         wheelIdx = mod(k-1,4)+1;
         signs = wheel(wheelIdx,:)*axis(d,:)';
-        r(wheelIdx) = round(signs*(x(k+4)-x(k))/dt/factor);
+        averageRpm = (x(k+4)-x(k))/dt/factor;
+        % With no cruise, keep one command batch at the rounded reference peak.
+        if softLeft && floor((k-1)/4)+1 == sum(acceleration)
+            averageRpm = vPeak/factor;
+        end
+        r(wheelIdx) = signs*round(averageRpm);
         command(k,:) = r;
         sent(k) = r(wheelIdx);
     end
     assert(all(command(end,:)==0));
     if d == 1
-        fprintf('Forward integer command matrix, rows by batch:\n');
-        disp(reshape(sent,4,[])');
+        rpmTable = abs(reshape(sent,4,[])');
+        fprintf('Unsigned integer command matrix, rows by batch:\n');
+        fprintf('{%3d,%3d,%3d,%3d},\n',rpmTable');
+        limits = min(20,min(rpmTable,[],2));
+        mixedLow = rpmTable-limits;
+        mixedHigh = rpmTable+limits;
+        assert(all(mixedLow(:)>=0 & mixedHigh(:)<=417));
+        assert(all(rpmTable(end,:)==0));
+        if softLeft
+            assert(all(rpmTable(sum(acceleration),:)==397));
+            assert(isequal(rpmTable(sum(acceleration)+1,:),[394 392 388 383]));
+        end
     end
     estimate = command*wheel*factor/4;
     along = estimate*axis(d,:)';
     across = estimate*[-axis(d,2);axis(d,1)];
     assert(max(abs(command(:)))==397);
-    assert(abs(sum(along)*0.020-1664)<4);
+    assert(abs(sum(along)*0.020-1664)<4 && max(along)>=1595);
     assert(max(abs(cumsum(across)*0.020))<10);
     yawRate = command*[-1;1;-1;1]*factor/(4*209);
     yawEdge = cumsum(yawRate)*0.020;
@@ -86,4 +110,5 @@ reserve = 1920-state(1);
 assert(reserve>vPeak*dt);
 fprintf('PASS: peak %.0f mm/s, A %.0f mm/s^2, J %.1f mm/s^3, nominal stop %.0f mm, reserve %.0f mm, duration %.2f s\n', ...
 vPeak,aPeak,jerk,state(1),reserve,sum(phases)*dt);
+fprintf('Braking A %.0f mm/s^2, J %.1f mm/s^3\n',brakePeak,brakeJerk);
 end

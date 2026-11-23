@@ -4,6 +4,12 @@
 #ifndef VEHICLE_SPEED_TRIAL160_MODE
 #define VEHICLE_SPEED_TRIAL160_MODE 2U /* 0U 普通 v1.1（四轮 S_Vel_IS=Enable），1U 校准供电（PC13 开关 VM），2U 测速（四轮 S_Vel_IS=Disable）。 */
 #endif
+#ifndef VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL
+#define VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL 1U /* 0U 左移原曲线，1U 左移缓加速；其他方向使用原曲线。 */
+#endif
+#if VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL > 1U
+#error Invalid_speed_trial160_left_soft_accel
+#endif
 /* 区 2 雷达两点校准测试。PC13 触发 ID 2 校准，成功后扫图一次，底盘原地待机。 */
 //#define APP_ZONE2_RADAR_CALIBRATION_TEST 1U
 /* 区 1 舵机单测。PC13 每按一次，在 500 µs 收拢和 2500 µs 端点命令之间切换。 */
@@ -208,7 +214,7 @@ static const float vehicle_station_extension_mm[8][3]={
 #endif
 
 #ifndef VEHICLE_SPEED_TRIAL160_DIRECTION
-#define VEHICLE_SPEED_TRIAL160_DIRECTION 3U
+#define VEHICLE_SPEED_TRIAL160_DIRECTION 2U
 #endif
 #if VEHICLE_SPEED_TRIAL160_MODE > 2U || VEHICLE_SPEED_TRIAL160_DIRECTION > 3U
 #error Invalid_speed_trial160_configuration
