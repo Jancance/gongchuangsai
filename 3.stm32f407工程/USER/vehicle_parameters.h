@@ -232,7 +232,7 @@ static const float vehicle_station_extension_mm[8][3]={
 #endif
 
 #ifndef VEHICLE_SPEED_TRIAL160_DIRECTION
-#define VEHICLE_SPEED_TRIAL160_DIRECTION 3U
+#define VEHICLE_SPEED_TRIAL160_DIRECTION 0U
 #endif
 #if VEHICLE_SPEED_TRIAL160_MODE > 2U || VEHICLE_SPEED_TRIAL160_DIRECTION > 3U
 #error Invalid_speed_trial160_configuration
