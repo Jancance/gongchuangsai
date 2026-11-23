@@ -14,10 +14,22 @@ enum {
 enum { TRIAL_RUN_ID=1U, TRIAL_PREPARE_MS=5000U, TRIAL_HWT_AGE_MS=100U };
 
 #if !VEHICLE_SPEED_TRIAL160_VM_SETUP_ONLY
-/* 80 ms average of each wheel's next interval, starting 0/20/40/60 ms into
- * the batch. Quantized by validate_speed_trial160.m with a 77 mm wheel. */
+/* 80 ms wheel-speed averages use per-wheel 0/20/40/60 ms offsets. */
 static const uint16_t s_trial_rpm[][4] = {
-#if APP_SPEED_TRIAL160_DIRECTION == 2U && VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL
+#if APP_SPEED_TRIAL160_DIRECTION == 2U && VEHICLE_SPEED_TRIAL_LEFT_PEAK120
+    {  1,  1,  2,  3},{  5,  6,  8, 11},{ 13, 16, 19, 22},
+    { 25, 29, 33, 37},{ 42, 46, 51, 57},{ 62, 68, 74, 80},
+    { 86, 92, 98,104},{111,117,123,129},{135,141,147,154},
+    {160,166,172,178},{184,190,197,203},{209,215,221,227},
+    {233,238,243,248},{253,258,262,266},{270,273,276,279},
+    {282,284,286,288},{290,291,293,293},{294,295,295,294},
+    {294,293,292,291},{290,288,286,283},{281,278,275,271},
+    {267,263,259,254},{249,244,239,233},{227,221,214,208},
+    {201,194,188,181},{174,168,161,154},{147,141,134,127},
+    {121,114,107,101},{ 94, 87, 80, 74},{ 68, 62, 56, 51},
+    { 45, 41, 36, 32},{ 28, 24, 20, 17},{ 14, 11,  9,  7},
+    {  5,  4,  2,  1},{  1,  0,  0,  0},{  0,  0,  0,  0},
+    #elif APP_SPEED_TRIAL160_DIRECTION == 2U && VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL
     {  1,  3,  4,  7}, {  9, 12, 16, 20}, { 25, 30, 36, 42},
     { 49, 56, 64, 72}, { 81, 90, 99,109}, {119,129,139,149},
     {159,169,179,189}, {198,208,218,228}, {238,248,258,268},
@@ -30,11 +42,13 @@ static const uint16_t s_trial_rpm[][4] = {
     {378,383,388,392}, {394,396,397,397}, {397,397,397,397},
     {397,397,397,396},
 #endif
+#if APP_SPEED_TRIAL160_DIRECTION != 2U || !VEHICLE_SPEED_TRIAL_LEFT_PEAK120
     {394,392,388,383}, {378,371,363,354},
     {344,334,322,310}, {298,285,273,260}, {248,236,223,211},
     {198,186,174,161}, {149,136,124,112}, { 99, 87, 75, 63},
     { 52, 43, 34, 26}, { 19, 14,  9,  5}, {  3,  1,  0,  0},
     {  0,  0,  0,  0}
+#endif
 };
 #endif
 
@@ -227,12 +241,12 @@ static void SpeedTrial_Drive(const ChassisZone2CanStatus *status,uint32_t now)
             if (s_trial_rpm[s_trial_index][i]<limit) limit=s_trial_rpm[s_trial_index][i];
         correction=kp*HeadingController_ErrorDeg(s_trial_target_yaw,heading.yaw_deg)
             -kd*heading.rate_dps;
-#if APP_SPEED_TRIAL160_DIRECTION == 2U && VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL && VEHICLE_SPEED_TRIAL160_LEFT_YAW_FEEDFORWARD
+#if APP_SPEED_TRIAL160_DIRECTION == 2U && VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL && VEHICLE_SPEED_TRIAL160_LEFT_YAW_FEEDFORWARD && !VEHICLE_SPEED_TRIAL_LEFT_PEAK120
         /* Batches 7-11 counter the repeatable left yaw before it builds. */
         if (s_trial_index>=6U && s_trial_index<=10U) {
             correction-=(s_trial_index==6U || s_trial_index==10U) ? 1.5f : 3.0f;
         }
-#elif APP_SPEED_TRIAL160_DIRECTION == 2U && VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL && VEHICLE_SPEED_TRIAL160_LEFT_EARLY_DAMPING
+#elif APP_SPEED_TRIAL160_DIRECTION == 2U && VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL && VEHICLE_SPEED_TRIAL160_LEFT_EARLY_DAMPING && !VEHICLE_SPEED_TRIAL_LEFT_PEAK120
         /* Batches 6-13 cover the early rising-speed window, with half weight at each edge. */
         if (s_trial_index>=5U && s_trial_index<=12U) {
             float extra=-0.10f*heading.rate_dps;

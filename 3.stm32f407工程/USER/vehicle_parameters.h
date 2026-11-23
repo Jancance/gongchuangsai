@@ -7,6 +7,12 @@
 #ifndef VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL
 #define VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL 1U /* 0U 左移原曲线，1U 左移缓加速；其他方向使用原曲线。 */
 #endif
+#ifndef VEHICLE_SPEED_TRIAL_LEFT_PEAK120
+#define VEHICLE_SPEED_TRIAL_LEFT_PEAK120 1U /* 0U 160 cm/s 缓加速基线，1U 左移最高约 120 cm/s。 */
+#endif
+#if VEHICLE_SPEED_TRIAL_LEFT_PEAK120 > 1U
+#error Invalid_speed_trial_left_peak120
+#endif
 #if VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL > 1U
 #error Invalid_speed_trial160_left_soft_accel
 #endif
@@ -17,7 +23,7 @@
 #error Invalid_speed_trial160_left_early_damping
 #endif
 #ifndef VEHICLE_SPEED_TRIAL160_LEFT_YAW_FEEDFORWARD
-#define VEHICLE_SPEED_TRIAL160_LEFT_YAW_FEEDFORWARD 1U /* 0U 关闭，1U 左移缓加速前段加入航向前馈，优先于提前阻尼。 */
+#define VEHICLE_SPEED_TRIAL160_LEFT_YAW_FEEDFORWARD 0U /* 0U 关闭，1U 左移缓加速前段加入航向前馈，优先于提前阻尼。 */
 #endif
 #if VEHICLE_SPEED_TRIAL160_LEFT_YAW_FEEDFORWARD > 1U
 #error Invalid_speed_trial160_left_yaw_feedforward
