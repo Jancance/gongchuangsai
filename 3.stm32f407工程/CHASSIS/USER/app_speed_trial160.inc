@@ -227,6 +227,16 @@ static void SpeedTrial_Drive(const ChassisZone2CanStatus *status,uint32_t now)
             if (s_trial_rpm[s_trial_index][i]<limit) limit=s_trial_rpm[s_trial_index][i];
         correction=kp*HeadingController_ErrorDeg(s_trial_target_yaw,heading.yaw_deg)
             -kd*heading.rate_dps;
+#if APP_SPEED_TRIAL160_DIRECTION == 2U && VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL && VEHICLE_SPEED_TRIAL160_LEFT_EARLY_DAMPING
+        /* Batches 6-13 cover the early rising-speed window, with half weight at each edge. */
+        if (s_trial_index>=5U && s_trial_index<=12U) {
+            float extra=-0.10f*heading.rate_dps;
+            if (extra>4.0f) extra=4.0f;
+            if (extra<-4.0f) extra=-4.0f;
+            if (s_trial_index==5U || s_trial_index==12U) extra*=0.5f;
+            correction+=extra;
+        }
+#endif
         if (correction>(float)limit) correction=(float)limit;
         if (correction<-(float)limit) correction=-(float)limit;
         trim=(int32_t)(correction+(correction<0.0f ? -0.5f : 0.5f));

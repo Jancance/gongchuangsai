@@ -10,6 +10,12 @@
 #if VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL > 1U
 #error Invalid_speed_trial160_left_soft_accel
 #endif
+#ifndef VEHICLE_SPEED_TRIAL160_LEFT_EARLY_DAMPING
+#define VEHICLE_SPEED_TRIAL160_LEFT_EARLY_DAMPING 1U /* 0U 左移缓加速基线，1U 缓加速时提前加强角速度阻尼。 */
+#endif
+#if VEHICLE_SPEED_TRIAL160_LEFT_EARLY_DAMPING > 1U
+#error Invalid_speed_trial160_left_early_damping
+#endif
 /* 区 2 雷达两点校准测试。PC13 触发 ID 2 校准，成功后扫图一次，底盘原地待机。 */
 //#define APP_ZONE2_RADAR_CALIBRATION_TEST 1U
 /* 区 1 舵机单测。PC13 每按一次，在 500 µs 收拢和 2500 µs 端点命令之间切换。 */
