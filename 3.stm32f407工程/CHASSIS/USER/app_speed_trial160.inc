@@ -88,6 +88,7 @@ static float s_trial_target_yaw;
 static volatile uint32_t s_trial_start_request, s_trial_cancel_request;
 static volatile uint32_t s_trial_export_ready;
 static ChassisZone2CanStatus s_trial_terminal;
+static uint32_t s_trial_hold_log_ms, s_trial_hold_final_logged;
 
 void AppChassis_SpeedTrialKey(void)
 {
@@ -288,7 +289,24 @@ static void SpeedTrial_Step(void)
     AppHeadingSource heading;
 #endif
     uint32_t now=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
-    if (!s_trial_start_request || s_trial_phase==TRIAL_FINISHED) return;
+    if (!s_trial_start_request) return;
+    /* A second PC13 press releases a completed successful hold. */
+    if (s_trial_phase==TRIAL_FINISHED) {
+        if (s_trial_reason==TRIAL_OK && g_vm_test_request && !g_chassis_auto_cut_vm) {
+            ChassisAuto_Zone2Read(&status);
+            if (status.feedback_ready && status.position_mask==0x0FU &&
+                status.status_mask==0x0FU) {
+                taskENTER_CRITICAL();
+                s_trial_terminal=status;
+                taskEXIT_CRITICAL();
+            }
+        }
+        if (s_trial_cancel_request) {
+            s_trial_cancel_request=0U;
+            (void)ChassisAuto_Zone2Disarm();
+        }
+        return;
+    }
     if (s_trial_phase==TRIAL_IDLE) {
         s_trial_tick=now;
         s_trial_phase=TRIAL_PRIMING;
@@ -331,10 +349,15 @@ static void SpeedTrial_Step(void)
     }
 #endif
     if (s_trial_phase==TRIAL_STOPPING && !g_chassis_auto_active) {
-        (void)ChassisAuto_Zone2Disarm();
         if (s_trial_reason==TRIAL_OK && (!status.wheel_quiet || status.cause)) s_trial_reason=TRIAL_CAN;
+        /* Keep VM active after a quiet success until PC13 releases it. */
+        if (s_trial_reason!=TRIAL_OK) (void)ChassisAuto_Zone2Disarm();
+        taskENTER_CRITICAL();
         s_trial_terminal=status;
+        taskEXIT_CRITICAL();
         s_trial_phase=TRIAL_FINISHED;
+        s_trial_hold_log_ms=now-200U;
+        s_trial_hold_final_logged=0U;
         __DMB();
         s_trial_export_ready=1U;
     }
@@ -345,29 +368,52 @@ static void SpeedTrial_Step(void)
 void AppChassis_SpeedTrialLog(void)
 {
     static uint32_t section, cursor;
-    char line[128];
-    uint32_t count;
+    char line[192];
+    uint32_t count, now;
+    ChassisZone2CanStatus hold, terminal;
     if (!s_trial_export_ready || section>6U) return;
     __DMB();
+    taskENTER_CRITICAL();
+    terminal=s_trial_terminal;
+    taskEXIT_CRITICAL();
+    now=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;
+    if (s_trial_reason==TRIAL_OK && g_vm_test_request && !g_chassis_auto_cut_vm &&
+        section>0U && now-s_trial_hold_log_ms>=200U) {
+        ChassisAuto_Zone2Read(&hold);
+        if (hold.feedback_ready && hold.position_mask==0x0FU &&
+            hold.status_mask==0x0FU) {
+            (void)snprintf(line,sizeof(line),"T160_HOLD,0,%lu,%u,%u,%u,%lu,%lu,%u,%ld,%lu,%lu,%u,%ld,%lu,%lu,%u,%ld,%lu,%lu,%u,%ld\r\n",
+                (unsigned long)now,(unsigned)hold.position_mask,(unsigned)hold.status_mask,
+                (unsigned)hold.wheel_quiet,
+                (unsigned long)hold.wheel_ms[0],(unsigned long)hold.position_counts[0],(unsigned)hold.position_sign[0],(long)hold.wheel_decirpm[0],
+                (unsigned long)hold.wheel_ms[1],(unsigned long)hold.position_counts[1],(unsigned)hold.position_sign[1],(long)hold.wheel_decirpm[1],
+                (unsigned long)hold.wheel_ms[2],(unsigned long)hold.position_counts[2],(unsigned)hold.position_sign[2],(long)hold.wheel_decirpm[2],
+                (unsigned long)hold.wheel_ms[3],(unsigned long)hold.position_counts[3],(unsigned)hold.position_sign[3],(long)hold.wheel_decirpm[3]);
+            if (App_DebugSendString(line)==1U) {
+                s_trial_hold_log_ms=now;
+                return;
+            }
+        }
+    }
     if (section==0U) {
         count=1U;
         (void)snprintf(line,sizeof(line),"T160_BEGIN,%u,%lu,%lu,%lu,%lu,%lu,%lu\r\n",
             APP_SPEED_TRIAL160_DIRECTION,(unsigned long)s_trial_reason,
-            (unsigned long)s_trial_terminal.state,(unsigned long)s_trial_terminal.cause,
-            (unsigned long)s_trial_terminal.wheel_quiet,(unsigned long)s_trial_terminal.stop_ack_ms,
-            (unsigned long)s_trial_terminal.options_result);
+            (unsigned long)terminal.state,(unsigned long)terminal.cause,
+            (unsigned long)terminal.wheel_quiet,(unsigned long)terminal.stop_ack_ms,
+            (unsigned long)terminal.options_result);
     } else if (section==1U) {
         count=4U;
 #if VEHICLE_SPEED_TRIAL160_VM_SETUP_ONLY
         (void)snprintf(line,sizeof(line),"T160_OPT,%lu,%lu,0x%04X,%u\r\n",
-            (unsigned long)(cursor+1U),(unsigned long)s_trial_terminal.options_ms[cursor],
-            (unsigned)s_trial_terminal.options_flags[cursor],
-            (unsigned)((s_trial_terminal.options_flags[cursor]&0x0086U)==0x0006U));
+            (unsigned long)(cursor+1U),(unsigned long)terminal.options_ms[cursor],
+            (unsigned)terminal.options_flags[cursor],
+            (unsigned)((terminal.options_flags[cursor]&0x0086U)==0x0006U));
 #else
         (void)snprintf(line,sizeof(line),"T160_OPT,%lu,%lu,%u,%lu\r\n",
-            (unsigned long)(cursor+1U),(unsigned long)s_trial_terminal.options_ms[cursor],
-            (unsigned)s_trial_terminal.options_flags[cursor],
-            (unsigned long)((s_trial_terminal.options_mask>>cursor)&1U));
+            (unsigned long)(cursor+1U),(unsigned long)terminal.options_ms[cursor],
+            (unsigned)terminal.options_flags[cursor],
+            (unsigned long)((terminal.options_mask>>cursor)&1U));
 #endif
     } else if (section==2U && cursor<s_trial_command_count) {
         const SpeedTrialCommand *event=&s_trial_commands[cursor];
@@ -396,6 +442,18 @@ void AppChassis_SpeedTrialLog(void)
             (int)event->accel[0],(int)event->accel[1],(int)event->accel[2],
             (int)event->gyro[0],(int)event->gyro[1],(int)event->gyro[2],(int)event->temperature);
     } else if (section==6U) {
+        if (s_trial_reason==TRIAL_OK && !s_trial_hold_final_logged) {
+            hold=terminal;
+            (void)snprintf(line,sizeof(line),"T160_HOLD,1,%lu,%u,%u,%u,%lu,%lu,%u,%ld,%lu,%lu,%u,%ld,%lu,%lu,%u,%ld,%lu,%lu,%u,%ld\r\n",
+                (unsigned long)now,(unsigned)hold.position_mask,(unsigned)hold.status_mask,
+                (unsigned)hold.wheel_quiet,
+                (unsigned long)hold.wheel_ms[0],(unsigned long)hold.position_counts[0],(unsigned)hold.position_sign[0],(long)hold.wheel_decirpm[0],
+                (unsigned long)hold.wheel_ms[1],(unsigned long)hold.position_counts[1],(unsigned)hold.position_sign[1],(long)hold.wheel_decirpm[1],
+                (unsigned long)hold.wheel_ms[2],(unsigned long)hold.position_counts[2],(unsigned)hold.position_sign[2],(long)hold.wheel_decirpm[2],
+                (unsigned long)hold.wheel_ms[3],(unsigned long)hold.position_counts[3],(unsigned)hold.position_sign[3],(long)hold.wheel_decirpm[3]);
+            if (App_DebugSendString(line)==1U) s_trial_hold_final_logged=1U;
+            return;
+        }
         count=1U;
         (void)snprintf(line,sizeof(line),"T160_END,%lu,%lu,%lu,%lu,%lu\r\n",
             (unsigned long)s_trial_command_count,(unsigned long)s_trial_wheel_count,
