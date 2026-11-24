@@ -72,10 +72,10 @@ typedef struct {
     int16_t accel[3], gyro[3], temperature;
 } SpeedTrialIcm;
 
-static SpeedTrialCommand s_trial_commands[160];
+static SpeedTrialCommand s_trial_commands[192];
 static SpeedTrialWheel s_trial_wheels[160];
-static SpeedTrialHeading s_trial_headings[384];
-static SpeedTrialIcm s_trial_icm[384];
+static SpeedTrialHeading s_trial_headings[512];
+static SpeedTrialIcm s_trial_icm[512];
 static ChassisMotorCommand s_trial_pending_commands[4];
 static uint32_t s_trial_command_count, s_trial_wheel_count, s_trial_heading_count, s_trial_icm_count;
 static uint32_t s_trial_command_mask, s_trial_command_slot, s_trial_overflow;
