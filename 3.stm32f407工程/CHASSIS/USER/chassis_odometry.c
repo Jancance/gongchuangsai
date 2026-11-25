@@ -1,5 +1,6 @@
 #include "chassis_odometry.h"
 #include "chassis_kinematics.h"
+#include "fusion_motion.h"
 #include <math.h>
 #include <string.h>
 #include <float.h>
@@ -71,7 +72,7 @@ static void reject(ChassisOdometry *c)
 void ChassisOdometry_Wheel(ChassisOdometry *c,uint32_t i,uint32_t sign,uint32_t raw,uint32_t ms)
 {
     int64_t current;
-    float delta;
+    float delta,max_delta;
     if(!c) return;
     if(i>=4U || sign>1U) { reject(c); return; }
     current=(int64_t)raw; if(sign) current=-current;
@@ -83,8 +84,10 @@ void ChassisOdometry_Wheel(ChassisOdometry *c,uint32_t i,uint32_t sign,uint32_t 
         if(!dt) { if(current!=c->raw[i]) reject(c); return; }
         if((int32_t)dt<0) { reject(c); return; }
         delta=(float)(current-c->raw[i])*ODOM_PI*g_chassis_geometry.wheel_diameter_mm/65536.0f;
-        /* 1000mm/s wheel travel + 2mm quantisation/noise allowance; not a motor limit. */
-        if(dt>=ODOM_WHEEL_MAX_AGE_MS || absolute(delta)>1.0f*(float)dt+2.0f)
+        max_delta=g_fusion_motion_limits.wheel_rpm*ODOM_PI*
+            g_chassis_geometry.wheel_diameter_mm*(float)dt/60000.0f+2.0f;
+        /* Bound encoder deltas by the active wheel-RPM planning envelope. */
+        if(dt>=ODOM_WHEEL_MAX_AGE_MS || absolute(delta)>max_delta)
         {
             reject(c); c->wheel[i].count=c->wheel[i].head=0U;
             /* Rebase this encoder without integrating the missing interval. */

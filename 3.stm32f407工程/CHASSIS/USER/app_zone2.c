@@ -1468,7 +1468,8 @@ void AppZone2_Step(void)
         /* A station STOP has its own measured standstill check after the STOP ACK. */
         if ((g_zone2_phase==ZONE2_ZERO || endpoint_ready) && g_zone2_phase!=ZONE2_TRACK &&
              can.ack_generation && can.ack_mask==0x0FU && can.tx_complete_mask==0x0FU &&
-             (station_ready || (can.zero_confirmed && quiet_since(&pose,&heading,can.zero_ack_ms)))) {
+             can.zero_confirmed &&
+             (station_ready || quiet_since(&pose,&heading,can.zero_ack_ms))) {
             if (g_zone2_phase==ZONE2_SECTION_ZERO) {
                 if (can.ack_generation!=s_generation) {
                     fail(ZONE2_FAULT_BACKEND);
