@@ -57,7 +57,7 @@ extern const uint8_t g_chassis_forward_direction[CHASSIS_WHEEL_COUNT];
 /* 纯适配不发帧；返回1成功、0不可表示/无效且全部目标速度清零 */
 /* 本阶段只接受整数RPM（允许浮点计算微小误差），不静默截断混合速度 */
 uint32_t Chassis_EncodeEmm(const ChassisWheelSpeeds *logical,
-    uint16_t max_raw, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
+    uint16_t max_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT]);
 
 /* 输入为CAN1_ReadSpeed已解析的带符号RPM；valid_mask须是四轮新鲜有效位 */
 /* 调用者负责真实时间戳新鲜度，本函数不把旧反馈自动当成有效 */

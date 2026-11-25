@@ -49,7 +49,7 @@ extern volatile RouteCheck g_route_check;
 #include "app_motion_runtime.h"
 #include "app_runtime_route.h"
 #include "app_serial_internal.h"
-extern volatile uint32_t g_vm_test_request,g_stage1_stop_requested,g_stage1_motion_skipped,g_scan_display_result,g_scan_display_count;
+extern volatile uint32_t g_vm_test_request,g_stage1_stop_requested,g_stage1_motion_skipped,g_scan_display_result,g_scan_display_count,g_vehicle_run_id;
 #if APP_HEADING_SESSION_TEST
 #if APP_TEST_MODE == 3U
 static uint32_t s_combined_keep_vm, s_combined_powered_segment;
@@ -71,6 +71,7 @@ static uint32_t s_motion_turn_max_rpm = 5U;
 #define App_StageStartVm() (0U)
 #endif
 static RouteHeadingReference s_route_heading_reference;
+static RouteHeadingContinuation s_vehicle_heading_continuation;
 static float s_route_heading_target;
 #if APP_CONTINUOUS_MAP_ENABLE
 static RouteHeadingContinuation s_route_heading_continuation;
@@ -598,8 +599,6 @@ void App_CombinedTestSafety(void)
     if ((g_combined_test.state == 1U) || (g_combined_test.state == 2U))
     {
         if (g_combined_test.request == 2U) App_CombinedTestStop(1U);
-        else if ((uint32_t)(now - s_combined_begin_ms) >= APP_PERIMETER_GROUP_MS)
-            App_CombinedTestStop(2U);
         else if (AppRuntimeRoute_Live()->committed.id && AppRuntimeRoute_Live()->consumed &&
                  g_combined_test.state==1U && g_combined_test.index<AppRuntimeRoute_Live()->committed.count &&
                  (uint32_t)(now-s_combined_stage_ms)>=AppRuntimeRoute_Live()->committed.rows[g_combined_test.index].timeout_ms)
@@ -709,9 +708,17 @@ void App_CombinedTestStep(void)
             (g_forward_hold.phase != HR_IDLE) || (g_heading_exec_phase != HR_IDLE))
         { App_CombinedTestStop(3U); taskEXIT_CRITICAL(); return; }
 #if APP_CONTINUOUS_MAP_ENABLE
-        if(!App_RouteHeadingBegin(&s_route_heading_reference,heading.yaw_deg))
+        if(g_vehicle_state>=1U && g_vehicle_state<=3U) {
+            s_route_heading_reference.valid=0U;
+            if(!RouteHeading_BeginContinued(&s_route_heading_reference,&s_vehicle_heading_continuation,
+                g_vehicle_run_id,heading.yaw_deg)) { App_CombinedTestStop(3U);taskEXIT_CRITICAL();return; }
+        } else if(!App_RouteHeadingBegin(&s_route_heading_reference,heading.yaw_deg))
 #else
-        if(!RouteHeading_Init(&s_route_heading_reference,heading.yaw_deg))
+        if(g_vehicle_state>=1U && g_vehicle_state<=3U) {
+            s_route_heading_reference.valid=0U;
+            if(!RouteHeading_BeginContinued(&s_route_heading_reference,&s_vehicle_heading_continuation,
+                g_vehicle_run_id,heading.yaw_deg)) { App_CombinedTestStop(3U);taskEXIT_CRITICAL();return; }
+        } else if(!RouteHeading_Init(&s_route_heading_reference,heading.yaw_deg))
 #endif
         { App_CombinedTestStop(3U);taskEXIT_CRITICAL();return; }
         s_combined_powered_segment = 0U;
@@ -800,6 +807,8 @@ void App_CombinedTestStep(void)
 #if APP_CONTINUOUS_MAP_ENABLE
                 App_RouteHeadingCompleted();
 #endif
+                if(g_vehicle_state>=1U && g_vehicle_state<=3U && g_vehicle_run_id)
+                    RouteHeading_Complete(&s_vehicle_heading_continuation,g_vehicle_run_id,s_route_heading_target);
                 index = g_combined_test.index;
                 g_combined_test.phase[index] = phase;
                 g_combined_test.session[index] = status.session;

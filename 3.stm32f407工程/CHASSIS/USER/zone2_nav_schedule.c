@@ -108,7 +108,7 @@ bool Zone2NavSchedule_Start(Zone2NavSchedule *s,uint32_t run_id,uint8_t start_id
 {
     if(!s || (s->phase!=ZONE2_SCHEDULE_IDLE && s->phase!=ZONE2_SCHEDULE_DONE) ||
        !run_id || run_id==s->run_id || (start_id!=1U && start_id!=2U) || !layout_id || !stowed || !config ||
-       !config->max_age_ms || config->max_age_ms>=0x80000000U || !(speed_mm_s>0.0f && speed_mm_s<=600.0f))
+       !config->max_age_ms || config->max_age_ms>=0x80000000U || !(speed_mm_s>0.0f && speed_mm_s<=2000.0f))
         return false;
     s->run_id=run_id;s->layout_id=layout_id;s->start_id=start_id;s->leg=0U;s->session=0U;s->error=ZONE2_NAV_OK;
     s->geometry.config=*config;s->geometry.speed_mm_s=speed_mm_s;

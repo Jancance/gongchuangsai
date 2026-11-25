@@ -57,7 +57,7 @@ static Zone2NavPathResult prepare_local(const Zone2NavMap *map,uint32_t index,
     if(!map || !route || !plan || !g || map->valid!=1U || !map->context.run_id ||
        !map->context.layout_id || !map->context.map_generation ||
        !Zone2NavPath_Leg(map->context.start_id,index,&leg) ||
-       !(g->speed_mm_s>0.0f && g->speed_mm_s<=600.0f) ||
+       !(g->speed_mm_s>0.0f && g->speed_mm_s<=2000.0f) ||
        (force_return && index!=2U && index!=5U)) return ZONE2_NAV_INPUT;
     memset(route,0,sizeof(*route));
     in=&route->reference;

@@ -106,20 +106,20 @@ static void Chassis_ClearMotorCommands(ChassisMotorCommand *commands)
 }
 
 uint32_t Chassis_EncodeEmm(const ChassisWheelSpeeds *logical,
-    uint16_t max_raw, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+    uint16_t max_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
 {
     ChassisMotorCommand result[CHASSIS_WHEEL_COUNT];
     uint32_t i;
     float magnitude;
     uint16_t raw;
     Chassis_ClearMotorCommands(commands);
-    if ((commands == NULL) || (logical == NULL) || (max_raw == 0U) ||
-        (max_raw > 3000U)) return 0U;
+    if ((commands == NULL) || (logical == NULL) || (max_rpm == 0U) ||
+        (max_rpm > ZDT_EMM_APP_MAX_SPEED_RPM)) return 0U;
     for (i = 0U; i < CHASSIS_WHEEL_COUNT; i++)
     {
         if (!Chassis_Finite(logical->rpm[i])) return 0U;
         magnitude = Chassis_Abs(logical->rpm[i]);
-        if (magnitude > (float)max_raw + CHASSIS_INTEGER_RPM_TOLERANCE) return 0U;
+        if (magnitude > (float)max_rpm + CHASSIS_INTEGER_RPM_TOLERANCE) return 0U;
         /* 已先限到协议范围，转换不会溢出；拒绝不能表示的小数速度 */
         raw = (uint16_t)(magnitude + 0.5f);
         if ((raw > max_raw) ||

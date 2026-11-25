@@ -536,6 +536,28 @@ static uint32_t Auto_ZeroSpeedLocked(void)
 /* P目标限幅后，经精确离散的二阶临界阻尼滤波；每次最多更新一次。
  * 对|u|<=C，连续滤波的保守界为|c|<=C、|c'|<=2*C*w、|c''|<=6*C*w*w。
  * prepare在原速度/加速度/jerk总预算中扣除这些余量；整数命令/到距停止另验。 */
+#if APP_ROUTE_SPEED_TRIAL_ACTIVE
+static uint32_t Auto_RouteTranslationCommands(uint32_t mode,uint32_t base_rpm,
+    float correction_rpm,ChassisMotorCommand commands[4])
+{
+    ChassisWheelSpeeds wheels={{0.0f,0.0f,0.0f,0.0f}};
+    float base=(float)base_rpm;
+    if(mode>3U || base_rpm<3U || base_rpm>ROUTE_TRIAL_MAX_RPM ||
+        !(correction_rpm>=-(float)APP_SPEED_TRIAL160_HEADING_MAX_RPM &&
+          correction_rpm<=(float)APP_SPEED_TRIAL160_HEADING_MAX_RPM)) return 0U;
+    if(mode==0U || mode==3U) {
+        if(mode==3U)base=-base;
+        wheels.rpm[0]=wheels.rpm[1]=wheels.rpm[2]=wheels.rpm[3]=base;
+    } else {
+        float lateral=(mode==1U)?base:-base;
+        wheels.rpm[0]=lateral;wheels.rpm[1]=-lateral;
+        wheels.rpm[2]=-lateral;wheels.rpm[3]=lateral;
+    }
+    wheels.rpm[0]-=correction_rpm;wheels.rpm[1]+=correction_rpm;
+    wheels.rpm[2]-=correction_rpm;wheels.rpm[3]+=correction_rpm;
+    return Chassis_EncodeEmm(&wheels,3000U,commands);
+}
+#endif
 static uint32_t Auto_ProfileFollowRpmLocked(float elapsed, float progress, TickType_t now, float *rpm)
 {
     float c = s_route_trial ? ROUTE_TRIAL_FOLLOW_RPM : MotionDistanceFollowRpm(s_distance_max_rpm), w = APP_DISTANCE_SCURVE_FOLLOW_OMEGA;
@@ -945,7 +967,7 @@ static uint32_t Auto_PrepareBasicCommands(ChassisMotorCommand commands[3][CHASSI
     {
         if (!Chassis_BasicTestCommands(&g_chassis_geometry, i, commands[i])) return 0U;
         for (j = 0U; j < CHASSIS_WHEEL_COUNT; j++)
-            commands[i][j].speed_raw = (uint16_t)(10U*CHASSIS_AUTO_TARGET_RPM);
+            commands[i][j].speed_raw = (uint16_t)(ZDT_EMM_RPM_TO_RAW*CHASSIS_AUTO_TARGET_RPM);
 #if APP_HWT_TURN_TEST && APP_HWT_TURN_CLOCKWISE
         if (i == 2U)
             for (j = 0U; j < CHASSIS_WHEEL_COUNT; j++) commands[i][j].direction ^= 1U;
@@ -1467,7 +1489,14 @@ void ChassisAuto_CanStep(void)
 #endif
     effective_heading = s_heading_pending_rpm;
 #if APP_DISTANCE_SCURVE_ACTIVE
-    if (s_profile_active && !Chassis_ProfileCorrectionRpm(s_translation_base_rpm,
+    if (s_profile_active && s_route_trial) {
+        float route_limit=(float)s_translation_base_rpm;
+        if(route_limit>(float)APP_SPEED_TRIAL160_HEADING_MAX_RPM)
+            route_limit=(float)APP_SPEED_TRIAL160_HEADING_MAX_RPM;
+        effective_heading=s_heading_pending_rpm;
+        if(effective_heading>route_limit)effective_heading=route_limit;
+        if(effective_heading < -route_limit)effective_heading=-route_limit;
+    } else if (s_profile_active && !Chassis_ProfileCorrectionRpm(s_translation_base_rpm,
             s_heading_pending_rpm,&effective_heading))
     { Auto_CutLocked(8U); taskEXIT_CRITICAL(); return; }
 #endif
@@ -1511,10 +1540,12 @@ void ChassisAuto_CanStep(void)
                 AppDebugPlan40Allowed(g_debug_plan_id,s_translation_mode,s_distance_max_rpm,s_distance_target_mm)) ?
                 Chassis_Left40DriftCommands(s_translation_base_rpm,effective_heading,s_commands[2]) :
 #endif
-                (s_route_trial && s_translation_mode==1U && APP_LEFT_TRIM_ACTIVE) ?
+                (!s_route_trial && s_translation_mode==1U && APP_LEFT_TRIM_ACTIVE) ?
                 Chassis_LeftTrimCommands(s_translation_base_rpm,effective_heading,s_commands[2]) :
-                Chassis_TranslationProfileCommands(s_translation_mode,
-                s_translation_base_rpm,effective_heading,s_commands[2])) :
+                (s_route_trial ? Auto_RouteTranslationCommands(s_translation_mode,
+                    s_translation_base_rpm,effective_heading,s_commands[2]) :
+                 Chassis_TranslationProfileCommands(s_translation_mode,
+                    s_translation_base_rpm,effective_heading,s_commands[2]))) :
 #endif
             Chassis_TranslationHoldCommandsAtSpeed(s_translation_mode, s_translation_base_rpm, effective_heading, s_commands[2])
 #if APP_DISTANCE_SCURVE_ACTIVE
@@ -1964,9 +1995,9 @@ static uint32_t Auto_NavSubmit(uint32_t run_id,uint32_t session,uint32_t generat
     if (!commands || !generation) return 0U;
     for (i=0U;i<4U;i++) {
 #if APP_SPEED_TRIAL160
-        const uint32_t raw_limit=APP_SPEED_TRIAL160_MAX_RPM;
+        const uint32_t raw_limit=APP_SPEED_TRIAL160_MAX_RPM*ZDT_EMM_RPM_TO_RAW;
 #else
-        const uint32_t raw_limit=(uint32_t)(g_fusion_motion_limits.wheel_rpm*10.0f);
+        const uint32_t raw_limit=(uint32_t)(g_fusion_motion_limits.wheel_rpm*(float)ZDT_EMM_RPM_TO_RAW);
 #endif
         if (commands[i].address!=i+1U || commands[i].direction>1U ||
             commands[i].speed_raw>raw_limit) return 0U;
@@ -2443,9 +2474,9 @@ uint32_t ChassisAuto_UpdateHeading(float command_rpm)
         (g_chassis_auto_state <= CHASSIS_AUTO_RUN))
     {
         /* 当前会话禁止反向：后续完成零速反向互锁后再扩展。 */
-        if (!(command_rpm >= -(float)(s_turn_brake_trial ? APP_TURN_BRAKE_MAX_RPM : 5U) &&
-              command_rpm <= (float)(s_turn_brake_trial ? APP_TURN_BRAKE_MAX_RPM : 5U)) ||
-            ((s_forward_hold == 1U) && ((command_rpm < -2) || (command_rpm > 2))) ||
+        if (!(command_rpm >= -(float)((s_forward_hold==1U && s_route_trial)?APP_SPEED_TRIAL160_HEADING_MAX_RPM:(s_turn_brake_trial ? APP_TURN_BRAKE_MAX_RPM : 5U)) &&
+              command_rpm <= (float)((s_forward_hold==1U && s_route_trial)?APP_SPEED_TRIAL160_HEADING_MAX_RPM:(s_turn_brake_trial ? APP_TURN_BRAKE_MAX_RPM : 5U))) ||
+            ((s_forward_hold == 1U) && (s_route_trial ? (command_rpm < -(float)APP_SPEED_TRIAL160_HEADING_MAX_RPM || command_rpm > (float)APP_SPEED_TRIAL160_HEADING_MAX_RPM) : ((command_rpm < -2) || (command_rpm > 2)))) ||
             ((s_heading_initial_rpm > 0) && (command_rpm < 0)) ||
             ((s_heading_initial_rpm < 0) && (command_rpm > 0)))
             Auto_CutLocked(8U);

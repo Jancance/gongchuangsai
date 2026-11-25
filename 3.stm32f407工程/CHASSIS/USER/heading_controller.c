@@ -42,6 +42,50 @@ float HeadingController_ErrorDeg(float target_deg, float current_deg)
     return HeadingController_WrapDeg(target_deg - current_deg);
 }
 
+uint32_t HeadingController_HoldStepRoute(HeadingHoldController *hold,
+    float target_deg, float yaw_deg, float rate_dps, uint32_t now_ms,
+    float kp, float kd, float max_correction_rpm,
+    float *correction_rpm, float *error_deg)
+{
+    uint32_t elapsed, quantize_step;
+    float error, desired, filtered, step, difference;
+    if (!hold || !correction_rpm || !error_deg ||
+        !(kp >= 0.0f && kp <= 10.0f) || !(kd >= 0.0f && kd <= 10.0f) ||
+        !(max_correction_rpm > 0.0f && max_correction_rpm <= 20.0f) ||
+        !Heading_Finite(target_deg) || !Heading_Finite(yaw_deg) ||
+        !Heading_Finite(rate_dps) || Heading_Abs(rate_dps) > 2000.0f ||
+        Heading_Abs(target_deg) > 180.0f || Heading_Abs(yaw_deg) > 180.0f) return 0U;
+    error=HeadingController_ErrorDeg(target_deg,yaw_deg);
+    *error_deg=error; *correction_rpm=0.0f;
+    if (Heading_Abs(error)>10.0f) return 0U;
+    elapsed=(hold->initialized!=0U)?now_ms-hold->tick:20U;
+    if(elapsed>=100U) return 0U;
+    if(hold->initialized!=0U && elapsed==0U) {
+        *correction_rpm=(float)hold->quantized_deci_rpm*0.1f; return 1U;
+    }
+    filtered=(hold->initialized!=0U)?hold->filtered_rate_dps+
+        ((float)elapsed/(80.0f+(float)elapsed))*(rate_dps-hold->filtered_rate_dps):rate_dps;
+    desired=kp*error-kd*filtered;
+    if(Heading_Abs(error)<=0.3f && Heading_Abs(filtered)<=0.3f) desired=0.0f;
+    if(desired>max_correction_rpm) desired=max_correction_rpm;
+    if(desired < -max_correction_rpm) desired=-max_correction_rpm;
+    step=0.01f*(float)elapsed; difference=desired-hold->command_rpm;
+    if(difference>step) difference=step;
+    if(difference < -step) difference=-step;
+    hold->command_rpm+=difference;
+    for(quantize_step=0U;quantize_step<40U;quantize_step++) {
+        if(hold->command_rpm*10.0f-(float)hold->quantized_deci_rpm>0.65f) hold->quantized_deci_rpm++;
+        else if(hold->command_rpm*10.0f-(float)hold->quantized_deci_rpm < -0.65f) hold->quantized_deci_rpm--;
+        else break;
+    }
+    if(hold->quantized_deci_rpm>(int32_t)(max_correction_rpm*10.0f))
+        hold->quantized_deci_rpm=(int32_t)(max_correction_rpm*10.0f);
+    if(hold->quantized_deci_rpm < -(int32_t)(max_correction_rpm*10.0f))
+        hold->quantized_deci_rpm=-(int32_t)(max_correction_rpm*10.0f);
+    hold->filtered_rate_dps=filtered; hold->tick=now_ms; hold->initialized=1U;
+    *correction_rpm=(float)hold->quantized_deci_rpm*0.1f;
+    return 1U;
+}
 uint32_t HeadingController_ConfigValid(const HeadingControllerConfig *config)
 {
     if ((config == NULL) || !Heading_Finite(config->tolerance_deg) ||

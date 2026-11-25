@@ -2,7 +2,7 @@
 #define VEHICLE_PARAMETERS_H
 #include <stdint.h>
 #ifndef VEHICLE_SPEED_TRIAL160_MODE
-#define VEHICLE_SPEED_TRIAL160_MODE 2U /* 0U 普通 v1.1（四轮 S_Vel_IS=Enable），1U 校准供电（PC13 开关 VM），2U 测速（四轮 S_Vel_IS=Disable）。 */
+#define VEHICLE_SPEED_TRIAL160_MODE 0U /* 0U 无雷达 v1.1 比赛，1U VM校准，2U 独立测速调试（S_Vel_IS=Disable）。 */
 #endif
 #ifndef VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL
 #define VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL 1U /* 0U 左移原曲线，1U 左移缓加速；其他方向使用原曲线。 */
@@ -51,14 +51,9 @@
 #ifndef VEHICLE_RUN_ALL
 #define VEHICLE_RUN_ALL 0U          /* 0单段；1从第1段连续执行八段。 */
 #endif
-#ifndef VEHICLE_REHEARSAL
-#define VEHICLE_REHEARSAL 0U        /* 八段现场分别通过后才设1，整场180秒。 */
-#endif
 #ifndef VEHICLE_SCAN_BYPASS
 #define VEHICLE_SCAN_BYPASS 1U      /* 当前按用户要求跳过扫码；不伪造任务码/计数。 */
 #endif
-#define VEHICLE_STAGE_TIMEOUT_MS 120000U
-#define VEHICLE_REHEARSAL_MS 180000U
 
 /* ---------- 上电停放：按键前DM/伸缩不自动运动 ---------- */
 #ifndef STARTUP_GRIPPER_ANGLE_DEG
@@ -232,7 +227,7 @@ static const float vehicle_station_extension_mm[8][3]={
 #endif
 
 #ifndef VEHICLE_SPEED_TRIAL160_DIRECTION
-#define VEHICLE_SPEED_TRIAL160_DIRECTION 0U
+#define VEHICLE_SPEED_TRIAL160_DIRECTION  3
 #endif
 #if VEHICLE_SPEED_TRIAL160_MODE > 2U || VEHICLE_SPEED_TRIAL160_DIRECTION > 3U
 #error Invalid_speed_trial160_configuration

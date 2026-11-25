@@ -13,8 +13,8 @@
 #define FEEDBACK_YAW_CAP (3.0f * FEEDBACK_RAD_PER_DEG)
 
 const FusionMotionLimits g_fusion_motion_limits = {
-    600.0f,600.0f,1200.0f,MOTION_PI/2.0f,MOTION_PI,8.0f*MOTION_PI,
-    300.0f,250.0f,1400.0f
+    1700.0f,2500.0f,12000.0f,MOTION_PI/2.0f,MOTION_PI,8.0f*MOTION_PI,
+    640.0f,1000.0f,4500.0f
 };
 
 typedef struct { ChassisWheelSpeeds x,y,yaw; } MotionWheelMap;
@@ -86,7 +86,7 @@ uint32_t FusionMotion_FeedbackBatch(const FusionMotionFeedbackInput *input,Fusio
         (FUSION_MOTION_HEADING_TOLERANCE_DEG+FUSION_MOTION_HEADING_ROUNDOFF_DEG)*FEEDBACK_RAD_PER_DEG;
     target.x=1.4f*error.x;
     target.y=1.4f*error.y;
-    target.yaw=limit_signed(2.2f*error.yaw,FEEDBACK_YAW_CAP);
+    target.yaw=input->heading_pd_enabled ? 0.0f : limit_signed(2.2f*error.yaw,FEEDBACK_YAW_CAP);
     if(!finite(norm_xy(target))) return 0U;
     limit_xy(&target,FEEDBACK_POSITION_CAP);
     step.x=target.x-input->committed.x;
@@ -94,7 +94,7 @@ uint32_t FusionMotion_FeedbackBatch(const FusionMotionFeedbackInput *input,Fusio
     limit_xy(&step,28.0f*FEEDBACK_DT_S);
     batch.correction.x=input->committed.x+step.x;
     batch.correction.y=input->committed.y+step.y;
-    batch.correction.yaw=heading_in_band ? 0.0f : input->committed.yaw+
+    batch.correction.yaw=(heading_in_band || input->heading_pd_enabled) ? 0.0f : input->committed.yaw+
         limit_signed(target.yaw-input->committed.yaw,10.0f*FEEDBACK_RAD_PER_DEG*FEEDBACK_DT_S);
     batch.finish_requested=input->reference_complete && input->capture_complete && norm_xy(error)<=2.5f &&
         heading_in_band;
@@ -113,10 +113,16 @@ uint32_t FusionMotion_FeedbackBatch(const FusionMotionFeedbackInput *input,Fusio
             if(!wheel_speeds(body,&slot)) return 0U;
             rpm.rpm[i]=slot.rpm[i];
         }
+        if(input->heading_pd_enabled) {
+            rpm.rpm[CHASSIS_LEFT_REAR]-=input->heading_correction_rpm;
+            rpm.rpm[CHASSIS_RIGHT_REAR]+=input->heading_correction_rpm;
+            rpm.rpm[CHASSIS_LEFT_FRONT]-=input->heading_correction_rpm;
+            rpm.rpm[CHASSIS_RIGHT_FRONT]+=input->heading_correction_rpm;
+        }
     }
     if(!Chassis_EncodeEmm(&rpm,(uint16_t)g_fusion_motion_limits.wheel_rpm,batch.commands)) return 0U;
     for(i=0U;i<CHASSIS_WHEEL_COUNT;i++) {
-        const float magnitude=(float)batch.commands[i].speed_raw/10.0f;
+        const float magnitude=(float)batch.commands[i].speed_raw/(float)ZDT_EMM_RPM_TO_RAW;
         batch.wheels.rpm[i]=batch.commands[i].direction==g_chassis_forward_direction[i] ?
             magnitude : -magnitude;
     }

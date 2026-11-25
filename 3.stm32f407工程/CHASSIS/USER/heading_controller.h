@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-/* º½Ïò±Õ»·µ±Ç°Ö»Êä³ö´ø·ûºÅµÄÂß¼­×ªÏòÂÖËÙ£¬²»Ö±½Ó²Ù×÷CAN»òVM¡£ */
+/* ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½Ç°Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åµï¿½ï¿½ß¼ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½Ù£ï¿½ï¿½ï¿½Ö±ï¿½Ó²ï¿½ï¿½ï¿½CANï¿½ï¿½VMï¿½ï¿½ */
 #define HEADING_CTRL_IDLE       0U
 #define HEADING_CTRL_TURNING    1U
 #define HEADING_CTRL_SETTLING   2U
@@ -40,7 +40,7 @@ typedef struct
     uint32_t settle_active;
     float target_deg;
     float error_deg;
-    float command_rpm; /* ÕýÖµÎª¸©ÊÓÄæÊ±Õë£¬¸ºÖµÎªË³Ê±Õë¡£ */
+    float command_rpm; /* ï¿½ï¿½ÖµÎªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ë£¬ï¿½ï¿½ÖµÎªË³Ê±ï¿½ë¡£ */
 } HeadingController;
 
 typedef struct
@@ -53,12 +53,12 @@ typedef struct
     float command_rpm;
 } HeadingControllerOutput;
 
-/* 5/3/1RPM¡¢2¶È¡¢Á¬ÐøÎÈ¶¨700ms¾ùÎª´ýÊµ³µµ÷²ÎµÄ¹¤³ÌºòÑ¡Öµ¡£ */
+/* 5/3/1RPMï¿½ï¿½2ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¶ï¿½700msï¿½ï¿½Îªï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½ÎµÄ¹ï¿½ï¿½Ìºï¿½Ñ¡Öµï¿½ï¿½ */
 extern const HeadingControllerConfig g_heading_controller_default_config;
 
 float HeadingController_WrapDeg(float angle_deg);
 float HeadingController_ErrorDeg(float target_deg, float current_deg);
-/* Ç°½øPD£ºKp=0.8 RPM/deg£¬Kd=0.25 RPM/(deg/s)£¬ÐÞÕýÏÞ·ù2RPM¡£ */
+/* Ç°ï¿½ï¿½PDï¿½ï¿½Kp=0.8 RPM/degï¿½ï¿½Kd=0.25 RPM/(deg/s)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ·ï¿½2RPMï¿½ï¿½ */
 typedef struct
 {
     uint32_t tick, initialized;
@@ -71,6 +71,10 @@ uint32_t HeadingController_HoldStep(HeadingHoldController *hold,
     float target_deg, float yaw_deg, float rate_dps, uint32_t now_ms,
     float *correction_rpm, float *error_deg);
 
+uint32_t HeadingController_HoldStepRoute(HeadingHoldController *hold,
+    float target_deg, float yaw_deg, float rate_dps, uint32_t now_ms,
+    float kp, float kd, float max_correction_rpm,
+    float *correction_rpm, float *error_deg);
 uint32_t HeadingController_ConfigValid(const HeadingControllerConfig *config);
 uint32_t HeadingController_Start(HeadingController *controller,
     const HeadingControllerConfig *config, float target_deg,

@@ -10,6 +10,7 @@
 #include "chassis_auto_test.h"
 #include "freertos_hooks.h"
 #include "heading_source.h"
+#include "heading_controller.h"
 #include "radar_zone_switch.h"
 #include "safety.h"
 #include "startup_axes.h"
@@ -74,9 +75,9 @@ static const FusionConfig s_config = {
     .position_budget_mm=5.0f, .heading_budget_deg=1.0f,
     .position_tolerance_mm=5.0f, .max_error_mm=5.0f,
     .stop_speed_mm_s=1.0f, .stop_omega_deg_s=1.0f,
-    .acceleration_hint_mm_s2=600.0f, .cross_gain_s=1.0f,
+    .acceleration_hint_mm_s2=2500.0f, .cross_gain_s=1.0f,
     .lateral_cap_mm_s=40.0f, .preview_s=0.05f,
-    .wheel_limit_rpm=300.0f, .heading_reserve_rpm=15.0f,
+    .wheel_limit_rpm=640.0f, .heading_reserve_rpm=20.0f,
     .speed_state_margin_mm_s=5.0f, .max_age_ms=ZONE2_POSE_MS
 };
 static const ChassisMotorCommand s_zero[4] = {
@@ -89,6 +90,7 @@ static Zone2NavSchedule s_schedule;
 static Zone2MotionReference s_trajectory;
 static FusionMotionVector s_correction, s_proposed;
 static uint32_t s_section, s_section_ms, s_generation, s_station_stop;
+static HeadingHoldController s_zone2_heading_controller;
 #if !APP_ZONE2_MISSION_ENABLE
 static uint32_t s_prepare_ms;
 static uint32_t s_section_progress_started, s_section_progress_ms, s_section_sample_ms;
@@ -678,6 +680,7 @@ static void start_section(uint32_t batch_ms)
 #endif
     s_generation=0U;
     s_correction=(FusionMotionVector){0};
+    s_zone2_heading_controller=(HeadingHoldController){0};
     g_zone2_phase=ZONE2_TRACK;
 }
 
@@ -751,6 +754,39 @@ static void motion_batch(const ChassisZone2CanStatus *can,const FusionObservatio
         in.slot_to[i]=(FusionMotionPoint){to.x,to.y};
         in.slot_yaw_delta[i]=remainderf(to.yaw-from.yaw,6.28318530717958648f);
     }
+
+    if(fabsf(in.slot_yaw_delta[0])<1.0e-5f && fabsf(in.slot_yaw_delta[1])<1.0e-5f &&
+       fabsf(in.slot_yaw_delta[2])<1.0e-5f && fabsf(in.slot_yaw_delta[3])<1.0e-5f) {
+        float angle=s_trajectory.hold_rad;
+        float dx=(in.slot_to[0].x-in.slot_from[0].x)/0.08f;
+        float dy=(in.slot_to[0].y-in.slot_from[0].y)/0.08f;
+        float body_forward=dx*cosf(angle)+dy*sinf(angle);
+        float body_lateral=-dx*sinf(angle)+dy*cosf(angle);
+        float kp,kd,correction,error;
+        if(fabsf(in.reference.yaw*(180.0f/3.14159265358979323846f)-pose->heading_deg)<=10.0f) {
+            if(fabsf(body_forward)>1.0f && fabsf(body_lateral)>1.0f) {
+                float longitudinal_kp=(body_forward>=0.0f)?APP_SPEED_TRIAL160_FORWARD_HEADING_KP_RPM_PER_DEG:APP_SPEED_TRIAL160_HEADING_KP_RPM_PER_DEG;
+                float longitudinal_kd=(body_forward>=0.0f)?APP_SPEED_TRIAL160_FORWARD_HEADING_KD_RPM_PER_DPS:APP_SPEED_TRIAL160_HEADING_KD_RPM_PER_DPS;
+                float lateral_kp=(body_lateral>=0.0f)?APP_SPEED_TRIAL160_LEFT_HEADING_KP_RPM_PER_DEG:APP_SPEED_TRIAL160_RIGHT_HEADING_KP_RPM_PER_DEG;
+                float lateral_kd=(body_lateral>=0.0f)?APP_SPEED_TRIAL160_LEFT_HEADING_KD_RPM_PER_DPS:APP_SPEED_TRIAL160_RIGHT_HEADING_KD_RPM_PER_DPS;
+                kp=fmaxf(longitudinal_kp,lateral_kp);kd=fmaxf(longitudinal_kd,lateral_kd);
+            } else if(fabsf(body_forward)>=fabsf(body_lateral)) {
+                kp=(body_forward>=0.0f)?APP_SPEED_TRIAL160_FORWARD_HEADING_KP_RPM_PER_DEG:APP_SPEED_TRIAL160_HEADING_KP_RPM_PER_DEG;
+                kd=(body_forward>=0.0f)?APP_SPEED_TRIAL160_FORWARD_HEADING_KD_RPM_PER_DPS:APP_SPEED_TRIAL160_HEADING_KD_RPM_PER_DPS;
+            } else {
+                kp=(body_lateral>=0.0f)?APP_SPEED_TRIAL160_LEFT_HEADING_KP_RPM_PER_DEG:APP_SPEED_TRIAL160_RIGHT_HEADING_KP_RPM_PER_DEG;
+                kd=(body_lateral>=0.0f)?APP_SPEED_TRIAL160_LEFT_HEADING_KD_RPM_PER_DPS:APP_SPEED_TRIAL160_RIGHT_HEADING_KD_RPM_PER_DPS;
+            }
+            if(HeadingController_HoldStepRoute(&s_zone2_heading_controller,
+                in.reference.yaw*(180.0f/3.14159265358979323846f),pose->heading_deg,
+                pose->omega_deg_s,pose->now_ms,kp,kd,(float)APP_SPEED_TRIAL160_HEADING_MAX_RPM,
+                &correction,&error)==1U) {
+                in.heading_correction_rpm=correction;
+                in.heading_pd_enabled=1U;
+            }
+        }
+    }
+
     if (!FusionMotion_FeedbackBatch(&in,&out)) {
         fail(ZONE2_FAULT_REFERENCE);
         return;
@@ -1269,7 +1305,7 @@ void AppZone2_Step(void)
             }
             if (!StartupAxes_Holding()) return;
             if (!Zone2NavSchedule_Start(&s_schedule,ZONE2_RUN_ID,(uint8_t)s_zone_locked,
-                VEHICLE_MAP_VERSION,true,&s_config,600.0f)) {
+                VEHICLE_MAP_VERSION,true,&s_config,2000.0f)) {
                 StartupAxes_Cancel();
                 fail(ZONE2_FAULT_PATH);
                 return;
@@ -1447,6 +1483,7 @@ void AppZone2_Step(void)
 #endif
                     s_generation=0U;
                     s_correction=(FusionMotionVector){0};
+    s_zone2_heading_controller=(HeadingHoldController){0};
                     g_zone2_phase=ZONE2_TRACK;
                     motion_batch(&can,&pose);
                     return;
