@@ -1,5 +1,6 @@
 #ifndef APP_CONFIG_H
 #define APP_CONFIG_H
+#include "../../USER/vehicle_parameters.h"
 #ifndef APP_ZONE2_NAV_ENABLE
 #define APP_ZONE2_NAV_ENABLE 0U
 #endif
@@ -37,7 +38,6 @@
 #error Baseline40_enable_invalid
 #endif
 #define APP_BASELINE40_ACTIVE (APP_BASELINE40_ENABLE && APP_IS_DEBUG && (APP_TEST_MODE == 3U))
-#include "../../USER/vehicle_parameters.h"
 #ifndef APP_ZONE2_RADAR_CALIBRATION_TEST
 #define APP_ZONE2_RADAR_CALIBRATION_TEST 0U
 #endif
@@ -423,7 +423,8 @@
 #if APP_CONTINUOUS_MAP_ENABLE && (!APP_POSITION_DIAGNOSTIC || !APP_HEADING_SESSION_TEST || APP_TEST_MODE != 3U)
 #error Continuous_map_requires_existing_odometry_owner
 #endif
-#if APP_ZONE2_NAV_ENABLE && (!APP_CONTINUOUS_MAP_ENABLE || APP_TEST_MODE != 3U || APP_BASELINE40_ACTIVE || APP_VM_CALIBRATION_ONLY_ENABLE)
+#if APP_ZONE2_NAV_ENABLE && (!APP_CONTINUOUS_MAP_ENABLE || APP_TEST_MODE != 3U || APP_BASELINE40_ACTIVE || \
+    (APP_VM_CALIBRATION_ONLY_ENABLE && VEHICLE_FIELD_MODE != VEHICLE_FIELD_MODE_VM_CALIBRATION))
 #error Zone2_nav_requires_continuous_map_and_the_normal_mode3_tasks
 #endif
 #endif
