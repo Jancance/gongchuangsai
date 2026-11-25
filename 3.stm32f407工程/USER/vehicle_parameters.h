@@ -2,8 +2,12 @@
 #define VEHICLE_PARAMETERS_H
 #include <stdint.h>
 /* ================= 现场快速调整区：只改当前需要的档位/方向 =================
- * 档位：0 无雷达路线；1 独立 VM 电机校准；2 直线测速调试。
- * 直线方向：0 前进、1 后退、2 左移、3 右移。
+ * 选 VEHICLE_FIELD_MODE 后，Keil 选择 Vehicle_Integrated，Rebuild 后再下载：
+ *   0 无雷达 Zone2 路线（默认）；1 独立 VM 电机参数校准；2 单趟直线测速。
+ * 直线测速方向：0 前进、1 后退、2 左移、3 右移；只对档位2生效。
+ * VM校准档上电时PC13保持松开可使能PE2，按下PC13切断PE2；该档不启动
+ * RTOS/CAN/Safety/Watchdog，只用于外部校准工具调电机参数，不运行小车路线。
+ * Vehicle_Offline 仅供离线构建，不会启用PE2。档位选择属于工程调试配置。
  */
 #define VEHICLE_FIELD_MODE_NO_RADAR 0U
 #define VEHICLE_FIELD_MODE_VM_CALIBRATION 1U
@@ -15,16 +19,16 @@
 #define VEHICLE_SPEED_TRIAL160_DIRECTION 3U
 #endif
 #ifndef VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL
-#define VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL 1U /* 左移缓加速。 */
+#define VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL 1U /* 左移：0原曲线；1缓加速。 */
 #endif
 #ifndef VEHICLE_SPEED_TRIAL_LATERAL_PEAK120
-#define VEHICLE_SPEED_TRIAL_LATERAL_PEAK120 1U /* 左右横移限到约120cm/s。 */
+#define VEHICLE_SPEED_TRIAL_LATERAL_PEAK120 1U /* 横移：0旧160cm/s基线；1限到约120cm/s。 */
 #endif
 #ifndef VEHICLE_SPEED_TRIAL160_LEFT_EARLY_DAMPING
-#define VEHICLE_SPEED_TRIAL160_LEFT_EARLY_DAMPING 0U /* 左移提前角速度阻尼。 */
+#define VEHICLE_SPEED_TRIAL160_LEFT_EARLY_DAMPING 0U /* 左移缓加速提前角速度阻尼：0关/1开。 */
 #endif
 #ifndef VEHICLE_SPEED_TRIAL160_LEFT_YAW_FEEDFORWARD
-#define VEHICLE_SPEED_TRIAL160_LEFT_YAW_FEEDFORWARD 0U /* 左移航向前馈。 */
+#define VEHICLE_SPEED_TRIAL160_LEFT_YAW_FEEDFORWARD 0U /* 左移缓加速航向前馈：0关/1开，优先于阻尼。 */
 #endif
 #if VEHICLE_FIELD_MODE > VEHICLE_FIELD_MODE_STRAIGHT_DEBUG || VEHICLE_SPEED_TRIAL160_DIRECTION > 3U
 #error Invalid_vehicle_field_mode_or_straight_direction
