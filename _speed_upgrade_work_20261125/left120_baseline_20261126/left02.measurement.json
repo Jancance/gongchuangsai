@@ -1,0 +1,30 @@
+{
+  "run_id": "left02",
+  "source": "user field measurement relayed by coordinating agent",
+  "user_original_text": "左移1620mm、后偏3cm",
+  "measurements": {
+    "left_distance": {
+      "value": 1620,
+      "unit": "mm"
+    },
+    "rearward_deviation": {
+      "original_value": 3,
+      "original_unit": "cm",
+      "value": 30,
+      "unit": "mm"
+    }
+  },
+  "associated_logs": {
+    "raw": "left02.bin",
+    "text": "left02.txt"
+  },
+  "left01_ruler_measurement": "not provided",
+  "log_facts_reported_by_coordinator": {
+    "begin": "BEGIN,2,0,9,0,1,114422,0",
+    "end": "END,180,157,412,0,0",
+    "overflow": 0,
+    "icm_count": 0,
+    "hold_line_fragmentation": "present in original serial log; preserved without modification"
+  },
+  "analysis_performed": false
+}

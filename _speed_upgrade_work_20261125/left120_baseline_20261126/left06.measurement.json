@@ -1,0 +1,31 @@
+{
+  "run_id": "left06",
+  "user_original_text": "后偏4cm走了1616mm",
+  "measurements": {
+    "left_distance": {
+      "value": 1616,
+      "unit": "mm"
+    },
+    "rearward_deviation": {
+      "original_value": 4,
+      "original_unit": "cm",
+      "value": 40,
+      "unit": "mm"
+    }
+  },
+  "associated_logs": {
+    "raw": "left06.bin",
+    "text": "left06.txt"
+  },
+  "log_facts_reported_by_coordinator": {
+    "receive_session": 88998,
+    "begin": "BEGIN,2,0,9,0,1,106902,0",
+    "end": "END,172,151,396,0,0",
+    "completion_status": "successful end received live",
+    "ready_seen": false,
+    "raw_size_bytes": 55670
+  },
+  "raw_file_status": "naturally closed and saved; original files contain left06 followed by READY and right01 segment",
+  "analysis_performed": false,
+  "log_segment": "left06 segment before subsequent READY; right01 follows READY in the same original files"
+}

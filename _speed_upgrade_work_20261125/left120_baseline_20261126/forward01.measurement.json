@@ -1,0 +1,37 @@
+{
+  "run_id": "forward01",
+  "user_original_text": "右偏3cm走了1700mm",
+  "measurements": {
+    "forward_distance": {
+      "value": 1700,
+      "unit": "mm"
+    },
+    "rightward_deviation": {
+      "original_value": 3,
+      "original_unit": "cm",
+      "value": 30,
+      "unit": "mm"
+    }
+  },
+  "associated_logs": {
+    "raw": "forward01.bin",
+    "text": "forward01.txt"
+  },
+  "log_facts_reported_by_coordinator": {
+    "begin": "BEGIN,0,0,9,0,1,62022,0",
+    "end": "END,152,136,356,0,0",
+    "raw_size_bytes": 23697,
+    "completion_status": "normal terminal state",
+    "buffer_overflow": 0,
+    "icm_count": 0
+  },
+  "host_firmware_reported_by_coordinator": {
+    "axf_path": "D:\\Desktop\\工创赛\\3.stm32f407工程\\Objects\\Vehicle_Integrated\\Vehicle_Integrated.axf",
+    "sha256": "029c7896a0aa3a6260126c0af4144fe89282097e8867fc922ce767662ee1de34",
+    "modified_time_local": "2026-11-26 20:43:34",
+    "verification": "user rebuild; high reviewer confirmed stable host SHA",
+    "board_readback_verified": false,
+    "previous_f5cc_hash_is_current": false
+  },
+  "analysis_performed": false
+}

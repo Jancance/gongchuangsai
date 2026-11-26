@@ -1,0 +1,28 @@
+{
+  "run_id": "left04",
+  "user_original_text": "后偏2.5cm左走1623mm",
+  "measurements": {
+    "left_distance": {
+      "value": 1623,
+      "unit": "mm"
+    },
+    "rearward_deviation": {
+      "original_value": 2.5,
+      "original_unit": "cm",
+      "value": 25,
+      "unit": "mm"
+    }
+  },
+  "candidate_logs": {
+    "raw": "left04.bin",
+    "text": "left04.txt"
+  },
+  "measurement_log_association": "pending verification; do not directly bind ruler measurement to the interrupted segment",
+  "log_facts_reported_by_coordinator": {
+    "opening": "tail of an old export followed by READY",
+    "begin": "BEGIN,2,1,10,5,0,10742,0",
+    "end": "END,80,66,170,0,0",
+    "completion_status": "cancelled; not normal completion"
+  },
+  "analysis_performed": false
+}
