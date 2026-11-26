@@ -71,6 +71,8 @@ static uint32_t VehicleMission_ArmProfileReady(uint32_t stage)
         if(r->op==5U && (carrier_verified!=1U || !(VEHICLE_CARRIER_SLOT1_DEG>=0 && VEHICLE_CARRIER_SLOT1_DEG<=270) ||
            !(VEHICLE_CARRIER_SLOT2_DEG>=0 && VEHICLE_CARRIER_SLOT2_DEG<=270) ||
            !(VEHICLE_CARRIER_SLOT3_DEG>=0 && VEHICLE_CARRIER_SLOT3_DEG<=270)))return 0U;
+        if(r->op==5U && r->target==-3.0f && ((stage!=2U && stage!=5U) ||
+           vehicle_arm_repeat[stage-1U]!=3U || !r->settle_ms))return 0U;
         if(r->op>9U)return 0U;
     }return 0U;
 }

@@ -83,7 +83,7 @@ uint32_t VehicleArm_Begin(const VehicleArmRow *row,uint32_t item)
 void VehicleArm_Service(void)
 {
 #if !APP_MOTOR_OFFLINE_ONLY
-    uint32_t now=(uint32_t)xTaskGetTickCount(),pulse,units,speed;
+    uint32_t now=(uint32_t)xTaskGetTickCount(),pulse,previous_pulse,units,speed;
     float target,delta;uint8_t q[5]={0xf3,0xab,1,0,0x6b};
     if(VehicleSourceParallel_Owns()){VehicleSourceParallel_Service();return;}
     if(g_vehicle_arm_stop_pending==5U || g_vehicle_arm_stop_pending==6U) {
@@ -121,9 +121,15 @@ void VehicleArm_Service(void)
             if(s_row.op==5U) {
                 target=s_row.target;
                 if(target==-2.0f)target=s_item==0?VEHICLE_CARRIER_SLOT1_DEG:(s_item==1?VEHICLE_CARRIER_SLOT2_DEG:VEHICLE_CARRIER_SLOT3_DEG);
+                else if(target==-3.0f){
+                    if(s_item>=2U){g_vehicle_arm_state=2U;return;}
+                    target=s_item==0U?VEHICLE_CARRIER_SLOT2_DEG:VEHICLE_CARRIER_SLOT3_DEG;
+                }
                 if(!(target>=0 && target<=270)){arm_fail(4U);return;}
                 pulse=CARRIER_PULSE_MIN_US+(uint32_t)(target*(CARRIER_PULSE_MAX_US-CARRIER_PULSE_MIN_US)/270.0f+0.5f);
+                previous_pulse=CarrierPwm_LastPulseUs();
                 if(!CarrierPwm_Write(pulse)){arm_fail(4U);return;}
+                if(previous_pulse==pulse){g_vehicle_arm_state=2U;return;}
             }
             s_wait=now;s_phase=1U;
         }
