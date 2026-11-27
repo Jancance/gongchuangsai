@@ -61,7 +61,6 @@ uint32_t LiftRuler_Start(LiftRulerController*c,uint32_t now,uint32_t ready)
  /* A completed return can start the next explicitly requested down test.
   * No fault is cleared and no reference is synthesized. */
  if(c->operation==3U)c->operation=1U;
- c->return_speed=0U;
  c->backoff_active=0U;if(c->operation!=1U)c->backoff_valid=0U;
  c->phase=c->stable=c->moves_sent=c->stop_confirmed=c->stop_unconfirmed=0;
  c->home_started=c->home_seen_running=c->home_reported=c->home_params_valid=c->home_exit_confirmed=0;
@@ -72,17 +71,14 @@ uint32_t LiftRuler_Start(LiftRulerController*c,uint32_t now,uint32_t ready)
 uint32_t LiftRuler_StartReturn(LiftRulerController*c,uint32_t now,uint32_t ready)
 {return LiftRuler_StartReturnWithLimit(c,now,ready,DOWN_TARGET_PULSES);}
 uint32_t LiftRuler_StartReturnWithLimit(LiftRulerController*c,uint32_t now,uint32_t ready,uint32_t limit)
-{return LiftRuler_StartReturnWithLimitSpeed(c,now,ready,limit,REFERENCE_SPEED);}
-uint32_t LiftRuler_StartReturnWithLimitSpeed(LiftRulerController*c,uint32_t now,uint32_t ready,uint32_t limit,uint32_t speed)
 {
  uint32_t previous;
- if(speed!=REFERENCE_SPEED && !(speed==6000U && limit==SPF_STAGE3_MAX_LIFT_PULSES))return 0U;
  if(limit!=DOWN_TARGET_PULSES && limit!=SPF_STAGE3_MAX_LIFT_PULSES)return 0U;
  if(!c || !ready || c->state!=LRC_DONE || !c->top_valid || c->cause || c->stop_pending)return 0U;
  c->reuse_count=(c->reuse_count>=9U)?0U:(c->reuse_count+1U);
  c->reuse_reference=c->top_valid?((c->reuse_count!=0U)?1U:0U):0U;
  previous=c->operation;c->operation=2U;
- if(LiftRuler_Start(c,now,ready)){c->return_limit_pulses=limit;c->return_speed=speed;return 1U;}
+ if(LiftRuler_Start(c,now,ready)){c->return_limit_pulses=limit;return 1U;}
  c->operation=previous;return 0U;
 }
 uint32_t LiftRuler_StartRelease(LiftRulerController*c,uint32_t now,uint32_t ready)
@@ -180,8 +176,7 @@ void LiftRuler_Service(LiftRulerController*c,uint32_t now,uint32_t ready,uint32_
    units=c->operation==1U?c->down_target_pulses:
     (c->return_limit_pulses==SPF_STAGE3_MAX_LIFT_PULSES?SOURCE_HOME_BACKOFF_PULSES:RETURN_TOP_MARGIN_PULSES);
    c->goal_raw=c->top_position_raw+(int64_t)units*360*c->scale/3200;
-   c->command_speed=(c->operation==2U && c->return_speed)?c->return_speed:REFERENCE_SPEED;
-   c->command_accel=REFERENCE_ACCEL;
+   c->command_speed=REFERENCE_SPEED;c->command_accel=REFERENCE_ACCEL;
   }
   delta=c->goal_raw-p;
   if(c->backoff_active && (delta<=0 || delta>(int64_t)(360U*c->scale+c->scale*3U/10U))){fail(c,LRC_CAUSE_POSITION,now);return;}

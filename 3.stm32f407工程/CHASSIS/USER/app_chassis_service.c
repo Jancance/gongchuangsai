@@ -21,7 +21,7 @@
 #if APP_ZONE2_NAV_ENABLE
 #include "app_zone2.h"
 #endif
-#if APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160
+#if APP_ZONE2_MISSION_ENABLE
 #include "region_dispatch.h"
 #include "lift_ruler_adapter.h"
 #endif
@@ -171,30 +171,19 @@ void AppChassis_CanStep(void)
 #endif
 }
 
-#if APP_SPEED_TRIAL160
-#include "app_speed_trial160.inc"
-#endif
 #if APP_ZONE2_NAV_ENABLE
 void AppChassis_Zone2CanStep(uint32_t slot_ms,uint32_t phase)
 {
     if (g_can_test_result==1U) {
-#if APP_SPEED_TRIAL160
-        SpeedTrial_CheckBeforeCan();
-#else
         if (!(phase&1U) && (g_chassis_auto_state==CHASSIS_AUTO_START ||
             g_chassis_auto_state==CHASSIS_AUTO_RUN) && !AppZone2_CanPermit(slot_ms))
             (void)ChassisAuto_RequestStop();
-#endif
         ChassisAuto_Zone2CanStep(slot_ms,phase);
     }
     ChassisAuto_Zone2SafetyReport();
-#if APP_SPEED_TRIAL160
-    SpeedTrial_Step();
-#else
     AppMotion_StepOdometry();
     AppZone2_Step();
 #if APP_ZONE2_MISSION_ENABLE && !APP_MOTOR_OFFLINE_ONLY
-#if !APP_SPEED_TRIAL160
     if (!g_chassis_auto_active && RegionDispatch_WantsService()) {
         RegionDispatch_MapService(slot_ms);
         LiftRuler_DebugService();
@@ -205,14 +194,12 @@ void AppChassis_Zone2CanStep(uint32_t slot_ms,uint32_t phase)
             g_can_guard_ready);
     }
 #endif
-#endif
-#endif
 }
 #endif
 
 void AppChassis_SafetyCheck(void)
 {
-#if APP_ZONE2_MISSION_ENABLE && !APP_MOTOR_OFFLINE_ONLY && !APP_SPEED_TRIAL160
+#if APP_ZONE2_MISSION_ENABLE && !APP_MOTOR_OFFLINE_ONLY
     StartupAxes_Safety(!g_rtos_fault && !g_safety_fault && !g_can_ctrl_fault_latched);
 #endif
 #if APP_VM_ONLY_ENABLE

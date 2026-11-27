@@ -249,14 +249,7 @@ typedef struct {
     uint32_t wheel_misses[4], status_misses[4];
     uint32_t status_miss_streak[4];
     int32_t wheel_decirpm[4];
-#if APP_SPEED_TRIAL160
-    uint32_t options_mask, options_result, options_address, options_ms[4], attempt_mask;
-    uint16_t options_flags[4];
-#endif
 } ChassisZone2CanStatus;
-#if APP_SPEED_TRIAL160
-uint32_t ChassisAuto_SpeedTrialPermit(uint8_t address,uint16_t rpm);
-#endif
 
 /* Sole CAN task. The startup/leg scheduler reads copies and submits once per generation. */
 uint32_t ChassisAuto_Zone2Prime(uint32_t run_id);

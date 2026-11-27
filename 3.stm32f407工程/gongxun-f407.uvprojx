@@ -10,7 +10,7 @@
       <TargetName>Vehicle_Integrated</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\arm5_compiler</pCCUsed>
+      <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -185,8 +185,6 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
-            <RvdsCdeCp>0</RvdsCdeCp>
-            <nBranchProt>0</nBranchProt>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -338,7 +336,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>ICM45686_SAMPLE_ONLY=0,STARTUP_EXTENSION_HOME_TEST_ONLY=0,STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000,APP_MOTOR_OFFLINE_ONLY=0</Define>
+              <Define>ICM45686_SAMPLE_ONLY=0,APP_CONTINUOUS_MAP_ENABLE=1,APP_MAP_NAV_RESIDUAL_ENABLE=1,APP_ZONE2_NAV_ENABLE=1,APP_ZONE2_NAV_MOTION_ENABLE=1,APP_ZONE2_MISSION_ENABLE=1,STARTUP_EXTENSION_HOME_TEST_ONLY=0,APP_ZONE2_POSE_TRACE_ENABLE=1,STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000,APP_MOTOR_OFFLINE_ONLY=0</Define>
               <Undefine></Undefine>
               <IncludePath>.\CHASSIS\CORE;.\CHASSIS\USER;.\CHASSIS\StdPeriph_Driver\inc;.\CHASSIS\FreeRTOS\include;.\CHASSIS\FreeRTOS\portable\RVDS\ARM_CM4F;.\CHASSIS\HARDWARE\LED;.\CHASSIS\HARDWARE\BUZZER;.\CHASSIS\SYSTEM\USART;.\CHASSIS\HARDWARE\KEY;.\CHASSIS\HARDWARE\POWER;.\CHASSIS\SYSTEM\CAN;.\CHASSIS\SYSTEM\SAFETY;.\CHASSIS\SYSTEM\WATCHDOG;.\CHASSIS\HARDWARE\SCREEN;.\CHASSIS\HARDWARE\SAOMA;.\CHASSIS\HARDWARE\RADAR_SERVO;.\CHASSIS\HARDWARE\RADAR_V6;.\CHASSIS\HARDWARE\ICM45686;.\HARDWARE\GRIPPER;.\HARDWARE\CARRIER;.\HARDWARE\DM_CAN2</IncludePath>
             </VariousControls>
@@ -353,7 +351,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <ClangAsOpt>4</ClangAsOpt>
+            <uClangAs>0</uClangAs>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -932,11 +930,6 @@
               <FileName>app_motion_runtime.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\CHASSIS\USER\app_motion_runtime.c</FilePath>
-            </File>
-            <File>
-              <FileName>turn_debug_link_support.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\CHASSIS\USER\turn_debug_link_support.c</FilePath>
             </File>
             <File>
               <FileName>app_motion_runtime.h</FileName>
@@ -1639,8 +1632,6 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
-            <RvdsCdeCp>0</RvdsCdeCp>
-            <nBranchProt>0</nBranchProt>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -1792,7 +1783,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>ICM45686_SAMPLE_ONLY=0,STARTUP_EXTENSION_HOME_TEST_ONLY=0,STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000,APP_MOTOR_OFFLINE_ONLY=1</Define>
+              <Define>ICM45686_SAMPLE_ONLY=0,APP_CONTINUOUS_MAP_ENABLE=1,APP_MAP_NAV_RESIDUAL_ENABLE=1,APP_ZONE2_NAV_ENABLE=1,APP_ZONE2_NAV_MOTION_ENABLE=1,APP_ZONE2_MISSION_ENABLE=1,STARTUP_EXTENSION_HOME_TEST_ONLY=0,APP_ZONE2_POSE_TRACE_ENABLE=1,STM32F40_41xxx,USE_STDPERIPH_DRIVER,HSE_VALUE=8000000,APP_MOTOR_OFFLINE_ONLY=1</Define>
               <Undefine></Undefine>
               <IncludePath>.\CHASSIS\CORE;.\CHASSIS\USER;.\CHASSIS\StdPeriph_Driver\inc;.\CHASSIS\FreeRTOS\include;.\CHASSIS\FreeRTOS\portable\RVDS\ARM_CM4F;.\CHASSIS\HARDWARE\LED;.\CHASSIS\HARDWARE\BUZZER;.\CHASSIS\SYSTEM\USART;.\CHASSIS\HARDWARE\KEY;.\CHASSIS\HARDWARE\POWER;.\CHASSIS\SYSTEM\CAN;.\CHASSIS\SYSTEM\SAFETY;.\CHASSIS\SYSTEM\WATCHDOG;.\CHASSIS\HARDWARE\SCREEN;.\CHASSIS\HARDWARE\SAOMA;.\CHASSIS\HARDWARE\RADAR_SERVO;.\CHASSIS\HARDWARE\RADAR_V6;.\CHASSIS\HARDWARE\ICM45686;.\HARDWARE\GRIPPER;.\HARDWARE\CARRIER;.\HARDWARE\DM_CAN2</IncludePath>
             </VariousControls>
@@ -1807,7 +1798,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <ClangAsOpt>4</ClangAsOpt>
+            <uClangAs>0</uClangAs>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -2386,11 +2377,6 @@
               <FileName>app_motion_runtime.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\CHASSIS\USER\app_motion_runtime.c</FilePath>
-            </File>
-            <File>
-              <FileName>turn_debug_link_support.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\CHASSIS\USER\turn_debug_link_support.c</FilePath>
             </File>
             <File>
               <FileName>app_motion_runtime.h</FileName>

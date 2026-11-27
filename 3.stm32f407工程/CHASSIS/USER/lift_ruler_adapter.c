@@ -146,8 +146,7 @@ void LiftRuler_DebugService(void)
  }
  if(request==4U){g_lift_ruler_rejected=0U;if(!LiftRuler_StartRelease(&g_lift_ruler_controller,now,ready))g_lift_ruler_rejected=1U;}
  if(request==3U && !(Stage3_Owns()?
-  LiftRuler_StartReturnWithLimitSpeed(&g_lift_ruler_controller,now,ready,SPF_STAGE3_MAX_LIFT_PULSES,
-   Stage3_CarrierReturn600Owned()?6000U:18464U):
+  LiftRuler_StartReturnWithLimit(&g_lift_ruler_controller,now,ready,SPF_STAGE3_MAX_LIFT_PULSES):
   LiftRuler_StartReturn(&g_lift_ruler_controller,now,ready)))g_lift_ruler_rejected=1U;
  if(request==LRC_REQUEST_STOP)LiftRuler_Stop(&g_lift_ruler_controller,now);
  Power_ReadCommandStatus(&power);

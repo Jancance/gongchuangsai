@@ -52,7 +52,6 @@ static uint32_t it_carrier_permit=0U;
 static uint32_t it_begin,it_phase,it_lift_samples,it_dm_cycle,it_seen_samples;
 static SPF_Command it_command,it_stage3_place;
 static uint32_t it_stage3_carry,it_stage3_grip100,it_stage3_grip_tick;
-static uint32_t it_stage3_release200,it_stage3_release_applied;
 
 /* ===== 视觉取件目标事务（离线版）=====
  * 视觉侧（现在是调试脚本扮演，后续是串口解析）写入下面这组字段并让 revision+1；
@@ -528,10 +527,6 @@ void Integration10_Service(void)
   uint32_t pending=g_it_request;g_it_request=0U;g_src_now_ms=now;Vision_Poll();
   if(pending==9U)Low_Fail(2U);
   else if(pending)g_it_rejected=1U;
-  /* Low owns the transaction, while the same CAN owner must still service real axes. */
-  if(g_startup_axes_state>=5U || !(g_dm_can2_read_request || (g_dm_can2_state>=1U && g_dm_can2_state<=3U)))
-   StartupAxes_Service(it_hold_platform(),g_can_guard_ready);
-  if(VehicleSourceParallel_Owns())VehicleArm_Service();
   return;
  }
  Region_Service(now);PZQNear_Service(now);request=g_it_request;
@@ -561,7 +556,7 @@ void Integration10_Service(void)
  if(request){
   if(Stage2Fast_IsActive() || SourceStage2_IsActive() || g_it_state==1U || g_it_state==9U || (request>15U && !((request==17U || request==18U) && Stage3_Owns()))){g_it_rejected=1U;}
   else {
-   it_stage3_carry=it_stage3_grip100=it_stage3_release200=it_stage3_release_applied=0U;
+   it_stage3_carry=it_stage3_grip100=0U;
    g_it_rejected=0U;g_it_action=request;it_phase=0U;it_begin=now;g_it_elapsed_ms=0U;
    if(!it_platform())g_it_rejected=2U;
    else if(request==1U){
@@ -611,39 +606,32 @@ void Integration10_Service(void)
     uint32_t touchdown=request==18U;
     uint32_t axes=g_it_axes;
     uint32_t stage3_scope=Stage3_Owns();
-    uint32_t carrier_lower=request==3U && S3_AnticipatoryOwned(25U) &&
-     s3_pending==3U && axes==SPF_LIFT && g_it_extension_mm==0.0f &&
-     g_it_lift_pulses==s3_slot_release_base+(float)SPF_CARRIER_EXTRA_DOWN_PULSES;
-    uint32_t ordinary_it3=request==3U && !stage3_scope;
     uint32_t stage3_sync=S3_SyncPlaceOwned() && axes==(SPF_EXT|SPF_LIFT);
     uint32_t stage3_return=stage3_sync && g_stage3_phase==S3_SYNC_RETURN_PHASE;
     uint32_t stage3_carry=request==3U && S3_AnticipatoryOwned(7U) && s3_pending==3U &&
        axes==(SPF_DM|SPF_EXT|SPF_LIFT);
     uint32_t stage3_recover=S3_FastRecoveryOwned() && axes==(SPF_DM|SPF_EXT|SPF_LIFT);
     uint32_t stage3_handoff=S3_EmptyHandoffOwned() && axes==(SPF_DM|SPF_EXT|SPF_LIFT);
-    uint32_t stage3_exit=S3_StorageExitOwned() && axes==(SPF_DM|SPF_EXT|SPF_LIFT);
     uint32_t stage3_low=S3_LowHandoffOwned() &&
        axes==(g_stage3_phase==17U?SPF_DM:SPF_EXT);
     uint32_t lift_limit=stage3_scope?SPF_STAGE3_MAX_LIFT_PULSES:SPF_MAX_LIFT_PULSES;
     float turn_extension_zero_tolerance_deg = stage3_scope ? SOURCE_EXTENSION_ZERO_DONE_DEG : 2.0f;
     if((touchdown && (axes!=SPF_LIFT || !S3_TouchdownAllowed())) ||
        !SingleTeach_ReferencesReady() || !axes || (axes&~7U) ||
-       ((!ordinary_it3 || (axes&SPF_DM)) && !(g_it_dm_deg>=0 && g_it_dm_deg<=270)) ||
-       ((!ordinary_it3 || (axes&SPF_EXT)) && !(g_it_extension_mm>=0 && g_it_extension_mm<=170)) ||
-       ((!ordinary_it3 || (axes&SPF_LIFT)) && !(g_it_lift_pulses>=0 && g_it_lift_pulses<=(float)lift_limit)) ||
+       !(g_it_dm_deg>=0 && g_it_dm_deg<=270) ||
+       !(g_it_extension_mm>=0 && g_it_extension_mm<=170) ||
+       !(g_it_lift_pulses>=0 && g_it_lift_pulses<=(float)lift_limit) ||
        (stage3_carry && (!S3_TrayGripElapsed() ||
           g_it_extension_mm!=0.0f || g_it_dm_deg!=s3_yaw[s3_positions[g_stage3_item]-1U] ||
           g_it_lift_pulses!=S3_SafeTopPulses())) ||
        (stage3_recover && (g_it_extension_mm!=0.0f || g_it_dm_deg!=s3_carrier ||
                           g_it_lift_pulses!=S3_SafeTopPulses())) ||
-       (stage3_exit && (g_it_dm_deg!=0.0f || g_it_extension_mm!=0.0f ||
-                        g_it_lift_pulses!=S3_SafeTopPulses())) ||
        (stage3_handoff && (g_it_extension_mm!=s3_x[s3_positions[s3_first]-1U] ||
            g_it_dm_deg!=s3_yaw[s3_positions[s3_first]-1U] ||
            g_it_lift_pulses!=s3_depth[s3_positions[g_stage3_item]-1U]-S3_FAST_HANDOFF_OFFSET_PULSES)) ||
-       ((axes&3U) && !stage3_recover && !stage3_handoff && !stage3_carry && !stage3_exit && ((!it_at_top() && !Low_XYAllowed() && !stage3_return && !stage3_low) ||
+       ((axes&3U) && !stage3_recover && !stage3_handoff && !stage3_carry && ((!it_at_top() && !Low_XYAllowed() && !stage3_return && !stage3_low) ||
                      ((axes&4U) && !stage3_sync))) ||
-       ((axes&4U) && g_it_lift_pulses<3200 && !stage3_return && !stage3_recover && !stage3_carry && !stage3_exit) ||
+       ((axes&4U) && g_it_lift_pulses<3200 && !stage3_return && !stage3_recover && !stage3_carry) ||
        /* 2026-11-08: this depth guard is place-path specific (arm at logical 180,
         * extension near the place offset). Running it unconditionally rejected every
         * pick extend that happened at any other arm angle with rejected=6. Apply it
@@ -653,7 +641,7 @@ void Integration10_Service(void)
           fabsf(g_startup_extension_current_deg-(g_extension_home_reference_deg+STARTUP_EXTENSION_EXTEND_SIGN*48.0f*3.6f))<=3.6f) &&
           (g_it_place_depth_limit_pulses>SPF_MAX_LIFT_PULSES ||
            g_it_lift_pulses>(float)g_it_place_depth_limit_pulses)) ||
-       ((axes&1U) && !stage3_recover && !stage3_handoff && !stage3_carry && !stage3_exit && !Low_XYAllowed() && !Region_ObserveYawAllowed() && !SC_InitialObserveAllowed() &&
+       ((axes&1U) && !stage3_recover && !stage3_handoff && !stage3_carry && !Low_XYAllowed() && !Region_ObserveYawAllowed() && !SC_InitialObserveAllowed() &&
           (fabsf(g_startup_extension_current_deg-g_extension_home_reference_deg)>turn_extension_zero_tolerance_deg ||
                      ((axes&2U) && g_it_extension_mm>0.01f))))g_it_rejected=6U;
     else {
@@ -662,21 +650,14 @@ void Integration10_Service(void)
                       (stage3_handoff?SPF_CMD_STAGE3_EMPTY_HANDOFF:
                        (stage3_recover?SPF_CMD_STAGE3_LOADED_RETURN:
                         (stage3_sync?SPF_CMD_STAGE3_FAST_TRANSFER:SPF_CMD_TRANSFER)));
-     if(stage3_exit){it_command.kind=SPF_CMD_STAGE3_STORAGE_EXIT;
-      it_command.run_id=g_stage3_locked_run;it_command.item=s3_first+s3_count-1U;}
      it_command.sequence=++g_it_sequence;
      it_command.lift_limit_pulses=stage3_scope?SPF_STAGE3_MAX_LIFT_PULSES:0U;
-     it_command.axes_mask=axes;
-     /* Ordinary axis requests must not inherit unrelated cached targets. Stage3 metadata stays intact. */
-     it_command.goal.dm_deg=ordinary_it3 && !(axes&SPF_DM)?0.0f:g_it_dm_deg;
-     it_command.goal.extension_mm=ordinary_it3 && !(axes&SPF_EXT)?0.0f:g_it_extension_mm;
-     it_command.goal.lift_pulses=ordinary_it3 && !(axes&SPF_LIFT)?0.0f:g_it_lift_pulses;
+     it_command.axes_mask=axes;it_command.goal.dm_deg=g_it_dm_deg;
+     it_command.goal.extension_mm=g_it_extension_mm;it_command.goal.lift_pulses=g_it_lift_pulses;
      it_command.dm_deg_s=SPF_DM_DEG_S;
      it_command.extension_rpm=stage3_sync?SPF_EXT_RPM:
          (stage3_scope?SPF_EXT_RPM:(g_it_ext_rpm_test?(float)g_it_ext_rpm_test:SPF_EXT_RPM));
      it_command.lift_rpm=touchdown?SPF_STAGE3_TOUCHDOWN_RPM:SPF_LIFT_RPM;
-     if(carrier_lower){it_command.kind=SPF_CMD_CARRIER_LOWER;
-      it_command.lift_rpm=SPF_CARRIER_LOWER_LIFT_RPM;}
      /* 2026-11-08: 45055 is not a legal stepper acceleration for these drives -- it made
      * the extension axis run away (0 -> -670 deg in 0.18s, overshooting the 156mm
      * target by 108 deg and tripping the VSP overshoot check). The lift ruler uses
@@ -699,14 +680,11 @@ void Integration10_Service(void)
     g_it_lift_permit=1U;it_lift_samples=g_lift_ruler_samples;
     g_lift_ruler_request=3U;g_it_state=1U;
    }else if(request==5U || request==6U || request==17U){
-    uint32_t carrier_release=request==17U && s3_pending==request && S3_AnticipatoryOwned(26U);
-    if(carrier_release && !S3_CarrierReleaseAllowed())g_it_rejected=7U;
-    else if(jiazhua(request==5U?140.0f:(request==17U?160.0f:210.0f))!=1U)g_it_rejected=7U;
+    if(jiazhua(request==5U?140.0f:(request==17U?160.0f:210.0f))!=1U)g_it_rejected=7U;
     else {
-     it_stage3_release200=carrier_release;
      it_stage3_grip100=s3_pending==request &&
         ((request==5U && S3_AnticipatoryOwned(20U)) ||
-         (request==17U && S3_AnticipatoryOwned(11U)));
+         (request==17U && (S3_AnticipatoryOwned(11U) || S3_AnticipatoryOwned(26U))));
      if(it_stage3_grip100)it_stage3_grip_tick=(uint32_t)xTaskGetTickCount();
      g_it_state=1U;
     }
@@ -800,7 +778,7 @@ void Integration10_Service(void)
     g_lift_ruler_controller.position_after_raw=(int64_t)(vsp_axis[1].current*(float)g_lift_ruler_controller.top_scale);
     if((it_command.kind==SPF_CMD_STAGE3_FAST_TRANSFER &&
         g_stage3_phase==S3_SYNC_RETURN_PHASE && !s3_low_handoff) ||
-       it_command.kind==SPF_CMD_STAGE3_LOADED_RETURN || it_command.kind==SPF_CMD_STAGE3_STORAGE_EXIT){
+       it_command.kind==SPF_CMD_STAGE3_LOADED_RETURN){
      if(VehicleSourceParallel_Owns() ||
         (g_source_parallel_done_mask&it_command.axes_mask)!=it_command.axes_mask ||
         fabsf(vsp_axis[1].current-(float)g_lift_ruler_controller.safe_position_raw/
@@ -841,14 +819,8 @@ void Integration10_Service(void)
    (it_carrier_latched_deg<0.0f || (g_it_carrier_auto_done &&
     (uint32_t)(now-it_carrier_pwm_tick)>=700U))){it_empty_overlap_publish();it_done();}break;
  case 5U:case 6U:case 17U:
-  /* Carrier release uses applied-PWM200; other existing request timings remain. */
-  if(it_stage3_release200){
-   if(!it_stage3_release_applied){
-    if(!Gripper_PulseApplied())break;
-    it_stage3_release_applied=1U;it_stage3_grip_tick=(uint32_t)xTaskGetTickCount();
-   }
-   if((uint32_t)((uint32_t)xTaskGetTickCount()-it_stage3_grip_tick)>=200U)it_done();
-  }else if(it_stage3_grip100){
+  /* User-selected 200 ms from close PWM request; no opening feedback. */
+  if(it_stage3_grip100){
    if((uint32_t)((uint32_t)xTaskGetTickCount()-it_stage3_grip_tick)>=100U)it_done();
   }else if(g_it_elapsed_ms>=((Stage3_Owns() && g_it_action==5U)?200U:600U))it_done();
   break;

@@ -20,7 +20,6 @@ volatile uint32_t g_low_wheel_hold_request,g_low_wheel_hold_ready,g_low_wheel_ho
 volatile uint32_t g_low_wheel_hold_result[4],g_low_wheel_hold_cycle;
 static uint32_t low_begin,low_phase_tick,low_group_sequence,low_slot,low_release_applied;
 static uint32_t low_tray_tick,low_pulse_tick,low_group_record_index;
-static uint32_t low_top_done_sequence,low_top_done_piece;
 static float low_yaw,low_extension,low_measured_depth,low_pick_depth;
 static uint32_t low_depth_tick,low_ext_tick;
 
@@ -32,8 +31,7 @@ static uint32_t Low_PoseAllowed(void)
 {return Low_Busy() && g_low_phase==4U && g_it_dm_deg==low_yaw;}
 static uint32_t Low_PickAllowed(void){return Low_PoseAllowed();}
 static uint32_t Low_XYAllowed(void)
-{return Low_Busy() && (g_low_phase==1U ||
- (g_low_phase==8U && low_top_done_sequence && low_top_done_piece==g_low_accepted_sequence));}
+{return Low_Busy() && (g_low_phase==1U || g_low_phase==7U);}
 static float Low_CommandPickDepth(uint32_t region)
 {return (float)SOURCE_PICK_PULSES-(region<2U?10.0f*SOURCE_LIFT_PULSES_PER_MM:0.0f);}
 static uint32_t Low_ReadDepth(float *depth)
@@ -187,27 +185,11 @@ static uint32_t Low_Group(uint32_t phase,uint32_t axes,float yaw,float extension
 #if APP_MOTOR_OFFLINE_ONLY
  (void)phase;(void)axes;(void)yaw;(void)extension;(void)depth;return 0U;
 #else
- SPF_Command command;
- if(phase==11U && (axes!=SPF_LIFT || yaw!=36.5f || extension!=0.0f ||
-    depth!=(float)(SOURCE_RETURN_PULSES+SPF_CARRIER_EXTRA_DOWN_PULSES)))return 0U;
- if(phase==7U && (axes!=SPF_LIFT || yaw!=0.0f || extension!=0.0f ||
-    depth!=(float)SOURCE_OBSERVE_PULSES))return 0U;
- if(phase==8U && (!low_top_done_sequence || low_top_done_piece!=g_low_accepted_sequence ||
-    g_low_phase!=7U || VehicleSourceParallel_Owns() || g_source_parallel_state!=3U ||
-    vsp_group.command.sequence!=low_top_done_sequence ||
-    vsp_group.command.axes_mask!=SPF_LIFT || g_source_parallel_done_mask!=SPF_LIFT ||
-    !it_at_top() || axes!=(SPF_DM|SPF_EXT) || depth!=(float)SOURCE_OBSERVE_PULSES ||
-    yaw!=(low_slot==3U?0.0f:180.0f) || extension!=(low_slot==3U?0.0f:65.0f)))return 0U;
- memset(&command,0,sizeof(command));
+ SPF_Command command;memset(&command,0,sizeof(command));
  command.sequence=++g_it_sequence;command.kind=phase==2U || phase==4U?SPF_CMD_PICK:SPF_CMD_TRANSFER;
  command.axes_mask=axes;command.goal.dm_deg=yaw;command.goal.extension_mm=extension;
  command.goal.lift_pulses=depth;command.dm_deg_s=SPF_DM_DEG_S;
  command.extension_rpm=SPF_EXT_RPM;command.lift_rpm=SPF_LIFT_RPM;
- if(phase==11U){command.kind=SPF_CMD_CARRIER_LOWER;command.lift_rpm=SPF_CARRIER_LOWER_LIFT_RPM;}
- if(phase==7U){
-  command.kind=SPF_CMD_SOURCE_EMPTY_OBSERVE_RETURN;
-  command.lift_rpm=SPF_SOURCE_EMPTY_OBSERVE_RETURN_LIFT_RPM;
- }
  command.stepper_accel_rpm_s=SPF_STEPPER_ACCEL;command.keep_vm_on=1U;
  if(!VehicleArm_BeginSourceParallel(&command,1U,0U))return 0U;
  vsp_fast_lift=(axes&SPF_LIFT)?1U:0U;
@@ -275,7 +257,6 @@ static uint32_t Low_TryStart(uint32_t now)
  memset((void*)g_low_group_skew_ms,0,sizeof(g_low_group_skew_ms));memset((void*)g_low_group_started_ms,0,sizeof(g_low_group_started_ms));
  memset((void*)g_low_group_done_ms,0,sizeof(g_low_group_done_ms));
  low_begin=(uint32_t)xTaskGetTickCount();low_release_applied=0U;
- low_top_done_sequence=low_top_done_piece=0U;
  g_it_state=1U;g_it_action=17U;g_it_dm_deg=low_yaw;g_it_extension_mm=low_extension;
  g_it_carrier_auto_deg=(float)(low_slot-1U)*120.0f;
  if(jiazhua(170.0f)!=1U || CarrierPwm_Write((uint32_t)(500.0f+g_it_carrier_auto_deg*2000.0f/270.0f+0.5f))!=1U){Low_Fail(7U);return 1U;}
@@ -322,8 +303,8 @@ static void Low_Service(uint32_t now)
   }
   g_low_release_wait_ms=now-low_pulse_tick;
   if(g_low_release_wait_ms<SOURCE_RELEASE_DWELL_MS)return;
-  g_low_return_overlap_axes=SPF_LIFT;
-  if(!Low_Group(7U,SPF_LIFT,0.0f,0.0f,(float)SOURCE_OBSERVE_PULSES))Low_Fail(8U);
+  g_low_return_overlap_axes=SPF_DM|SPF_EXT|SPF_LIFT;
+  if(!Low_Group(7U,SPF_DM|SPF_EXT|SPF_LIFT,low_slot==3U?0.0f:180.0f,low_slot==3U?0.0f:65.0f,(float)SOURCE_OBSERVE_PULSES))Low_Fail(8U);
   return;
  }
 #if !APP_MOTOR_OFFLINE_ONLY
@@ -352,35 +333,17 @@ static void Low_Service(uint32_t now)
      0.0f,(float)SOURCE_RETURN_PULSES))Low_Fail(8U);
   break;
  case 5U:
-  Low_PublishLift(0U); /* Actual carrier-transfer height is not a new safe top. */
-  if(!Low_Group(11U,SPF_LIFT,36.5f,0.0f,
-     (float)(SOURCE_RETURN_PULSES+SPF_CARRIER_EXTRA_DOWN_PULSES)))Low_Fail(8U);
-  break;
- case 11U:
-  Low_PublishLift(0U); /* Release is lower by10mm; retain the established top. */
-  g_low_phase=12U;
+  Low_PublishLift(1U);
+  g_low_phase=12U; /* All axes done: fall through to the real tray window. */
   /* fall through */
  case 12U:
   if((uint32_t)(now-low_tray_tick)<700U)return;
-  if(jiazhua(160.0f)!=1U){Low_Fail(7U);return;}
+  if(jiazhua(210.0f)!=1U){Low_Fail(7U);return;}
   g_low_release_command_ms=(uint32_t)xTaskGetTickCount()-low_begin;
   low_release_applied=0U;g_low_phase=6U;low_phase_tick=(uint32_t)xTaskGetTickCount();break;
  case 7U:
-  if(vsp_group.command.kind!=SPF_CMD_SOURCE_EMPTY_OBSERVE_RETURN ||
-     vsp_group.command.axes_mask!=SPF_LIFT || !vsp_axis[1].position_cycle ||
-     (uint32_t)(now-vsp_axis[1].position_tick)>150U ||
-     fabsf((vsp_axis[1].current-SingleTeach_TopDeg())*(3200.0f/360.0f)-
-       (float)SOURCE_OBSERVE_PULSES)>SOURCE_TOP_TOLERANCE_DEG*(3200.0f/360.0f)){
-   Low_Fail(14U);return;
-  }
-  low_top_done_sequence=low_group_sequence;low_top_done_piece=g_low_accepted_sequence;
-  Low_PublishLift(1U);
-  if(!Low_Group(8U,SPF_DM|SPF_EXT,low_slot==3U?0.0f:180.0f,
-     low_slot==3U?0.0f:65.0f,(float)SOURCE_OBSERVE_PULSES))Low_Fail(8U);
-  break;
- case 8U:
   if(low_slot<3U && jiazhua(210.0f)!=1U){Low_Fail(7U);return;}
-  g_low_state=2U;g_low_phase=10U;
+  Low_PublishLift(1U);g_low_state=2U;g_low_phase=10U;
   g_low_done_sequence=g_low_accepted_sequence;g_it_state=2U;g_it_lift_permit=0U;break;
  default:Low_Fail(13U);break;
  }

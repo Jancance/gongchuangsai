@@ -27,14 +27,6 @@ typedef struct {
     float raw_x_mm,raw_y_mm,correction_x_mm,correction_y_mm;
     uint32_t action_epoch,calibration_flags,calibration_direction;
 } AppMapPose;
-/* Fixed-station reference: CAN owner applies native SetPose and ACKs only a fresh baseline. */
-typedef struct {
- uint32_t sequence,ticket,run_id,start_id,map_version,power_epoch,cell;
- uint32_t request_ms,applied_ms,ack_ms,state; /* 1 pending,2 baseline,3 ACK,4 rejected. */
-} AppMapStationAnchor;
-uint32_t AppOdometry_RequestStationAnchor(uint32_t run,uint32_t start,uint32_t version,
- uint32_t power_epoch,uint32_t ticket,uint32_t cell);
-void AppOdometry_ReadStationAnchor(AppMapStationAnchor *snapshot);
 /* TaskA submits only a genuinely new round; CAN owns the map context. */
 void AppOdometry_RequestMapRun(uint32_t run_id,uint32_t start_id);
 void AppOdometry_ReadMap(AppMapPose *snapshot);

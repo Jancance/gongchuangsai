@@ -23,6 +23,10 @@
 #include "route_plan.h"
 extern volatile RouteCheck g_route_check;
 #include "dm_can2.h"
+#include "radar_observer.h"
+#include "radar_servo.h"
+#include "radar_zone_config.h"
+#include "radar_lift.h"
 #include "radar_zone_switch.h"
 #include "fine_rpm_telemetry.h"
 #include "app_entry.h"
@@ -76,9 +80,6 @@ volatile uint32_t g_test_count_b = 0U;
 volatile TickType_t g_test_tick = 0U;
 volatile BaseType_t g_test_create_a = pdFAIL;
 volatile BaseType_t g_test_create_b = pdFAIL;
-#if APP_ZONE2_MISSION_ENABLE
-TaskHandle_t g_zone2_display_task;
-#endif
 volatile uint32_t g_test_scheduler_returned = 0U;
 /* 1表示发送请求被接受，不代表电脑已经收到 */
 volatile uint32_t g_serial_send_ok = 0U;
@@ -230,9 +231,8 @@ static void App_TestTaskA(void *argument)
     /* FreeRTOS运行后才开启接收中断 */
     if (APP_IS_DEBUG) USART1_EnableReceive();
     /* 启动时只请求发送一次基础平台就绪信息 */
-    if ((APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160) ||
-        (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_EnableReceive();
-#if APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160
+    if (APP_ZONE2_MISSION_ENABLE || (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_EnableReceive();
+#if APP_ZONE2_MISSION_ENABLE
     USART6_VisionEnableReceive();
 #endif
     HWT101_EnableReceive();
@@ -277,8 +277,7 @@ static void App_TestTaskA(void *argument)
         App_HeadingLiveStep();
         #endif
         /* 一轮最多处理64字节；只有任务A交接并更新屏幕 */
-        if ((APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160) ||
-            (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_Update();
+        if (APP_ZONE2_MISSION_ENABLE || (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_Update();
         if(APP_BASELINE40_ACTIVE || APP_ZONE2_NAV_ENABLE) { /* Dedicated chassis branch; no mission dispatch. */ }
         else if(VEHICLE_INTEGRATED_ENABLE){AppMotion_MissionService();AppMotion_MissionTelemetry();}
         else if(VEHICLE_STAGE1_ENABLE)
@@ -291,9 +290,6 @@ static void App_TestTaskA(void *argument)
             AppInput_ScanDisplay(screen_start_tick);
         }
 
-#if APP_SPEED_TRIAL160
-        AppChassis_SpeedTrialLog();
-#endif
         if (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE) App_StartGateUpdate();
 #if APP_SERIAL_MOTION_CONTROL && !APP_ZONE2_NAV_ENABLE
         AppSerial_Telemetry();
@@ -322,22 +318,11 @@ static void App_TestTaskB(void *argument)
         /* 每500毫秒翻转一次，完整亮灭周期约1秒 */
         LED_Turn();
         /* 查询任务B自己的最小剩余栈 */
-#if APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160
-        {
-            const TickType_t period=pdMS_TO_TICKS(500U);
-            const TickType_t begin=xTaskGetTickCount();
-            TickType_t elapsed;
-            do {
-                AppZone2_DisplayTaskCode();
-                elapsed=(TickType_t)(xTaskGetTickCount()-begin);
-                if (elapsed>=period) break;
-            } while (ulTaskNotifyTake(pdTRUE,period-elapsed)!=0U);
-        }
-        g_stack_b_words = uxTaskGetStackHighWaterMark(NULL);
-#else
+#if APP_ZONE2_MISSION_ENABLE
+        AppZone2_DisplayTaskCode();
+#endif
         g_stack_b_words = uxTaskGetStackHighWaterMark(NULL);
         vTaskDelay(pdMS_TO_TICKS(500U));
-#endif
     }
 }
 
@@ -407,6 +392,129 @@ static void App_SafetyTask(void *argument)
     }
 }
 
+/* 单次观察入口：结果0待处理/1接受/2拒绝，拒绝后不自动重试。 */
+volatile uint32_t g_radar_app_config_result = 0U;
+volatile uint32_t g_radar_app_calibration_result = 0U;
+volatile uint32_t g_radar_app_scan_result = 0U;
+
+/* 校准测试由PC13触发，只校准、扫描一次。 */
+#if !APP_BASELINE40_ACTIVE
+#if APP_ZONE1_RADAR_LIFT_TEST
+volatile uint32_t g_radar_zone1_link_ready;
+#endif
+static void App_RadarTask(void *argument)
+{
+#if APP_ZONE1_RADAR_LIFT_TEST
+    (void)argument;
+    for (;;) {
+        g_radar_zone1_link_ready=RadarObserver_PollZone1Link();
+        vTaskDelay(pdMS_TO_TICKS(2U));
+    }
+#else
+#if !APP_ZONE2_NAV_ENABLE || APP_ZONE2_RADAR_CALIBRATION_TEST
+    uint32_t calibration_attempted = 0U;
+    uint32_t scan_attempted = 0U;
+    RadarObserverStatus radar_status;
+#endif
+    /* 用户2026-11-11临时授权measured=1，仅供校准和路径观察；
+     * 自动扫描下行和回升均用4000半步；等待时间为工程选择，非实测。 */
+    RadarZone2Config cfg = {
+        RADAR_ZONE2_NODE_ID, 1U, RADAR_ZONE_LIFT_STEPS, 1500U, 500U, 1000U, 60000U, 1U, 2U
+    };
+
+    (void)argument;
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+    g_can_test_result = CAN1_LoopbackTest();
+#endif
+#if APP_ZONE2_NAV_ENABLE && !APP_ZONE2_RADAR_CALIBRATION_TEST && APP_ZONE1_RADAR_LIFT_CONFIRMED && !APP_ZONE1_RADAR_SERVO_TEST
+    while (!g_radar_zone_ready) {
+        RadarObserver_Service();
+        vTaskDelay(pdMS_TO_TICKS(2U));
+    }
+    cfg.zone=(uint8_t)g_radar_zone_selected;
+    cfg.node_id=RADAR_NODE_FOR_ZONE(cfg.zone);
+    if (cfg.zone==1U) cfg.down_direction=RADAR_ZONE1_DOWN_DIRECTION;
+#endif
+    g_radar_app_config_result = RadarObserver_Configure(&cfg) ? 1U : 2U;
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+    if (g_radar_app_config_result == 2U) s_zone2_radar_test_beep_ms = 3000U;
+#endif
+    for (;;)
+    {
+        if (!g_radar_zone_locked && g_radar_zone_ready &&
+            (g_radar_zone_selected==1U || g_radar_zone_selected==2U) &&
+            cfg.zone!=(uint8_t)g_radar_zone_selected) {
+            RadarZone2Config next_cfg=cfg;
+            next_cfg.zone=(uint8_t)g_radar_zone_selected;
+            next_cfg.node_id=RADAR_NODE_FOR_ZONE(next_cfg.zone);
+            next_cfg.down_direction=next_cfg.zone==1U?RADAR_ZONE1_DOWN_DIRECTION:1U;
+            if (RadarObserver_Configure(&next_cfg)) cfg=next_cfg;
+        }        if (g_radar_app_config_result == 1U)
+        {
+            RadarObserver_Service();
+#if !APP_ZONE2_NAV_ENABLE || APP_ZONE2_RADAR_CALIBRATION_TEST
+            RadarObserver_GetStatus(&radar_status);
+            if (radar_status.stage != 99U && radar_status.error == 0U)
+            {
+                if (calibration_attempted == 0U &&
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+                    g_zone2_radar_calibration_requested && g_safety_ready && !g_rtos_fault &&
+                    RadarObserver_IsScanReady())
+#else
+                    RadarClient_IsReady())
+#endif
+                {
+                    /* 仅入队一次；本次人工确认顶部、180度收拢起点。 */
+                    calibration_attempted = 1U;
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+                    g_radar_app_calibration_result =
+                        (RadarServo_Init() && RadarCalibration_StartZone2()) ? 1U : 2U;
+#else
+                    /* 默认沿用已保存校准；恢复本行则等待本轮校准成功。 */
+                    /* g_radar_app_calibration_result = RadarCalibration_StartZone2() ? 1U : 2U; */
+#endif
+                }
+                else if (calibration_attempted != 0U && scan_attempted == 0U &&
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+                         RadarObserver_IsScanReady() &&
+#endif
+                         (
+#if !APP_ZONE2_RADAR_CALIBRATION_TEST
+                          g_radar_app_calibration_result == 0U ||
+#endif
+                          (g_radar_app_calibration_result == 1U &&
+                           radar_status.stage == 8U && radar_status.calibration_complete == 1U)))
+                {
+                    scan_attempted = 1U;
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+                    g_radar_app_scan_result = RadarObserver_StartScan(ZONE2_RADAR_TEST_RUN_ID, 2U, VEHICLE_MAP_VERSION) ? 1U : 2U;
+#else
+                    g_radar_app_scan_result = RadarObserver_StartZone2(0, 24, true) ? 1U : 2U;
+#endif
+                }
+            }
+#if APP_ZONE2_RADAR_CALIBRATION_TEST
+            if (!s_zone2_radar_test_beep_ms)
+            {
+                if (g_radar_app_calibration_result == 2U || g_radar_app_scan_result == 2U ||
+                    (radar_status.stage == 99U && radar_status.error && radar_status.recovered))
+                    s_zone2_radar_test_beep_ms = 3000U;
+                else if (g_radar_app_scan_result == 1U && !radar_status.error &&
+                         radar_status.stage == 8U && radar_status.map_valid)
+                {
+                    RadarObserverMap map;
+                    if (RadarObserver_GetMap(ZONE2_RADAR_TEST_RUN_ID, &map)) s_zone2_radar_test_beep_ms = APP_BEEP_ON_MS;
+                }
+            }
+#endif
+#endif
+        }
+        vTaskDelay(pdMS_TO_TICKS(2U));
+    }
+#endif
+}
+
+#endif /* !APP_BASELINE40_ACTIVE */
 #endif /* !ICM45686_SAMPLE_ONLY */
 
 #if ICM45686_RAW_ENABLE || ICM45686_SAMPLE_ONLY || APP_BASELINE40_ACTIVE
@@ -470,7 +578,7 @@ int main(void)
     Buzzer_Init();
     /* 初始化调试串口，本轮仅发送 */
     USART1_Config();
-#if APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160
+#if APP_ZONE2_MISSION_ENABLE
     USART6_VisionConfig();
 #endif
     /* 调度前初始化启动按键 */
@@ -482,13 +590,12 @@ int main(void)
 #if !APP_BASELINE40_ACTIVE
     RadarZoneSwitch_Init();
 #if !APP_ZONE2_RADAR_CALIBRATION_TEST
-    /* Fixed field mode: PA1 selection only, no radar servo initialization. */
+    (void)RadarServo_Init();
 #endif
-    if (!APP_ZONE2_NAV_ENABLE || (APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160)) StartupPose_Init();
+    if (!APP_ZONE2_NAV_ENABLE || APP_ZONE2_MISSION_ENABLE) StartupPose_Init();
 #endif
     Safety_Init();
-    if ((APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160) ||
-        (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_Init();
+    if (APP_ZONE2_MISSION_ENABLE || (!APP_BASELINE40_ACTIVE && !APP_ZONE2_NAV_ENABLE)) SAOMA_Init();
     HWT101_Init();
     g_watchdog_init_result = Watchdog_Init();
     configASSERT(g_watchdog_init_result == 1U);
@@ -503,12 +610,7 @@ int main(void)
                                      (APP_SERIAL_MOTION_CONTROL ? 512U : 256U), NULL, 2U, NULL);
     configASSERT(g_test_create_a == pdPASS);
     g_test_create_b = xTaskCreate(App_TestTaskB, "TestB",
-                                 256U, NULL, 1U,
-#if APP_ZONE2_MISSION_ENABLE && !APP_SPEED_TRIAL160
-                                 &g_zone2_display_task);
-#else
-                                 NULL);
-#endif
+                                 256U, NULL, 1U, NULL);
     configASSERT(g_test_create_b == pdPASS);
     /* 本轮接收任务栈256字，优先级3 */
     g_rx_task_create = xTaskCreate(App_UartRxTask, "UartRx",
@@ -532,7 +634,7 @@ int main(void)
     configASSERT(g_can_task_create == pdPASS);
 #endif
 #if !APP_BASELINE40_ACTIVE
-    /* Fixed field mode has no radar task or radar health dependency. */
+    configASSERT(xTaskCreate(App_RadarTask, "RadarObs", 768U, NULL, 2U, NULL) == pdPASS);
 #endif
 #if ICM45686_RAW_ENABLE || APP_BASELINE40_ACTIVE
     g_icm_task_create = xTaskCreate(App_IcmRawTask, "IcmRaw", 256U, NULL, 3U, NULL);

@@ -9,7 +9,6 @@
 #include "safety.h"
 #include "can.h"
 #include <string.h>
-#include <math.h>
 #if APP_CONTINUOUS_MAP_ENABLE
 #include "app_can_diagnostics.h"
 #endif
@@ -56,8 +55,7 @@ void AppOdometry_MapActionAccepted(uint32_t direction,uint32_t rpm,float distanc
 static ChassisOdometry s_map_odometry;
 static AppMapPose s_map_pose,s_map_published __attribute__((section(".bss.map_pose"),zero_init));
 static uint32_t s_map_start,s_map_begin,s_map_gap_run;
-static uint32_t s_map_sign[4],s_map_raw[4],s_map_power_epoch,s_map_sample_begin;
-static AppMapStationAnchor s_map_anchor;
+static uint32_t s_map_sign[4],s_map_raw[4],s_map_power_epoch;
 static void AppOdometry_MapGap(uint32_t reason)
 {
     s_map_pose.state=APP_MAP_GAP;
@@ -66,42 +64,6 @@ static void AppOdometry_MapGap(uint32_t reason)
     s_map_odometry.status.reasons|=ODOM_GAP|reason;
 }
 #endif
-uint32_t AppOdometry_RequestStationAnchor(uint32_t run,uint32_t start,uint32_t version,
- uint32_t power_epoch,uint32_t ticket,uint32_t cell)
-{
- uint32_t sequence=0U;
-#if APP_CONTINUOUS_MAP_ENABLE
- taskENTER_CRITICAL();
- if(run && run==s_map_run && start==s_map_start && version==VEHICLE_MAP_VERSION &&
-    power_epoch && power_epoch==s_map_power_epoch && ticket && (cell==10U || cell==22U) &&
-    s_map_gap_run!=run && s_map_published.run_id==run && s_map_published.start_id==start &&
-    s_map_published.map_version==version && s_map_published.based &&
-    s_map_published.state==APP_MAP_TRACKING && s_map_published.pose.valid &&
-    !s_map_published.pose.local_origin && !s_map_published.pose.reasons &&
-    !s_map_published.pose.continuity_lost &&
-    s_map_anchor.state!=1U && s_map_anchor.state!=2U &&
-    !(s_map_anchor.run_id==run && s_map_anchor.ticket>=ticket)) {
-  sequence=s_map_anchor.sequence+1U;if(!sequence)sequence=1U;
-  memset(&s_map_anchor,0,sizeof(s_map_anchor));s_map_anchor.sequence=sequence;
-  s_map_anchor.ticket=ticket;s_map_anchor.run_id=run;s_map_anchor.start_id=start;
-  s_map_anchor.map_version=version;s_map_anchor.power_epoch=power_epoch;s_map_anchor.cell=cell;
-  s_map_anchor.request_ms=(uint32_t)xTaskGetTickCount()*portTICK_PERIOD_MS;s_map_anchor.state=1U;
- }
- taskEXIT_CRITICAL();
-#else
- (void)run;(void)start;(void)version;(void)power_epoch;(void)ticket;(void)cell;
-#endif
- return sequence;
-}
-void AppOdometry_ReadStationAnchor(AppMapStationAnchor *snapshot)
-{
- if(!snapshot)return;
-#if APP_CONTINUOUS_MAP_ENABLE
- taskENTER_CRITICAL();*snapshot=s_map_anchor;taskEXIT_CRITICAL();
-#else
- memset(snapshot,0,sizeof(*snapshot));
-#endif
-}
 void AppOdometry_RequestMapRun(uint32_t run_id,uint32_t start_id)
 {
 #if APP_CONTINUOUS_MAP_ENABLE
@@ -205,66 +167,6 @@ static void AppOdometry_MapNavigationStep(void)
     if(q>0.0f) {s_map_pose.nav_applied=1U;s_map_pose.calibration_scope|=action.scope;}
 }
 #endif
-static uint32_t AppOdometry_AnchorQuiet(const AppMapStationAnchor *a,
- const AppHeadingSource *source,uint32_t now,uint32_t after)
-{
- ChassisZone2CanStatus can;uint32_t i;
- ChassisAuto_Zone2Read(&can);
- if(!source->healthy || App_HeadingFrameAge(source,now,1U)>=ODOM_YAW_MAX_AGE_MS ||
-    App_HeadingFrameAge(source,now,2U)>=ODOM_YAW_MAX_AGE_MS || fabsf(source->rate_dps)>1.0f ||
-    (int32_t)(source->angle_ms-after)<=0 || (int32_t)(source->rate_ms-after)<=0 ||
-    can.run_id!=a->run_id || can.power_epoch!=a->power_epoch || !can.feedback_ready ||
-    can.state!=CHASSIS_AUTO_IDLE || g_chassis_auto_active || g_wheel_test_active)return 0U;
- for(i=0U;i<4U;i++)if(can.wheel_decirpm[i] || (int32_t)(can.wheel_ms[i]-after)<=0 ||
-    now-can.wheel_ms[i]>=ODOM_WHEEL_MAX_AGE_MS)return 0U;
- return 1U;
-}
-static void AppOdometry_MapAnchorStep(const AppHeadingSource *source,
- const PowerCommandStatus *power,uint32_t now)
-{
- AppMapStationAnchor a;float x,y,heading;
- AppOdometry_ReadStationAnchor(&a);
- if(a.state!=1U && a.state!=2U)return;
- if(a.run_id!=s_map_run || a.start_id!=s_map_start || a.map_version!=VEHICLE_MAP_VERSION ||
-    a.power_epoch!=s_map_power_epoch || !power->active || power->enable_count!=a.power_epoch ||
-    s_map_gap_run==a.run_id || s_map_pose.state==APP_MAP_GAP ||
-    g_safety_fault || g_rtos_fault || g_can_ctrl_fault_latched ||
-    now-a.request_ms>=2500U) {
-  taskENTER_CRITICAL();s_map_anchor.state=4U;taskEXIT_CRITICAL();return;
- }
- if(a.state!=1U || !AppOdometry_AnchorQuiet(&a,source,now,a.request_ms))return;
- if(s_map_pose.state!=APP_MAP_TRACKING || !s_map_odometry.status.valid ||
-    s_map_odometry.status.continuity_lost || s_map_odometry.status.reasons)return;
- x=a.cell==10U?FIELD_COARSE_X_MM+50.0f:FIELD_STORAGE_X_MM;
- y=a.cell==10U?FIELD_COARSE_Y_MM:FIELD_STORAGE_Y_MM;
- heading=remainderf(source->yaw_deg+s_map_odometry.heading_offset,360.0f);
- if(!ChassisOdometry_SetPose(&s_map_odometry,x,y,heading,source->yaw_deg)) {
-  taskENTER_CRITICAL();s_map_anchor.state=4U;taskEXIT_CRITICAL();return;
- }
- /* Never splice a pre-cutover wheel/yaw into the fresh native baseline. */
- s_map_sample_begin=now+1U;
- memset(s_map_sign,0,sizeof(s_map_sign));memset(s_map_raw,0,sizeof(s_map_raw));
- memset(s_map_pose.wheel_ms,0,sizeof(s_map_pose.wheel_ms));s_map_pose.angle_ms=0U;
- s_map_pose.correction_x_mm=s_map_pose.correction_y_mm=0.0f;
- s_map_pose.nav_applied=s_map_pose.calibration_scope=s_map_pose.calibration_flags=s_map_pose.action_epoch=0U;
- s_map_pose.state=APP_MAP_WAIT_BASELINE;s_map_pose.based=0U;
-#if APP_MAP_NAV_RESIDUAL_ENABLE
- taskENTER_CRITICAL();memset(&s_map_action,0,sizeof(s_map_action));taskEXIT_CRITICAL();
- memset(&s_map_navigation,0,sizeof(s_map_navigation));
-#endif
- taskENTER_CRITICAL();s_map_anchor.applied_ms=now;s_map_anchor.state=2U;taskEXIT_CRITICAL();
-}
-static void AppOdometry_MapAnchorAck(const AppHeadingSource *source,uint32_t now)
-{
- AppMapStationAnchor a;uint32_t i;
- AppOdometry_ReadStationAnchor(&a);
- if(a.state!=2U || s_map_pose.state!=APP_MAP_TRACKING || !s_map_odometry.based ||
-    !s_map_odometry.status.valid || s_map_odometry.status.continuity_lost ||
-    s_map_odometry.status.reasons || (int32_t)(s_map_odometry.status.sample_ms-a.applied_ms)<=0 ||
-    !AppOdometry_AnchorQuiet(&a,source,now,a.applied_ms))return;
- for(i=0U;i<4U;i++)if((int32_t)(s_map_pose.wheel_ms[i]-a.applied_ms)<=0)return;
- taskENTER_CRITICAL();s_map_anchor.ack_ms=now;s_map_anchor.state=3U;taskEXIT_CRITICAL();
-}
 static void AppOdometry_MapStep(const AppHeadingSource *source,
     const ChassisOdometrySamples *backend,uint32_t now)
 {
@@ -276,7 +178,7 @@ static void AppOdometry_MapStep(const AppHeadingSource *source,
         ChassisOdometry_Init(&s_map_odometry);
         memset(&s_map_pose,0,sizeof(s_map_pose));
         memset(s_map_sign,0,sizeof(s_map_sign));memset(s_map_raw,0,sizeof(s_map_raw));
-        s_map_power_epoch=0U;s_map_sample_begin=begin;
+        s_map_power_epoch=0U;
 #if APP_MAP_NAV_RESIDUAL_ENABLE
         memset(&s_map_navigation,0,sizeof(s_map_navigation));
 #endif
@@ -291,8 +193,6 @@ static void AppOdometry_MapStep(const AppHeadingSource *source,
        (s_map_odometry.based && (!power.active || power.enable_count!=s_map_power_epoch))) {
         AppOdometry_MapGap(APP_MAP_FAULT);goto publish;
     }
-    AppOdometry_MapAnchorStep(source,&power,now);
-    begin=s_map_sample_begin;
     if(!s_map_odometry.based && (g_chassis_auto_active || g_wheel_test_active)) {
         AppOdometry_MapGap(APP_MAP_NO_BASELINE);goto publish;
     }
@@ -364,7 +264,7 @@ publish:
     s_map_pose.pose.age_ms=s_map_pose.based?now-s_map_pose.pose.sample_ms:0xFFFFFFFFU;
     s_map_pose.source=s_map_pose.nav_applied?APP_MAP_CALIBRATED_WHEEL_HWT:APP_MAP_RAW_WHEEL_HWT;
     s_map_pose.map_version=VEHICLE_MAP_VERSION;
-    s_map_pose.now_ms=now;AppOdometry_MapAnchorAck(source,now);s_map_published=s_map_pose;
+    s_map_pose.now_ms=now;s_map_published=s_map_pose;
     taskEXIT_CRITICAL();
 }
 #endif
@@ -458,8 +358,7 @@ void AppOdometry_Init(void)
 #if APP_CONTINUOUS_MAP_ENABLE
     ChassisOdometry_Init(&s_map_odometry);memset(&s_map_pose,0,sizeof(s_map_pose));
     s_map_pose.pose=s_map_odometry.status;s_map_published=s_map_pose;
-    s_map_run=s_map_start=s_map_begin=s_map_gap_run=s_map_sample_begin=0U;
-    memset(&s_map_anchor,0,sizeof(s_map_anchor));
+    s_map_run=s_map_start=s_map_begin=s_map_gap_run=0U;
 #if APP_MAP_NAV_RESIDUAL_ENABLE
     memset(&s_map_action,0,sizeof(s_map_action));memset(&s_map_navigation,0,sizeof(s_map_navigation));
 #endif

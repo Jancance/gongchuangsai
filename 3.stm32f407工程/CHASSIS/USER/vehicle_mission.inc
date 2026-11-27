@@ -3,7 +3,7 @@ volatile uint32_t g_vehicle_stage=VEHICLE_TEST_STAGE,g_vehicle_state=0U,g_vehicl
 volatile uint32_t g_vehicle_key=0U,g_vehicle_arm_row=0U,g_vehicle_item=0U,g_vehicle_stage_mask=0U;
 volatile uint32_t g_vehicle_run_id=0U,g_vehicle_scan_bypassed=0U;
 volatile uint32_t g_vehicle_correct_pick_count=0U,g_vehicle_correct_place_count=0U;
-static uint32_t s_vehicle_start,s_vehicle_zone,s_vehicle_observation;
+static uint32_t s_vehicle_start,s_vehicle_stage_start,s_vehicle_zone,s_vehicle_observation;
 static uint32_t s_vehicle_scan_baseline,s_vehicle_code_valid,s_vehicle_display_done;
 static char s_vehicle_task_code[16];
 /* 真实观测端调用，必须绑定当前run/stage/item/row；不提供Watch成功开关。 */
@@ -71,8 +71,6 @@ static uint32_t VehicleMission_ArmProfileReady(uint32_t stage)
         if(r->op==5U && (carrier_verified!=1U || !(VEHICLE_CARRIER_SLOT1_DEG>=0 && VEHICLE_CARRIER_SLOT1_DEG<=270) ||
            !(VEHICLE_CARRIER_SLOT2_DEG>=0 && VEHICLE_CARRIER_SLOT2_DEG<=270) ||
            !(VEHICLE_CARRIER_SLOT3_DEG>=0 && VEHICLE_CARRIER_SLOT3_DEG<=270)))return 0U;
-        if(r->op==5U && r->target==-3.0f && ((stage!=2U && stage!=5U) ||
-           vehicle_arm_repeat[stage-1U]!=3U || !r->settle_ms))return 0U;
         if(r->op>9U)return 0U;
     }return 0U;
 }
@@ -88,11 +86,7 @@ static uint32_t VehicleMission_Load(uint32_t stage)
             direction=direction==1U?2U:1U;
         rows[n].kind=MOTION_FORWARD_DISTANCE+direction;
         rows[n].amount=vehicle_drive[stage-1U][n].distance_cm;
-#if APP_ROUTE_SPEED_TRIAL_ACTIVE
-        rows[n].speed=(direction==0U || direction==3U)?160.0f:120.0f;
-#else
         rows[n].speed=vehicle_drive[stage-1U][n].speed_cm_s;
-#endif
     }
     if(!n || n>8U || !RoutePlan_Convert(rows,n,&g_chassis_geometry,s_motion_actions,&check))return 0U;
     if(g_combined_test.state==3U) {
@@ -112,7 +106,7 @@ static uint32_t VehicleMission_Load(uint32_t stage)
     /* 各段里程仅作本段观测，不伪造全场真实X/Y或名义终点已到。 */
     g_stage1_stop_requested=g_stage1_motion_skipped=0U;
     s_serial_start_permit=1U;g_combined_test.request=1U;g_serial_motion_state=2U;g_serial_motion_result=2U;
-    g_vehicle_stage=stage;g_vehicle_state=2U;
+    g_vehicle_stage=stage;g_vehicle_state=2U;s_vehicle_stage_start=(uint32_t)xTaskGetTickCount();
     return 1U;
 }
 static void VehicleMission_Advance(void)
@@ -151,7 +145,7 @@ static void VehicleMission_Service(void)
 #if APP_CONTINUOUS_MAP_ENABLE
         AppOdometry_RequestMapRun(g_vehicle_run_id,g_vehicle_stage==1U?s_vehicle_zone:0U);
 #endif
-        s_vehicle_start=now;g_vehicle_stage_mask=0U;
+        s_vehicle_start=s_vehicle_stage_start=now;g_vehicle_stage_mask=0U;
         g_vehicle_scan_bypassed=VEHICLE_SCAN_BYPASS;s_vehicle_code_valid=s_vehicle_display_done=0U;
         s_vehicle_scan_baseline=g_saoma_accept_count;memset(s_vehicle_task_code,0,16);
         if(!StartupAxes_Holding() && !StartupAxes_Begin()){VehicleMission_Fail(3U);return;}g_vehicle_state=1U;
@@ -165,6 +159,9 @@ static void VehicleMission_Service(void)
     if(g_vehicle_state>=1U && g_vehicle_state<=3U) {
         if(g_rtos_fault || g_safety_fault || g_can_ctrl_fault_latched || g_startup_axes_state>=5U)
         {VehicleMission_Fail(4U);return;}
+        if(now-s_vehicle_stage_start>=VEHICLE_STAGE_TIMEOUT_MS ||
+           (VEHICLE_REHEARSAL && now-s_vehicle_start>=VEHICLE_REHEARSAL_MS))
+        {VehicleMission_Fail(5U);return;}
     }
         if((g_vehicle_state==1U || g_vehicle_state==2U) && g_vehicle_stage==1U && !g_vehicle_scan_bypassed && !s_vehicle_code_valid &&
            g_saoma_accept_count!=s_vehicle_scan_baseline && g_saoma_last_result==1U &&

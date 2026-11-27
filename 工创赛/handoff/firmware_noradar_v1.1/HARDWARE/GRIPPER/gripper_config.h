@@ -1,0 +1,21 @@
+#ifndef GRIPPER_CONFIG_H
+#define GRIPPER_CONFIG_H
+#include "../../USER/startup_pose_config.h"
+
+/* 标称角度映射起点，实际机械开合范围后续按实物调整。 */
+#define JIAZHUA_ANGLE_MAX_DEG  270.0f
+#define JIAZHUA_PULSE_MIN_US   500U
+#define JIAZHUA_PULSE_MAX_US   2500U
+#define JIAZHUA_PERIOD_US      20000U
+
+/* 原生FreeRTOS夹爪任务；启动后先按用户要求张开到180度。 */
+#define GRIPPER_TASK_STACK_WORDS  256U
+#define GRIPPER_TASK_PRIORITY     2U
+#define GRIPPER_TASK_PERIOD_MS    10U
+/* 用户指定：未抓取180度张开，抓取物料140度闭合。 */
+#define JIAZHUA_OPEN_ANGLE_DEG   180.0f
+#define JIAZHUA_GRAB_ANGLE_DEG   140.0f
+#define JIAZHUA_CLOSED_ANGLE_DEG JIAZHUA_GRAB_ANGLE_DEG
+#define GRIPPER_DEBUG_ANGLE_DEG  JIAZHUA_OPEN_ANGLE_DEG
+
+#endif
