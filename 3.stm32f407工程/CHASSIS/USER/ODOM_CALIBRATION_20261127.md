@@ -41,6 +41,6 @@ MATLAB R2020a 对单个 90°七相位曲线的假设模型显示，即使移除 
 - `app_config.h`：可选 `APP_LEFT_DISTANCE_SCALE` 更新为左移拟合值；`APP_LEFT_TRIM_ENABLE` 默认仍为 0。
 - MATLAB R2020a 脚本 `_speed_upgrade_work_20261125/calibration_precheck_20261127.m` 检查比例重算、四个符号方向和 0°/90°坐标变换，结果见 `matlab_calibration_precheck_20261127.log`。此检查是代数/坐标映射前置验证，不证明真实地面轨迹。
 - ARM C 单元 `validation/odom_calibration_20261127/unit.c` 和 `run_unit.py` 编译并执行活动 `chassis_odometry.c`、`chassis_kinematics.c`；`Chassis_DistanceSelfTest()` 通过，并覆盖前/后/左/右四种轮符号在 0°/90° 航向下的累计位姿，共8种情形、16项断言通过。结果 `_speed_upgrade_work_20261125/odom_calibration_replay_20261127/result.json` 的夹具哈希与当前 `unit.c` SHA256 `e04c2fa7f7c431493253afad81f5be5a7f4e2ca50363ebf73fc5e459aeb053f6` 一致。Cortex-M3 ARMCC 产物在 Unicorn 中回放，按 SHF_ALLOC 初始化 PROGBITS/NOBITS；几何、轮方向和 HWT 为受控输入，不是板端/实车测试。
-- 无雷达 Integrated/Offline Keil 构建和活动 AXF 身份另在本轮交接记录；未下载、未复位、未发车。
+- 无雷达 Integrated/Offline Keil 构建日志另在本轮交接记录；活动 Integrated AXF 的修改时间晚于本轮构建日志，因此当前磁盘 AXF 是否对应这里的源码构建未确认。未下载、未复位、未发车。
 
 需求核对：R `RUN-01/02/04`、`FIELD-02/06`、`PWR-01`、`MECH-01/02`；E `LOC-02/05/06`、`MOT-01/02/03/04`。Q `FIELD-05`、`OBS-03`、`QR-04` 继续待技术答疑确认。比例是工程标定选择，不改规则。
