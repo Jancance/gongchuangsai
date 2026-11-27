@@ -456,8 +456,10 @@ uint32_t Chassis_CalibrateDistanceMm(uint32_t mode, float encoder_mm, float *pro
     *progress_mm = 0.0f;
     if (mode > 3U || !Chassis_Finite(encoder_mm)) return 0U;
     result = encoder_mm;
-    if (mode == 0U || mode == 3U) result *= CHASSIS_FORWARD_DISTANCE_SCALE;
-    if (mode == 1U && APP_LEFT_TRIM_ACTIVE) result *= APP_LEFT_DISTANCE_SCALE;
+    if (mode == 0U) result *= CHASSIS_ODOM_FORWARD_DISTANCE_SCALE;
+    else if (mode == 1U) result *= CHASSIS_ODOM_LEFT_DISTANCE_SCALE;
+    else if (mode == 2U) result *= CHASSIS_ODOM_RIGHT_DISTANCE_SCALE;
+    else result *= CHASSIS_ODOM_REVERSE_DISTANCE_SCALE;
     if (!Chassis_Finite(result)) return 0U;
     *progress_mm = result;
     return 1U;
@@ -491,11 +493,13 @@ uint32_t Chassis_DistanceSelfTest(void)
        Chassis_Abs(mean-241.90263f)>0.01f || spread>0.01f)return 0U;
     sign[0]=0U; sign[1]=1U; sign[2]=0U; sign[3]=1U;
     if (!Chassis_CalibrateDistanceMm(0U,300.0f,&mean) ||
-        Chassis_Abs(mean - 306.54762f) > 0.01f ||
-        !Chassis_CalibrateDistanceMm(1U,300.0f,&mean) || Chassis_Abs(mean - (APP_LEFT_TRIM_ACTIVE ? 300.0f*APP_LEFT_DISTANCE_SCALE : 300.0f)) > 0.01f ||
-        !Chassis_CalibrateDistanceMm(2U,300.0f,&mean) || mean != 300.0f ||
+        Chassis_Abs(mean - 300.0f*CHASSIS_ODOM_FORWARD_DISTANCE_SCALE) > 0.01f ||
+        !Chassis_CalibrateDistanceMm(1U,300.0f,&mean) ||
+        Chassis_Abs(mean - 300.0f*CHASSIS_ODOM_LEFT_DISTANCE_SCALE) > 0.01f ||
+        !Chassis_CalibrateDistanceMm(2U,300.0f,&mean) ||
+        Chassis_Abs(mean - 300.0f*CHASSIS_ODOM_RIGHT_DISTANCE_SCALE) > 0.01f ||
         !Chassis_CalibrateDistanceMm(3U,300.0f,&mean) ||
-        Chassis_Abs(mean-300.0f*CHASSIS_FORWARD_DISTANCE_SCALE)>0.01f ||
+        Chassis_Abs(mean-300.0f*CHASSIS_ODOM_REVERSE_DISTANCE_SCALE)>0.01f ||
         Chassis_CalibrateDistanceMm(4U,300.0f,&mean) ||
         Chassis_CalibrateDistanceMm(0U,300.0f,NULL)) return 0U;
     if (Chassis_DistanceRpm(121.0f,15U) != 15U || Chassis_DistanceRpm(120.0f,15U) != 8U ||
