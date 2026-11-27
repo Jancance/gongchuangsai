@@ -1,0 +1,44 @@
+{
+  "version": "v1.13",
+  "base": "v1.12.6",
+  "source_up_down_rpm": 3000,
+  "source_lift_speed_was_already_equal": true,
+  "extension_all_areas_rpm": 200,
+  "extension_accel": 600,
+  "preclose_deg": 160,
+  "lift_tolerance_mm": 1,
+  "coarse_nominal_xy": [
+    356.5,
+    1170
+  ],
+  "coarse_approach_xy": [
+    346.5,
+    1170
+  ],
+  "source_prepare_mm": 600,
+  "turn_first_then_parallel_prepare_then_vision": true,
+  "files": {
+    "Objects/Vehicle_Integrated/Vehicle_Integrated.axf": {
+      "bytes": 1917868,
+      "sha256": "28a0483a8de9211b98a299bfc3242ae96532f1f851d7dc21514184d3fb3ebb5b"
+    },
+    "Objects/Vehicle_Integrated/Vehicle_Integrated-v1.13.bin": {
+      "bytes": 219952,
+      "sha256": "954304e932e74eafd9bdf2053b4e2fb6846faf8b5d4302a4f3dfd10cf863985e"
+    },
+    "Objects/Vehicle_Offline/Vehicle_Offline.axf": {
+      "bytes": 1444524,
+      "sha256": "cad427a70c48a5b274e489426a5dad911a25b2fca6895e27bd380e9f877ce106"
+    },
+    "Objects/Vehicle_Offline/Vehicle_Offline-v1.13.bin": {
+      "bytes": 117500,
+      "sha256": "4fa090b5e59df2c5ce31178508acb7990f3db7313d9d94c81df0a2c556cabb3f"
+    }
+  },
+  "stm32_flashed": false,
+  "physical_passed": false,
+  "source15s_passed": false,
+  "pi_code_changed_this_revision": false,
+  "coarse_nearby_turn_max_mm": 30,
+  "coarse_egress_checked_entry_mm": 336.5
+}

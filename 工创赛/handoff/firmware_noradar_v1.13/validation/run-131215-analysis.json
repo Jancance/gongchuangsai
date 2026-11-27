@@ -1,0 +1,145 @@
+{
+  "version": "v1.13",
+  "flash_verification": {
+    "bytes": 219952,
+    "sha256": "954304e932e74eafd9bdf2053b4e2fb6846faf8b5d4302a4f3dfd10cf863985e",
+    "bytewise_match_before_button": true
+  },
+  "method": "raw MEM-AP reads only; samples are not atomic",
+  "target_writes": false,
+  "result": "failed during second source pickup approach; first item software completed; no departure",
+  "first_fault": {
+    "valid": 1,
+    "sequence": 5,
+    "run_id": 0,
+    "item": 0,
+    "kind": 3,
+    "axis": 4,
+    "node": 5,
+    "reason": 7,
+    "phase": 1,
+    "flags": 1,
+    "options": 132,
+    "position_tick": 143503,
+    "position_cycle": 9,
+    "started_mask": 7,
+    "done_mask": 0,
+    "dm_state": 4,
+    "dm_result": 0,
+    "dm_first_fault": 0,
+    "dm_stop_result": 0,
+    "now_ms": 143503,
+    "before": 67.68000030517578,
+    "current": 2982.340087890625,
+    "goal": 2891.659912109375,
+    "reply": [
+      54,
+      0,
+      0,
+      4,
+      140,
+      250,
+      107,
+      0
+    ]
+  },
+  "lift_window": {
+    "unit": "motor degrees, converted with configured45 degrees/mm; not ruler measurement",
+    "before_deg": 67.68000030517578,
+    "goal_deg": 2891.659912109375,
+    "current_deg": 2982.340087890625,
+    "overshoot_deg": 90.68017578125,
+    "overshoot_mm": 2.015115017361111,
+    "corridor_deg": 90,
+    "corridor_mm": 2,
+    "excess_over_corridor_mm": 0.015115017361110983,
+    "arrival_tolerance_mm": 1,
+    "transient_vs_final_position": "unknown; group cancels on first out-of-window sample"
+  },
+  "timeline": {
+    "preparation_publish_ms": 128222,
+    "publish_remaining_mm_sample": 555.7625122070312,
+    "group_begin_ms": 128222,
+    "first_started_mask_sample": 129324,
+    "prepare_ready_ms": 130822,
+    "vision_handoff_ms": 131742,
+    "initial_stop_confirm_first_sample_ms": 133844,
+    "alignment_complete_first_sample_ms": 136127,
+    "first_item_complete_first_sample_ms": 142714,
+    "first_item_after_alignment_ms": 6587,
+    "fault_diagnostic_ms": 143503,
+    "safety32_first_sample_ms": 143641,
+    "reboots": [
+      {
+        "time": "2026-11-27T13:13:37.670589+08:00",
+        "tick": 18,
+        "iwdg_flag": 1
+      }
+    ]
+  },
+  "commands_observed": {
+    "extension_speed_rpm": 200,
+    "extension_acceleration_rpm_s": 600,
+    "lift_down_and_up_raw_speed": 30000,
+    "lift_down_and_up_rpm": 3000,
+    "lift_down_and_up_acceleration_raw": 45055,
+    "physical_speed_equality": "not established by command equality"
+  },
+  "vision_first_fault": {
+    "reason": 0,
+    "tick_ms": 0,
+    "ticket": 0,
+    "phase": 0,
+    "session": 0,
+    "observed": 0,
+    "vision_ms": 0,
+    "vision_age_ms": 0,
+    "vision_pose": 0,
+    "vision_frame": 0,
+    "vision_request": 0,
+    "vision_pending": 0,
+    "speed_batches": 0,
+    "can_state": 0,
+    "can_result": 0,
+    "can_cause": 0,
+    "can_ready": 0,
+    "can_feedback_ready": 0,
+    "ack_generation": 0,
+    "attempt_generation": 0,
+    "ack_mask": 0,
+    "tx_mask": 0,
+    "zero_confirmed": 0,
+    "zero_ack_ms": 0,
+    "stop_ack_ms": 0,
+    "next_batch_ms": 0
+  },
+  "not_verified": [
+    "three-item15s target",
+    "third-item release to departure",
+    "processing25s target",
+    "storage10s target",
+    "turn then parallel preparation then vision at later stations",
+    "physical grip/place and clearances",
+    "mechanical or drive origin of lift overshoot",
+    "fault to Safety32 and IWDG recovery chain"
+  ],
+  "requirements_checked": {
+    "R": [
+      "RUN-01",
+      "RUN-02",
+      "RUN-04",
+      "FIELD-02",
+      "FIELD-06",
+      "MECH-01",
+      "MECH-02"
+    ],
+    "E": [
+      "read-only monitoring",
+      "software timing and motion-window diagnosis; no rule-derived timeout added"
+    ],
+    "Q": "official unanswered items unchanged"
+  },
+  "source_changes": false,
+  "pi_changes": false,
+  "github_changes": false
+}
