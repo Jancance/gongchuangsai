@@ -76,12 +76,14 @@ typedef struct {
     /* Each LR/RR/LF/RF slot uses its own reference displacement over 80 ms. */
     FusionMotionPoint slot_from[CHASSIS_WHEEL_COUNT],slot_to[CHASSIS_WHEEL_COUNT];
     float slot_yaw_delta[CHASSIS_WHEEL_COUNT]; /* Signed reference radians over the slot. */
+    float heading_correction_rpm;
+    uint32_t heading_pd_enabled;
     uint32_t reference_complete; /* Nominal duration reached at preparation time. */
     uint32_t capture_complete; /* Nominal duration reached at pose capture time. */
 } FusionMotionFeedbackInput;
 typedef struct {
     FusionMotionVector correction; /* Candidate, commit only after a timely complete ACK. */
-    ChassisWheelSpeeds wheels; /* Signed logical RPM, rounded to 0.1 RPM. */
+    ChassisWheelSpeeds wheels; /* Signed logical RPM after command-unit quantization. */
     ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT];
     uint32_t finish_requested; /* Zero batch request. Caller verifies physical stop. */
 } FusionMotionFeedbackBatch;

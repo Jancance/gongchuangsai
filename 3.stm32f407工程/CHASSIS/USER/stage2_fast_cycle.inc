@@ -66,7 +66,7 @@ static uint32_t SF_Move(uint32_t axes,float yaw,float ext,uint32_t depth,uint32_
  memset(c,0,sizeof(*c));c->run_id=sf.profile.run_id;c->pose_version=sf.profile.pose_version;
  c->sequence=++g_it_sequence;c->item=g_stage2_fast_item;c->kind=kind;c->axes_mask=axes;
  c->goal.dm_deg=yaw;c->goal.extension_mm=ext;c->goal.lift_pulses=(float)depth;
- c->dm_deg_s=SPF_DM_DEG_S;c->extension_rpm=SPF_EXT_RPM;c->lift_rpm=SPF_LIFT_RPM;
+ c->dm_deg_s=SPF_DM_DEG_S;c->extension_rpm=SPF_EXT_RPM;c->lift_rpm=VEHICLE_SOURCE_LIFT_RPM;
  c->stepper_accel_rpm_s=SPF_STEPPER_ACCEL;c->keep_vm_on=1U;
  if(kind==SPF_CMD_ROUTE_AND_STOW)c->route_stage=3U;
  if(!VehicleArm_BeginSourceParallel(c,1U,kind==SPF_CMD_ROUTE_AND_STOW?1U:0U))return 0U;
@@ -126,8 +126,7 @@ void Stage2Fast_Service(uint32_t now)
   return;
  }
  if(!SF_Healthy() || g_source_parallel_cause || g_source_parallel_state==4U){Stage2Fast_Cancel(2U);return;}
- /* The route has its own timeout; the arm and evidence phases are bounded. */
- if(g_stage2_fast_state!=S2F_DEPART && now-sf.phase_ms>=15000U){Stage2Fast_Cancel(3U);return;}
+ /* v1.12.3: no business phase deadline; health and explicit cancellation remain. */
  item=g_stage2_fast_item;
  SF_ReleaseGates(now);
  switch(g_stage2_fast_state){

@@ -728,11 +728,18 @@ static void Safety_MotionPermissionUpdate(uint32_t vm_request)
  * Keep real wheel queries alive without restoring chassis motion permission. */
 static uint32_t Safety_ChassisFeedbackVm(uint32_t vm_request)
 {
+    ChassisAutoStatus stopped;
     if(vm_request!=0U)return vm_request;
     if(g_safety_ready!=1U || g_safety_fault || g_rtos_fault ||
        g_can_ctrl_fault_latched || g_startup_axes_vm_request!=1U ||
        g_motion_auto_stop_cut_vm || g_wheel_test_cut_vm)return 0U;
-    return StartupAxes_NormalStopHold()?1U:0U;
+    if(StartupAxes_NormalStopHold())return 1U;
+    /* Arm STOP/fault can retain live VM after a genuine chassis STOP.
+     * Keep real feedback queries alive; do not grant motion or clear any fault. */
+    if(g_chassis_auto_cut_vm || !ChassisAuto_ReadStatus(&stopped))return 0U;
+    return !stopped.active && stopped.state==CHASSIS_AUTO_DONE &&
+        stopped.result==1U && !stopped.cause && stopped.rotation_stop_mask==15U;
+
 }
 
 void Safety_Update(uint32_t vm_request, uint32_t can_test_result)

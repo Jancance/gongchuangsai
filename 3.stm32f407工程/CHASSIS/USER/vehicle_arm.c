@@ -1,5 +1,6 @@
 #include "vehicle_arm.h"
 #include "app_config.h"
+#include "region_dispatch.h"
 #include "startup_axes.h"
 #include "dm_can2.h"
 #include "gripper.h"
@@ -83,7 +84,7 @@ uint32_t VehicleArm_Begin(const VehicleArmRow *row,uint32_t item)
 void VehicleArm_Service(void)
 {
 #if !APP_MOTOR_OFFLINE_ONLY
-    uint32_t now=(uint32_t)xTaskGetTickCount(),pulse,previous_pulse,units,speed;
+    uint32_t now=(uint32_t)xTaskGetTickCount(),pulse,units,speed;
     float target,delta;uint8_t q[5]={0xf3,0xab,1,0,0x6b};
     if(VehicleSourceParallel_Owns()){VehicleSourceParallel_Service();return;}
     if(g_vehicle_arm_stop_pending==5U || g_vehicle_arm_stop_pending==6U) {
@@ -121,15 +122,9 @@ void VehicleArm_Service(void)
             if(s_row.op==5U) {
                 target=s_row.target;
                 if(target==-2.0f)target=s_item==0?VEHICLE_CARRIER_SLOT1_DEG:(s_item==1?VEHICLE_CARRIER_SLOT2_DEG:VEHICLE_CARRIER_SLOT3_DEG);
-                else if(target==-3.0f){
-                    if(s_item>=2U){g_vehicle_arm_state=2U;return;}
-                    target=s_item==0U?VEHICLE_CARRIER_SLOT2_DEG:VEHICLE_CARRIER_SLOT3_DEG;
-                }
                 if(!(target>=0 && target<=270)){arm_fail(4U);return;}
                 pulse=CARRIER_PULSE_MIN_US+(uint32_t)(target*(CARRIER_PULSE_MAX_US-CARRIER_PULSE_MIN_US)/270.0f+0.5f);
-                previous_pulse=CarrierPwm_LastPulseUs();
                 if(!CarrierPwm_Write(pulse)){arm_fail(4U);return;}
-                if(previous_pulse==pulse){g_vehicle_arm_state=2U;return;}
             }
             s_wait=now;s_phase=1U;
         }
@@ -159,9 +154,10 @@ void VehicleArm_Service(void)
         if(!(fabsf(delta)<=(s_address==5U?VEHICLE_LIFT_MAX_TARGET_PULSES*360.0f/3200.0f:180.0f))){arm_fail(8U);return;}
         s_did_move=fabsf(delta)>0.2f;
         units=(uint32_t)(fabsf(delta)*((s_options&0x80U)?100.0f:10.0f)+0.5f);
-        speed=(uint32_t)(s_row.speed*10.0f+0.5f);
+        speed=(uint32_t)((s_address==6U?VEHICLE_EXTENSION_RPM:s_row.speed)*10.0f+0.5f);
         memset(s_move,0,15);s_move[0]=0xfd;s_move[1]=delta<0;
         s_move[2]=s_move[4]=(uint8_t)(VEHICLE_X_ACCEL_RPM_S>>8);s_move[3]=s_move[5]=(uint8_t)VEHICLE_X_ACCEL_RPM_S;
+        if(s_address==6U){s_move[2]=s_move[4]=(uint8_t)(VEHICLE_EXTENSION_ACCEL_RPM_S>>8);s_move[3]=s_move[5]=(uint8_t)VEHICLE_EXTENSION_ACCEL_RPM_S;}
         s_move[6]=(uint8_t)(speed>>8);s_move[7]=(uint8_t)speed;
         s_move[8]=units>>24;s_move[9]=units>>16;s_move[10]=units>>8;s_move[11]=units;
         s_move[12]=2;s_move[14]=0x6b;s_phase=2U;return;

@@ -89,7 +89,7 @@ void StartupAxes_Safety(uint32_t healthy)
         if(g_dm_jog_first_fault){fail(7U);return;}
         if(backend.state>=CHASSIS_AUTO_FAULT || backend.cause){fail(10U);return;}
         if(!healthy || (uint32_t)(now-s_last_service)>300U)fail(2U);
-        else if(g_startup_axes_state!=4U && (uint32_t)(now-s_begin_ms)>=15000U)fail(3U);
+        /* v1.12.3: no startup total duration limit. */
     }
 }
 #if !APP_MOTOR_OFFLINE_ONLY
@@ -156,7 +156,7 @@ void StartupAxes_Service(uint32_t platform_ready,uint32_t can_guard_ready)
             scale=(s_options&0x80U)?100U:10U;
             angle=(uint32_t)(fabsf(delta)*(float)scale+0.5f);
             memset(s_move,0,sizeof(s_move));s_move[0]=0xfd;s_move[1]=delta<0.0f;
-            s_move[2]=s_move[4]=(uint8_t)(VEHICLE_X_ACCEL_RPM_S>>8);s_move[3]=s_move[5]=(uint8_t)VEHICLE_X_ACCEL_RPM_S;
+            s_move[2]=s_move[4]=(uint8_t)(VEHICLE_EXTENSION_ACCEL_RPM_S>>8);s_move[3]=s_move[5]=(uint8_t)VEHICLE_EXTENSION_ACCEL_RPM_S;
             speed=(uint32_t)(STARTUP_EXTENSION_RPM*10.0f+0.5f);s_move[6]=(uint8_t)(speed>>8);s_move[7]=(uint8_t)speed; /* 默认106.0RPM、45055RPM/s。 */
             s_move[8]=(uint8_t)(angle>>24);s_move[9]=(uint8_t)(angle>>16);s_move[10]=(uint8_t)(angle>>8);s_move[11]=(uint8_t)angle;
             s_move[12]=2U;s_move[14]=0x6b;

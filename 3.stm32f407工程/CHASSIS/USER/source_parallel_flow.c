@@ -25,7 +25,7 @@ static void command_base(SPF_Flow *f,SPF_Command *c)
 {
  memset(c,0,sizeof(*c));c->run_id=f->config.run_id;c->pose_version=f->config.pose_version;
  c->sequence=++f->sequence;c->item=f->item;c->dm_deg_s=SPF_DM_DEG_S;
- c->extension_rpm=SPF_EXT_RPM;c->lift_rpm=SPF_LIFT_RPM;
+ c->extension_rpm=SPF_EXT_RPM;c->lift_rpm=VEHICLE_SOURCE_LIFT_RPM;
  c->stepper_accel_rpm_s=SPF_STEPPER_ACCEL;c->keep_vm_on=1;
 }
 uint32_t SPF_ReadCommand(SPF_Flow *f,SPF_Command *out,uint32_t now)
@@ -99,11 +99,8 @@ uint32_t SPF_TargetReady(SPF_Flow *f,const SPF_Target *t,uint32_t now)
 }
 void SPF_Service(SPF_Flow *f,uint32_t now)
 {
- /* Real route has its own existing route timeout; do not kill a healthy
-  * stage3 route with the short arm transaction deadline. */
- if(f && f->state!=SPF_IDLE && f->state!=SPF_DONE && f->state!=SPF_FAULT &&
-  f->state!=SPF_ROUTE_AND_STOW &&
-  now-f->last_progress_ms>=f->config.transaction_timeout_ms)SPF_Cancel(f,3);
+ /* v1.12.3: no business transaction deadline; faults/cancel and axis checks remain. */
+ (void)f;(void)now;
 }
 uint32_t SPF_GroupBegin(SPF_Group *g,const SPF_Command *c,const SPF_GroupIO *io,
  uint32_t verified,uint32_t skew,uint32_t timeout)
@@ -116,25 +113,41 @@ uint32_t SPF_GroupBegin(SPF_Group *g,const SPF_Command *c,const SPF_GroupIO *io,
   (c->dm_deg_s!=SPF_DM_DEG_S &&
    !(c->kind==SPF_CMD_TRANSFER && c->axes_mask==SPF_DM &&
      c->lift_limit_pulses==SPF_STAGE3_MAX_LIFT_PULSES && c->dm_deg_s==SPF_STAGE3_DM_DEG_S)) ||
-  c->extension_rpm!=((c->lift_limit_pulses && c->kind!=SPF_CMD_STAGE3_FAST_TRANSFER)?
-     SPF_EXT_RPM:SPF_EXT_RPM) ||
+  c->extension_rpm!=(c->kind==SPF_CMD_SOURCE_OBSERVE_PREP?
+     VEHICLE_SOURCE_OBSERVE_EXTENSION_RPM:SPF_EXT_RPM) ||
+  (c->kind==SPF_CMD_SOURCE_OBSERVE_PREP &&
+   (c->axes_mask!=(SPF_DM|SPF_EXT) || c->lift_limit_pulses!=0U ||
+    c->goal.dm_deg!=180.0f || c->goal.extension_mm!=65.0f || c->goal.lift_pulses!=0.0f)) ||
   (c->kind==SPF_CMD_STAGE3_FAST_TRANSFER &&
    (c->axes_mask!=(SPF_EXT|SPF_LIFT) || c->lift_limit_pulses!=SPF_STAGE3_MAX_LIFT_PULSES)) ||
   (c->kind==SPF_CMD_STAGE3_CARRY_PLACE &&
    (c->axes_mask!=(SPF_EXT|SPF_LIFT) || c->lift_limit_pulses!=SPF_STAGE3_MAX_LIFT_PULSES)) ||
   ((c->kind==SPF_CMD_STAGE3_LOADED_RETURN || c->kind==SPF_CMD_STAGE3_EMPTY_HANDOFF ||
-    c->kind==SPF_CMD_STAGE3_CARRY_RISE) &&
+    c->kind==SPF_CMD_STAGE3_CARRY_RISE || c->kind==SPF_CMD_STAGE3_STORAGE_EXIT) &&
    (c->axes_mask!=(SPF_DM|SPF_EXT|SPF_LIFT) ||
     (c->kind!=SPF_CMD_STAGE3_EMPTY_HANDOFF && c->goal.extension_mm!=0.0f) ||
     c->lift_limit_pulses!=SPF_STAGE3_MAX_LIFT_PULSES)) ||
+  (c->kind==SPF_CMD_SOURCE_EMPTY_OBSERVE_RETURN &&
+   (c->axes_mask!=SPF_LIFT || c->lift_limit_pulses!=0U ||
+    c->goal.lift_pulses!=600.0f || c->goal.dm_deg!=0.0f ||
+    c->goal.extension_mm!=0.0f)) ||
+  (c->kind==SPF_CMD_CARRIER_LOWER &&
+   (c->axes_mask!=SPF_LIFT || c->goal.extension_mm!=0.0f ||
+    (!c->lift_limit_pulses && (c->goal.dm_deg!=36.5f || c->goal.lift_pulses!=5800.0f)) ||
+    (c->lift_limit_pulses && c->goal.lift_pulses<(float)SPF_CARRIER_EXTRA_DOWN_PULSES))) ||
   (c->kind==SPF_CMD_STAGE3_TOUCHDOWN && (c->axes_mask!=SPF_LIFT ||
    c->lift_limit_pulses!=SPF_STAGE3_MAX_LIFT_PULSES || !(c->goal.lift_pulses>=3200.0f))) ||
   c->lift_rpm!=(c->kind==SPF_CMD_STAGE3_TOUCHDOWN?SPF_STAGE3_TOUCHDOWN_RPM:
-   (c->kind==SPF_CMD_STAGE3_CARRY_RISE?SPF_STAGE3_CARRY_RISE_LIFT_RPM:SPF_LIFT_RPM)) ||
-  c->stepper_accel_rpm_s!=SPF_STEPPER_ACCEL ||
-  !c->keep_vm_on || skew<1 || skew>100 || timeout<100 || timeout>15000)return 0;
+   (c->kind==SPF_CMD_STAGE3_CARRY_RISE?SPF_STAGE3_CARRY_RISE_LIFT_RPM:
+    (c->kind==SPF_CMD_SOURCE_EMPTY_OBSERVE_RETURN?SPF_SOURCE_EMPTY_OBSERVE_RETURN_LIFT_RPM:
+     (c->kind==SPF_CMD_CARRIER_LOWER?SPF_CARRIER_LOWER_LIFT_RPM:
+      (c->lift_limit_pulses?SPF_LIFT_RPM:VEHICLE_SOURCE_LIFT_RPM))))) ||
+  c->stepper_accel_rpm_s!=(c->kind==SPF_CMD_SOURCE_OBSERVE_PREP?
+     VEHICLE_SOURCE_OBSERVE_EXTENSION_ACCEL:SPF_STEPPER_ACCEL) ||
+  !c->keep_vm_on || skew<1 || skew>100 || (timeout && timeout<100) || timeout>15000)return 0;
  memset(g,0,sizeof(*g));g->command=*c;g->io=*io;g->max_start_skew_ms=skew;
- if(c->kind==SPF_CMD_STAGE3_LOADED_RETURN || c->kind==SPF_CMD_STAGE3_CARRY_RISE){
+ if(c->kind==SPF_CMD_STAGE3_LOADED_RETURN || c->kind==SPF_CMD_STAGE3_CARRY_RISE ||
+    c->kind==SPF_CMD_STAGE3_STORAGE_EXIT){
   g->delayed_mask=SPF_DM;g->release_mask=SPF_EXT|SPF_LIFT;
  }else if(c->kind==SPF_CMD_STAGE3_EMPTY_HANDOFF){
   g->delayed_mask=SPF_EXT|SPF_DM;g->release_mask=SPF_LIFT;
@@ -155,12 +168,12 @@ void SPF_GroupService(SPF_Group *g)
   return;
  }
  now=g->io.clock_ms(g->io.context);
- if(now-g->progress_ms>=g->timeout_ms){SPF_GroupCancel(g,3);return;}
+ if(g->timeout_ms && now-g->progress_ms>=g->timeout_ms){SPF_GroupCancel(g,3);return;}
 
  if(g->delayed_mask &&
     !((g->command.kind==SPF_CMD_STAGE3_LOADED_RETURN ||
        g->command.kind==SPF_CMD_STAGE3_EMPTY_HANDOFF ||
-       g->command.kind==SPF_CMD_STAGE3_CARRY_RISE) && g->state==1U)){
+       g->command.kind==SPF_CMD_STAGE3_CARRY_RISE || g->command.kind==SPF_CMD_STAGE3_STORAGE_EXIT) && g->state==1U)){
   /* Prepare only released axes: preparing DM can queue a retarget. */
   for(bit=1U;bit<=4U;bit<<=1)if((g->command.axes_mask&bit) && !(g->started&bit) &&
      (g->release_mask&bit)){
@@ -189,7 +202,8 @@ void SPF_GroupService(SPF_Group *g)
   initial_mask=g->command.axes_mask;
   if(g->command.kind==SPF_CMD_STAGE3_LOADED_RETURN ||
      g->command.kind==SPF_CMD_STAGE3_EMPTY_HANDOFF ||
-     g->command.kind==SPF_CMD_STAGE3_CARRY_RISE)initial_mask&=~g->delayed_mask;
+     g->command.kind==SPF_CMD_STAGE3_CARRY_RISE ||
+     g->command.kind==SPF_CMD_STAGE3_STORAGE_EXIT)initial_mask&=~g->delayed_mask;
   for(bit=1;bit<=4;bit<<=1)if((initial_mask&bit) && !(g->prepared&bit)){
    result=g->io.prepare(g->io.context,bit,&g->command);
    if(result==2){SPF_GroupCancel(g,4);return;}

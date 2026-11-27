@@ -112,7 +112,7 @@ static void SourcePrep_Service(void)
 {
  uint32_t now=(uint32_t)xTaskGetTickCount();float ratio,angle,delta;uint8_t enable[5]={0xf3,0xab,1,0,0x6b};
  g_source_prepare_elapsed_ms=now-sp_begin;
- if(!StartupAxes_Holding() || now-sp_begin>=VEHICLE_SOURCE_PREP_TIMEOUT_MS){SourcePrep_Fail(20);return;}
+ if(!StartupAxes_Holding()){SourcePrep_Fail(20);return;}
  if(g_dm_jog_first_fault || (g_dm_jog_state==8 && g_dm_jog_result!=2)){SourcePrep_Fail(21);return;}
  s_address=6;
  if(g_source_prepare_state==1){
@@ -220,7 +220,7 @@ uint32_t VehicleArm_BeginSourcePreparation(void)
       VEHICLE_SOURCE_PREP_EXTENSION_MM<=2*VEHICLE_SOURCE_PREP_EXTENSION_SEGMENT_MM &&
       VEHICLE_EXTENSION_PULSES_PER_MM>0.0f && VEHICLE_EXTENSION_PULSES_PER_MM<100000.0f &&
       VEHICLE_SOURCE_PREP_DM_DEG==180 && VEHICLE_SOURCE_PREP_DM_SPEED_DEG_S>0 && VEHICLE_SOURCE_PREP_DM_SPEED_DEG_S<=300 &&
-      VEHICLE_SOURCE_PREP_EXTENSION_RPM>0 && VEHICLE_SOURCE_PREP_EXTENSION_RPM<=106 &&
+      VEHICLE_SOURCE_PREP_EXTENSION_RPM>0 && VEHICLE_SOURCE_PREP_EXTENSION_RPM<=VEHICLE_EXTENSION_RPM &&
       VEHICLE_SOURCE_PREP_EXTENSION_ACCEL_RPM_S>=1 && VEHICLE_SOURCE_PREP_EXTENSION_ACCEL_RPM_S<=45055 &&
       VEHICLE_SOURCE_PREP_GRIP_DEG>=0 && VEHICLE_SOURCE_PREP_GRIP_DEG<=210 &&
       VEHICLE_SOURCE_PREP_GRIP_RAMP_MS>=500 && VEHICLE_SOURCE_PREP_GRIP_RAMP_MS<=3000 &&

@@ -1018,7 +1018,7 @@ uint32_t VehicleArm_Exchange(uint8_t address,const uint8_t *q,uint8_t length,uin
     else
     {
         uint32_t speed=((uint32_t)q[6]<<8)|q[7];
-        if(!speed || speed>(address==5U?18464U:(uint32_t)(VEHICLE_EXTENSION_RPM*10.0f)) || (!q[2] && !q[3]) || (!q[4] && !q[5]))return 7U;
+        if(!speed || speed>(address==5U?(uint32_t)(VEHICLE_LIFT_RPM*10.0f):(uint32_t)(VEHICLE_EXTENSION_RPM*10.0f)) || (!q[2] && !q[3]) || (!q[4] && !q[5]))return 7U;
     }
     if(!s_can1_normal_ready){r=CAN1_InitMode(CAN_Mode_Normal);if(r!=1U)return r;s_can1_normal_ready=1U;}
     for(flush=0;flush<3 && CAN_MessagePending(CAN1,CAN_FIFO0);flush++)StartupHome_Receive(&rx);

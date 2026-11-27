@@ -11,4 +11,7 @@ uint32_t SourceBodyStep_WheelWindow(void);
 uint32_t SourceBodyStep_Busy(void);
 uint32_t SourceBodyStep_SmallDistanceWindow(void);
 uint32_t SourceBodyStep_FastAlignmentWindow(void);
+/* Mission only: one observation per run/pose/frame, from the existing vision parser. */
+uint32_t SourceBodyStep_Stream(uint32_t ticket,uint32_t pose,uint32_t frame,
+    uint32_t observed_ms,uint32_t request,uint32_t direction,float amount);
 #endif

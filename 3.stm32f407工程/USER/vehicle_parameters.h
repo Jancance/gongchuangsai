@@ -1,6 +1,25 @@
 #ifndef VEHICLE_PARAMETERS_H
 #define VEHICLE_PARAMETERS_H
 #include <stdint.h>
+#define VEHICLE_FIELD_MODE_NO_RADAR 0U
+#define VEHICLE_FIELD_MODE_VM_CALIBRATION 1U
+#define VEHICLE_FIELD_MODE_STRAIGHT_DEBUG 2U
+#define VEHICLE_FIELD_MODE VEHICLE_FIELD_MODE_NO_RADAR
+#define VEHICLE_SPEED_TRIAL160_MODE 0U
+#define VEHICLE_SPEED_TRIAL160_DIRECTION 0U
+#define VEHICLE_SPEED_TRIAL160_VM_SETUP_ONLY 0U
+#define VEHICLE_SPEED_TRIAL_LATERAL_PEAK120 1U
+#define VEHICLE_SPEED_TRIAL160_LEFT_SOFT_ACCEL 1U
+#define VEHICLE_SPEED_TRIAL160_LEFT_EARLY_DAMPING 0U
+#define VEHICLE_SPEED_TRIAL160_LEFT_YAW_FEEDFORWARD 0U
+#define VEHICLE_SOURCE_LIFT_RPM 3000.0f
+/* v1.12.2: source extension only; Stage3 profiles stay unchanged. */
+#define VEHICLE_SOURCE_EXTENSION_RPM 200.0f
+#define VEHICLE_SOURCE_EXTENSION_ACCEL_RPM_S 600U
+#define VEHICLE_EXTENSION_ACCEL_RPM_S 600U /* All ordinary extension moves; lift acceleration independent. */
+#define SOURCE_PREGRIP_DEG 160.0f /* Preclose during approach, without extra dwell. */
+#define VEHICLE_COARSE_APPROACH_OFFSET_MM 50.0f
+#define VEHICLE_COARSE_NEARBY_X_BACKOFF_MM 10.0f /* Nearby safe turn point; final alignment is visual. */
 /* 区 2 雷达两点校准测试。PC13 触发 ID 2 校准，成功后扫图一次，底盘原地待机。 */
 //#define APP_ZONE2_RADAR_CALIBRATION_TEST 1U
 /* 区 1 舵机单测。PC13 每按一次，在 500 µs 收拢和 2500 µs 端点命令之间切换。 */
@@ -60,8 +79,14 @@
 #define STARTUP_EXTENSION_ZERO_DEG 0.0f
 #define STARTUP_EXTENSION_EXTEND_SIGN (1)
 #define STARTUP_EXTENSION_TARGET_MM 0.0f  /* 这里改按键后的固定伸出量，当前0~50粗标。 */
-#define VEHICLE_EXTENSION_RPM 150.0f /* 应用保护上限；普通动作速度改下方逐行参数。 */
-#define STARTUP_EXTENSION_RPM 150.0f /* 按键启动时的伸缩速度，可在上限内调低。 */
+#define VEHICLE_EXTENSION_RPM 200.0f /* v1.13: all-region ordinary extension200RPM; home speed unchanged. */
+#define STARTUP_EXTENSION_RPM 200.0f /* 按键启动时的伸缩速度，可在上限内调低。 */
+/* 进站观察准备距离：到程序导航终点的剩余距离，单位mm。
+ * 原料/粗加工/暂存共用；<=300mm触发一次。
+ * 伸缩与4310真实到位后接入新鲜视觉，不等待底盘零速；抓取仍须停车。 */
+#define VEHICLE_STATION_PREPARE_DISTANCE_MM 400.0f
+#define VEHICLE_SOURCE_PREPARE_DISTANCE_MM 600.0f /* Source stations only, user 2026-11-27. */
+
 #define VEHICLE_EXTENSION_PULSES_PER_MM 315.5f /* 2026-11-08 measured on hardware: 3306.4deg = 93mm -> 35.55 deg/mm; 35.55*3200/360=315.5. Short-stroke points (12/15mm) read 33 deg/mm but carry ~8% ruler error; the 93mm point wins. */
 #define VEHICLE_BETWEEN_LEGS_MS 0U /* 已有停车核验，去掉重复的诊断停顿。 */
 #define VEHICLE_X_ACCEL_RPM_S 45055U
@@ -74,7 +99,15 @@
 #define VEHICLE_LIFT_TOP_DEG 0.0f
 #define VEHICLE_LIFT_DOWN_SIGN 1
 #define VEHICLE_LIFT_MAX_TARGET_PULSES 26250.0f
-#define VEHICLE_LIFT_RPM 1846.4f
+/* v1.11 三个工位普通动作速度入口；不是电机实测转速，发包沿用现有乘10。
+ * 伸缩：VEHICLE_EXTENSION_RPM；升降：VEHICLE_LIFT_RPM。
+ * v1.13: extension wire acceleration=600RPM/s; fast-lift stays45055; homing unchanged.
+ * 改这里后重建Integrated/Offline，不用Watch写业务参数。 */
+#define VEHICLE_PARALLEL_X_ACCEL_RPM_S 6000U /* Legacy group/lift metadata; node6 always uses VEHICLE_EXTENSION_ACCEL_RPM_S. */
+/* v1.11.1：仅原料区进站65mm观察准备恢复v1.10.2，不影响抓取循环速度。 */
+#define VEHICLE_SOURCE_OBSERVE_EXTENSION_RPM 200.0f
+#define VEHICLE_SOURCE_OBSERVE_EXTENSION_ACCEL 600U
+#define VEHICLE_LIFT_RPM 3000.0f /* v1.11.3候选；transport ceiling follows rpm*10. */
 #define VEHICLE_DM_SPEED_DEG_S 300.0f /* 既有应用上限；逐行速度独立配置。 */
 #define VEHICLE_DM_ZERO_RAW_DEG (-0.010928F) /* 既有逻辑左零基准，非本轮机械零点证明。 */
 #define VEHICLE_GRIP_OPEN_DEG 180.0f
@@ -223,9 +256,9 @@ static const float vehicle_station_extension_mm[8][3]={
 #define VEHICLE_SOURCE_PREP_DM_SPEED_DEG_S 300.0f
 #define VEHICLE_SOURCE_PREP_DM_ACCEL_DEG_S2 150.0f
 #define VEHICLE_SOURCE_PREP_EXTENSION_MM 70.0f /* 用户已确认机械可用行程；比例仍粗标。 */
-#define VEHICLE_SOURCE_PREP_EXTENSION_SEGMENT_MM 35.0f
-#define VEHICLE_SOURCE_PREP_EXTENSION_RPM 106.0f
-#define VEHICLE_SOURCE_PREP_EXTENSION_ACCEL_RPM_S 45055U
+#define VEHICLE_SOURCE_PREP_EXTENSION_SEGMENT_MM 36.0f
+#define VEHICLE_SOURCE_PREP_EXTENSION_RPM 200.0f
+#define VEHICLE_SOURCE_PREP_EXTENSION_ACCEL_RPM_S 600U
 #define VEHICLE_SOURCE_PREP_GRIP_DEG 210.0f
 #define VEHICLE_SOURCE_PREP_GRIP_RAMP_MS 1500U
 #define VEHICLE_SOURCE_PREP_GRIP_SETTLE_MS 300U
@@ -248,18 +281,24 @@ static const float vehicle_station_extension_mm[8][3]={
 #define VEHICLE_EXTENSION_HOME_DETECT_CURRENT_MA 800U
 #define VEHICLE_EXTENSION_HOME_DETECT_TIME_MS 60U
 #define SOURCE_LIFT_PULSES_PER_MM 400.0f /* 原1600/4，虚拟脉冲/mm */
+/* User 2026-11-21: lift moving path corridor only; final arrival/EXT stay unchanged. */
+#define SOURCE_LIFT_MOVING_CORRIDOR_MM 2.0f
+#define SOURCE_LIFT_MOVING_CORRIDOR_DEG (SOURCE_LIFT_MOVING_CORRIDOR_MM * SOURCE_LIFT_PULSES_PER_MM * 360.0f / 3200.0f)
 #define SOURCE_GRIP_LEAD_MM 20.0f /* 用户2026-11-18：剩20mm发140度夹紧，继续到原抓取高度即升，无新增停顿。 */
 #define SOURCE_PICK_PULSES 29700U /* 原118800/4，物理下降74.25mm不变 */
-#define SOURCE_RETURN_PULSES 1800U /* 原7200/4，距真实顶部4.5mm */
+#define SOURCE_RETURN_PULSES 600U /* v1.11：提前合并3mm回升，回盘到观察高度直接松爪。 */
 #define SOURCE_HOME_BACKOFF_PULSES 600U /* 原2400/4，回零退出1.5mm */
+/* 用户2026-11-25：首次回零后的退让到位容差，单位为电机角度，不是毫米。
+ * 零速、位置新鲜度、连续三次到位及编码器复核条件保留。 */
+#define SOURCE_HOME_BACKOFF_DONE_DEG 0.5f
 #define SOURCE_HOME_EXIT_TOLERANCE_PULSES 80U /* 原0.02mm放宽至0.2mm */
-#define SOURCE_TOP_TOLERANCE_DEG 22.5f /* 顶部反馈容差约0.5mm */
+#define SOURCE_TOP_TOLERANCE_DEG 45.0f /* v1.13: 1.0mm at400virtual pulses/mm; departure uses same arrival tolerance. */
 #define SOURCE_EXTENSION_DONE_DEG (5.0f * VEHICLE_EXTENSION_PULSES_PER_MM * 360.0f / 3200.0f) /* User2026-11-15: normal arrival5mm; zero unchanged. */
 #define SOURCE_EXTENSION_CORRIDOR_DEG (10.0f * VEHICLE_EXTENSION_PULSES_PER_MM * 360.0f / 3200.0f) /* User2026-11-15:10mm path window;arrival unchanged. */
 #define SOURCE_OVERLAP_HOVER_PULSES 15600U /* 原39mm/80mm净空点，按新400p/mm换算 */
 #define SOURCE_LOADED_PARTIAL_RETRACT_MM 60.0f /* MATLAB轨迹段，非新增停车门限 */
 #define SOURCE_EXTENSION_STALL_CONFIRM_MS 3000U /* User:2026-11-15; existing stall window. */
-#define SOURCE_RELEASE_DWELL_MS 100U /* 松爪脉冲生效后计时，用户指定 */
+#define SOURCE_RELEASE_DWELL_MS 200U /* 松爪脉冲生效后计时，用户指定 */
 #define SOURCE_OBSERVE_PULSES 600U /* 回到原框选的顶部1.5mm退出位 */
 #define SOURCE_EXTENSION_ZERO_DONE_DEG 17.75f /* 仅新动作：原2度放宽约0.5mm */
 #define SOURCE_WHEEL_HOLD_SPEED_RAW 37U /* 已有15mm/s低速档折算；Emm输入速度/10 */

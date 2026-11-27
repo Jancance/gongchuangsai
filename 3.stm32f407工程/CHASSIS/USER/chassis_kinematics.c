@@ -109,24 +109,25 @@ static void Chassis_ClearMotorCommands(ChassisMotorCommand *commands)
 }
 
 uint32_t Chassis_EncodeEmm(const ChassisWheelSpeeds *logical,
-    uint16_t max_raw, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
+    uint16_t max_rpm, ChassisMotorCommand commands[CHASSIS_WHEEL_COUNT])
 {
     ChassisMotorCommand result[CHASSIS_WHEEL_COUNT];
     uint32_t i;
     float magnitude;
     uint16_t raw;
     Chassis_ClearMotorCommands(commands);
-    if ((commands == NULL) || (logical == NULL) || (max_raw == 0U) ||
-        (max_raw > 3000U)) return 0U;
+    if ((commands == NULL) || (logical == NULL) || (max_rpm == 0U) ||
+        (max_rpm > ZDT_EMM_APP_MAX_SPEED_RPM)) return 0U;
     for (i = 0U; i < CHASSIS_WHEEL_COUNT; i++)
     {
         if (!Chassis_Finite(logical->rpm[i])) return 0U;
         magnitude = Chassis_Abs(logical->rpm[i]);
-        if (magnitude > (float)max_raw + CHASSIS_INTEGER_RPM_TOLERANCE) return 0U;
+        if (magnitude > (float)max_rpm + CHASSIS_INTEGER_RPM_TOLERANCE) return 0U;
         /* 已先限到协议范围，转换不会溢出；拒绝不能表示的小数速度 */
-        raw = (uint16_t)(magnitude*10.0f + 0.5f);
-        if ((raw > (uint32_t)max_raw*10U) || raw>3000U ||
-            (Chassis_Abs(magnitude - (float)raw*0.1f) > 0.0501f))
+        raw = (uint16_t)(magnitude*(float)ZDT_EMM_RPM_TO_RAW + 0.5f);
+        if ((raw > (uint32_t)max_rpm*ZDT_EMM_RPM_TO_RAW) || raw>ZDT_EMM_APP_MAX_SPEED_RAW ||
+            (Chassis_Abs(magnitude - (float)raw/(float)ZDT_EMM_RPM_TO_RAW) >
+                0.5001f/(float)ZDT_EMM_RPM_TO_RAW))
             return 0U;
         result[i].address = (uint8_t)(i + 1U);
         result[i].speed_raw = raw;
@@ -328,7 +329,7 @@ uint32_t Chassis_Baseline40Commands(uint32_t base_rpm, int32_t heading_deci,
     for(i=0U;i<4U;i++) {
         commands[i].address=(uint8_t)(i+1U);
         commands[i].direction=g_chassis_forward_direction[i];
-        commands[i].speed_raw=(uint16_t)raw[i];
+        commands[i].speed_raw=(uint16_t)(((uint32_t)raw[i]*ZDT_EMM_RPM_TO_RAW+5U)/10U);
     }
     return 1U;
 }

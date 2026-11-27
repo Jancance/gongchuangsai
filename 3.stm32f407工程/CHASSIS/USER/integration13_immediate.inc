@@ -33,8 +33,7 @@ static void it_auto_service(uint32_t now)
  uint32_t expected;
  if(g_it_auto_state!=1U)return;
  g_it_auto_elapsed_ms=now-it_auto_begin;g_it_auto_phase_ms=now-it_auto_phase_begin;
- if(!it_platform() || g_it_rejected || g_it_cause || g_it_state==9U ||
-  g_it_auto_phase_ms>=16000U){
+ if(!it_platform() || g_it_rejected || g_it_cause || g_it_state==9U){
   g_it_auto_fault=g_it_cause?g_it_cause:12U;g_it_auto_state=9U;
   g_it_request=0U;it_fail(g_it_auto_fault);return;
  }

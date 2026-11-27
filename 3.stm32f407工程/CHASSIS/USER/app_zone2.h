@@ -36,8 +36,13 @@ void AppZone2_OfferTaskCode(const char *code,uint32_t first_ms,uint32_t last_ms)
 void AppZone2_DisplayTaskCode(void);
 uint32_t AppZone2_CopyTaskCode(char code[16]);
 uint32_t AppZone2_StationRead(AppZone2Station *station);
+/* 仅提前发布工位票据；交接前行驶底盘仍由原导航控制。 */
+uint32_t AppZone2_StationApproaching(void);
 uint32_t AppZone2_StationConfirm(uint32_t ticket,uint8_t item,AppZone2Action action,
     uint8_t color,uint8_t ring);
+/* Called only at fresh, CRC/identity-checked O31 visual convergence, before pose token advances. */
+uint32_t AppZone2_StationVisualAligned(uint32_t ticket,uint32_t vision_run,
+ uint32_t vision_pose,uint32_t vision_sequence,uint32_t observation_ms);
 uint32_t AppZone2_StationComplete(uint32_t ticket,uint32_t success);
 uint32_t AppZone2_StationCompleteUnverified(uint32_t ticket);
 #endif

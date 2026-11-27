@@ -25,6 +25,18 @@ void RegionDispatch_KeyEvent(void);
 void RegionDispatch_ScanService(void);
 uint32_t RegionDispatch_WantsService(void);
 #if APP_ZONE2_MISSION_ENABLE
+/* 0等待首次基准完成，1基准就绪，2已有执行器或反馈故障。 */
+uint32_t RegionDispatch_StartupReferencesReady(void);
 void RegionDispatch_MapService(uint32_t now);
+void RegionDispatch_AlignmentService(void);
+uint32_t RegionDispatch_MotionAllowed(void);
+uint32_t RegionDispatch_MotionRequestAllowed(uint32_t request);
+uint32_t RegionDispatch_ParallelAxesAllowed(uint32_t axes,float yaw,float extension);
+uint32_t RegionDispatch_ApproachTurnAllowed(void);
+uint32_t RegionDispatch_ObservationReady(uint32_t ticket,uint32_t *stamp);
+uint32_t RegionDispatch_ParallelFaulted(void);
+uint32_t RegionDispatch_StopServiceNeeded(void);
+uint32_t RegionDispatch_SourceDepartureCommitted(void);
+void RegionDispatch_StationStopped(uint32_t ticket);
 #endif
 #endif

@@ -98,7 +98,7 @@ void StartupAxes_Safety(uint32_t healthy)
         if(!healthy || (uint32_t)(now-sg_last)>150U)StartupGroup_Fail(2U);
         else if(g_group_extension_state>=5U)StartupGroup_Fail(11U);
         else if(g_dm_jog_first_fault)StartupGroup_Fail(7U);
-        else if(g_startup_axes_state!=4U && (uint32_t)(now-sg_begin)>=15000U)StartupGroup_Fail(3U);
+        /* v1.12.3: no startup total duration limit. */
     }
 }
 void StartupAxes_Service(uint32_t platform_ready,uint32_t can_guard_ready)

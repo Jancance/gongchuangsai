@@ -3,8 +3,11 @@
 #include "source_parallel_flow.h"
 #include "source_pick_extension_lead_20261115.h"
 #include "chassis_auto_test.h"
+#include "app_zone2.h"
 volatile uint32_t g_source_parallel_state,g_source_parallel_cause,g_source_parallel_started_mask;
 volatile uint32_t g_source_parallel_done_mask,g_source_parallel_stop_mask,g_source_parallel_start_skew_ms;
+volatile SPF_PollFirst g_source_parallel_poll_first;
+typedef char SPF_PollFirstSizeCheck[sizeof(SPF_PollFirst)==100U?1:-1];
 #if !APP_MOTOR_OFFLINE_ONLY
 extern volatile uint32_t g_dm_parallel_group_active,g_dm_parallel_group_go,g_dm_stage2_sync;
 extern volatile uint32_t g_dm_initial_observe;
@@ -39,9 +42,11 @@ static uint32_t vsp_pick_sync,vsp_pick_queued;
 static uint32_t vsp_loaded_sync_sent,vsp_loaded_z_cycle,vsp_loaded_dm_stop;
 extern volatile uint32_t g_dm_stage3_empty_target_sent;
 volatile uint32_t g_source_parallel_sync_tick;
+volatile uint32_t g_arm_command_tick,g_arm_extension_speed_raw,g_arm_extension_accel_raw;
+volatile uint32_t g_arm_lift_speed_raw,g_arm_lift_direction,g_arm_lift_accel_raw;
 
 volatile uint32_t g_vsp_prepare_miss,g_vsp_prepare_nonzero,g_vsp_prepare_speed_raw,g_vsp_prepare_wait_address;
-static uint32_t vsp_dm_posted,vsp_dm_cycle,vsp_owned,vsp_dm_hold_tick;
+static uint32_t vsp_dm_posted,vsp_dm_cycle,vsp_owned,vsp_dm_hold_tick,vsp_storage_exit_sequence;
 static uint32_t VSP_Query(uint8_t address,uint8_t command,uint8_t count)
 {uint8_t q[2];q[0]=command;q[1]=0x6b;return VehicleArm_Exchange(address,q,2,count,&s_rx)==1;}
 static uint32_t VSP_Position(uint8_t address,VSP_Axis *a)
@@ -72,7 +77,8 @@ uint32_t VehicleArm_Stage3GroupStopPending(void)
 {
  return vsp_owned && (vsp_group.command.kind==SPF_CMD_STAGE3_LOADED_RETURN ||
                       vsp_group.command.kind==SPF_CMD_STAGE3_EMPTY_HANDOFF ||
-                      vsp_group.command.kind==SPF_CMD_STAGE3_CARRY_RISE) &&
+                      vsp_group.command.kind==SPF_CMD_STAGE3_CARRY_RISE ||
+                      vsp_group.command.kind==SPF_CMD_STAGE3_STORAGE_EXIT) &&
   (vsp_group.state==4U || !SingleTeach_ReferencesReady() || Stage3_FastTransferStopPending());
 }
 static uint32_t VSP_Stage3SyncStopPending(void)
@@ -92,6 +98,18 @@ static uint32_t VSP_LoadedReturnHeightReady(uint32_t now)
  if(VEHICLE_LIFT_DOWN_SIGN<0.0f)depth=-depth;
  return depth>=0 && depth<=(int64_t)2000U*360U*scale;
 }
+static uint32_t VSP_StorageExitHeightReady(uint32_t now)
+{
+ const VSP_Axis *z=&vsp_axis[1];
+ uint32_t scale=g_lift_ruler_controller.top_scale;
+ const float near_deg=5.0f*SOURCE_LIFT_PULSES_PER_MM*360.0f/3200.0f;
+ if(!vsp_owned || vsp_group.command.kind!=SPF_CMD_STAGE3_STORAGE_EXIT ||
+    vsp_group.state==4U || !vsp_storage_exit_sequence ||
+    vsp_group.command.sequence!=vsp_storage_exit_sequence ||
+    !(vsp_group.started&SPF_LIFT) || z->position_cycle==vsp_lift_start_cycle ||
+    (uint32_t)(now-z->position_tick)>150U || (scale!=10U && scale!=100U))return 0U;
+ return fabsf(z->current-z->goal)<=near_deg;
+}
 static uint32_t S3_TouchdownAllowed(void);
 static uint32_t VSP_TouchdownDelta(float delta,float down_sign,uint32_t scale)
 {
@@ -110,6 +128,8 @@ static uint32_t VSP_Prepare(void *context,uint32_t bit,const SPF_Command *c)
   if(!vsp_dm_posted){
    if((c->kind==SPF_CMD_STAGE3_LOADED_RETURN || c->kind==SPF_CMD_STAGE3_CARRY_RISE) &&
       !VSP_LoadedReturnHeightReady((uint32_t)xTaskGetTickCount()))return 0U;
+   if(c->kind==SPF_CMD_STAGE3_STORAGE_EXIT &&
+      !VSP_StorageExitHeightReady((uint32_t)xTaskGetTickCount()))return 0U;
    if(!g_dm_can2_feedback_valid || (uint32_t)xTaskGetTickCount()-g_dm_can2_feedback_tick>=100)return 0;
    g_dm_parallel_group_active=1;g_dm_parallel_group_go=0;
    g_dm_source_smooth=0;g_dm_point_enable=1;g_dm_posvel_speed_deg_s=c->dm_deg_s;
@@ -136,7 +156,8 @@ static uint32_t VSP_Prepare(void *context,uint32_t bit,const SPF_Command *c)
   a->options=s_rx.Data[2];
   if((vsp_fast_lift || c->kind==SPF_CMD_STAGE3_TOUCHDOWN ||
       c->kind==SPF_CMD_STAGE3_LOADED_RETURN || c->kind==SPF_CMD_STAGE3_EMPTY_HANDOFF ||
-      c->kind==SPF_CMD_STAGE3_CARRY_RISE || c->kind==SPF_CMD_STAGE3_CARRY_PLACE) && address==5U &&
+      c->kind==SPF_CMD_STAGE3_CARRY_RISE || c->kind==SPF_CMD_STAGE3_CARRY_PLACE ||
+      c->kind==SPF_CMD_STAGE3_STORAGE_EXIT) && address==5U &&
    ((a->options&0x80U)?100U:10U)!=g_lift_ruler_controller.top_scale)return 2;
   a->phase=1;return 0;
  case 1:
@@ -159,14 +180,24 @@ static uint32_t VSP_Prepare(void *context,uint32_t bit,const SPF_Command *c)
    * only 3200 for the same 360 deg target, i.e. 320.0 deg, an 11.1% shortfall. */
   units=(uint32_t)(fabsf(delta)*((address==5U && (a->options&0x80U))?100.0f:10.0f)+0.5f);
   speed=(uint32_t)((address==6?c->extension_rpm:c->lift_rpm)*10.0f+.5f);
+  /* Source extension only: restore v1.1 speed/acceleration at the CAN boundary. */
+  if(address==6U)
+   speed=(uint32_t)(VEHICLE_EXTENSION_RPM*10.0f+.5f);
   memset(a->move,0,15);a->move[0]=0xfd;a->move[1]=delta<0;
   a->move[2]=(uint8_t)(c->stepper_accel_rpm_s>>8);
   a->move[3]=(uint8_t)c->stepper_accel_rpm_s;
   a->move[4]=(uint8_t)(c->stepper_accel_rpm_s>>8);a->move[5]=(uint8_t)c->stepper_accel_rpm_s;
+  if(address==6U){
+   a->move[2]=a->move[4]=(uint8_t)(VEHICLE_EXTENSION_ACCEL_RPM_S>>8);
+   a->move[3]=a->move[5]=(uint8_t)VEHICLE_EXTENSION_ACCEL_RPM_S;
+  }
   if(vsp_fast_lift && address==5U){
    a->move[2]=a->move[4]=(uint8_t)(45055U>>8);
    a->move[3]=a->move[5]=(uint8_t)45055U;
   }
+  g_arm_command_tick=(uint32_t)xTaskGetTickCount();
+  if(address==6U){g_arm_extension_speed_raw=speed;g_arm_extension_accel_raw=((uint32_t)a->move[2]<<8)|a->move[3];}
+  else {g_arm_lift_speed_raw=speed;g_arm_lift_direction=a->move[1];g_arm_lift_accel_raw=((uint32_t)a->move[2]<<8)|a->move[3];}
   a->move[6]=(uint8_t)(speed>>8);a->move[7]=(uint8_t)speed;
   a->move[8]=(uint8_t)(units>>24);a->move[9]=(uint8_t)(units>>16);a->move[10]=(uint8_t)(units>>8);a->move[11]=(uint8_t)units;
   a->move[12]=2;a->move[14]=0x6b;a->phase=2;return 0;
@@ -201,7 +232,7 @@ static uint32_t VSP_Prepare(void *context,uint32_t bit,const SPF_Command *c)
 static uint32_t VSP_PositionWindow(VSP_Axis *a,uint32_t settle_allowed)
 {
  float lo=fminf(a->before,a->goal),hi=fmaxf(a->before,a->goal);
- float corridor=a==&vsp_axis[0]?SOURCE_EXTENSION_CORRIDOR_DEG:45.0f;
+ float corridor=a==&vsp_axis[0]?SOURCE_EXTENSION_CORRIDOR_DEG:SOURCE_LIFT_MOVING_CORRIDOR_DEG;
  (void)settle_allowed;
  return a->current>=lo-corridor && a->current<=hi+corridor;
 }
@@ -298,13 +329,36 @@ static uint32_t VSP_TouchdownArrived(float before,float current,const uint8_t *m
  float moved=(current-before)*VEHICLE_LIFT_DOWN_SIGN;
  return units && moved>0.0f && fabsf(moved*(float)scale-(float)units)<=0.5f;
 }
+static uint32_t VSP_PollFailure(SPF_Group *g,uint32_t bit,uint32_t node,uint32_t reason,
+                                const VSP_Axis *a,uint32_t flags)
+{
+ uint32_t i;
+ volatile SPF_PollFirst *d=&g_source_parallel_poll_first;
+ if(!d->valid){
+  d->sequence=g->command.sequence;d->run_id=g->command.run_id;d->item=g->command.item;
+  d->kind=g->command.kind;d->axis=bit;d->node=node;d->reason=reason;
+  d->phase=a?a->phase:g_dm_jog_state;d->flags=flags;d->options=a?a->options:0U;
+  d->position_tick=a?a->position_tick:g_dm_can2_feedback_tick;
+  d->position_cycle=a?a->position_cycle:g_dm_can2_read_cycle;
+  d->started_mask=g->started;d->done_mask=g->done;
+  d->dm_state=g_dm_jog_state;d->dm_result=g_dm_jog_result;
+  d->dm_first_fault=g_dm_jog_first_fault;d->dm_stop_result=g_dm_jog_stop_result;
+  d->now_ms=(uint32_t)xTaskGetTickCount();
+  d->before=a?a->before:0.0f;d->current=a?a->current:g_dm_can2_logical_position_deg;
+  d->goal=a?a->goal:g->command.goal.dm_deg;
+  for(i=0U;i<8U;i++)d->reply[i]=node?s_rx.Data[i]:0U;
+  d->valid=1U;
+ }
+ return 2U;
+}
 static uint32_t VSP_Poll(void *context,uint32_t bit)
 {
  VSP_Axis *a;uint8_t address;uint32_t zero_return;(void)context;
  SPF_Group *g=bit==SPF_DM?&vsp_group:VSP_StepperGroup();
  if(g==&vsp_carry_place && !vsp_carry_sent)return 0U;
  if(bit==SPF_DM){
-  if(g_dm_jog_first_fault || g_dm_jog_state==8)return 2;
+  if(g_dm_jog_first_fault)return VSP_PollFailure(g,bit,0U,SPF_POLL_DM_FIRSTFAULT,0,0U);
+  if(g_dm_jog_state==8)return VSP_PollFailure(g,bit,0U,SPF_POLL_DM_STATE8,0,0U);
   return g_dm_jog_state==7 && g_dm_jog_result==1 && g_dm_posvel_holding &&
    (uint32_t)xTaskGetTickCount()-g_dm_can2_feedback_tick<100 && fabsf(g_dm_can2_logical_position_deg-vsp_group.command.goal.dm_deg)<=3;
  }
@@ -314,11 +368,13 @@ static uint32_t VSP_Poll(void *context,uint32_t bit)
   /* 2026-11-08: one missed poll while the axis is accelerating must not abort the
    * transfer (old code returned 2 -> fault 7 within ~3 s). Retry instead. */
   if(!VSP_Query(address,0x3a,3)){a->samples=0;return 0;}
-  if(!(s_rx.Data[1]&1) || (s_rx.Data[1]&0x08))return 2;
+  if(!(s_rx.Data[1]&1))return VSP_PollFailure(g,bit,address,SPF_POLL_AXIS_DISABLED,a,s_rx.Data[1]);
+  if(s_rx.Data[1]&0x08)return VSP_PollFailure(g,bit,address,SPF_POLL_AXIS_PROTECT,a,s_rx.Data[1]);
   if(s_rx.Data[1]&4){
-   if(address==5)return 2;
+   if(address==5)return VSP_PollFailure(g,bit,address,SPF_POLL_Z_STALL,a,s_rx.Data[1]);
    if(!a->stall_active){a->stall_active=1;a->stall_ms=(uint32_t)xTaskGetTickCount();}
-   else if((uint32_t)xTaskGetTickCount()-a->stall_ms>=SOURCE_EXTENSION_STALL_CONFIRM_MS)return 2;
+   else if((uint32_t)xTaskGetTickCount()-a->stall_ms>=SOURCE_EXTENSION_STALL_CONFIRM_MS)
+    return VSP_PollFailure(g,bit,address,SPF_POLL_EXT_STALL_TIMEOUT,a,s_rx.Data[1]);
   }else a->stall_active=0;
   a->flags=s_rx.Data[1];a->phase=1;return 0;
  }
@@ -333,7 +389,8 @@ static uint32_t VSP_Poll(void *context,uint32_t bit)
   /* 2026-11-08: measured stop overshoot after the 294.4 pulses/mm recalibration is
    * ~33 deg (1.0 mm) on a 100 mm move. 60 deg still catches the 670 deg runaway seen
    * earlier. */
-  if(!VSP_PositionWindow(a,zero_return || (address==6U && Low_ObserveReturnSettling())))return 2;
+  if(!VSP_PositionWindow(a,zero_return || (address==6U && Low_ObserveReturnSettling())))
+   return VSP_PollFailure(g,bit,address,SPF_POLL_POSITION_WINDOW,a,a->flags);
   a->phase=2;return 0;
  }
  if(!VSP_Query(address,0x35,5) || ((zero_return || vsp_group.command.kind==SPF_CMD_STAGE3_TOUCHDOWN) && s_rx.Data[1]>1U)){
@@ -343,7 +400,7 @@ static uint32_t VSP_Poll(void *context,uint32_t bit)
  if(!s_rx.Data[2] && !s_rx.Data[3] && !(a->flags&0x0c) &&
     (vsp_group.command.kind==SPF_CMD_STAGE3_TOUCHDOWN?
      ((a->flags&2) && VSP_TouchdownArrived(a->before,a->current,a->move,(a->options&0x80U)?100U:10U)):
-     (fabsf(a->current-a->goal)<=(zero_return?SOURCE_EXTENSION_ZERO_DONE_DEG:(address==6U?SOURCE_EXTENSION_DONE_DEG:22.5f)) &&
+     (fabsf(a->current-a->goal)<=(zero_return?SOURCE_EXTENSION_ZERO_DONE_DEG:(address==6U?SOURCE_EXTENSION_DONE_DEG:(g->command.lift_limit_pulses?22.5f:SOURCE_TOP_TOLERANCE_DEG))) &&
       (fabsf(a->goal-a->before)<=.2f || (a->flags&2)))))a->samples++;else a->samples=0;
  a->phase=0;return a->samples>=((vsp_group.command.kind==SPF_CMD_PICK || (address==5U && Low_Busy()))?2U:1U);
 }
@@ -353,7 +410,8 @@ static uint32_t VSP_Stop(void *context,uint32_t bit)
  if(bit==SPF_DM){
   if((vsp_group.command.kind==SPF_CMD_STAGE3_LOADED_RETURN ||
       vsp_group.command.kind==SPF_CMD_STAGE3_EMPTY_HANDOFF ||
-      vsp_group.command.kind==SPF_CMD_STAGE3_CARRY_RISE) && vsp_dm_posted){
+      vsp_group.command.kind==SPF_CMD_STAGE3_CARRY_RISE ||
+      vsp_group.command.kind==SPF_CMD_STAGE3_STORAGE_EXIT) && vsp_dm_posted){
    /* 让 CAN2 先清未消费的回收请求，再确认停机；不重复打断 STOP。 */
    if(!vsp_loaded_dm_stop){vsp_loaded_dm_stop=1U;g_dm_jog_request=3U;return 0U;}
    if(g_dm_jog_request || g_dm_jog_state==6U)return 0U;
@@ -503,6 +561,16 @@ static void VehicleSourceParallel_Service(void)
    if(vsp_group.done&SPF_DM)vsp_group.release_mask|=SPF_EXT;
   }
  }
+ if(vsp_group.command.kind==SPF_CMD_STAGE3_STORAGE_EXIT && vsp_group.state!=4U){
+  if(VehicleArm_Stage3GroupStopPending())SPF_GroupCancel(&vsp_group,2U);
+  else if(!vsp_dm_posted){
+   uint32_t now=(uint32_t)xTaskGetTickCount();
+   if((vsp_group.done&SPF_LIFT) && (uint32_t)(now-vsp_axis[1].position_tick)>150U)
+    (void)VSP_Position(5U,&vsp_axis[1]);
+   if(VehicleArm_Stage3GroupStopPending())SPF_GroupCancel(&vsp_group,2U);
+   else if(VSP_StorageExitHeightReady((uint32_t)xTaskGetTickCount()))vsp_group.release_mask|=SPF_DM;
+  }
+ }
  VSP_ReleasePickDescent((uint32_t)xTaskGetTickCount());
  SPF_GroupService(&vsp_group);
  if(VehicleArm_Stage3CarryActive())VSP_CarryService();
@@ -542,7 +610,11 @@ uint32_t VehicleArm_BeginSourceParallel(const SPF_Command *command,uint32_t swee
  if(!command || VehicleArm_Busy() || vsp_owned || !SingleTeach_ReferencesReady() ||
   !g_extension_home_reference_valid || !g_vehicle_lift_reference_valid)return 0;
  (void)ChassisAuto_ReadStatus(&body);
- if(body.active && !(command->kind==SPF_CMD_ROUTE_AND_STOW && driving_stow_verified==1))return 0;
+ if(body.active && !(command->kind==SPF_CMD_ROUTE_AND_STOW && driving_stow_verified==1)
+#if APP_ZONE2_MISSION_ENABLE
+    && !RegionDispatch_ParallelAxesAllowed(command->axes_mask,command->goal.dm_deg,command->goal.extension_mm)
+#endif
+   )return 0;
  if(!body.active && body.cause)return 0;
  /* Planner/mission supplies verified trajectory, current run/profile and
   * references. No key or Watch path can grant these in this candidate. */
@@ -553,9 +625,19 @@ uint32_t VehicleArm_BeginSourceParallel(const SPF_Command *command,uint32_t swee
  /* 2026-11-08: start skew was 20ms but a node6 frame + ack costs ~80ms, so every
  * transfer tripped SPF_GroupCancel(5). 90ms stays inside the SPF_GroupBegin limit
  * (<=100) while leaving room for the Emm_V5 ack. */
- if(!SPF_GroupBegin(&vsp_group,command,&io,sweep_verified,90,VEHICLE_AXIS_TIMEOUT_MS?VEHICLE_AXIS_TIMEOUT_MS:12000))return 0;
+ if(!SPF_GroupBegin(&vsp_group,command,&io,sweep_verified,90,VEHICLE_AXIS_TIMEOUT_MS))return 0;
+#if APP_ZONE2_MISSION_ENABLE
+ if(AppZone2_StationApproaching()){
+  extern volatile uint32_t g_region_prepare_started_ms;
+  extern volatile float g_region_prepare_started_remaining_mm,g_zone2_station_remaining_mm;
+  g_region_prepare_started_ms=(uint32_t)xTaskGetTickCount();
+  g_region_prepare_started_remaining_mm=g_zone2_station_remaining_mm;
+ }
+#endif
+ g_source_parallel_poll_first.valid=0U; /* Accepted new command only; STOP never overwrites the first failure. */
  vsp_pick_queued=g_source_parallel_sync_tick=g_dm_initial_observe=g_dm_stage2_sync=0U;
  vsp_pick_sync=command->kind==SPF_CMD_STAGE3_LOADED_RETURN;
+ vsp_storage_exit_sequence=command->kind==SPF_CMD_STAGE3_STORAGE_EXIT?command->sequence:0U;
  vsp_loaded_sync_sent=vsp_loaded_z_cycle=vsp_loaded_dm_stop=0U;
  vsp_carry_leg=vsp_carry_sent=vsp_lift_start_cycle=0U;
  memset(&vsp_carry_place,0,sizeof(vsp_carry_place));
@@ -579,7 +661,7 @@ uint32_t VehicleArm_BeginStage3CarryPlace(const SPF_Command *rise,const SPF_Comm
     place->kind!=SPF_CMD_STAGE3_CARRY_PLACE || rise->sequence!=place->sequence ||
     rise->run_id!=place->run_id || rise->goal.dm_deg!=place->goal.dm_deg ||
     !(place->goal.lift_pulses>rise->goal.lift_pulses) ||
-    !SPF_GroupBegin(&staged,place,&io,1U,90U,VEHICLE_AXIS_TIMEOUT_MS?VEHICLE_AXIS_TIMEOUT_MS:12000U) ||
+    !SPF_GroupBegin(&staged,place,&io,1U,90U,VEHICLE_AXIS_TIMEOUT_MS) ||
     !VehicleArm_BeginSourceParallel(rise,1U,0U))return 0U;
  g_vsp_carry_first_node=g_vsp_carry_first_command=g_vsp_carry_first_exchange=0U;
  g_vsp_carry_first_flags=g_vsp_carry_first_speed_raw=g_vsp_carry_first_broadcast_result=0U;

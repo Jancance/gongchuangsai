@@ -5,7 +5,6 @@
 
 static uint32_t s_ready = 0U;
 static uint32_t s_output = 0U;
-static uint32_t s_last_pulse_us = 0U;
 
 static void CarrierPwm_PinMode(GPIOMode_TypeDef mode)
 {
@@ -32,7 +31,6 @@ uint32_t CarrierPwm_Init(void)
     TIM_DeInit(TIM3);
     s_ready = 0U;
     s_output = 0U;
-    s_last_pulse_us = 0U;
     RCC_GetClocksFreq(&clocks);
     timer_hz = clocks.PCLK1_Frequency;
     if ((RCC->CFGR & RCC_CFGR_PPRE1) != 0U) timer_hz *= 2U;
@@ -65,7 +63,6 @@ uint32_t CarrierPwm_Write(uint32_t pulse_us)
     if (s_ready != 1U || pulse_us < CARRIER_PULSE_MIN_US ||
         pulse_us > CARRIER_PULSE_MAX_US) return 0U;
     TIM_SetCompare4(TIM3, pulse_us);
-    s_last_pulse_us = pulse_us;
     if (!s_output)
     {
         TIM_GenerateEvent(TIM3, TIM_EventSource_Update);
@@ -76,16 +73,10 @@ uint32_t CarrierPwm_Write(uint32_t pulse_us)
     return 1U;
 }
 
-uint32_t CarrierPwm_LastPulseUs(void)
-{
-    return s_last_pulse_us;
-}
-
 void CarrierPwm_Off(void)
 {
     CarrierPwm_PinMode(GPIO_Mode_OUT);
     TIM_Cmd(TIM3, DISABLE);
     TIM_SetCompare4(TIM3, 0U);
     s_output = 0U;
-    s_last_pulse_us = 0U;
 }

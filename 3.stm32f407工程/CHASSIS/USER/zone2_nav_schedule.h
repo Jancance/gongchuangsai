@@ -1,8 +1,8 @@
 #ifndef ZONE2_NAV_SCHEDULE_H
 #define ZONE2_NAV_SCHEDULE_H
 
-#include "radar_observer.h"
 #include "zone2_nav_path.h"
+#include <stdbool.h>
 
 typedef enum {
     ZONE2_SCHEDULE_IDLE=0,ZONE2_SCHEDULE_SCAN,ZONE2_SCHEDULE_REQUEST,ZONE2_SCHEDULE_REPLY,
@@ -11,16 +11,14 @@ typedef enum {
 } Zone2SchedulePhase;
 
 /* Zero-initialize once in static storage. One navigation task owns all calls and
- * observes the phase before consuming plan/route. RadarObserver_Service runs in its own task.
+ * observes the phase before consuming the immutable local plan/route.
  * The navigation caller owns the overall run deadline, motor commands and fault stop. */
 typedef struct {
     Zone2SchedulePhase phase;
     Zone2NavPathResult error;
-    uint32_t run_id,layout_id,scan_status_sequence,leg,session,prepared_sample_ms;
+    uint32_t run_id,layout_id,leg,session,prepared_sample_ms;
     uint8_t start_id;
-    RadarObserverMapIdentity map_identity;
     Zone2NavMap map;
-    Zone2NavReply reply,cache[2];
     Zone2NavGeometry geometry;
     Zone2NavRoute route;
     FusionPlan plan;
@@ -38,6 +36,7 @@ bool Zone2NavSchedule_BeginLeg(Zone2NavSchedule *s,const FusionIdentity *identit
  * feedback. The observation must carry the active plan identity. */
 bool Zone2NavSchedule_Arrive(Zone2NavSchedule *s,uint32_t session,bool station_arrived,
     const FusionObservation *pose,uint32_t now_ms);
+bool Zone2NavSchedule_MapCurrent(const Zone2NavSchedule *s);
 void Zone2NavSchedule_Abort(Zone2NavSchedule *s);
 
 #if APP_ZONE2_POSE_TRACE_ENABLE

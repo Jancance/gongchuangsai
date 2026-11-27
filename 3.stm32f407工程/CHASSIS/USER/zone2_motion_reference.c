@@ -6,10 +6,10 @@
 #define DEG_TO_RAD 0.01745329251994329577f
 #define REF_BATCH_MS FUSION_MOTION_FEEDBACK_PERIOD_MS
 #define REF_BATCH_S 0.08f
-#define REF_SPEED 250.0f
-#define REF_ACCEL 120.0f
-#define REF_JERK 240.0f
-#define LONG_LINE_SPEED 400.0f
+#define REF_SPEED 1700.0f
+#define REF_ACCEL 2500.0f
+#define REF_JERK 12000.0f
+#define LONG_LINE_SPEED 1700.0f
 #define LONG_LINE_MIN_MM 780.0f
 #define TRACK_MM 2.0f
 #define EDGE_TRACK_MM 1.0f
@@ -40,6 +40,56 @@ static FusionPoint direction(const FusionPlan *p,uint32_t edge)
     return add_scaled((FusionPoint){0,0},d,1.0f/p->lengths[edge]);
 }
 
+static float edge_speed_cap(FusionPoint unit,float hold_deg)
+{
+    float angle=hold_deg*DEG_TO_RAD;
+    float forward=fabsf(unit.x_mm*cosf(angle)+unit.y_mm*sinf(angle));
+    float lateral=fabsf(-unit.x_mm*sinf(angle)+unit.y_mm*cosf(angle));
+    float cap=1697.0563f;
+    if(forward>1.0e-6f) cap=fminf(cap,1600.0f/forward);
+    if(lateral>1.0e-6f) cap=fminf(cap,1200.0f/lateral);
+    return cap;
+}
+
+static float corner_duration(const FusionPoint control[6],float hold_deg,float wheel_diameter_mm)
+{
+    FusionPoint first[5],second[4],third[3];
+    float angle=hold_deg*DEG_TO_RAD,c=cosf(angle),s=sinf(angle);
+    float long_bound=0.0f,lateral_bound=0.0f,norm_bound=0.0f;
+    float accel_bound=0.0f,jerk_bound=0.0f,wheel_accel=0.0f,wheel_jerk=0.0f;
+    float wheel_rpm_per_mm_s=60.0f/(3.14159265358979323846f*wheel_diameter_mm);
+    float duration=0.0f;
+    uint32_t i;
+    for(i=0U;i<5U;i++) first[i]=add_scaled((FusionPoint){0,0},delta(control[i],control[i+1U]),5.0f);
+    for(i=0U;i<4U;i++) second[i]=add_scaled((FusionPoint){0,0},delta(first[i],first[i+1U]),4.0f);
+    for(i=0U;i<3U;i++) third[i]=add_scaled((FusionPoint){0,0},delta(second[i],second[i+1U]),3.0f);
+    for(i=0U;i<5U;i++) {
+        float x=first[i].x_mm*c+first[i].y_mm*s;
+        float y=-first[i].x_mm*s+first[i].y_mm*c;
+        long_bound=fmaxf(long_bound,fabsf(x));lateral_bound=fmaxf(lateral_bound,fabsf(y));
+        norm_bound=fmaxf(norm_bound,norm(first[i]));
+    }
+    for(i=0U;i<4U;i++) {
+        float x=second[i].x_mm*c+second[i].y_mm*s;
+        float y=-second[i].x_mm*s+second[i].y_mm*c;
+        accel_bound=fmaxf(accel_bound,norm(second[i]));
+        wheel_accel=fmaxf(wheel_accel,(fabsf(x)+fabsf(y))*wheel_rpm_per_mm_s);
+    }
+    for(i=0U;i<3U;i++) {
+        float x=third[i].x_mm*c+third[i].y_mm*s;
+        float y=-third[i].x_mm*s+third[i].y_mm*c;
+        jerk_bound=fmaxf(jerk_bound,norm(third[i]));
+        wheel_jerk=fmaxf(wheel_jerk,(fabsf(x)+fabsf(y))*wheel_rpm_per_mm_s);
+    }
+    duration=fmaxf(long_bound/1600.0f,lateral_bound/1200.0f);
+    duration=fmaxf(duration,norm_bound/1697.0563f);
+    duration=fmaxf(duration,sqrtf(accel_bound/REF_ACCEL));
+    duration=fmaxf(duration,powf(jerk_bound/REF_JERK,1.0f/3.0f));
+    duration=fmaxf(duration,wheel_rpm_per_mm_s*(long_bound+lateral_bound)/620.0f);
+    duration=fmaxf(duration,sqrtf(wheel_accel/1000.0f));
+    duration=fmaxf(duration,powf(wheel_jerk/4500.0f,1.0f/3.0f));
+    return duration;
+}
 static float wraps_deg(float heading)
 {
     float a=fmodf(heading+180.0f,360.0f);
@@ -190,11 +240,12 @@ static void fit_long_line(FusionPoint d,float length,float cap,Zone2MotionSpan *
     const float entry=span->data.line.entry,exit=span->data.line.exit;
     const float minimum=fmaxf(entry,exit);
     float lo=minimum,hi=fminf(cap,LONG_LINE_SPEED),peak,rise,fall,dist,seconds;
-    uint32_t i,batches;
-    if(length<LONG_LINE_MIN_MM || fminf(fabsf(d.x_mm),fabsf(d.y_mm))>1.0e-6f ||
+    uint32_t i,duration_ms;
+    (void)d;
+    if(length<LONG_LINE_MIN_MM ||
        hi<=minimum || s_ramp_distance(entry,exit,lo,&rise,&fall)>length) return;
 
-    /* Find the fastest feasible peak, then refit it to a whole number of batches. */
+    /* Find the fastest feasible peak and fit its exact millisecond duration. */
     if(s_ramp_distance(entry,exit,hi,&rise,&fall)<=length) lo=hi;
     else for(i=0U;i<24U;i++) {
         peak=.5f*(lo+hi);
@@ -203,9 +254,10 @@ static void fit_long_line(FusionPoint d,float length,float cap,Zone2MotionSpan *
     }
     dist=s_ramp_distance(entry,exit,lo,&rise,&fall);
     if(lo<=0.0f) return;
-    batches=(uint32_t)ceilf((rise+fall+(length-dist)/lo)/REF_BATCH_S);
-    if(batches*REF_BATCH_MS>=span->duration_ms) return;
-    seconds=(float)(batches*REF_BATCH_MS)*.001f;
+    seconds=rise+fall+(length-dist)/lo;
+    duration_ms=(uint32_t)ceilf(seconds*1000.0f);
+    if(duration_ms>=span->duration_ms) return;
+    seconds=(float)duration_ms*.001f;
     hi=lo;
     lo=minimum;
     for(i=0U;i<24U;i++) {
@@ -218,7 +270,7 @@ static void fit_long_line(FusionPoint d,float length,float cap,Zone2MotionSpan *
     dist=s_ramp_distance(entry,exit,peak,&rise,&fall);
     if(seconds<rise+fall || fabsf(dist+peak*(seconds-rise-fall)-length)>.005f) return;
     span->kind=SPAN_S_LINE;
-    span->duration_ms=batches*REF_BATCH_MS;
+    span->duration_ms=duration_ms;
     span->data.line.cruise=peak;
     span->data.line.rise_s=rise;
     span->data.line.fall_s=fall;
@@ -234,18 +286,6 @@ static void corner_controls(const FusionPlan *p,uint32_t node,float trim,FusionP
     }
 }
 
-static float max_difference(FusionPoint *points,uint32_t count)
-{
-    float peak=0.0f;
-    uint32_t i;
-    for(i=0U;i+1U<count;i++) {
-        FusionPoint d=delta(points[i],points[i+1U]);
-        points[i]=add_scaled((FusionPoint){0,0},d,(float)(count-1U));
-        peak=fmaxf(peak,norm(points[i]));
-    }
-    return peak;
-}
-
 static void select_corner(const FusionPlan *p,uint32_t node,FusionPoint ext,Corner *out)
 {
     FusionPoint a=direction(p,node-1U),b=direction(p,node);
@@ -255,26 +295,28 @@ static void select_corner(const FusionPlan *p,uint32_t node,FusionPoint ext,Corn
     float turn=atan2f(a.x_mm*b.y_mm-a.y_mm*b.x_mm,a.x_mm*b.x_mm+a.y_mm*b.y_mm);
     float trim=fminf(160.0f,.4f*fminf(before,after));
     float exit=after-trim-(node+2U<p->input.count?.4f*after:0.0f);
-    float cap_a=fminf(REF_SPEED,p->input.speed_mm_s[node-1U]);
-    float cap_b=fminf(REF_SPEED,p->input.speed_mm_s[node]);
+    float cap_a=fminf(edge_speed_cap(a,p->hold_heading_deg),p->input.speed_mm_s[node-1U]);
+    float cap_b=fminf(edge_speed_cap(b,p->hold_heading_deg),p->input.speed_mm_s[node]);
     float cap=fminf(cap_a,cap_b);
     FusionPoint bisector=add_scaled(a,b,1.0f);
-    float speed,accel,jerk,join,t,projection;
+    float join,t,projection,projection_min,projection_max;
     uint32_t ticks,i;
     if(fabsf(turn)<1.0e-6f*DEG_TO_RAD || fabsf(turn)>150.0f*DEG_TO_RAD ||
        trim<8.0f || exit<CORNER_MIN_EXIT_MM || cap<12.0f) return;
     corner_controls(p,node,trim,control);
     if(!sweep(&p->input,control,6U,ext,TRACK_MM,7U)) return;
-    speed=max_difference(control,6U);
-    join=norm(control[0]);
-    projection=control[0].x_mm*bisector.x_mm+control[0].y_mm*bisector.y_mm;
-    for(i=1U;i<5U;i++)
-        projection=fminf(projection,control[i].x_mm*bisector.x_mm+control[i].y_mm*bisector.y_mm);
-    projection/=norm(bisector);
-    accel=max_difference(control,5U);
-    jerk=max_difference(control,4U);
-    t=fmaxf(fmaxf(speed/cap,sqrtf(accel/REF_ACCEL)),
-           fmaxf(powf(jerk/REF_JERK,1.0f/3.0f),join/90.0f));
+    t=corner_duration(control,p->hold_heading_deg,p->input.config.geometry.wheel_diameter_mm);
+    join=norm(delta(p->input.points[node],control[0]));
+    projection_min=projection_max=(control[0].x_mm-p->input.points[node].x_mm)*bisector.x_mm+
+        (control[0].y_mm-p->input.points[node].y_mm)*bisector.y_mm;
+    for(i=1U;i<6U;i++) {
+        projection=(control[i].x_mm-p->input.points[node].x_mm)*bisector.x_mm+
+            (control[i].y_mm-p->input.points[node].y_mm)*bisector.y_mm;
+        projection_min=fminf(projection_min,projection);
+        projection_max=fmaxf(projection_max,projection);
+    }
+    projection=(projection_max-projection_min)/norm(bisector);
+    t=fmaxf(t,1.5f*join/cap);
     ticks=(uint32_t)ceilf(t/REF_BATCH_S);
     for(;;ticks++) {
         float v=join/((float)ticks*REF_BATCH_S);
@@ -294,6 +336,7 @@ static void push_span(Zone2MotionReference *r,const Zone2MotionSpan *span)
     Zone2MotionSection *section=&r->sections[r->section_count];
     r->spans[r->span_count++]=*span;
     section->span_count++;
+    section->hold_rad=r->hold_rad;
     section->duration_ms+=span->duration_ms;
     r->duration_ms+=span->duration_ms;
 }
@@ -324,7 +367,7 @@ static uint32_t add_turn(const FusionPlan *p,Zone2MotionReference *r,FusionPoint
     return 1U;
 }
 
-uint32_t Zone2MotionReference_Prepare(const FusionPlan *p,Zone2MotionReference *r)
+static uint32_t prepare_with_stop(const FusionPlan *p,Zone2MotionReference *r,uint32_t stop_node)
 {
     Corner corners[FUSION_POINTS]={0};
     Zone2MotionSpan span={0};
@@ -344,7 +387,7 @@ uint32_t Zone2MotionReference_Prepare(const FusionPlan *p,Zone2MotionReference *
     ext=body_extent(&in->config,hold);
     for(i=0U;i<n;i++)
         if(!(p->lengths[i]>=.01f && p->lengths[i]<=4000.0f) || !clear_line(p,i,ext)) return 0U;
-    for(i=1U;i<n;i++) select_corner(p,i,ext,&corners[i]);
+    for(i=1U;i<n;i++) if(i!=stop_node) select_corner(p,i,ext,&corners[i]);
     for(;;) {
         memset(r,0,sizeof(*r));
         r->hold_rad=hold*DEG_TO_RAD;
@@ -355,7 +398,7 @@ uint32_t Zone2MotionReference_Prepare(const FusionPlan *p,Zone2MotionReference *
             FusionPoint a=add_scaled(in->points[i],u,corners[i].trim);
             FusionPoint b=add_scaled(in->points[i+1U],u,-corners[i+1U].trim);
             FusionPoint d=delta(a,b);
-            float length=norm(d),cap=fminf(in->speed_mm_s[i],REF_SPEED);
+            float length=norm(d),cap=fminf(in->speed_mm_s[i],edge_speed_cap(u,hold));
             if(!fit_line(length,corners[i].speed,corners[i+1U].speed,cap,&span)) {
                 drop=corners[i+1U].duration_ms?i+1U:i;
                 if(!corners[drop].duration_ms) {
@@ -364,7 +407,7 @@ uint32_t Zone2MotionReference_Prepare(const FusionPlan *p,Zone2MotionReference *
                 }
                 break;
             }
-            fit_long_line(d,length,in->speed_mm_s[i],&span);
+            fit_long_line(d,length,cap,&span);
             span.data.line.from=a;
             span.data.line.to=b;
             push_span(r,&span);
@@ -386,6 +429,55 @@ uint32_t Zone2MotionReference_Prepare(const FusionPlan *p,Zone2MotionReference *
         return 0U;
     }
     r->sections[r->section_count-1U].terminal=1U;
+    return 1U;
+}
+
+uint32_t Zone2MotionReference_Prepare(const FusionPlan *p,Zone2MotionReference *r)
+{
+    return prepare_with_stop(p,r,0U);
+}
+
+uint32_t Zone2MotionReference_PrepareWithStop(const FusionPlan *p,Zone2MotionReference *r,uint32_t stop_node)
+{
+    if(r) r->section_count=0U;
+    if(stop_node!=1U || !p || p->valid!=1U || p->input.count<3U ||
+       (p->input.identity.path_id!=3U && p->input.identity.path_id!=6U) ||
+       (p->input.identity.start_id!=1U && p->input.identity.start_id!=2U) ||
+       !(fabsf(p->input.points[1].x_mm-FIELD_RAW_X_MM)<=0.01f &&
+         fabsf(p->input.points[1].y_mm-FIELD_RAW_Y_MM)<=0.01f)) return 0U;
+    return prepare_with_stop(p,r,stop_node);
+}
+
+/* CAN-owner scratch only. The measured start is retained in route->entry_from;
+ * this validated prefix is executed, never used to rebase the odometry. */
+static FusionInput parking_entry_input;
+static FusionPlan parking_entry_plan;
+static Zone2MotionReference parking_entry_reference;
+uint32_t Zone2MotionReference_PrepareRoute(const FusionPlan *p,Zone2MotionReference *r,
+    const Zone2NavRoute *route)
+{
+    FusionCheck check;
+    uint32_t i,spans,sections;
+    if(!route || !(route->return_stop_node?
+        Zone2MotionReference_PrepareWithStop(p,r,route->return_stop_node):
+        Zone2MotionReference_Prepare(p,r)))return 0U;
+    if(!route->entry_needed)return 1U;
+    parking_entry_input=p->input;parking_entry_input.count=2U;
+    parking_entry_input.points[0]=route->entry_from;parking_entry_input.points[1]=route->entry_to;
+    parking_entry_input.config.goal_heading_deg=parking_entry_input.config.start_heading_deg;
+    parking_entry_input.speed_mm_s[0]=p->input.speed_mm_s[0];
+    if(!FusionReference_Prepare(&parking_entry_plan,&parking_entry_input,&check) ||
+       !Zone2MotionReference_Prepare(&parking_entry_plan,&parking_entry_reference))return 0U;
+    spans=parking_entry_reference.span_count;sections=parking_entry_reference.section_count;
+    if(r->span_count+spans>ZONE2_MOTION_SPAN_COUNT ||
+       r->section_count+sections>ZONE2_MOTION_SECTION_COUNT)return 0U;
+    memmove(r->spans+spans,r->spans,r->span_count*sizeof(r->spans[0]));
+    memmove(r->sections+sections,r->sections,r->section_count*sizeof(r->sections[0]));
+    for(i=sections;i<r->section_count+sections;i++)r->sections[i].first_span+=spans;
+    memcpy(r->spans,parking_entry_reference.spans,spans*sizeof(r->spans[0]));
+    memcpy(r->sections,parking_entry_reference.sections,sections*sizeof(r->sections[0]));
+    for(i=0U;i<sections;i++)r->sections[i].terminal=0U;
+    r->span_count+=spans;r->section_count+=sections;r->duration_ms+=parking_entry_reference.duration_ms;
     return 1U;
 }
 
@@ -459,7 +551,7 @@ uint32_t Zone2MotionReference_Sample(const Zone2MotionReference *r,uint32_t sect
         t-=span->duration_ms;
     }
     span=&r->spans[s->first_span+i];
-    heading=r->hold_rad;
+    heading=s->hold_rad;
     point=sample_span(span,(float)t*.001f,&heading);
     *pose=(FusionMotionVector){point.x_mm,point.y_mm,heading};
     return 1U;

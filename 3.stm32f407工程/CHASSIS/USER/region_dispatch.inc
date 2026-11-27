@@ -8,6 +8,15 @@ volatile uint32_t g_region_dispatch_test_enable=1U;
 static RegionModuleRequest rm_task;
 static volatile RegionModuleStatus rm_status;
 static uint32_t rm_bound,rm_wait_dm_stop,rm_fault_after_stop;
+#if APP_ZONE2_MISSION_ENABLE
+static uint32_t map_ticket,rm_departing,rm_preturn,rm_observe_ticket,rm_observe_stamp;
+static uint32_t rm_startup_reference_action;
+volatile uint32_t g_region_startup_reference_state,g_region_startup_reference_requests;
+volatile uint32_t g_region_x_prepare_ms,g_region_x_ready_ms;
+volatile uint32_t g_region_approach_turn_ms,g_region_departure_ms,g_region_return_done_ms;
+volatile uint32_t g_region_prepare_started_ms;
+volatile float g_region_prepare_started_remaining_mm;
+#endif
 
 static uint32_t RM_Faulted(void)
 {
@@ -17,6 +26,29 @@ static uint32_t RM_Faulted(void)
   g_dm_jog_first_fault || g_source_body_step_reason;
 }
 
+#if APP_ZONE2_MISSION_ENABLE
+uint32_t RegionDispatch_StartupReferencesReady(void)
+{
+ if(RM_Faulted() || g_it_rejected)return 2U;
+ if(!StartupAxes_Holding())return 0U;
+ if(g_region_startup_reference_state==2U)return SingleTeach_ReferencesReady()?1U:2U;
+ if(!g_region_startup_reference_state){
+  if(SingleTeach_ReferencesReady() && it_at_top()){
+   g_region_startup_reference_state=2U;return 1U;
+  }
+  if(g_it_request || g_it_state==1U || VehicleArm_Busy() || Low_Busy())return 0U;
+  rm_startup_reference_action=g_lift_ruler_controller.top_valid?4U:1U;
+  g_it_carrier_auto_deg=-1.0f;g_it_request=rm_startup_reference_action;
+  g_region_startup_reference_requests++;g_region_startup_reference_state=1U;
+  return 0U;
+ }
+ if(g_it_request || g_it_state==1U)return 0U;
+ if(g_it_state!=2U || g_it_action!=rm_startup_reference_action ||
+    !SingleTeach_ReferencesReady() || !it_at_top())return 2U;
+ g_region_startup_reference_state=2U;return 1U;
+}
+#endif
+
 static uint32_t RM_Idle(void)
 {
  return S3_Platform() && !RM_Faulted() &&
@@ -24,7 +56,13 @@ static uint32_t RM_Idle(void)
   (!g_stage3_state || g_stage3_state==6U || g_stage3_state==11U) &&
   !g_it_request && !g_low_request && !g_source_cycle_request && !g_stage3_request &&
   !g_stage3_teach_request && !s3_teach_pending && !g_stage3_manual_state && !g_stage3_replay_enable &&
-  !g_source_body_step_request && !SourceBodyStep_WheelWindow() && !g_chassis_auto_active &&
+  !g_source_body_step_request && !SourceBodyStep_WheelWindow() &&
+  (!g_chassis_auto_active
+#if APP_ZONE2_MISSION_ENABLE
+   || (AppZone2_StationApproaching() && it_at_top() &&
+       fabsf(g_startup_extension_current_deg-g_extension_home_reference_deg)<=SOURCE_EXTENSION_ZERO_DONE_DEG)
+#endif
+  ) &&
   !g_lift_ruler_request && !g_lift_ruler_stop_pending && !VehicleArm_Busy() && !g_vehicle_arm_stop_pending &&
   !VehicleSourceParallel_Owns() && !Stage2Fast_IsActive() && !SourceStage2_IsActive() &&
   !g_dm_jog_request && !DM_CAN2_JogIsBusy() && g_it_auto_state!=1U && g_it_auto_state!=9U &&
@@ -102,7 +140,7 @@ static void RM_Start(uint32_t now)
  if(rm_task.module==REGION_MODULE_SOURCE){
   g_region_dispatch_area=1U;sc_bound_batch=rm_task.batch_id;
   for(i=0U;i<3U;i++){g_source_cycle_colors[i]=rm_task.colors[i];sc_bound_slots[i]=rm_task.slots[i];}
-  g_source_cycle_run=rm_task.run_id;g_source_cycle_prep=g_source_cycle_item=sc_pending=sc_retract_pending=0U;
+  g_source_cycle_run=rm_task.run_id;g_source_cycle_prep=g_source_cycle_item=sc_pending=0U;
   sc_beep_started=g_source_cycle_beeps=g_source_cycle_beep_started=g_source_cycle_beep_done=0U;
   g_source_cycle_pick_beeps=g_source_cycle_pick_beep_pending=g_source_cycle_scheduled=0U;
   g_source_cycle_done=g_source_cycle_body_steps=0U;
@@ -120,6 +158,19 @@ static void RM_Start(uint32_t now)
   g_stage3_run=rm_task.run_id-1U;g_stage3_request=1U;
  }
  rm_bound=1U;
+#if APP_ZONE2_MISSION_ENABLE
+ if(rm_task.module==REGION_MODULE_SOURCE){
+  /* 复用首次按键建立的基准，同时转臂和伸缩，不再执行回零链。 */
+  g_source_cycle_prep=4U;g_it_axes=SPF_DM|SPF_EXT;
+  g_it_dm_deg=180.0f;g_it_extension_mm=65.0f;
+  if(jiazhua(210.0f)!=1U){rm_fault_after_stop=1U;rm_status=REGION_MODULE_STOPPING;return;}
+  g_it_request=3U;rm_preturn=1U;g_region_x_prepare_ms=g_region_approach_turn_ms=now;
+ }else{
+  g_it_axes=SPF_DM;g_it_dm_deg=g_stage3_observe_yaw;g_it_extension_mm=0.0f;
+  if(jiazhua(210.0f)!=1U){rm_fault_after_stop=1U;rm_status=REGION_MODULE_STOPPING;return;}
+  g_it_request=3U;rm_preturn=3U;g_region_approach_turn_ms=now;
+ }
+#endif
 }
 static uint32_t RM_StopSettled(void)
 {
@@ -175,6 +226,19 @@ static void RegionDispatch_Service(uint32_t now)
    g_stage3_request=2U;
 #endif
  taskEXIT_CRITICAL();
+#if APP_ZONE2_MISSION_ENABLE
+ if(rm_preturn && rm_status==REGION_MODULE_BUSY){
+  if(g_it_rejected || g_it_state==9U){rm_fault_after_stop=1U;rm_status=REGION_MODULE_STOPPING;return;}
+  if(g_it_request || g_it_state==1U)return;
+  if(g_it_state!=2U || g_it_action!=3U)return;
+  if(rm_task.module==REGION_MODULE_SOURCE){
+   /* IT3仅在整个并行动作组真实完成后返回2；不用固定延时。 */
+   g_region_x_ready_ms=now;
+   g_source_cycle_prep=5U;g_source_cycle_state=2U;sc_stream_started=0U;SC_Pose();
+  }
+  rm_preturn=0U;
+ }
+#endif
  if(g_region_dispatch_area==1U)SourceCycle_Service(now);else if(g_region_dispatch_area==3U)Stage3_Service(now);
  if(rm_status==REGION_MODULE_STOPPING){
   if(rm_bound==2U && !g_source_cycle_request && !g_stage3_request && RM_StopSettled())
@@ -192,7 +256,11 @@ static void RegionDispatch_Service(uint32_t now)
  taskENTER_CRITICAL();
  if(rm_status==REGION_MODULE_BUSY){
   if(fault){rm_fault_after_stop=1U;rm_status=REGION_MODULE_STOPPING;}
-  else if(done)rm_status=REGION_MODULE_DONE;
+  else if(done){rm_status=REGION_MODULE_DONE;
+#if APP_ZONE2_MISSION_ENABLE
+   if(rm_departing)g_region_return_done_ms=now;
+#endif
+  }
  }
  taskEXIT_CRITICAL();
 }
@@ -202,11 +270,100 @@ static void RegionDispatch_Telemetry(uint32_t now)
 {if(g_region_dispatch_area==3U)Stage3_Telemetry(now);else SourceCycle_Telemetry(now);}
 
 #if APP_ZONE2_MISSION_ENABLE
-static uint32_t map_ticket;
+/* 真实导航停车后推进原有姿态票据，使停车前图像失效；
+ * 即使未发出非零纠偏也执行，香橙派已有帧围栏跟随该票据。 */
+void RegionDispatch_StationStopped(uint32_t ticket)
+{
+ if(!ticket || ticket!=map_ticket || rm_bound!=1U || rm_status!=REGION_MODULE_BUSY)return;
+ if(rm_task.module==REGION_MODULE_SOURCE && g_source_cycle_state==2U){
+  sc_stream_started=0U;SC_Pose();
+ }else if(rm_task.module!=REGION_MODULE_SOURCE && g_stage3_state==2U){
+  s3_stream_started=0U;S3_Pose();
+ }
+}
+uint32_t RegionDispatch_ParallelFaulted(void)
+{return (AppZone2_StationApproaching() || rm_departing) && RM_Faulted();}
+uint32_t RegionDispatch_StopServiceNeeded(void){return rm_status==REGION_MODULE_STOPPING;}
+uint32_t RegionDispatch_SourceDepartureCommitted(void)
+{return rm_departing && rm_task.module==REGION_MODULE_SOURCE && map_ticket==g_source_cycle_run;}
+uint32_t RegionDispatch_MotionAllowed(void)
+{
+ if(!map_ticket || rm_status!=REGION_MODULE_BUSY || RM_Faulted())return 0U;
+ if(!rm_bound)return !SourceBodyStep_Busy() && AppZone2_StationApproaching() && it_at_top() &&
+  fabsf(g_startup_extension_current_deg-g_extension_home_reference_deg)<=SOURCE_EXTENSION_ZERO_DONE_DEG;
+ if(rm_bound!=1U)return 0U;
+ if(rm_departing){
+  if(rm_task.module==REGION_MODULE_SOURCE)return
+   g_source_cycle_state==7U && g_source_cycle_item==2U && low_last_piece &&
+   ((Low_Busy() && (g_low_phase==7U || g_low_phase==8U) && Low_DepartureClear()) ||
+    (g_low_state==2U && g_low_phase==10U));
+  return g_stage3_state==5U && g_stage3_phase>=33U && g_stage3_phase<=36U;
+ }
+ return !SourceBodyStep_Busy() && AppZone2_StationApproaching() && (rm_preturn ||
+  (rm_task.module==REGION_MODULE_SOURCE?g_source_cycle_state==1U:
+   (g_stage3_state==0U || g_stage3_state==6U || g_stage3_state==1U)));
+}
+uint32_t RegionDispatch_MotionRequestAllowed(uint32_t request)
+{
+ if(!RegionDispatch_MotionAllowed())return 0U;
+ if(!request || request==9U)return 1U;
+ if(rm_departing)return request==3U;
+ return request==3U || (!rm_preturn && (request==6U || request==7U ||
+        (request==10U && rm_task.module!=REGION_MODULE_SOURCE)));
+}
+uint32_t RegionDispatch_ParallelAxesAllowed(uint32_t axes,float yaw,float extension)
+{
+ float observe=rm_task.module==REGION_MODULE_SOURCE?180.0f:g_stage3_observe_yaw;
+ if(!RegionDispatch_MotionAllowed() || !it_at_top() || !axes || (axes&~(SPF_DM|SPF_EXT)))return 0U;
+ if(rm_departing)return (!(axes&SPF_DM) || yaw==0.0f) &&
+                            (!(axes&SPF_EXT) || extension==0.0f);
+ return (!(axes&SPF_DM) || yaw==observe) && (!(axes&SPF_EXT) || extension==0.0f ||
+         (rm_task.module==REGION_MODULE_SOURCE && extension==65.0f));
+}
+uint32_t RegionDispatch_ApproachTurnAllowed(void)
+{return rm_preturn && RegionDispatch_ParallelAxesAllowed(g_it_axes,g_it_dm_deg,g_it_extension_mm);}
+uint32_t RegionDispatch_ObservationReady(uint32_t ticket,uint32_t *stamp)
+{
+ uint32_t ready;
+ if(!stamp || !ticket || ticket!=map_ticket || rm_preturn || rm_departing || RM_Faulted() ||
+    g_it_request || g_it_state!=2U || VehicleArm_Busy() || VehicleSourceParallel_Owns())return 0U;
+ ready=rm_task.module==REGION_MODULE_SOURCE?
+  (g_source_cycle_state==2U && g_source_cycle_prep>=5U && g_source_cycle_run==ticket):
+  (g_stage3_state==2U && s3_module_run==ticket);
+ if(!ready || !it_at_top() || !it_dm_fresh() || !g_dm_posvel_holding ||
+    fabsf(g_dm_can2_logical_position_deg-(rm_task.module==REGION_MODULE_SOURCE?180.0f:g_stage3_observe_yaw))>3.0f ||
+    fabsf(g_startup_extension_current_deg-g_extension_home_reference_deg-
+      STARTUP_EXTENSION_EXTEND_SIGN*(rm_task.module==REGION_MODULE_SOURCE?65.0f:0.0f)*
+      VEHICLE_EXTENSION_PULSES_PER_MM*360.0f/3200.0f)>
+      (rm_task.module==REGION_MODULE_SOURCE?SOURCE_EXTENSION_DONE_DEG:SOURCE_EXTENSION_ZERO_DONE_DEG))return 0U;
+ if(rm_observe_ticket!=ticket){rm_observe_ticket=ticket;rm_observe_stamp=(uint32_t)xTaskGetTickCount();}
+ *stamp=rm_observe_stamp;return 1U;
+}
 uint32_t RegionDispatch_WantsService(void)
 {
  AppZone2Station station;
- return map_ticket || AppZone2_StationRead(&station);
+ return g_region_startup_reference_state==1U || map_ticket || AppZone2_StationRead(&station);
+}
+
+/* Active chassis may consume visual observations, but never enters the
+ * mechanical dispatcher or schedules the next grasp from this path. */
+void RegionDispatch_AlignmentService(void)
+{
+ AppZone2Station station;
+ uint32_t source,now=(uint32_t)xTaskGetTickCount();
+ if(!g_chassis_auto_active || !map_ticket || rm_bound!=1U || rm_status!=REGION_MODULE_BUSY ||
+    !AppZone2_StationRead(&station) || station.ticket!=map_ticket || RM_Faulted())return;
+ source=station.kind==APP_ZONE2_SOURCE;
+ if(source ? (!sc_bound_batch || g_source_cycle_run!=map_ticket ||
+              g_source_cycle_state!=2U || g_source_cycle_request) :
+             (s3_module_run!=map_ticket || g_stage3_state!=2U ||
+              g_stage3_request || g_stage3_replay_state))return;
+ g_src_now_ms=now;
+ Vision_Poll();
+ /* Stream alignment in state 2 only. Normal mechanical service remains idle-only. */
+ if(!g_it_request && (source?!g_source_cycle_request:!g_stage3_request)){
+  if(source)SourceCycle_Service(now);else Stage3_Service(now);
+ }
 }
 
 void RegionDispatch_MapService(uint32_t now)
@@ -215,7 +372,14 @@ void RegionDispatch_MapService(uint32_t now)
  RegionModuleRequest request;
  RegionModuleStatus state;
  uint32_t i;
- (void)now;
+ if(rm_departing){
+  state=RegionDispatch_Poll(map_ticket);
+  if(state==REGION_MODULE_FAULT || state==REGION_MODULE_STOPPED){
+   (void)RegionDispatch_StopActive();return;
+  }
+  if(state!=REGION_MODULE_DONE)return;
+  rm_departing=0U;map_ticket=0U;
+ }
  if(!AppZone2_StationRead(&station)){
   if(map_ticket){
    (void)RegionDispatch_Stop(map_ticket);
@@ -245,6 +409,36 @@ void RegionDispatch_MapService(uint32_t now)
   map_ticket=station.ticket;
  }
  if(map_ticket!=station.ticket)return;
+ /* 第三件释放并完成实际退让后登记原有回执；
+  * 底盘可离站，转臂回位仍由当前机构任务继续服务。 */
+ if(!rm_departing && !RM_Faulted() && !SourceBodyStep_Busy()){
+  uint32_t source_clear=rm_task.module==REGION_MODULE_SOURCE && sc_bound_batch &&
+   g_source_cycle_state==7U && g_source_cycle_item==2U && Low_Busy() && low_last_piece &&
+   (g_low_phase==7U || g_low_phase==8U) && Low_DepartureClear() &&
+   g_low_release_wait_ms>=SOURCE_RELEASE_DWELL_MS;
+  uint32_t stage_clear=rm_task.module!=REGION_MODULE_SOURCE && g_stage3_state==5U &&
+   g_stage3_phase==33U && g_stage3_placed_count==3U && g_stage3_item==3U &&
+   (rm_task.module!=REGION_MODULE_ROUGH || g_stage3_recovered_count==3U) &&
+   !s3_pending && !g_it_request && g_it_state==2U && it_at_top();
+  if(source_clear){
+   uint8_t color=(uint8_t)g_source_cycle_colors[2];
+   if(!AppZone2_StationConfirm(map_ticket,2U,APP_ZONE2_SOURCE_GRIP,color,0U) ||
+      !AppZone2_StationConfirm(map_ticket,2U,APP_ZONE2_SOURCE_SLOT,color,0U)){
+    SC_Fail(12U);return;
+   }
+  }
+  if(source_clear || stage_clear){
+   uint32_t accepted;
+#if APP_ZONE2_UNVERIFIED_TRIAL_ENABLE
+   if(rm_task.module==REGION_MODULE_STORAGE_BASE || rm_task.module==REGION_MODULE_STACK)
+    accepted=AppZone2_StationCompleteUnverified(map_ticket);
+   else
+#endif
+    accepted=AppZone2_StationComplete(map_ticket,1U);
+   if(!accepted){if(source_clear)SC_Fail(12U);return;}
+   rm_departing=1U;g_region_departure_ms=now;return;
+  }
+ }
  state=RegionDispatch_Poll(map_ticket);
  if(state==REGION_MODULE_DONE || state==REGION_MODULE_FAULT || state==REGION_MODULE_STOPPED){
 #if APP_ZONE2_UNVERIFIED_TRIAL_ENABLE

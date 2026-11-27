@@ -23,6 +23,7 @@
 #endif
 #if APP_ZONE2_MISSION_ENABLE
 #include "region_dispatch.h"
+#include "source_body_step.h"
 #include "lift_ruler_adapter.h"
 #endif
 
@@ -184,14 +185,18 @@ void AppChassis_Zone2CanStep(uint32_t slot_ms,uint32_t phase)
     AppMotion_StepOdometry();
     AppZone2_Step();
 #if APP_ZONE2_MISSION_ENABLE && !APP_MOTOR_OFFLINE_ONLY
-    if (!g_chassis_auto_active && RegionDispatch_WantsService()) {
-        RegionDispatch_MapService(slot_ms);
-        LiftRuler_DebugService();
+    RegionDispatch_MapService(slot_ms);
+    if ((!g_chassis_auto_active && RegionDispatch_WantsService()) ||
+        RegionDispatch_MotionAllowed() || RegionDispatch_StopServiceNeeded()) {
+        if(!g_chassis_auto_active)LiftRuler_DebugService();
         Integration10_Service();
-    } else if (g_startup_axes_state) {
-        StartupAxes_Service(g_safety_ready && g_can_test_result==1U &&
-            !g_safety_fault && !g_rtos_fault && !g_can_ctrl_fault_latched,
-            g_can_guard_ready);
+    } else {
+        if (g_chassis_auto_active) RegionDispatch_AlignmentService();
+        if (g_startup_axes_state) {
+            StartupAxes_Service(g_safety_ready && g_can_test_result==1U &&
+                !g_safety_fault && !g_rtos_fault && !g_can_ctrl_fault_latched,
+                g_can_guard_ready);
+        }
     }
 #endif
 }

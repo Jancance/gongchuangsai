@@ -19,7 +19,13 @@ volatile uint32_t g_low_group_skew_ms[8],g_low_group_started_ms[8],g_low_group_d
 volatile uint32_t g_low_wheel_hold_request,g_low_wheel_hold_ready,g_low_wheel_hold_stage;
 volatile uint32_t g_low_wheel_hold_result[4],g_low_wheel_hold_cycle;
 static uint32_t low_begin,low_phase_tick,low_group_sequence,low_slot,low_release_applied;
+static uint32_t low_last_piece,low_mission_piece;
 static uint32_t low_tray_tick,low_pulse_tick,low_group_record_index;
+static uint32_t low_top_done_sequence,low_top_done_piece;
+static uint32_t low_departure_clear_piece;
+volatile uint32_t g_low_departure_clear_ms;
+static uint32_t Low_DepartureClear(void)
+{return low_departure_clear_piece && low_departure_clear_piece==g_low_accepted_sequence;}
 static float low_yaw,low_extension,low_measured_depth,low_pick_depth;
 static uint32_t low_depth_tick,low_ext_tick;
 
@@ -31,7 +37,8 @@ static uint32_t Low_PoseAllowed(void)
 {return Low_Busy() && g_low_phase==4U && g_it_dm_deg==low_yaw;}
 static uint32_t Low_PickAllowed(void){return Low_PoseAllowed();}
 static uint32_t Low_XYAllowed(void)
-{return Low_Busy() && (g_low_phase==1U || g_low_phase==7U);}
+{return Low_Busy() && (g_low_phase==1U ||
+ (g_low_phase==8U && low_top_done_sequence && low_top_done_piece==g_low_accepted_sequence));}
 static float Low_CommandPickDepth(uint32_t region)
 {return (float)SOURCE_PICK_PULSES-(region<2U?10.0f*SOURCE_LIFT_PULSES_PER_MM:0.0f);}
 static uint32_t Low_ReadDepth(float *depth)
@@ -185,11 +192,28 @@ static uint32_t Low_Group(uint32_t phase,uint32_t axes,float yaw,float extension
 #if APP_MOTOR_OFFLINE_ONLY
  (void)phase;(void)axes;(void)yaw;(void)extension;(void)depth;return 0U;
 #else
- SPF_Command command;memset(&command,0,sizeof(command));
+ SPF_Command command;
+ if(phase==11U && (axes!=SPF_LIFT || yaw!=36.5f || extension!=0.0f ||
+    depth!=(float)(SOURCE_RETURN_PULSES+SPF_CARRIER_EXTRA_DOWN_PULSES)))return 0U;
+ if(phase==7U && (axes!=SPF_LIFT || yaw!=0.0f || extension!=0.0f ||
+    depth!=(float)SOURCE_OBSERVE_PULSES))return 0U;
+ if(phase==8U && (!low_top_done_sequence || low_top_done_piece!=g_low_accepted_sequence ||
+    g_low_phase!=7U || VehicleSourceParallel_Owns() || g_source_parallel_state!=3U ||
+    vsp_group.command.sequence!=low_top_done_sequence ||
+    vsp_group.command.axes_mask!=g_low_lift_retract_axes ||
+    g_source_parallel_done_mask!=g_low_lift_retract_axes ||
+    !it_at_top() || axes!=(SPF_DM|SPF_EXT) || depth!=(float)SOURCE_OBSERVE_PULSES ||
+    yaw!=(low_last_piece?0.0f:180.0f) || extension!=(low_last_piece?0.0f:65.0f)))return 0U;
+ memset(&command,0,sizeof(command));
  command.sequence=++g_it_sequence;command.kind=phase==2U || phase==4U?SPF_CMD_PICK:SPF_CMD_TRANSFER;
  command.axes_mask=axes;command.goal.dm_deg=yaw;command.goal.extension_mm=extension;
  command.goal.lift_pulses=depth;command.dm_deg_s=SPF_DM_DEG_S;
- command.extension_rpm=SPF_EXT_RPM;command.lift_rpm=SPF_LIFT_RPM;
+ command.extension_rpm=SPF_EXT_RPM;command.lift_rpm=VEHICLE_SOURCE_LIFT_RPM;
+ if(phase==11U){command.kind=SPF_CMD_CARRIER_LOWER;command.lift_rpm=SPF_CARRIER_LOWER_LIFT_RPM;}
+ if(phase==7U){
+  command.kind=SPF_CMD_SOURCE_EMPTY_OBSERVE_RETURN;
+  command.lift_rpm=SPF_SOURCE_EMPTY_OBSERVE_RETURN_LIFT_RPM;
+ }
  command.stepper_accel_rpm_s=SPF_STEPPER_ACCEL;command.keep_vm_on=1U;
  if(!VehicleArm_BeginSourceParallel(&command,1U,0U))return 0U;
  vsp_fast_lift=(axes&SPF_LIFT)?1U:0U;
@@ -230,10 +254,12 @@ static uint32_t Low_EmptyApproach(void)
  return Low_Group(4U,g_low_pick_overlap_axes,low_yaw,low_extension,low_pick_depth);
 }
 
-static uint32_t Low_TryStart(uint32_t now)
+/* A bound mission passes the piece ordinal separately from the color-mapped slot.
+ * Ordinal 0 retains the stand-alone low-pick slot convention. */
+static uint32_t Low_TryStartForPiece(uint32_t now,uint32_t ordinal)
 {
  float depth;(void)now;
- if(!g_low_sequence || g_low_sequence==g_low_accepted_sequence || Low_Busy() || g_low_state==9U ||
+ if(ordinal>3U || !g_low_sequence || g_low_sequence==g_low_accepted_sequence || Low_Busy() || g_low_state==9U ||
   g_region_state==1U || g_it_auto_state==1U || g_it_auto_state==9U || g_pzq_near_state==1U ||
   g_it_state!=2U || g_it_request || g_it_cause || g_it_rejected || !it_platform() || !it_dm_fresh() ||
   !SingleTeach_ReferencesReady() || !g_low_wheel_hold_ready || SourceBodyStep_Busy() ||
@@ -247,6 +273,7 @@ static uint32_t Low_TryStart(uint32_t now)
  /* The host has already latched the sole two-frame decision. No new image can revoke it. */
  if(!Low_ReadDepth(&depth) || !it_at_top() || !Low_ExtensionAt(65.0f))return 0U;
  low_slot=g_low_slot;low_yaw=g_low_target_yaw;low_extension=g_low_target_extension_mm;
+ low_last_piece=ordinal?ordinal==3U:low_slot==3U;low_mission_piece=ordinal!=0U;
  low_pick_depth=Low_CommandPickDepth(g_low_region);
  g_low_accepted_sequence=g_low_sequence;g_low_state=1U;g_low_commit_frame_cycle=g_low_confirm_frame_cycle;
  g_low_grip_command_ms=0U;g_low_fault=g_low_elapsed_ms=g_low_clear_ms=g_low_clear_valid=g_low_release_ms=0U;
@@ -257,13 +284,18 @@ static uint32_t Low_TryStart(uint32_t now)
  memset((void*)g_low_group_skew_ms,0,sizeof(g_low_group_skew_ms));memset((void*)g_low_group_started_ms,0,sizeof(g_low_group_started_ms));
  memset((void*)g_low_group_done_ms,0,sizeof(g_low_group_done_ms));
  low_begin=(uint32_t)xTaskGetTickCount();low_release_applied=0U;
+ low_top_done_sequence=low_top_done_piece=0U;
+ low_departure_clear_piece=g_low_departure_clear_ms=0U;
  g_it_state=1U;g_it_action=17U;g_it_dm_deg=low_yaw;g_it_extension_mm=low_extension;
  g_it_carrier_auto_deg=(float)(low_slot-1U)*120.0f;
- if(jiazhua(170.0f)!=1U || CarrierPwm_Write((uint32_t)(500.0f+g_it_carrier_auto_deg*2000.0f/270.0f+0.5f))!=1U){Low_Fail(7U);return 1U;}
+ if(jiazhua(g_low_region<2U?SOURCE_PREGRIP_DEG:170.0f)!=1U || CarrierPwm_Write((uint32_t)(500.0f+g_it_carrier_auto_deg*2000.0f/270.0f+0.5f))!=1U){Low_Fail(7U);return 1U;}
  low_tray_tick=(uint32_t)xTaskGetTickCount();g_it_carrier_auto_done=1U;
  if(!Low_EmptyApproach())Low_Fail(8U);
  return 1U;
 }
+
+static uint32_t Low_TryStart(uint32_t now)
+{return Low_TryStartForPiece(now,0U);}
 
 #include "low_readonly_diag.inc"
 static void Low_Service(uint32_t now)
@@ -276,17 +308,31 @@ static void Low_Service(uint32_t now)
  if(!Low_Busy())return;
  now=(uint32_t)xTaskGetTickCount();g_low_elapsed_ms=now-low_begin;g_it_elapsed_ms=g_low_elapsed_ms;
  if(!it_platform() || g_lift_ruler_cause || g_startup_axes_cause || g_dm_jog_first_fault ||
-  g_it_cause || g_it_rejected ||
-  (!(APP_ZONE2_MISSION_ENABLE && RegionDispatch_WantsService()) &&
-    !VehicleSourceParallel_Owns() && (uint32_t)(now-low_phase_tick)>=16000U)){Low_Fail(g_it_cause?g_it_cause:12U);return;}
+  g_it_cause || g_it_rejected){Low_Fail(g_it_cause?g_it_cause:12U);return;}
 #if !APP_MOTOR_OFFLINE_ONLY
  Low_ReleaseLoadedTransfer(now);
  now=(uint32_t)xTaskGetTickCount();
+ /* Existing carrier transfer height is the physical retreat boundary, not
+  * a new delay or a top/home requirement. Keep servicing Z during departure. */
+ if(low_last_piece && g_low_phase==7U && low_release_applied &&
+    g_low_release_wait_ms>=SOURCE_RELEASE_DWELL_MS &&
+    vsp_group.command.sequence==low_group_sequence &&
+    vsp_group.command.kind==SPF_CMD_TRANSFER &&
+    vsp_group.command.goal.lift_pulses==(float)SOURCE_OBSERVE_PULSES &&
+    vsp_axis[1].position_cycle && (uint32_t)(now-vsp_axis[1].position_tick)<=150U &&
+    fabsf(vsp_axis[1].current-(SingleTeach_TopDeg()+(float)SOURCE_RETURN_PULSES*(360.0f/3200.0f)))<=SOURCE_TOP_TOLERANCE_DEG){
+  if(!low_departure_clear_piece)g_low_departure_clear_ms=now-low_begin;
+  low_departure_clear_piece=g_low_accepted_sequence;
+ }
  if(Low_Loaded() && (vsp_group.command.axes_mask&SPF_LIFT) && vsp_axis[1].position_cycle)
   (void)Low_TransferGate(now,(vsp_axis[1].current-SingleTeach_TopDeg())*(3200.0f/360.0f),
    (uint32_t)(now-vsp_axis[1].position_tick)<=150U);
- /* Restore live-feedback preclose, keeping the original final pick depth. */
+ /* v1.11：左右保持张爪；Z进入原20mm窗口且X/4310实际到位后才发夹紧。 */
  if(g_low_phase==4U && !g_it_lead5_grip_done && g_source_parallel_state!=4U &&
+    (g_low_region>=2U ||
+     (vsp_axis[0].position_cycle && (uint32_t)(now-vsp_axis[0].position_tick)<=150U &&
+      fabsf(vsp_axis[0].current-vsp_axis[0].goal)<=SOURCE_EXTENSION_DONE_DEG &&
+      it_dm_fresh() && fabsf(g_dm_can2_logical_position_deg-low_yaw)<=1.0f)) &&
     vsp_group.command.sequence==low_group_sequence &&
     (vsp_group.command.axes_mask&SPF_LIFT) && (vsp_group.started&SPF_LIFT) &&
     vsp_axis[1].position_cycle && (uint32_t)(now-vsp_axis[1].position_tick)<=150U &&
@@ -303,8 +349,16 @@ static void Low_Service(uint32_t now)
   }
   g_low_release_wait_ms=now-low_pulse_tick;
   if(g_low_release_wait_ms<SOURCE_RELEASE_DWELL_MS)return;
-  g_low_return_overlap_axes=SPF_DM|SPF_EXT|SPF_LIFT;
-  if(!Low_Group(7U,SPF_DM|SPF_EXT|SPF_LIFT,low_slot==3U?0.0f:180.0f,low_slot==3U?0.0f:65.0f,(float)SOURCE_OBSERVE_PULSES))Low_Fail(8U);
+#if !APP_MOTOR_OFFLINE_ONLY
+  if(low_last_piece && vsp_group.command.sequence==low_group_sequence &&
+     vsp_group.state==3U && g_source_parallel_done_mask==vsp_group.command.axes_mask &&
+     vsp_axis[1].position_cycle && it_at_top()){
+   if(!low_departure_clear_piece)g_low_departure_clear_ms=now-low_begin;
+   low_departure_clear_piece=g_low_accepted_sequence;
+  }
+#endif
+  /* The completed loaded return already reached observation Z. No extra Z move. */
+  g_low_return_overlap_axes=0U;g_low_phase=7U;
   return;
  }
 #if !APP_MOTOR_OFFLINE_ONLY
@@ -333,17 +387,53 @@ static void Low_Service(uint32_t now)
      0.0f,(float)SOURCE_RETURN_PULSES))Low_Fail(8U);
   break;
  case 5U:
-  Low_PublishLift(1U);
-  g_low_phase=12U; /* All axes done: fall through to the real tray window. */
+  Low_PublishLift(1U); /* Exact loaded group DONE at the pre-existing observation height. */
+  g_low_phase=12U;
+  /* fall through: release at tray yaw, without the 10mm lowering group. */
+ case 11U:
+  Low_PublishLift(1U); /* Legacy label; actual completed return is already at observation Z. */
+  g_low_phase=12U;
   /* fall through */
  case 12U:
   if((uint32_t)(now-low_tray_tick)<700U)return;
-  if(jiazhua(210.0f)!=1U){Low_Fail(7U);return;}
+  if(jiazhua(160.0f)!=1U){Low_Fail(7U);return;}
   g_low_release_command_ms=(uint32_t)xTaskGetTickCount()-low_begin;
   low_release_applied=0U;g_low_phase=6U;low_phase_tick=(uint32_t)xTaskGetTickCount();break;
  case 7U:
-  if(low_slot<3U && jiazhua(210.0f)!=1U){Low_Fail(7U);return;}
-  Low_PublishLift(1U);g_low_state=2U;g_low_phase=10U;
+  if(!vsp_axis[1].position_cycle || (uint32_t)(now-vsp_axis[1].position_tick)>150U){
+   /* Completed SPF axes stop polling; this CAN owner refreshes Z while
+    * waiting for actual chassis motion, rather than reusing an old sample. */
+   if(!VSP_Position(5U,&vsp_axis[1])){Low_Fail(14U);return;}
+   now=(uint32_t)xTaskGetTickCount();
+  }
+  if(vsp_group.command.kind!=SPF_CMD_TRANSFER ||
+     vsp_group.command.goal.lift_pulses!=(float)SOURCE_OBSERVE_PULSES ||
+     vsp_group.command.axes_mask!=g_low_lift_retract_axes || !vsp_axis[1].position_cycle ||
+     (uint32_t)(now-vsp_axis[1].position_tick)>150U ||
+     fabsf((vsp_axis[1].current-SingleTeach_TopDeg())*(3200.0f/360.0f)-
+       (float)SOURCE_OBSERVE_PULSES)>SOURCE_TOP_TOLERANCE_DEG*(3200.0f/360.0f)){
+   Low_Fail(14U);return;
+  }
+  if(low_last_piece && low_mission_piece){
+   ChassisZone2CanStatus body;uint32_t i,moving=0U;
+   /* The removed Z move used to provide this handoff window. Keep phase7
+    * until the same mission commits departure and actual wheels start. */
+   if(!RegionDispatch_SourceDepartureCommitted())return;
+   ChassisAuto_Zone2Read(&body);
+   if(body.state!=CHASSIS_AUTO_RUN || !body.feedback_ready)return;
+   for(i=0U;i<4U;i++)if(body.wheel_decirpm[i])moving=1U;
+   if(!moving)return; /* 4310 returns only after actual chassis motion feedback. */
+  }
+  low_top_done_sequence=low_group_sequence;low_top_done_piece=g_low_accepted_sequence;
+  Low_PublishLift(1U);
+  /* Release PWM+200ms already completed. Open during the empty return,
+   * rather than only after reaching the next observation pose. */
+  if(!low_last_piece && jiazhua(210.0f)!=1U){Low_Fail(7U);return;}
+  if(!Low_Group(8U,SPF_DM|SPF_EXT,low_last_piece?0.0f:180.0f,
+     low_last_piece?0.0f:65.0f,(float)SOURCE_OBSERVE_PULSES))Low_Fail(8U);
+  break;
+ case 8U:
+  g_low_state=2U;g_low_phase=10U;
   g_low_done_sequence=g_low_accepted_sequence;g_it_state=2U;g_it_lift_permit=0U;break;
  default:Low_Fail(13U);break;
  }

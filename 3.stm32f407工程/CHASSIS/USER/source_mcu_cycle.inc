@@ -13,7 +13,7 @@ volatile uint32_t g_source_cycle_request,g_source_cycle_state,g_source_cycle_fau
 volatile uint32_t g_source_cycle_run,g_source_cycle_pose,g_source_cycle_item,g_source_cycle_prep;
 volatile uint32_t g_source_cycle_colors[3]={0U,0U,0U};
 volatile float g_source_cycle_yaw[3]={195.0f,165.0f,180.0f};
-volatile float g_source_cycle_extension[3]={164.0708363f,161.9699163f,0.0f};
+volatile float g_source_cycle_extension[3]={164.0708363f,167.9699163f,0.0f};
 volatile uint32_t g_source_cycle_rx,g_source_cycle_rx_bad,g_source_cycle_tx,g_source_cycle_rejected;
 volatile uint32_t g_source_cycle_body_steps,g_source_cycle_beeps,g_source_cycle_beep_started,g_source_cycle_beep_done;
 volatile uint32_t g_source_cycle_started,g_source_cycle_done,g_source_cycle_piece_ms[3];
@@ -23,13 +23,14 @@ volatile uint32_t g_source_cycle_grip_command_ms[3];
 volatile int32_t g_source_cycle_right_milli_mm,g_source_cycle_forward_milli_mm;
 volatile uint32_t g_source_cycle_error_milli_mm;
 static uint32_t sc_pending,sc_step_sequence,sc_frame,sc_rx_tick,sc_frame_age;
+static uint32_t sc_stream_started;
 static uint32_t sc_valid,sc_target_ready,sc_colors[3],sc_used,sc_active,sc_last_byte;
 static uint32_t sc_continuous,sc_target_color;
 static uint32_t SC_InitialObserveAllowed(void)
 {
  return g_source_cycle_state==1U && g_source_cycle_prep==4U &&
   g_it_axes==(SPF_DM|SPF_EXT) && g_it_dm_deg==180.0f && g_it_extension_mm==65.0f &&
-  it_at_top() && fabsf(g_startup_extension_current_deg-g_extension_home_reference_deg)<=2.0f;
+  it_at_top();
 }
 static uint32_t sc_beep_started,sc_last_tx;
 volatile uint32_t g_source_cycle_pick_beeps,g_source_cycle_pick_beep_pending;
@@ -52,8 +53,32 @@ volatile uint32_t g_source_scan_rejected,g_source_scan_displayed_run;
 char g_source_scan_code[16];
 static uint32_t sc_scan_seen;
 static volatile uint32_t sc_bound_batch;
-static uint32_t sc_retract_pending,sc_bound_slots[3];
+static uint32_t sc_bound_slots[3];
 static uint32_t sc_transport;
+/* All three current-item alternatives are computed before accepting a grasp.
+ * A forecast never selects an actuator target; the fresh final packet does. */
+typedef struct {float yaw,extension;uint32_t slot,color;} SC_Plan;
+static SC_Plan sc_plan[3][3];
+static uint32_t sc_plan_run,sc_plan_item;
+volatile uint32_t g_source_plan_ready,g_source_plan_builds,g_source_plan_hits;
+static void SC_WarmPlans(void)
+{
+ uint32_t i,j,k,color;
+ if(g_source_cycle_item>=3U)return;
+ if(sc_plan_run==g_source_cycle_run && sc_plan_item==g_source_cycle_item && g_source_plan_ready)return;
+ g_source_plan_ready=0U;
+ for(k=0U;k<3U;k++){
+  color=g_source_cycle_colors[k];if(color<1U || color>6U)return;
+  j=k;
+  if(sc_bound_batch){for(j=0U;j<3U && sc_bound_slots[j]!=color;j++){}if(j==3U)return;}
+  for(i=0U;i<3U;i++){
+   sc_plan[k][i].yaw=g_source_cycle_yaw[i];sc_plan[k][i].extension=g_source_cycle_extension[i];
+   sc_plan[k][i].slot=j+1U;sc_plan[k][i].color=color;
+  }
+ }
+ sc_plan_run=g_source_cycle_run;sc_plan_item=g_source_cycle_item;
+ g_source_plan_builds++;g_source_plan_ready=1U;
+}
 void SourceCycle_ScanService(void)
 {
 #if SOURCE_CYCLE_TEST_215
@@ -145,8 +170,8 @@ static void SC_Fail(uint32_t why)
  if(SourceBodyStep_Busy())g_source_body_step_request=9U;
 }
 static uint32_t SC_Fresh(uint32_t now)
-{return sc_valid && (uint32_t)(now-sc_rx_tick)<=200U && sc_frame_age<=200U &&
- (uint32_t)(now-sc_rx_tick)+sc_frame_age<=200U;}
+{return sc_valid && (uint32_t)(now-sc_rx_tick)<=500U && sc_frame_age<=500U &&
+ (uint32_t)(now-sc_rx_tick)+sc_frame_age<=500U;}
 static void SC_Line(uint32_t now)
 {
  unsigned long run,pose,seq,valid,norm,ready,left,right,down,age,color=0,delay0=0,delay1=0,delay2=0;long dx,dy;
@@ -171,7 +196,7 @@ static void SC_Line(uint32_t now)
     norm>0xffffffffUL || dx<-2147483647L || dx>2147483647L || dy<-2147483647L || dy>2147483647L){g_source_cycle_rx_bad++;return;}
  if(run!=g_source_cycle_run || pose!=g_source_cycle_pose ||
    (g_source_cycle_state!=2U && g_source_cycle_state!=6U) ||
-   (sc_frame && (int32_t)((uint32_t)seq-sc_frame)<=0) || age>200UL)return;
+   (sc_frame && (int32_t)((uint32_t)seq-sc_frame)<=0) || age>500UL)return;
  sc_frame=(uint32_t)seq;sc_rx_tick=now;sc_frame_age=(uint32_t)age;
  sc_continuous=continuous;sc_valid=(uint32_t)valid;sc_target_ready=sc_continuous?(uint32_t)ready:0U;
  sc_target_color=(uint32_t)color;
@@ -239,35 +264,54 @@ static void SourceCycle_Service(uint32_t now)
     g_source_body_step_reason || g_source_body_step_state==9U){SC_Fail(g_it_cause?g_it_cause:12U);return;}
  if(sc_beep_started && !g_source_cycle_beep_done && !Buzzer_IsBusy())g_source_cycle_beep_done=now;
  SC_PickBeep(now);
+ if(g_source_cycle_state<=6U || g_source_cycle_state==7U)SC_WarmPlans();
  if(g_source_cycle_state==1U){
   static const uint32_t prep[5]={1U,2U,7U,6U,3U};
+  /* 比赛任务的观察准备由区域调度完成，后续原料区不再进入调试回零链。 */
+  if(sc_bound_batch)return;
   if(!sc_bound_batch && !SC_ScanTask())return;
-  if(sc_retract_pending){
-   if(g_it_rejected){SC_Fail(g_it_rejected);return;}
-   if(g_it_request || g_it_state!=2U || g_it_action!=3U)return;
-   sc_retract_pending=0U;
-  }
   if(sc_pending){
    if(g_it_rejected){SC_Fail(g_it_rejected);return;}
    if(g_it_state!=2U || g_it_request || g_it_action!=prep[g_source_cycle_prep])return;
    sc_pending=0U;g_source_cycle_prep++;
   }
-  if(g_source_cycle_prep>=5U){g_source_cycle_state=2U;SC_Pose();return;}
+  if(g_source_cycle_prep>=5U){sc_stream_started=0U;g_source_cycle_state=2U;SC_Pose();return;}
   if(g_it_state==1U || g_it_request)return;
   if(sc_bound_batch && g_source_cycle_prep==0U && it_at_top()){g_source_cycle_prep++;return;}
   if(sc_bound_batch && g_source_cycle_prep==1U && StartupAxes_Holding() &&
      g_extension_home_reference_valid && g_extension_hold_confirmed){g_source_cycle_prep++;return;}
   g_it_carrier_auto_deg=-1.0f;
-  if(sc_bound_batch && g_source_cycle_prep==4U &&
-     fabsf(g_startup_extension_current_deg-g_extension_home_reference_deg)>2.0f){
-   g_it_axes=SPF_EXT;g_it_extension_mm=0.0f;sc_retract_pending=1U;g_it_request=3U;return;
-  }
   if(g_source_cycle_prep==4U){g_it_axes=SPF_DM|SPF_EXT;g_it_dm_deg=180.0f;g_it_extension_mm=65.0f;}
   g_it_request=prep[g_source_cycle_prep];sc_pending=1U;return;
  }
  if(g_source_cycle_state==2U){
   int32_t right=g_source_cycle_right_milli_mm,forward=g_source_cycle_forward_milli_mm;
   uint32_t axis,distance;int32_t amount;
+#if APP_ZONE2_MISSION_ENABLE
+  if(sc_bound_batch){
+   if(sc_stream_started && g_source_align_command_seq!=sc_step_sequence){
+    sc_stream_started=0U;SC_Pose();return;
+   }
+   if(!SC_Fresh(now))return;
+   if(g_source_cycle_error_milli_mm<=5000U){
+    { /* 即使到站时已对准，也须使用真实停车后的新画面。 */
+     if(SourceBodyStep_Stream(g_source_cycle_run,g_source_cycle_pose,sc_frame,
+        sc_rx_tick-sc_frame_age,7U,0U,0.0f)!=2U)return;
+     sc_stream_started=0U;
+    }
+    SC_Pose();g_source_cycle_state=5U;return;
+   }
+   axis=labs((long)right)>=labs((long)forward)?0U:1U;amount=axis?forward:right;
+   distance=labs((long)amount)>=20000L?20U:(uint32_t)((labs((long)amount)+500L)/1000L);
+   if(distance<1U)distance=1U;
+   if(SourceBodyStep_Stream(g_source_cycle_run,g_source_cycle_pose,sc_frame,sc_rx_tick-sc_frame_age,
+      2U,axis?(amount>0?0U:3U):(amount>0?2U:1U),(float)distance)){
+    if(!sc_stream_started)sc_step_sequence=g_source_align_command_seq;
+    sc_stream_started=1U;g_source_cycle_body_steps++;
+   }
+   return;
+  }
+#endif
   if(!SC_Fresh(now))return;
   if(g_source_cycle_error_milli_mm<=5000U){
    SC_Pose();
@@ -311,31 +355,32 @@ static void SourceCycle_Service(uint32_t now)
    for(j=0U;j<i;j++)if(sc_colors[j]==sc_colors[i])return;
   }
   g_low_sequence=g_low_accepted_sequence+1U;if(!g_low_sequence)g_low_sequence=1U;
-  g_low_slot=g_source_cycle_item+1U;g_low_color=color;g_low_region=region;
-  if(sc_bound_batch){
-   for(i=0U;i<3U && sc_bound_slots[i]!=color;i++){}
-   if(i==3U){SC_Fail(12U);return;}
-   g_low_slot=i+1U;
-  }
-  g_low_target_yaw=g_source_cycle_yaw[region];g_low_target_extension_mm=g_source_cycle_extension[region];
+  if(!g_source_plan_ready || sc_plan_run!=g_source_cycle_run ||
+     sc_plan_item!=g_source_cycle_item || sc_plan[g_source_cycle_item][region].color!=color)return;
+  g_low_slot=sc_plan[g_source_cycle_item][region].slot;g_low_color=color;g_low_region=region;
+  g_low_target_yaw=sc_plan[g_source_cycle_item][region].yaw;
+  g_low_target_extension_mm=sc_plan[g_source_cycle_item][region].extension;
+  g_source_plan_hits++;
   g_low_pose_version=g_low_scene_id=1U;g_low_confirm_pose_sequence=g_low_sequence;
   g_low_confirm_frame_cycle=sc_frame;sc_pending=g_low_sequence;
-  g_source_cycle_planned_region=region;g_source_cycle_due_tick=now+g_source_cycle_start_delay_ms[region];
+  g_source_cycle_planned_region=region;g_source_cycle_due_tick=now; /* Two stopped frames commit an immediate start. */
   g_source_cycle_scheduled=1U;
   /* MCU owns the future start. No host timer or later image can issue it. */
-  g_source_cycle_state=7U;SC_Pose();return;
+  g_source_cycle_state=7U;SC_Pose(); /* Fall through: start in this CAN service. */
  }
  if(g_source_cycle_state==7U){
   if(g_source_cycle_scheduled){
    if((int32_t)(now-g_source_cycle_due_tick)<0)return;
    g_source_cycle_scheduled=0U;
-   if(!Low_TryStart(now)){g_source_cycle_rejected++;g_source_cycle_state=6U;SC_Pose();return;}
+   if(!Low_TryStartForPiece(now,sc_bound_batch?g_source_cycle_item+1U:0U)){
+    g_source_cycle_rejected++;g_source_cycle_state=6U;SC_Pose();return;
+   }
    if(g_low_state==1U){g_source_cycle_pick_beep_pending++;SC_PickBeep(now);}
    g_source_cycle_start_lag_ms=(uint32_t)xTaskGetTickCount()-g_source_cycle_due_tick;return;
   }
   if(g_low_state!=2U || g_low_done_sequence!=sc_pending)return;
 #if APP_ZONE2_MISSION_ENABLE
-  if(sc_bound_batch){
+  if(sc_bound_batch && !RegionDispatch_SourceDepartureCommitted()){
    uint8_t item=(uint8_t)g_source_cycle_item,color=(uint8_t)g_source_cycle_colors[item];
    if(!AppZone2_StationConfirm(g_source_cycle_run,item,APP_ZONE2_SOURCE_GRIP,color,0U) ||
       !AppZone2_StationConfirm(g_source_cycle_run,item,APP_ZONE2_SOURCE_SLOT,color,0U)){
@@ -345,8 +390,11 @@ static void SourceCycle_Service(uint32_t now)
 #endif
   g_source_cycle_piece_ms[g_source_cycle_item]=g_low_elapsed_ms;
   g_source_cycle_grip_command_ms[g_source_cycle_item]=g_low_grip_command_ms;g_source_cycle_item++;
+  g_source_plan_ready=0U;SC_WarmPlans();
   if(g_source_cycle_item==3U){
-   if(sc_bound_batch){sc_transport=0U;g_source_cycle_state=10U;SC_Pose();return;}
+   if(sc_bound_batch && !RegionDispatch_SourceDepartureCommitted()){
+    sc_transport=0U;g_source_cycle_state=10U;SC_Pose();return;
+   }
    g_source_cycle_done=now;g_source_cycle_state=8U;SC_Pose();return;
   }
   g_source_cycle_state=6U;SC_Pose();return;

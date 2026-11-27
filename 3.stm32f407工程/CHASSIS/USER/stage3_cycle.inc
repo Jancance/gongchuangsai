@@ -23,7 +23,7 @@ volatile float g_stage3_target_yaw[3]={-1.0f,180.0f,-1.0f};
 volatile float g_stage3_target_x[3]={-1.0f,0.0f,-1.0f};
 volatile float g_stage3_target_depth[3]={-1.0f,-1.0f,-1.0f};
 volatile float g_stage3_recovery_depth[3]={-1.0f,-1.0f,-1.0f};
-volatile float g_stage3_observe_yaw=180.55f;
+volatile float g_stage3_observe_yaw=180.0f;
 #endif
 #if VEHICLE_STAGE3_STANDALONE_ENABLE
 volatile uint32_t g_stage3_colors[3]=VEHICLE_STAGE3_STANDALONE_COLORS;
@@ -62,12 +62,16 @@ static float s3_pick,s3_carrier,s3_yaw[3],s3_x[3],s3_depth[3];
 /* 0 three-place baseline; 1 rough round-trip; 2 storage stack. */
 volatile uint32_t g_stage3_locked_run;
 volatile uint32_t g_stage3_first_colors[3],g_stage3_first_positions[3],g_stage3_first_mapping_valid;
-static uint32_t s3_cycle_mode,s3_locked_top_scale,s3_module_run;
+static uint32_t s3_cycle_mode,s3_locked_top_scale,s3_module_run,s3_storage_exit_done;
+static uint32_t s3_stream_started;
 static int64_t s3_locked_top_raw;
 static float s3_locked_extension_home;
 volatile uint32_t g_stage3_placed_count,g_stage3_recovered_count;
 static uint32_t s3_round_trip;
 static float s3_recovery_depth[3];
+static float s3_slot_release_base;
+static uint32_t s3_slot_lower_sequence,s3_slot_lower_item;
+static float S3_SafeTopPulses(void);
 #define S3_SYNC_PLACE_PHASE 9U
 #define S3_SYNC_RETURN_PHASE 12U
 #define S3_RECOVER_FIRST_PHASE 17U
@@ -203,7 +207,7 @@ static uint32_t S3_Config(void)
   j=S3_TargetPosition(i);
   if(j<1U || j>3U)return 0U;
   j--;
-  if(!s3_module_run && g_stage3_task_run && g_stage3_cycle_mode==1U && i+1U==first+count &&
+  if(g_stage3_task_run && g_stage3_cycle_mode==1U && i+1U==first+count &&
      !(g_stage3_target_depth[j]>=3200.0f+S3_FAST_HANDOFF_OFFSET_PULSES))return 0U;
   if(g_stage3_cycle_mode==1U && !(g_stage3_recovery_depth[j]>=3200.0f &&
     g_stage3_recovery_depth[j]<=(float)SPF_STAGE3_MAX_LIFT_PULSES))return 0U;
@@ -355,7 +359,16 @@ static void S3_LockConfig(void)
  s3_first=g_stage3_test_first_item;s3_count=g_stage3_test_count;
  s3_pick=g_stage3_pick_depth;s3_carrier=g_stage3_carrier_yaw;
  s3_round_trip=g_stage3_task_run!=0U;
- s3_cycle_mode=g_stage3_cycle_mode;s3_low_handoff=0U;
+ s3_cycle_mode=g_stage3_cycle_mode;s3_low_handoff=s3_storage_exit_done=0U;
+ s3_slot_lower_sequence=s3_slot_lower_item=0U;s3_slot_release_base=0.0f;
+ if(s3_cycle_mode==1U){
+  if(!g_lift_ruler_controller.top_scale){S3_Fail(12U);return;}
+  s3_slot_release_base=S3_SafeTopPulses();
+  if(!(s3_slot_release_base>=0.0f &&
+       s3_slot_release_base+(float)SPF_CARRIER_EXTRA_DOWN_PULSES<=SPF_STAGE3_MAX_LIFT_PULSES)){
+   S3_Fail(12U);return;
+  }
+ }
  g_stage3_locked_run=g_stage3_run;
  s3_locked_top_raw=g_lift_ruler_controller.top_position_raw;
  s3_locked_top_scale=g_lift_ruler_controller.top_scale;
@@ -382,9 +395,11 @@ static uint32_t S3_Complete(void)
 static uint32_t S3_MapConfirm(AppZone2Action action)
 {
  uint8_t item=(uint8_t)g_stage3_item;
+ /* Rough placements acknowledge completed mechanics; no vision-occupancy claim is made. */
+ uint32_t rough_mechanical=s3_module_run && s3_cycle_mode==1U && action==APP_ZONE2_ROUGH_PLACE;
  if(!s3_module_run)return 1U;
  if(item>=3U)return 0U;
- if((action==APP_ZONE2_ROUGH_PLACE || action==APP_ZONE2_STORAGE_PLACE) &&
+ if((action==APP_ZONE2_ROUGH_PLACE || action==APP_ZONE2_STORAGE_PLACE) && !rough_mechanical &&
 #if APP_ZONE2_UNVERIFIED_TRIAL_ENABLE
     !(action==APP_ZONE2_STORAGE_PLACE && s3_module_run &&
       (s3_cycle_mode==0U || s3_cycle_mode==2U)) &&
@@ -409,13 +424,21 @@ static uint32_t S3_TrayGripElapsed(void)
 {return s3_tray_grip_sent && (uint32_t)((uint32_t)xTaskGetTickCount()-s3_tray_grip_tick)>=100U;}
 static uint32_t S3_AnticipatoryOwned(uint32_t phase)
 {
- return !s3_module_run && Stage3_Owns() && s3_round_trip && s3_cycle_mode==1U && g_stage3_state==5U &&
-  g_stage3_phase==phase && g_stage3_locked_run==g_stage3_run &&
+ return Stage3_Owns() && s3_round_trip &&
+  (s3_cycle_mode==1U ||
+   (s3_module_run && (s3_cycle_mode==0U || s3_cycle_mode==2U) &&
+    (phase==0U || phase==4U || phase==5U || phase==6U || phase==7U || phase==11U))) &&
+  g_stage3_state==5U && g_stage3_phase==phase && g_stage3_locked_run==g_stage3_run &&
   !g_stage3_fault && g_low_wheel_hold_ready;
+}
+uint32_t Stage3_CarrierReturn600Owned(void)
+{
+ return S3_AnticipatoryOwned(27U) && s3_pending==4U &&
+  g_it_state==1U && g_it_action==4U;
 }
 static uint32_t S3_FastRecoveryOwned(void)
 {
- return !s3_module_run && Stage3_Owns() && s3_round_trip && s3_cycle_mode==1U && g_stage3_state==5U &&
+ return Stage3_Owns() && s3_round_trip && s3_cycle_mode==1U && g_stage3_state==5U &&
   g_stage3_phase==21U && s3_pending==3U && !g_stage3_fault && g_low_wheel_hold_ready;
 }
 static uint32_t S3_EmptyHandoffOwned(void)
@@ -445,6 +468,46 @@ static float S3_SafeTopPulses(void)
  return ((float)(g_lift_ruler_controller.safe_position_raw-g_lift_ruler_controller.top_position_raw)/
   (float)g_lift_ruler_controller.top_scale)*VEHICLE_LIFT_DOWN_SIGN*(3200.0f/360.0f);
 }
+/* Real fresh DONE of this exact carrier-lowering command is the release permit. */
+static uint32_t S3_CarrierLowerConfirmed(void)
+{
+#if APP_MOTOR_OFFLINE_ONLY
+ return 0U;
+#else
+ float depth;
+ if(!(s3_cycle_mode==1U && it_command.kind==SPF_CMD_STAGE3_LOADED_RETURN &&
+  it_command.axes_mask==(SPF_DM|SPF_EXT|SPF_LIFT) &&
+  it_command.goal.dm_deg==s3_carrier && it_command.goal.extension_mm==0.0f &&
+  it_command.goal.lift_pulses==s3_slot_release_base &&
+  !VehicleSourceParallel_Owns() && g_source_parallel_state==3U &&
+  g_source_parallel_done_mask==(SPF_DM|SPF_EXT|SPF_LIFT) &&
+  vsp_group.command.sequence==it_command.sequence))return 0U;
+ /* Z can finish before delayed loaded yaw. Completed axes stop polling;
+  * refresh actual Z in this sole CAN owner before release, without a new move. */
+ if(!VehicleArm_Stage3LiftDepthFresh(it_command.sequence,&depth)){
+  if(!VSP_Position(5U,&vsp_axis[1]) ||
+     !VehicleArm_Stage3LiftDepthFresh(it_command.sequence,&depth))return 0U;
+ }
+ return fabsf(depth-it_command.goal.lift_pulses)<=SOURCE_TOP_TOLERANCE_DEG*(3200.0f/360.0f);
+#endif
+}
+static uint32_t S3_CarrierReleaseAllowed(void)
+{
+ return S3_AnticipatoryOwned(26U) && s3_slot_lower_sequence &&
+  s3_slot_lower_item==g_stage3_item+1U && s3_slot_lower_sequence==it_command.sequence &&
+  S3_CarrierLowerConfirmed();
+}
+/* Only the final locked physical ring2 of storage/stack uses the empty exit group. */
+static uint32_t S3_StorageExitScope(void)
+{
+ uint32_t last=s3_first+s3_count;
+ return s3_module_run && Stage3_Owns() && g_stage3_state==5U && g_stage3_phase==S3_SYNC_RETURN_PHASE &&
+  (s3_cycle_mode==0U || s3_cycle_mode==2U) && last>=1U && last<=3U &&
+  g_stage3_item+1U==last && s3_positions[last-1U]==2U &&
+  g_stage3_locked_run==g_stage3_run && !g_stage3_fault && !Stage3_FastTransferStopPending();
+}
+static uint32_t S3_StorageExitOwned(void)
+{return S3_StorageExitScope() && s3_pending==3U;}
 static uint32_t S3_SyncPlaceOwned(void)
 {
  return Stage3_Owns() && s3_round_trip && g_stage3_state==5U &&
@@ -483,8 +546,8 @@ static uint32_t S3_BeginRecoverPlaced(void)
  S3_Pose();return 1U;
 }
 static uint32_t S3_Fresh(uint32_t now)
-{return s3_valid && (uint32_t)(now-s3_rx_tick)<=200U && s3_age<=200U &&
- (uint32_t)(now-s3_rx_tick)+s3_age<=200U;}
+{return s3_valid && (uint32_t)(now-s3_rx_tick)<=500U && s3_age<=500U &&
+ (uint32_t)(now-s3_rx_tick)+s3_age<=500U;}
 static void Stage3_Line(uint32_t now)
 {
  unsigned long run,pose,seq,valid,norm,age;long right,forward,yaw,error_yaw;int n=0,count;
@@ -499,11 +562,11 @@ static void Stage3_Line(uint32_t now)
   else if(h>='A' && h<='F')v=(uint32_t)(h-'A'+10);
   else {g_stage3_rx_bad++;return;}crc=(crc<<4)|v;
  }
- if(crc!=SC_Crc(s3_input,(uint32_t)n) || valid>1UL || !seq || seq>0xffffffffUL ||
+ if(crc!=SC_Crc(s3_input,(uint32_t)n) || (valid>2UL || (valid==2UL && !s3_module_run)) || !seq || seq>0xffffffffUL ||
     right<-2147483647L || right>2147483647L || forward<-2147483647L || forward>2147483647L ||
     yaw<-2147483647L || yaw>2147483647L || norm>0xffffffffUL ||
     error_yaw<-2147483647L || error_yaw>2147483647L){g_stage3_rx_bad++;return;}
- if(g_stage3_state!=2U || run!=g_stage3_run || pose!=g_stage3_pose || age>200UL ||
+ if(g_stage3_state!=2U || run!=g_stage3_run || pose!=g_stage3_pose || age>500UL ||
     (s3_seq && (int32_t)((uint32_t)seq-s3_seq)<=0))return;
  s3_seq=(uint32_t)seq;s3_rx_tick=now;s3_age=(uint32_t)age;s3_valid=(uint32_t)valid;
  g_stage3_right_um=(int32_t)right;g_stage3_forward_um=(int32_t)forward;g_stage3_yaw_mdeg=(int32_t)yaw;g_stage3_rx++;
@@ -700,9 +763,19 @@ static void Stage3_Service(uint32_t now)
  if(g_stage3_state==1U){
   static const uint32_t prep[]={1U,2U,7U,6U,3U,3U};
   if(s3_pending){if(!S3_Complete())return;g_stage3_phase++;}
+  if(s3_module_run && g_stage3_phase<2U){
+   if(!SingleTeach_ReferencesReady()){S3_Fail(9U);return;}
+   /* ¸´ÓÃÒÑÓÐ»ù×¼£¬½öÔÊÐí¹¤×÷Î»ÖÃ»ØÉý£¬²»ÖØÐÂ»ØÁã¡£ */
+   if(!it_at_top()){S3_Command(4U);return;}
+   /* ÈÎÎñµ÷¶ÈÒÑÍê³É¹Û²ì×ª±Û£¬Ö±½Ó·¢²¼ÐÂ×ËÌ¬£»ÔØÅÌÔ¤È¡ÈÔÓÉÔ­×¥·ÅÁ÷³Ì´¦Àí¡£ */
+   g_stage3_phase=6U;g_stage3_state=2U;s3_stream_started=0U;S3_Pose();return;
+  }
   if(g_stage3_phase==1U && StartupAxes_Holding() && g_extension_home_reference_valid &&
      g_extension_hold_confirmed)g_stage3_phase++;
   if(g_stage3_phase==0U && it_at_top()){g_stage3_phase++;return;}
+#if APP_ZONE2_MISSION_ENABLE
+  if(s3_module_run && AppZone2_StationApproaching() && g_chassis_auto_active && g_stage3_phase<2U)return;
+#endif
   if(g_stage3_phase==6U){g_stage3_state=2U;S3_Pose();return;}
   if(g_stage3_phase==2U && g_stage3_task_run && g_stage3_config_ready){
    uint32_t slot=0U,item=g_stage3_test_first_item;
@@ -720,7 +793,37 @@ static void Stage3_Service(uint32_t now)
   int32_t right=g_stage3_right_um,forward=g_stage3_forward_um,yaw=g_stage3_yaw_mdeg,amount;
   float angle=(float)yaw/1000.0f;
   uint32_t axis;
+#if APP_ZONE2_MISSION_ENABLE
+  if(s3_module_run && !g_stage3_replay_state && s3_stream_started &&
+     g_source_align_command_seq!=s3_step_seq){s3_stream_started=0U;S3_Pose();return;}
+#endif
   if(!S3_Fresh(now))return;
+#if APP_ZONE2_MISSION_ENABLE
+  if(s3_module_run && !g_stage3_replay_state){
+   uint32_t request=0U,dir=0U;float value=0.0f;
+   if(g_stage3_error_norm_um<=S3_STRICT_NORM_UM && labs((long)g_stage3_error_yaw_mdeg)<=S3_STRICT_YAW_MDEG){
+    if(s3_stream_started || SourceBodyStep_Busy() || AppZone2_StationApproaching()){
+     if(SourceBodyStep_Stream(s3_module_run,g_stage3_pose,s3_seq,s3_rx_tick-s3_age,7U,0U,0.0f)!=2U)return;
+     s3_stream_started=0U;
+    }
+   }else{
+    if(labs((long)g_stage3_error_yaw_mdeg)>S3_STRICT_YAW_MDEG){
+     if(!(fabsf(angle)>S3_STRICT_YAW_DEG)){g_stage3_motion_unusable++;s3_valid=0U;return;}
+     request=3U;value=angle>10.0f?10.0f:(angle< -10.0f?-10.0f:angle);
+    }else{
+     axis=labs((long)right)>=labs((long)forward)?0U:1U;amount=axis?forward:right;
+     if(labs((long)amount)<250L){g_stage3_motion_unusable++;s3_valid=0U;return;}
+     request=2U;dir=axis?(amount>0?0U:3U):(amount>0?2U:1U);
+     value=fabsf((float)amount)/1000.0f;if(value>30.0f)value=30.0f;
+    }
+    if(SourceBodyStep_Stream(s3_module_run,g_stage3_pose,s3_seq,s3_rx_tick-s3_age,request,dir,value)){
+     if(!s3_stream_started)s3_step_seq=g_source_align_command_seq;
+     s3_stream_started=1U;g_stage3_body_steps++;
+    }
+    return;
+   }
+  }
+#endif
   if(g_stage3_error_norm_um<=S3_STRICT_NORM_UM && labs((long)g_stage3_error_yaw_mdeg)<=S3_STRICT_YAW_MDEG){
    if(g_stage3_replay_state==1U){
     s3_replay_expected=0U;s3_replay_rejected=g_source_align_rejected;s3_replay_lock_cycle=g_low_wheel_hold_cycle;
@@ -732,6 +835,12 @@ static void Stage3_Service(uint32_t now)
     if(g_source_align_chain_active)g_source_body_step_request=7U;
     return;
    }
+#if APP_ZONE2_MISSION_ENABLE
+   /* Motion-valid frames can finish braking, never certify static alignment. */
+   if(s3_module_run && s3_valid!=1U)return;
+   if(s3_module_run && !AppZone2_StationVisualAligned(s3_module_run,g_stage3_run,
+      g_stage3_pose,s3_seq,s3_rx_tick-s3_age))return;
+#endif
    g_stage3_fast_align_tick=(uint32_t)xTaskGetTickCount();g_stage3_fast_timing_mask|=1U;
    g_stage3_align_done=1U;S3_Pose();g_stage3_state=4U;
    if(g_source_align_chain_active)g_source_body_step_request=7U;return;
@@ -783,7 +892,19 @@ static void Stage3_Service(uint32_t now)
  if(g_stage3_state==5U){
   uint32_t p=g_stage3_phase,target=g_stage3_item<3U?s3_positions[g_stage3_item]-1U:0U;
   if(s3_pending){
+   uint32_t storage_exit=S3_StorageExitOwned();
+   uint32_t carrier_lower=s3_cycle_mode==1U && g_stage3_phase==21U && s3_pending==3U;
    if(!S3_Complete())return;
+   if(carrier_lower){
+    if(!S3_CarrierLowerConfirmed()){S3_Fail(12U);return;}
+    s3_slot_lower_sequence=it_command.sequence;s3_slot_lower_item=g_stage3_item+1U;
+   }
+#if APP_ZONE2_MISSION_ENABLE
+   /* The anticipatory IT3 completion skips phase8; retain its real slot-grip receipt. */
+   if(S3_AnticipatoryOwned(7U) &&
+      !S3_MapConfirm(s3_cycle_mode==1U?APP_ZONE2_ROUGH_SLOT_GRIP:APP_ZONE2_STORAGE_SLOT_GRIP))return;
+#endif
+   if(storage_exit)s3_storage_exit_done=1U; /* IT3 has confirmed all three real DONE bits. */
    g_stage3_phase=S3_AnticipatoryOwned(7U)?11U:g_stage3_phase+1U;p=g_stage3_phase;
   }
   /* Real referenced feedback satisfies ensure-top; never synthesize LRC DONE. */
@@ -845,12 +966,20 @@ static void Stage3_Service(uint32_t now)
    break;
   case 11U:S3_Command(s3_round_trip?17U:6U);break; /* Place-only release uses the 160-degree command. */
   case S3_SYNC_RETURN_PHASE:
-   if(s3_module_run){S3_Command(4U);break;}
+   if(S3_StorageExitScope()){
+    g_it_axes=SPF_DM|SPF_EXT|SPF_LIFT;g_it_dm_deg=0.0f;g_it_extension_mm=0.0f;
+    g_it_lift_pulses=S3_SafeTopPulses();S3_Command(3U);break;
+   }
+   if(s3_module_run && s3_cycle_mode!=1U){
+    /* Existing round-trip X/Z group; yaw stays at the ring until both are DONE. */
+    g_it_axes=SPF_EXT|SPF_LIFT;g_it_extension_mm=0.0f;
+    g_it_lift_pulses=S3_SafeTopPulses();S3_Command(3U);break;
+   }
    if(!s3_round_trip || (target!=1U && s3_cycle_mode!=1U)){S3_Command(4U);break;}
    g_it_axes=SPF_EXT|SPF_LIFT;
    g_it_extension_mm=0.0f;
    if(!g_lift_ruler_controller.top_scale){S3_Fail(12U);break;}
-   if(!s3_module_run && s3_cycle_mode==1U && g_stage3_item+1U==s3_first+s3_count){
+   if(s3_cycle_mode==1U && g_stage3_item+1U==s3_first+s3_count){
     g_stage3_fast_place_tick=(uint32_t)xTaskGetTickCount();g_stage3_fast_timing_mask|=2U;
     s3_low_handoff=1U;
    }
@@ -865,6 +994,11 @@ static void Stage3_Service(uint32_t now)
 #if APP_ZONE2_MISSION_ENABLE
    if(s3_module_run){
     if(!S3_MapConfirm(s3_cycle_mode==1U?APP_ZONE2_ROUGH_PLACE:APP_ZONE2_STORAGE_PLACE))return;
+    if(s3_cycle_mode==1U || s3_storage_exit_done ||
+       (s3_round_trip && it_command.kind==SPF_CMD_STAGE3_FAST_TRANSFER &&
+        it_command.axes_mask==(SPF_EXT|SPF_LIFT) && it_command.goal.extension_mm==0.0f &&
+        it_command.goal.lift_pulses==S3_SafeTopPulses() &&
+        g_source_parallel_done_mask==(SPF_EXT|SPF_LIFT))){g_stage3_phase=30U;return;}
     S3_Axis(SPF_EXT,0.0f);break;
    }
 #endif
@@ -893,6 +1027,11 @@ static void Stage3_Service(uint32_t now)
   if(s3_module_run){g_stage3_phase=33U;return;}
    g_stage3_state=6U;S3_Pose();return;
   case 33U:
+   if(s3_storage_exit_done && s3_module_run && (s3_cycle_mode==0U || s3_cycle_mode==2U) &&
+      g_stage3_locked_run==g_stage3_run && s3_count && s3_first+s3_count<=3U &&
+      g_stage3_item==s3_first+s3_count && s3_positions[s3_first+s3_count-1U]==2U){
+    g_stage3_phase=36U;return;
+   }
    if(!it_at_top()){S3_Command(4U);break;}
    g_stage3_phase=34U;
    return;
@@ -923,14 +1062,14 @@ static void Stage3_Service(uint32_t now)
 #if APP_ZONE2_MISSION_ENABLE
    if(!S3_MapConfirm(APP_ZONE2_ROUGH_GRIP))return;
 #endif
-   if(s3_module_run || s3_cycle_mode!=1U){S3_Command(4U);break;}
+   if(s3_cycle_mode!=1U){S3_Command(4U);break;}
    if(!g_lift_ruler_controller.top_scale){S3_Fail(12U);break;}
    g_it_axes=SPF_DM|SPF_EXT|SPF_LIFT;g_it_dm_deg=s3_carrier;g_it_extension_mm=0.0f;
    g_it_lift_pulses=S3_SafeTopPulses();S3_Command(3U);break;
   case 22U:
-   if(!s3_module_run && s3_cycle_mode==1U){
+   if(s3_cycle_mode==1U){
     if(it_at_top() && s3_tray_valid && g_stage3_tray_prefetch_item==g_stage3_item){
-     g_stage3_phase=26U;S3_Command(17U);return;
+     g_stage3_phase=26U;return; /* v1.11ï¼šçœŸå®žå›žç›˜DONEç›´æŽ¥æ¾çˆªï¼Œä¸é¢å¤–ä¸‹é™ã€‚ */
     }
     g_stage3_phase=24U;return;
    }
@@ -938,16 +1077,22 @@ static void Stage3_Service(uint32_t now)
   case 23U:S3_Axis(SPF_DM,s3_carrier);break;
   case 24U:
    if(s3_cycle_mode!=1U){S3_IndexItemSlot();break;}
-   if(s3_tray_valid && g_stage3_tray_prefetch_item==g_stage3_item)g_stage3_phase++;
+   if(s3_tray_valid && g_stage3_tray_prefetch_item==g_stage3_item)g_stage3_phase=26U;
    break;
   case 25U:
-   /* User choice: release directly at real top, after DM/tray completion. */
+   if(s3_cycle_mode==1U){
+    if(!it_at_top()){g_stage3_phase=24U;S3_Command(4U);break;}
+    s3_slot_lower_sequence=s3_slot_lower_item=0U;
+    S3_Axis(SPF_LIFT,s3_slot_release_base+(float)SPF_CARRIER_EXTRA_DOWN_PULSES);break;
+   }
    if(it_at_top())g_stage3_phase++;else S3_Command(4U);
    break;
-  case 26U:S3_Command(17U);break;
+  case 26U:
+   if(s3_cycle_mode==1U && !S3_CarrierReleaseAllowed()){S3_Fail(12U);return;}
+   S3_Command(17U);break;
   case 27U:
-   if(s3_cycle_mode==1U && it_at_top()){g_stage3_phase++;return;}
-   S3_Command(4U);break;
+   if(s3_cycle_mode==1U){g_stage3_phase=28U;return;}
+   S3_Command(4U);break; /* Other modes retain their existing return. */
   case 28U:
 #if APP_ZONE2_MISSION_ENABLE
    if(!S3_MapConfirm(APP_ZONE2_ROUGH_SLOT))return;

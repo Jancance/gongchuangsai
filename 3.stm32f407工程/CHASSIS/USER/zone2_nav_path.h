@@ -2,32 +2,18 @@
 #define ZONE2_NAV_PATH_H
 
 #include "fusion_reference.h"
-#include "radar_client.h"
-
 #define ZONE2_NAV_LEGS 8U
+#define ZONE2_STATION_COUNT 6U
 
 typedef struct {
-    uint32_t run_id,map_generation,layout_id,link_generation,scan_sequence;
-    uint8_t start_id,node_id,zone;
+    uint32_t run_id,map_generation,layout_id;
+    uint8_t start_id;
 } Zone2NavContext;
 
 typedef struct {
     Zone2NavContext context;
-    uint32_t occupied_mask;
     uint8_t valid;
 } Zone2NavMap;
-
-typedef struct {
-    Zone2NavContext context;
-    uint32_t path_id; /* New local reference identity for each leg, including cache hits. */
-    uint16_t request_sequence;
-    uint8_t start,goal,from_cache;
-} Zone2NavRequest;
-
-typedef struct {
-    Zone2NavContext context; /* Context captured when the acknowledged PATH was received. */
-    radar_client_path_result_t path;
-} Zone2NavReply;
 
 typedef struct { uint8_t start,goal; float start_heading_deg,goal_heading_deg; } Zone2NavLeg;
 
@@ -47,6 +33,10 @@ typedef struct {
     uint32_t visited_mask;
     Zone2NavTurns preferred,alternate;
     uint8_t has_alternate;
+    uint8_t return_stop_node; /* 0=none; 1=configured raw parking return. */
+    uint8_t raw_direct; /* Validated raw-departure actual-to-terminal candidate. */
+    uint8_t entry_needed; /* Verified translation from actual pose to a turn-clear point. */
+    FusionPoint entry_from,entry_to;
 } Zone2NavRoute;
 
 typedef enum {
@@ -58,14 +48,16 @@ typedef enum {
 
 uint32_t Zone2NavPath_Leg(uint8_t start_id,uint32_t index,Zone2NavLeg *leg);
 uint32_t Zone2NavPath_Station(uint8_t grid_id,FusionPoint *point);
-/* Call only with a completed GRID_SCAN callback for the supplied context. */
-uint32_t Zone2NavPath_SetMap(const Zone2NavContext *context,const radar_client_grid_result_t *grid,Zone2NavMap *map);
-/* Matches the directed cache key. The local path_id is per use, not part of the cache key. */
-uint32_t Zone2NavPath_Matches(const Zone2NavRequest *request,const Zone2NavReply *reply);
-/* Caller owns distinct route scratch and plan output. Only OK yields a valid
- * desired reference. COINCIDENT leaves the plan invalid for separate station evaluation. */
-Zone2NavPathResult Zone2NavPath_Prepare(const Zone2NavMap *map,const Zone2NavRequest *request,
-    const Zone2NavReply *reply,const Zone2NavGeometry *geometry,Zone2NavRoute *route,FusionPlan *plan);
+/* Build the fixed field route directly from the current measured position.
+ * No radar map, health frame or PATH transaction is synthesized. */
+Zone2NavPathResult Zone2NavPath_PrepareLocal(const Zone2NavMap *map,uint32_t leg_index,
+    const Zone2NavGeometry *geometry,Zone2NavRoute *route,FusionPlan *plan);
+/* Rebuild at most once after a valid raw-direct candidate fails motion checks. */
+Zone2NavPathResult Zone2NavPath_PrepareReturn(const Zone2NavMap *map,uint32_t leg_index,
+    const Zone2NavGeometry *geometry,Zone2NavRoute *route,FusionPlan *plan);
+uint32_t Zone2NavPath_RawDirectValid(const Zone2NavRoute *route,const FusionPlan *plan);
+/* Only a declared raw-departure node at current configured parking may stop. */
+uint32_t Zone2NavPath_ReturnStopValid(const Zone2NavRoute *route,const FusionPlan *plan);
 /* stopped must be independent caller evidence. Budgets bound the supplied measured pose. */
 uint32_t Zone2NavPath_InsideReturn(uint8_t start_id,FusionPoint pose,float heading_deg,float position_budget_mm,
     float heading_budget_deg,uint32_t stopped);

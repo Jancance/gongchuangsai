@@ -5,11 +5,6 @@
 #include "app_config.h"
 
 #if APP_ZONE2_MISSION_ENABLE
-#include "radar_servo.h"
-#include "radar_servo_config.h"
-#if JIAZHUA_PERIOD_US != RADAR_SERVO_PERIOD_US
-#error Gripper_requires_radar_TIM4_period
-#endif
 #define GRIPPER_GPIO GPIOB
 #define GRIPPER_PIN GPIO_Pin_9
 #define GRIPPER_GPIO_CLOCK RCC_AHB1Periph_GPIOB
@@ -41,21 +36,33 @@ void Gripper_Init(void)
 {
 #if !(APP_ZONE2_MISSION_ENABLE && APP_MOTOR_OFFLINE_ONLY)
     TIM_OCInitTypeDef channel;
-#if !APP_ZONE2_MISSION_ENABLE
     RCC_ClocksTypeDef clocks;
     TIM_TimeBaseInitTypeDef timer;
     uint32_t timer_hz;
-#endif
 
     RCC_AHB1PeriphClockCmd(GRIPPER_GPIO_CLOCK, ENABLE);
     Gripper_PinMode(GPIO_Mode_OUT);
     s_ready = 0U;
     s_running = 0U;
 #if APP_ZONE2_MISSION_ENABLE
-    if (g_radar_servo_state != 1U)
-        return;
-
-    /* RadarServo_Init owns the running TIM4 time base. Keep CH4 low until jiazhua. */
+    /* The gripper owns TIM4 in fixed-field mission mode. Radar outputs stay unused. */
+    RCC_GetClocksFreq(&clocks);
+    timer_hz = clocks.PCLK1_Frequency;
+    if ((RCC->CFGR & RCC_CFGR_PPRE1) != 0U) timer_hz *= 2U;
+    if (timer_hz < 1000000U || timer_hz % 1000000U != 0U ||
+        timer_hz / 1000000U > 65536U ||
+        JIAZHUA_PULSE_MIN_US >= JIAZHUA_PULSE_MAX_US ||
+        JIAZHUA_PULSE_MAX_US >= JIAZHUA_PERIOD_US ||
+        JIAZHUA_PERIOD_US > 65536U || !(JIAZHUA_ANGLE_MAX_DEG > 0.0f)) return;
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+    TIM_Cmd(TIM4, DISABLE);
+    TIM_TimeBaseStructInit(&timer);
+    timer.TIM_Prescaler = (uint16_t)(timer_hz / 1000000U - 1U);
+    timer.TIM_Period = JIAZHUA_PERIOD_US - 1U;
+    timer.TIM_CounterMode = TIM_CounterMode_Up;
+    timer.TIM_ClockDivision = TIM_CKD_DIV1;
+    TIM_TimeBaseInit(TIM4, &timer);
+    /* Keep CH4 and PB9 low until an explicit jiazhua command. */
     TIM_OC4PreloadConfig(TIM4, TIM_OCPreload_Disable);
     TIM_OCStructInit(&channel);
     channel.TIM_OCMode = TIM_OCMode_PWM1;
@@ -66,6 +73,10 @@ void Gripper_Init(void)
     TIM_OC4PreloadConfig(TIM4, TIM_OCPreload_Enable);
     TIM_SetCompare4(TIM4, 0U);
     GPIO_PinAFConfig(GPIOB, GPIO_PinSource9, GPIO_AF_TIM4);
+    TIM_ARRPreloadConfig(TIM4, ENABLE);
+    TIM_SetCounter(TIM4, 0U);
+    TIM_GenerateEvent(TIM4, TIM_EventSource_Update);
+    TIM_Cmd(TIM4, ENABLE);
 #else
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
     TIM_DeInit(TIM2);

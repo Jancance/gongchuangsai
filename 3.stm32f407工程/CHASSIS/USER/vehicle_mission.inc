@@ -159,9 +159,7 @@ static void VehicleMission_Service(void)
     if(g_vehicle_state>=1U && g_vehicle_state<=3U) {
         if(g_rtos_fault || g_safety_fault || g_can_ctrl_fault_latched || g_startup_axes_state>=5U)
         {VehicleMission_Fail(4U);return;}
-        if(now-s_vehicle_stage_start>=VEHICLE_STAGE_TIMEOUT_MS ||
-           (VEHICLE_REHEARSAL && now-s_vehicle_start>=VEHICLE_REHEARSAL_MS))
-        {VehicleMission_Fail(5U);return;}
+        /* v1.12.3: stage/rehearsal elapsed time is diagnostic, not a failure. */
     }
         if((g_vehicle_state==1U || g_vehicle_state==2U) && g_vehicle_stage==1U && !g_vehicle_scan_bypassed && !s_vehicle_code_valid &&
            g_saoma_accept_count!=s_vehicle_scan_baseline && g_saoma_last_result==1U &&

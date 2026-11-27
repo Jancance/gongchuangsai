@@ -1,13 +1,15 @@
 #ifndef SOURCE_PARALLEL_FLOW_H
 #define SOURCE_PARALLEL_FLOW_H
 #include <stdint.h>
+#include "../../USER/vehicle_parameters.h"
 /* Source-stage transaction coordinator. No CAN/UART/PWM access. A backend
  * consumes immutable batches and reports physical-stage outcomes separately.
  * One batch means parallel axes, not a list of single-axis rows. */
 /* Aligned to the already measured source commissioning target. */
 #define SPF_MAX_LIFT_PULSES 29700U
 #define SPF_STAGE3_MAX_LIFT_PULSES 82000U
-#define SPF_STAGE3_EXT_RPM 106.0f
+#define SPF_CARRIER_EXTRA_DOWN_PULSES 4000U /* User carrier release: 10mm at 400p/mm. */
+#define SPF_STAGE3_EXT_RPM VEHICLE_EXTENSION_RPM
 #define SPF_DM 1U
 #define SPF_EXT 2U
 #define SPF_LIFT 4U
@@ -15,23 +17,38 @@
 #define SPF_STOW 16U
 #define SPF_DM_DEG_S 300.0f
 #define SPF_STAGE3_DM_DEG_S (SPF_DM_DEG_S / 2.0f)
-#define SPF_EXT_RPM 150.0f
-#define SPF_LIFT_RPM 1846.4f
-#define SPF_STAGE3_CARRY_RISE_LIFT_RPM 1000.0f
+#define SPF_EXT_RPM VEHICLE_EXTENSION_RPM /* v1.11：指令值，沿用现有乘10编码；待载物实测。 */
+#define SPF_LIFT_RPM 2200.0f /* v1.11：普通升降候选；回零速度保持。 */
+#define SPF_STAGE3_CARRY_RISE_LIFT_RPM 2200.0f
+/* Empty LIFT-only return to the existing observation top; yaw starts only after true DONE. */
+#define SPF_SOURCE_EMPTY_OBSERVE_RETURN_LIFT_RPM VEHICLE_SOURCE_LIFT_RPM
+#define SPF_CARRIER_LOWER_LIFT_RPM 600.0f
 /* 2026-11-08: 45055 is not a legal stepper acceleration on this hardware -- it made
  * the extension axis run away (0 -> -670 deg in 0.18 s, overshoot past the 156 mm
  * target). The lift ruler uses 600 for the same drives; SPF_GroupBegin also pins
  * this value, so both must agree. */
-#define SPF_STEPPER_ACCEL 600U
+#define SPF_STEPPER_ACCEL VEHICLE_PARALLEL_X_ACCEL_RPM_S /* v1.11：伸缩加减速候选；升降沿用fast-lift覆盖。 */
 enum { SPF_IDLE,SPF_DEPLOY,SPF_ALIGN,SPF_WAIT_TARGET,SPF_PICK,
  SPF_CLOSE,SPF_TRANSFER,SPF_PLACE,SPF_RELEASE,SPF_NEXT,
  SPF_ROUTE_AND_STOW,SPF_DONE,SPF_FAULT };
 enum { SPF_CMD_DEPLOY=1,SPF_CMD_ALIGN,SPF_CMD_PICK,SPF_CMD_CLOSE,
  SPF_CMD_TRANSFER,SPF_CMD_PLACE,SPF_CMD_RELEASE,SPF_CMD_NEXT,
  SPF_CMD_ROUTE_AND_STOW,SPF_CMD_STOP,SPF_CMD_STAGE3_TOUCHDOWN,SPF_CMD_STAGE3_FAST_TRANSFER,
- SPF_CMD_STAGE3_LOADED_RETURN,SPF_CMD_STAGE3_EMPTY_HANDOFF,SPF_CMD_STAGE3_CARRY_RISE,SPF_CMD_STAGE3_CARRY_PLACE };
+ SPF_CMD_STAGE3_LOADED_RETURN,SPF_CMD_STAGE3_EMPTY_HANDOFF,SPF_CMD_STAGE3_CARRY_RISE,SPF_CMD_STAGE3_CARRY_PLACE,SPF_CMD_STAGE3_STORAGE_EXIT,SPF_CMD_SOURCE_EMPTY_OBSERVE_RETURN,SPF_CMD_CARRIER_LOWER,SPF_CMD_SOURCE_OBSERVE_PREP };
 #define SPF_STAGE3_TOUCHDOWN_RPM 30.0f
 #define SPF_STAGE3_TOUCHDOWN_MAX_PULSES 1200U
+/* First real VSP poll failure. ARM uint32/float fields are 4 bytes; valid publishes last. */
+enum {SPF_POLL_DM_FIRSTFAULT=1,SPF_POLL_DM_STATE8,SPF_POLL_AXIS_DISABLED,
+ SPF_POLL_AXIS_PROTECT,SPF_POLL_Z_STALL,SPF_POLL_EXT_STALL_TIMEOUT,SPF_POLL_POSITION_WINDOW};
+typedef struct {
+ uint32_t valid,sequence,run_id,item,kind,axis,node,reason,phase,flags,options;
+ uint32_t position_tick,position_cycle,started_mask,done_mask;
+ uint32_t dm_state,dm_result,dm_first_fault,dm_stop_result,now_ms;
+ float before,current,goal;
+ uint8_t reply[8];
+} SPF_PollFirst;
+extern volatile SPF_PollFirst g_source_parallel_poll_first;
+
 typedef struct {float dm_deg,extension_mm,lift_pulses;} SPF_Pose;
 typedef struct {
  uint32_t run_id,pose_version,live_references_valid,deploy_sweep_valid;

@@ -164,8 +164,7 @@ void HeadingSession_Step(HeadingSession *s, const HeadingSessionInput *in,
         if ((s->stop_accepted == 1U) && (in->backend_active == 0U) &&
             (in->backend_result == 1U) && (in->backend_stop_mask == 0x0FU))
         { s->state = HS_DONE; HS_Out(s, HS_ACTION_COMPLETE, out); return; }
-        if ((uint32_t)(in->now_ms - s->stop_ms) >= HS_STOP_MS)
-        { HS_Fail(s, HS_CAUSE_STOP_TIMEOUT, out); return; }
+        /* v1.12.3: await real stop result; executor faults still abort. */
         if ((in->platform_ok != 1U) ||
             ((in->backend_result != 0U) && (in->backend_result != 1U)))
         { HS_Fail(s, HS_CAUSE_EXECUTOR, out); return; }

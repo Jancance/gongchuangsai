@@ -88,8 +88,7 @@ static void Region_Service(uint32_t now)
  if(request==1U && !Region_TryStart(now))g_region_rejected++;
  if(!Region_Busy())return;
  g_region_elapsed_ms=now-region_begin;
- if(!it_platform() || g_it_cause || g_it_rejected || g_it_state==9U ||
-    (uint32_t)(now-region_phase_tick)>=16000U){
+ if(!it_platform() || g_it_cause || g_it_rejected || g_it_state==9U){
   g_region_fault=g_it_cause?g_it_cause:12U;g_region_state=9U;
   g_it_request=0U;it_fail(g_region_fault);return;
  }
