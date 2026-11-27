@@ -1040,8 +1040,12 @@ void AppMotion_LoadDefaultPlan(void)
 #if APP_HEADING_SESSION_TEST && APP_FORWARD_HOLD_TEST && APP_TEST_MODE == 3U
     if (APP_IS_DEBUG)
     {
+#if VEHICLE_FIELD_MODE == VEHICLE_FIELD_MODE_TURN_DEBUG
+        g_debug_plan_id=VEHICLE_TURN_DIRECTION ? DEBUG_PLAN_TURN_CW90_90 : DEBUG_PLAN_TURN_CCW90_90;
+#else
         g_debug_plan_id=APP_STRAIGHT_CAPTURE_ENABLE ? DEBUG_PLAN_STRAIGHT_CAPTURE_FIRST :
             (APP_BASELINE40_ACTIVE ? DEBUG_PLAN_FORWARD210_40 : DEBUG_PLAN_DEFAULT);
+#endif
         (void)AppDebugPlan_Load(g_debug_plan_id,s_motion_actions,&s_motion_action_count);
         g_motion_plan_valid = App_MotionPlanValid();
     }

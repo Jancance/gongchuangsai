@@ -59,6 +59,9 @@ uint32_t AppDebugPlan_Load(uint32_t id, MotionAction *actions, uint32_t *count)
     };
     uint32_t i,n;
     if (!APP_IS_DEBUG || !actions || !count || id > DEBUG_PLAN_MAX || id == DEBUG_PLAN_FORWARD237) return 0U;
+#if VEHICLE_FIELD_MODE == VEHICLE_FIELD_MODE_TURN_DEBUG
+    if (id != (VEHICLE_TURN_DIRECTION ? DEBUG_PLAN_TURN_CW90_90 : DEBUG_PLAN_TURN_CCW90_90)) return 0U;
+#endif
     if (APP_STRAIGHT_CAPTURE_ENABLE && id<DEBUG_PLAN_STRAIGHT_CAPTURE_FIRST) return 0U;
     if (AppDebugStraightCapturePlan(id,actions)) { *count=1U; return 1U; }
     if ((id==DEBUG_PLAN_TURN_CCW90_90 || id==DEBUG_PLAN_TURN_CW90_90) && !AppDebugTurn90Plan(id)) return 0U;

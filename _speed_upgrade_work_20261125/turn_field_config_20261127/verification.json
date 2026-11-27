@@ -1,0 +1,113 @@
+{
+  "hardware_accessed": false,
+  "downloaded": false,
+  "preprocess": [
+    {
+      "mode": 0,
+      "offline": 0,
+      "mapping_unchanged": true,
+      "values": "0U 0U 1U 1U 1U\r"
+    },
+    {
+      "mode": 0,
+      "offline": 1,
+      "mapping_unchanged": true,
+      "values": "0U 0U 1U 1U 1U\r"
+    },
+    {
+      "mode": 1,
+      "offline": 0,
+      "mapping_unchanged": true,
+      "values": "0U 1U 1U 1U 1U\r"
+    },
+    {
+      "mode": 1,
+      "offline": 1,
+      "mapping_unchanged": true,
+      "values": "0U 0U 1U 1U 1U\r"
+    },
+    {
+      "mode": 2,
+      "offline": 0,
+      "mapping_unchanged": true,
+      "values": "2U 0U 1U 1U 1U\r"
+    },
+    {
+      "mode": 2,
+      "offline": 1,
+      "mapping_unchanged": true,
+      "values": "0U 0U 1U 1U 1U\r"
+    },
+    {
+      "mode": 3,
+      "direction": 0,
+      "offline": 0,
+      "values": "0U 0U 0U 0U 0U\r",
+      "default_and_plan_filter_match": true
+    },
+    {
+      "mode": 3,
+      "direction": 0,
+      "offline": 1,
+      "values": "0U 0U 0U 0U 0U\r",
+      "default_and_plan_filter_match": true
+    },
+    {
+      "mode": 3,
+      "direction": 1,
+      "offline": 0,
+      "values": "0U 0U 0U 0U 0U\r",
+      "default_and_plan_filter_match": true
+    },
+    {
+      "mode": 3,
+      "direction": 1,
+      "offline": 1,
+      "values": "0U 0U 0U 0U 0U\r",
+      "default_and_plan_filter_match": true
+    }
+  ],
+  "builds": [
+    {
+      "direction": 0,
+      "target": "Vehicle_Integrated",
+      "return_code": 1,
+      "log": "D:\\Desktop\\\u5de5\u521b\u8d5b\\_speed_upgrade_work_20261125\\turn_field_config_20261127\\build_direction0_Vehicle_Integrated.log",
+      "errors": 0,
+      "warnings": 4
+    },
+    {
+      "direction": 0,
+      "target": "Vehicle_Offline",
+      "return_code": 1,
+      "log": "D:\\Desktop\\\u5de5\u521b\u8d5b\\_speed_upgrade_work_20261125\\turn_field_config_20261127\\build_direction0_Vehicle_Offline.log",
+      "errors": 0,
+      "warnings": 3
+    },
+    {
+      "direction": 1,
+      "target": "Vehicle_Integrated",
+      "return_code": 1,
+      "log": "D:\\Desktop\\\u5de5\u521b\u8d5b\\_speed_upgrade_work_20261125\\turn_field_config_20261127\\build_direction1_Vehicle_Integrated.log",
+      "errors": 0,
+      "warnings": 4
+    },
+    {
+      "direction": 1,
+      "target": "Vehicle_Offline",
+      "return_code": 1,
+      "log": "D:\\Desktop\\\u5de5\u521b\u8d5b\\_speed_upgrade_work_20261125\\turn_field_config_20261127\\build_direction1_Vehicle_Offline.log",
+      "errors": 0,
+      "warnings": 3
+    }
+  ],
+  "index_header_sha256": "7d40b859d82e19ae6c9ab48ff5cf57b4190d35157c6055fbd86e828f8bb15f99",
+  "source_sha256": {
+    "USER\\vehicle_parameters.h": "781de8fd0ae555b10076f89f5f5ae630db4872c9396473476e35a2b47af1412a",
+    "CHASSIS\\USER\\app_entry.c": "97a74e9bcc095dbe9d4bb97709b0c2cdd6482d75123b5e9e2d2b37838d8fea78",
+    "CHASSIS\\USER\\app_motion_runtime.c": "d5504ccc1499e4ab4094ab7fd513df4558a8a3e4dc712f70faa9c419ac55b3ff",
+    "CHASSIS\\USER\\turn_debug_link_support.c": "a1308a59a6f250844683c57fb61587dd6a1c2f2018e7bc6e1a3edbc0175ac5f5",
+    "gongxun-f407.uvprojx": "7866c993a111de8166b1db60577e8d4cb8d20a8ad7d2971f5a007b87776e42d9"
+  },
+  "main_axf_sha256": "55064a37d4392a2d8cd474caa6dbc1cbbd06114339f2732575e9f4b079768d5e"
+}
