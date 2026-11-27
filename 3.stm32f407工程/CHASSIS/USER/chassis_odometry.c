@@ -157,8 +157,9 @@ void ChassisOdometry_Update(ChassisOdometry *c,uint32_t now)
         for(i=0U;i<4U;i++) wheel[i]-=c->previous_mm[i];
         dx=(wheel[0]+wheel[1]+wheel[2]+wheel[3])*0.25f;
         dy=(wheel[0]-wheel[1]-wheel[2]+wheel[3])*0.25f;
-        /* Explicit first-stage odometry calibration; no command trim subtraction. */
-        dx*=CHASSIS_FORWARD_DISTANCE_SCALE;
+        /* 按移动方向分别校正车体坐标增量，再由HWT航向旋转到场地坐标。 */
+        dx *= (dx >= 0.0f) ? CHASSIS_ODOM_FORWARD_DISTANCE_SCALE : CHASSIS_ODOM_REVERSE_DISTANCE_SCALE;
+        dy *= (dy >= 0.0f) ? CHASSIS_ODOM_LEFT_DISTANCE_SCALE : CHASSIS_ODOM_RIGHT_DISTANCE_SCALE;
         half=(yaw-c->previous_yaw)*ODOM_PI/360.0f;
         sinc=absolute(half)<0.0001f ? 1.0f : sinf(half)/half;
         angle=(wrap(c->previous_yaw)+c->heading_offset)*ODOM_PI/180.0f+half;

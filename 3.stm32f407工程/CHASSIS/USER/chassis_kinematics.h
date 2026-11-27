@@ -109,10 +109,12 @@ uint32_t Chassis_TranslationPositionMm(uint32_t mode,
     const uint32_t sign[4], const uint32_t raw[4], float *mean_mm, float *spread_mm);
 uint32_t Chassis_ForwardPositionMm(const uint32_t start_sign[4], const uint32_t start_raw[4],
     const uint32_t sign[4], const uint32_t raw[4], float *mean_mm, float *spread_mm);
-/* 独立前进距离比例：210cm三次实测均值214.583333cm，2026-10-26。
- * 校准进度=名义编码进度*该系数；目标仍是用户输入的mm。
- * 仅用于距离任务，横移、轮速和原始编码/四轮差异不变；提速后须复核。 */
-#define CHASSIS_FORWARD_DISTANCE_SCALE 1.02182540f
+/* Current no-radar direction scales; see ODOM_CALIBRATION_20261127.md. */
+#define CHASSIS_ODOM_FORWARD_DISTANCE_SCALE 1.02743847f
+#define CHASSIS_ODOM_REVERSE_DISTANCE_SCALE 1.01448963f
+#define CHASSIS_ODOM_LEFT_DISTANCE_SCALE 0.98092315f
+#define CHASSIS_ODOM_RIGHT_DISTANCE_SCALE 0.98688169f
+#define CHASSIS_FORWARD_DISTANCE_SCALE CHASSIS_ODOM_FORWARD_DISTANCE_SCALE
 uint32_t Chassis_CalibrateDistanceMm(uint32_t mode, float encoder_mm, float *progress_mm);
 uint32_t Chassis_DistanceRpm(float remaining_mm, uint32_t maximum_rpm);
 uint32_t Chassis_DistanceSelfTest(void);
