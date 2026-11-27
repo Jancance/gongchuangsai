@@ -27,12 +27,6 @@ HWT yaw/rate 用于描述过程偏航和姿态旋转，不用于拟合 X/Y 距�
 
 下一轮先固定速度、起点、载荷、地面参考和方向，各做一趟可配对的基线；优先只对前进 P 做小步 MATLAB 量化影子比较，再决定是否值得一次实车对照，D 暂时保持 0.25。历史 `Kp=3.00/Kd=0.25` 影子回算虽有整数修正差异，但独立评审结论为不部署；不直接恢复该候选，也不同时改 P、D、速度表或轮速限幅。左右移分别保留现值为基线，先补同条件重复尺量，不共用前进增益。
 
-## 90°旋转完整计时
-
-用户目标口径为旋转准备开始至动作完成且收到四轮 STOP 确认。现有顺/逆时针单趟 host 记录从 ARM 写入至软件完成分别约 7.13 s、6.95 s；这是当前实现的一次现场观测，不代表最优值或重复性验收。当前准备需要最长 1000 ms 电源稳定等待，90° S 曲线在 yaw 速度/加速度/jerk 上限 90°/s、180°/s²、1440°/s³ 下曲线本身最短约 1.625 s，终点还要求 700 ms 稳定，并等待真实 STOP 四轮确认。因此按现有限制，仅准备、曲线、稳定三项的乐观下界已约 3.325 s，STOP 确认时间还未计入；完整区间不可能压到 1.5 s 左右。
-
-MATLAB R2020a 对单个 90°七相位曲线的假设模型显示，即使移除 90°/s yaw 速度上限，保留现有加速度和 jerk 上限，曲线仍约 1.545 s（峰 116.5°/s、轮端约 105.4 RPM）；加上当前准备和稳定确认下界约 3.245 s，仍不含 STOP 确认，也未包含真实电机跟随、机械扫掠与停车误差。该候选不构成可部署提速方案；本轮不改旋转参数，达到该整段目标需另行评估准备重叠、完整轨迹/轮端约束、制动稳定确认与实车安全余量后，再单独 MATLAB 预检和单趟验证。
-
 ## 代码与验证
 
 - `chassis_kinematics.h`：定义四个方向系数；保留既有 `CHASSIS_FORWARD_DISTANCE_SCALE` 作为前进别名。
@@ -40,7 +34,7 @@ MATLAB R2020a 对单个 90°七相位曲线的假设模型显示，即使移除 
 - `chassis_kinematics.c`：无雷达距离进度 mode 0/1/2/3 分别使用前进/左移/右移/后退比例；`Chassis_DistanceSelfTest()` 同步核对四向比例。
 - `app_config.h`：可选 `APP_LEFT_DISTANCE_SCALE` 更新为左移拟合值；`APP_LEFT_TRIM_ENABLE` 默认仍为 0。
 - MATLAB R2020a 脚本 `_speed_upgrade_work_20261125/calibration_precheck_20261127.m` 检查比例重算、四个符号方向和 0°/90°坐标变换，结果见 `matlab_calibration_precheck_20261127.log`。此检查是代数/坐标映射前置验证，不证明真实地面轨迹。
-- ARM C 单元 `validation/odom_calibration_20261127/unit.c` 和 `run_unit.py` 编译并执行活动 `chassis_odometry.c`、`chassis_kinematics.c`；`Chassis_DistanceSelfTest()` 通过，并覆盖前/后/左/右四种轮符号在 0°/90° 航向下的累计位姿，共8种情形、16项断言通过。结果 `_speed_upgrade_work_20261125/odom_calibration_replay_20261127/result.json` 的夹具哈希与当前 `unit.c` SHA256 `e04c2fa7f7c431493253afad81f5be5a7f4e2ca50363ebf73fc5e459aeb053f6` 一致。Cortex-M3 ARMCC 产物在 Unicorn 中回放，按 SHF_ALLOC 初始化 PROGBITS/NOBITS；几何、轮方向和 HWT 为受控输入，不是板端/实车测试。
-- 无雷达 Integrated/Offline Keil 构建和活动 AXF 身份另在本轮交接记录；未下载、未复位、未发车。
+- ARM C 单元 `validation/odom_calibration_20261127/unit.c` 和 `run_unit.py` 编译并执行目标分支的 `chassis_odometry.c`、`chassis_kinematics.c`；`Chassis_DistanceSelfTest()` 通过，并覆盖前/后/左/右四种轮符号在 0°/90° 航向下的累计位姿，共8种情形、16项断言通过。结果 `_speed_upgrade_work_20261125/odom_calibration_replay_20261127/result.json` 绑定夹具 SHA256 `9334a340df72712aa848f0118d02ce1a3e3ac060`、里程计源 SHA256 `0aae740c80750c6bb80a47b685de0e6d4da73c5c0b0b06c3f4decaff7b6e0551` 和运动学源 SHA256 `b0c1ccd5d79c51ed26cbcb72444c4c8ed1553660c0607791537df2e985accd79`。Cortex-M3 ARMCC 产物在 Unicorn 中回放，按 SHF_ALLOC 初始化 PROGBITS/NOBITS；几何、轮方向和 HWT 为受控输入，不是板端/实车测试。
+- 以 GitHub `origin/main` 为基线重建：`keil_odom_calibration_integrated_20261127.log` 与 `keil_odom_calibration_offline_20261127.log` 均为0错误、0警告。活动 AXF 仅为隔离 worktree 的构建产物，不随标定源提交；未下载、未复位、未发车。
 
 需求核对：R `RUN-01/02/04`、`FIELD-02/06`、`PWR-01`、`MECH-01/02`；E `LOC-02/05/06`、`MOT-01/02/03/04`。Q `FIELD-05`、`OBS-03`、`QR-04` 继续待技术答疑确认。比例是工程标定选择，不改规则。
